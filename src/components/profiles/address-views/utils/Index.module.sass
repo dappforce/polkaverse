@@ -1,0 +1,63 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.ModalLogo
+  height: 32px
+
+
+.UseAsProfileModal
+  \:global .ant-modal-body
+    height: 340px !important
+
+.SwitchProfileModalBody
+  width: calc(100% + 1rem)
+  position: relative
+  left: -0.5rem
+
+.UseAsProfileModalBody
+  padding: 0 4.25rem
+
+.DfSpacePreview
+  border-radius: $space_normal
+  padding: $space_tiny
+  cursor: pointer
+
+  &:hover
+    background-color: #ffedf6
+
+.PrevieWithoutHover
+  padding: $space_tiny
+  cursor: default
+
+  &:hover
+    background-color: transparent
+
+.BodyCommon
+  text-align: start
+
+  h2
+    line-height: 28px
+    color: $color_font_normal
+    margin: $space_large 0 $space_tiny 0 !important
+
+  div
+    font-size: $font_normal
+
+.BodyTitle
+  @extend .BodyCommon
+  padding: 0 $space_tiny
+  margin-bottom: $space_normal
+
+.UseAsProfileModalTitle
+  @extend .BodyCommon
+  padding: 0 2.75rem
+
+  h2
+    margin: $space_tiny 0 $space_normal 0 !important
+
+.FooterButton
+  padding-right: 2.75rem
+  padding-left: 2.75rem
+
+  button
+    height: 40px
+    margin: 0

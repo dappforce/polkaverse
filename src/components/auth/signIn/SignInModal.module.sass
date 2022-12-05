@@ -1,0 +1,124 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.SignInModalBody
+  padding: $space_normal $space_large
+  position: relative
+
+  \:global .ant-menu-horizontal
+    border-bottom: none !important
+    white-space: normal !important
+    line-height: 20px !important
+
+  \:global .DfSubTitle
+    display: none
+
+  \:global .SelectAccountSection
+    max-height: fit-content !important
+
+  \:global .SelectAccountItem
+    padding: 0 !important
+    padding: $space_tiny !important
+    border-radius: $space_normal
+    height: 64px !important
+
+    &:hover
+      background-color: #ffedf6
+
+  li
+    \:global .ant-menu-item
+      padding: $space_tiny !important
+      border-radius: $space_normal
+
+      &:hover
+        background-color: #ffedf6
+
+.TitleContainer
+  position: relative
+  font-size: $font_normal
+  padding: 0 $space_mini
+
+.BackButton
+  position: absolute
+  top: 50%
+  transform: translateY(-50%)
+
+.ModalFooter
+  display: flex
+  align-items: center
+  justify-content: center
+  font-size: $font_normal !important
+  padding: 0 !important
+
+  a
+    color: $color_muted !important
+
+    &:hover
+      color: $color_link_hover !important
+
+.BodyTitle
+  padding: 0 $space_tiny
+  text-align: start
+  margin-bottom: $space_normal
+
+  h2
+    line-height: 28px
+    color: $color_font_normal
+    margin: $space_large 0 $space_tiny 0 !important
+
+  div
+    font-size: $font_normal
+
+.Back
+  display: flex
+  align-items: center
+  font-size: 20px
+  font-weight: bold
+  padding: 0
+  color: $color_font_normal
+
+  span:last-child
+    margin-left: 0 !important
+
+  &:hover
+    color: $color_link_hover
+
+  svg
+    width: 16px
+    height: 16px
+    margin-right: $space_big
+
+.ModalLogo
+  height: 32px
+
+.FooterButton
+  padding-right: 3rem
+  padding-left: 3rem
+
+  button
+    height: 40px
+
+.EnergySection
+  padding: 0 $space_tiny
+  margin-bottom: 8rem
+
+  button
+    height: 40px
+
+.EnergyMessage
+  text-align: left
+  border: 1px solid $color_light_border
+  border-radius: $border_radius_btn
+  padding: $space_tiny $space_small
+  margin-bottom: $space_normal
+
+.SignInModal
+  \:global .ant-modal-body
+    height: 440px !important
+
+@media (max-width: 767px)
+  .SignInModalBody
+    padding: 0 $space_huge
+
+  .FooterButton
+    padding-right: 1.5rem
+    padding-left: 1.5rem

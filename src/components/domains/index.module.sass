@@ -1,0 +1,147 @@
+@import 'src/styles/subsocial-vars.scss'
+
+$border_size: 10px
+$input_section_height: 50px
+$font_size: 1.1rem
+
+@mixin input-section-item
+  height: $input_section_height
+  font-size: $font_normal
+
+.Intro
+  text-align: center
+  margin-bottom: $space_huge
+
+.SubLogo
+  width: 50%
+  display: flex
+  justify-content: center
+
+.DomainHeader
+  display: flex
+  justify-content: center
+  margin-top: $space_huge
+  font-weight: bold
+  color: $color_font_normal
+
+.DomainInput
+  display: flex !important
+  align-items: center
+  \:global .ant-select-selection-item
+    font-size: $font_normal
+  \:global .ant-input
+    @include input-section-item
+    border-top-left-radius: $border_size !important
+    border-bottom-left-radius: $border_size !important
+    padding-left: $space_normal
+
+  \:global .ant-btn
+    @include input-section-item
+    border-top-right-radius: $border_size !important
+    border-bottom-right-radius: $border_size !important
+
+.DomainPrimaryButton
+  padding: 0 $space_normal
+  font-size: $font_normal
+  margin-left: $space_tiny
+
+.DomainResults
+  border-radius: $border_size
+  margin-top: $space_normal
+
+  \:global .ant-card-body
+    padding-top: $space_normal
+    padding-bottom: $space_normal
+    
+  \:global .ProfilePreview-Right
+    display: flex
+    justify-content: end
+    align-items: center
+
+  h2
+    color: $color_font_normal
+
+  .DomainResultItem
+    font-size: $font_size
+    font-weight: bold
+    padding: $space_tiny 0
+
+    &:last-child
+      border-bottom: none
+
+    \:global .ant-card-body
+      padding: $space_normal
+
+.DomainName
+  font-size: 4rem
+  text-align: center
+
+.SaveBtn
+  font-size: $font-normal
+  width: 190px
+
+.DomainManageForm
+  margin-top: $space_normal
+  \:global .ant-form-item-label
+   padding: 0
+
+.FaqBtn
+  background-color: $color_pink_bg
+  font-weight: bold
+  font-size: $font_normal
+  border-radius: 52px
+
+.Faq
+  \:global .ant-card-body
+    padding: $space_tiny
+
+.ChooseStep
+  \:global .anticon
+    color: $color_muted
+
+  font-weight: 600
+  padding: $space_mini
+  padding-left: 0
+  cursor: pointer
+
+
+.Modal
+  \:global .ant-modal-body
+    padding: 2*$space_normal
+  
+  \:global .ant-btn
+    width: 190px
+  
+.ModalTitle
+  font-size: 2rem
+
+.ModalDomainTitle
+  font-size: 2rem
+  font-weight: 600
+
+.ModalLink
+  font-size: $font_large
+  margin: $space_normal 0
+  font-weight: 600
+
+.MyDomainsContainer
+  padding: $space_normal 0
+  border-bottom: 1px solid $color_lighter_border
+
+.DomainInfiniteListContainer
+  \:global .ant-list-items
+    display: flex
+    flex-direction: column
+    gap: $space_normal
+
+.FaqPanel
+  \:global .ant-collapse-header
+    padding-left: $space_big !important
+
+  \:global .ant-collapse-content-box
+    padding-top: 0 !important
+    padding-left: 0 !important
+    padding-right: 0 !important
+
+  \:global .ant-collapse-arrow
+    left: 0 !important

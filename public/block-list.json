@@ -1,0 +1,18 @@
+{
+  "blockedPosts": [ 1912, 1913, 3689 ],
+  "blockedSpaces": [ 2175, 2025, 2638, 3095 ],
+  "blockedAccounts": {
+    "spam": [ "3qixizA4tDFhTV4wfSKBCbiFUpw5VGTNKmUiSVDHtn4SgyFr" ],
+    "cheat": [],
+    "scam": [],
+    "fake": [],
+    "nudity": [
+      "3t2KWguKwsuwRp6j7Moj1DMP9vZErXeV1CCqd74CfxaUSDZa",
+      "3r5rgv8Wgc1p78P3vUppiy9jTSVj41e4QUWpZWpVpPU2PSDt",
+      "3rqtZ54aCuXgpKNasdDzBPVmZpi96rwaQxcY7D4pC9SVpXBs"
+    ],
+    "child_abuse": [],
+    "violence": [],
+    "copyright": []
+  }
+}

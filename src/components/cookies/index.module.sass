@@ -1,0 +1,14 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.CookiesNotification
+  \:global .ant-notification-notice-btn
+    width: 100%
+
+@media screen and ( max-width: 768px)
+  .CookiesNotification
+    margin: 0px
+    width: 100%
+    \:global .ant-notification-bottomRight
+      margin: 0px
+      bottom: 0px !important
+      max-width: 100%

@@ -1,0 +1,21 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.Chip
+  border: 1px solid $color_border
+  background: $color_page_bg
+  padding: 0.3em 0.8em
+  border-radius: 1.5em
+  cursor: pointer
+  transition: background 0.3s
+
+  &:hover, &:focus
+    background: $color_hover_selectable_bg
+
+.ChipSelected
+  border-color: $color_primary
+  background: $color_primary
+  color: white
+
+  &:hover, &:focus
+    border-color: $color_link_hover
+    background: $color_link_hover

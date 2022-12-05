@@ -1,0 +1,20 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.Indicator
+  width: 0.375em
+  height: 0.375em
+  background: $color_light_border
+  border-radius: 50%
+  cursor: pointer
+  outline: 1px solid
+  outline-color: transparent
+  transition: outline-color 300ms
+
+  &.IndicatorActive
+    background: $color_primary
+    width: 0.5em
+    height: 0.5em
+
+  &:hover, &:focus
+    outline-color: $color_primary
+    outline-offset: 1px

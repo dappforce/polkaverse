@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: web-app
+    spec:
+      imagePullSecrets:
+        - name: dockerhub
+      containers:
+        - name: web-app
+          image: <IMAGE>
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3003
+      restartPolicy: Always

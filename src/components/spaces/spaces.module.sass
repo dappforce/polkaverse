@@ -1,0 +1,55 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.DfSpacePreview
+  > *:last-child
+    margin-bottom: $space_normal
+    
+  \:global .ProfileDetails
+    text-align: left
+
+.OfficialSpaceIcon
+  margin-left: $space_tiny
+  font-size: $font_big
+
+.ClaimedOfficialSpaceIcon
+  @extend .OfficialSpaceIcon
+  color: $color_green
+
+.ClaimSpacePendingIcon
+  padding: $space_mini
+  background-color: $color_gold
+  border-radius: 50%
+  margin-left: $space_tiny
+  font-size: $font_normal
+  color: #fff
+
+.MakeAsProfileBtn
+  margin-left: 5rem
+
+.CurrentProfile
+  border-radius: 50%
+  padding: 0.25rem
+  background-color: #eb2f96
+
+  path
+    color: white
+
+.About
+  white-space: nowrap
+  text-overflow: ellipsis
+  width: 256px
+  overflow: hidden
+  font-size: 14px
+
+.WithoutButton
+  width: 334px !important
+
+@media (max-width: 755px)
+  .ClaimMessage
+    \:global .DfDataList
+      margin-top: 0
+      margin-left: -$space_normal
+      margin-right: -$space_normal
+
+  .MakeAsProfileBtn
+    margin-left: 4rem

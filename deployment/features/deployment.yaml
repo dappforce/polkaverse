@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: web-app-<BRANCH>
+  name: web-app-<BRANCH>
+  namespace: sub-back
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-app-<BRANCH>
+  template:
+    metadata:
+      labels:
+        app: web-app-<BRANCH>
+      name: web-app-<BRANCH>
+    spec:
+      containers:
+      - image: <IMAGE>
+        imagePullPolicy: IfNotPresent
+        name: web-app-<BRANCH>
+        ports:
+        - containerPort: 3003
+      imagePullSecrets:
+      - name: dockerhub
+      restartPolicy: Always

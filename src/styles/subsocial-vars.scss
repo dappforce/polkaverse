@@ -1,0 +1,79 @@
+/*-------------Font Size-----------*/
+
+$font_tiny: 0.75rem;
+$font_small: 0.875rem;
+$font_normal: 1rem;
+$font_large: 1.25rem;
+$font_big: 1.5rem;
+$font_huge: 2rem;
+
+/*----------Space Size-------------*/
+
+$space_mini: 0.25rem;
+$space_tiny: 0.5rem;
+$space_small: 0.75rem;
+$space_normal: 1rem;
+$space_large: 1.25rem;
+$space_big: 1.5rem;
+$space_huge: 2rem;
+
+/*-------------Colors----------*/
+
+$color_page_bg: #f8fafc;
+$color_font_normal: #222222;
+$color_muted: #8c8c8c;
+$color_border: #d9d9d9;
+$color_link: #bd018b;
+$color_primary: #eb2f96;
+$color_link_hover: #f759ab;
+$color_secondary: #595959;
+$color_light_border: #d1d1d1;
+$color_lighter_border: #ebebeb;
+$color_warn_border: #f3e8ac;
+$color_hover_selectable_bg: #fff0f6;
+$color_volcano: #fa541c;
+$color_gold: #faad14;
+$color_pink_bg: #fff0f6;
+$color_green: #4bb543;
+$color_blue: #0099f4;
+$color_shadow: #eeecec;
+$color_shadow_accent: #e2e8f0;
+$color_error: #ff4d4f;
+$color_twitter_link: #316cf4;
+$color_background: #f8fafc;
+$color_info: #e6f7ff;
+$color_info_border: #91d5ff;
+$color_info_text: #52b2ee;
+$color_warning: #fffbe6;
+$color_warning_border: #ffe58f;
+$color_warning_text: #faad14;
+
+/*------------- Line Height --------*/
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.6;
+$line-height-loose: 1.8;
+
+/*------------- Shadow --------*/
+
+$shadow: 0 0 5px 2px $color_shadow !important;
+$shadow_light: 0px 0px 20px $color_shadow_accent !important;
+$shadow_primary: 0 0 0 2px rgba($color_primary, 0.2);
+
+/*------------- Misc ----------*/
+
+/* 64px is a height of Ant Design toolbar */
+$height_top_menu: 64px;
+$modal_max_height: 60vh;
+$border_radius_normal: 5px;
+$border_radius_large: 10px;
+$border_radius_big: 15px;
+$border_radius_huge: 20px;
+$border_radius_btn: 5px;
+$width_panel: 300px;
+$min_width_content: 428px;
+$max_width_content: calc(680px + #{$space_normal} * 2);
+$max_mobile_width: 755px;
+
+// $font_family_title: 'PT Serif', Georgia, serif;
+// $font_family_title: 'Noto Serif', Georgia, serif;
+// $font_family_title: 'Merriweather', Georgia, serif;

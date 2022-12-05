@@ -1,0 +1,30 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.Menu
+  color: $color_muted
+  padding-top: 4rem
+
+.PagePadding
+  padding-top: 76px
+
+.SiderDivider
+  margin: 0 $space_big !important
+  background-color: #E5E5E5 !important
+
+.SiderOverflow
+  overflow-x: hidden
+  overflow-y: auto
+
+  &::-webkit-scrollbar
+    display: none
+
+    -ms-overflow-style: none
+    scrollbar-width: none
+
+@media (max-width: 991px)
+  .Menu
+    padding-top: 4remrem
+
+@media (max-width: $max_mobile_width)
+  .Menu
+    padding-top: 0rem

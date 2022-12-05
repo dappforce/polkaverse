@@ -1,0 +1,43 @@
+@import 'src/styles/subsocial-vars.scss'
+
+$text_shadow: 0px 20px 26px #363535
+
+.DfBanner
+  padding: $space_normal $space_big
+  width: 100%
+  margin-bottom: $space_normal
+  cursor: pointer
+
+.DfActionButton
+  margin-top: $space_small
+
+.DfCloseButton
+  color: #fff
+  cursor: pointer
+  padding: $space_tiny
+  padding-right: 0
+  float: right
+
+.DfTitle
+  margin-top: $space_mini
+  text-shadow: $text_shadow
+
+.DfDesc
+  text-shadow: $text_shadow
+
+@media (max-width: 755px)
+  .DfBanner
+    padding: $space_tiny $space_small
+
+  .DfDesc
+    text-shadow: $text_shadow
+
+  .DfActionButton
+    margin-top: -$space_mini
+
+  .DfTitle
+    margin-bottom: $space_mini
+    text-shadow: $text_shadow
+
+  .DfCloseButton
+    margin-top: -$space_mini

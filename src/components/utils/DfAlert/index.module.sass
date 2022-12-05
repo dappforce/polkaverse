@@ -1,0 +1,57 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.DfAlert
+  display: flex
+  padding: $space_normal
+  border-radius: $border_radius_big
+
+  &.Info
+    background-color: $color_info
+    border: 1px solid $color_info_border
+
+    .Icon
+      color: $color_info_text
+
+  &.Warning
+    background-color: $color_warning
+    border: 1px solid $color_warning_border
+
+    .Icon
+      color: $color_warning_text
+  
+  .MobileIcon
+    display: none
+
+  .Icon
+    margin-right: $space_small
+    font-size: $font_large
+    display: flex
+    position: relative
+
+  .Content
+    display: flex
+    flex-direction: column
+
+    & > *
+      margin-bottom: $space_mini
+
+      &:last-child
+        margin-bottom: 0
+
+  @media screen and (max-width: 455px)
+    flex-direction: column
+    align-items: center
+    text-align: center
+
+    .MobileIcon
+      display: inline
+      margin-right: $space_mini
+
+    .Icon
+      display: none
+
+    .Title
+      font-size: $font_large
+      display: flex
+      align-items: center
+      justify-content: center

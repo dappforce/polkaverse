@@ -1,0 +1,70 @@
+@import "src/styles/subsocial-vars.scss"
+
+.DfDateFilter
+  margin-left: $space_normal
+
+.DfBackToTop
+  margin-right: $space_normal
+
+.AffixTabsCommon
+  background-color: $color_page_bg
+
+  box-shadow: 0px 21px 12px -19px #ddd
+  height: 46px
+  opacity: 0
+  animation: ShowTabs 0.4s forwards
+
+.AffixTabs
+  @extend .AffixTabsCommon
+  margin: 0 -30px 0 -30px
+  padding: 0 34px 0 34px
+  box-shadow: 0px 21px 12px -19px #ddd
+
+@keyframes ShowTabs
+  0%
+    opacity: 0
+  50%
+    opacity: 50
+  100%
+    opacity: 100
+
+.DfGridParams
+  column-gap: $space_mini
+  justify-content: space-between
+
+.DfCol
+  display: block
+
+.DfDateCol
+  display: block
+  flex: 0 0 16%
+  max-width: 16%
+
+.FilterSelect
+  // If input/select font size is less than 16px, safari/iphone will automatically zoom to it.
+  // This won't affect the dropdown, because input's opacity is 0
+  input, select
+    font-size: $font_normal
+
+@media (max-width: 755px)
+  .DfCol
+    flex: 0 0 48%
+    max-width: 48%
+
+  .DfDateCol
+    flex: 0 0 48%
+    max-width: 48%
+
+  .AffixTabs
+    @extend .AffixTabsCommon
+    margin: 0 -18px 0 -18px
+    padding: 0 0 0 14px
+    box-shadow: 0px 21px 12px -19px #ddd
+
+  .DfBackToTop
+    margin-right: 0
+
+  .DfDateFilter
+    margin-left: 0
+    margin-top: $space_normal
+

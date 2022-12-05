@@ -1,0 +1,4 @@
+**/.next/*
+**/node_modules/*
+**/cypress/*
+src/graphql/__generated__

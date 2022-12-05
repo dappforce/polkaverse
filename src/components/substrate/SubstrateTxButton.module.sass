@@ -1,0 +1,27 @@
+@import "src/styles/subsocial-vars.scss"
+
+@keyframes progress
+  from
+    transform: scaleX(1)
+  to
+    transform: scaleX(0)
+
+@mixin progressbar($height: 3px)
+  position: relative
+  &::before
+    transform-origin: left
+    content: ''
+    position: absolute
+    width: 100%
+    bottom: 0
+    left: 0
+    height: $height
+    background-image: linear-gradient(to right, $color_link, $color_primary)
+    animation: progress 30s linear forwards
+
+.NotificationProgress
+  @include progressbar
+
+.NotificationProgressMobile
+  > div
+    @include progressbar(2px)

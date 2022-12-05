@@ -1,0 +1,29 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.CustomModalContainer
+  &.CustomModalFullHeight
+    :global(.ant-modal-content)
+      height: calc(100vh - 100px)
+
+  :global(.ant-modal-content)
+    max-height: 700px
+    border-radius: $space_normal
+
+  :global(.ant-modal-body)
+    max-height: 700px
+    height: 100%
+    display: flex
+    flex-direction: column
+    padding: 1.5rem 1.75rem
+
+  .CustomModalContent
+    display: flex
+    flex-direction: column
+    padding-right: $space_mini
+    flex: 1
+
+  .CustomModalTitle
+    font-weight: bold
+    color: #222222
+    font-size: $font_big
+    margin-bottom: $space_mini
