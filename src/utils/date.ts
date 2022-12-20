@@ -31,9 +31,7 @@ export function getTimeRelativeToNow(
   date: Date | string | number,
   config: { locale?: string } = { locale: 'en-US' },
 ) {
-  const formatter = new Intl.RelativeTimeFormat(config.locale, {
-    numeric: 'auto',
-  })
+  const formatter = new Intl.RelativeTimeFormat(config.locale)
   let duration = (new Date(date).getTime() - new Date().getTime()) / 1000
 
   for (let i = 0; i <= DIVISIONS.length; i++) {
