@@ -9,7 +9,7 @@ const mainConfig: SubsocialConfig = {
 
   offchainUrl: 'https://api.subsocial.network',
   offchainWs: 'wss://app.subsocial.network/notif-ws',
-  graphqlUrl: 'https://squid.subsquid.io/subsocial/graphql',
+  // graphqlUrl: 'https://squid.subsquid.io/subsocial/graphql',
 
   ipfsNodeUrl: 'https://ipfs.subsocial.network',
 
