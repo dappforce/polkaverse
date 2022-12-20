@@ -75,7 +75,7 @@ jobs:
                   GH_OFFCHAIN_URL=https://api.subsocial.network
                   GH_IPFS_NODE_URL=https://ipfs.subsocial.network
                   GH_GA_ID=UA-204866512-2
-                  GH_APP_KIND=subsocial
+                  GH_APP_KIND=polkaverse
                   GH_CONNECTION_KIND=main
 
           tags: |
