@@ -61,7 +61,7 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
-      - if: ${{ github.ref == 'refs/heads/master' }}
+      - if: ${{ github.ref == 'refs/heads/main' }}
         name: Build production image
         uses: docker/build-push-action@v3
         with:
@@ -126,7 +126,7 @@ jobs:
     name: pro-deploy
     needs: front_build
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout main
         uses: actions/checkout@v3
@@ -163,7 +163,7 @@ jobs:
     name: bk-prod-deploy
     needs: front_build
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout main
         uses: actions/checkout@v3
