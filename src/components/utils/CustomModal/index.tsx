@@ -36,7 +36,7 @@ export default function CustomModal({
       {...props}
     >
       {(title || subtitle) && (
-        <div className='d-flex flex-column w-100 mb-3 mr-4'>
+        <div className='d-flex flex-column w-100 pb-3 pr-4'>
           <h2 className={clsx(styles.CustomModalTitle)}>{title}</h2>
           {subtitle && <MutedSpan className={clsx(title && 'mt-1')}>{subtitle}</MutedSpan>}
         </div>
