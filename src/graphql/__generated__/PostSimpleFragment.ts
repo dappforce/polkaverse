@@ -42,6 +42,7 @@ export interface PostSimpleFragment {
   createdByAccount: PostSimpleFragment_createdByAccount;
   title: string | null;
   summary: string | null;
+  body: string | null;
   image: string | null;
   link: string | null;
   downvotesCount: number;

@@ -272,6 +272,7 @@ export interface GetPostsData_posts_parentPost {
   createdByAccount: GetPostsData_posts_parentPost_createdByAccount;
   title: string | null;
   summary: string | null;
+  body: string | null;
   image: string | null;
   link: string | null;
   downvotesCount: number;
@@ -431,6 +432,7 @@ export interface GetPostsData_posts_sharedPost {
   createdByAccount: GetPostsData_posts_sharedPost_createdByAccount;
   title: string | null;
   summary: string | null;
+  body: string | null;
   image: string | null;
   link: string | null;
   downvotesCount: number;
@@ -457,6 +459,7 @@ export interface GetPostsData_posts {
   createdByAccount: GetPostsData_posts_createdByAccount;
   title: string | null;
   summary: string | null;
+  body: string | null;
   image: string | null;
   link: string | null;
   downvotesCount: number;

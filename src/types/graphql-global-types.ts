@@ -26,15 +26,18 @@ export enum EventName {
   CommentUpdated = 'CommentUpdated',
   PostCreated = 'PostCreated',
   PostDeleted = 'PostDeleted',
+  PostFollowed = 'PostFollowed',
   PostMoved = 'PostMoved',
   PostReactionCreated = 'PostReactionCreated',
   PostReactionDeleted = 'PostReactionDeleted',
   PostReactionUpdated = 'PostReactionUpdated',
   PostShared = 'PostShared',
+  PostUnfollowed = 'PostUnfollowed',
   PostUpdated = 'PostUpdated',
   ProfileUpdated = 'ProfileUpdated',
   SpaceCreated = 'SpaceCreated',
   SpaceFollowed = 'SpaceFollowed',
+  SpaceOwnershipTransferAccepted = 'SpaceOwnershipTransferAccepted',
   SpaceUnfollowed = 'SpaceUnfollowed',
   SpaceUpdated = 'SpaceUpdated',
 }
@@ -238,6 +241,10 @@ export interface ActivityWhereInput {
   space?: SpaceWhereInput | null
   spacePrev_isNull?: boolean | null
   spacePrev?: SpaceWhereInput | null
+  newOwner_isNull?: boolean | null
+  newOwner?: AccountWhereInput | null
+  oldOwner_isNull?: boolean | null
+  oldOwner?: AccountWhereInput | null
   post_isNull?: boolean | null
   post?: PostWhereInput | null
   reaction_isNull?: boolean | null
@@ -1178,6 +1185,23 @@ export interface SpaceWhereInput {
   format_not_startsWith?: string | null
   format_endsWith?: string | null
   format_not_endsWith?: string | null
+  handle_isNull?: boolean | null
+  handle_eq?: string | null
+  handle_not_eq?: string | null
+  handle_gt?: string | null
+  handle_gte?: string | null
+  handle_lt?: string | null
+  handle_lte?: string | null
+  handle_in?: string[] | null
+  handle_not_in?: string[] | null
+  handle_contains?: string | null
+  handle_not_contains?: string | null
+  handle_containsInsensitive?: string | null
+  handle_not_containsInsensitive?: string | null
+  handle_startsWith?: string | null
+  handle_not_startsWith?: string | null
+  handle_endsWith?: string | null
+  handle_not_endsWith?: string | null
   canFollowerCreatePosts_isNull?: boolean | null
   canFollowerCreatePosts_eq?: boolean | null
   canFollowerCreatePosts_not_eq?: boolean | null
