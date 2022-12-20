@@ -83,6 +83,7 @@ export const POST_SIMPLE_FRAGMENT = gql`
     }
     title
     summary
+    body
     image
     link
     downvotesCount
