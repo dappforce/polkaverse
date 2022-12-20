@@ -1,4 +1,4 @@
-name: Build and deploy frontend based on features
+name: Feature based build and deploy frontend
 on:
   workflow_dispatch:
   push:
@@ -10,19 +10,16 @@ jobs:
     name: build & Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Extract branch name
         shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/} | sed 's/^deploy\///')"
+        run: echo "name=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^deploy\///')" >> $GITHUB_ENV
         id: extract_branch
 
       - name: Prepare
         id: prep
         run: |
-          TAG=${{ steps.extract_branch.outputs.branch }}-$(echo $GITHUB_SHA | head -c7)
-          IMAGE="dappforce/subsocial-web-app"
-          echo ::set-output name=tagged_image::${IMAGE}:${TAG}
-          echo ::set-output name=tag::${TAG}
+          echo "image=dappforce/subsocial-web-app:${{ env.name }}-$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
         id: buildx
@@ -35,7 +32,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Cache Docker layers
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-single-buildx-${{ github.sha }}
@@ -43,24 +40,23 @@ jobs:
             ${{ runner.os }}-single-buildx
 
       - name: Build docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
           file: docker/Dockerfile
           push: true
           build-args: |
-            GH_SUBSTRATE_URL=wss://para.f3joule.space
-            GH_SUBSTRATE_RPC_URL=https://rco-para.subsocial.network/http
-            GH_OFFCHAIN_URL=https://staging-api.subsocial.network
-            GH_OFFCHAIN_WS=wss://staging.subsocial.network/notif-ws
-            GH_IPFS_NODE_URL=https://ipfs.subsocial.network
-            GH_GA_ID=fake
-            GH_APP_KIND=staging
-            GH_APP_BASE_URL=https://${{ steps.extract_branch.outputs.branch }}.subsocial.network
-            GH_CONNECTION_KIND=dev
+                  GH_SUBSTRATE_URL=wss://para.f3joule.space
+                  GH_SUBSTRATE_RPC_URL=https://rco-para.subsocial.network/http
+                  GH_OFFCHAIN_URL=https://staging-api.subsocial.network
+                  GH_OFFCHAIN_WS=wss://staging.subsocial.network/notif-ws
+                  GH_IPFS_NODE_URL=https://ipfs.subsocial.network
+                  GH_GA_ID=fake
+                  GH_APP_KIND=staging
+                  GH_CONNECTION_KIND=dev
           tags: |
-            ${{ steps.prep.outputs.tagged_image }}
+                  ${{ env.image }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
@@ -69,17 +65,18 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
+
   deploy:
     name: deploy
     needs: front_build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Extract branch name
         shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/} | sed 's/^deploy\///')"
+        run: echo "name=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^deploy\///')" >> $GITHUB_ENV
         id: extract_branch
 
       - name: Install doctl
@@ -91,19 +88,19 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 c7e84602-9029-40ed-9f95-6c113f6693ee
 
       - name: Update docker image name
-        run: TAG=${{ steps.extract_branch.outputs.branch }}-$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|dappforce/subsocial-web-app:'${TAG}'|' $GITHUB_WORKSPACE/deployment/features/deployment.yaml
+        run: TAG=${{ env.image }}-$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|dappforce/subsocial-web-app:'${TAG}'|' $GITHUB_WORKSPACE/deployment/features/deployment.yaml
 
       - name: Update svc & ingress file
-        run: NAME=${{ steps.extract_branch.outputs.branch }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/features/all.yaml
+        run: NAME=${{ env.image }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/features/all.yaml
 
       - name: Update deploy file
-        run: NAME=${{ steps.extract_branch.outputs.branch }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/features/deployment.yaml
+        run: NAME=${{ env.image }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/features/deployment.yaml
 
       - name: Deploy to DigitalOcean Kubernetes
         run: kubectl apply -f $GITHUB_WORKSPACE/deployment/features/
 
       - name: Verify deployment
-        run: NAME=${{ steps.extract_branch.outputs.branch }} && kubectl -n sub-back rollout status deployment/web-app-${NAME}
+        run: NAME=${{ env.image }} && kubectl -n sub-back rollout status deployment/web-app-${NAME}
 
       - name: CF deploy
-        run: curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE }}/dns_records"      -H "X-Auth-Email:${{ secrets.CF_MAIL }}"      -H "Authorization:Bearer ${{ secrets.CF_TOKEN }}"      -H "Content-Type:application/json"      --data '{"type":"A","name":"${{ steps.extract_branch.outputs.branch }}.subsocial.network","content":"188.166.202.107","ttl":3600,"priority":10,"proxied":true}'
+        run: curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE }}/dns_records"      -H "X-Auth-Email:${{ secrets.CF_MAIL }}"      -H "Authorization:Bearer ${{ secrets.CF_TOKEN }}"      -H "Content-Type:application/json"      --data '{"type":"A","name":"${{ env.image }}.subsocial.network","content":"188.166.202.107","ttl":3600,"priority":10,"proxied":true}'
