@@ -3,6 +3,8 @@ export default [
   '1',
   // Bill's Polkadot Digest
   '1354',
+  // Substrate Newsletters
+  '10647',
   // DotMarketCap
   '1599',
   // PolkaWarriors
