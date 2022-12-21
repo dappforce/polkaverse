@@ -246,7 +246,7 @@ const CommentNotification = (props: NotificationProps) => {
   const commentDetails = useSelectPost(commentId)
 
   const rootPostId = commentDetails
-    ? asCommentData(commentDetails.post).struct.rootPostId
+    ? asCommentData(commentDetails.post)?.struct?.rootPostId
     : undefined
   const postDetails = useSelectPost(rootPostId)
 
@@ -264,7 +264,7 @@ const CommentNotification = (props: NotificationProps) => {
       preview={
         <ViewPostLink
           post={post}
-          space={space!.struct}
+          space={space?.struct}
           title={<PostTitleForActivity post={post} />}
         />
       }
