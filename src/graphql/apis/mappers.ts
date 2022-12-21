@@ -1,4 +1,4 @@
-import { summarize } from '@subsocial/utils'
+import { summarizeMd } from '@subsocial/utils'
 import { Activity } from 'src/types'
 import { ActivityRequiredFragment } from '../__generated__/ActivityRequiredFragment'
 import { GetPostsData_posts } from '../__generated__/GetPostsData'
@@ -105,7 +105,7 @@ export const mapSimplePostFragment = (post: PostSimpleFragment): PostSimpleFragm
   originalPostId: post.sharedPost?.id,
   rootPostId: post.parentPost?.id,
   ipfsContent: {
-    summary: summarize(post.body ?? '') ?? '',
+    summary: summarizeMd(post.body ?? '').summary ?? '',
     image: post.image ?? '',
     title: post.title ?? '',
     link: post.link ?? undefined,
