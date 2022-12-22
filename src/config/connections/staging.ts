@@ -7,7 +7,6 @@ const stagingConfig: SubsocialConfig = {
   kusamaUrl: 'wss://staging.subsocial.network/kusama',
 
   offchainUrl: 'https://staging-api.subsocial.network',
-  offchainWs: 'wss://staging.subsocial.network/notif-ws',
   graphqlUrl: undefined,
 
   ipfsNodeUrl: 'https://staging-ipfs.subsocial.network',

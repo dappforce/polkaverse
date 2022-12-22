@@ -6,7 +6,6 @@ const localConfig: SubsocialConfig = {
   kusamaUrl: 'wss://staging.subsocial.network/kusama',
 
   offchainUrl: 'http://localhost:3001',
-  offchainWs: 'ws://localhost:3011',
   graphqlUrl: 'https://staging.subsocial.network/hydra/graphql',
 
   ipfsNodeUrl: 'http://127.0.0.1:8080',
