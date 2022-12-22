@@ -40,7 +40,6 @@ export const featureOverrides: SubsocialFeatures = {
 export const connectionsOverrides: Partial<ConnectionsSettings> = {
   substrateUrl: getEnv('SUBSTRATE_URL'),
   offchainUrl: getEnv('OFFCHAIN_URL'),
-  offchainWs: getEnv('OFFCHAIN_WS'),
   graphqlUrl: getEnv('GRAPHQL_URL'),
   ipfsNodeUrl: getEnv('IPFS_NODE_URL'),
 }

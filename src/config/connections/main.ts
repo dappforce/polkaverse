@@ -8,8 +8,7 @@ const mainConfig: SubsocialConfig = {
   kusamaUrl: 'wss://kusama-rpc.polkadot.io',
 
   offchainUrl: 'https://api.subsocial.network',
-  offchainWs: 'wss://app.subsocial.network/notif-ws',
-  graphqlUrl: 'https://squid.subsquid.io/subsocial/v/batch-proc-04/graphql',
+  graphqlUrl: 'https://squid.subsquid.io/subsocial/graphql',
 
   ipfsNodeUrl: 'https://ipfs.subsocial.network',
 

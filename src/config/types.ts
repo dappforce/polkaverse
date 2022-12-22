@@ -58,9 +58,6 @@ export type ConnectionsSettings = {
   /** A URL of a Subsocial Offchain service. Example: `'http://localhost:3001'`. */
   offchainUrl: string
 
-  /** A URL of Notifications web socket. Example: `'ws://localhost:3011'`. */
-  offchainWs: string
-
   /** A URL of Subsocial's GraphQL server. Example: `http://localhost:4000/graphql`. */
   graphqlUrl?: string
 
