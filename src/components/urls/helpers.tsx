@@ -87,7 +87,7 @@ export const innerFullUrl = (appBaseUrl: string, relative: string) => {
   if (relative.startsWith(appBaseUrl)) return relative
 
   const base = appBaseUrl.endsWith('/') ? appBaseUrl : appBaseUrl + '/'
-  const pathname = relative.startsWith('/') ? relative.substr(1) : relative
+  const pathname = relative.startsWith('/') ? relative.substring(1) : relative
 
   return base + pathname
 }
