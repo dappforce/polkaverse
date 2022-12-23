@@ -7,6 +7,7 @@ interface Props {
 
 export const DfMd = ({ source, className = '' }: Props) => (
   <ReactMarkdown className={`markdown-body ${className}`} linkTarget='_blank'>
-    {source ?? ''}
+    {source?.replaceAll('(https://app.subsocial.network/ipfs', '(https://ipfs.subsocial.network') ??
+      ''}
   </ReactMarkdown>
 )
