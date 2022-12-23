@@ -84,6 +84,8 @@ export const Copy = ({ text, message, children, style, className }: CopyProps) =
 )
 
 export const innerFullUrl = (appBaseUrl: string, relative: string) => {
+  if (relative.startsWith('http') || relative.startsWith('https')) return relative
+
   if (relative.startsWith(appBaseUrl)) return relative
 
   const base = appBaseUrl.endsWith('/') ? appBaseUrl : appBaseUrl + '/'
