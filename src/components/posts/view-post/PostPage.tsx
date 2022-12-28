@@ -1,4 +1,4 @@
-import { summarize } from '@subsocial/utils'
+import { summarize, summarizeMd } from '@subsocial/utils'
 import { getPostIdFromSlug } from '@subsocial/utils/slugify'
 import { NextPage } from 'next'
 import router from 'next/router'
@@ -105,7 +105,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   let metaTitle = title
   if (!metaTitle) {
     if (typeof body === 'string') {
-      metaTitle = body.substring(MAX_META_TITLE_LEN)
+      metaTitle = summarizeMd(body, { limit: MAX_META_TITLE_LEN }).summary
     } else {
       metaTitle = config.metaTags.title
     }
