@@ -12,7 +12,7 @@ export const MovePostLink = ({ post }: Props) => {
 
   return (
     <>
-      <a className='DfBlackLink' onClick={() => setOpen(true)} title={title}>
+      <a onClick={() => setOpen(true)} title={title}>
         {title}
       </a>
       <MoveModal post={post} open={open} onClose={() => setOpen(false)} />

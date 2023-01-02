@@ -21,9 +21,7 @@ export const TransferOwnershipLink = (props: LinkProps) => {
 
   return (
     <>
-      <a className='DfBlackLink' onClick={() => setOpen(true)}>
-        Transfer ownership
-      </a>
+      <a onClick={() => setOpen(true)}>Transfer ownership</a>
       <TransferOwnershipModal {...props} open={open} onClose={() => setOpen(false)} />
     </>
   )
