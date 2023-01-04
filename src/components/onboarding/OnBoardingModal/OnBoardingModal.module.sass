@@ -7,7 +7,7 @@
 
   :global(.ant-modal-content)
     max-height: 700px
-    padding: $space_tiny $space_small
+    padding: $space_tiny 0
     border-radius: $space_normal
 
     :global(.ant-modal-body)
@@ -15,6 +15,10 @@
       height: 100%
       display: flex
       flex-direction: column
+
+      > *
+        padding-left: $space_small
+        padding-right: $space_small
 
 .Title
   font-weight: bold
