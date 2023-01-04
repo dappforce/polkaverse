@@ -10,6 +10,7 @@ export interface CustomModalProps extends ModalProps {
   contentClassName?: string
   footerClassName?: string
   fullHeight?: boolean
+  noScroll?: boolean
 }
 
 export default function CustomModal({
@@ -21,6 +22,7 @@ export default function CustomModal({
   contentClassName,
   footerClassName,
   fullHeight,
+  noScroll,
   ...props
 }: CustomModalProps & {
   children: any
@@ -41,7 +43,14 @@ export default function CustomModal({
           {subtitle && <MutedSpan className={clsx(title && 'mt-1')}>{subtitle}</MutedSpan>}
         </div>
       )}
-      <div className={clsx(styles.CustomModalContent, 'overflow-auto scrollbar', contentClassName)}>
+      <div
+        className={clsx(
+          styles.CustomModalContent,
+          !noScroll && 'overflow-auto',
+          'scrollbar',
+          contentClassName,
+        )}
+      >
         {children}
       </div>
       {footer && <div className={clsx('mt-4', footerClassName)}>{footer}</div>}
