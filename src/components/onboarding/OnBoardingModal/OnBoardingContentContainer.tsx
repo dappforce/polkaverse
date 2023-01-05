@@ -196,6 +196,7 @@ function SuccessContent() {
           backgroundImage: `url(/confetti.gif?d=${Date.now()})`,
           backgroundSize: 'cover',
           transform: 'translateY(-60%)',
+          pointerEvents: 'none',
         }}
       />
       <TwitterMock
