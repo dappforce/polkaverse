@@ -93,6 +93,7 @@ export default function OnBoardingContentContainer({
       <div
         className={clsx(
           styles.ContentContainer,
+          !success && 'overflow-auto',
           openState === 'full-on-boarding' && styles.ContentContainerFull,
           'scrollbar',
         )}
@@ -187,7 +188,17 @@ function SuccessContent() {
   const twitterText = `I just onboarded to ${config.appName}, the premier social platform of the @Polkadot ecosystem, powered by @SubsocialChain!\n\nYou can follow me here:`
 
   return (
-    <div className={clsx('d-flex flex-column')}>
+    <div className={clsx('d-flex flex-column', 'position-relative')}>
+      <div
+        className='position-absolute inset-0 w-100 h-100'
+        style={{
+          zIndex: 1,
+          backgroundImage: `url(/confetti.gif?d=${Date.now()})`,
+          backgroundSize: 'cover',
+          transform: 'translateY(-60%)',
+          pointerEvents: 'none',
+        }}
+      />
       <TwitterMock
         url={`/accounts/${myAddress}`}
         twitterText={twitterText}
