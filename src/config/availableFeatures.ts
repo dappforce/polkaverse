@@ -5,7 +5,7 @@ import { featureOverrides as env } from './env'
 import { CommonSubsocialFeatures, SubsocialFeatures } from './types'
 import { getOrFalse, getOrTrue } from './utils'
 
-const enableGraphQl = getOrTrue(env.enableGraphQl) && nonEmptyStr(connections.graphqlUrl)
+const enableGraphQl = getOrTrue(false) && nonEmptyStr(connections.graphqlUrl)
 const commonFeatures: CommonSubsocialFeatures = {
   enableSearch: getOrTrue(env.enableSearch),
   enableFeed: getOrTrue(env.enableFeed),
@@ -17,7 +17,7 @@ const commonFeatures: CommonSubsocialFeatures = {
   enableGraphQl,
   enableSubnetMode: nonEmptyStr(app.subnetId),
   enableContributionPage: getOrTrue(env.enableContributionPage),
-  enableOnchainActivities: getOrFalse(env.enableOnchainActivities),
+  enableOnchainActivities: getOrFalse(true),
   enableDomains: getOrFalse(true),
   enableSquidDataSource: getOrTrue(env.enableSquidDataSource) && enableGraphQl,
 }
