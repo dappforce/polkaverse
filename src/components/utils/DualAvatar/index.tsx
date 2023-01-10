@@ -10,7 +10,7 @@ export interface DualAvatarProps extends HTMLProps<HTMLDivElement> {
   rightAvatarSize?: number
 }
 
-const TOP_IMAGE_OFFSET = 60
+const RIGHT_IMAGE_OFFSET = 60
 
 export default function DualAvatar({
   className,
@@ -23,10 +23,10 @@ export default function DualAvatar({
     <div className={clsx(!noMargin && 'mr-2', className)}>
       <div
         className={clsx(styles.DualAvatar)}
-        style={{ marginRight: `${(rightAvatarSize * TOP_IMAGE_OFFSET) / 100}px` }}
+        style={{ marginRight: `${(rightAvatarSize * RIGHT_IMAGE_OFFSET) / 100}px` }}
       >
         <div className={clsx(styles.LeftAvatar)}>{rightAvatar}</div>
-        <div className={clsx(styles.RightAvatar)} style={{ left: `${TOP_IMAGE_OFFSET}%` }}>
+        <div className={clsx(styles.RightAvatar)} style={{ left: `${RIGHT_IMAGE_OFFSET}%` }}>
           {leftAvatar}
         </div>
       </div>
