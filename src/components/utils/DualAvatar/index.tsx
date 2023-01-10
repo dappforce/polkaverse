@@ -10,7 +10,7 @@ export interface DualAvatarProps extends HTMLProps<HTMLDivElement> {
   rightAvatarSize?: number
 }
 
-const RIGHT_IMAGE_OFFSET = 60
+const RIGHT_IMAGE_OFFSET = 50
 
 export default function DualAvatar({
   className,
