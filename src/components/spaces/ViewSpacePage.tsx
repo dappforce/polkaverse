@@ -44,7 +44,7 @@ const InnerViewSpacePage: FC<Props> = props => {
       <PageContent
         meta={{
           title,
-          desc: `Latest news and updates from ${name} on Subsocial.`,
+          desc: `Latest news and updates from ${name} on Polkaverse.`,
           image,
           canonical: spaceUrl(spaceData.struct),
         }}
