@@ -53,7 +53,7 @@ export const fetchSpaceIdsOwnedByAccount = createAsyncThunk<
     ? findSpaceIdsThatCanSuggestIfSudo(sudoOne, myAddress, allSpaceIds)
     : allSpaceIds
 
-  dispatch(fetchPostIdsOwnedByAccount({ ...args, spaceIds }))
+  await dispatch(fetchPostIdsOwnedByAccount({ ...args, spaceIds }))
 
   return {
     id: myAddress,
