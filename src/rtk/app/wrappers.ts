@@ -112,24 +112,34 @@ export function createFetchManyDataWrapper<
 
     const newArgs = { ...args, newIds, dataSource, runAdditionalCheckForUnknownIds }
     let data: ReturnType[] = []
-    if (
-      dataSource === DataSourceTypes.SQUID &&
-      prefetchedData &&
-      Object.values(prefetchedData).length >= newIds.length
-    ) {
-      newIds.forEach(id => {
+    let needToFetchIds: string[] = []
+    const fetchIdxToOriginalIdxMap: { [key: number]: number } = {}
+
+    if (dataSource === DataSourceTypes.SQUID && prefetchedData) {
+      newIds.forEach((id, idx) => {
         let content = prefetchedData?.[id]
-        if (!content) return
+        if (!content) {
+          fetchIdxToOriginalIdxMap[needToFetchIds.length] = idx
+          needToFetchIds.push(id)
+          return
+        }
         if (withAdditionalUnknownIdValidation) {
           content = { ...content, [withAdditionalUnknownIdValidation.unknownFlagAttr]: true }
         }
-        data.push(content)
+        data[idx] = content
       })
     } else {
+      needToFetchIds = newIds
+    }
+
+    if (needToFetchIds.length > 0) {
       try {
-        const res = await getData(newArgs, thunkApi)
+        const res = await getData({ ...newArgs, newIds: needToFetchIds }, thunkApi)
         if (Array.isArray(res)) {
-          data = res
+          res.forEach((content, idx) => {
+            const originalIdx = fetchIdxToOriginalIdxMap[idx] || idx
+            data[originalIdx] = content
+          })
         }
       } catch (e) {
         console.error(e)
