@@ -242,10 +242,11 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
         const ids = getUniqueContentIds(entities)
         const prefetchedData = generatePrefetchData<Content>(
           data => data.contentId,
-          data => ({
-            id: data.contentId ?? '',
-            ...data.ipfsContent,
-          }),
+          data =>
+            data.ipfsContent && {
+              id: data.contentId ?? '',
+              ...data.ipfsContent,
+            },
         )
         if (ids.length) {
           fetches.push(dispatch(fetchContents({ api, ids, dataSource, prefetchedData })))

@@ -2,11 +2,11 @@ import { PostContent, PostStruct, SpaceContent, SpaceStruct } from '@subsocial/a
 import { ProfileSpaceIdByAccount } from 'src/types'
 
 // Simple Fragment Results
-export type SpaceSimpleFragmentMapped = SpaceStruct & { ipfsContent: SpaceContent }
+export type SpaceSimpleFragmentMapped = SpaceStruct & { ipfsContent?: SpaceContent }
 export type PostSimpleFragmentMapped = PostStruct & {
   originalPostId?: string
   rootPostId?: string
-} & { ipfsContent: PostContent }
+} & { ipfsContent?: PostContent }
 export type ProfileSimpleFragmentMapped = ProfileSpaceIdByAccount
 
 // Full Fragment Results
