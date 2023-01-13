@@ -61,19 +61,8 @@ export const mapSimpleProfileFragment = ({
   spaceId: profileSpace?.id ?? '',
 })
 
-export const mapSimpleSpaceFragment = (space: SpaceSimpleFragment): SpaceSimpleFragmentMapped => ({
-  canEveryoneCreatePosts: space.canEveryoneCreatePosts ?? false,
-  canFollowerCreatePosts: space.canFollowerCreatePosts ?? false,
-  createdAtBlock: space.createdAtBlock,
-  createdAtTime: space.createdAtTime,
-  createdByAccount: space.createdByAccount.id,
-  hidden: space.hidden,
-  id: space.id,
-  ownerId: space.ownedByAccount.id,
-  contentId: space.content ?? '',
-  handle: undefined,
-  postsCount: space.postsCount,
-  ipfsContent: {
+export const mapSimpleSpaceFragment = (space: SpaceSimpleFragment): SpaceSimpleFragmentMapped => {
+  const getContent = () => ({
     image: space.image ?? '',
     name: space.name ?? '',
     tags: getTokensFromUnifiedString(space.tagsOriginal),
@@ -82,39 +71,61 @@ export const mapSimpleSpaceFragment = (space: SpaceSimpleFragment): SpaceSimpleF
     email: space.email ?? '',
     links: getTokensFromUnifiedString(space.linksOriginal),
     isShowMore: false,
-  },
-})
+  })
+  const isIpfsDataError =
+    space.content && !space.name && !space.image && !space.about && !space.email
+  return {
+    canEveryoneCreatePosts: space.canEveryoneCreatePosts ?? false,
+    canFollowerCreatePosts: space.canFollowerCreatePosts ?? false,
+    createdAtBlock: space.createdAtBlock,
+    createdAtTime: space.createdAtTime,
+    createdByAccount: space.createdByAccount.id,
+    hidden: space.hidden,
+    id: space.id,
+    ownerId: space.ownedByAccount.id,
+    contentId: space.content ?? '',
+    handle: undefined,
+    postsCount: space.postsCount,
+    ipfsContent: isIpfsDataError ? undefined : getContent(),
+  }
+}
 
-export const mapSimplePostFragment = (post: PostSimpleFragment): PostSimpleFragmentMapped => ({
-  createdAtBlock: parseInt(post.createdAtBlock),
-  createdAtTime: new Date(post.createdAtTime).getTime(),
-  createdByAccount: post.createdByAccount.id,
-  downvotesCount: post.downvotesCount,
-  hidden: post.hidden,
-  id: post.id,
-  isComment: post.isComment,
-  isRegularPost: post.kind === 'RegularPost',
-  isSharedPost: post.kind === 'SharedPost',
-  ownerId: post.ownedByAccount.id,
-  upvotesCount: post.upvotesCount,
-  contentId: post.content ?? '',
-  repliesCount: post.repliesCount,
-  sharesCount: post.sharesCount,
-  spaceId: post.space?.id,
-  isUpdated: !!post.updatedAtTime,
-  originalPostId: post.sharedPost?.id,
-  rootPostId: post.parentPost?.id,
-  ipfsContent: {
-    summary: summarizeMd(post.body ?? '').summary ?? '',
-    image: post.image ?? '',
-    title: post.title ?? '',
-    link: post.link ?? undefined,
-    body: '',
-    canonical: post.canonical ?? '',
-    isShowMore: false,
-    tags: getTokensFromUnifiedString(post.tagsOriginal),
-  },
-})
+export const mapSimplePostFragment = (post: PostSimpleFragment): PostSimpleFragmentMapped => {
+  const getContent = () => {
+    return {
+      summary: summarizeMd(post.body ?? '').summary ?? '',
+      image: post.image ?? '',
+      title: post.title ?? '',
+      link: post.link ?? undefined,
+      body: '',
+      canonical: post.canonical ?? '',
+      isShowMore: false,
+      tags: getTokensFromUnifiedString(post.tagsOriginal),
+    }
+  }
+  const isIpfsDataError = post.content && !post.body && !post.image && !post.title
+  return {
+    createdAtBlock: parseInt(post.createdAtBlock),
+    createdAtTime: new Date(post.createdAtTime).getTime(),
+    createdByAccount: post.createdByAccount.id,
+    downvotesCount: post.downvotesCount,
+    hidden: post.hidden,
+    id: post.id,
+    isComment: post.isComment,
+    isRegularPost: post.kind === 'RegularPost',
+    isSharedPost: post.kind === 'SharedPost',
+    ownerId: post.ownedByAccount.id,
+    upvotesCount: post.upvotesCount,
+    contentId: post.content ?? '',
+    repliesCount: post.repliesCount,
+    sharesCount: post.sharesCount,
+    spaceId: post.space?.id,
+    isUpdated: !!post.updatedAtTime,
+    originalPostId: post.sharedPost?.id,
+    rootPostId: post.parentPost?.id,
+    ipfsContent: isIpfsDataError ? undefined : getContent(),
+  }
+}
 
 export const mapProfileFragment = (profile: ProfileFragment): ProfileFragmentMapped => ({
   ...mapSimpleProfileFragment(profile),
