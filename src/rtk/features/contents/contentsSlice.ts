@@ -62,9 +62,9 @@ export const fetchContents = createAsyncThunk<
       selectEntities: selectContentEntities,
       unknownFlagAttr: 'isOverview',
     },
-    getData: async ({ api, ids }) => {
+    getData: async ({ api, newIds }) => {
       const timeoutMs = 10_000
-      let contents = await api.ipfs.getContentArray(ids as string[], timeoutMs)
+      let contents = await api.ipfs.getContentArray(newIds as string[], timeoutMs)
       return Object.entries(contents).map(([id, content]) => {
         const derivedContent = convertToDerivedContent(content) as CommentContent
         return { id, ...derivedContent, isOverview: false }

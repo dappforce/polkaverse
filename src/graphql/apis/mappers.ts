@@ -92,14 +92,15 @@ export const mapSimpleSpaceFragment = (space: SpaceSimpleFragment): SpaceSimpleF
 
 export const mapSimplePostFragment = (post: PostSimpleFragment): PostSimpleFragmentMapped => {
   const getContent = () => {
+    const summary = summarizeMd(post.body ?? '')
     return {
-      summary: summarizeMd(post.body ?? '').summary ?? '',
+      summary: summary.summary ?? '',
       image: post.image ?? '',
       title: post.title ?? '',
       link: post.link ?? undefined,
       body: '',
       canonical: post.canonical ?? '',
-      isShowMore: false,
+      isShowMore: summary.isShowMore,
       tags: getTokensFromUnifiedString(post.tagsOriginal),
     }
   }
