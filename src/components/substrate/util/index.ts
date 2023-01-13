@@ -67,7 +67,6 @@ export const getSpaceId = async (
     const handle = idOrHandle.substring(1).toLowerCase()
     const meta = await subsocial.findDomain(resolveDomain(handle))
     const spaceId = meta?.innerSpace
-    console.log('meta', meta)
 
     return spaceId ? new BN(spaceId) : undefined
   } else {
