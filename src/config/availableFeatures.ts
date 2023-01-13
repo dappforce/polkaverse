@@ -17,7 +17,7 @@ const commonFeatures: CommonSubsocialFeatures = {
   enableGraphQl,
   enableSubnetMode: nonEmptyStr(app.subnetId),
   enableContributionPage: getOrTrue(env.enableContributionPage),
-  enableOnchainActivities: getOrFalse(true),
+  enableOnchainActivities: getOrFalse(!enableGraphQl),
   enableDomains: getOrFalse(true),
   enableSquidDataSource: getOrTrue(env.enableSquidDataSource) && enableGraphQl,
 }
