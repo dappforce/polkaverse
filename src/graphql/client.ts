@@ -5,7 +5,11 @@ import config from 'src/config'
 
 const { enableGraphQl, graphqlUrl } = config
 
-export let apolloClient: ApolloClient<NormalizedCacheObject>
+let apolloClient: ApolloClient<NormalizedCacheObject>
+
+export function getApolloClient() {
+  return apolloClient || initializeApollo()
+}
 
 const createApolloClient = (graphqlUrl: string): ApolloClient<NormalizedCacheObject> => {
   return new ApolloClient({

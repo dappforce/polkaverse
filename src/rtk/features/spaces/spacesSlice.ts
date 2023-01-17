@@ -4,7 +4,7 @@ import { FindSpacesQuery } from '@subsocial/api/filters'
 import { getFirstOrUndefined } from '@subsocial/utils'
 import { getSpacesData } from 'src/graphql/apis'
 import { SpaceFragmentMapped } from 'src/graphql/apis/types'
-import { apolloClient } from 'src/graphql/client'
+import { getApolloClient } from 'src/graphql/client'
 import {
   createFetchOne,
   FetchManyArgsWithPrefetch,
@@ -145,7 +145,7 @@ const getSpaces = createFetchDataFn<SpaceState[]>([])({
     return entities
   },
   squid: async ({ ids }: { ids: string[] }) => {
-    const spaces = await getSpacesData(apolloClient, { where: { id_in: ids } })
+    const spaces = await getSpacesData(getApolloClient(), { where: { id_in: ids } })
     return spaces.map<SpaceState>(space => ({ ...space, isOverview: true }))
   },
 })
