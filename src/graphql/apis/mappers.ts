@@ -124,7 +124,7 @@ export const mapSimplePostFragment = (post: PostSimpleFragment): PostSimpleFragm
     spaceId: post.space?.id,
     isUpdated: !!post.updatedAtTime,
     originalPostId: post.sharedPost?.id,
-    rootPostId: post.parentPost?.id,
+    rootPostId: post.rootPost?.id,
     ipfsContent: isIpfsDataError ? undefined : getContent(),
   }
 }

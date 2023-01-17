@@ -128,160 +128,9 @@ export interface GetPostsData_posts_space {
   ownedByAccount: GetPostsData_posts_space_ownedByAccount;
 }
 
-export interface GetPostsData_posts_parentPost_createdByAccount {
-  __typename: "Account";
-  id: string;
-}
-
-export interface GetPostsData_posts_parentPost_ownedByAccount_profileSpace_profileSpace {
-  __typename: "Account";
-  followingAccountsCount: number;
-}
-
-export interface GetPostsData_posts_parentPost_ownedByAccount_profileSpace_createdByAccount {
-  __typename: "Account";
-  id: string;
-}
-
-export interface GetPostsData_posts_parentPost_ownedByAccount_profileSpace_ownedByAccount {
-  __typename: "Account";
-  id: string;
-}
-
-export interface GetPostsData_posts_parentPost_ownedByAccount_profileSpace {
-  __typename: "Space";
-  id: string;
-  profileSpace: GetPostsData_posts_parentPost_ownedByAccount_profileSpace_profileSpace | null;
-  canEveryoneCreatePosts: boolean | null;
-  canFollowerCreatePosts: boolean | null;
-  content: string | null;
-  createdAtBlock: any | null;
-  createdAtTime: any | null;
-  createdByAccount: GetPostsData_posts_parentPost_ownedByAccount_profileSpace_createdByAccount;
-  email: string | null;
-  name: string | null;
-  linksOriginal: string | null;
-  hidden: boolean;
-  updatedAtTime: any | null;
-  postsCount: number;
-  image: string | null;
-  tagsOriginal: string | null;
-  about: string | null;
-  ownedByAccount: GetPostsData_posts_parentPost_ownedByAccount_profileSpace_ownedByAccount;
-}
-
-export interface GetPostsData_posts_parentPost_ownedByAccount {
-  __typename: "Account";
-  id: string;
-  followersCount: number;
-  profileSpace: GetPostsData_posts_parentPost_ownedByAccount_profileSpace | null;
-}
-
-export interface GetPostsData_posts_parentPost_space_createdByAccount {
-  __typename: "Account";
-  id: string;
-}
-
-export interface GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace_profileSpace {
-  __typename: "Account";
-  followingAccountsCount: number;
-}
-
-export interface GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace_createdByAccount {
-  __typename: "Account";
-  id: string;
-}
-
-export interface GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace_ownedByAccount {
-  __typename: "Account";
-  id: string;
-}
-
-export interface GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace {
-  __typename: "Space";
-  id: string;
-  profileSpace: GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace_profileSpace | null;
-  canEveryoneCreatePosts: boolean | null;
-  canFollowerCreatePosts: boolean | null;
-  content: string | null;
-  createdAtBlock: any | null;
-  createdAtTime: any | null;
-  createdByAccount: GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace_createdByAccount;
-  email: string | null;
-  name: string | null;
-  linksOriginal: string | null;
-  hidden: boolean;
-  updatedAtTime: any | null;
-  postsCount: number;
-  image: string | null;
-  tagsOriginal: string | null;
-  about: string | null;
-  ownedByAccount: GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace_ownedByAccount;
-}
-
-export interface GetPostsData_posts_parentPost_space_ownedByAccount {
-  __typename: "Account";
-  id: string;
-  followersCount: number;
-  profileSpace: GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace | null;
-}
-
-export interface GetPostsData_posts_parentPost_space {
-  __typename: "Space";
-  id: string;
-  canEveryoneCreatePosts: boolean | null;
-  canFollowerCreatePosts: boolean | null;
-  content: string | null;
-  createdAtBlock: any | null;
-  createdAtTime: any | null;
-  createdByAccount: GetPostsData_posts_parentPost_space_createdByAccount;
-  email: string | null;
-  name: string | null;
-  linksOriginal: string | null;
-  hidden: boolean;
-  updatedAtTime: any | null;
-  postsCount: number;
-  image: string | null;
-  tagsOriginal: string | null;
-  about: string | null;
-  ownedByAccount: GetPostsData_posts_parentPost_space_ownedByAccount;
-}
-
-export interface GetPostsData_posts_parentPost_parentPost {
+export interface GetPostsData_posts_rootPost {
   __typename: "Post";
   id: string;
-}
-
-export interface GetPostsData_posts_parentPost_sharedPost {
-  __typename: "Post";
-  id: string;
-}
-
-export interface GetPostsData_posts_parentPost {
-  __typename: "Post";
-  id: string;
-  content: string | null;
-  createdAtBlock: any | null;
-  createdAtTime: any | null;
-  createdByAccount: GetPostsData_posts_parentPost_createdByAccount;
-  title: string | null;
-  body: string | null;
-  image: string | null;
-  link: string | null;
-  downvotesCount: number;
-  hidden: boolean;
-  isComment: boolean;
-  kind: PostKind | null;
-  repliesCount: number;
-  sharesCount: number;
-  upvotesCount: number;
-  updatedAtTime: any | null;
-  canonical: string | null;
-  tagsOriginal: string | null;
-  ownedByAccount: GetPostsData_posts_parentPost_ownedByAccount;
-  space: GetPostsData_posts_parentPost_space | null;
-  parentPost: GetPostsData_posts_parentPost_parentPost | null;
-  sharedPost: GetPostsData_posts_parentPost_sharedPost | null;
 }
 
 export interface GetPostsData_posts_sharedPost_createdByAccount {
@@ -403,7 +252,7 @@ export interface GetPostsData_posts_sharedPost_space {
   ownedByAccount: GetPostsData_posts_sharedPost_space_ownedByAccount;
 }
 
-export interface GetPostsData_posts_sharedPost_parentPost {
+export interface GetPostsData_posts_sharedPost_rootPost {
   __typename: "Post";
   id: string;
 }
@@ -436,8 +285,164 @@ export interface GetPostsData_posts_sharedPost {
   tagsOriginal: string | null;
   ownedByAccount: GetPostsData_posts_sharedPost_ownedByAccount;
   space: GetPostsData_posts_sharedPost_space | null;
-  parentPost: GetPostsData_posts_sharedPost_parentPost | null;
+  rootPost: GetPostsData_posts_sharedPost_rootPost | null;
   sharedPost: GetPostsData_posts_sharedPost_sharedPost | null;
+}
+
+export interface GetPostsData_posts_parentPost_createdByAccount {
+  __typename: "Account";
+  id: string;
+}
+
+export interface GetPostsData_posts_parentPost_ownedByAccount_profileSpace_profileSpace {
+  __typename: "Account";
+  followingAccountsCount: number;
+}
+
+export interface GetPostsData_posts_parentPost_ownedByAccount_profileSpace_createdByAccount {
+  __typename: "Account";
+  id: string;
+}
+
+export interface GetPostsData_posts_parentPost_ownedByAccount_profileSpace_ownedByAccount {
+  __typename: "Account";
+  id: string;
+}
+
+export interface GetPostsData_posts_parentPost_ownedByAccount_profileSpace {
+  __typename: "Space";
+  id: string;
+  profileSpace: GetPostsData_posts_parentPost_ownedByAccount_profileSpace_profileSpace | null;
+  canEveryoneCreatePosts: boolean | null;
+  canFollowerCreatePosts: boolean | null;
+  content: string | null;
+  createdAtBlock: any | null;
+  createdAtTime: any | null;
+  createdByAccount: GetPostsData_posts_parentPost_ownedByAccount_profileSpace_createdByAccount;
+  email: string | null;
+  name: string | null;
+  linksOriginal: string | null;
+  hidden: boolean;
+  updatedAtTime: any | null;
+  postsCount: number;
+  image: string | null;
+  tagsOriginal: string | null;
+  about: string | null;
+  ownedByAccount: GetPostsData_posts_parentPost_ownedByAccount_profileSpace_ownedByAccount;
+}
+
+export interface GetPostsData_posts_parentPost_ownedByAccount {
+  __typename: "Account";
+  id: string;
+  followersCount: number;
+  profileSpace: GetPostsData_posts_parentPost_ownedByAccount_profileSpace | null;
+}
+
+export interface GetPostsData_posts_parentPost_space_createdByAccount {
+  __typename: "Account";
+  id: string;
+}
+
+export interface GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace_profileSpace {
+  __typename: "Account";
+  followingAccountsCount: number;
+}
+
+export interface GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace_createdByAccount {
+  __typename: "Account";
+  id: string;
+}
+
+export interface GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace_ownedByAccount {
+  __typename: "Account";
+  id: string;
+}
+
+export interface GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace {
+  __typename: "Space";
+  id: string;
+  profileSpace: GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace_profileSpace | null;
+  canEveryoneCreatePosts: boolean | null;
+  canFollowerCreatePosts: boolean | null;
+  content: string | null;
+  createdAtBlock: any | null;
+  createdAtTime: any | null;
+  createdByAccount: GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace_createdByAccount;
+  email: string | null;
+  name: string | null;
+  linksOriginal: string | null;
+  hidden: boolean;
+  updatedAtTime: any | null;
+  postsCount: number;
+  image: string | null;
+  tagsOriginal: string | null;
+  about: string | null;
+  ownedByAccount: GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace_ownedByAccount;
+}
+
+export interface GetPostsData_posts_parentPost_space_ownedByAccount {
+  __typename: "Account";
+  id: string;
+  followersCount: number;
+  profileSpace: GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace | null;
+}
+
+export interface GetPostsData_posts_parentPost_space {
+  __typename: "Space";
+  id: string;
+  canEveryoneCreatePosts: boolean | null;
+  canFollowerCreatePosts: boolean | null;
+  content: string | null;
+  createdAtBlock: any | null;
+  createdAtTime: any | null;
+  createdByAccount: GetPostsData_posts_parentPost_space_createdByAccount;
+  email: string | null;
+  name: string | null;
+  linksOriginal: string | null;
+  hidden: boolean;
+  updatedAtTime: any | null;
+  postsCount: number;
+  image: string | null;
+  tagsOriginal: string | null;
+  about: string | null;
+  ownedByAccount: GetPostsData_posts_parentPost_space_ownedByAccount;
+}
+
+export interface GetPostsData_posts_parentPost_rootPost {
+  __typename: "Post";
+  id: string;
+}
+
+export interface GetPostsData_posts_parentPost_sharedPost {
+  __typename: "Post";
+  id: string;
+}
+
+export interface GetPostsData_posts_parentPost {
+  __typename: "Post";
+  content: string | null;
+  createdAtBlock: any | null;
+  createdAtTime: any | null;
+  createdByAccount: GetPostsData_posts_parentPost_createdByAccount;
+  title: string | null;
+  body: string | null;
+  image: string | null;
+  link: string | null;
+  downvotesCount: number;
+  hidden: boolean;
+  id: string;
+  isComment: boolean;
+  kind: PostKind | null;
+  repliesCount: number;
+  sharesCount: number;
+  upvotesCount: number;
+  updatedAtTime: any | null;
+  canonical: string | null;
+  tagsOriginal: string | null;
+  ownedByAccount: GetPostsData_posts_parentPost_ownedByAccount;
+  space: GetPostsData_posts_parentPost_space | null;
+  rootPost: GetPostsData_posts_parentPost_rootPost | null;
+  sharedPost: GetPostsData_posts_parentPost_sharedPost | null;
 }
 
 export interface GetPostsData_posts {
@@ -463,8 +468,9 @@ export interface GetPostsData_posts {
   tagsOriginal: string | null;
   ownedByAccount: GetPostsData_posts_ownedByAccount;
   space: GetPostsData_posts_space | null;
-  parentPost: GetPostsData_posts_parentPost | null;
+  rootPost: GetPostsData_posts_rootPost | null;
   sharedPost: GetPostsData_posts_sharedPost | null;
+  parentPost: GetPostsData_posts_parentPost | null;
 }
 
 export interface GetPostsData {
