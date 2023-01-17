@@ -1,3 +1,4 @@
+import router from 'next/router'
 import { slugifyDomain } from 'src/components/domains/utils'
 import { getSpaceId } from 'src/components/substrate'
 import { return404 } from 'src/components/utils/next'
@@ -33,13 +34,18 @@ export async function loadSpaceOnNextReq(
 
     const handle = slugifyDomain(maybeHandle)
 
-    if ((!handle || handle !== idOrHandle) && res) {
+    if (!handle || handle !== idOrHandle) {
       const owner = spaceData.struct.ownerId
       const handleFromChain = await subsocial.blockchain.domainNameBySpaceId(owner, idStr)
 
       if (handleFromChain) {
-        res.writeHead(301, { Location: getCanonicalUrl({ id: idStr, handle: handleFromChain }) })
-        res.end()
+        const expectedUrl = getCanonicalUrl({ id: idStr, handle: handleFromChain })
+        if (res) {
+          res.writeHead(301, { Location: expectedUrl })
+          res.end()
+        } else {
+          router.push(expectedUrl)
+        }
       }
     }
 
