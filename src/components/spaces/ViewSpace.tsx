@@ -13,13 +13,14 @@ import { useMyAddress } from '../auth/MyAccountsContext'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { editSpaceUrl } from '../urls'
-import { DfMd } from '../utils/DfMd'
 import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels'
+import { SummarizeMd } from '../utils/md'
 import { MutedSpan } from '../utils/MutedText'
 import MyEntityLabel from '../utils/MyEntityLabel'
 import Section from '../utils/Section'
 import { BareProps } from '../utils/types'
 import ViewTags from '../utils/ViewTags'
+import AboutSpaceLink from './AboutSpaceLink'
 import {
   HiddenSpaceAlert,
   OfficialSpaceStatus,
@@ -187,7 +188,10 @@ export const InnerViewSpace = (props: Props) => {
 
           {nonEmptyStr(about) && (
             <div className='description mt-3'>
-              <DfMd source={content.about} />
+              <SummarizeMd
+                content={content}
+                more={<AboutSpaceLink space={space} title={'Learn More'} />}
+              />
             </div>
           )}
 
