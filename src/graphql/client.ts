@@ -1,6 +1,5 @@
 import { ApolloClient, InMemoryCache, NormalizedCacheObject } from '@apollo/client'
 import { useMemo } from 'react'
-import { isServerSide } from 'src/components/utils'
 import config from 'src/config'
 
 const { enableGraphQl, graphqlUrl } = config
@@ -8,7 +7,7 @@ const { enableGraphQl, graphqlUrl } = config
 let apolloClient: ApolloClient<NormalizedCacheObject>
 
 export function getApolloClient() {
-  return apolloClient || initializeApollo()
+  return apolloClient
 }
 
 const createApolloClient = (graphqlUrl: string): ApolloClient<NormalizedCacheObject> => {
@@ -26,8 +25,6 @@ export const initializeApollo = (initialState: any = null) => {
   if (initialState) {
     _apolloClient.cache.restore(initialState)
   }
-
-  if (isServerSide()) return _apolloClient
 
   if (!apolloClient) apolloClient = _apolloClient
 
