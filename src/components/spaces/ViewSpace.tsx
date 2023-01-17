@@ -1,7 +1,7 @@
 import { EditOutlined } from '@ant-design/icons'
 import { isEmptyStr, newLogger, nonEmptyStr } from '@subsocial/utils'
 import dynamic from 'next/dynamic'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 import { Donate } from 'src/components/donate'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
@@ -13,7 +13,6 @@ import { useMyAddress } from '../auth/MyAccountsContext'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { editSpaceUrl } from '../urls'
-import { DfMd } from '../utils/DfMd'
 import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels'
 import { SummarizeMd } from '../utils/md'
 import { MutedSpan } from '../utils/MutedText'
@@ -79,7 +78,6 @@ export const InnerViewSpace = (props: Props) => {
 
     onClick,
   } = props
-  const [collapseAbout, setCollapseAbout] = useState(true)
   const isMobile = useIsMobileWidthOrDevice()
   const address = useMyAddress()
 
@@ -189,18 +187,11 @@ export const InnerViewSpace = (props: Props) => {
           </div>
 
           {nonEmptyStr(about) && (
-            <div
-              className='description mt-3 CursorPointer'
-              onClick={() => setCollapseAbout(prev => !prev)}
-            >
-              {collapseAbout ? (
-                <SummarizeMd
-                  content={content}
-                  more={<AboutSpaceLink space={space} title={'Learn More'} />}
-                />
-              ) : (
-                <DfMd source={content.about} />
-              )}
+            <div className='description mt-3'>
+              <SummarizeMd
+                content={content}
+                more={<AboutSpaceLink space={space} title={'Learn More'} />}
+              />
             </div>
           )}
 
