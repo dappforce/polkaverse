@@ -219,7 +219,7 @@ const PostSummary = React.memo(({ space, post }: PostSummaryProps) => {
   const { content } = post
   if (!content) return null
 
-  const seeMoreLink = <BlackPostLink space={space!} post={post} title='View Full Post' />
+  const seeMoreLink = <BlackPostLink space={space!} post={post} title='View Post' />
   return <SummarizeMd content={content} more={seeMoreLink} />
 })
 
