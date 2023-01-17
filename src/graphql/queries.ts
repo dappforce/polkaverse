@@ -593,7 +593,20 @@ export const GET_NOTIFICATIONS_COUNT = gql`
     notificationsConnection(
       orderBy: id_ASC
       where: {
-        account: { id_eq: $address }
+        AND: {
+          account: { id_eq: $address }
+          OR: {
+            activity: {
+              post: {
+                OR: [
+                  { OR: { ownedByAccount: { id_eq: $address } } }
+                  { OR: { rootPost: { ownedByAccount: { id_eq: $address } } } }
+                  { OR: { parentPost: { ownedByAccount: { id_eq: $address } } } }
+                ]
+              }
+            }
+          }
+        }
         activity: { aggregated_eq: true, account: { id_not_eq: $address }, date_gt: $afterDate }
       }
     ) {
@@ -607,28 +620,21 @@ export const GET_NOTIFICATIONS = gql`
   query GetNotifications($address: String!, $offset: Int = 0, $limit: Int!) {
     notifications(
       where: {
-        activity: {
-          aggregated_eq: true
-          account: { id_not_eq: $address }
-          AND: {
-            OR: [
-              { OR: { space: { ownedByAccount: { id_eq: $address } } } }
-              { OR: { followingAccount: { id_eq: $address } } }
-              { OR: { reaction: { post: { ownedByAccount: { id_eq: $address } } } } }
-              {
-                OR: {
-                  post: {
-                    OR: [
-                      { OR: { ownedByAccount: { id_eq: $address } } }
-                      { OR: { rootPost: { ownedByAccount: { id_eq: $address } } } }
-                      { OR: { parentPost: { ownedByAccount: { id_eq: $address } } } }
-                    ]
-                  }
-                }
+        AND: {
+          account: { id_eq: $address }
+          OR: {
+            activity: {
+              post: {
+                OR: [
+                  { OR: { ownedByAccount: { id_eq: $address } } }
+                  { OR: { rootPost: { ownedByAccount: { id_eq: $address } } } }
+                  { OR: { parentPost: { ownedByAccount: { id_eq: $address } } } }
+                ]
               }
-            ]
+            }
           }
         }
+        activity: { aggregated_eq: true, account: { id_not_eq: $address } }
       }
       limit: $limit
       offset: $offset
