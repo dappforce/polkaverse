@@ -65,7 +65,6 @@ export const SPACE_SIMPLE_FRAGMENT = gql`
     postsCount
     image
     tagsOriginal
-    summary
     about
     ownedByAccount {
       id
@@ -82,7 +81,6 @@ export const POST_SIMPLE_FRAGMENT = gql`
       id
     }
     title
-    summary
     body
     image
     link

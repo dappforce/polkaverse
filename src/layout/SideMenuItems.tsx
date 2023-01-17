@@ -2,7 +2,6 @@ import {
   BookOutlined,
   BugOutlined,
   BulbOutlined,
-  CommentOutlined,
   CompassOutlined,
   GlobalOutlined,
   LineChartOutlined,
@@ -77,11 +76,11 @@ export const DefaultMenu: MenuItem[] = [
     page: ['https://twitter.com/subsocialchain'],
     icon: <SubIcon Icon={FiTwitter} />,
   },
-  {
-    name: 'Official Telegram chat',
-    page: ['https://t.me/Subsocial'],
-    icon: <CommentOutlined />,
-  },
+  // {
+  //   name: 'Official Telegram chat',
+  //   page: ['https://t.me/Subsocial'],
+  //   icon: <CommentOutlined />,
+  // },
   {
     name: 'Subsocial Announcements',
     page: ['https://t.me/SubsocialNetwork'],

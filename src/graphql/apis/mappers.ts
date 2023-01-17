@@ -62,15 +62,16 @@ export const mapSimpleProfileFragment = ({
 })
 
 export const mapSimpleSpaceFragment = (space: SpaceSimpleFragment): SpaceSimpleFragmentMapped => {
+  const summarizedAbout = summarizeMd(space.about ?? '')
   const getContent = () => ({
     image: space.image ?? '',
     name: space.name ?? '',
     tags: getTokensFromUnifiedString(space.tagsOriginal),
-    summary: space.summary ?? '',
+    summary: summarizedAbout.summary ?? '',
     about: space.about ?? '',
     email: space.email ?? '',
     links: getTokensFromUnifiedString(space.linksOriginal),
-    isShowMore: false,
+    isShowMore: summarizedAbout.isShowMore,
   })
   const isIpfsDataError =
     space.content && !space.name && !space.image && !space.about && !space.email

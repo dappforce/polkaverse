@@ -11,6 +11,7 @@ export type ViewSpaceOptsProps = {
   withTags?: boolean
   withStats?: boolean
   withTipButton?: boolean
+  showFullAbout?: boolean
   imageSize?: number
 }
 

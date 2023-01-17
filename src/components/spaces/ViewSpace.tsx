@@ -1,7 +1,7 @@
 import { EditOutlined } from '@ant-design/icons'
 import { isEmptyStr, newLogger, nonEmptyStr } from '@subsocial/utils'
 import dynamic from 'next/dynamic'
-import React, { useCallback } from 'react'
+import React, { MouseEvent, useCallback, useState } from 'react'
 import { Donate } from 'src/components/donate'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
@@ -15,6 +15,7 @@ import { useIsMobileWidthOrDevice } from '../responsive'
 import { editSpaceUrl } from '../urls'
 import { DfMd } from '../utils/DfMd'
 import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels'
+import { SummarizeMd } from '../utils/md'
 import { MutedSpan } from '../utils/MutedText'
 import MyEntityLabel from '../utils/MyEntityLabel'
 import Section from '../utils/Section'
@@ -69,6 +70,7 @@ export const InnerViewSpace = (props: Props) => {
     withStats = true,
     withTags = true,
     withTipButton = true,
+    showFullAbout = false,
     dropdownPreview = false,
 
     postIds = [],
@@ -79,6 +81,7 @@ export const InnerViewSpace = (props: Props) => {
   } = props
   const isMobile = useIsMobileWidthOrDevice()
   const address = useMyAddress()
+  const [collapseAbout, setCollapseAbout] = useState(true)
 
   const spaceData = useSelectSpace(initialSpaceData?.id)
   const isMy = useIsMySpace(spaceData?.struct)
@@ -155,6 +158,11 @@ export const InnerViewSpace = (props: Props) => {
     </span>,
   )
 
+  const onToggleShow = (e: MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setCollapseAbout(prev => !prev)
+  }
   const renderPreview = () => (
     <div className={primaryClass}>
       <div className='DfSpaceBody'>
@@ -186,8 +194,35 @@ export const InnerViewSpace = (props: Props) => {
           </div>
 
           {nonEmptyStr(about) && (
-            <div className='description mt-3'>
-              <DfMd source={content.about} />
+            <div className='description mt-3 d-block'>
+              {showFullAbout || !collapseAbout ? (
+                <>
+                  <DfMd source={content.about} />
+                  {!showFullAbout && (
+                    <div
+                      className='DfBlackLink font-weight-semibold mt-1 FontNormal'
+                      onClick={onToggleShow}
+                    >
+                      Show Less
+                    </div>
+                  )}
+                </>
+              ) : (
+                <ViewSpaceLink
+                  space={space}
+                  className='description mt-3 d-block'
+                  title={
+                    <SummarizeMd
+                      content={content}
+                      more={
+                        <span className='DfBlackLink font-weight-semibold' onClick={onToggleShow}>
+                          Show More
+                        </span>
+                      }
+                    />
+                  }
+                />
+              )}
             </div>
           )}
 

@@ -47,7 +47,6 @@ export interface PostFragment_ownedByAccount_profileSpace {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: PostFragment_ownedByAccount_profileSpace_ownedByAccount;
 }
@@ -97,7 +96,6 @@ export interface PostFragment_space_ownedByAccount_profileSpace {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: PostFragment_space_ownedByAccount_profileSpace_ownedByAccount;
 }
@@ -126,7 +124,6 @@ export interface PostFragment_space {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: PostFragment_space_ownedByAccount;
 }
@@ -148,7 +145,6 @@ export interface PostFragment {
   createdAtTime: any | null;
   createdByAccount: PostFragment_createdByAccount;
   title: string | null;
-  summary: string | null;
   body: string | null;
   image: string | null;
   link: string | null;

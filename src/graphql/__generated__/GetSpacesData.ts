@@ -47,7 +47,6 @@ export interface GetSpacesData_spaces_ownedByAccount_profileSpace {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: GetSpacesData_spaces_ownedByAccount_profileSpace_ownedByAccount;
 }
@@ -76,7 +75,6 @@ export interface GetSpacesData_spaces {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: GetSpacesData_spaces_ownedByAccount;
 }

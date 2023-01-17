@@ -47,7 +47,6 @@ export interface GetPostsData_posts_ownedByAccount_profileSpace {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: GetPostsData_posts_ownedByAccount_profileSpace_ownedByAccount;
 }
@@ -97,7 +96,6 @@ export interface GetPostsData_posts_space_ownedByAccount_profileSpace {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: GetPostsData_posts_space_ownedByAccount_profileSpace_ownedByAccount;
 }
@@ -126,7 +124,6 @@ export interface GetPostsData_posts_space {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: GetPostsData_posts_space_ownedByAccount;
 }
@@ -169,7 +166,6 @@ export interface GetPostsData_posts_parentPost_ownedByAccount_profileSpace {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: GetPostsData_posts_parentPost_ownedByAccount_profileSpace_ownedByAccount;
 }
@@ -219,7 +215,6 @@ export interface GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: GetPostsData_posts_parentPost_space_ownedByAccount_profileSpace_ownedByAccount;
 }
@@ -248,7 +243,6 @@ export interface GetPostsData_posts_parentPost_space {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: GetPostsData_posts_parentPost_space_ownedByAccount;
 }
@@ -271,7 +265,6 @@ export interface GetPostsData_posts_parentPost {
   createdAtTime: any | null;
   createdByAccount: GetPostsData_posts_parentPost_createdByAccount;
   title: string | null;
-  summary: string | null;
   body: string | null;
   image: string | null;
   link: string | null;
@@ -329,7 +322,6 @@ export interface GetPostsData_posts_sharedPost_ownedByAccount_profileSpace {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: GetPostsData_posts_sharedPost_ownedByAccount_profileSpace_ownedByAccount;
 }
@@ -379,7 +371,6 @@ export interface GetPostsData_posts_sharedPost_space_ownedByAccount_profileSpace
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: GetPostsData_posts_sharedPost_space_ownedByAccount_profileSpace_ownedByAccount;
 }
@@ -408,7 +399,6 @@ export interface GetPostsData_posts_sharedPost_space {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: GetPostsData_posts_sharedPost_space_ownedByAccount;
 }
@@ -431,7 +421,6 @@ export interface GetPostsData_posts_sharedPost {
   createdAtTime: any | null;
   createdByAccount: GetPostsData_posts_sharedPost_createdByAccount;
   title: string | null;
-  summary: string | null;
   body: string | null;
   image: string | null;
   link: string | null;
@@ -458,7 +447,6 @@ export interface GetPostsData_posts {
   createdAtTime: any | null;
   createdByAccount: GetPostsData_posts_createdByAccount;
   title: string | null;
-  summary: string | null;
   body: string | null;
   image: string | null;
   link: string | null;

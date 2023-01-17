@@ -672,6 +672,9 @@ export interface PostWhereInput {
   summary_not_startsWith?: string | null
   summary_endsWith?: string | null
   summary_not_endsWith?: string | null
+  isShowMore_isNull?: boolean | null
+  isShowMore_eq?: boolean | null
+  isShowMore_not_eq?: boolean | null
   meta_isNull?: boolean | null
   meta_eq?: string | null
   meta_not_eq?: string | null
@@ -1117,6 +1120,9 @@ export interface SpaceWhereInput {
   summary_not_startsWith?: string | null
   summary_endsWith?: string | null
   summary_not_endsWith?: string | null
+  isShowMore_isNull?: boolean | null
+  isShowMore_eq?: boolean | null
+  isShowMore_not_eq?: boolean | null
   email_isNull?: boolean | null
   email_eq?: string | null
   email_not_eq?: string | null

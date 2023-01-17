@@ -3,7 +3,7 @@ import { SubsocialApi } from '@subsocial/api'
 import { bnsToIds, toSubsocialAddress } from '@subsocial/utils'
 import { getProfilesData } from 'src/graphql/apis'
 import { ProfileFragmentMapped } from 'src/graphql/apis/types'
-import { apolloClient } from 'src/graphql/client'
+import { getApolloClient } from 'src/graphql/client'
 import {
   CommonVisibility,
   createFetchOne,
@@ -77,7 +77,7 @@ const getProfiles = createFetchDataFn<ProfileSpaceIdByAccount[]>([])({
     return spaceIdsByAccouts.filter(x => !!x.id)
   },
   squid: async ({ ids }: { ids: string[] }) => {
-    const profiles = await getProfilesData(apolloClient, { ids })
+    const profiles = await getProfilesData(getApolloClient(), { ids })
     return profiles
   },
 })

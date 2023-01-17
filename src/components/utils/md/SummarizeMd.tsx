@@ -16,7 +16,7 @@ type Props = {
 
 export const SummarizeMd = React.memo((props: Props) => {
   const { content, limit: initialLimit, more, className, ...otherProps } = props
-  const { summary: initialSummary = '', isShowMore = false } = content || {}
+  const { summary: initialSummary = '', isShowMore: initialIsShowMore = false } = content || {}
   const isMobile = useIsMobileWidthOrDevice()
 
   if (isEmptyStr(initialSummary)) return null
@@ -24,13 +24,19 @@ export const SummarizeMd = React.memo((props: Props) => {
   const limit = initialLimit ? initialLimit : isMobile ? MOBILE_SUMMARY_LEN : DESKTOP_SUMMARY_LEN
 
   const summary = summarize(initialSummary, { limit })
+  let isShowMore = initialIsShowMore || initialSummary.length > limit
 
   if (isEmptyStr(summary)) return null
 
   return (
     <div className={clsx('DfSummary', className)} {...otherProps}>
       {summary}
-      {isShowMore && <span className='DfSeeMore'> {more}</span>}
+      {isShowMore && (
+        <span className='DfSeeMore' onClick={e => e.stopPropagation()}>
+          {' '}
+          {more}
+        </span>
+      )}
     </div>
   )
 })

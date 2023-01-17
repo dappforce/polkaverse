@@ -41,7 +41,6 @@ export interface PostSimpleFragment {
   createdAtTime: any | null;
   createdByAccount: PostSimpleFragment_createdByAccount;
   title: string | null;
-  summary: string | null;
   body: string | null;
   image: string | null;
   link: string | null;
