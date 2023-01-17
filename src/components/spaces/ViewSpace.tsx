@@ -189,7 +189,10 @@ export const InnerViewSpace = (props: Props) => {
           </div>
 
           {nonEmptyStr(about) && (
-            <div className='description mt-3' onClick={() => setCollapseAbout(prev => !prev)}>
+            <div
+              className='description mt-3 CursorPointer'
+              onClick={() => setCollapseAbout(prev => !prev)}
+            >
               {collapseAbout ? (
                 <SummarizeMd
                   content={content}
