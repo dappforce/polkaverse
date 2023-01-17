@@ -40,7 +40,6 @@ export interface GetProfilesData_accounts_profileSpace {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: GetProfilesData_accounts_profileSpace_ownedByAccount;
 }

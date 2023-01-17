@@ -34,7 +34,6 @@ export interface SpaceSimpleFragment {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: SpaceSimpleFragment_ownedByAccount;
 }

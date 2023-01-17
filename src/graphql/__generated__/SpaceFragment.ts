@@ -45,7 +45,6 @@ export interface SpaceFragment_ownedByAccount_profileSpace {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: SpaceFragment_ownedByAccount_profileSpace_ownedByAccount;
 }
@@ -74,7 +73,6 @@ export interface SpaceFragment {
   postsCount: number;
   image: string | null;
   tagsOriginal: string | null;
-  summary: string | null;
   about: string | null;
   ownedByAccount: SpaceFragment_ownedByAccount;
 }
