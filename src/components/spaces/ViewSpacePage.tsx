@@ -57,7 +57,7 @@ const InnerViewSpacePage: FC<Props> = props => {
             desc='You can claim ownership for free!'
           />
         )}
-        <ViewSpace {...props} showFullAbout />
+        <ViewSpace {...props} />
       </PageContent>
     </>
   )
