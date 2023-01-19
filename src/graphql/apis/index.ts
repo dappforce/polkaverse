@@ -227,7 +227,7 @@ export async function getAllNotifications(client: GqlClient, variables: GetNotif
     variables,
   })
   return (
-    notifications.data.accountById?.notifications.map(({ activity }) => {
+    notifications.data?.notifications.map(({ activity }) => {
       const isComment = activity.post?.isComment
       return mapActivityQueryResult(activity, {
         followingId: activity.followingAccount?.id,

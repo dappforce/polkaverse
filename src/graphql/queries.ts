@@ -101,7 +101,7 @@ export const POST_SIMPLE_FRAGMENT = gql`
     space {
       id
     }
-    parentPost {
+    rootPost {
       id
     }
     sharedPost {
@@ -593,7 +593,20 @@ export const GET_NOTIFICATIONS_COUNT = gql`
     notificationsConnection(
       orderBy: id_ASC
       where: {
-        account: { id_eq: $address }
+        AND: {
+          account: { id_eq: $address }
+          OR: {
+            activity: {
+              post: {
+                OR: [
+                  { OR: { ownedByAccount: { id_eq: $address } } }
+                  { OR: { rootPost: { ownedByAccount: { id_eq: $address } } } }
+                  { OR: { parentPost: { ownedByAccount: { id_eq: $address } } } }
+                ]
+              }
+            }
+          }
+        }
         activity: { aggregated_eq: true, account: { id_not_eq: $address }, date_gt: $afterDate }
       }
     ) {
@@ -605,29 +618,43 @@ export const GET_NOTIFICATIONS_COUNT = gql`
 export const GET_NOTIFICATIONS = gql`
   ${ACTIVITY_REQUIRED_FRAGMENT}
   query GetNotifications($address: String!, $offset: Int = 0, $limit: Int!) {
-    accountById(id: $address) {
-      notifications(
-        where: { activity: { aggregated_eq: true, account: { id_not_eq: $address } } }
-        limit: $limit
-        offset: $offset
-        orderBy: activity_date_DESC
-      ) {
-        id
-        activity {
-          ...ActivityRequiredFragment
-          post {
-            id
-            isComment
+    notifications(
+      where: {
+        AND: {
+          account: { id_eq: $address }
+          OR: {
+            activity: {
+              post: {
+                OR: [
+                  { OR: { ownedByAccount: { id_eq: $address } } }
+                  { OR: { rootPost: { ownedByAccount: { id_eq: $address } } } }
+                  { OR: { parentPost: { ownedByAccount: { id_eq: $address } } } }
+                ]
+              }
+            }
           }
-          space {
-            id
-          }
-          followingAccount {
-            id
-          }
-          reaction {
-            id
-          }
+        }
+        activity: { aggregated_eq: true, account: { id_not_eq: $address } }
+      }
+      limit: $limit
+      offset: $offset
+      orderBy: activity_date_DESC
+    ) {
+      id
+      activity {
+        ...ActivityRequiredFragment
+        post {
+          id
+          isComment
+        }
+        space {
+          id
+        }
+        followingAccount {
+          id
+        }
+        reaction {
+          id
         }
       }
     }

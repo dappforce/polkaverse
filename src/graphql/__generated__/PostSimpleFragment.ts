@@ -24,7 +24,7 @@ export interface PostSimpleFragment_space {
   id: string;
 }
 
-export interface PostSimpleFragment_parentPost {
+export interface PostSimpleFragment_rootPost {
   __typename: "Post";
   id: string;
 }
@@ -57,6 +57,6 @@ export interface PostSimpleFragment {
   tagsOriginal: string | null;
   ownedByAccount: PostSimpleFragment_ownedByAccount;
   space: PostSimpleFragment_space | null;
-  parentPost: PostSimpleFragment_parentPost | null;
+  rootPost: PostSimpleFragment_rootPost | null;
   sharedPost: PostSimpleFragment_sharedPost | null;
 }

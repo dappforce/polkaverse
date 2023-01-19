@@ -128,7 +128,7 @@ export interface PostFragment_space {
   ownedByAccount: PostFragment_space_ownedByAccount;
 }
 
-export interface PostFragment_parentPost {
+export interface PostFragment_rootPost {
   __typename: "Post";
   id: string;
 }
@@ -161,6 +161,6 @@ export interface PostFragment {
   tagsOriginal: string | null;
   ownedByAccount: PostFragment_ownedByAccount;
   space: PostFragment_space | null;
-  parentPost: PostFragment_parentPost | null;
+  rootPost: PostFragment_rootPost | null;
   sharedPost: PostFragment_sharedPost | null;
 }
