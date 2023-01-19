@@ -1,4 +1,5 @@
 import { nonEmptyStr } from '@subsocial/utils'
+import clsx from 'clsx'
 import { useState } from 'react'
 import { idToBn, PostStruct } from 'src/types'
 import { MutedSpan } from '../utils/MutedText'
@@ -29,7 +30,7 @@ export const StatsPanel = (props: StatsProps) => {
     <>
       <div className='DfCountsPreview'>
         <MutedSpan className={reactionsCount ? '' : 'disable'}>
-          <span onClick={showReactionsModal}>
+          <span onClick={showReactionsModal} className={clsx(reactionsCount > 0 && 'DfMutedLink')}>
             <Pluralize count={reactionsCount} singularText='Reaction' />
           </span>
         </MutedSpan>
