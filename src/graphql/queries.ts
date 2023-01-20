@@ -629,6 +629,7 @@ export const GET_NOTIFICATIONS = gql`
                   { OR: { ownedByAccount: { id_eq: $address } } }
                   { OR: { rootPost: { ownedByAccount: { id_eq: $address } } } }
                   { OR: { parentPost: { ownedByAccount: { id_eq: $address } } } }
+                  { OR: { rootPost: { space: { ownedByAccount: { id_eq: $address } } } } }
                 ]
               }
             }
