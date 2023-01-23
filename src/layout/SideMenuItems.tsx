@@ -2,7 +2,6 @@ import {
   BookOutlined,
   BugOutlined,
   BulbOutlined,
-  CompassOutlined,
   GlobalOutlined,
   LineChartOutlined,
   LinkOutlined,
@@ -43,12 +42,6 @@ export const isDivider = (item: MenuItem): item is Divider => item === Divider
 export const isPageLink = (item: MenuItem): item is PageLink => !isDivider(item)
 
 export const DefaultMenu: MenuItem[] = [
-  {
-    name: 'Explore spaces',
-    page: ['/spaces'],
-    icon: <CompassOutlined />,
-    hidden: enableSubnetMode,
-  },
   // {
   //   name: 'Polkadot Apps',
   //   page: [ polkadotAppsUrl ],
