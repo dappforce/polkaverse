@@ -9,7 +9,7 @@ import config from 'src/config'
 import { useApollo } from './client'
 
 type ApolloProviderProps = {
-  initialApolloState: NormalizedCacheObject
+  initialApolloState?: NormalizedCacheObject
 }
 
 export type GqlClient = ApolloClient<object>
