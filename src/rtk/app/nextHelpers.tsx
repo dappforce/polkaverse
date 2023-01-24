@@ -32,7 +32,6 @@ export const getInitialPropsWithRedux = async <ResultProps extends {} = {}>(
 
     return {
       initialReduxState: reduxStore.getState(),
-      initialApolloState: apolloClient?.cache.extract(),
       ...resultProps,
     }
   })
