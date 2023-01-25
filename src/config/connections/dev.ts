@@ -3,7 +3,7 @@ import mainConfig from './main'
 
 const devConfig: SubsocialConfig = {
   ...mainConfig,
-  substrateUrl: 'wss://para.f3joule.space',
+  substrateUrl: 'wss://para.subsocial.network',
 }
 
 export default devConfig
