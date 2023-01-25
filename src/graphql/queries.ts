@@ -597,11 +597,13 @@ export const GET_NOTIFICATIONS_COUNT = gql`
           account: { id_eq: $address }
           OR: {
             activity: {
+              event_eq: CommentCreated
               post: {
                 OR: [
                   { OR: { ownedByAccount: { id_eq: $address } } }
                   { OR: { rootPost: { ownedByAccount: { id_eq: $address } } } }
                   { OR: { parentPost: { ownedByAccount: { id_eq: $address } } } }
+                  { OR: { rootPost: { space: { ownedByAccount: { id_eq: $address } } } } }
                 ]
               }
             }
@@ -624,6 +626,7 @@ export const GET_NOTIFICATIONS = gql`
           account: { id_eq: $address }
           OR: {
             activity: {
+              event_eq: CommentCreated
               post: {
                 OR: [
                   { OR: { ownedByAccount: { id_eq: $address } } }
