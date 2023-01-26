@@ -1,23 +1,17 @@
 import { SubsocialConfig } from '../types'
 
 const stagingConfig: SubsocialConfig = {
-  sudoOne: '3osmnRNnrcScHsgkTJH1xyBF5kGjpbWHsGrqM31BJpy4vwn8',
+  sudoOne: '3si9SFRhEPKvpk2xW9dUkcud1AanQxJwok2QFqppqE5ZeShp',
 
   substrateUrl: 'wss://rco-para.subsocial.network',
-  kusamaUrl: 'wss://staging.subsocial.network/kusama',
-
   offchainUrl: 'https://staging-api.subsocial.network',
   graphqlUrl: undefined,
 
   ipfsNodeUrl: 'https://staging-ipfs.subsocial.network',
   dagHttpMethod: 'get',
-  useOffchainForIpfs: true,
+  useOffchainForIpfs: false,
 
-  nodes: {
-    kusama: 'wss://kusama-rpc.polkadot.io',
-  },
-
-  subIdApiUrl: 'https://staging.sub.id/api/v1',
+  subIdApiUrl: 'https://sub.id/api/v1',
   subsocialParaId: 2100,
 }
 
