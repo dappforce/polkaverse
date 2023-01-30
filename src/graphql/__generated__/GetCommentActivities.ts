@@ -7,19 +7,14 @@
 // GraphQL query operation: GetCommentActivities
 // ====================================================
 
-export interface GetCommentActivities_accountById_activities_post {
+export interface GetCommentActivities_accountById_posts {
   __typename: "Post";
   id: string;
 }
 
-export interface GetCommentActivities_accountById_activities {
-  __typename: "Activity";
-  post: GetCommentActivities_accountById_activities_post | null;
-}
-
 export interface GetCommentActivities_accountById {
   __typename: "Account";
-  activities: GetCommentActivities_accountById_activities[];
+  posts: GetCommentActivities_accountById_posts[];
 }
 
 export interface GetCommentActivities {

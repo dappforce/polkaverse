@@ -201,8 +201,8 @@ export async function getCommentActivities(
     variables,
   })
   const commentIds: string[] = []
-  activities.data.accountById?.activities.forEach(activity => {
-    const commentId = activity.post?.id
+  activities.data.accountById?.posts.forEach(post => {
+    const commentId = post?.id
     if (commentId) {
       commentIds.push(commentId)
     }

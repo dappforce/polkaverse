@@ -411,7 +411,7 @@ export const GET_ACTIVITY_COUNTS = gql`
     }
     comments: postsConnection(
       orderBy: id_ASC
-      where: { ownedByAccount: { id_eq: $address }, isComment_eq: true }
+      where: { ownedByAccount: { id_eq: $address }, isComment_eq: true, hidden_eq: false }
     ) {
       totalCount
     }
@@ -551,15 +551,13 @@ export const GET_POST_ACTIVITIES = gql`
 export const GET_COMMENT_ACTIVITIES = gql`
   query GetCommentActivities($address: String!, $offset: Int = 0, $limit: Int!) {
     accountById(id: $address) {
-      activities(
-        where: { event_in: [CommentCreated, CommentReplyCreated, CommentShared] }
+      posts(
         limit: $limit
         offset: $offset
-        orderBy: date_DESC
+        orderBy: createdAtTime_DESC
+        where: { isComment_eq: true, hidden_eq: false }
       ) {
-        post {
-          id
-        }
+        id
       }
     }
   }
