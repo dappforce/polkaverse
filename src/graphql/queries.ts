@@ -415,18 +415,15 @@ export const GET_ACTIVITY_COUNTS = gql`
     ) {
       totalCount
     }
-    reactions: reactionsConnection(orderBy: id_ASC, where: { account: { id_eq: $address } }) {
-      totalCount
-    }
-    spaceFollows: spaceFollowersConnection(
+    reactions: activitiesConnection(
       orderBy: id_ASC
-      where: { followerAccount: { id_eq: $address } }
+      where: { account: { id_eq: $address }, event_in: [PostReactionCreated] }
     ) {
       totalCount
     }
-    accountFollows: accountFollowersConnection(
+    follows: activitiesConnection(
       orderBy: id_ASC
-      where: { followerAccount: { id_eq: $address } }
+      where: { account: { id_eq: $address }, event_in: [AccountFollowed, SpaceFollowed] }
     ) {
       totalCount
     }
