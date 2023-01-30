@@ -519,15 +519,8 @@ export const GET_REACTION_ACTIVITIES = gql`
 export const GET_SPACE_ACTIVITIES = gql`
   query GetSpaceActivities($address: String!, $offset: Int = 0, $limit: Int!) {
     accountById(id: $address) {
-      activities(
-        where: { event_in: [SpaceCreated] }
-        limit: $limit
-        offset: $offset
-        orderBy: date_DESC
-      ) {
-        space {
-          id
-        }
+      spacesOwned(limit: $limit, offset: $offset, orderBy: createdAtTime_DESC) {
+        id
       }
     }
   }

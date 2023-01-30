@@ -39,7 +39,10 @@ import {
   GetReactionActivities,
   GetReactionActivitiesVariables,
 } from '../__generated__/GetReactionActivities'
-import { GetSpaceActivitiesVariables } from '../__generated__/GetSpaceActivities'
+import {
+  GetSpaceActivities,
+  GetSpaceActivitiesVariables,
+} from '../__generated__/GetSpaceActivities'
 import { GetSpacesData, GetSpacesDataVariables } from '../__generated__/GetSpacesData'
 import {
   mapActivityQueryResult,
@@ -163,13 +166,13 @@ export async function getSpaceActivities(
   client: GqlClient,
   variables: GetSpaceActivitiesVariables,
 ) {
-  const activities = await client.query<GetFollowActivities, GetFollowActivitiesVariables>({
+  const activities = await client.query<GetSpaceActivities, GetSpaceActivitiesVariables>({
     query: q.GET_SPACE_ACTIVITIES,
     variables,
   })
   const spaceIds: string[] = []
-  activities.data.accountById?.activities.forEach(activity => {
-    const spaceId = activity.space?.id
+  activities.data.accountById?.spacesOwned.forEach(space => {
+    const spaceId = space?.id
     if (spaceId) {
       spaceIds.push(spaceId)
     }
