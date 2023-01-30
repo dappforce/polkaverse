@@ -402,7 +402,7 @@ export const GET_ACTIVITY_COUNTS = gql`
     }
     posts: postsConnection(
       orderBy: id_ASC
-      where: { ownedByAccount: { id_eq: $address }, isComment_eq: false }
+      where: { ownedByAccount: { id_eq: $address }, isComment_eq: false, hidden_eq: false }
     ) {
       totalCount
     }
@@ -533,7 +533,6 @@ export const GET_SPACE_ACTIVITIES = gql`
   }
 `
 
-// TODO: take hidden true? because content is null if hidden true
 export const GET_POST_ACTIVITIES = gql`
   query GetPostActivities($address: String!, $offset: Int = 0, $limit: Int!) {
     accountById(id: $address) {
@@ -541,7 +540,7 @@ export const GET_POST_ACTIVITIES = gql`
         limit: $limit
         offset: $offset
         orderBy: createdAtTime_DESC
-        where: { isComment_eq: false }
+        where: { isComment_eq: false, hidden_eq: false }
       ) {
         id
       }
