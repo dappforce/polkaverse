@@ -39,7 +39,10 @@ import {
   GetReactionActivities,
   GetReactionActivitiesVariables,
 } from '../__generated__/GetReactionActivities'
-import { GetSpaceActivitiesVariables } from '../__generated__/GetSpaceActivities'
+import {
+  GetSpaceActivities,
+  GetSpaceActivitiesVariables,
+} from '../__generated__/GetSpaceActivities'
 import { GetSpacesData, GetSpacesDataVariables } from '../__generated__/GetSpacesData'
 import {
   mapActivityQueryResult,
@@ -163,13 +166,13 @@ export async function getSpaceActivities(
   client: GqlClient,
   variables: GetSpaceActivitiesVariables,
 ) {
-  const activities = await client.query<GetFollowActivities, GetFollowActivitiesVariables>({
+  const activities = await client.query<GetSpaceActivities, GetSpaceActivitiesVariables>({
     query: q.GET_SPACE_ACTIVITIES,
     variables,
   })
   const spaceIds: string[] = []
-  activities.data.accountById?.activities.forEach(activity => {
-    const spaceId = activity.space?.id
+  activities.data.accountById?.spacesOwned.forEach(space => {
+    const spaceId = space?.id
     if (spaceId) {
       spaceIds.push(spaceId)
     }
@@ -183,8 +186,8 @@ export async function getPostActivities(client: GqlClient, variables: GetPostAct
     variables,
   })
   const postIds: string[] = []
-  activities.data.accountById?.activities.forEach(activity => {
-    const postId = activity.post?.id
+  activities.data.accountById?.posts.forEach(post => {
+    const postId = post?.id
     if (postId) {
       postIds.push(postId)
     }
@@ -201,8 +204,8 @@ export async function getCommentActivities(
     variables,
   })
   const commentIds: string[] = []
-  activities.data.accountById?.activities.forEach(activity => {
-    const commentId = activity.post?.id
+  activities.data.accountById?.posts.forEach(post => {
+    const commentId = post?.id
     if (commentId) {
       commentIds.push(commentId)
     }

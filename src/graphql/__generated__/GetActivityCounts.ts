@@ -13,17 +13,17 @@ export interface GetActivityCounts_activities {
 }
 
 export interface GetActivityCounts_posts {
-  __typename: "ActivitiesConnection";
+  __typename: "PostsConnection";
   totalCount: number;
 }
 
 export interface GetActivityCounts_spaces {
-  __typename: "ActivitiesConnection";
+  __typename: "SpacesConnection";
   totalCount: number;
 }
 
 export interface GetActivityCounts_comments {
-  __typename: "ActivitiesConnection";
+  __typename: "PostsConnection";
   totalCount: number;
 }
 

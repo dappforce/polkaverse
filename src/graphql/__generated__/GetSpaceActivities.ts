@@ -7,19 +7,14 @@
 // GraphQL query operation: GetSpaceActivities
 // ====================================================
 
-export interface GetSpaceActivities_accountById_activities_space {
+export interface GetSpaceActivities_accountById_spacesOwned {
   __typename: "Space";
   id: string;
 }
 
-export interface GetSpaceActivities_accountById_activities {
-  __typename: "Activity";
-  space: GetSpaceActivities_accountById_activities_space | null;
-}
-
 export interface GetSpaceActivities_accountById {
   __typename: "Account";
-  activities: GetSpaceActivities_accountById_activities[];
+  spacesOwned: GetSpaceActivities_accountById_spacesOwned[];
 }
 
 export interface GetSpaceActivities {

@@ -726,6 +726,25 @@ export interface PostWhereInput {
   format_not_startsWith?: string | null
   format_endsWith?: string | null
   format_not_endsWith?: string | null
+  tweetId_isNull?: boolean | null
+  tweetId_eq?: string | null
+  tweetId_not_eq?: string | null
+  tweetId_gt?: string | null
+  tweetId_gte?: string | null
+  tweetId_lt?: string | null
+  tweetId_lte?: string | null
+  tweetId_in?: string[] | null
+  tweetId_not_in?: string[] | null
+  tweetId_contains?: string | null
+  tweetId_not_contains?: string | null
+  tweetId_containsInsensitive?: string | null
+  tweetId_not_containsInsensitive?: string | null
+  tweetId_startsWith?: string | null
+  tweetId_not_startsWith?: string | null
+  tweetId_endsWith?: string | null
+  tweetId_not_endsWith?: string | null
+  tweetDetails_isNull?: boolean | null
+  tweetDetails?: TweetDetailsWhereInput | null
   proposalIndex_isNull?: boolean | null
   proposalIndex_eq?: number | null
   proposalIndex_not_eq?: number | null
@@ -1174,6 +1193,23 @@ export interface SpaceWhereInput {
   linksOriginal_not_startsWith?: string | null
   linksOriginal_endsWith?: string | null
   linksOriginal_not_endsWith?: string | null
+  interestsOriginal_isNull?: boolean | null
+  interestsOriginal_eq?: string | null
+  interestsOriginal_not_eq?: string | null
+  interestsOriginal_gt?: string | null
+  interestsOriginal_gte?: string | null
+  interestsOriginal_lt?: string | null
+  interestsOriginal_lte?: string | null
+  interestsOriginal_in?: string[] | null
+  interestsOriginal_not_in?: string[] | null
+  interestsOriginal_contains?: string | null
+  interestsOriginal_not_contains?: string | null
+  interestsOriginal_containsInsensitive?: string | null
+  interestsOriginal_not_containsInsensitive?: string | null
+  interestsOriginal_startsWith?: string | null
+  interestsOriginal_not_startsWith?: string | null
+  interestsOriginal_endsWith?: string | null
+  interestsOriginal_not_endsWith?: string | null
   format_isNull?: boolean | null
   format_eq?: string | null
   format_not_eq?: string | null
@@ -1236,6 +1272,117 @@ export interface SpaceWhereInput {
   followers_none?: SpaceFollowersWhereInput | null
   AND?: SpaceWhereInput[] | null
   OR?: SpaceWhereInput[] | null
+}
+
+export interface TweetDetailsWhereInput {
+  createdAt_isNull?: boolean | null
+  createdAt_eq?: string | null
+  createdAt_not_eq?: string | null
+  createdAt_gt?: string | null
+  createdAt_gte?: string | null
+  createdAt_lt?: string | null
+  createdAt_lte?: string | null
+  createdAt_in?: string[] | null
+  createdAt_not_in?: string[] | null
+  createdAt_contains?: string | null
+  createdAt_not_contains?: string | null
+  createdAt_containsInsensitive?: string | null
+  createdAt_not_containsInsensitive?: string | null
+  createdAt_startsWith?: string | null
+  createdAt_not_startsWith?: string | null
+  createdAt_endsWith?: string | null
+  createdAt_not_endsWith?: string | null
+  username_isNull?: boolean | null
+  username_eq?: string | null
+  username_not_eq?: string | null
+  username_gt?: string | null
+  username_gte?: string | null
+  username_lt?: string | null
+  username_lte?: string | null
+  username_in?: string[] | null
+  username_not_in?: string[] | null
+  username_contains?: string | null
+  username_not_contains?: string | null
+  username_containsInsensitive?: string | null
+  username_not_containsInsensitive?: string | null
+  username_startsWith?: string | null
+  username_not_startsWith?: string | null
+  username_endsWith?: string | null
+  username_not_endsWith?: string | null
+  authorId_isNull?: boolean | null
+  authorId_eq?: string | null
+  authorId_not_eq?: string | null
+  authorId_gt?: string | null
+  authorId_gte?: string | null
+  authorId_lt?: string | null
+  authorId_lte?: string | null
+  authorId_in?: string[] | null
+  authorId_not_in?: string[] | null
+  authorId_contains?: string | null
+  authorId_not_contains?: string | null
+  authorId_containsInsensitive?: string | null
+  authorId_not_containsInsensitive?: string | null
+  authorId_startsWith?: string | null
+  authorId_not_startsWith?: string | null
+  authorId_endsWith?: string | null
+  authorId_not_endsWith?: string | null
+  editHistoryTweetIds_isNull?: boolean | null
+  editHistoryTweetIds_containsAll?: (string | null)[] | null
+  editHistoryTweetIds_containsAny?: (string | null)[] | null
+  editHistoryTweetIds_containsNone?: (string | null)[] | null
+  conversationId_isNull?: boolean | null
+  conversationId_eq?: string | null
+  conversationId_not_eq?: string | null
+  conversationId_gt?: string | null
+  conversationId_gte?: string | null
+  conversationId_lt?: string | null
+  conversationId_lte?: string | null
+  conversationId_in?: string[] | null
+  conversationId_not_in?: string[] | null
+  conversationId_contains?: string | null
+  conversationId_not_contains?: string | null
+  conversationId_containsInsensitive?: string | null
+  conversationId_not_containsInsensitive?: string | null
+  conversationId_startsWith?: string | null
+  conversationId_not_startsWith?: string | null
+  conversationId_endsWith?: string | null
+  conversationId_not_endsWith?: string | null
+  inReplyToUserId_isNull?: boolean | null
+  inReplyToUserId_eq?: string | null
+  inReplyToUserId_not_eq?: string | null
+  inReplyToUserId_gt?: string | null
+  inReplyToUserId_gte?: string | null
+  inReplyToUserId_lt?: string | null
+  inReplyToUserId_lte?: string | null
+  inReplyToUserId_in?: string[] | null
+  inReplyToUserId_not_in?: string[] | null
+  inReplyToUserId_contains?: string | null
+  inReplyToUserId_not_contains?: string | null
+  inReplyToUserId_containsInsensitive?: string | null
+  inReplyToUserId_not_containsInsensitive?: string | null
+  inReplyToUserId_startsWith?: string | null
+  inReplyToUserId_not_startsWith?: string | null
+  inReplyToUserId_endsWith?: string | null
+  inReplyToUserId_not_endsWith?: string | null
+  referencedTweets_isNull?: boolean | null
+  attachments_isNull?: boolean | null
+  lang_isNull?: boolean | null
+  lang_eq?: string | null
+  lang_not_eq?: string | null
+  lang_gt?: string | null
+  lang_gte?: string | null
+  lang_lt?: string | null
+  lang_lte?: string | null
+  lang_in?: string[] | null
+  lang_not_in?: string[] | null
+  lang_contains?: string | null
+  lang_not_contains?: string | null
+  lang_containsInsensitive?: string | null
+  lang_not_containsInsensitive?: string | null
+  lang_startsWith?: string | null
+  lang_not_startsWith?: string | null
+  lang_endsWith?: string | null
+  lang_not_endsWith?: string | null
 }
 
 //==============================================================
