@@ -7,19 +7,14 @@
 // GraphQL query operation: GetPostActivities
 // ====================================================
 
-export interface GetPostActivities_accountById_activities_post {
+export interface GetPostActivities_accountById_posts {
   __typename: "Post";
   id: string;
 }
 
-export interface GetPostActivities_accountById_activities {
-  __typename: "Activity";
-  post: GetPostActivities_accountById_activities_post | null;
-}
-
 export interface GetPostActivities_accountById {
   __typename: "Account";
-  activities: GetPostActivities_accountById_activities[];
+  posts: GetPostActivities_accountById_posts[];
 }
 
 export interface GetPostActivities {

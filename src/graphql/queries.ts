@@ -533,18 +533,17 @@ export const GET_SPACE_ACTIVITIES = gql`
   }
 `
 
+// TODO: take hidden true? because content is null if hidden true
 export const GET_POST_ACTIVITIES = gql`
   query GetPostActivities($address: String!, $offset: Int = 0, $limit: Int!) {
     accountById(id: $address) {
-      activities(
-        where: { event_in: [PostCreated] }
+      posts(
         limit: $limit
         offset: $offset
-        orderBy: date_DESC
+        orderBy: createdAtTime_DESC
+        where: { isComment_eq: false }
       ) {
-        post {
-          id
-        }
+        id
       }
     }
   }

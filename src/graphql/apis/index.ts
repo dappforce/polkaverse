@@ -183,8 +183,8 @@ export async function getPostActivities(client: GqlClient, variables: GetPostAct
     variables,
   })
   const postIds: string[] = []
-  activities.data.accountById?.activities.forEach(activity => {
-    const postId = activity.post?.id
+  activities.data.accountById?.posts.forEach(post => {
+    const postId = post?.id
     if (postId) {
       postIds.push(postId)
     }
