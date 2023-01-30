@@ -94,11 +94,11 @@ export async function getActivityCounts(
     variables,
   })
 
-  const { activities, comments, follows, posts, reactions, spaces } = res.data
+  const { activities, comments, accountFollows, spaceFollows, posts, reactions, spaces } = res.data
   return {
     activitiesCount: activities.totalCount,
     commentsCount: comments.totalCount,
-    followsCount: follows.totalCount,
+    followsCount: (spaceFollows.totalCount || 0) + (accountFollows.totalCount || 0),
     postsCount: posts.totalCount,
     reactionsCount: reactions.totalCount,
     spacesCount: spaces.totalCount,

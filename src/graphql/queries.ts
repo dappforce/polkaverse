@@ -400,48 +400,33 @@ export const GET_ACTIVITY_COUNTS = gql`
     ) {
       totalCount
     }
-    posts: activitiesConnection(
+    posts: postsConnection(
       orderBy: id_ASC
-      where: {
-        account: { id_eq: $address }
-        event_in: [PostCreated]
-        post: { isComment_eq: false }
-      }
+      where: { ownedByAccount: { id_eq: $address }, isComment_eq: false }
     ) {
       totalCount
     }
-    spaces: activitiesConnection(
+    spaces: spacesConnection(orderBy: id_ASC, where: { ownedByAccount: { id_eq: $address } }) {
+      totalCount
+    }
+    comments: postsConnection(
       orderBy: id_ASC
-      where: { account: { id_eq: $address }, event_in: [SpaceCreated] }
+      where: { ownedByAccount: { id_eq: $address }, isComment_eq: true }
     ) {
       totalCount
     }
-    comments: activitiesConnection(
+    reactions: reactionsConnection(orderBy: id_ASC, where: { account: { id_eq: $address } }) {
+      totalCount
+    }
+    spaceFollows: spaceFollowersConnection(
       orderBy: id_ASC
-      where: {
-        account: { id_eq: $address }
-        event_in: [
-          CommentCreated
-          CommentShared
-          CommentReplyCreated
-          CommentReplyShared
-          PostCreated
-          PostShared
-        ]
-        post: { isComment_eq: true }
-      }
+      where: { followerAccount: { id_eq: $address } }
     ) {
       totalCount
     }
-    reactions: activitiesConnection(
+    accountFollows: accountFollowersConnection(
       orderBy: id_ASC
-      where: { account: { id_eq: $address }, event_in: [PostReactionCreated] }
-    ) {
-      totalCount
-    }
-    follows: activitiesConnection(
-      orderBy: id_ASC
-      where: { account: { id_eq: $address }, event_in: [AccountFollowed, SpaceFollowed] }
+      where: { followerAccount: { id_eq: $address } }
     ) {
       totalCount
     }

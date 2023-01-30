@@ -13,27 +13,32 @@ export interface GetActivityCounts_activities {
 }
 
 export interface GetActivityCounts_posts {
-  __typename: "ActivitiesConnection";
+  __typename: "PostsConnection";
   totalCount: number;
 }
 
 export interface GetActivityCounts_spaces {
-  __typename: "ActivitiesConnection";
+  __typename: "SpacesConnection";
   totalCount: number;
 }
 
 export interface GetActivityCounts_comments {
-  __typename: "ActivitiesConnection";
+  __typename: "PostsConnection";
   totalCount: number;
 }
 
 export interface GetActivityCounts_reactions {
-  __typename: "ActivitiesConnection";
+  __typename: "ReactionsConnection";
   totalCount: number;
 }
 
-export interface GetActivityCounts_follows {
-  __typename: "ActivitiesConnection";
+export interface GetActivityCounts_spaceFollows {
+  __typename: "SpaceFollowersConnection";
+  totalCount: number;
+}
+
+export interface GetActivityCounts_accountFollows {
+  __typename: "AccountFollowersConnection";
   totalCount: number;
 }
 
@@ -43,7 +48,8 @@ export interface GetActivityCounts {
   spaces: GetActivityCounts_spaces;
   comments: GetActivityCounts_comments;
   reactions: GetActivityCounts_reactions;
-  follows: GetActivityCounts_follows;
+  spaceFollows: GetActivityCounts_spaceFollows;
+  accountFollows: GetActivityCounts_accountFollows;
 }
 
 export interface GetActivityCountsVariables {
