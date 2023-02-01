@@ -25,7 +25,6 @@ import {
 import { getFilterType, setFiltersInUrl, tabs } from './utils'
 
 const MyFeed = dynamic(import('../activity/MyFeed'))
-const SpacersBanner = dynamic(import('src/components/utils/banners/SpacersBanner'))
 // import { CrowdloanProgress } from 'src/components/crowdloan/progress/ProgressSection'
 
 const { enableGraphQl, metaTags } = config
@@ -176,7 +175,6 @@ const HomePage: NextPage<Props> = props => (
       withOnBoarding
     >
       {/* <CrowdloanProgress /> */}
-      <SpacersBanner />
       <TabsHomePage {...props} />
     </PageContent>
   </>
