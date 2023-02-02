@@ -573,7 +573,7 @@ a {
 .DfPostName {
   @extend .DfUnboundedTitle;
   margin-top: 0;
-  margin-bottom: $space_big !important;
+  margin-bottom: $space_big;
   margin-right: $space_normal;
   line-height: 1.25;
   color: $color_font_normal;
