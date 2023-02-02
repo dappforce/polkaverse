@@ -16,6 +16,7 @@ import { useAuth } from '../auth/AuthContext'
 import { getCurrentWallet } from '../auth/utils'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { controlledMessage, Message, showErrorMessage, showSuccessMessage } from '../utils/Message'
+import { OffchainSignerEndpoint, offchainSignerRequest } from '../utils/OffchainSignerUtils'
 import { getWalletBySource } from '../wallets/supportedWallets/index'
 import styles from './SubstrateTxButton.module.sass'
 import useToggle from './useToggle'
@@ -52,6 +53,21 @@ export type TxButtonProps = BaseTxButtonProps & {
   withSpinner?: boolean
   component?: React.FunctionComponent
   customNodeApi?: ApiPromise
+}
+
+//TODO: create api folder for offchain-signer-backend
+
+const submitSignedCallData = async (data: any, jwt: string) => {
+  const signerEndpoint: OffchainSignerEndpoint = OffchainSignerEndpoint.SIGNER_SIGN
+
+  try {
+    const res = offchainSignerRequest(data, signerEndpoint, jwt)
+
+    return res
+  } catch (err) {
+    console.warn(err)
+    return undefined
+  }
 }
 
 function TxButton({
@@ -207,9 +223,25 @@ function TxButton({
 
     try {
       const extrinsic = await getExtrinsic()
+      const hexCallData = extrinsic.inner.toHex()
 
-      const tx = await extrinsic.signAsync(accountId, { signer })
-      unsub = await tx.send(onSuccessHandler)
+      //TODO: how to pass around jwt gracefully
+      // 1. create axios instance and
+      // use interceptors to send headers before requests?
+      const jwt =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50QWRkcmVzcyI6IjVFcHJuOUp1TERIbnRONzZ0OVFURkIzbUZpQ0RmS1dKWWlwSGY1elpRblhtSm1QZCIsImVtYWlsIjoiaHVzbmlAdGVzdC5tYWlsIiwic3ViIjoiNjNkYTFjZmU2YjRmYzJlMDQ3OGZhZTI5IiwiZW1haWxWZXJpZmllZCI6dHJ1ZSwiaWF0IjoxNjc1MjM4NzMyLCJleHAiOjE2NzU4NDM1MzJ9.31YpBgd77RE_ip45dmEpUSJTRFjk80UYIOylU4cD6OA'
+
+      const res = await submitSignedCallData(hexCallData, jwt)
+
+      const hexSignedCallData = res?.data
+
+      if (!res) {
+        throw new Error('No response from offchain signer')
+      }
+
+      api.tx(hexSignedCallData).send(onSuccessHandler)
+      // const tx = await extrinsic.signAsync(accountId, { signer })
+      // unsub = await tx.send(onSuccessHandler)
       waitMessage.open()
       sendGaEvent()
     } catch (err: any) {

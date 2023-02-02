@@ -33,6 +33,7 @@ import styles from './OnBoardingModal.module.sass'
 import Confirmation from './steps/Confirmation'
 import Energy from './steps/Energy'
 import Profile from './steps/Profile'
+import Signer from './steps/Signer'
 import Spaces from './steps/Spaces'
 import Topics from './steps/Topics'
 import { OnBoardingContentProps, OnBoardingModalProps } from './types'
@@ -63,6 +64,11 @@ const steps: {
     content: Energy,
     title: '⚡ Energy',
     subtitle: `Energy allows you to use ${config.appName}. You can create energy here by burning SUB or get a small amount of energy for free (only for new users), allowing you to start posting without getting tokens.`,
+  },
+  signer: {
+    content: Signer,
+    title: '🔒 Remember me',
+    subtitle: 'Skip approving every transactions',
   },
   confirmation: {
     content: Confirmation,

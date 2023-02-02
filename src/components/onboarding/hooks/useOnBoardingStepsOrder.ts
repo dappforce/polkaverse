@@ -32,6 +32,8 @@ export default function useOnBoardingStepsOrder(
       : transactionsCount < 20
     if (showEnergyStep) usedSteps.push('energy')
 
+    if (usedSteps[usedSteps.length - 1] === 'energy') usedSteps.push('signer')
+
     if (usedSteps.length > 0) usedSteps.push('confirmation')
 
     return usedSteps

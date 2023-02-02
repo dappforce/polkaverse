@@ -47,6 +47,8 @@ export default function OnBoardingContentContainer({
   const currentStep = useCurrentOnBoardingStep()
   const dispatch = useAppDispatch()
 
+  console.log({ currentStep })
+
   const isLastStep = totalSteps - 1 <= (currentStepIndex ?? -1)
   const shouldSubmitTxWhenContinue = isLastStep || openState === 'partial'
 
