@@ -36,6 +36,7 @@ import Embed from '../embed/Embed'
 import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
 import { PostDropDownMenu } from './PostDropDownMenu'
+import styles from './ViewPost.module.sass'
 
 type IsUnlistedPostProps = {
   post?: PostStruct
@@ -249,17 +250,24 @@ const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
 
   return (
     <div className='DfContent'>
-      <ViewPostLink
-        post={post}
-        space={space}
-        title={
-          <div>
-            {withImage && <PostImage post={post} space={space} />}
-            <PostName post={postDetails} withLink />
+      <div>
+        <ViewPostLink
+          post={post}
+          space={space}
+          title={
+            <>
+              {withImage && <PostImage post={post} space={space} />}
+              <PostName post={postDetails} withLink />
+            </>
+          }
+        />
+        <div className={styles.PostSummary}>
+          <ViewPostLink title=' ' post={post} space={space} className={styles.PostSummaryLink} />
+          <div className={styles.PostSummaryBody}>
             <PostSummary space={space} post={post} />
           </div>
-        }
-      />
+        </div>
+      </div>
     </div>
   )
 })
