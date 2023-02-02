@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-// const withBundleAnalyzer = require('@next/bundle-analyzer')
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
 const path = require('path')
 const Dotenv = require('dotenv-webpack')
 
@@ -63,7 +65,7 @@ const nextConfig = {
   },
 }
 
-module.exports = {
+module.exports = withBundleAnalyzer({
   ...nextConfig,
   async redirects() {
     const spaceId = ':spaceId(\\d{1,}|@.*)'
@@ -110,4 +112,4 @@ module.exports = {
       },
     ]
   },
-}
+})
