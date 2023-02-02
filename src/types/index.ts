@@ -5,6 +5,7 @@ import { ReactionId, ReactionType, SpaceData } from 'src/types'
 export * from '@subsocial/api/subsocial/flatteners'
 export * from '@subsocial/api/subsocial/flatteners/utils'
 export * from '@subsocial/api/types'
+export * from '@subsocial/elasticsearch/types'
 export { idToBn, bnToId, idsToBns, bnsToIds }
 
 export type ProfileData = SpaceData

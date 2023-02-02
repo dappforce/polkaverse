@@ -2516,18 +2516,17 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@subsocial/api@0.7.5":
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.7.5.tgz#70c8a42cdb80c3f317da99a8ad309c91ce142acb"
-  integrity sha512-U+A6y6LVevu+EhoEMm0UNkKll9HJqnwtlV8RCx23K8SiH9/lD/ITpdGQcBECCvFSV524dp3xWnXM5VyBXAzXHQ==
+"@subsocial/api@^0.7.11":
+  version "0.7.11"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.7.11.tgz#cf5b12a47c20d892e09f7d130a19883812b8562b"
+  integrity sha512-vchtJFLjiEwXuXTjCTY5l36JSPs2Omihm1eS+RdjjDwtzVNQ/n40E5OLuGKlJmMFz/Mr3Oe5Ug2MlfcxinATyg==
   dependencies:
-    "@elastic/elasticsearch" "7.4.0"
     "@polkadot/api" latest
     "@polkadot/types" latest
     "@polkadot/types-known" latest
     "@polkadot/types-support" latest
-    "@subsocial/definitions" "0.7.5"
-    "@subsocial/utils" "0.7.5"
+    "@subsocial/definitions" latest
+    "@subsocial/utils" latest
     axios "^0.24.0"
     ipfs-http-client "56.0.3"
 
@@ -2536,18 +2535,26 @@
   resolved "https://registry.yarnpkg.com/@subsocial/config/-/config-0.7.1.tgz#5dbd8dcd4540390e2c3ea4ab38466d7f5fee03b8"
   integrity sha512-zF+u865sZ++4+V1GRVtIeeBri+UMh6W+mVg04ysTNosk2gZ3xajv5m2EF8OdSvydrq2PSFTznSVVYGKACPNvjQ==
 
-"@subsocial/definitions@0.7.5":
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/@subsocial/definitions/-/definitions-0.7.5.tgz#1552d7aaf809ae1ea2a82d56169196a54f7326e8"
-  integrity sha512-pUT4/Y95Bw0L4wWeumafJ91rB2jHSRPm8rMSzOvuXnfrDlYIG7wV1Rzepmct+EhbllARLeOMKc2SnfJ0dxdUKw==
+"@subsocial/definitions@^0.7.11", "@subsocial/definitions@latest":
+  version "0.7.11"
+  resolved "https://registry.yarnpkg.com/@subsocial/definitions/-/definitions-0.7.11.tgz#a21fe9e194d3c470bacd2a645b0f819aeabaa07b"
+  integrity sha512-zG1Jj/xmCNpKPhzTi4ZTs6WVKakPQVetJBl+NXH9Eiq/eD4LkAZLgndqlDYdqXHZy+HR4dQP3bhA9xS0DFtZIw==
   dependencies:
     "@polkadot/api" latest
     lodash.camelcase "^4.3.0"
 
-"@subsocial/utils@0.7.5":
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.7.5.tgz#c3b8cfe343646b617d4c4eb68576ccc373384c94"
-  integrity sha512-4U+2n5ZIyMdYEV4g8sWlOM9X6X41BTa1U3DrY3hFQm0nYaTBMm3cvohrgN0WsfXm9fvswodAat9yQ8QioI78nw==
+"@subsocial/elasticsearch@^0.7.11":
+  version "0.7.11"
+  resolved "https://registry.yarnpkg.com/@subsocial/elasticsearch/-/elasticsearch-0.7.11.tgz#9782c9a36041138ea5a8273a7dfeee7f18eb90bd"
+  integrity sha512-wUzGoaN0OiEApM5kR/Ehz8u3hcBEcvvd1lVTYBhIS/16+OOBFCL+QDjIpAk99Cv79j4/wHMpFNHE3/BEHt28aA==
+  dependencies:
+    "@elastic/elasticsearch" "7.4.0"
+    "@subsocial/utils" latest
+
+"@subsocial/utils@^0.7.11", "@subsocial/utils@latest":
+  version "0.7.11"
+  resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.7.11.tgz#6a8f9bbb596b231698793b619edd3109f97ea403"
+  integrity sha512-1FQ11g6pjho9Ls4/LFce3bF4IC1dRmzhtXoQdWWbUc8E7sP2CjLqhSVjKNffhWlQMm2hjjIK6okRdGAMXjPD5Q==
   dependencies:
     "@polkadot/util-crypto" latest
     "@sindresorhus/slugify" "^1.1.0"
@@ -3228,6 +3235,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-dom@17.0.2":
+  version "17.0.2"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.2.tgz#35654cf6c49ae162d5bc90843d5437dc38008d43"
+  integrity sha512-Icd9KEgdnFfJs39KyRyr0jQ7EKhq8U6CcHRMGAS45fp5qgUvxL3ujUCfWFttUK2UErqZNj97t9gsVPNAqcwoCg==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-google-recaptcha@^2.1.0":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@types/react-google-recaptcha/-/react-google-recaptcha-2.1.2.tgz#b7af03527a4667a4f2cb01a7a50e0ea135e0bea0"
@@ -3301,13 +3315,21 @@
   dependencies:
     react-tooltip "*"
 
-"@types/react@*":
-  version "17.0.37"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.37.tgz#6884d0aa402605935c397ae689deed115caad959"
-  integrity sha512-2FS1oTqBGcH/s0E+CjrCCR9+JMpsu9b69RTFO+40ua43ZqP5MmQ4iUde/dMjWR909KxZwmOQIFq6AV6NjEG5xg==
+"@types/react@*", "@types/react@^17.x.x":
+  version "17.0.53"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.53.tgz#10d4d5999b8af3d6bc6a9369d7eb953da82442ab"
+  integrity sha512-1yIpQR2zdYu1Z/dc1OxC+MA6GR240u3gcnP4l6mvj/PJiVaqHsQPmWttsvHsfnhfPbU2FuGmo0wSITPygjBmsw==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@17.0.2":
+  version "17.0.2"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.2.tgz#3de24c4efef902dd9795a49c75f760cbe4f7a5a8"
+  integrity sha512-Xt40xQsrkdvjn1EyWe1Bc0dJLcil/9x2vAuW7ya+PuQip4UYUaXyhzWmAbwRsdMgwOFHpfp7/FFZebDU6Y8VHA==
+  dependencies:
+    "@types/prop-types" "*"
     csstype "^3.0.2"
 
 "@types/sanitize-html@^2.6.2":
