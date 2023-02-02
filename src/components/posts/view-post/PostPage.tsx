@@ -1,4 +1,4 @@
-import { summarize, summarizeMd } from '@subsocial/utils'
+import { summarize, summarizeMd, twitterParser } from '@subsocial/utils'
 import { getPostIdFromSlug } from '@subsocial/utils/slugify'
 import { NextPage } from 'next'
 import router from 'next/router'
@@ -80,7 +80,11 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const spaceStruct = space.struct
   const spaceData = space
 
-  const { title, body, image, tags, link } = content
+  const { title, image, tags, link, tweet } = content
+  let body = content.body
+  if (tweet?.id) {
+    body = twitterParser.parseTextToMarkdown(body)
+  }
 
   const goToCommentsId = 'comments'
 
@@ -109,6 +113,9 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
     } else {
       metaTitle = config.metaTags.title
     }
+  }
+
+  if (tweet?.id) {
   }
 
   return (

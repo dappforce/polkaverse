@@ -1,7 +1,7 @@
 import { MessageOutlined } from '@ant-design/icons'
 import { BN } from '@polkadot/util'
 import { PostId } from '@subsocial/api/types/substrate'
-import { isEmptyObj, isEmptyStr } from '@subsocial/utils'
+import { isEmptyObj, isEmptyStr, twitterParser } from '@subsocial/utils'
 import { Alert, Button, Tooltip } from 'antd'
 import clsx from 'clsx'
 import isEmpty from 'lodash.isempty'
@@ -218,6 +218,10 @@ type PostSummaryProps = {
 const PostSummary = React.memo(({ space, post }: PostSummaryProps) => {
   const { content } = post
   if (!content) return null
+
+  if (content.tweet?.id) {
+    return <DfMd source={twitterParser.parseTextToMarkdown(content.summary)} />
+  }
 
   const seeMoreLink = <BlackPostLink space={space!} post={post} title='View Post' />
   return <SummarizeMd content={content} more={seeMoreLink} />
