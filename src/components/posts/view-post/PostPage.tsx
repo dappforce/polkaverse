@@ -115,9 +115,6 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
     }
   }
 
-  if (tweet?.id) {
-  }
-
   return (
     <PageContent
       meta={{
