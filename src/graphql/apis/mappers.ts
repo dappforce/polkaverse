@@ -103,6 +103,7 @@ export const mapSimplePostFragment = (post: PostSimpleFragment): PostSimpleFragm
       canonical: post.canonical ?? '',
       isShowMore: summary.isShowMore,
       tags: getTokensFromUnifiedString(post.tagsOriginal),
+      tweetId: post.tweetId,
     }
   }
   const isIpfsDataError = post.content && !post.body && !post.image && !post.title

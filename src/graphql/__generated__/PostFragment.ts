@@ -159,6 +159,7 @@ export interface PostFragment {
   updatedAtTime: any | null;
   canonical: string | null;
   tagsOriginal: string | null;
+  tweetId: string | null;
   ownedByAccount: PostFragment_ownedByAccount;
   space: PostFragment_space | null;
   rootPost: PostFragment_rootPost | null;
