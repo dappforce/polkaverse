@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import { useResponsiveSize } from 'src/components/responsive'
 import { MutedSpan } from '../MutedText'
+import styles from './CardWithContent.module.sass'
 import DfCard, { DfCardProps } from './DfCard'
 
 export interface CardWithContentProps extends Omit<DfCardProps, 'title'> {
@@ -26,8 +27,8 @@ export default function CardWithContent({
 
   return (
     <DfCard {...props}>
-      <div className={clsx('d-flex w-100')}>
-        <div className={clsx(!isNotMobile ? 'mt-2' : '')}>{avatar}</div>
+      <div className={clsx(styles.CardWithContent, 'd-flex w-100')}>
+        <div className={clsx(isNotMobile ? '' : 'mb-2')}>{avatar}</div>
         <div className={clsx('d-flex flex-column w-100', avatar && 'ml-1')}>
           <div
             className={clsx(
@@ -44,7 +45,9 @@ export default function CardWithContent({
           </div>
           {subtitle && <MutedSpan>{subtitle}</MutedSpan>}
           {children}
-          {!isNotMobile && moveActionsToBottomInMobile && <div className={'mt-3'}>{actions}</div>}
+          {!isNotMobile && moveActionsToBottomInMobile && (
+            <div className={clsx('mt-3', styles.ActionMobile)}>{actions}</div>
+          )}
         </div>
       </div>
     </DfCard>
