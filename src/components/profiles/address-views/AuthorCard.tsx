@@ -53,21 +53,20 @@ export default function AuthorCard({
         </div>
       }
       subtitle={<DfMd source={profile?.content?.about} className='ColorCurrentColor' />}
-      actions={
-        <div className='d-flex align-items-center'>
-          {withTipButton && !isMy && <Donate recipientAddress={address.toString()} />}
-          {isMy && profile && (
-            <ButtonLink
-              href={'/[spaceId]/edit'}
-              as={editSpaceUrl(profile.struct)}
-              className='bg-transparent'
-            >
-              <EditOutlined /> Edit
-            </ButtonLink>
-          )}
-          <FollowAccountButton address={address} />
-        </div>
-      }
+      buttons={[
+        withTipButton && !isMy && <Donate key='donate' recipientAddress={address.toString()} />,
+        isMy && profile && (
+          <ButtonLink
+            key='edit'
+            href={'/[spaceId]/edit'}
+            as={editSpaceUrl(profile.struct)}
+            className='bg-transparent'
+          >
+            <EditOutlined /> Edit
+          </ButtonLink>
+        ),
+        <FollowAccountButton key='follow' address={address} />,
+      ]}
     />
   )
 }

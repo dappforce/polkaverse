@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { Fragment } from 'react'
 import { useResponsiveSize } from 'src/components/responsive'
 import { MutedSpan } from '../MutedText'
 import styles from './CardWithContent.module.sass'
@@ -10,6 +11,7 @@ export interface CardWithContentProps extends Omit<DfCardProps, 'title'> {
   title: string | JSX.Element
   subtitle?: string | JSX.Element
   actions?: JSX.Element
+  buttons?: (JSX.Element | undefined | null | boolean)[]
 
   moveActionsToBottomInMobile?: boolean
 }
@@ -21,9 +23,12 @@ export default function CardWithContent({
   avatar,
   children,
   moveActionsToBottomInMobile = true,
+  buttons,
   ...props
 }: CardWithContentProps) {
   const { isNotMobile } = useResponsiveSize()
+  const actionsContent =
+    actions || buttons?.map((el, idx) => <Fragment key={idx}>{el || null}</Fragment>)
 
   return (
     <DfCard {...props}>
@@ -36,17 +41,28 @@ export default function CardWithContent({
               'align-items-center',
               'w-100',
               'mb-2',
+              styles.TitleContainer,
             )}
           >
-            <div className={clsx('d-flex align-items-center', 'FontBig font-weight-semibold')}>
+            <div
+              className={clsx(
+                'd-flex align-items-center',
+                'FontBig font-weight-semibold',
+                styles.Title,
+              )}
+            >
               {title}
             </div>
-            {(isNotMobile || !moveActionsToBottomInMobile) && <div>{actions}</div>}
+            {(isNotMobile || !moveActionsToBottomInMobile) && (
+              <div className='d-flex align-items-center'>{actionsContent}</div>
+            )}
           </div>
           {subtitle && <MutedSpan>{subtitle}</MutedSpan>}
           {children}
           {!isNotMobile && moveActionsToBottomInMobile && (
-            <div className={clsx('mt-3', styles.ActionMobile)}>{actions}</div>
+            <div className={clsx('mt-3', actions ? '' : styles.ButtonsContainer)}>
+              {actionsContent}
+            </div>
           )}
         </div>
       </div>
