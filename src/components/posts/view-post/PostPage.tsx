@@ -1,5 +1,6 @@
 import { summarize, summarizeMd } from '@subsocial/utils'
 import { getPostIdFromSlug } from '@subsocial/utils/slugify'
+import clsx from 'clsx'
 import { NextPage } from 'next'
 import router from 'next/router'
 import { FC } from 'react'
@@ -147,7 +148,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
             </div>
             <OriginalPostPanel canonicalUrl={content.canonical} />
             <div className='DfPostContent'>
-              {titleMsg && <h1 className='DfPostName'>{titleMsg}</h1>}
+              {titleMsg && <h1 className={clsx('DfPostName', !body && 'mb-0')}>{titleMsg}</h1>}
               {struct.isSharedPost ? (
                 <SharePostContent postDetails={postData} space={space} />
               ) : (
