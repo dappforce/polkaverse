@@ -35,7 +35,7 @@ export default function AuthorCard({
   return (
     <CardWithContent
       {...props}
-      avatar={<Avatar address={address} avatar={accountAvatar} size={64} />}
+      avatar={<Avatar noMargin address={address} avatar={accountAvatar} size={64} />}
       title={
         <div className={clsx('d-flex', isMobile ? 'flex-column' : 'align-items-center')}>
           <Name asLink owner={profile} address={address} />
@@ -43,7 +43,7 @@ export default function AuthorCard({
             {withAuthorTag && (
               <Tag
                 color='blue'
-                className={clsx(isMobile ? 'mb-2' : 'ml-2')}
+                className={clsx('mr-0', isMobile ? 'mb-2' : 'ml-2')}
                 icon={<NotificationOutlined />}
               >
                 <span className='font-weight-normal'>Post author</span>

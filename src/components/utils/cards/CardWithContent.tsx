@@ -33,7 +33,7 @@ export default function CardWithContent({
   return (
     <DfCard {...props}>
       <div className={clsx(styles.CardWithContent, 'd-flex w-100')}>
-        <div className={clsx(isNotMobile ? '' : 'mb-2')}>{avatar}</div>
+        <div className={clsx('mt-2', isNotMobile ? '' : 'mb-2', styles.Avatar)}>{avatar}</div>
         <div className={clsx('d-flex flex-column w-100', avatar && 'ml-1')}>
           <div
             className={clsx(

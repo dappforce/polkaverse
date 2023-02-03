@@ -23,6 +23,7 @@ export default function SpaceCard({ spaceId, ...props }: SpaceCardProps) {
       avatar={
         spaceData && (
           <SpaceAvatar
+            noMargin
             address={spaceData?.struct.ownerId}
             space={spaceData?.struct}
             size={64}
