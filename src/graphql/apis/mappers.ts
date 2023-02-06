@@ -99,7 +99,7 @@ export const mapSimplePostFragment = (post: PostSimpleFragment): PostSimpleFragm
       image: post.image ?? '',
       title: post.title ?? '',
       link: post.link ?? undefined,
-      body: '',
+      body: post.body || '',
       canonical: post.canonical ?? '',
       isShowMore: summary.isShowMore,
       tags: getTokensFromUnifiedString(post.tagsOriginal),

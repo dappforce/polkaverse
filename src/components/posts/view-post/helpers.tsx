@@ -221,7 +221,7 @@ const PostSummary = React.memo(({ space, post }: PostSummaryProps) => {
   if (!content) return null
 
   if (content.tweet?.id) {
-    return <DfMd source={parseTwitterTextToMarkdown(content.summary)} />
+    return <DfMd source={parseTwitterTextToMarkdown(content.body)} />
   }
 
   const seeMoreLink = <BlackPostLink space={space!} post={post} title='View Post' />
