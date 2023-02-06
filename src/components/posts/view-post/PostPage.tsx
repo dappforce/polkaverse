@@ -104,18 +104,15 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
 
   const titleMsg = struct.isComment ? renderResponseTitle(rootPostData?.post) : title
   let metaTitle = title
-  if (!metaTitle) {
-    if (typeof body === 'string') {
-      metaTitle = summarizeMd(body, { limit: MAX_META_TITLE_LEN }).summary
-    } else {
-      metaTitle = config.metaTags.title
-    }
+  const defaultMetaTitle = config.metaTags.title
+  if (!metaTitle && typeof body === 'string') {
+    metaTitle = summarizeMd(body, { limit: MAX_META_TITLE_LEN }).summary
   }
 
   return (
     <PageContent
       meta={{
-        title: metaTitle,
+        title: metaTitle || defaultMetaTitle,
         desc: content.summary,
         image,
         tags,
