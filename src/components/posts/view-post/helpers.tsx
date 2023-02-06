@@ -175,10 +175,9 @@ export const PostCreator: FC<PostCreatorProps> = ({
 
 type PostImageProps = {
   post: PostData
-  space?: SpaceStruct
 }
 
-const PostImage = React.memo(({ post, space }: PostImageProps) => {
+const PostImage = React.memo(({ post }: PostImageProps) => {
   const { content } = post
   const image = content?.image
   const [shouldImageBeCropped, setShouldImageBeCropped] = useState(true)
@@ -242,7 +241,7 @@ const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
 
   return (
     <div className='DfContent'>
-      {withImage && <PostImage post={post} space={space} />}
+      {withImage && <PostImage post={post} />}
       <ViewPostLink
         post={post}
         space={space}
