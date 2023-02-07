@@ -2,14 +2,14 @@ import { MessageOutlined } from '@ant-design/icons'
 import { BN } from '@polkadot/util'
 import { PostId } from '@subsocial/api/types/substrate'
 import { isEmptyObj, isEmptyStr, parseTwitterTextToMarkdown } from '@subsocial/utils'
-import { Alert, Button, Tooltip } from 'antd'
+import { Alert, Button, Image, Tooltip } from 'antd'
 import clsx from 'clsx'
 import isEmpty from 'lodash.isempty'
 import Error from 'next/error'
 import React, { FC, useState } from 'react'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
-import { HasDataForSlug, postUrl } from 'src/components/urls'
+import { HasDataForSlug } from 'src/components/urls'
 import { DfMd } from 'src/components/utils/DfMd'
 import NoData from 'src/components/utils/EmptyList'
 import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels'
@@ -29,7 +29,6 @@ import { useIsMyAddress } from '../../auth/MyAccountsContext'
 import AuthorPreview from '../../profiles/address-views/AuthorPreview'
 import { SpaceNameAsLink } from '../../spaces/ViewSpace'
 import { formatDate, IconWithLabel, isHidden, toShortUrl, useIsVisible } from '../../utils'
-import { DfBgImageLink } from '../../utils/DfBgImg'
 import { SummarizeMd } from '../../utils/md/SummarizeMd'
 import ViewTags from '../../utils/ViewTags'
 import Embed from '../embed/Embed'
@@ -177,10 +176,9 @@ export const PostCreator: FC<PostCreatorProps> = ({
 
 type PostImageProps = {
   post: PostData
-  space?: SpaceStruct
 }
 
-const PostImage = React.memo(({ post, space }: PostImageProps) => {
+const PostImage = React.memo(({ post }: PostImageProps) => {
   const { content } = post
   const image = content?.image
   const [shouldImageBeCropped, setShouldImageBeCropped] = useState(true)
@@ -199,12 +197,10 @@ const PostImage = React.memo(({ post, space }: PostImageProps) => {
     DfPostImagePreviewWrapper: true,
   })
   return (
-    <DfBgImageLink
-      href={'/[spaceId]/[slug]'}
-      as={postUrl(space, post)}
+    <Image
       src={resolveIpfsUrl(image)}
       className='DfPostImagePreview'
-      preview={false}
+      preview={{ mask: null }}
       wrapperClassName={wrapperClassName}
       onLoad={onImgLoad}
     />
@@ -251,16 +247,8 @@ const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
   return (
     <div className='DfContent'>
       <div>
-        <ViewPostLink
-          post={post}
-          space={space}
-          title={
-            <>
-              {withImage && <PostImage post={post} space={space} />}
-              <PostName post={postDetails} withLink />
-            </>
-          }
-        />
+        {withImage && <PostImage post={post} />}
+        <ViewPostLink post={post} space={space} title={<PostName post={postDetails} withLink />} />
         <div className={styles.PostSummary}>
           <ViewPostLink title=' ' post={post} space={space} className={styles.PostSummaryLink} />
           <div className={styles.PostSummaryBody}>
