@@ -15,10 +15,26 @@
     a
       color: inherit
 
-  .TwitterPostBody
+  .TwitterPostContent
     padding: $space_normal $space_large
     padding-top: $space_small
     font-size: $font_large
 
     \:global .markdown-body
       font-size: inherit
+
+    .TwitterPostBodyContainer
+      position: relative
+
+      .TwitterPostBodyLink
+        inset: 0
+        position: absolute
+        width: 100%
+        height: 100%
+
+      .TwitterPostBody
+        position: relative
+        pointer-events: none
+
+        a
+          pointer-events: all
