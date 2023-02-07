@@ -30,12 +30,12 @@ export default function AuthorCard({
   const profile = useSelectProfile(address.toString())
   const accountAvatar = profile?.content?.image
   const isMobile = useIsMobileWidthOrDevice()
-  const isMy = useIsMyAddress(address)
+  const isMyAddress = useIsMyAddress(address)
 
   return (
     <CardWithContent
       {...props}
-      avatar={<Avatar address={address} avatar={accountAvatar} size={64} />}
+      avatar={<Avatar noMargin address={address} avatar={accountAvatar} size={64} />}
       title={
         <div className={clsx('d-flex', isMobile ? 'flex-column' : 'align-items-center')}>
           <Name asLink owner={profile} address={address} />
@@ -43,7 +43,7 @@ export default function AuthorCard({
             {withAuthorTag && (
               <Tag
                 color='blue'
-                className={clsx(isMobile ? 'mb-2' : 'ml-2')}
+                className={clsx('mr-0', isMobile ? 'mb-2' : 'ml-2')}
                 icon={<NotificationOutlined />}
               >
                 <span className='font-weight-normal'>Post author</span>
@@ -53,21 +53,22 @@ export default function AuthorCard({
         </div>
       }
       subtitle={<DfMd source={profile?.content?.about} className='ColorCurrentColor' />}
-      actions={
-        <div className='d-flex align-items-center'>
-          {withTipButton && !isMy && <Donate recipientAddress={address.toString()} />}
-          {isMy && profile && (
-            <ButtonLink
-              href={'/[spaceId]/edit'}
-              as={editSpaceUrl(profile.struct)}
-              className='bg-transparent'
-            >
-              <EditOutlined /> Edit
-            </ButtonLink>
-          )}
-          <FollowAccountButton address={address} />
-        </div>
-      }
+      buttons={[
+        withTipButton && !isMyAddress && (
+          <Donate key='donate' recipientAddress={address.toString()} />
+        ),
+        isMyAddress && profile && (
+          <ButtonLink
+            key='edit'
+            href={'/[spaceId]/edit'}
+            as={editSpaceUrl(profile.struct)}
+            className='bg-transparent'
+          >
+            <EditOutlined /> Edit
+          </ButtonLink>
+        ),
+        <FollowAccountButton key='follow' address={address} />,
+      ]}
     />
   )
 }
