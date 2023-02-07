@@ -36,7 +36,7 @@ export default function TwitterPost({ content, ...props }: TwitterPostProps) {
         </Link>
       </div>
       <div className={styles.TwitterPostBody}>
-        <PostImage className='my-3' content={content} />
+        <PostImage className='my-2' content={content} />
         <DfMd source={parsedBody} />
       </div>
     </div>
