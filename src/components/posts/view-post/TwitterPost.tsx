@@ -3,7 +3,6 @@ import { createTwitterURL, parseTwitterTextToMarkdown } from '@subsocial/utils'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { HTMLProps } from 'react'
-import { BsTwitter } from 'react-icons/bs'
 import { DfMd } from 'src/components/utils/DfMd'
 import ViewPostLink from '../ViewPostLink'
 import { PostImage } from './helpers'
@@ -25,13 +24,8 @@ export default function TwitterPost({ post, space, ...props }: TwitterPostProps)
     <div {...props} className={clsx(styles.TwitterPost, props.className)}>
       <div className={styles.TwitterPostHeader}>
         <Link passHref href={originalTweetUrl}>
-          <a
-            target='_blank'
-            rel='noreferrer noopener'
-            className='font-weight-bold d-flex align-items-center'
-          >
-            <span>Saved From</span>
-            <BsTwitter className='ml-2' />
+          <a target='_blank' rel='noreferrer noopener' className='font-weight-bold'>
+            Saved from Twitter
           </a>
         </Link>
         <Link href='https://post4ever.app/' passHref>
