@@ -1,4 +1,4 @@
-import { summarize, summarizeMd } from '@subsocial/utils'
+import { parseTwitterTextToMarkdown, summarize, summarizeMd } from '@subsocial/utils'
 import { getPostIdFromSlug } from '@subsocial/utils/slugify'
 import clsx from 'clsx'
 import { NextPage } from 'next'
@@ -81,7 +81,11 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const spaceStruct = space.struct
   const spaceData = space
 
-  const { title, body, image, tags, link } = content
+  const { title, image, tags, link, tweet } = content
+  let body = content.body
+  if (tweet?.id) {
+    body = parseTwitterTextToMarkdown(body)
+  }
 
   const goToCommentsId = 'comments'
 

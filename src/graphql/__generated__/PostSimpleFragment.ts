@@ -55,6 +55,7 @@ export interface PostSimpleFragment {
   updatedAtTime: any | null;
   canonical: string | null;
   tagsOriginal: string | null;
+  tweetId: string | null;
   ownedByAccount: PostSimpleFragment_ownedByAccount;
   space: PostSimpleFragment_space | null;
   rootPost: PostSimpleFragment_rootPost | null;

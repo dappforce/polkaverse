@@ -99,10 +99,17 @@ export const mapSimplePostFragment = (post: PostSimpleFragment): PostSimpleFragm
       image: post.image ?? '',
       title: post.title ?? '',
       link: post.link ?? undefined,
-      body: '',
+      body: post.body || '',
       canonical: post.canonical ?? '',
       isShowMore: summary.isShowMore,
       tags: getTokensFromUnifiedString(post.tagsOriginal),
+      tweet: post.tweetId
+        ? {
+            id: post.tweetId,
+            edit_history_tweet_ids: [],
+            username: '',
+          }
+        : undefined,
     }
   }
   const isIpfsDataError = post.content && !post.body && !post.image && !post.title

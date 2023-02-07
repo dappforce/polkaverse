@@ -58,7 +58,7 @@
 
 @media (max-width: 767px) {
   .ant-tabs {
-    margin: 0 -$space_normal;
+    margin: 0 (-$space_normal);
   }
 
   .MobilePageContent {

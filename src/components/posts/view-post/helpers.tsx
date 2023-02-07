@@ -1,7 +1,7 @@
 import { MessageOutlined } from '@ant-design/icons'
 import { BN } from '@polkadot/util'
 import { PostId } from '@subsocial/api/types/substrate'
-import { isEmptyObj, isEmptyStr } from '@subsocial/utils'
+import { isEmptyObj, isEmptyStr, parseTwitterTextToMarkdown } from '@subsocial/utils'
 import { Alert, Button, Tooltip } from 'antd'
 import clsx from 'clsx'
 import isEmpty from 'lodash.isempty'
@@ -36,6 +36,7 @@ import Embed from '../embed/Embed'
 import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
 import { PostDropDownMenu } from './PostDropDownMenu'
+import styles from './ViewPost.module.sass'
 
 type IsUnlistedPostProps = {
   post?: PostStruct
@@ -219,6 +220,10 @@ const PostSummary = React.memo(({ space, post }: PostSummaryProps) => {
   const { content } = post
   if (!content) return null
 
+  if (content.tweet?.id) {
+    return <DfMd source={parseTwitterTextToMarkdown(content.body)} />
+  }
+
   const seeMoreLink = <BlackPostLink space={space!} post={post} title='View Post' />
   return <SummarizeMd content={content} more={seeMoreLink} />
 })
@@ -245,17 +250,24 @@ const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
 
   return (
     <div className='DfContent'>
-      <ViewPostLink
-        post={post}
-        space={space}
-        title={
-          <div>
-            {withImage && <PostImage post={post} space={space} />}
-            <PostName post={postDetails} withLink />
+      <div>
+        <ViewPostLink
+          post={post}
+          space={space}
+          title={
+            <>
+              {withImage && <PostImage post={post} space={space} />}
+              <PostName post={postDetails} withLink />
+            </>
+          }
+        />
+        <div className={styles.PostSummary}>
+          <ViewPostLink title=' ' post={post} space={space} className={styles.PostSummaryLink} />
+          <div className={styles.PostSummaryBody}>
             <PostSummary space={space} post={post} />
           </div>
-        }
-      />
+        </div>
+      </div>
     </div>
   )
 })

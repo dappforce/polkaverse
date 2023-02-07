@@ -95,6 +95,7 @@ export const POST_SIMPLE_FRAGMENT = gql`
     updatedAtTime
     canonical
     tagsOriginal
+    tweetId
     ownedByAccount {
       id
     }

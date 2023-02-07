@@ -131,6 +131,18 @@ export interface AccountWhereInput {
   posts_every?: PostWhereInput | null
   posts_some?: PostWhereInput | null
   posts_none?: PostWhereInput | null
+  ownedPosts_every?: PostWhereInput | null
+  ownedPosts_some?: PostWhereInput | null
+  ownedPosts_none?: PostWhereInput | null
+  ownedPostsCount_isNull?: boolean | null
+  ownedPostsCount_eq?: number | null
+  ownedPostsCount_not_eq?: number | null
+  ownedPostsCount_gt?: number | null
+  ownedPostsCount_gte?: number | null
+  ownedPostsCount_lt?: number | null
+  ownedPostsCount_lte?: number | null
+  ownedPostsCount_in?: number[] | null
+  ownedPostsCount_not_in?: number[] | null
   followingPostsCount_isNull?: boolean | null
   followingPostsCount_eq?: number | null
   followingPostsCount_not_eq?: number | null
