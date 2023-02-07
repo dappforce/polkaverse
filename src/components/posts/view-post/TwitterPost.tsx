@@ -21,14 +21,16 @@ export default function TwitterPost({ content, ...props }: TwitterPostProps) {
   return (
     <div {...props} className={clsx(styles.TwitterPost, props.className)}>
       <div className={styles.TwitterPostHeader}>
-        <span className='font-weight-bold d-flex align-items-center'>
-          <BsTwitter className='FontLarge' />
-          <Link passHref href={originalTweetUrl}>
-            <a target='_blank' rel='noreferrer noopener' className='ml-2'>
-              Saved Tweet
-            </a>
-          </Link>
-        </span>
+        <Link passHref href={originalTweetUrl}>
+          <a
+            target='_blank'
+            rel='noreferrer noopener'
+            className='font-weight-bold d-flex align-items-center'
+          >
+            <span>Saved From</span>
+            <BsTwitter className='ml-2' />
+          </a>
+        </Link>
         <Link href='https://post4ever.app/' passHref>
           <a target='_blank' rel='noreferrer noopener'>
             How it works?
@@ -36,7 +38,7 @@ export default function TwitterPost({ content, ...props }: TwitterPostProps) {
         </Link>
       </div>
       <div className={styles.TwitterPostBody}>
-        <PostImage className='my-2' content={content} />
+        <PostImage className='CursorPointer my-2' content={content} />
         <DfMd source={parsedBody} />
       </div>
     </div>
