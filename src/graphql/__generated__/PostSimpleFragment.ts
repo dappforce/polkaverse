@@ -14,6 +14,11 @@ export interface PostSimpleFragment_createdByAccount {
   id: string;
 }
 
+export interface PostSimpleFragment_tweetDetails {
+  __typename: "TweetDetails";
+  username: string | null;
+}
+
 export interface PostSimpleFragment_ownedByAccount {
   __typename: "Account";
   id: string;
@@ -56,6 +61,7 @@ export interface PostSimpleFragment {
   canonical: string | null;
   tagsOriginal: string | null;
   tweetId: string | null;
+  tweetDetails: PostSimpleFragment_tweetDetails | null;
   ownedByAccount: PostSimpleFragment_ownedByAccount;
   space: PostSimpleFragment_space | null;
   rootPost: PostSimpleFragment_rootPost | null;

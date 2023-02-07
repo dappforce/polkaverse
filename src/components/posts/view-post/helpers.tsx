@@ -1,7 +1,7 @@
 import { MessageOutlined } from '@ant-design/icons'
 import { BN } from '@polkadot/util'
 import { PostId } from '@subsocial/api/types/substrate'
-import { isEmptyObj, isEmptyStr, parseTwitterTextToMarkdown } from '@subsocial/utils'
+import { isEmptyObj, isEmptyStr } from '@subsocial/utils'
 import { Alert, Button, Image, Tooltip } from 'antd'
 import clsx from 'clsx'
 import isEmpty from 'lodash.isempty'
@@ -21,7 +21,14 @@ import { resolveIpfsUrl } from 'src/ipfs'
 import messages from 'src/messages'
 import { isBlockedPost } from 'src/moderation'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
-import { PostData, PostStruct, PostWithSomeDetails, SpaceData, SpaceStruct } from 'src/types'
+import {
+  PostContent as PostContentType,
+  PostData,
+  PostStruct,
+  PostWithSomeDetails,
+  SpaceData,
+  SpaceStruct,
+} from 'src/types'
 import { getTimeRelativeToNow } from 'src/utils/date'
 import { RegularPreview } from '.'
 import { useSelectSpace } from '../../../rtk/features/spaces/spacesHooks'
@@ -35,7 +42,7 @@ import Embed from '../embed/Embed'
 import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
 import { PostDropDownMenu } from './PostDropDownMenu'
-import styles from './ViewPost.module.sass'
+import TwitterPost from './TwitterPost'
 
 type IsUnlistedPostProps = {
   post?: PostStruct
@@ -174,12 +181,12 @@ export const PostCreator: FC<PostCreatorProps> = ({
   )
 }
 
-type PostImageProps = {
-  post: PostData
+export type PostImageProps = {
+  content: PostContentType | undefined
+  className?: string
 }
 
-const PostImage = React.memo(({ post }: PostImageProps) => {
-  const { content } = post
+export const PostImage = React.memo(({ content, className }: PostImageProps) => {
   const image = content?.image
   const [shouldImageBeCropped, setShouldImageBeCropped] = useState(true)
 
@@ -192,7 +199,7 @@ const PostImage = React.memo(({ post }: PostImageProps) => {
     setShouldImageBeCropped(isTallerThan16By9)
   }
 
-  const wrapperClassName = clsx({
+  const wrapperClassName = clsx(className, {
     DfPostImagePreviewWrapperCropped: shouldImageBeCropped,
     DfPostImagePreviewWrapper: true,
   })
@@ -215,10 +222,6 @@ type PostSummaryProps = {
 const PostSummary = React.memo(({ space, post }: PostSummaryProps) => {
   const { content } = post
   if (!content) return null
-
-  if (content.tweet?.id) {
-    return <DfMd source={parseTwitterTextToMarkdown(content.body)} />
-  }
 
   const seeMoreLink = <BlackPostLink space={space!} post={post} title='View Post' />
   return <SummarizeMd content={content} more={seeMoreLink} />
@@ -243,19 +246,23 @@ const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
   const { content } = post
 
   if (!content || isEmptyObj(content)) return null
+  if (content.tweet?.id) {
+    return <TwitterPost content={content} className='mt-3' />
+  }
 
   return (
     <div className='DfContent'>
-      <div>
-        {withImage && <PostImage post={post} />}
-        <ViewPostLink post={post} space={space} title={<PostName post={postDetails} withLink />} />
-        <div className={styles.PostSummary}>
-          <ViewPostLink title=' ' post={post} space={space} className={styles.PostSummaryLink} />
-          <div className={styles.PostSummaryBody}>
+      {withImage && <PostImage content={post.content} />}
+      <ViewPostLink
+        post={post}
+        space={space}
+        title={
+          <div>
+            <PostName post={postDetails} withLink />
             <PostSummary space={space} post={post} />
           </div>
-        </div>
-      </div>
+        }
+      />
     </div>
   )
 })

@@ -1,0 +1,24 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.TwitterPost
+  border: 1px solid $color_twitter_border
+  border-radius: $border_radius_big
+  overflow: hidden
+
+  .TwitterPostHeader
+    display: flex
+    justify-content: space-between
+    padding: $space_tiny $space_large
+    background: $color_twitter_bg
+    color: $color_twitter_text
+
+    a
+      color: inherit
+
+  .TwitterPostBody
+    padding: $space_normal $space_large
+    padding-top: $space_small
+    font-size: $font_large
+
+    \:global .markdown-body
+      font-size: inherit

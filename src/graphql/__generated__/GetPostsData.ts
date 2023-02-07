@@ -14,6 +14,11 @@ export interface GetPostsData_posts_createdByAccount {
   id: string;
 }
 
+export interface GetPostsData_posts_tweetDetails {
+  __typename: "TweetDetails";
+  username: string | null;
+}
+
 export interface GetPostsData_posts_ownedByAccount_profileSpace_profileSpace {
   __typename: "Account";
   followingAccountsCount: number;
@@ -136,6 +141,11 @@ export interface GetPostsData_posts_rootPost {
 export interface GetPostsData_posts_sharedPost_createdByAccount {
   __typename: "Account";
   id: string;
+}
+
+export interface GetPostsData_posts_sharedPost_tweetDetails {
+  __typename: "TweetDetails";
+  username: string | null;
 }
 
 export interface GetPostsData_posts_sharedPost_ownedByAccount_profileSpace_profileSpace {
@@ -284,6 +294,7 @@ export interface GetPostsData_posts_sharedPost {
   canonical: string | null;
   tagsOriginal: string | null;
   tweetId: string | null;
+  tweetDetails: GetPostsData_posts_sharedPost_tweetDetails | null;
   ownedByAccount: GetPostsData_posts_sharedPost_ownedByAccount;
   space: GetPostsData_posts_sharedPost_space | null;
   rootPost: GetPostsData_posts_sharedPost_rootPost | null;
@@ -293,6 +304,11 @@ export interface GetPostsData_posts_sharedPost {
 export interface GetPostsData_posts_parentPost_createdByAccount {
   __typename: "Account";
   id: string;
+}
+
+export interface GetPostsData_posts_parentPost_tweetDetails {
+  __typename: "TweetDetails";
+  username: string | null;
 }
 
 export interface GetPostsData_posts_parentPost_ownedByAccount_profileSpace_profileSpace {
@@ -441,6 +457,7 @@ export interface GetPostsData_posts_parentPost {
   canonical: string | null;
   tagsOriginal: string | null;
   tweetId: string | null;
+  tweetDetails: GetPostsData_posts_parentPost_tweetDetails | null;
   ownedByAccount: GetPostsData_posts_parentPost_ownedByAccount;
   space: GetPostsData_posts_parentPost_space | null;
   rootPost: GetPostsData_posts_parentPost_rootPost | null;
@@ -469,6 +486,7 @@ export interface GetPostsData_posts {
   canonical: string | null;
   tagsOriginal: string | null;
   tweetId: string | null;
+  tweetDetails: GetPostsData_posts_tweetDetails | null;
   ownedByAccount: GetPostsData_posts_ownedByAccount;
   space: GetPostsData_posts_space | null;
   rootPost: GetPostsData_posts_rootPost | null;

@@ -96,6 +96,9 @@ export const POST_SIMPLE_FRAGMENT = gql`
     canonical
     tagsOriginal
     tweetId
+    tweetDetails {
+      username
+    }
     ownedByAccount {
       id
     }

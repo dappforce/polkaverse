@@ -14,6 +14,11 @@ export interface PostFragment_createdByAccount {
   id: string;
 }
 
+export interface PostFragment_tweetDetails {
+  __typename: "TweetDetails";
+  username: string | null;
+}
+
 export interface PostFragment_ownedByAccount_profileSpace_profileSpace {
   __typename: "Account";
   followingAccountsCount: number;
@@ -160,6 +165,7 @@ export interface PostFragment {
   canonical: string | null;
   tagsOriginal: string | null;
   tweetId: string | null;
+  tweetDetails: PostFragment_tweetDetails | null;
   ownedByAccount: PostFragment_ownedByAccount;
   space: PostFragment_space | null;
   rootPost: PostFragment_rootPost | null;
