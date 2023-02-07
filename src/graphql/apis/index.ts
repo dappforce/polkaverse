@@ -308,7 +308,7 @@ export async function getActivityCountStat(
       }
       return acc
     },
-    [],
+    [] as StatType['statisticsData'],
   )
 
   return {
