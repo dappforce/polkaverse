@@ -19,6 +19,7 @@ const messages: {
   topics: data => `Subscribing to ${data.length} topics`,
   spaces: data => `Subscribing to ${data.length} spaces`,
   energy: data => `Burning ${data} SUB`,
+  signer: () => 'Remember me',
 }
 
 export default function Confirmation({
@@ -36,6 +37,7 @@ export default function Confirmation({
   const noTokenToSign = status === 'zero' && balance.isZero()
 
   const confirmationContent: JSX.Element[] = []
+
   Object.keys(messages).forEach(key => {
     const castedKey = key as any as keyof OnBoardingDataTypes
     if (!onBoardingData) return

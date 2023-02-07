@@ -5,6 +5,7 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { subsocialUrl } from 'src/components/urls'
 import LoadingTransaction from 'src/components/utils/LoadingTransaction'
 import { MutedDiv, MutedSpan } from 'src/components/utils/MutedText'
+import RememberMeButton from 'src/components/utils/OffchainSigner/RememberMeButton'
 import PrivacyPolicyText from 'src/components/utils/PrivacyPolicyText'
 import TwitterMock from 'src/components/utils/TwitterMock'
 import TxButton from 'src/components/utils/TxButton'
@@ -37,6 +38,11 @@ export default function OnBoardingContentContainer({
   success,
   setLoading,
   setSuccess,
+  loadingProxy,
+  proxyAdded,
+  setProxyAdded,
+  onProxyAdded,
+  setLoadingProxy,
   buttonText = 'Continue',
   customButtonOnClick,
   hideSubmitBtn,
@@ -47,9 +53,8 @@ export default function OnBoardingContentContainer({
   const currentStep = useCurrentOnBoardingStep()
   const dispatch = useAppDispatch()
 
-  console.log({ currentStep })
-
   const isLastStep = totalSteps - 1 <= (currentStepIndex ?? -1)
+
   const shouldSubmitTxWhenContinue = isLastStep || openState === 'partial'
 
   const ContinueBtn = shouldSubmitTxWhenContinue && !customButtonOnClick ? TxButton : Button
@@ -63,7 +68,9 @@ export default function OnBoardingContentContainer({
     subtitle = 'Your profile is ready to use, and you can edit it at any time.'
   }
 
-  const showContinueBtn = !loading && !success && !hideSubmitBtn
+  const showSignerConfirmBtn = !hideSubmitBtn && currentStep === 'signer'
+
+  const showContinueBtn = !loading && !success && !hideSubmitBtn && currentStep !== 'signer'
 
   return (
     <>
@@ -118,6 +125,43 @@ export default function OnBoardingContentContainer({
             />
           </MutedDiv>
         )}
+        {showSignerConfirmBtn && (
+          <div className={clsx('d-flex justify-center align-center GapNormal')}>
+            <Button
+              className={clsx('w-100')}
+              size='large'
+              onClick={() => {
+                goToNextStep()
+              }}
+            >
+              No, I’m fine
+            </Button>
+            <RememberMeButton
+              className={clsx('w-100')}
+              type='primary'
+              size='large'
+              loading={loadingProxy}
+              disabled={loadingProxy}
+              onClick={async () => {
+                setLoadingProxy && setLoadingProxy(true)
+
+                dispatch(markStepAsDraftOnBoardingModal(false))
+                if (proxyAdded) {
+                  goToNextStep()
+                } else {
+                  setLoadingProxy && setLoadingProxy(true)
+                }
+              }}
+              onSuccess={() => {
+                setLoadingProxy && setLoadingProxy(false)
+                setProxyAdded && setProxyAdded(true)
+                onProxyAdded && onProxyAdded()
+                goToNextStep()
+              }}
+            />
+          </div>
+        )}
+
         {showContinueBtn && (
           <ContinueBtn
             isFreeTx

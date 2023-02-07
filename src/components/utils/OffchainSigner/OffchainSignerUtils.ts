@@ -3,7 +3,7 @@ import axios from 'axios'
 
 const log = newLogger('OffchainSignerRequests')
 
-const OFFCHAIN_SIGNER_URL = 'http://127.0.0.1:3000'
+const OFFCHAIN_SIGNER_URL = 'https://staging-signer.subsocial.network'
 
 type AxiosResponse<T = any> = {
   data: T
@@ -11,20 +11,32 @@ type AxiosResponse<T = any> = {
 }
 
 export const OffchainSignerEndpoint = {
-  SIGNUP: '/auth/signup',
-  SIGNIN: '/auth/signin',
-  CONFIRM: '/auth/confirm-email',
-  SIGNER_SIGN: '/signer/sign',
+  SIGNUP: 'auth/signup',
+  SIGNIN: 'auth/signin',
+  CONFIRM: 'auth/confirm-email',
+  SIGNER_SIGN: 'signer/sign',
+  GENERATE_PROOF: 'auth/generateAuthByAddressProof',
+  SEND_SIGNED_PROOF: 'auth/authByAddress',
+  FETCH_MAIN_PROXY: 'signer/main-proxy-address',
 } as const
 
 export type OffchainSignerEndpoint =
   typeof OffchainSignerEndpoint[keyof typeof OffchainSignerEndpoint]
 
+export type Method = 'GET' | 'POST'
+
+type OffchainSignerRequestProps = {
+  endpoint: OffchainSignerEndpoint
+  method: Method
+  data?: any
+  jwt?: string
+}
+
 export const offchainSignerRequest = async (
-  data: any,
-  endpoint: OffchainSignerEndpoint,
-  jwt?: string,
+  props: OffchainSignerRequestProps,
 ): Promise<AxiosResponse | undefined> => {
+  const { data, endpoint, method, jwt } = props
+
   let headers: undefined | { Authorization: string }
   if (jwt) {
     headers = { Authorization: jwt }
@@ -32,8 +44,8 @@ export const offchainSignerRequest = async (
 
   try {
     const res = await axios(`${OFFCHAIN_SIGNER_URL}/${endpoint}`, {
-      method: 'POST',
-      data,
+      method,
+      data: method === 'GET' ? undefined : data,
       headers,
     })
 

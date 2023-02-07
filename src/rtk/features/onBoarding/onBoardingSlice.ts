@@ -13,7 +13,7 @@ export type OnBoardingDataTypes = {
   energy: number
   profile: ProfileOnBoardingData
   spaces: string[]
-  signer: undefined
+  signer: string
   confirmation: undefined
 }
 

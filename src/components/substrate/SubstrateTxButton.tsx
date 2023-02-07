@@ -16,7 +16,11 @@ import { useAuth } from '../auth/AuthContext'
 import { getCurrentWallet } from '../auth/utils'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { controlledMessage, Message, showErrorMessage, showSuccessMessage } from '../utils/Message'
-import { OffchainSignerEndpoint, offchainSignerRequest } from '../utils/OffchainSignerUtils'
+import {
+  Method,
+  OffchainSignerEndpoint,
+  offchainSignerRequest,
+} from '../utils/OffchainSigner/OffchainSignerUtils'
 import { getWalletBySource } from '../wallets/supportedWallets/index'
 import styles from './SubstrateTxButton.module.sass'
 import useToggle from './useToggle'
@@ -55,13 +59,21 @@ export type TxButtonProps = BaseTxButtonProps & {
   customNodeApi?: ApiPromise
 }
 
-//TODO: create api folder for offchain-signer-backend
-
-const submitSignedCallData = async (data: any, jwt: string) => {
+const submitSignedCallData = async (data: any) => {
   const signerEndpoint: OffchainSignerEndpoint = OffchainSignerEndpoint.SIGNER_SIGN
+  const method = 'POST' as Method
+  const dataPayload = {
+    'hex-call-data': data,
+  }
 
   try {
-    const res = offchainSignerRequest(data, signerEndpoint, jwt)
+    const payload = {
+      data: dataPayload,
+      endpoint: signerEndpoint,
+      method,
+    }
+
+    const res = offchainSignerRequest(payload)
 
     return res
   } catch (err) {
@@ -201,7 +213,7 @@ function TxButton({
     doOnFailed(null)
   }
 
-  const sendSignedTx = async () => {
+  const sendSignedTx = async (isOffchain?: boolean) => {
     if (!accountId) {
       throw new Error('No account id provided')
     }
@@ -223,25 +235,23 @@ function TxButton({
 
     try {
       const extrinsic = await getExtrinsic()
-      const hexCallData = extrinsic.inner.toHex()
 
-      //TODO: how to pass around jwt gracefully
-      // 1. create axios instance and
-      // use interceptors to send headers before requests?
-      const jwt =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50QWRkcmVzcyI6IjVFcHJuOUp1TERIbnRONzZ0OVFURkIzbUZpQ0RmS1dKWWlwSGY1elpRblhtSm1QZCIsImVtYWlsIjoiaHVzbmlAdGVzdC5tYWlsIiwic3ViIjoiNjNkYTFjZmU2YjRmYzJlMDQ3OGZhZTI5IiwiZW1haWxWZXJpZmllZCI6dHJ1ZSwiaWF0IjoxNjc1MjM4NzMyLCJleHAiOjE2NzU4NDM1MzJ9.31YpBgd77RE_ip45dmEpUSJTRFjk80UYIOylU4cD6OA'
+      if (isOffchain) {
+        const hexCallData = extrinsic.inner.toHex()
 
-      const res = await submitSignedCallData(hexCallData, jwt)
+        const res = await submitSignedCallData(hexCallData)
 
-      const hexSignedCallData = res?.data
+        const hexSignedCallData = res?.data
 
-      if (!res) {
-        throw new Error('No response from offchain signer')
+        if (!res) {
+          throw new Error('No response from offchain signer')
+        }
+
+        api.tx(hexSignedCallData).send(onSuccessHandler)
       }
 
-      api.tx(hexSignedCallData).send(onSuccessHandler)
-      // const tx = await extrinsic.signAsync(accountId, { signer })
-      // unsub = await tx.send(onSuccessHandler)
+      const tx = await extrinsic.signAsync(accountId, { signer })
+      unsub = await tx.send(onSuccessHandler)
       waitMessage.open()
       sendGaEvent()
     } catch (err: any) {

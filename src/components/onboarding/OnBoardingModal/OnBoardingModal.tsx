@@ -68,7 +68,8 @@ const steps: {
   signer: {
     content: Signer,
     title: '🔒 Remember me',
-    subtitle: 'Skip approving every transactions',
+    subtitle:
+      'Avoid approving every interaction with your wallet by allowing PolkaVerse to remember you. This only affects social actions; your assets will remain secure.',
   },
   confirmation: {
     content: Confirmation,
@@ -100,6 +101,9 @@ export default function OnBoardingModal({
 
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+
+  const [loadingProxy, setLoadingProxy] = useState(false)
+  const [proxyAdded, setProxyAdded] = useState(false)
 
   const openState = useOnBoardingModalOpenState()
   const openCloseModal = useOpenCloseOnBoardingModal()
@@ -204,6 +208,10 @@ export default function OnBoardingModal({
             success={success}
             setLoading={setLoading}
             setSuccess={setSuccess}
+            loadingProxy={loadingProxy}
+            proxyAdded={proxyAdded}
+            setLoadingProxy={setLoadingProxy}
+            setProxyAdded={setProxyAdded}
             currentStepIndex={currentStepIndex}
             firstStepOffset={firstStepOffset}
             goToNextStep={goToNextStep}

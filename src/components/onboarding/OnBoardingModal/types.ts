@@ -17,6 +17,11 @@ export interface OnBoardingContentProps {
   success: boolean
   setSuccess: (success: boolean) => void
   setLoading: (loading: boolean) => void
+
+  loadingProxy?: boolean
+  proxyAdded?: boolean
+  setProxyAdded?: (proxyAdded: boolean) => void
+  setLoadingProxy?: (loadingProxy: boolean) => void
 }
 
 export interface OnBoardingContentContainerProps extends OnBoardingContentProps {
@@ -29,4 +34,9 @@ export interface OnBoardingContentContainerProps extends OnBoardingContentProps 
   buttonText?: string
   customButtonOnClick?: () => void
   showPrivacyPolicy?: boolean
+  loadingProxy?: boolean
+  proxyAdded?: boolean
+  setProxyAdded?: (proxyAdded: boolean) => void
+  setLoadingProxy?: (loadingProxy: boolean) => void
+  onProxyAdded?: () => void
 }
