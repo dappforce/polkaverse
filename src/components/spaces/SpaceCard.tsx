@@ -23,6 +23,7 @@ export default function SpaceCard({ spaceId, ...props }: SpaceCardProps) {
       avatar={
         spaceData && (
           <SpaceAvatar
+            noMargin
             address={spaceData?.struct.ownerId}
             space={spaceData?.struct}
             size={64}
@@ -41,22 +42,20 @@ export default function SpaceCard({ spaceId, ...props }: SpaceCardProps) {
         )
       }
       subtitle={<DfMd className='ColorCurrentColor' source={spaceData?.content?.about} />}
-      actions={
-        <div className='d-flex align-items-center'>
-          {spaceData &&
-            (isMySpace ? (
-              <ButtonLink
-                href={'/[spaceId]/edit'}
-                as={editSpaceUrl(spaceData.struct)}
-                className='bg-transparent'
-              >
-                <EditOutlined /> Edit
-              </ButtonLink>
-            ) : (
-              <FollowSpaceButton space={spaceData.struct} />
-            ))}
-        </div>
-      }
+      buttons={[
+        spaceData &&
+          (isMySpace ? (
+            <ButtonLink
+              href={'/[spaceId]/edit'}
+              as={editSpaceUrl(spaceData.struct)}
+              className='bg-transparent'
+            >
+              <EditOutlined /> Edit
+            </ButtonLink>
+          ) : (
+            <FollowSpaceButton space={spaceData.struct} />
+          )),
+      ]}
     />
   )
 }

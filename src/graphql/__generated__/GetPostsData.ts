@@ -283,6 +283,7 @@ export interface GetPostsData_posts_sharedPost {
   updatedAtTime: any | null;
   canonical: string | null;
   tagsOriginal: string | null;
+  tweetId: string | null;
   ownedByAccount: GetPostsData_posts_sharedPost_ownedByAccount;
   space: GetPostsData_posts_sharedPost_space | null;
   rootPost: GetPostsData_posts_sharedPost_rootPost | null;
@@ -439,6 +440,7 @@ export interface GetPostsData_posts_parentPost {
   updatedAtTime: any | null;
   canonical: string | null;
   tagsOriginal: string | null;
+  tweetId: string | null;
   ownedByAccount: GetPostsData_posts_parentPost_ownedByAccount;
   space: GetPostsData_posts_parentPost_space | null;
   rootPost: GetPostsData_posts_parentPost_rootPost | null;
@@ -466,6 +468,7 @@ export interface GetPostsData_posts {
   updatedAtTime: any | null;
   canonical: string | null;
   tagsOriginal: string | null;
+  tweetId: string | null;
   ownedByAccount: GetPostsData_posts_ownedByAccount;
   space: GetPostsData_posts_space | null;
   rootPost: GetPostsData_posts_rootPost | null;

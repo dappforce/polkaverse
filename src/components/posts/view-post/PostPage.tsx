@@ -1,4 +1,4 @@
-import { summarize, summarizeMd } from '@subsocial/utils'
+import { parseTwitterTextToMarkdown, summarize, summarizeMd } from '@subsocial/utils'
 import { getPostIdFromSlug } from '@subsocial/utils/slugify'
 import clsx from 'clsx'
 import { NextPage } from 'next'
@@ -81,7 +81,11 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const spaceStruct = space.struct
   const spaceData = space
 
-  const { title, body, image, tags, link } = content
+  const { title, image, tags, link, tweet } = content
+  let body = content.body
+  if (tweet?.id) {
+    body = parseTwitterTextToMarkdown(body)
+  }
 
   const goToCommentsId = 'comments'
 
@@ -104,18 +108,15 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
 
   const titleMsg = struct.isComment ? renderResponseTitle(rootPostData?.post) : title
   let metaTitle = title
-  if (!metaTitle) {
-    if (typeof body === 'string') {
-      metaTitle = summarizeMd(body, { limit: MAX_META_TITLE_LEN }).summary
-    } else {
-      metaTitle = config.metaTags.title
-    }
+  const defaultMetaTitle = config.metaTags.title
+  if (!metaTitle && typeof body === 'string') {
+    metaTitle = summarizeMd(body, { limit: MAX_META_TITLE_LEN }).summary
   }
 
   return (
     <PageContent
       meta={{
-        title: metaTitle,
+        title: metaTitle || defaultMetaTitle,
         desc: content.summary,
         image,
         tags,

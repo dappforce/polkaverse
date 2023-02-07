@@ -105,7 +105,16 @@ export const Filters = (props: Props) => {
   return (
     <div className={`DfFilters ${!isAffix ? 'mt-3' : ''}`}>
       <Row className={style.DfGridParams}>
-        {isMobile ? (
+        {!isMobile ? (
+          <Col className={needDateFilter ? style.DfCol : 'ant-col-24'}>
+            <Radio.Group
+              options={filterByKey[tabKey]}
+              onChange={onChangeWrap(onFilterChange)}
+              value={type}
+              optionType={'button'}
+            />
+          </Col>
+        ) : (
           <Col className={needDateFilter ? style.DfCol : 'ant-col-24'}>
             <Select
               value={type}
@@ -118,15 +127,6 @@ export const Filters = (props: Props) => {
                 </Select.Option>
               ))}
             </Select>
-          </Col>
-        ) : (
-          <Col className={needDateFilter ? style.DfCol : 'ant-col-24'}>
-            <Radio.Group
-              options={filterByKey[tabKey]}
-              onChange={onChangeWrap(onFilterChange)}
-              value={type}
-              optionType={'button'}
-            />
           </Col>
         )}
         {needDateFilter && (

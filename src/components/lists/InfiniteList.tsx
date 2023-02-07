@@ -89,7 +89,9 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
 
   const [page, setPage] = useState(initialPage)
   const [data, setData] = useState(dataSource || [])
-  const [loading, setLoading] = useState(false)
+
+  const loadingInitialState = !hasInitialData
+  const [loading, setLoading] = useState(loadingInitialState)
 
   const [hasMore, setHasMore] = useState(canHaveMoreData(dataSource, page))
 
