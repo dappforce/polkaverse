@@ -21,6 +21,7 @@ import {
   GetFollowActivities,
   GetFollowActivitiesVariables,
 } from '../__generated__/GetFollowActivities'
+import { GetLatestSpaceId } from '../__generated__/GetLatestSpaceId'
 import { GetNewsFeeds, GetNewsFeedsVariables } from '../__generated__/GetNewsFeeds'
 import { GetNewsFeedsCount, GetNewsFeedsCountVariables } from '../__generated__/GetNewsFeedsCount'
 import { GetNotifications, GetNotificationsVariables } from '../__generated__/GetNotifications'
@@ -308,7 +309,7 @@ export async function getActivityCountStat(
       }
       return acc
     },
-    [] as StatType['statisticsData'],
+    [],
   )
 
   return {
@@ -318,4 +319,12 @@ export async function getActivityCountStat(
     todayCount: res.data.today.totalCount,
     statisticsData,
   }
+}
+
+export async function getLatestSpaceId(client: GqlClient) {
+  const res = await client.query<GetLatestSpaceId>({
+    query: q.GET_LATEST_SPACE_ID,
+  })
+  const [latestSpace] = res.data.spaces
+  return latestSpace?.id
 }

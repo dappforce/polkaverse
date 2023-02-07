@@ -255,6 +255,14 @@ export const GET_POSTS_DATA = gql`
 // Space queries
 // ------------------------------------------------------------------------------------
 
+export const GET_LATEST_SPACE_ID = gql`
+  query GetLatestSpaceId {
+    spaces(limit: 1, orderBy: id_DESC) {
+      id
+    }
+  }
+`
+
 export const GET_LATEST_SPACE_IDS = gql`
   query GetLatestSpaceIds($offset: Int = 0, $limit: Int!) {
     spaces(offset: $offset, limit: $limit, orderBy: id_DESC) {
