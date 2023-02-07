@@ -170,38 +170,40 @@ export default function OnBoardingModal({
   const modalClosable = !loading && openState === 'partial'
 
   return (
-    <Modal
-      visible={
-        openState !== '' &&
-        !(openState === 'full-on-boarding' && onBoardingModalStepsOrder.length === 0)
-      }
-      destroyOnClose
-      closable={success || modalClosable}
-      maskClosable={modalClosable}
-      keyboard={modalClosable}
-      onCancel={() => afterDoneOnBoarding(!success)}
-      footer={null}
-      className={clsx(
-        styles.DfOnBoardingModal,
-        openState === 'full-on-boarding' && !success && styles.DfOnBoardingModalFull,
-      )}
-    >
-      {currentContent && Component && (
-        <Component
-          loading={loading}
-          success={success}
-          setLoading={setLoading}
-          setSuccess={setSuccess}
-          currentStepIndex={currentStepIndex}
-          firstStepOffset={firstStepOffset}
-          goToNextStep={goToNextStep}
-          onBackClick={onBackClick}
-          totalSteps={onBoardingModalStepsOrder.length}
-          title={currentContent.title}
-          subtitle={currentContent.subtitle}
-        />
-      )}
-    </Modal>
+    <>
+      <Modal
+        visible={
+          openState !== '' &&
+          !(openState === 'full-on-boarding' && onBoardingModalStepsOrder.length === 0)
+        }
+        destroyOnClose
+        closable={success || modalClosable}
+        maskClosable={modalClosable}
+        keyboard={modalClosable}
+        onCancel={() => afterDoneOnBoarding(!success)}
+        footer={null}
+        className={clsx(
+          styles.DfOnBoardingModal,
+          openState === 'full-on-boarding' && !success && styles.DfOnBoardingModalFull,
+        )}
+      >
+        {currentContent && Component && (
+          <Component
+            loading={loading}
+            success={success}
+            setLoading={setLoading}
+            setSuccess={setSuccess}
+            currentStepIndex={currentStepIndex}
+            firstStepOffset={firstStepOffset}
+            goToNextStep={goToNextStep}
+            onBackClick={onBackClick}
+            totalSteps={onBoardingModalStepsOrder.length}
+            title={currentContent.title}
+            subtitle={currentContent.subtitle}
+          />
+        )}
+      </Modal>
+    </>
   )
 }
 
