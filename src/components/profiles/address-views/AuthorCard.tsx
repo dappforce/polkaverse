@@ -30,7 +30,7 @@ export default function AuthorCard({
   const profile = useSelectProfile(address.toString())
   const accountAvatar = profile?.content?.image
   const isMobile = useIsMobileWidthOrDevice()
-  const isMy = useIsMyAddress(address)
+  const isMyAddress = useIsMyAddress(address)
 
   return (
     <CardWithContent
@@ -54,8 +54,10 @@ export default function AuthorCard({
       }
       subtitle={<DfMd source={profile?.content?.about} className='ColorCurrentColor' />}
       buttons={[
-        withTipButton && !isMy && <Donate key='donate' recipientAddress={address.toString()} />,
-        isMy && profile && (
+        withTipButton && !isMyAddress && (
+          <Donate key='donate' recipientAddress={address.toString()} />
+        ),
+        isMyAddress && profile && (
           <ButtonLink
             key='edit'
             href={'/[spaceId]/edit'}
