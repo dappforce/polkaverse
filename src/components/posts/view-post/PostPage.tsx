@@ -46,6 +46,7 @@ import {
   useIsUnlistedPost,
 } from './helpers'
 import { PostDropDownMenu } from './PostDropDownMenu'
+import TwitterPost from './TwitterPost'
 
 export type PostDetailsProps = {
   postData: PostWithAllDetails
@@ -148,23 +149,31 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               )}
             </div>
             <OriginalPostPanel canonicalUrl={content.canonical} />
-            <div className='DfPostContent'>
-              {titleMsg && <h1 className={clsx('DfPostName', !body && 'mb-0')}>{titleMsg}</h1>}
-              {struct.isSharedPost ? (
-                <SharePostContent postDetails={postData} space={space} />
-              ) : (
-                <>
-                  {image && (
-                    <div className='d-flex justify-content-center'>
-                      <DfImage src={resolveIpfsUrl(image)} className='DfPostImage' />
-                    </div>
-                  )}
-                  {link && <Embed link={link} className={!!body ? 'mb-3' : 'mb-0'} />}
-                  {body && <DfMd source={body} />}
-                  <ViewTags tags={tags} className='mt-2' />
-                </>
-              )}
-            </div>
+            {content.tweet ? (
+              <TwitterPost
+                className='DfBoxShadowLight mt-4 mb-3'
+                post={post}
+                space={space.struct}
+              />
+            ) : (
+              <div className='DfPostContent'>
+                {titleMsg && <h1 className={clsx('DfPostName', !body && 'mb-0')}>{titleMsg}</h1>}
+                {struct.isSharedPost ? (
+                  <SharePostContent postDetails={postData} space={space} />
+                ) : (
+                  <>
+                    {image && (
+                      <div className='d-flex justify-content-center'>
+                        <DfImage src={resolveIpfsUrl(image)} className='DfPostImage' />
+                      </div>
+                    )}
+                    {link && <Embed link={link} className={!!body ? 'mb-3' : 'mb-0'} />}
+                    {body && <DfMd source={body} />}
+                    <ViewTags tags={tags} className='mt-2' />
+                  </>
+                )}
+              </div>
+            )}
 
             <div className='DfRow mt-2'>
               <PostActionsPanel postDetails={postData} space={space.struct} />
