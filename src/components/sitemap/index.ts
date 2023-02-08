@@ -209,9 +209,8 @@ export class PostsUrlSet extends React.Component {
 
     const items: UrlItem[] = posts.map(post => {
       return {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        loc: postUrl(space!.struct, post),
-        lastmod: getLastModFromStruct(post.struct),
+        loc: postUrl(post.space || undefined, { struct: post }),
+        lastmod: getLastModFromStruct(post),
         changefreq: 'weekly',
       }
     })
