@@ -154,6 +154,14 @@ export const POST_FRAGMENT = gql`
 // Post queries
 // ------------------------------------------------------------------------------------
 
+export const GET_LATEST_POST_ID = gql`
+  query GetLatestPostId {
+    posts(limit: 1, orderBy: createdAtTime_DESC) {
+      id
+    }
+  }
+`
+
 export const GET_LATEST_POST_IDS = gql`
   query GetLatestPostIds($kind: PostKind = RegularPost, $offset: Int = 0, $limit: Int!) {
     posts(where: { kind_eq: $kind }, orderBy: createdAtBlock_DESC, offset: $offset, limit: $limit) {
@@ -257,7 +265,7 @@ export const GET_POSTS_DATA = gql`
 
 export const GET_LATEST_SPACE_ID = gql`
   query GetLatestSpaceId {
-    spaces(limit: 1, orderBy: id_DESC) {
+    spaces(limit: 1, orderBy: createdAtTime_DESC) {
       id
     }
   }
@@ -338,6 +346,14 @@ export const GET_SPACES_DATA = gql`
   query GetSpacesData($where: SpaceWhereInput) {
     spaces(where: $where) {
       ...SpaceFragment
+    }
+  }
+`
+
+export const GET_PROFILES_COUNT = gql`
+  query GetProfilesCount {
+    accountsConnection(where: { profileSpace_isNull: false }, orderBy: id_ASC) {
+      totalCount
     }
   }
 `

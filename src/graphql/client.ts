@@ -7,6 +7,7 @@ const { enableGraphQl, graphqlUrl } = config
 let apolloClient: ApolloClient<NormalizedCacheObject>
 
 export function getApolloClient() {
+  if (!apolloClient) return initializeApollo()
   return apolloClient
 }
 
@@ -18,7 +19,8 @@ const createApolloClient = (graphqlUrl: string): ApolloClient<NormalizedCacheObj
 }
 
 export const initializeApollo = (initialState: any = null) => {
-  if (!enableGraphQl || !graphqlUrl) return undefined
+  if (!enableGraphQl || !graphqlUrl)
+    throw new Error('Graphql is disabled or graphql URL is not set')
 
   const _apolloClient = apolloClient ?? createApolloClient(graphqlUrl)
 

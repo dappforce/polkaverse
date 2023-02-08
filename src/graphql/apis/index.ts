@@ -21,6 +21,7 @@ import {
   GetFollowActivities,
   GetFollowActivitiesVariables,
 } from '../__generated__/GetFollowActivities'
+import { GetLatestPostId } from '../__generated__/GetLatestPostId'
 import { GetLatestSpaceId } from '../__generated__/GetLatestSpaceId'
 import { GetNewsFeeds, GetNewsFeedsVariables } from '../__generated__/GetNewsFeeds'
 import { GetNewsFeedsCount, GetNewsFeedsCountVariables } from '../__generated__/GetNewsFeedsCount'
@@ -35,6 +36,7 @@ import {
   GetPostIdsBySpacesVariables,
 } from '../__generated__/GetPostIdsBySpaces'
 import { GetPostsData, GetPostsDataVariables } from '../__generated__/GetPostsData'
+import { GetProfilesCount } from '../__generated__/GetProfilesCount'
 import { GetProfilesData, GetProfilesDataVariables } from '../__generated__/GetProfilesData'
 import {
   GetReactionActivities,
@@ -327,4 +329,19 @@ export async function getLatestSpaceId(client: GqlClient) {
   })
   const [latestSpace] = res.data.spaces
   return latestSpace?.id
+}
+
+export async function getLatestPostId(client: GqlClient) {
+  const res = await client.query<GetLatestPostId>({
+    query: q.GET_LATEST_POST_ID,
+  })
+  const [latestPost] = res.data.posts
+  return latestPost?.id
+}
+
+export async function getProfileSpaceCount(client: GqlClient) {
+  const res = await client.query<GetProfilesCount>({
+    query: q.GET_PROFILES_COUNT,
+  })
+  return res.data.accountsConnection.totalCount
 }
