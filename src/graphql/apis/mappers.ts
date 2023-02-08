@@ -1,5 +1,5 @@
 import { summarizeMd } from '@subsocial/utils'
-import { Activity } from 'src/types'
+import { Activity, PostContent } from 'src/types'
 import { ActivityRequiredFragment } from '../__generated__/ActivityRequiredFragment'
 import { GetPostsData_posts } from '../__generated__/GetPostsData'
 import { PostFragment } from '../__generated__/PostFragment'
@@ -92,7 +92,7 @@ export const mapSimpleSpaceFragment = (space: SpaceSimpleFragment): SpaceSimpleF
 }
 
 export const mapSimplePostFragment = (post: PostSimpleFragment): PostSimpleFragmentMapped => {
-  const getContent = () => {
+  const getContent = (): PostContent => {
     const summary = summarizeMd(post.body ?? '')
     return {
       summary: summary.summary ?? '',
@@ -107,7 +107,7 @@ export const mapSimplePostFragment = (post: PostSimpleFragment): PostSimpleFragm
         ? {
             id: post.tweetId,
             edit_history_tweet_ids: [],
-            username: '',
+            username: post.tweetDetails?.username ?? '',
           }
         : undefined,
     }

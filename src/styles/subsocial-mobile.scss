@@ -246,12 +246,10 @@
     &.DfSegment {
       padding-bottom: 0 !important;
     }
-    .DfPostImagePreviewWrapper {
-      margin-bottom: $space_tiny !important;
-    }
-    .DfPostImagePreview {
-      margin-left: 0 !important;
-    }
+  }
+
+  .DfPostImagePreviewWrapper {
+    margin-bottom: $space_tiny !important;
   }
 
   .DfSpaceStats {
