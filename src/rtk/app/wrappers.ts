@@ -1,4 +1,6 @@
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { AsyncThunkPayloadCreator, Dictionary, EntityId } from '@reduxjs/toolkit'
+import { getApolloClient } from 'src/graphql/client'
 import { DataSourceTypes } from 'src/types'
 import {
   CommonFetchPropsWithPrefetch,
@@ -15,7 +17,11 @@ type GetFirstArgumentOfAnyFunction<T> = T extends (
   ? FirstArgument
   : never
 export type FetchDataWorkers<ReturnType> = {
-  [key in DataSourceTypes]?: (params: any) => Promise<ReturnType>
+  [DataSourceTypes.SQUID]?: (
+    params: any,
+    client: ApolloClient<NormalizedCacheObject>,
+  ) => Promise<ReturnType>
+  [DataSourceTypes.CHAIN]?: (params: any) => Promise<ReturnType>
 }
 export const createFetchDataFn =
   <Return>(defaultReturn: Return) =>
@@ -24,11 +30,19 @@ export const createFetchDataFn =
       dataSource: DataSourceTypes,
       params: { [key in DataSourceTypes]: GetFirstArgumentOfAnyFunction<Workers[key]> },
     ) => {
-      const workerFn = workers[dataSource]
-      if (workerFn) {
-        return workerFn(params[dataSource])
+      const client = getApolloClient()
+      if (!client) dataSource = DataSourceTypes.CHAIN
+
+      const param = params[dataSource]
+      let returnValue = Promise.resolve(defaultReturn)
+      if (dataSource === DataSourceTypes.SQUID) {
+        const workerFn = workers[DataSourceTypes.SQUID]
+        if (workerFn) returnValue = workerFn(param, client!)
+      } else {
+        const workerFn = workers[DataSourceTypes.CHAIN]
+        if (workerFn) returnValue = workerFn(param)
       }
-      return Promise.resolve(defaultReturn)
+      return returnValue
     }
   }
 
