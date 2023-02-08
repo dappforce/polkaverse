@@ -1,12 +1,11 @@
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import BN from 'bn.js'
 import dayjs, { Dayjs } from 'dayjs'
 import { NextPageContext } from 'next'
 import React from 'react'
-import { postUrl, spaceUrl } from 'src/components/urls'
+import { HasSpaceIdOrHandle, postUrl, spaceUrl } from 'src/components/urls'
 import { fullUrl } from 'src/components/urls/helpers'
 import config from 'src/config'
-import { HasCreated } from 'src/types'
-
-import { BN } from 'bn.js'
 import {
   getLatestPostId,
   getLatestSpaceId,
@@ -15,6 +14,7 @@ import {
   getSpacesData,
 } from 'src/graphql/apis'
 import { getApolloClient } from 'src/graphql/client'
+import { flattenSpaceStructs, HasCreated, PostStruct } from 'src/types'
 import {
   approxCountOfPostPages,
   approxCountOfSpacePages,
@@ -23,6 +23,7 @@ import {
   ParsedPaginationQuery,
   parsePageQuery,
 } from '../utils/getIds'
+import { getSubsocialApi } from '../utils/SubsocialConnect'
 
 const { seoSitemapLastmod, seoSitemapPageSize } = config
 
@@ -118,23 +119,98 @@ const getPageAndSize = (props: NextPageContext): ParsedPaginationQuery => {
   return { page, size: seoSitemapPageSize }
 }
 
-async function getNextSpaceId() {
-  const client = getApolloClient()
-  const latestSpaceId = await getLatestSpaceId(client)
-  const nextSpaceId = new BN(latestSpaceId).add(new BN(1))
-  return nextSpaceId
+function generateFetcher<ReturnValue, Params>({
+  chain,
+  squid,
+}: {
+  squid: (client: ApolloClient<NormalizedCacheObject>, params: Params) => Promise<ReturnValue>
+  chain: (params: Params) => Promise<ReturnValue>
+}) {
+  return (params: Params) => {
+    const client = getApolloClient()
+    if (client) {
+      return squid(client, params)
+    }
+    return chain(params)
+  }
 }
 
-async function getNextPostId() {
-  const latestPostId = await getLatestPostId(getApolloClient())
-  const nextPostId = new BN(latestPostId).add(new BN(1))
-  return nextPostId
-}
+const getNextSpaceId = generateFetcher({
+  chain: async () => {
+    const { blockchain } = await getSubsocialApi()
+    const nextSpaceId = await blockchain.nextSpaceId()
+    return new BN(nextSpaceId)
+  },
+  squid: async client => {
+    const latestSpaceId = await getLatestSpaceId(client)
+    const nextSpaceId = new BN(latestSpaceId).add(new BN(1))
+    return nextSpaceId
+  },
+})
+
+const getNextPostId = generateFetcher({
+  chain: async () => {
+    const subsocial = await getSubsocialApi()
+    const nextPostId = await subsocial.blockchain.nextPostId()
+    return new BN(nextPostId)
+  },
+  squid: async client => {
+    const latestPostId = await getLatestPostId(client)
+    const nextPostId = new BN(latestPostId).add(new BN(1))
+    return nextPostId
+  },
+})
+
+const getTotalProfileCount = generateFetcher({
+  chain: async () => {
+    const { blockchain } = await getSubsocialApi()
+    const profileKeys = await (await blockchain.api).query.profiles.profileSpaceIdByAccount.keys()
+    return profileKeys.length
+  },
+  squid: async client => {
+    return getProfileSpaceCount(client)
+  },
+})
+
+const getSpacesByIds = generateFetcher<(HasSpaceIdOrHandle & HasCreatedOrUpdated)[], BN[]>({
+  chain: async ids => {
+    const { blockchain } = await getSubsocialApi()
+    const structs = await blockchain.findSpaces({ ids, visibility: 'onlyPublic' })
+    return flattenSpaceStructs(structs)
+  },
+  squid: async (client, ids) => {
+    const spaces = await getSpacesData(client, { where: { id_in: ids.map(id => id.toString()) } })
+    spaces.sort((a, b) => {
+      return new Date(b.createdAtTime).getTime() - new Date(a.createdAtTime).getTime()
+    })
+    return spaces
+  },
+})
+
+const getPostsByIds = generateFetcher<
+  { postStruct: PostStruct; space?: HasSpaceIdOrHandle }[],
+  BN[]
+>({
+  chain: async ids => {
+    const subsocial = await getSubsocialApi()
+    const posts = await subsocial.findPublicPostsWithSomeDetails({ ids, withSpace: true })
+    return posts.map(({ post, space }) => ({ postStruct: post.struct, space }))
+  },
+  squid: async (client, ids) => {
+    const posts = await getPostsData(client, {
+      where: { id_in: ids.map(id => id.toString()), hidden_eq: false },
+    })
+    posts.sort((a, b) => {
+      return new Date(b.createdAtTime).getTime() - new Date(a.createdAtTime).getTime()
+    })
+    return posts.map(post => ({ postStruct: post, space: post.space || undefined }))
+  },
+})
 
 export class SpacesSitemapIndex extends React.Component {
   static async getInitialProps(props: NextPageContext) {
     const query = getPageAndSize(props)
-    const nextSpaceId = await getNextSpaceId()
+    const nextSpaceId = await getNextSpaceId(undefined)
     const totalPages = approxCountOfSpacePages(nextSpaceId, query)
     const xml = renderSitemapIndexOfResource({ resource: 'spaces', totalPages })
     sendXml(props, xml)
@@ -144,7 +220,7 @@ export class SpacesSitemapIndex extends React.Component {
 export class PostsSitemapIndex extends React.Component {
   static async getInitialProps(props: NextPageContext) {
     const query = getPageAndSize(props)
-    const nextPostId = await getNextPostId()
+    const nextPostId = await getNextPostId(undefined)
     const totalPages = approxCountOfPostPages(nextPostId, query)
     const xml = renderSitemapIndexOfResource({ resource: 'posts', totalPages })
     sendXml(props, xml)
@@ -154,8 +230,8 @@ export class PostsSitemapIndex extends React.Component {
 export class ProfilesSitemapIndex extends React.Component {
   static async getInitialProps(props: NextPageContext) {
     const { size } = getPageAndSize(props)
-    const accountWithProfileSpaceCount = await getProfileSpaceCount(getApolloClient())
-    const totalPages = Math.ceil(accountWithProfileSpaceCount / size)
+    const totalProfileCount = await getTotalProfileCount(undefined)
+    const totalPages = Math.ceil(totalProfileCount / size)
     const xml = renderSitemapIndexOfResource({ resource: 'profiles', totalPages })
     sendXml(props, xml)
   }
@@ -164,14 +240,10 @@ export class ProfilesSitemapIndex extends React.Component {
 export class SpacesUrlSet extends React.Component {
   static async getInitialProps(props: NextPageContext) {
     const query = getPageAndSize(props)
-    const client = getApolloClient()
-    const nextSpaceId = await getNextSpaceId()
+    const nextSpaceId = await getNextSpaceId(undefined)
 
     const ids = getReversePageOfSpaceIds(nextSpaceId, query)
-    const spaces = await getSpacesData(client, { where: { id_in: ids.map(id => id.toString()) } })
-    spaces.sort((a, b) => {
-      return new Date(b.createdAtTime).getTime() - new Date(a.createdAtTime).getTime()
-    })
+    const spaces = await getSpacesByIds(ids)
 
     const items: UrlItem[] = []
 
@@ -199,18 +271,15 @@ export class SpacesUrlSet extends React.Component {
 export class PostsUrlSet extends React.Component {
   static async getInitialProps(props: NextPageContext) {
     const query = getPageAndSize(props)
-    const client = getApolloClient()
 
-    const nextPostId = await getNextPostId()
+    const nextPostId = await getNextPostId(undefined)
     const ids = getReversePageOfPostIds(nextPostId, query)
-    const posts = await getPostsData(client, {
-      where: { id_in: ids.map(id => id.toString()), hidden_eq: false },
-    })
+    const posts = await getPostsByIds(ids)
 
-    const items: UrlItem[] = posts.map(post => {
+    const items: UrlItem[] = posts.map(({ postStruct, space }) => {
       return {
-        loc: postUrl(post.space || undefined, { struct: post }),
-        lastmod: getLastModFromStruct(post),
+        loc: postUrl(space, { struct: postStruct }),
+        lastmod: getLastModFromStruct(postStruct),
         changefreq: 'weekly',
       }
     })
