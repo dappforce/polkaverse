@@ -34,10 +34,10 @@ export default function TwitterPost({
           <a
             target='_blank'
             rel='noreferrer noopener'
-            className='d-flex align-items-center font-weight-bold'
+            className='d-flex align-items-center font-weight-bold CursorPointer'
           >
-            <BsTwitter className='mr-2 FontLarge' />
-            <span>Saved from Twitter</span>
+            <BsTwitter className='mr-2 FontLarge CursorPointer' />
+            <span className='CursorPointer'>Saved from Twitter</span>
           </a>
         </Link>
         <Link href='https://post4ever.app/' passHref>
