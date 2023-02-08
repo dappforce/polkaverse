@@ -135,9 +135,7 @@ export function createFetchManyDataWrapper<
       try {
         const res = await getData({ ...newArgs, newIds: needToFetchIds }, thunkApi)
         if (Array.isArray(res)) {
-          res.forEach(content => {
-            data.push(content)
-          })
+          data.push(...res)
         }
       } catch (e) {
         console.error(e)
