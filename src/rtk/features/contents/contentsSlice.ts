@@ -1,4 +1,5 @@
 import { AsyncThunk, createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
+import { isDef } from '@subsocial/utils'
 import { createFetchOne, SelectByIdFn, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createFetchManyDataWrapper } from 'src/rtk/app/wrappers'
@@ -65,10 +66,12 @@ export const fetchContents = createAsyncThunk<
     getData: async ({ api, newIds }) => {
       const timeoutMs = 10_000
       let contents = await api.ipfs.getContentArray(newIds as string[], timeoutMs)
-      return Object.entries(contents).map(([id, content]) => {
-        const derivedContent = convertToDerivedContent(content) as CommentContent
-        return { id, ...derivedContent, isOverview: false }
-      })
+      return Object.entries(contents)
+        .map(([id, content]) => {
+          const derivedContent = convertToDerivedContent(content) as CommentContent
+          return { id, ...derivedContent, isOverview: false }
+        })
+        .filter(isDef)
     },
   }),
 )
