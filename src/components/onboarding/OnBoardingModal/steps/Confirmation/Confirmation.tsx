@@ -19,7 +19,7 @@ const messages: {
   topics: data => `Subscribing to ${data.length} topics`,
   spaces: data => `Subscribing to ${data.length} spaces`,
   energy: data => `Burning ${data} SUB`,
-  signer: () => 'Remember me',
+  signer: () => 'Remembering you',
 }
 
 export default function Confirmation({

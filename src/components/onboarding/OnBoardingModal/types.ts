@@ -37,6 +37,8 @@ export interface OnBoardingContentContainerProps extends OnBoardingContentProps 
   loadingProxy?: boolean
   proxyAdded?: boolean
   setProxyAdded?: (proxyAdded: boolean) => void
+  offchainSigner?: boolean
+  setOffchainSigner?: (offchainSigner: boolean) => void
   setLoadingProxy?: (loadingProxy: boolean) => void
   onProxyAdded?: () => void
 }

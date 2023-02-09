@@ -5,7 +5,10 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { subsocialUrl } from 'src/components/urls'
 import LoadingTransaction from 'src/components/utils/LoadingTransaction'
 import { MutedDiv, MutedSpan } from 'src/components/utils/MutedText'
-import RememberMeButton from 'src/components/utils/OffchainSigner/RememberMeButton'
+import RememberMeButton, {
+  setOffchainToken,
+  setProxyAddress,
+} from 'src/components/utils/OffchainSigner/RememberMeButton'
 import PrivacyPolicyText from 'src/components/utils/PrivacyPolicyText'
 import TwitterMock from 'src/components/utils/TwitterMock'
 import TxButton from 'src/components/utils/TxButton'
@@ -41,6 +44,8 @@ export default function OnBoardingContentContainer({
   loadingProxy,
   proxyAdded,
   setProxyAdded,
+  offchainSigner,
+  setOffchainSigner,
   onProxyAdded,
   setLoadingProxy,
   buttonText = 'Continue',
@@ -77,7 +82,18 @@ export default function OnBoardingContentContainer({
       {openState === 'full-on-boarding' && !success && (
         <div className={clsx('d-flex justify-content-between mb-3')}>
           <MutedDiv className={clsx('d-flex align-items-center')}>
-            <ArrowLeftOutlined className='mr-2' onClick={loading ? undefined : onBackClick} />
+            <ArrowLeftOutlined
+              className='mr-2'
+              onClick={
+                loading
+                  ? undefined
+                  : () => {
+                      setOffchainToken('')
+                      setProxyAddress('')
+                      onBackClick()
+                    }
+              }
+            />
             <span className='font-weight-bold'>
               Step {currentStepIndex + firstStepOffset}/{totalSteps - 1 + firstStepOffset}
             </span>
@@ -140,21 +156,24 @@ export default function OnBoardingContentContainer({
               className={clsx('w-100')}
               type='primary'
               size='large'
+              withSpinner={true}
               loading={loadingProxy}
               disabled={loadingProxy}
-              onClick={async () => {
+              onClick={() => {
                 setLoadingProxy && setLoadingProxy(true)
 
                 dispatch(markStepAsDraftOnBoardingModal(false))
-                if (proxyAdded) {
+                if (proxyAdded && offchainSigner) {
                   goToNextStep()
                 } else {
-                  setLoadingProxy && setLoadingProxy(true)
+                  setLoadingProxy && setLoadingProxy(false)
                 }
               }}
-              onSuccess={() => {
+              onFailedAuth={() => setLoadingProxy && setLoadingProxy(false)}
+              onSuccessAuth={() => {
                 setLoadingProxy && setLoadingProxy(false)
                 setProxyAdded && setProxyAdded(true)
+                setOffchainSigner && setOffchainSigner(true)
                 onProxyAdded && onProxyAdded()
                 goToNextStep()
               }}

@@ -67,7 +67,7 @@ const steps: {
   },
   signer: {
     content: Signer,
-    title: '🔒 Remember me',
+    title: '🔒 Remembering you',
     subtitle:
       'Avoid approving every interaction with your wallet by allowing PolkaVerse to remember you. This only affects social actions; your assets will remain secure.',
   },

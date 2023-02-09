@@ -1,5 +1,5 @@
 import { newLogger } from '@subsocial/utils'
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 
 const log = newLogger('OffchainSignerRequests')
 
@@ -8,6 +8,56 @@ const OFFCHAIN_SIGNER_URL = 'https://staging-signer.subsocial.network'
 type AxiosResponse<T = any> = {
   data: T
   status: number
+}
+
+const setAuthOnRequest = (jwt: string) => {
+  try {
+    axios.interceptors.request.use(
+      async (config: AxiosRequestConfig) => {
+        config.headers = config.headers ?? {}
+
+        config.headers.Authorization = jwt
+
+        return config
+      },
+      error => {
+        return Promise.reject(error)
+      },
+    )
+  } catch (err) {
+    console.warn(err)
+  }
+}
+
+type SubmitSignedCallDataProps = {
+  data: any
+  jwt: string
+}
+
+export const submitSignedCallData = async ({ data, jwt }: SubmitSignedCallDataProps) => {
+  const signerEndpoint: OffchainSignerEndpoint = OffchainSignerEndpoint.SIGNER_SIGN
+  const method = 'POST' as Method
+  const dataPayload = {
+    unsigedCall: data,
+  }
+
+  console.log({ data })
+
+  try {
+    const payload = {
+      data: dataPayload,
+      endpoint: signerEndpoint,
+      method,
+      jwt,
+    }
+
+    const res = offchainSignerRequest(payload)
+
+    return res
+  } catch (err) {
+    console.warn(err)
+    return Promise.reject(err)
+  }
 }
 
 export const OffchainSignerEndpoint = {
@@ -39,7 +89,7 @@ export const offchainSignerRequest = async (
 
   let headers: undefined | { Authorization: string }
   if (jwt) {
-    headers = { Authorization: jwt }
+    setAuthOnRequest(jwt)
   }
 
   try {
