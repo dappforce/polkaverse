@@ -1,4 +1,5 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { HasTitleOrBody } from '@subsocial/utils'
 import BN from 'bn.js'
 import dayjs, { Dayjs } from 'dayjs'
 import { NextPageContext } from 'next'
@@ -188,13 +189,17 @@ const getSpacesByIds = generateFetcher<(HasSpaceIdOrHandle & HasCreatedOrUpdated
 })
 
 const getPostsByIds = generateFetcher<
-  { postStruct: PostStruct; space?: HasSpaceIdOrHandle }[],
+  { postStruct: PostStruct; postContent?: HasTitleOrBody; space?: HasSpaceIdOrHandle }[],
   BN[]
 >({
   chain: async ids => {
     const subsocial = await getSubsocialApi()
     const posts = await subsocial.findPublicPostsWithSomeDetails({ ids, withSpace: true })
-    return posts.map(({ post, space }) => ({ postStruct: post.struct, space }))
+    return posts.map(({ post, space }) => ({
+      postStruct: post.struct,
+      space,
+      postContent: post.content,
+    }))
   },
   squid: async (client, ids) => {
     const posts = await getPostsData(client, {
@@ -203,7 +208,11 @@ const getPostsByIds = generateFetcher<
     posts.sort((a, b) => {
       return new Date(b.createdAtTime).getTime() - new Date(a.createdAtTime).getTime()
     })
-    return posts.map(post => ({ postStruct: post, space: post.space || undefined }))
+    return posts.map(post => ({
+      postStruct: post,
+      space: post.space || undefined,
+      postContent: post.ipfsContent,
+    }))
   },
 })
 
@@ -276,9 +285,9 @@ export class PostsUrlSet extends React.Component {
     const ids = getReversePageOfPostIds(nextPostId, query)
     const posts = await getPostsByIds(ids)
 
-    const items: UrlItem[] = posts.map(({ postStruct, space }) => {
+    const items: UrlItem[] = posts.map(({ postStruct, postContent, space }) => {
       return {
-        loc: postUrl(space, { struct: postStruct }),
+        loc: postUrl(space, { struct: postStruct, content: postContent }),
         lastmod: getLastModFromStruct(postStruct),
         changefreq: 'weekly',
       }
