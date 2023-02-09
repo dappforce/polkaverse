@@ -68,8 +68,6 @@ export const fetchContents = createAsyncThunk<
       let contents = await api.ipfs.getContentArray(newIds as string[], timeoutMs)
       return Object.entries(contents)
         .map(([id, content]) => {
-          const isInvalidContent = typeof content === 'string'
-          if (isInvalidContent) return
           const derivedContent = convertToDerivedContent(content) as CommentContent
           return { id, ...derivedContent, isOverview: false }
         })
