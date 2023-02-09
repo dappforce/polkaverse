@@ -25,6 +25,7 @@ export const RegularPreview: ComponentType = props => {
         space={space}
         withImage={withImage}
         withTags={withTags}
+        withMarginForCardType={!withActions}
       />
       {withActions && (
         <PostActionsPanel

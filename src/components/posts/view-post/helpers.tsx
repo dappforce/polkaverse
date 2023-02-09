@@ -231,6 +231,7 @@ type PostContentProps = {
   postDetails: PostWithSomeDetails
   space?: SpaceStruct
   withImage?: boolean
+  withMarginForCardType?: boolean
 }
 
 type PostContentMemoizedProps = PostContentProps & {
@@ -238,7 +239,7 @@ type PostContentMemoizedProps = PostContentProps & {
 }
 
 const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
-  const { postDetails, space, withImage } = props
+  const { postDetails, space, withImage, withMarginForCardType } = props
 
   if (!postDetails) return null
 
@@ -247,7 +248,11 @@ const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
 
   if (!content || isEmptyObj(content)) return null
   if (content.tweet?.id) {
-    return <TwitterPost withLinkToDetailPage space={space} post={post} className='mt-3' />
+    return (
+      <div className={clsx(withMarginForCardType && 'mb-3 pb-1')}>
+        <TwitterPost withLinkToDetailPage space={space} post={post} className={clsx('mt-3')} />
+      </div>
+    )
   }
 
   return (
@@ -341,6 +346,7 @@ type PostPreviewProps = {
   space?: SpaceData
   withImage?: boolean
   withTags?: boolean
+  withMarginForCardType?: boolean
 }
 
 const SharedPostMd = (props: PostPreviewProps) => {
@@ -388,7 +394,7 @@ export const SharePostContent = (props: PostPreviewProps) => {
 }
 
 export const InfoPostPreview: FC<PostPreviewProps> = props => {
-  const { postDetails, space, withImage = true, withTags } = props
+  const { postDetails, space, withImage = true, withTags, withMarginForCardType } = props
   const {
     post: { struct, content },
   } = postDetails
@@ -409,7 +415,12 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
             />
           </div>
           {content.link && <Embed link={content.link} className='mt-3' />}
-          <PostContent postDetails={postDetails} space={space?.struct} withImage={withImage} />
+          <PostContent
+            withMarginForCardType={withMarginForCardType && !withTags}
+            postDetails={postDetails}
+            space={space?.struct}
+            withImage={withImage}
+          />
           {withTags && <ViewTags tags={content?.tags} />}
           {/* {withStats && <StatsPanel id={post.id}/>} */}
         </div>
