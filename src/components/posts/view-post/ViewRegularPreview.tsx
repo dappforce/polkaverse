@@ -16,8 +16,6 @@ export const RegularPreview: ComponentType = props => {
   const [commentsSection, setCommentsSection] = useState(false)
   const { isSharedPost } = postDetails.post.struct
 
-  const isTwitterContent = !!postDetails.post.content?.tweet?.id
-
   return !isSharedPost ? (
     <>
       <InfoPostPreview
@@ -33,7 +31,6 @@ export const RegularPreview: ComponentType = props => {
           space={space?.struct}
           toogleCommentSection={() => setCommentsSection(!commentsSection)}
           preview
-          withBorder={!isTwitterContent}
         />
       )}
       {commentsSection && (
