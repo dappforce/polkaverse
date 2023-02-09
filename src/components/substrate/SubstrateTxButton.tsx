@@ -143,6 +143,10 @@ function TxButton({
       resultParams = await params()
     }
 
+    const result = params
+
+    console.log({ result, resultParams })
+
     return api.tx[pallet][method](...resultParams)
   }
 
