@@ -13,12 +13,14 @@ export type TwitterPostProps = Omit<HTMLProps<HTMLDivElement>, 'content'> & {
   post: PostData
   space: SpaceStruct | undefined
   withLinkToDetailPage?: boolean
+  withLargeFont?: boolean
 }
 
 export default function TwitterPost({
   post,
   space,
   withLinkToDetailPage,
+  withLargeFont,
   ...props
 }: TwitterPostProps) {
   const { content } = post
@@ -46,8 +48,8 @@ export default function TwitterPost({
           </a>
         </Link>
       </div>
-      <div className={styles.TwitterPostContent}>
-        <PostImage className='CursorPointer my-2' content={content} />
+      <div className={clsx(styles.TwitterPostContent, withLargeFont ? 'FontLarge' : 'FontNormal')}>
+        <PostImage className='mb-0 BorderNone RoundedNone' content={content} />
         <div className={styles.TwitterPostBodyContainer}>
           {withLinkToDetailPage && (
             <ViewPostLink

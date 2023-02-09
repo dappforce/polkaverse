@@ -178,6 +178,10 @@ a {
   color: currentColor;
 }
 
+.RoundedNone {
+  border-radius: 0 !important;
+}
+
 .RoundedNormal {
   border-radius: $border_radius_normal;
 }
@@ -198,6 +202,10 @@ a {
 .IconFontSize {
   font-size: 1.25rem;
   cursor: pointer;
+}
+
+.BorderNone {
+  border: none !important;
 }
 
 .DfSegment {
