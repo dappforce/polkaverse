@@ -1,5 +1,6 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { AsyncThunkPayloadCreator, Dictionary, EntityId } from '@reduxjs/toolkit'
+import { isDef } from '@subsocial/utils'
 import { getApolloClient } from 'src/graphql/client'
 import { DataSourceTypes } from 'src/types'
 import {
@@ -127,20 +128,18 @@ export function createFetchManyDataWrapper<
     const newArgs = { ...args, newIds, dataSource, runAdditionalCheckForUnknownIds }
     let data: ReturnType[] = []
     let needToFetchIds: string[] = []
-    const fetchIdxToOriginalIdxMap: { [key: number]: number } = {}
 
     if (dataSource === DataSourceTypes.SQUID && prefetchedData) {
-      newIds.forEach((id, idx) => {
+      newIds.forEach(id => {
         let content = prefetchedData?.[id]
         if (!content) {
-          fetchIdxToOriginalIdxMap[needToFetchIds.length] = idx
           needToFetchIds.push(id)
           return
         }
         if (withAdditionalUnknownIdValidation) {
           content = { ...content, [withAdditionalUnknownIdValidation.unknownFlagAttr]: true }
         }
-        data[idx] = content
+        data.push(content)
       })
     } else {
       needToFetchIds = newIds
@@ -150,21 +149,19 @@ export function createFetchManyDataWrapper<
       try {
         const res = await getData({ ...newArgs, newIds: needToFetchIds }, thunkApi)
         if (Array.isArray(res)) {
-          res.forEach((content, idx) => {
-            const originalIdx = fetchIdxToOriginalIdxMap[idx] || idx
-            data[originalIdx] = content
-          })
+          data.push(...res)
         }
       } catch (e) {
         console.error(e)
       }
     }
+    const definedData = data.filter(isDef)
 
     if (handleAfterDataFetch) {
-      const afterDataRes = await handleAfterDataFetch(data, newArgs, thunkApi)
+      const afterDataRes = await handleAfterDataFetch(definedData, newArgs, thunkApi)
       if (afterDataRes) return afterDataRes
     }
-    return data
+    return definedData
   }
 }
 

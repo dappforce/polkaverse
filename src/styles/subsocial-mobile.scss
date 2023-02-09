@@ -235,7 +235,7 @@
   }
 
   .header.DfPostTitle--preview {
-    margin: $space_tiny 0;
+    margin-bottom: $space_tiny;
   }
 
   .DfPostPreview {
@@ -246,9 +246,10 @@
     &.DfSegment {
       padding-bottom: 0 !important;
     }
-    .DfPostImagePreview {
-      margin-left: 0 !important;
-    }
+  }
+
+  .DfPostImagePreviewWrapper {
+    margin-bottom: $space_tiny !important;
   }
 
   .DfSpaceStats {

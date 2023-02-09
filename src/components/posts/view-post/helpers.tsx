@@ -247,7 +247,7 @@ const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
 
   if (!content || isEmptyObj(content)) return null
   if (content.tweet?.id) {
-    return <TwitterPost space={space} post={post} className='mt-3' />
+    return <TwitterPost withLinkToDetailPage space={space} post={post} className='mt-3' />
   }
 
   return (

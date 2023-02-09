@@ -932,30 +932,30 @@ hr {
     padding: 0.25rem 0;
     justify-content: space-evenly;
   }
+}
 
-  .DfPostImagePreviewWrapper {
-    width: 100%;
-    margin-bottom: $space_normal;
-    border-radius: $border_radius_normal;
-    overflow: hidden;
-    border: 1px solid $color_light_border;
-    background-color: #f0f0f0;
-  }
+.DfPostImagePreviewWrapper {
+  width: 100%;
+  margin-bottom: $space_normal;
+  border-radius: $border_radius_normal;
+  overflow: hidden;
+  border: 1px solid $color_light_border;
+  background-color: #f0f0f0;
+}
+
+.DfPostImagePreview {
+  object-fit: cover;
+}
+
+.DfPostImagePreviewWrapperCropped {
+  position: relative;
+  padding-top: calc(9 / 16 * 100%);
 
   .DfPostImagePreview {
-    object-fit: cover;
-  }
-
-  .DfPostImagePreviewWrapperCropped {
-    position: relative;
-    padding-top: calc(9 / 16 * 100%);
-
-    .DfPostImagePreview {
-      inset: 0;
-      position: absolute;
-      height: 100%;
-      width: 100%;
-    }
+    inset: 0;
+    position: absolute;
+    height: 100%;
+    width: 100%;
   }
 }
 
