@@ -20,7 +20,7 @@ jobs:
 
       - name: Extract branch name
         shell: bash
-        run: echo "name=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^deploy\///')" >> $GITHUB_ENV
+        run: echo "name=$(echo ${{ steps.vars.outputs.branch }} | sed 's/^deploy\///')" >> $GITHUB_ENV
         id: extract_branch
 
       - name: Install doctl
