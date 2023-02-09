@@ -49,7 +49,7 @@ export default function TwitterPost({
         </Link>
       </div>
       <div className={clsx(styles.TwitterPostContent, withLargeFont ? 'FontLarge' : 'FontNormal')}>
-        <PostImage className='CursorPointer my-2' content={content} />
+        <PostImage className='mb-0 BorderNone RoundedNone' content={content} />
         <div className={styles.TwitterPostBodyContainer}>
           {withLinkToDetailPage && (
             <ViewPostLink

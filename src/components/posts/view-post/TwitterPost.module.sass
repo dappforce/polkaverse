@@ -17,13 +17,15 @@
       color: inherit
 
   .TwitterPostContent
-    padding: $space_normal $space_large
-    padding-top: $space_small
+    display: flex
+    flex-direction: column
 
     \:global .markdown-body
       font-size: inherit
 
     .TwitterPostBodyContainer
+      padding: $space_normal $space_large
+      padding-top: $space_small
       position: relative
 
       .TwitterPostBodyLink
