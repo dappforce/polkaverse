@@ -34,13 +34,13 @@ export const CreateOrEditProfileSpace = ({ address, onClick, ...props }: Profile
   const profileSpace = useSelectProfile(address.toString())
 
   const actionButton = profileSpace ? (
-    <Link href={'/[spaceId]/edit'} as={editSpaceUrl(profileSpace.struct)}>
+    <Link href='/[spaceId]/edit?as-profile=true' as={editSpaceUrl(profileSpace.struct)}>
       <a className='item' onClick={onClick} {...props}>
         Edit profile
       </a>
     </Link>
   ) : (
-    <Link href='/spaces/new' as='/spaces/new'>
+    <Link href='/spaces/new?as-profile=true' as='/spaces/new'>
       <a className='item' onClick={onClick} {...props}>
         Create profile
       </a>

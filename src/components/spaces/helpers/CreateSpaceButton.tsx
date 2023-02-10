@@ -10,12 +10,17 @@ export const CreateSpaceButton = ({
   children,
   type = 'primary',
   ghost = true,
+  asProfile,
   ...otherProps
-}: ButtonProps) => {
+}: ButtonProps & { asProfile?: boolean }) => {
   const props = { type, ghost, ...otherProps }
 
   return (
-    <ButtonLink href={newSpacePath} as={newSpacePath} {...props}>
+    <ButtonLink
+      href={`${newSpacePath}${asProfile ? '?as-profile=true' : ''}`}
+      as={newSpacePath}
+      {...props}
+    >
       {children || (
         <span>
           <PlusOutlined /> {title}
