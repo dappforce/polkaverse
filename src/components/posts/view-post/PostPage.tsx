@@ -149,7 +149,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               )}
             </div>
             <OriginalPostPanel canonicalUrl={content.canonical} />
-            {content.tweet ? (
+            {content.tweet?.id ? (
               <TwitterPost
                 withLargeFont
                 className='DfBoxShadowLight mt-4 mb-3'
