@@ -7,11 +7,7 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { setFiltersInUrl } from 'src/components/main/utils'
 import config from 'src/config'
 import { useBooleanExternalStorage } from 'src/hooks/useExternalStorage'
-import {
-  useCreateReloadProfile,
-  useCreateReloadSpaceIdsForMyAccount,
-  useSelectProfile,
-} from 'src/rtk/app/hooks'
+import { useCreateReloadProfile, useCreateReloadSpaceIdsForMyAccount } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
 import {
   useCurrentOnBoardingStep,
@@ -85,7 +81,6 @@ export default function OnBoardingModal({
 }: OnBoardingModalProps) {
   const router = useRouter()
   const myAddress = useMyAddress()
-  const profile = useSelectProfile(myAddress)
   const { data: isFinishedOnBoarding, setData: setIsFinishedOnBoarding } =
     useBooleanExternalStorage(ON_BOARDING_MODAL_KEY, {
       storageKeyType: 'user',
@@ -154,7 +149,7 @@ export default function OnBoardingModal({
     if (!isSkipped) {
       dispatch(resetOnBoardingData())
       if (isProfileDraft === false || isTopicsDraft === false) {
-        if (profile) reloadProfile({ id: myAddress ?? '', dataSource: DataSourceTypes.CHAIN })
+        reloadProfile({ id: myAddress ?? '', dataSource: DataSourceTypes.CHAIN })
         reloadMySpaceIds()
       }
       if (isFollowSpacesDraft === false) {
