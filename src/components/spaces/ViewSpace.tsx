@@ -10,6 +10,7 @@ import { SpaceContent, SpaceId, SpaceWithSomeDetails } from 'src/types'
 import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks'
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { editSpaceUrl } from '../urls'
 import { DfMd } from '../utils/DfMd'
@@ -268,6 +269,7 @@ export const InnerViewSpace = (props: Props) => {
       <Section className='DfContentPage mt-4'>
         <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
       </Section>
+      <MakeAsProfileModal isMySpace={isMy} />
     </Section>
   )
 }
