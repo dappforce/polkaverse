@@ -73,7 +73,7 @@ const Component = (props: Props) => {
   const { image, about } = owner?.content || ({} as ProfileContent)
 
   const createProfileButton = noProfile && isMyAccount && (
-    <Link href='/spaces/new' as='/spaces/new'>
+    <Link href='/spaces/new?as-profile=true' as='/spaces/new'>
       <Button type='primary' ghost>
         <PlusOutlined />
         Create profile space
