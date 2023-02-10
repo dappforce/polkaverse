@@ -6,10 +6,8 @@ import { createNewPostLinkProps } from '../spaces/helpers'
 
 const log = newLogger('Go to page')
 
-export function goToSpacePage(spaceId: AnyId, isFirstSpace?: boolean) {
-  const params = isFirstSpace ? '?isFirst' : ''
-
-  Router.push('/[spaceId]', `/${spaceId.toString()}${params}`).catch(err =>
+export function goToSpacePage(spaceId: AnyId) {
+  Router.push('/[spaceId]', `/${spaceId.toString()}`).catch(err =>
     log.error('Failed to redirect to "View Space" page:', err),
   )
 }
