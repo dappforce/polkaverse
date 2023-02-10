@@ -1,6 +1,8 @@
 import { newLogger } from '@subsocial/utils'
 import axios, { AxiosRequestConfig } from 'axios'
 
+import { truncateAddress } from 'src/utils/storage'
+
 const log = newLogger('OffchainSignerRequests')
 
 const OFFCHAIN_SIGNER_URL = 'https://staging-signer.subsocial.network'
@@ -34,14 +36,15 @@ type SubmitSignedCallDataProps = {
   jwt: string
 }
 
+export const isAccountOnboarded = (accountId: string) =>
+  localStorage.getItem(`df.onBoardingModalFinished:${truncateAddress(accountId)}`) === '1'
+
 export const submitSignedCallData = async ({ data, jwt }: SubmitSignedCallDataProps) => {
   const signerEndpoint: OffchainSignerEndpoint = OffchainSignerEndpoint.SIGNER_SIGN
   const method = 'POST' as Method
   const dataPayload = {
     unsigedCall: data,
   }
-
-  console.log({ data })
 
   try {
     const payload = {

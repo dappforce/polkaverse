@@ -16,7 +16,10 @@ import { useAuth } from '../auth/AuthContext'
 import { getCurrentWallet } from '../auth/utils'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { controlledMessage, Message, showErrorMessage, showSuccessMessage } from '../utils/Message'
-import { submitSignedCallData } from '../utils/OffchainSigner/OffchainSignerUtils'
+import {
+  isAccountOnboarded,
+  submitSignedCallData,
+} from '../utils/OffchainSigner/OffchainSignerUtils'
 import { getOffchainAddress, getOffchainToken } from '../utils/OffchainSigner/RememberMeButton'
 import { getWalletBySource } from '../wallets/supportedWallets'
 import styles from './SubstrateTxButton.module.sass'
@@ -126,10 +129,6 @@ function TxButton({
       resultParams = await params()
     }
 
-    const result = params
-
-    console.log({ result, resultParams })
-
     return api.tx[pallet][method](...resultParams)
   }
 
@@ -191,6 +190,24 @@ function TxButton({
     doOnFailed(null)
   }
 
+  const sendOffchainTx = async (extrinsic: SubmittableExtrinsic, offchainToken: string) => {
+    try {
+      const hexCallData = extrinsic.inner.toHex()
+
+      const res = await submitSignedCallData({
+        data: hexCallData,
+        jwt: offchainToken,
+      })
+
+      const { signedCall } = res?.data
+
+      api.tx(signedCall).send(onSuccessHandler)
+    } catch (err: any) {
+      log.warn(err)
+      onFailedHandler(err instanceof Error ? err.message : err)
+    }
+  }
+
   const sendSignedTx = async () => {
     if (!accountId) {
       throw new Error('No account id provided')
@@ -202,21 +219,8 @@ function TxButton({
       const offchainToken = getOffchainToken()
       const offchainAddress = getOffchainAddress()
 
-      if (offchainToken && offchainAddress === accountId) {
-        const hexCallData = extrinsic.inner.toHex()
-
-        const res = await submitSignedCallData({
-          data: hexCallData,
-          jwt: offchainToken,
-        })
-
-        const hexSignedCallData = res?.data
-
-        // if (!res) {
-        //   throw new Error('Error from offchain signer')
-        // }
-
-        api.tx(hexSignedCallData).send(onSuccessHandler)
+      if (offchainToken && offchainAddress === accountId && isAccountOnboarded(accountId)) {
+        sendOffchainTx(extrinsic, offchainToken)
       } else {
         let signer: Signer | undefined
 

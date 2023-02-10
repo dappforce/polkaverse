@@ -157,7 +157,7 @@ const txGenerators: {
     return upsertProfile(api, cid, profileSpace?.id)
   },
   signer: async ({ api }, _, { proxyAddress }) => {
-    return api.tx.proxy.addProxy(proxyAddress, null, 0)
+    return api.tx.proxy.addProxy(proxyAddress, 'Any', 0)
   },
 }
 export function useOnBoardingBatchTxs(specificData?: keyof OnBoardingDataTypes) {
