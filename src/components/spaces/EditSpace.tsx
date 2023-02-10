@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import messages from 'src/messages'
 import { WriteAccessRequired } from 'src/moderation'
-import { useCreateReloadSpaceIdsForMyAccount } from 'src/rtk/app/hooks'
-import { IpfsCid, SpaceContent } from 'src/types'
+import { useCreateReloadProfile, useCreateReloadSpaceIdsForMyAccount } from 'src/rtk/app/hooks'
+import { DataSourceTypes, IpfsCid, SpaceContent } from 'src/types'
 import { useAmIBlocked, useMyAddress } from '../auth/MyAccountsContext'
 import { DfForm, DfFormButtons, maxLenError, minLenError } from '../forms'
 import { PageContent } from '../main/PageWrapper'
@@ -78,9 +78,11 @@ function getInitialValues({ space }: FormProps): FormValues {
 export function InnerForm(props: FormProps) {
   const [form] = Form.useForm()
   const { ipfs } = useSubsocialApi()
+  const myAddress = useMyAddress()
 
   const [ipfsCid, setIpfsCid] = useState<IpfsCid>()
   const reloadMySpaceIds = useCreateReloadSpaceIdsForMyAccount()
+  const reloadMyProfile = useCreateReloadProfile()
 
   const { space, asProfile } = props
 
@@ -159,6 +161,9 @@ export function InnerForm(props: FormProps) {
   const onSuccess: TxCallback = txResult => {
     clearAutoSavedContent('space')
     const id = space?.struct.id || getNewIdFromEvent(txResult)?.toString()
+    if (props.asProfile) {
+      reloadMyProfile({ id: myAddress ?? '', dataSource: DataSourceTypes.CHAIN })
+    }
     if (id) {
       goToSpacePage(id)
       reloadMySpaceIds()
