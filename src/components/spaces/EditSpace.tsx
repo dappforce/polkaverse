@@ -89,7 +89,7 @@ export function InnerForm(props: FormProps) {
     state => selectSpaceIdsByOwner(state, address || '') || [],
   )
 
-  const { space } = props
+  const { space, asProfile } = props
 
   const initialValues = getInitialValues(props)
   const tags = initialValues.tags || []
@@ -130,6 +130,9 @@ export function InnerForm(props: FormProps) {
     )
 
     if (!space) {
+      if (asProfile) {
+        return [IpfsContent(cid)]
+      }
       return [IpfsContent(cid), permissions]
     } else {
       return [
@@ -175,6 +178,15 @@ export function InnerForm(props: FormProps) {
 
   const onAvatarChanged = (url?: string) => {
     form.setFieldsValue({ [fieldName('image')]: url })
+  }
+
+  const buttonActionLabel = space ? 'Update' : 'Create new'
+  const buttonEntityLabel = asProfile ? 'profile' : 'space'
+  const buttonLabel = `${buttonActionLabel} ${buttonEntityLabel}`
+
+  let extrinsic = space ? 'spaces.updateSpace' : 'spaces.createSpace'
+  if (!space && asProfile) {
+    extrinsic = 'profiles.createSpaceAsProfile'
   }
 
   return (
@@ -257,8 +269,8 @@ export function InnerForm(props: FormProps) {
         <DfFormButtons
           form={form}
           txProps={{
-            label: space ? 'Update space' : 'Create new space',
-            tx: space ? 'spaces.updateSpace' : 'spaces.createSpace',
+            label: buttonLabel,
+            tx: extrinsic,
             params: pinToIpfsAndBuildTxParams,
             onSuccess,
             onFailed,
