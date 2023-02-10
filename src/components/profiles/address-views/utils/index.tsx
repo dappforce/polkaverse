@@ -33,14 +33,18 @@ type ProfileSpaceProps = BareProps & {
 export const CreateOrEditProfileSpace = ({ address, onClick, ...props }: ProfileSpaceProps) => {
   const profileSpace = useSelectProfile(address.toString())
 
+  const asProfileQuery = '?as-profile=true'
   const actionButton = profileSpace ? (
-    <Link href='/[spaceId]/edit?as-profile=true' as={editSpaceUrl(profileSpace.struct)}>
+    <Link
+      href={'/[spaceId]/edit' + asProfileQuery}
+      as={editSpaceUrl(profileSpace.struct) + asProfileQuery}
+    >
       <a className='item' onClick={onClick} {...props}>
         Edit profile
       </a>
     </Link>
   ) : (
-    <Link href='/spaces/new?as-profile=true' as='/spaces/new'>
+    <Link href={'/spaces/new' + asProfileQuery} as={'/spaces/new' + asProfileQuery}>
       <a className='item' onClick={onClick} {...props}>
         Create profile
       </a>
