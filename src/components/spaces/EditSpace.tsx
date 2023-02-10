@@ -39,8 +39,11 @@ import {
 import { equalAddresses, getNewIdFromEvent, getTxParams } from '../substrate'
 
 import { IpfsContent, OptionIpfsContent } from '@subsocial/api/substrate/wrappers'
+import { isEmptyArray } from '@subsocial/utils'
 import { useRouter } from 'next/router'
 import { TxCallback, TxFailedCallback } from 'src/components/substrate/SubstrateTxButton'
+import { useAppSelector } from '../../rtk/app/store'
+import { selectSpaceIdsByOwner } from '../../rtk/features/spaceIds/ownSpaceIdsSlice'
 
 const MAX_TAGS = 10
 
@@ -83,6 +86,9 @@ export function InnerForm(props: FormProps) {
   const [ipfsCid, setIpfsCid] = useState<IpfsCid>()
   const reloadMySpaceIds = useCreateReloadSpaceIdsForMyAccount()
   const reloadMyProfile = useCreateReloadProfile()
+  const ownSpaceIds: string[] = useAppSelector(
+    state => selectSpaceIdsByOwner(state, myAddress || '') || [],
+  )
 
   const { space, asProfile } = props
 
@@ -165,7 +171,7 @@ export function InnerForm(props: FormProps) {
       reloadMyProfile({ id: myAddress ?? '', dataSource: DataSourceTypes.CHAIN })
     }
     if (id) {
-      goToSpacePage(id)
+      goToSpacePage(id, !props.asProfile && isEmptyArray(ownSpaceIds) && !space)
       reloadMySpaceIds()
     }
   }
