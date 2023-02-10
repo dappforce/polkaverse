@@ -40,6 +40,7 @@ import { equalAddresses, getNewIdFromEvent, getTxParams } from '../substrate'
 
 import { IpfsContent, OptionIpfsContent } from '@subsocial/api/substrate/wrappers'
 import { isEmptyArray } from '@subsocial/utils'
+import { useRouter } from 'next/router'
 import { TxCallback, TxFailedCallback } from 'src/components/substrate/SubstrateTxButton'
 import { useAppSelector } from '../../rtk/app/store'
 import { selectSpaceIdsByOwner } from '../../rtk/features/spaceIds/ownSpaceIdsSlice'
@@ -63,7 +64,10 @@ type ValidationProps = {
   maxHandleLen: number
 }
 
-type FormProps = CanHaveSpaceProps & ValidationProps
+type FormProps = CanHaveSpaceProps &
+  ValidationProps & {
+    asProfile?: boolean
+  }
 
 function getInitialValues({ space }: FormProps): FormValues {
   if (space) {
@@ -275,8 +279,10 @@ export function FormInSection(props: Partial<FormProps>) {
     minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.spaces.minHandleLen, 5),
     maxHandleLen: MAX_HANDLE_LEN, // bnToNum(api.consts.spaces.maxHandleLen, 50)
   })
-  const { space } = props
-  const title = space ? 'Edit space' : 'New space'
+  const { space, asProfile } = props
+  const titleAction = space ? 'Edit' : 'New'
+  const titleEntity = asProfile ? 'profile' : 'space'
+  const title = `${titleAction} ${titleEntity}`
 
   return (
     <PageContent meta={{ title }}>
@@ -293,8 +299,14 @@ const CannotEditSpace = <NoData description='You do not have permission to edit 
 
 const LoadSpaceThenEdit = withLoadSpaceFromUrl(FormInSection)
 
+function useIsEditAsProfile() {
+  const { query } = useRouter()
+  return query['as-profile'] === 'true'
+}
+
 export function EditSpace(props: FormProps) {
   const myAddress = useMyAddress()
+  const asProfile = useIsEditAsProfile()
 
   const checkSpacePermission: CheckSpacePermissionFn = space => {
     const isOwner = space && equalAddresses(myAddress, space.struct.ownerId)
@@ -304,9 +316,18 @@ export function EditSpace(props: FormProps) {
     }
   }
 
-  return <LoadSpaceThenEdit {...props} checkSpacePermission={checkSpacePermission} />
+  return (
+    <LoadSpaceThenEdit
+      {...props}
+      asProfile={asProfile}
+      checkSpacePermission={checkSpacePermission}
+    />
+  )
 }
 
-export const NewSpace = FormInSection
+export const NewSpace = () => {
+  const asProfile = useIsEditAsProfile()
+  return <FormInSection asProfile={asProfile} />
+}
 
 export default NewSpace
