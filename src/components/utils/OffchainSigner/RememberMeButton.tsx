@@ -1,12 +1,14 @@
+import { isFunction } from '@polkadot/util'
 import Button from 'antd/lib/button'
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { TxButtonProps } from 'src/components/substrate/SubstrateTxButton'
 
 import axios, { AxiosRequestConfig } from 'axios'
 import { offchainSignerRequest } from './OffchainSignerUtils'
 
+import HCaptcha from '@hcaptcha/react-hcaptcha'
 import type { Signer } from '@polkadot/api/types'
-import { isFunction, stringToHex } from '@polkadot/util'
+import { stringToHex } from '@polkadot/util'
 import { newLogger } from '@subsocial/utils'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { getCurrentWallet } from 'src/components/auth/utils'
@@ -52,6 +54,44 @@ function RememberMeButton({
   const { isMobile } = useResponsiveSize()
   const myAddress = useMyAddress()
 
+  const [token, setToken] = useState<string | undefined>()
+  const [captchaReady, setCaptchaReady] = useState(false)
+  const hCaptchaRef = useRef(null)
+
+  useEffect(() => {
+    if (token) {
+      confirmOffchainSigner(token)
+    }
+  }, [token])
+
+  const onExpire = () => {
+    console.warn('hCaptcha Token Expired')
+  }
+
+  const onError = (err: any) => {
+    console.warn(`hCaptcha Error: ${err}`)
+  }
+
+  const onLoad = () => {
+    // this reaches out to the hCaptcha JS API and runs the
+    // execute function on it. you can use other functions as
+    // documented here:
+    // https://docs.hcaptcha.com/configuration#jsapi
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    hCaptchaRef.current?.execute()
+  }
+
+  const HCAPTCHA_SITE_KEY = 'fc5815a2-6662-420f-8d94-ed72200d8a39'
+  // const HCAPTCHA_SITE_KEY = '10000000-ffff-ffff-ffff-000000000001'
+
+  const confirmOffchainSigner = (token: string) => {
+    isFunction(onClick) && onClick()
+
+    setIsConfirming(true)
+    finaliseOffchainSigner(token)
+  }
+
   const buttonLabel = label || 'Remember me'
   const Component = component || Button
 
@@ -65,6 +105,7 @@ function RememberMeButton({
 
   const onFailedHandler = (err: Error) => {
     if (err) {
+      setToken(undefined)
       onFailedAuth()
       setIsConfirming(false)
       const errMsg = `Signing failed: ${err.toString()}`
@@ -134,11 +175,14 @@ function RememberMeButton({
     }
   }
 
-  const sendSignedMessage = async (signedMessageJwt: string, messageJwt: string) => {
+  const sendSignedMessage = async (signedMessageJwt: string, messageJwt: string, token: string) => {
+    if (!token) throw new Error('Please confirm hCaptcha!')
+
     const data = {
       accountAddress: myAddress as string,
       signedMessageJwt,
       messageJwt,
+      hcaptchaResponse: token,
     }
 
     try {
@@ -169,17 +213,15 @@ function RememberMeButton({
     }
   }
 
-  const finaliseOffchainSigner = async () => {
+  const finaliseOffchainSigner = async (token: string) => {
     if (!myAddress) {
       throw new Error('No account id provided')
     }
 
     try {
-      // 1. request a proof
       const dataMessage = await requestMessage()
       const { jwt: messageJwt } = dataMessage
 
-      // 1a. sign proof
       const signedMessageJwt = await signMessage(messageJwt)
 
       if (!signedMessageJwt) {
@@ -187,15 +229,12 @@ function RememberMeButton({
         return
       }
 
-      // 2. send signed proof
-      const dataSignature = await sendSignedMessage(signedMessageJwt, messageJwt)
-
+      const dataSignature = await sendSignedMessage(signedMessageJwt, messageJwt, token)
       const { accessToken } = dataSignature
 
       setOffchainAddress(myAddress)
       setOffchainToken(accessToken)
 
-      // 3. save access token in an axios instance from now on
       axios.interceptors.request.use(
         async (config: AxiosRequestConfig) => {
           config.headers = config.headers ?? {}
@@ -209,59 +248,41 @@ function RememberMeButton({
         },
       )
 
-      // 3a. set accessToken in localStorage?
-
       const { address } = await fetchProxyAddress()
       setProxyAddress(address)
-
       onSuccessAuth()
-      //   if (!myAddress) {
-      //     throw new Error('No account id provided')
-      //   }
-
-      //   let signer: Signer | undefined
-
-      //   if (isMobile) {
-      //     const { web3FromAddress } = await import('@polkadot/extension-dapp')
-      //     signer = await (await web3FromAddress(myAddress.toString())).signer
-      //   } else {
-      //     const currentWallet = getCurrentWallet()
-      //     const wallet = getWalletBySource(currentWallet)
-      //     signer = wallet?.signer
-      //   }
-
-      // 4. open up extension and sign addProxy call
-      //   const extrinsic = await api.tx.proxy.addProxy(proxyAddress, null, 0)
-
-      //   const tx = await extrinsic.signAsync(myAddress, { signer })
-
-      //   unsub = await tx.send(onSuccessHandler)
     } catch (err: any) {
       onFailedHandler(err instanceof Error ? err.message : err)
       return
     }
   }
 
-  const confirmOffchainSigner = async () => {
-    isFunction(onClick) && onClick()
-
-    setIsConfirming(true)
-    finaliseOffchainSigner()
-  }
-
-  const isDisabled = disabled || isConfirming
+  const isDisabled = disabled || isConfirming || !captchaReady
 
   return (
-    <Component
-      {...antdProps}
-      onClick={() => {
-        confirmOffchainSigner()
-      }}
-      disabled={isDisabled}
-      loading={(withSpinner && isConfirming) || loading}
-    >
-      {buttonLabel}
-    </Component>
+    <>
+      <Component
+        {...antdProps}
+        onClick={() => {
+          onLoad()
+        }}
+        disabled={isDisabled}
+        loading={(withSpinner && isConfirming) || loading}
+      >
+        {buttonLabel}
+      </Component>
+      <HCaptcha
+        size='invisible'
+        sitekey={HCAPTCHA_SITE_KEY}
+        onVerify={setToken}
+        onLoad={() => {
+          setCaptchaReady(true)
+        }}
+        onError={onError}
+        onExpire={onExpire}
+        ref={hCaptchaRef}
+      />
+    </>
   )
 }
 
