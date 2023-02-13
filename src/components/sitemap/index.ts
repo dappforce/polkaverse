@@ -7,13 +7,7 @@ import React from 'react'
 import { HasSpaceIdOrHandle, postUrl, spaceUrl } from 'src/components/urls'
 import { fullUrl } from 'src/components/urls/helpers'
 import config from 'src/config'
-import {
-  getLatestPostId,
-  getLatestSpaceId,
-  getPostsData,
-  getProfileSpaceCount,
-  getSpacesData,
-} from 'src/graphql/apis'
+import { getLatestPostId, getLatestSpaceId, getPostsData, getSpacesData } from 'src/graphql/apis'
 import { getApolloClient } from 'src/graphql/client'
 import { flattenSpaceStructs, HasCreated, PostStruct } from 'src/types'
 import {
@@ -162,17 +156,6 @@ const getNextPostId = generateFetcher({
   },
 })
 
-const getTotalProfileCount = generateFetcher({
-  chain: async () => {
-    const { blockchain } = await getSubsocialApi()
-    const profileKeys = await (await blockchain.api).query.profiles.profileSpaceIdByAccount.keys()
-    return profileKeys.length
-  },
-  squid: async client => {
-    return getProfileSpaceCount(client)
-  },
-})
-
 const getSpacesByIds = generateFetcher<(HasSpaceIdOrHandle & HasCreatedOrUpdated)[], BN[]>({
   chain: async ids => {
     const { blockchain } = await getSubsocialApi()
@@ -232,16 +215,6 @@ export class PostsSitemapIndex extends React.Component {
     const nextPostId = await getNextPostId(undefined)
     const totalPages = approxCountOfPostPages(nextPostId, query)
     const xml = renderSitemapIndexOfResource({ resource: 'posts', totalPages })
-    sendXml(props, xml)
-  }
-}
-
-export class ProfilesSitemapIndex extends React.Component {
-  static async getInitialProps(props: NextPageContext) {
-    const { size } = getPageAndSize(props)
-    const totalProfileCount = await getTotalProfileCount(undefined)
-    const totalPages = Math.ceil(totalProfileCount / size)
-    const xml = renderSitemapIndexOfResource({ resource: 'profiles', totalPages })
     sendXml(props, xml)
   }
 }
