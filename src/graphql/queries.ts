@@ -434,6 +434,17 @@ export const GET_ACTIVITY_COUNTS = gql`
     ) {
       totalCount
     }
+    tweets: postsConnection(
+      orderBy: id_ASC
+      where: {
+        ownedByAccount: { id_eq: $address }
+        tweetId_isNull: false
+        isComment_eq: false
+        hidden_eq: false
+      }
+    ) {
+      totalCount
+    }
     spaces: spacesConnection(orderBy: id_ASC, where: { ownedByAccount: { id_eq: $address } }) {
       totalCount
     }
@@ -559,6 +570,21 @@ export const GET_POST_ACTIVITIES = gql`
         offset: $offset
         orderBy: createdAtTime_DESC
         where: { isComment_eq: false, hidden_eq: false }
+      ) {
+        id
+      }
+    }
+  }
+`
+
+export const GET_TWEET_ACTIVITIES = gql`
+  query GetTweetActivities($address: String!, $offset: Int = 0, $limit: Int!) {
+    accountById(id: $address) {
+      posts(
+        limit: $limit
+        offset: $offset
+        orderBy: createdAtTime_DESC
+        where: { isComment_eq: false, hidden_eq: false, tweetId_isNull: false }
       ) {
         id
       }

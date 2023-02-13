@@ -17,6 +17,11 @@ export interface GetActivityCounts_posts {
   totalCount: number;
 }
 
+export interface GetActivityCounts_tweets {
+  __typename: "PostsConnection";
+  totalCount: number;
+}
+
 export interface GetActivityCounts_spaces {
   __typename: "SpacesConnection";
   totalCount: number;
@@ -40,6 +45,7 @@ export interface GetActivityCounts_follows {
 export interface GetActivityCounts {
   activities: GetActivityCounts_activities;
   posts: GetActivityCounts_posts;
+  tweets: GetActivityCounts_tweets;
   spaces: GetActivityCounts_spaces;
   comments: GetActivityCounts_comments;
   reactions: GetActivityCounts_reactions;
