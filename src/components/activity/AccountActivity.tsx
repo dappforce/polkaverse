@@ -166,7 +166,7 @@ const OffchainAccountActivity = ({ address }: ActivitiesByAddressProps) => {
 
   const onChangeTab = (activeKey: string) => {
     setActiveTab(activeKey as ActivityTab)
-    router.push('#' + activeKey)
+    router.replace('#' + activeKey)
   }
 
   return (
