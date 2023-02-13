@@ -158,6 +158,12 @@ a {
   gap: $space_huge;
 }
 
+.VertAlignMiddleChildren {
+  > * {
+    vertical-align: middle;
+  }
+}
+
 .LineHeightNormal {
   line-height: $line-height-normal;
 }
