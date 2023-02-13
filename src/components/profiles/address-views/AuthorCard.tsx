@@ -38,7 +38,12 @@ export default function AuthorCard({
       avatar={<Avatar noMargin address={address} avatar={accountAvatar} size={64} />}
       title={
         <div className={clsx('d-flex', isMobile ? 'flex-column' : 'align-items-center')}>
-          <Name asLink owner={profile} address={address} />
+          <Name
+            asLink
+            owner={profile}
+            address={address}
+            className='UnboundedFont font-weight-normal'
+          />
           <div className='FontNormal'>
             {withAuthorTag && (
               <Tag

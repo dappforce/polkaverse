@@ -34,6 +34,7 @@ export default function SpaceCard({ spaceId, ...props }: SpaceCardProps) {
       title={
         spaceData ? (
           <ViewSpaceLink
+            className='UnboundedFont font-weight-normal'
             title={spaceData.content?.name ?? 'Unnamed Space'}
             space={spaceData.struct}
           />
