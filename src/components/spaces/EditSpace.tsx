@@ -6,7 +6,7 @@ import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import messages from 'src/messages'
 import { WriteAccessRequired } from 'src/moderation'
 import { useCreateReloadProfile, useCreateReloadSpaceIdsForMyAccount } from 'src/rtk/app/hooks'
-import { DataSourceTypes, IpfsCid, SpaceContent } from 'src/types'
+import { DataSourceTypes, IpfsCid, SpaceContent, SpaceData } from 'src/types'
 import { useAmIBlocked, useMyAddress } from '../auth/MyAccountsContext'
 import { DfForm, DfFormButtons, maxLenError, minLenError } from '../forms'
 import { PageContent } from '../main/PageWrapper'
@@ -77,6 +77,17 @@ function getInitialValues({ space }: FormProps): FormValues {
     return { ...content, whoCanPost }
   }
   return {}
+}
+
+function getFormActionLabel(space: SpaceData | undefined, asProfile?: boolean) {
+  const actionLabel = space ? 'Update' : 'Create new'
+  const entityLabel = asProfile ? 'profile' : 'space'
+  const fullActionLabel = `${actionLabel} ${entityLabel}`
+  return {
+    actionLabel,
+    entityLabel,
+    fullActionLabel,
+  }
 }
 
 export function InnerForm(props: FormProps) {
@@ -185,9 +196,7 @@ export function InnerForm(props: FormProps) {
     form.setFieldsValue({ [fieldName('image')]: url })
   }
 
-  const actionLabel = space ? 'Update' : 'Create new'
-  const entityLabel = asProfile ? 'profile' : 'space'
-  const buttonLabel = `${actionLabel} ${entityLabel}`
+  const { entityLabel, fullActionLabel } = getFormActionLabel(space, asProfile)
 
   let extrinsic = space ? 'spaces.updateSpace' : 'spaces.createSpace'
   if (!space && asProfile) {
@@ -274,7 +283,7 @@ export function InnerForm(props: FormProps) {
         <DfFormButtons
           form={form}
           txProps={{
-            label: buttonLabel,
+            label: fullActionLabel,
             tx: extrinsic,
             params: pinToIpfsAndBuildTxParams,
             onSuccess,
@@ -297,13 +306,11 @@ export function FormInSection(props: Partial<FormProps>) {
     maxHandleLen: MAX_HANDLE_LEN, // bnToNum(api.consts.spaces.maxHandleLen, 50)
   })
   const { space, asProfile } = props
-  const titleAction = space ? 'Edit' : 'New'
-  const titleEntity = asProfile ? 'profile' : 'space'
-  const title = `${titleAction} ${titleEntity}`
+  const { fullActionLabel } = getFormActionLabel(space, asProfile)
 
   return (
-    <PageContent meta={{ title }}>
-      <Section className='EditEntityBox' title={title}>
+    <PageContent meta={{ title: fullActionLabel }}>
+      <Section className='EditEntityBox' title={fullActionLabel}>
         <WriteAccessRequired>
           <InnerForm {...props} {...consts} />
         </WriteAccessRequired>
