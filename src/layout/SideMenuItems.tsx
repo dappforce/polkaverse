@@ -69,6 +69,7 @@ export const DefaultMenu: MenuItem[] = [
     name: 'Subsocial Twitter',
     page: ['https://twitter.com/subsocialchain'],
     icon: <SubIcon Icon={FiTwitter} />,
+    openInNewTab: true,
   },
   // {
   //   name: 'Official Telegram chat',
@@ -79,11 +80,13 @@ export const DefaultMenu: MenuItem[] = [
     name: 'Subsocial Announcements',
     page: ['https://t.me/SubsocialNetwork'],
     icon: <NotificationOutlined />,
+    openInNewTab: true,
   },
   {
     name: 'Subsocial Discord',
     page: ['https://discord.gg/yU8tgHN'],
     icon: <SubIcon Icon={FaDiscord} />,
+    openInNewTab: true,
   },
   Divider,
   {
