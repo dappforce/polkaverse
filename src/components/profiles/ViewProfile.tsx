@@ -76,7 +76,7 @@ const Component = (props: Props) => {
     <Link href='/spaces/new?as-profile=true'>
       <Button type='primary' ghost>
         <PlusOutlined />
-        Create profile space
+        Create profile
       </Button>
     </Link>
   )
