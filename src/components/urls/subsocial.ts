@@ -41,12 +41,12 @@ export function spaceUrl(space: HasSpaceIdOrHandle, ...subUrls: string[]): strin
 
 /** /[spaceId]/new */
 export function newSpaceUrl(asProfile?: boolean): string {
-  return '/spaces/new' + asProfile ? '?as-profile=true' : ''
+  return '/spaces/new' + (asProfile ? '?as-profile=true' : '')
 }
 
 /** /[spaceId]/edit */
 export function editSpaceUrl(space: HasSpaceIdOrHandle, asProfile?: boolean): string {
-  return spaceUrl(space, 'edit') + asProfile ? '?as-profile=true' : ''
+  return spaceUrl(space, 'edit') + (asProfile ? '?as-profile=true' : '')
 }
 
 /** /[spaceId]/about */
