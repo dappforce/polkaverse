@@ -3,23 +3,25 @@ import { ButtonProps } from 'antd/lib/button'
 import { ButtonLink, IconLink } from 'src/components/utils/CustomLinks'
 import { BareProps } from 'src/components/utils/types'
 
-const newSpacePath = '/spaces/new'
-const title = 'Create space'
+const getNewSpacePath = (asProfile?: boolean) =>
+  '/spaces/new' + (asProfile ? '?as-profile=true' : '')
+const getTitle = (asProfile?: boolean) => `Create ${asProfile ? 'profile' : 'space'}`
 
+export type CreateSpaceButtonProps = { asProfile?: boolean }
 export const CreateSpaceButton = ({
   children,
   type = 'primary',
   ghost = true,
   asProfile,
   ...otherProps
-}: ButtonProps & { asProfile?: boolean }) => {
+}: ButtonProps & CreateSpaceButtonProps) => {
   const props = { type, ghost, ...otherProps }
 
   return (
-    <ButtonLink href={`${newSpacePath}${asProfile ? '?as-profile=true' : ''}`} {...props}>
+    <ButtonLink href={getNewSpacePath(asProfile)} {...props}>
       {children || (
         <span>
-          <PlusOutlined /> {title}
+          <PlusOutlined /> {getTitle(asProfile)}
         </span>
       )}
     </ButtonLink>
@@ -28,6 +30,11 @@ export const CreateSpaceButton = ({
 
 const CreateIcon = <PlusCircleOutlined size={48} />
 
-export const CreateSpaceIcon = (props: BareProps) => (
-  <IconLink {...props} href={newSpacePath} as={newSpacePath} title={title} icon={CreateIcon} />
+export const CreateSpaceIcon = ({ asProfile, ...props }: BareProps & CreateSpaceButtonProps) => (
+  <IconLink
+    {...props}
+    href={getNewSpacePath(asProfile)}
+    title={getTitle(asProfile)}
+    icon={CreateIcon}
+  />
 )
