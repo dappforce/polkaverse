@@ -18,7 +18,7 @@ import { AccountActivity } from '../activity/AccountActivity'
 import { useIsMyAddress } from '../auth/MyAccountsContext'
 import { Balance } from '../common/balances'
 import { PageContent } from '../main/PageWrapper'
-import { accountUrl } from '../urls'
+import { accountUrl, newSpaceUrl } from '../urls'
 import { DfMd } from '../utils/DfMd'
 import { MutedDiv } from '../utils/MutedText'
 import MyEntityLabel from '../utils/MyEntityLabel'
@@ -73,7 +73,7 @@ const Component = (props: Props) => {
   const { image, about } = owner?.content || ({} as ProfileContent)
 
   const createProfileButton = noProfile && isMyAccount && (
-    <Link href='/spaces/new?as-profile=true'>
+    <Link href={newSpaceUrl(true)}>
       <Button type='primary' ghost>
         <PlusOutlined />
         Create profile
