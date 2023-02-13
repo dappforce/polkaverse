@@ -1,16 +1,6 @@
 // See how to work with custom fonts in Next.js:
 // https://codeconqueror.com/blog/using-google-fonts-with-next-js
 
-@font-face {
-  font-family: 'Unbounded';
-  src: local('Unbounded Medium'), local('Unbounded-Medium'),
-    url('/fonts/Unbounded/Unbounded-Medium.woff2') format('woff2'),
-    url('/fonts/Unbounded/Unbounded-Medium.woff') format('woff'),
-    url('/fonts/Unbounded/Unbounded-Medium.ttf') format('truetype');
-  font-weight: 500;
-  font-style: normal;
-}
-
 // @font-face {
 //   font-family: 'PT Serif';
 //   src: url('/fonts/PTSerif-Bold.ttf');

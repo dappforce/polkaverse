@@ -54,6 +54,12 @@ function MyApp(props) {
         {/* <link rel="font/ttf" href="/fonts/PTSerif-Bold.ttf" /> */}
         {/* <link rel="font/ttf" href="/fonts/NotoSerif-Bold.ttf" /> */}
         {/* <link rel="font/ttf" href="/fonts/Merriweather-Bold.ttf" /> */}
+        <link rel='preconnect' href='https://fonts.googleapis.com' />
+        <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='' />
+        <link
+          href='https://fonts.googleapis.com/css2?family=Unbounded:wght@500&display=swap'
+          rel='stylesheet'
+        />
       </Head>
       <Provider store={store}>
         {/* <AdBlockModal /> */}
