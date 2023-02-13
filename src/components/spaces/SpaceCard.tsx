@@ -38,11 +38,12 @@ export default function SpaceCard({ spaceId, ...props }: SpaceCardProps) {
       title={
         spaceData ? (
           <ViewSpaceLink
-            className='UnboundedFont font-weight-normal VertAlignMiddleChildren'
+            containerClassName='w-100'
+            className='font-weight-normal VertAlignMiddleChildren'
             title={
               <>
-                <span>{spaceData.content?.name ?? 'Unnamed Space'}</span>
-                <OfficialSpaceStatus space={spaceData.struct} />
+                <span className='UnboundedFont'>{spaceData.content?.name ?? 'Unnamed Space'}</span>
+                <OfficialSpaceStatus removeContainer space={spaceData.struct} />
                 <MyEntityLabel isMy={isMySpace} className='ml-2'>
                   {spaceId === myProfile?.id ? 'My profile' : 'My space'}
                 </MyEntityLabel>
