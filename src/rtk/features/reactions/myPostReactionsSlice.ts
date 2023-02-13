@@ -3,7 +3,6 @@ import { SubsocialApi } from '@subsocial/api'
 import { getFirstOrUndefined, idToBn, isDef, isEmptyArray, isEmptyStr } from '@subsocial/utils'
 import BN from 'bn.js'
 import { getAddressPostsReaction } from 'src/graphql/apis'
-import { getApolloClient } from 'src/graphql/client'
 import {
   decodePrependedIdWithAddress,
   FetchManyArgsWithPrefetch,
@@ -116,12 +115,8 @@ const getMyReactionsByPostIds = createFetchDataFn<FetchManyResult>([])({
 
     return Array.from(reactionByPostId.values())
   },
-  squid: async ({ ids, myAddress }: { ids: string[]; myAddress: string }) => {
-    return getAddressPostsReaction(
-      getApolloClient(),
-      { address: myAddress, postIds: ids },
-      idSeparator,
-    )
+  squid: async ({ ids, myAddress }: { ids: string[]; myAddress: string }, client) => {
+    return getAddressPostsReaction(client, { address: myAddress, postIds: ids }, idSeparator)
   },
 })
 

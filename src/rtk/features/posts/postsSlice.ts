@@ -4,7 +4,6 @@ import { FindPostsQuery } from '@subsocial/api/filters'
 import { getFirstOrUndefined } from '@subsocial/utils'
 import { getPostsData } from 'src/graphql/apis'
 import { PostFragmentMapped, PostFragmentWithParent } from 'src/graphql/apis/types'
-import { getApolloClient } from 'src/graphql/client'
 import {
   createFetchOne,
   createSelectUnknownIds,
@@ -193,9 +192,9 @@ const getPosts = createFetchDataFn<PostState[]>([])({
     }
     return entities.map<PostState>(post => ({ ...post, isOverview: false }))
   },
-  squid: async ({ ids, publicOnly }: { ids: string[]; publicOnly?: boolean }) => {
+  squid: async ({ ids, publicOnly }: { ids: string[]; publicOnly?: boolean }, client) => {
     if (ids.length === 0) return []
-    const posts = await getPostsData(getApolloClient(), {
+    const posts = await getPostsData(client, {
       where: {
         id_in: ids,
         hidden_not_eq: publicOnly ? true : undefined,
