@@ -122,10 +122,13 @@ const OffchainAccountActivity = ({ address }: ActivitiesByAddressProps) => {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<ActivityTab>('posts')
   const [counts, setCounts] = useState<ActivityCounts>()
+  // to make tweets tab doesn't disappear until the address is changed.
+  const [haveDisplayedTweetsTab, setHaveDisplayedTweetsTab] = useState(false)
 
   useEffect(() => {
     setActiveTab('posts')
     setCounts(undefined)
+    setHaveDisplayedTweetsTab(false)
     ;(async () => {
       if (!address) return
 
@@ -133,6 +136,10 @@ const OffchainAccountActivity = ({ address }: ActivitiesByAddressProps) => {
       setCounts(counts)
     })()
   }, [address])
+
+  useEffect(() => {
+    if (activeTab === 'tweets') setHaveDisplayedTweetsTab(true)
+  }, [activeTab])
 
   useEffect(() => {
     const hash = window.location.hash.substring(1) as ActivityTab
@@ -167,7 +174,7 @@ const OffchainAccountActivity = ({ address }: ActivitiesByAddressProps) => {
       <TabPane tab={getTabTitle('Posts', postsCount)} key={getTab('posts')}>
         <PostActivities address={address} totalCount={postsCount} />
       </TabPane>
-      {tweetsCount > 0 && (
+      {(tweetsCount > 0 || haveDisplayedTweetsTab) && (
         <TabPane tab={getTabTitle('Tweets', tweetsCount)} key={getTab('tweets')}>
           <TweetActivities address={address} totalCount={tweetsCount} />
         </TabPane>
