@@ -53,7 +53,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
               mouseEnterDelay={0.3}
               content={<ProfilePreviewPopup address={address} owner={owner} withDetails />}
             >
-              <div className='d-flex'>
+              <div className='d-flex align-items-center'>
                 <Name address={address} owner={owner} className={nameClass} asLink />
                 {afterName}
               </div>
