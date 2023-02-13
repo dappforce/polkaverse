@@ -91,21 +91,23 @@ export async function getPostIdsBySpaces(
   return res.data.posts.map(({ id }) => id)
 }
 
+export type ActivityCounts = Counts & { tweetsCount: number }
 export async function getActivityCounts(
   client: GqlClient,
   variables: GetActivityCountsVariables,
-): Promise<Counts> {
+): Promise<ActivityCounts> {
   const res = await client.query<GetActivityCounts, GetActivityCountsVariables>({
     query: q.GET_ACTIVITY_COUNTS,
     variables,
   })
 
-  const { activities, comments, follows, posts, reactions, spaces } = res.data
+  const { activities, comments, follows, posts, reactions, spaces, tweets } = res.data
   return {
     activitiesCount: activities.totalCount,
     commentsCount: comments.totalCount,
     followsCount: follows.totalCount,
     postsCount: posts.totalCount,
+    tweetsCount: tweets.totalCount,
     reactionsCount: reactions.totalCount,
     spacesCount: spaces.totalCount,
   }
@@ -186,6 +188,21 @@ export async function getSpaceActivities(
 export async function getPostActivities(client: GqlClient, variables: GetPostActivitiesVariables) {
   const activities = await client.query<GetPostActivities, GetPostActivitiesVariables>({
     query: q.GET_POST_ACTIVITIES,
+    variables,
+  })
+  const postIds: string[] = []
+  activities.data.accountById?.posts.forEach(post => {
+    const postId = post?.id
+    if (postId) {
+      postIds.push(postId)
+    }
+  })
+  return postIds
+}
+
+export async function getTweetActivities(client: GqlClient, variables: GetPostActivitiesVariables) {
+  const activities = await client.query<GetPostActivities, GetPostActivitiesVariables>({
+    query: q.GET_TWEET_ACTIVITIES,
     variables,
   })
   const postIds: string[] = []
