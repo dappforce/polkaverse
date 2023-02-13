@@ -15,7 +15,7 @@ import styles from './Confirmation.module.sass'
 const messages: {
   [key in keyof OnBoardingDataTypes]?: (data: OnBoardingDataTypes[key]) => string
 } = {
-  profile: () => 'Creating your space',
+  profile: () => 'Creating your profile',
   topics: data => `Subscribing to ${data.length} topics`,
   spaces: data => `Subscribing to ${data.length} spaces`,
   energy: data => `Burning ${data} SUB`,

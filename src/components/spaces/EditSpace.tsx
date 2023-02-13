@@ -1,5 +1,6 @@
 import { MailOutlined } from '@ant-design/icons'
 import { Form, Input, Select } from 'antd'
+import capitalize from 'lodash/capitalize'
 import { useState } from 'react'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import messages from 'src/messages'
@@ -184,9 +185,9 @@ export function InnerForm(props: FormProps) {
     form.setFieldsValue({ [fieldName('image')]: url })
   }
 
-  const buttonActionLabel = space ? 'Update' : 'Create new'
-  const buttonEntityLabel = asProfile ? 'profile' : 'space'
-  const buttonLabel = `${buttonActionLabel} ${buttonEntityLabel}`
+  const actionLabel = space ? 'Update' : 'Create new'
+  const entityLabel = asProfile ? 'profile' : 'space'
+  const buttonLabel = `${actionLabel} ${entityLabel}`
 
   let extrinsic = space ? 'spaces.updateSpace' : 'spaces.createSpace'
   if (!space && asProfile) {
@@ -206,7 +207,7 @@ export function InnerForm(props: FormProps) {
 
         <Form.Item
           name={fieldName('name')}
-          label='Space name'
+          label={`${capitalize(entityLabel)} name`}
           hasFeedback
           rules={[
             { required: true, message: 'Name is required.' },
@@ -214,7 +215,7 @@ export function InnerForm(props: FormProps) {
             { max: NAME_MAX_LEN, message: maxLenError('Name', NAME_MAX_LEN) },
           ]}
         >
-          <Input placeholder='Name of your space' />
+          <Input placeholder={`Name of your ${entityLabel}`} />
         </Form.Item>
 
         <Form.Item name={fieldName('whoCanPost')} label='Who can post?' help={whoCanPostHint}>
