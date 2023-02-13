@@ -2105,10 +2105,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@subsocial/api@0.7.12":
-  version "0.7.12"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.7.12.tgz#6cbb5b4b75593e68f46f1f7a8a0d89034ff455a2"
-  integrity sha512-O38LX1E76Jj0Ue/3TpZipjOKJVpFSYMqVV80zYRRy4PH3YhKHPkg6unRyiMdXQYFS5QoCLDYFk08ETgdVSgiZw==
+"@subsocial/api@0.7.13":
+  version "0.7.13"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.7.13.tgz#19dc7062c53b8b568d0784757e458163e49a3467"
+  integrity sha512-RvcNKxP7uPa2tr65KcW9AOQs/+rQvBWGNvuCZBpXb4Hs/veBjnYdStU68rN25xccDLFRynlFw4w6GziU05KVdw==
   dependencies:
     "@polkadot/api" latest
     "@polkadot/types" latest
@@ -2124,26 +2124,26 @@
   resolved "https://registry.yarnpkg.com/@subsocial/config/-/config-0.7.1.tgz#5dbd8dcd4540390e2c3ea4ab38466d7f5fee03b8"
   integrity sha512-zF+u865sZ++4+V1GRVtIeeBri+UMh6W+mVg04ysTNosk2gZ3xajv5m2EF8OdSvydrq2PSFTznSVVYGKACPNvjQ==
 
-"@subsocial/definitions@0.7.12", "@subsocial/definitions@latest":
-  version "0.7.12"
-  resolved "https://registry.yarnpkg.com/@subsocial/definitions/-/definitions-0.7.12.tgz#9ca1316628d6a640f5fe3591848d75e3937f11d4"
-  integrity sha512-wM4CBYTRkBy56Qozo4PL4tVVk07v1tksp/0lzHH7m6Es3mGsr48LuV4KYtzaVAisUnObuQ9aFyfTuwiju2qL3Q==
+"@subsocial/definitions@0.7.13", "@subsocial/definitions@latest":
+  version "0.7.13"
+  resolved "https://registry.yarnpkg.com/@subsocial/definitions/-/definitions-0.7.13.tgz#5ee7aa2888fb37295eb609cc61568189e9d434a2"
+  integrity sha512-BOkRK1cxStnhQ0Orw0aH/BcI00iMdxmHh7saO2tp1ub79mfPjDLtd48y2lfJpCX0ddsEJ6GCDitCr7Ai7TOECA==
   dependencies:
     "@polkadot/api" latest
     lodash.camelcase "^4.3.0"
 
-"@subsocial/elasticsearch@0.7.12":
-  version "0.7.12"
-  resolved "https://registry.yarnpkg.com/@subsocial/elasticsearch/-/elasticsearch-0.7.12.tgz#bbd6ea17dd3d4cc3ff9cb4a3ecedec53e2862527"
-  integrity sha512-9Skkerlbh2wf/XLSq1aBiUhpIVNXvy1BbFo2OpJYKlW4INqWS3yKW5uPGb01jS5YTxHVVmFeo+JV59B0XsUlVA==
+"@subsocial/elasticsearch@0.7.13":
+  version "0.7.13"
+  resolved "https://registry.yarnpkg.com/@subsocial/elasticsearch/-/elasticsearch-0.7.13.tgz#1ec625cb9912b70f9d1f14866d6b7f50882699d2"
+  integrity sha512-BLv4wMdwPVvOD47TH5Qw54SY11nP7PG8MbFKob62xxv0uiZbdA3KiFshgMF4FYIVk6oCbCgs/X3KBaqzfOz13w==
   dependencies:
     "@elastic/elasticsearch" "7.4.0"
     "@subsocial/utils" latest
 
-"@subsocial/utils@0.7.12", "@subsocial/utils@latest":
-  version "0.7.12"
-  resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.7.12.tgz#6d25b138259bad3e5c40edc43fe155d3aabd9912"
-  integrity sha512-SWo9UNiahTYsCivsHhNSje1qnUN26RiCZIRT5lwCHzebEWEXTPqocDeotRMry4j04KHOkNx+/hjC++OyWKy6hw==
+"@subsocial/utils@0.7.13", "@subsocial/utils@latest":
+  version "0.7.13"
+  resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.7.13.tgz#546abef2c4fa5e1f3d8e3de3ee69fb107f977309"
+  integrity sha512-HNHV+ZG/1yHgi4JcOLAWW0p4oaa6JCrv5///DzUuJbhpLjR7k6gKnF+ReXqEp9hFJggH4WCWPtNUCODD1FxlSA==
   dependencies:
     "@polkadot/util-crypto" latest
     "@sindresorhus/slugify" "^1.1.0"

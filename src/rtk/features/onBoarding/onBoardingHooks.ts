@@ -106,8 +106,7 @@ const getSavedProfileData = (profile: SpaceContent | undefined) => {
 }
 const upsertProfile = (api: ApiPromise, cid: IpfsCid, currentProfileId?: string) => {
   if (!currentProfileId) {
-    // TODO: remove any cast when sdk is updated
-    return (api.tx.profiles as any).createSpaceAsProfile(IpfsContent(cid?.toString()))
+    return api.tx.profiles.createSpaceAsProfile(IpfsContent(cid?.toString()))
   } else {
     return api.tx.spaces.updateSpace(currentProfileId, {
       content: OptionIpfsContent(cid?.toString()),
