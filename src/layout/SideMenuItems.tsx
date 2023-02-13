@@ -93,7 +93,9 @@ export const DefaultMenu: MenuItem[] = [
   Divider,
   {
     name: 'Suggest Feature',
-    page: ['https://forms.gle/sdmMJN3n4sxyNTWW7'],
+    page: [
+      'https://forms.clickup.com/9008022125/p/f/8ceq0kd-8261/FLJSBRH2PYGGK5K7Z9/suggestafeature',
+    ],
     icon: <BulbOutlined />,
   },
   {
