@@ -11,6 +11,7 @@ import { isEmptyStr, newLogger } from '@subsocial/utils'
 import { useCreateSendGaUserEvent } from 'src/ga'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import messages from 'src/messages'
+import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
 import { AnyAccountId } from 'src/types'
 import { useSubstrate } from '.'
 import { useAuth } from '../auth/AuthContext'
@@ -85,6 +86,7 @@ function TxButton({
   ...antdProps
 }: TxButtonProps) {
   const { api: subsocialApi } = useSubstrate()
+  const openOnBoardingModal = useOpenCloseOnBoardingModal()
   const [isSending, , setIsSending] = useToggle(false)
   const { isMobile } = useResponsiveSize()
   const {
@@ -116,7 +118,6 @@ function TxButton({
 
   let unsub: VoidFn | undefined
 
-  const isAuthRequired = !accountId || (!isFreeTx && !hasTokens)
   const buttonLabel = label || children
   const Component = component || Button
 
@@ -305,9 +306,15 @@ function TxButton({
     <Component
       {...antdProps}
       onClick={() => {
-        if (isAuthRequired && !isFreeTx && !customNodeApi) {
-          openSignInModal(false)
-          return setIsSending(false)
+        if (!customNodeApi && !isFreeTx) {
+          if (!accountId) {
+            openSignInModal(false)
+            return setIsSending(false)
+          }
+          if (!hasTokens) {
+            openOnBoardingModal('open', { toStep: 'energy', type: 'partial' })
+            return setIsSending(false)
+          }
         }
 
         sendTx()
