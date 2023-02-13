@@ -39,7 +39,9 @@ export default function AuthorCard({
       title={
         <div
           className={clsx(
-            isSmallMobile ? 'd-flex align-items-center flex-column' : 'VertAlignMiddleChildren',
+            isSmallMobile
+              ? 'd-flex align-items-center flex-column mx-auto'
+              : 'VertAlignMiddleChildren',
           )}
         >
           <Name
