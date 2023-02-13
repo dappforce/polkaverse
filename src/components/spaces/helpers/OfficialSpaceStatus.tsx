@@ -11,7 +11,7 @@ import styles from '../spaces.module.sass'
 type OfficialSpaceStatusProps = {
   space: SpaceStruct
   className?: string
-  removeContainer?: boolean
+  withoutContainer?: boolean
 }
 
 type InnerIconProps = {
@@ -46,7 +46,7 @@ const claimSpaceLink = (
 export const OfficialSpaceStatus = ({
   space,
   className,
-  removeContainer,
+  withoutContainer,
 }: OfficialSpaceStatusProps) => {
   const isMobile = useIsMobileWidthOrDevice()
 
@@ -65,7 +65,7 @@ export const OfficialSpaceStatus = ({
     </>
   )
 
-  if (removeContainer) {
+  if (withoutContainer) {
     return content
   }
 

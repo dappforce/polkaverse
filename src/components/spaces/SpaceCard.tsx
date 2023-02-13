@@ -43,7 +43,7 @@ export default function SpaceCard({ spaceId, ...props }: SpaceCardProps) {
             title={
               <>
                 <span className='UnboundedFont'>{spaceData.content?.name ?? 'Unnamed Space'}</span>
-                <OfficialSpaceStatus removeContainer space={spaceData.struct} />
+                <OfficialSpaceStatus withoutContainer space={spaceData.struct} />
                 <MyEntityLabel isMy={isMySpace} className='ml-2'>
                   {spaceId === myProfile?.id ? 'My profile' : 'My space'}
                 </MyEntityLabel>
