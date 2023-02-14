@@ -16,6 +16,7 @@ export function WhoCanPostSelector(props: WhoCanPostSelectorProps) {
     <Select defaultValue={getWhoCanPost(space)} onChange={onChange}>
       <Option value='space_owner'>{messages.forms.permissions.whoCanPost.space_owner}</Option>
       <Option value='follower'>{messages.forms.permissions.whoCanPost.follower}</Option>
+      <Option value='everyone'>{messages.forms.permissions.whoCanPost.everyone}</Option>
     </Select>
   )
 }
