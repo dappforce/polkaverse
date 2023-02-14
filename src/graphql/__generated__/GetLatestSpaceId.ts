@@ -9,6 +9,9 @@
 
 export interface GetLatestSpaceId_spaces {
   __typename: "Space";
+  /**
+   * The ID of a Space, which will have the same value and Space ID on the blockchain.
+   */
   id: string;
 }
 
