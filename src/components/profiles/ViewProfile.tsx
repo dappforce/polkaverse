@@ -13,7 +13,7 @@ import {
   selectProfileSpace,
   selectProfileSpaceStructById,
 } from 'src/rtk/features/profiles/profilesSlice'
-import { AnyAccountId, ProfileContent, ProfileData, SpaceData } from 'src/types'
+import { AnyAccountId, DataSourceTypes, ProfileContent, ProfileData, SpaceData } from 'src/types'
 import { AccountActivity } from '../activity/AccountActivity'
 import { useIsMyAddress } from '../auth/MyAccountsContext'
 import { Balance } from '../common/balances'
@@ -31,6 +31,7 @@ import { CopyAddress } from './address-views/utils'
 
 import { Donate } from 'src/components/donate'
 import { isBlockedAccount } from 'src/moderation'
+import { useFetchSpaceIdsByFollower } from 'src/rtk/app/hooks'
 import { fetchEntityOfSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
 import { useAppSelector } from '../../rtk/app/store'
 import { useSelectProfile } from '../../rtk/features/profiles/profilesHooks'
@@ -58,13 +59,14 @@ const Component = (props: Props) => {
   )
   const isMyAccount = useIsMyAddress(address)
   const shouldHideContent = isBlockedAccount(address.toString()) && !isMyAccount
+  const { spaceIds } = useFetchSpaceIdsByFollower(props.address.toString(), DataSourceTypes.SQUID)
 
   const noProfile = !owner?.struct
 
   const { accountFollowersCount, accountFollowedCount } = profileSpaceByAccount || {}
 
   const followers = accountFollowersCount || 0
-  const following = accountFollowedCount || 0
+  const following = (accountFollowedCount || 0) + spaceIds.length
 
   if (shouldHideContent && owner) {
     owner.content = undefined

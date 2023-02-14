@@ -13,7 +13,7 @@ import {
 } from 'src/rtk/features/spaceIds/spaceIdsHooks'
 import { selectSpaceIdsWithRolesByAccount } from 'src/rtk/features/spaceIds/spaceIdsWithRolesByAccountSlice'
 import { fetchSpaces } from 'src/rtk/features/spaces/spacesSlice'
-import { AccountId, AnyAccountId, isUnlisted, SpaceData, SpaceId } from 'src/types'
+import { AccountId, AnyAccountId, DataSourceTypes, isUnlisted, SpaceData, SpaceId } from 'src/types'
 import { useIsMyAddress } from '../auth/MyAccountsContext'
 import { InfiniteListByPage } from '../lists'
 import { PageContent } from '../main/PageWrapper'
@@ -184,7 +184,7 @@ export const FollowingSpacesList = (props: BaseProps) => {
   const address = props.address.toString()
   const isMyAddress = useIsMyAddress(address)
 
-  const { spaceIds, error, loading } = useFetchSpaceIdsByFollower(address)
+  const { spaceIds, error, loading } = useFetchSpaceIdsByFollower(address, DataSourceTypes.SQUID)
 
   if (error) return null
 
