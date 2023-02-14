@@ -16,22 +16,15 @@ import { useResponsiveSize } from 'src/components/responsive'
 import { useSubstrate } from 'src/components/substrate'
 import useToggle from 'src/components/substrate/useToggle'
 import { getWalletBySource } from 'src/components/wallets/supportedWallets'
+import useExternalStorage from 'src/hooks/useExternalStorage'
 import store from 'store'
 import { showErrorMessage } from '../Message'
 const log = newLogger('RememberMeButton')
 
-const PROXY_ADDRESS = 'ProxyAddress'
-export const setProxyAddress = (proxyAddress: string) => store.set(PROXY_ADDRESS, proxyAddress)
-export const getProxyAddress = (): string => store.get(PROXY_ADDRESS)
-
-const OFFCHAIN_ADDRESS = 'OffchainAddress'
-export const setOffchainAddress = (offchainAddress: string) =>
-  store.set(OFFCHAIN_ADDRESS, offchainAddress)
-export const getOffchainAddress = (): string => store.get(OFFCHAIN_ADDRESS)
-
-const OFFCHAIN_TOKEN = 'OffchainToken'
-export const setOffchainToken = (offchainToken: string) => store.set(OFFCHAIN_TOKEN, offchainToken)
-export const getOffchainToken = (): string => store.get(OFFCHAIN_TOKEN)
+export const PROXY_ADDRESS_KEY = 'ProxyAddress'
+export const OFFCHAIN_ADDRESS_KEY = 'OffchainAddress'
+export const OFFCHAIN_TOKEN_KEY = 'OffchainToken'
+export const getProxyAddress = (): string => store.get(PROXY_ADDRESS_KEY)
 
 interface RememberMeButtonProps extends TxButtonProps {
   onFailedAuth: () => void
@@ -53,6 +46,16 @@ function RememberMeButton({
   const [isConfirming, , setIsConfirming] = useToggle(false)
   const { isMobile } = useResponsiveSize()
   const myAddress = useMyAddress()
+
+  const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY, {
+    storageKeyType: 'user',
+  })
+  const { setData: setProxyAddress } = useExternalStorage(PROXY_ADDRESS_KEY, {
+    storageKeyType: 'user',
+  })
+  const { setData: setOffchainAddress } = useExternalStorage(OFFCHAIN_ADDRESS_KEY, {
+    storageKeyType: 'user',
+  })
 
   const [token, setToken] = useState<string | undefined>()
   const [captchaReady, setCaptchaReady] = useState(false)
@@ -81,6 +84,10 @@ function RememberMeButton({
     // @ts-ignore
     hCaptchaRef.current?.execute()
   }
+
+  useEffect(() => {
+    setCaptchaReady(true)
+  }, [])
 
   const HCAPTCHA_SITE_KEY = 'fc5815a2-6662-420f-8d94-ed72200d8a39'
   // const HCAPTCHA_SITE_KEY = '10000000-ffff-ffff-ffff-000000000001'

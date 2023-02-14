@@ -5,10 +5,7 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { subsocialUrl } from 'src/components/urls'
 import LoadingTransaction from 'src/components/utils/LoadingTransaction'
 import { MutedDiv, MutedSpan } from 'src/components/utils/MutedText'
-import RememberMeButton, {
-  setOffchainToken,
-  setProxyAddress,
-} from 'src/components/utils/OffchainSigner/RememberMeButton'
+import RememberMeButton from 'src/components/utils/OffchainSigner/RememberMeButton'
 import PrivacyPolicyText from 'src/components/utils/PrivacyPolicyText'
 import TwitterMock from 'src/components/utils/TwitterMock'
 import TxButton from 'src/components/utils/TxButton'
@@ -88,8 +85,6 @@ export default function OnBoardingContentContainer({
                 loading
                   ? undefined
                   : () => {
-                      setOffchainToken('')
-                      setProxyAddress('')
                       onBackClick()
                     }
               }

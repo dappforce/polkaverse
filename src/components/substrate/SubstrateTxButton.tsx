@@ -9,8 +9,11 @@ import type { Signer } from '@polkadot/api/types'
 import { VoidFn } from '@polkadot/api/types'
 import { isEmptyStr, newLogger } from '@subsocial/utils'
 import { useCreateSendGaUserEvent } from 'src/ga'
+import useExternalStorage from 'src/hooks/useExternalStorage'
 import messages from 'src/messages'
 import { AnyAccountId } from 'src/types'
+import { createStorageKey } from 'src/utils/storage'
+import store from 'store'
 import { useSubstrate } from '.'
 import { useAuth } from '../auth/AuthContext'
 import { getCurrentWallet } from '../auth/utils'
@@ -20,7 +23,7 @@ import {
   isAccountOnboarded,
   submitSignedCallData,
 } from '../utils/OffchainSigner/OffchainSignerUtils'
-import { getOffchainAddress, getOffchainToken } from '../utils/OffchainSigner/RememberMeButton'
+import { OFFCHAIN_ADDRESS_KEY, OFFCHAIN_TOKEN_KEY } from '../utils/OffchainSigner/RememberMeButton'
 import { getWalletBySource } from '../wallets/supportedWallets'
 import styles from './SubstrateTxButton.module.sass'
 import useToggle from './useToggle'
@@ -89,6 +92,16 @@ function TxButton({
       completedSteps: { hasTokens },
     },
   } = useAuth()
+
+  const { data: offchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY, {
+    storageKeyType: 'user',
+  })
+
+  const isCurrentOffchainAddress =
+    store.get(createStorageKey(OFFCHAIN_ADDRESS_KEY, accountId as string)) === 1 ? true : false
+
+  const isOffchainSignerTx =
+    !!offchainToken && isCurrentOffchainAddress && isAccountOnboarded(accountId as string)
 
   const api = customNodeApi || subsocialApi
 
@@ -216,10 +229,7 @@ function TxButton({
     try {
       const extrinsic = await getExtrinsic()
 
-      const offchainToken = getOffchainToken()
-      const offchainAddress = getOffchainAddress()
-
-      if (offchainToken && offchainAddress === accountId && isAccountOnboarded(accountId)) {
+      if (isOffchainSignerTx) {
         sendOffchainTx(extrinsic, offchainToken)
       } else {
         let signer: Signer | undefined
