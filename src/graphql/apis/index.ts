@@ -21,6 +21,10 @@ import {
   GetFollowActivities,
   GetFollowActivitiesVariables,
 } from '../__generated__/GetFollowActivities'
+import {
+  GetFollowingSpaces,
+  GetFollowingSpacesVariables,
+} from '../__generated__/GetFollowingSpaces'
 import { GetLatestPostId } from '../__generated__/GetLatestPostId'
 import { GetLatestSpaceId } from '../__generated__/GetLatestSpaceId'
 import { GetNewsFeeds, GetNewsFeedsVariables } from '../__generated__/GetNewsFeeds'
@@ -344,4 +348,15 @@ export async function getProfileSpaceCount(client: GqlClient) {
     query: q.GET_PROFILES_COUNT,
   })
   return res.data.accountsConnection.totalCount
+}
+
+export async function getFollowingSpaces(
+  client: GqlClient,
+  variables: GetFollowingSpacesVariables,
+) {
+  const res = await client.query<GetFollowingSpaces, GetFollowingSpacesVariables>({
+    query: q.GET_FOLLOWING_SPACES,
+    variables,
+  })
+  return res.data.accountById?.spacesFollowed.map(space => space.followingSpace.id)
 }
