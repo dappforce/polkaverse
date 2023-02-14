@@ -581,6 +581,20 @@ export const GET_COMMENT_ACTIVITIES = gql`
   }
 `
 
+// Follows
+// ------------------------------------------------------------------------------------
+export const GET_FOLLOWING_SPACES = gql`
+  query GetFollowingSpaces($address: String!) {
+    accountById(id: $address) {
+      spacesFollowed {
+        followingSpace {
+          id
+        }
+      }
+    }
+  }
+`
+
 // Notifications
 // ------------------------------------------------------------------------------------
 

@@ -11,13 +11,25 @@ import { ReactionKind } from "./../../types/graphql-global-types";
 
 export interface GetAddressPostsReaction_reactions_post {
   __typename: "Post";
+  /**
+   * The Post ID, the same as it is on the blockchain.
+   */
   id: string;
 }
 
 export interface GetAddressPostsReaction_reactions {
   __typename: "Reaction";
+  /**
+   * The ID of a Reaction, which will have the same value and reaction ID on the blockchain.
+   */
   id: string;
+  /**
+   * The type of Reaction (Upvote, Downvote).
+   */
   kind: ReactionKind;
+  /**
+   * A One-to-One relationship with the Post that the current reaction has been made for.
+   */
   post: GetAddressPostsReaction_reactions_post;
 }
 

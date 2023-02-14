@@ -9,6 +9,9 @@
 
 export interface GetPostIdsBySpaces_posts {
   __typename: "Post";
+  /**
+   * The Post ID, the same as it is on the blockchain.
+   */
   id: string;
 }
 
