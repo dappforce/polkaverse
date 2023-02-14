@@ -46,7 +46,7 @@ export default function CardWithContent({
           >
             <div
               className={clsx(
-                'd-flex align-items-center',
+                'd-flex align-items-center w-100',
                 'FontBig font-weight-semibold',
                 styles.Title,
               )}

@@ -35,8 +35,6 @@ input[type='number'] {
   font-family: 'Unbounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
     Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
     'Noto Color Emoji';
-  position: relative;
-  top: 2px;
 }
 
 #__next {
@@ -156,6 +154,12 @@ a {
 
 .GapHuge {
   gap: $space_huge;
+}
+
+.VertAlignMiddleChildren {
+  > * {
+    vertical-align: middle;
+  }
 }
 
 .LineHeightNormal {

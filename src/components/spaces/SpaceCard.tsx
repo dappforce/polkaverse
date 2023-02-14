@@ -1,11 +1,13 @@
 import { EditOutlined } from '@ant-design/icons'
 import CardWithContent, { CardWithContentProps } from 'src/components/utils/cards/CardWithContent'
-import { useSelectSpace } from 'src/rtk/app/hooks'
+import { useSelectProfile, useSelectSpace } from 'src/rtk/app/hooks'
+import { useMyAddress } from '../auth/MyAccountsContext'
 import { editSpaceUrl } from '../urls'
 import { ButtonLink } from '../utils/CustomLinks'
 import { DfMd } from '../utils/DfMd'
 import FollowSpaceButton from '../utils/FollowSpaceButton'
-import { SpaceAvatar, useIsMySpace } from './helpers'
+import MyEntityLabel from '../utils/MyEntityLabel'
+import { OfficialSpaceStatus, SpaceAvatar, useIsMySpace } from './helpers'
 import ViewSpaceLink from './ViewSpaceLink'
 
 export interface SpaceCardProps
@@ -15,6 +17,8 @@ export interface SpaceCardProps
 
 export default function SpaceCard({ spaceId, ...props }: SpaceCardProps) {
   const spaceData = useSelectSpace(spaceId)
+  const myAddress = useMyAddress()
+  const myProfile = useSelectProfile(myAddress)
   const isMySpace = useIsMySpace(spaceData?.struct)
 
   return (
@@ -34,7 +38,17 @@ export default function SpaceCard({ spaceId, ...props }: SpaceCardProps) {
       title={
         spaceData ? (
           <ViewSpaceLink
-            title={spaceData.content?.name ?? 'Unnamed Space'}
+            containerClassName='w-100'
+            className='font-weight-normal VertAlignMiddleChildren'
+            title={
+              <>
+                <span className='UnboundedFont'>{spaceData.content?.name ?? 'Unnamed Space'}</span>
+                <OfficialSpaceStatus withoutContainer space={spaceData.struct} />
+                <MyEntityLabel isMy={isMySpace} className='ml-2'>
+                  {spaceId === myProfile?.id ? 'My profile' : 'My space'}
+                </MyEntityLabel>
+              </>
+            }
             space={spaceData.struct}
           />
         ) : (

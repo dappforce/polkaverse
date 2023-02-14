@@ -70,9 +70,9 @@ type LoadingProps = {
 export const Loading = ({ label, style, center = true }: LoadingProps) => {
   const alignCss = center ? 'justify-content-center align-items-center' : ''
   return (
-    <div className={`d-flex w-100 h-100 pt-3 pb-3 ${alignCss}`} style={style}>
+    <div className={`d-flex w-100 h-100 pt-4 pb-3 ${alignCss}`} style={style}>
       <LoadingOutlined />
-      {label && <em className='ml-3 text-muted'>{label}</em>}
+      {label && <em className='ml-3 text-muted FontSmall'>{label}</em>}
     </div>
   )
 }

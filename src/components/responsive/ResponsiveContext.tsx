@@ -3,6 +3,7 @@ import { useMediaQuery } from 'react-responsive'
 import { isMobileDevice } from 'src/config/Size.config'
 
 export type ResponsiveSizeState = {
+  isSmallMobile: boolean
   isMobile: boolean
   isTablet: boolean
   isDesktop: boolean
@@ -14,6 +15,7 @@ const contextStub: ResponsiveSizeState = {
   isDesktop: true,
   isMobile: false,
   isNotMobile: false,
+  isSmallMobile: true,
   isTablet: false,
   isNotDesktop: false,
 }
@@ -25,6 +27,7 @@ export function ResponsiveSizeProvider(props: React.PropsWithChildren<any>) {
     isDesktop: useMediaQuery({ minWidth: 992 }),
     isTablet: useMediaQuery({ minWidth: 768, maxWidth: 991 }),
     isMobile: useMediaQuery({ maxWidth: 767 }),
+    isSmallMobile: useMediaQuery({ maxWidth: 455 }),
     isNotMobile: useMediaQuery({ minWidth: 768 }),
     isNotDesktop: useMediaQuery({ maxWidth: 991 }),
   }

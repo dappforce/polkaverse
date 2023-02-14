@@ -1,5 +1,6 @@
 import { CheckCircleFilled, HourglassOutlined } from '@ant-design/icons'
 import { Tag, Tooltip } from 'antd'
+import clsx from 'clsx'
 import Link from 'next/link'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import messages from 'src/messages'
@@ -9,6 +10,8 @@ import styles from '../spaces.module.sass'
 
 type OfficialSpaceStatusProps = {
   space: SpaceStruct
+  className?: string
+  withoutContainer?: boolean
 }
 
 type InnerIconProps = {
@@ -40,7 +43,11 @@ const claimSpaceLink = (
   </Link>
 )
 
-export const OfficialSpaceStatus = ({ space }: OfficialSpaceStatusProps) => {
+export const OfficialSpaceStatus = ({
+  space,
+  className,
+  withoutContainer,
+}: OfficialSpaceStatusProps) => {
   const isMobile = useIsMobileWidthOrDevice()
 
   if (!isOfficialSpace(space.id)) return null
@@ -49,12 +56,18 @@ export const OfficialSpaceStatus = ({ space }: OfficialSpaceStatusProps) => {
 
   const { title, icon } = isClaimed ? officialSpaceProps : unclaimedSpaceProps
 
-  return (
-    <span className='d-flex align-items-center'>
+  const content = (
+    <>
       <Tooltip title={title} className='mr-2'>
         {icon}
       </Tooltip>
       {!isClaimed && !isMobile && claimSpaceLink}
-    </span>
+    </>
   )
+
+  if (withoutContainer) {
+    return content
+  }
+
+  return <span className={clsx('d-flex align-items-center', className)}>{content}</span>
 }
