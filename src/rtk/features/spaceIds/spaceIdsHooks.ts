@@ -3,7 +3,7 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { useActions } from 'src/rtk/app/helpers'
 import { useFetchOneEntity } from 'src/rtk/app/hooksCommon'
 import { useAppSelector } from 'src/rtk/app/store'
-import { AccountId } from 'src/types'
+import { AccountId, DataSourceTypes } from 'src/types'
 import {
   fetchEntityOfSpaceIdsByFollower,
   selectEntityOfSpaceIdsByFollower,
@@ -31,11 +31,11 @@ export const useFetchSpaceIdsByOwner = (owner: AccountId) => {
   }
 }
 
-export const useFetchSpaceIdsByFollower = (follower: AccountId) => {
+export const useFetchSpaceIdsByFollower = (follower: AccountId, dataSource?: DataSourceTypes) => {
   const { entity, ...other } = useFetchOneEntity(
     selectEntityOfSpaceIdsByFollower,
     fetchEntityOfSpaceIdsByFollower,
-    { id: follower },
+    { id: follower, dataSource },
   )
 
   return {

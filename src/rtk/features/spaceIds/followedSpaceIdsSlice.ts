@@ -1,8 +1,11 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
+import { SubsocialApi } from '@subsocial/api'
 import config from 'src/config'
-import { FetchOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { getFollowingSpaces } from 'src/graphql/apis'
+import { FetchOneArgs, ThunkApiConfig, validateDataSource } from 'src/rtk/app/helpers'
 import { SelectOneFn } from 'src/rtk/app/hooksCommon'
 import { RootState } from 'src/rtk/app/rootReducer'
+import { createFetchDataFn } from 'src/rtk/app/wrappers'
 import { AccountId, bnsToIds, SpaceId } from 'src/types'
 import { fetchFeedByAccount } from '../posts/myFeedSlice'
 
@@ -30,12 +33,25 @@ type Args = {}
 
 type FetchOneSpaceIdsArgs = FetchOneArgs<Args>
 
+const getFollowedSpaceIds = createFetchDataFn<string[]>([])({
+  chain: async ({ api, account }: { api: SubsocialApi; account: string }) => {
+    return bnsToIds(await api.blockchain.spaceIdsFollowedByAccount(account))
+  },
+  squid: async ({ account }: { account: string }, client) => {
+    const posts = await getFollowingSpaces(client, {
+      address: account,
+    })
+    return posts ?? []
+  },
+})
+
 export const fetchEntityOfSpaceIdsByFollower = createAsyncThunk<
   MaybeEntity,
   FetchOneSpaceIdsArgs,
   ThunkApiConfig
 >('followedSpaceIds/fetchOne', async (args, { getState, dispatch }): Promise<MaybeEntity> => {
-  const { api, id, reload } = args
+  const { api, id, reload, dataSource: _dataSource } = args
+  const dataSource = validateDataSource(_dataSource)
 
   const follower = id as AccountId
   const knownSpaceIds = selectSpaceIdsByFollower(getState(), follower)
@@ -45,7 +61,10 @@ export const fetchEntityOfSpaceIdsByFollower = createAsyncThunk<
     return undefined
   }
 
-  const spaceIds = bnsToIds(await api.blockchain.spaceIdsFollowedByAccount(follower))
+  const spaceIds = await getFollowedSpaceIds(dataSource, {
+    chain: { api, account: follower },
+    squid: { account: follower },
+  })
 
   config.enableOnchainActivities && dispatch(fetchFeedByAccount({ ...args, spaceIds }))
 
