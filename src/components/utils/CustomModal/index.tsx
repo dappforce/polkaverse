@@ -4,10 +4,11 @@ import { MutedSpan } from 'src/components/utils/MutedText'
 import styles from './index.module.sass'
 
 export interface CustomModalProps extends ModalProps {
-  title?: string | JSX.Element
+  title?: string | JSX.Element | React.ReactNode
   subtitle?: string | JSX.Element
   footer?: JSX.Element
   contentClassName?: string
+  contentElementId?: string
   footerClassName?: string
   fullHeight?: boolean
   noScroll?: boolean
@@ -20,6 +21,7 @@ export default function CustomModal({
   footer,
   className,
   contentClassName,
+  contentElementId,
   footerClassName,
   fullHeight,
   noScroll,
@@ -50,6 +52,7 @@ export default function CustomModal({
           'scrollbar',
           contentClassName,
         )}
+        id={contentElementId}
       >
         {children}
       </div>
