@@ -3,6 +3,7 @@ import styles from './AccountsListModal.module.sass'
 import { GenericAccountId as SubstrateAccountId } from '@polkadot/types'
 import { isEmptyArray } from '@subsocial/utils'
 import { Divider, Tabs } from 'antd'
+import clsx from 'clsx'
 import React, { useState } from 'react'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import { useFetchSpaceIdsByFollower } from 'src/rtk/app/hooks'
@@ -37,12 +38,14 @@ type InnerProfilePreviewListProps = {
   noDataDesc: string
   loadingLabel: string
   scrollableTarget: string
+  className?: string
 }
 const InnerProfilePreviewList = ({
   ids,
   noDataDesc,
   loadingLabel,
   scrollableTarget,
+  className,
 }: InnerProfilePreviewListProps) => {
   const { subsocial } = useSubsocialApi()
   const dispatch = useAppDispatch()
@@ -76,7 +79,7 @@ const InnerProfilePreviewList = ({
 
   return (
     <InfiniteListByPage
-      className='m-0'
+      className={clsx('m-0', className)}
       loadMore={loadMoreProfiles}
       noDataDesc={noDataDesc}
       totalCount={ids.length}
@@ -100,16 +103,18 @@ const InnerProfilePreviewList = ({
 }
 
 const ProfilePreviewList = (props: InnerProps) => {
-  const renderAccountsList = () => (
+  const renderAccountsList = (className?: string) => (
     <InnerProfilePreviewList
+      className={className}
       scrollableTarget='account-list-modal'
       noDataDesc='No accounts followed yet...'
       loadingLabel='Loading followed accounts...'
       ids={props.accounts}
     />
   )
-  const renderSpacesList = () => (
+  const renderSpacesList = (className?: string) => (
     <InnerProfilePreviewList
+      className={className}
       scrollableTarget='account-list-modal'
       noDataDesc='No spaces followed yet...'
       loadingLabel='Loading followed spaces...'
@@ -121,10 +126,10 @@ const ProfilePreviewList = (props: InnerProps) => {
     return (
       <Tabs>
         <Tabs.TabPane tab={`Accounts (${props.accounts.length})`} key='accounts'>
-          {renderAccountsList()}
+          {renderAccountsList('pt-1')}
         </Tabs.TabPane>
         <Tabs.TabPane tab={`Spaces (${props.spaceIds?.length ?? 0})`} key='spaces'>
-          {renderSpacesList()}
+          {renderSpacesList('pt-1')}
         </Tabs.TabPane>
       </Tabs>
     )
