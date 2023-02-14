@@ -16,6 +16,7 @@ import { useResponsiveSize } from 'src/components/responsive'
 import { useSubstrate } from 'src/components/substrate'
 import useToggle from 'src/components/substrate/useToggle'
 import { getWalletBySource } from 'src/components/wallets/supportedWallets'
+import { hCaptchaSiteKey } from 'src/config/env'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import store from 'store'
 import { showErrorMessage } from '../Message'
@@ -88,9 +89,6 @@ function RememberMeButton({
   useEffect(() => {
     setCaptchaReady(true)
   }, [])
-
-  const HCAPTCHA_SITE_KEY = 'fc5815a2-6662-420f-8d94-ed72200d8a39'
-  // const HCAPTCHA_SITE_KEY = '10000000-ffff-ffff-ffff-000000000001'
 
   const confirmOffchainSigner = (token: string) => {
     isFunction(onClick) && onClick()
@@ -280,7 +278,7 @@ function RememberMeButton({
       </Component>
       <HCaptcha
         size='invisible'
-        sitekey={HCAPTCHA_SITE_KEY}
+        sitekey={hCaptchaSiteKey}
         onVerify={setToken}
         onLoad={() => {
           setCaptchaReady(true)

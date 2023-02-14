@@ -5,7 +5,9 @@ import { truncateAddress } from 'src/utils/storage'
 
 const log = newLogger('OffchainSignerRequests')
 
-const OFFCHAIN_SIGNER_URL = 'https://staging-signer.subsocial.network'
+import config from 'src/config'
+
+const { offchainSignerUrl } = config
 
 type AxiosResponse<T = any> = {
   data: T
@@ -96,7 +98,7 @@ export const offchainSignerRequest = async (
   }
 
   try {
-    const res = await axios(`${OFFCHAIN_SIGNER_URL}/${endpoint}`, {
+    const res = await axios(`${offchainSignerUrl}/${endpoint}`, {
       method,
       data: method === 'GET' ? undefined : data,
       headers,

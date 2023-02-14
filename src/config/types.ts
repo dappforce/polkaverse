@@ -70,6 +70,9 @@ export type ConnectionsSettings = {
    * - `'http://127.0.0.1:5001'` – `5001` port for write access via IPFS Go.
    */
   ipfsNodeUrl: string
+
+  /** A URL of Subsocial Offchain signer backend. Example: http://localhost:3002. **/
+  offchainSignerUrl?: string
 }
 
 export type AppConfig = {
