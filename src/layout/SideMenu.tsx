@@ -3,6 +3,7 @@ import { Menu } from 'antd'
 import clsx from 'clsx'
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
+import { HTMLProps } from 'react'
 import { useIsSignedIn, useMyAddress } from '../components/auth/MyAccountsContext'
 import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMenuItems'
 import styles from './Sider.module.sass'
@@ -14,20 +15,28 @@ const goToPage = ([url, as]: string[]) => {
 }
 
 const renderPageLink = (item: PageLink) => {
-  const { icon } = item
+  const { icon, openInNewTab } = item
 
   if (item.hidden) {
     return null
+  }
+
+  let anchorProps: HTMLProps<HTMLAnchorElement> = {}
+  if (openInNewTab) {
+    anchorProps = {
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    }
   }
 
   return (
     <Menu.Item
       className='DfMenuItem'
       key={item.page[1] || item.page[0]}
-      onClick={() => goToPage(item.page)}
+      onClick={() => !openInNewTab && goToPage(item.page)}
     >
-      <Link href={item.page[0]} as={item.page[1]}>
-        <a>
+      <Link href={item.page[0]} as={item.page[1]} passHref>
+        <a {...anchorProps}>
           {icon}
           <span className='MenuItemName'>{item.name}</span>
         </a>

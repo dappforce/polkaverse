@@ -19,7 +19,7 @@ import config from 'src/config'
 
 const { enableSubnetMode, enableDomains } = config
 
-const issuesUrl = 'https://github.com/dappforce/subsocial/issues'
+const issuesUrl = 'https://forms.clickup.com/9008022125/f/8ceq0kd-7261/7PAH62P0XTHM9UIV4Q'
 
 export type Divider = 'Divider'
 
@@ -30,6 +30,7 @@ export type PageLink = {
   page: string[]
   icon: React.ReactNode
   hidden?: boolean
+  openInNewTab?: boolean
 
   // Helpers
   isNotifications?: boolean
@@ -68,6 +69,7 @@ export const DefaultMenu: MenuItem[] = [
     name: 'Subsocial Twitter',
     page: ['https://twitter.com/subsocialchain'],
     icon: <SubIcon Icon={FiTwitter} />,
+    openInNewTab: true,
   },
   // {
   //   name: 'Official Telegram chat',
@@ -78,11 +80,13 @@ export const DefaultMenu: MenuItem[] = [
     name: 'Subsocial Announcements',
     page: ['https://t.me/SubsocialNetwork'],
     icon: <NotificationOutlined />,
+    openInNewTab: true,
   },
   {
     name: 'Subsocial Discord',
     page: ['https://discord.gg/yU8tgHN'],
     icon: <SubIcon Icon={FaDiscord} />,
+    openInNewTab: true,
   },
   Divider,
   {
@@ -97,11 +101,13 @@ export const DefaultMenu: MenuItem[] = [
       'https://forms.clickup.com/9008022125/p/f/8ceq0kd-8261/FLJSBRH2PYGGK5K7Z9/suggestafeature',
     ],
     icon: <BulbOutlined />,
+    openInNewTab: true,
   },
   {
     name: 'Report bug',
     page: [issuesUrl],
     icon: <BugOutlined />,
+    openInNewTab: true,
   },
 ]
 
