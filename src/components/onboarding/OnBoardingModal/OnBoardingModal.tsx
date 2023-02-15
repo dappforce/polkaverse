@@ -5,14 +5,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAuth } from 'src/components/auth/AuthContext'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { setFiltersInUrl } from 'src/components/main/utils'
-import { SwitchSpaceProfileModal } from 'src/components/profiles/address-views/utils/SwitchProfileSpaceModal'
 import config from 'src/config'
 import { useBooleanExternalStorage } from 'src/hooks/useExternalStorage'
-import {
-  useCreateReloadProfile,
-  useCreateReloadSpaceIdsForMyAccount,
-  useSelectProfile,
-} from 'src/rtk/app/hooks'
+import { useCreateReloadProfile, useCreateReloadSpaceIdsForMyAccount } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
 import {
   useCurrentOnBoardingStep,
@@ -79,7 +74,6 @@ export default function OnBoardingModal({
 }: OnBoardingModalProps) {
   const router = useRouter()
   const myAddress = useMyAddress()
-  const profile = useSelectProfile(myAddress)
   const { data: isFinishedOnBoarding, setData: setIsFinishedOnBoarding } =
     useBooleanExternalStorage(ON_BOARDING_MODAL_KEY, {
       storageKeyType: 'user',
@@ -90,7 +84,6 @@ export default function OnBoardingModal({
   const isProfileDraft = useIsDraftOnBoardingData('profile')
   const isTopicsDraft = useIsDraftOnBoardingData('topics')
   const isFollowSpacesDraft = useIsDraftOnBoardingData('spaces')
-  const [openProfileSelection, setOpenProfileSelection] = useState(false)
 
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -149,8 +142,7 @@ export default function OnBoardingModal({
     if (!isSkipped) {
       dispatch(resetOnBoardingData())
       if (isProfileDraft === false || isTopicsDraft === false) {
-        if (!profile) setOpenProfileSelection(true)
-        else reloadProfile({ id: myAddress ?? '', dataSource: DataSourceTypes.CHAIN })
+        reloadProfile({ id: myAddress ?? '', dataSource: DataSourceTypes.CHAIN })
         reloadMySpaceIds()
       }
       if (isFollowSpacesDraft === false) {
@@ -171,44 +163,38 @@ export default function OnBoardingModal({
   const modalClosable = !loading && openState === 'partial'
 
   return (
-    <>
-      <SwitchSpaceProfileModal
-        open={openProfileSelection}
-        hide={() => setOpenProfileSelection(false)}
-      />
-      <Modal
-        visible={
-          openState !== '' &&
-          !(openState === 'full-on-boarding' && onBoardingModalStepsOrder.length === 0)
-        }
-        destroyOnClose
-        closable={success || modalClosable}
-        maskClosable={modalClosable}
-        keyboard={modalClosable}
-        onCancel={() => afterDoneOnBoarding(!success)}
-        footer={null}
-        className={clsx(
-          styles.DfOnBoardingModal,
-          openState === 'full-on-boarding' && !success && styles.DfOnBoardingModalFull,
-        )}
-      >
-        {currentContent && Component && (
-          <Component
-            loading={loading}
-            success={success}
-            setLoading={setLoading}
-            setSuccess={setSuccess}
-            currentStepIndex={currentStepIndex}
-            firstStepOffset={firstStepOffset}
-            goToNextStep={goToNextStep}
-            onBackClick={onBackClick}
-            totalSteps={onBoardingModalStepsOrder.length}
-            title={currentContent.title}
-            subtitle={currentContent.subtitle}
-          />
-        )}
-      </Modal>
-    </>
+    <Modal
+      visible={
+        openState !== '' &&
+        !(openState === 'full-on-boarding' && onBoardingModalStepsOrder.length === 0)
+      }
+      destroyOnClose
+      closable={success || modalClosable}
+      maskClosable={modalClosable}
+      keyboard={modalClosable}
+      onCancel={() => afterDoneOnBoarding(!success)}
+      footer={null}
+      className={clsx(
+        styles.DfOnBoardingModal,
+        openState === 'full-on-boarding' && !success && styles.DfOnBoardingModalFull,
+      )}
+    >
+      {currentContent && Component && (
+        <Component
+          loading={loading}
+          success={success}
+          setLoading={setLoading}
+          setSuccess={setSuccess}
+          currentStepIndex={currentStepIndex}
+          firstStepOffset={firstStepOffset}
+          goToNextStep={goToNextStep}
+          onBackClick={onBackClick}
+          totalSteps={onBoardingModalStepsOrder.length}
+          title={currentContent.title}
+          subtitle={currentContent.subtitle}
+        />
+      )}
+    </Modal>
   )
 }
 

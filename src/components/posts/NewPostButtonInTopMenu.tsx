@@ -6,7 +6,7 @@ import { useSelectSpaceIdsWhereAccountCanPost } from 'src/rtk/app/hooks'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { useResponsiveSize } from '../responsive'
-import { CreateSpaceButton, CreateSpaceIcon } from '../spaces/helpers'
+import { CreateSpaceButton, CreateSpaceButtonProps, CreateSpaceIcon } from '../spaces/helpers'
 import { BareProps } from '../utils/types'
 import { PostEditorModal } from './editor/ModalEditor'
 
@@ -18,7 +18,7 @@ import { PostEditorModal } from './editor/ModalEditor'
  *   - Opens "Space Selector" modal if user has more than one space.
  */
 
-const CreateSpaceAdaptiveButton = (props: BareProps) => {
+const CreateSpaceAdaptiveButton = (props: BareProps & CreateSpaceButtonProps) => {
   const { isMobile } = useResponsiveSize()
 
   return isMobile ? <CreateSpaceIcon {...props} /> : <CreateSpaceButton ghost={true} {...props} />
@@ -63,7 +63,7 @@ export function NewPostButtonInTopMenu() {
   const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: ids })
 
   const anySpace = spaceIds[0]
-  if (!anySpace) return <CreateSpaceAdaptiveButton />
+  if (!anySpace) return <CreateSpaceAdaptiveButton asProfile />
 
   return <NewPostButtonAndModal />
 }

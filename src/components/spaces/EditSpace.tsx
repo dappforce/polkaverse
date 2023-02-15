@@ -1,11 +1,12 @@
 import { MailOutlined } from '@ant-design/icons'
 import { Form, Input, Select } from 'antd'
+import capitalize from 'lodash/capitalize'
 import { useState } from 'react'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import messages from 'src/messages'
 import { WriteAccessRequired } from 'src/moderation'
-import { useCreateReloadSpaceIdsForMyAccount } from 'src/rtk/app/hooks'
-import { IpfsCid, SpaceContent } from 'src/types'
+import { useCreateReloadProfile, useCreateReloadSpaceIdsForMyAccount } from 'src/rtk/app/hooks'
+import { DataSourceTypes, IpfsCid, SpaceContent, SpaceData } from 'src/types'
 import { useAmIBlocked, useMyAddress } from '../auth/MyAccountsContext'
 import { DfForm, DfFormButtons, maxLenError, minLenError } from '../forms'
 import { PageContent } from '../main/PageWrapper'
@@ -40,6 +41,7 @@ import { equalAddresses, getNewIdFromEvent, getTxParams } from '../substrate'
 
 import { IpfsContent, OptionIpfsContent } from '@subsocial/api/substrate/wrappers'
 import { isEmptyArray } from '@subsocial/utils'
+import { useRouter } from 'next/router'
 import { TxCallback, TxFailedCallback } from 'src/components/substrate/SubstrateTxButton'
 import { useAppSelector } from '../../rtk/app/store'
 import { selectSpaceIdsByOwner } from '../../rtk/features/spaceIds/ownSpaceIdsSlice'
@@ -63,7 +65,10 @@ type ValidationProps = {
   maxHandleLen: number
 }
 
-type FormProps = CanHaveSpaceProps & ValidationProps
+type FormProps = CanHaveSpaceProps &
+  ValidationProps & {
+    asProfile?: boolean
+  }
 
 function getInitialValues({ space }: FormProps): FormValues {
   if (space) {
@@ -74,18 +79,30 @@ function getInitialValues({ space }: FormProps): FormValues {
   return {}
 }
 
+function getFormActionLabel(space: SpaceData | undefined, asProfile?: boolean) {
+  const actionLabel = space ? 'Update' : 'Create new'
+  const entityLabel = asProfile ? 'profile' : 'space'
+  const fullActionLabel = `${actionLabel} ${entityLabel}`
+  return {
+    actionLabel,
+    entityLabel,
+    fullActionLabel,
+  }
+}
+
 export function InnerForm(props: FormProps) {
   const [form] = Form.useForm()
   const { ipfs } = useSubsocialApi()
-  const address = useMyAddress()
+  const myAddress = useMyAddress()
 
   const [ipfsCid, setIpfsCid] = useState<IpfsCid>()
   const reloadMySpaceIds = useCreateReloadSpaceIdsForMyAccount()
+  const reloadMyProfile = useCreateReloadProfile()
   const ownSpaceIds: string[] = useAppSelector(
-    state => selectSpaceIdsByOwner(state, address || '') || [],
+    state => selectSpaceIdsByOwner(state, myAddress || '') || [],
   )
 
-  const { space } = props
+  const { space, asProfile } = props
 
   const initialValues = getInitialValues(props)
   const tags = initialValues.tags || []
@@ -126,6 +143,9 @@ export function InnerForm(props: FormProps) {
     )
 
     if (!space) {
+      if (asProfile) {
+        return [IpfsContent(cid)]
+      }
       return [IpfsContent(cid), permissions]
     } else {
       return [
@@ -159,8 +179,11 @@ export function InnerForm(props: FormProps) {
   const onSuccess: TxCallback = txResult => {
     clearAutoSavedContent('space')
     const id = space?.struct.id || getNewIdFromEvent(txResult)?.toString()
+    if (props.asProfile) {
+      reloadMyProfile({ id: myAddress ?? '', dataSource: DataSourceTypes.CHAIN })
+    }
     if (id) {
-      goToSpacePage(id, isEmptyArray(ownSpaceIds) && !space)
+      goToSpacePage(id, !props.asProfile && isEmptyArray(ownSpaceIds) && !space)
       reloadMySpaceIds()
     }
   }
@@ -171,6 +194,13 @@ export function InnerForm(props: FormProps) {
 
   const onAvatarChanged = (url?: string) => {
     form.setFieldsValue({ [fieldName('image')]: url })
+  }
+
+  const { entityLabel, fullActionLabel } = getFormActionLabel(space, asProfile)
+
+  let extrinsic = space ? 'spaces.updateSpace' : 'spaces.createSpace'
+  if (!space && asProfile) {
+    extrinsic = 'profiles.createSpaceAsProfile'
   }
 
   return (
@@ -186,7 +216,7 @@ export function InnerForm(props: FormProps) {
 
         <Form.Item
           name={fieldName('name')}
-          label='Space name'
+          label={`${capitalize(entityLabel)} name`}
           hasFeedback
           rules={[
             { required: true, message: 'Name is required.' },
@@ -194,7 +224,7 @@ export function InnerForm(props: FormProps) {
             { max: NAME_MAX_LEN, message: maxLenError('Name', NAME_MAX_LEN) },
           ]}
         >
-          <Input placeholder='Name of your space' />
+          <Input placeholder={`Name of your ${entityLabel}`} />
         </Form.Item>
 
         <Form.Item name={fieldName('whoCanPost')} label='Who can post?' help={whoCanPostHint}>
@@ -253,8 +283,8 @@ export function InnerForm(props: FormProps) {
         <DfFormButtons
           form={form}
           txProps={{
-            label: space ? 'Update space' : 'Create new space',
-            tx: space ? 'spaces.updateSpace' : 'spaces.createSpace',
+            label: fullActionLabel,
+            tx: extrinsic,
             params: pinToIpfsAndBuildTxParams,
             onSuccess,
             onFailed,
@@ -275,12 +305,12 @@ export function FormInSection(props: Partial<FormProps>) {
     minHandleLen: MIN_HANDLE_LEN, // bnToNum(api.consts.spaces.minHandleLen, 5),
     maxHandleLen: MAX_HANDLE_LEN, // bnToNum(api.consts.spaces.maxHandleLen, 50)
   })
-  const { space } = props
-  const title = space ? 'Edit space' : 'New space'
+  const { space, asProfile } = props
+  const { fullActionLabel } = getFormActionLabel(space, asProfile)
 
   return (
-    <PageContent meta={{ title }}>
-      <Section className='EditEntityBox' title={title}>
+    <PageContent meta={{ title: fullActionLabel }}>
+      <Section className='EditEntityBox' title={fullActionLabel}>
         <WriteAccessRequired>
           <InnerForm {...props} {...consts} />
         </WriteAccessRequired>
@@ -293,8 +323,14 @@ const CannotEditSpace = <NoData description='You do not have permission to edit 
 
 const LoadSpaceThenEdit = withLoadSpaceFromUrl(FormInSection)
 
+function useIsEditAsProfile() {
+  const { query } = useRouter()
+  return query['as-profile'] === 'true'
+}
+
 export function EditSpace(props: FormProps) {
   const myAddress = useMyAddress()
+  const asProfile = useIsEditAsProfile()
 
   const checkSpacePermission: CheckSpacePermissionFn = space => {
     const isOwner = space && equalAddresses(myAddress, space.struct.ownerId)
@@ -304,9 +340,18 @@ export function EditSpace(props: FormProps) {
     }
   }
 
-  return <LoadSpaceThenEdit {...props} checkSpacePermission={checkSpacePermission} />
+  return (
+    <LoadSpaceThenEdit
+      {...props}
+      asProfile={asProfile}
+      checkSpacePermission={checkSpacePermission}
+    />
+  )
 }
 
-export const NewSpace = FormInSection
+export const NewSpace = () => {
+  const asProfile = useIsEditAsProfile()
+  return <FormInSection asProfile={asProfile} />
+}
 
 export default NewSpace

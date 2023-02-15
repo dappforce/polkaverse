@@ -1,6 +1,6 @@
 export const wording = {
   modalConfirmation: {
-    profile: () => 'Creating your space',
+    profile: () => 'Creating your profile',
     topics: (amount: number) => `Subscribing to ${amount} topics`,
     spaces: (amount: number) => `Subscribing to ${amount} spaces`,
     burnSub: (amount: number) => `Burning ${amount} SUB`,

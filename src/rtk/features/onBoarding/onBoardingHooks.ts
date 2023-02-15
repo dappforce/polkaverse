@@ -6,7 +6,6 @@ import { balanceWithDecimal, isDefined } from '@subsocial/utils'
 import { Form } from 'antd'
 import { useCallback, useEffect } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
-import { newWritePermission } from 'src/components/spaces/permissions/space-permissions'
 import { useSubsocialApi, useSubstrate } from 'src/components/substrate'
 import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
 import { useSelectProfile } from '../profiles/profilesHooks'
@@ -106,9 +105,8 @@ const getSavedProfileData = (profile: SpaceContent | undefined) => {
   return { about, email, image, links, name, tags }
 }
 const upsertProfile = (api: ApiPromise, cid: IpfsCid, currentProfileId?: string) => {
-  const permissions = newWritePermission()
   if (!currentProfileId) {
-    return api.tx.spaces.createSpace(IpfsContent(cid?.toString()), permissions)
+    return api.tx.profiles.createSpaceAsProfile(IpfsContent(cid?.toString()))
   } else {
     return api.tx.spaces.updateSpace(currentProfileId, {
       content: OptionIpfsContent(cid?.toString()),

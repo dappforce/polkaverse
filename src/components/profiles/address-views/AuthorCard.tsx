@@ -71,8 +71,7 @@ export default function AuthorCard({
         isMyAddress && profile && (
           <ButtonLink
             key='edit'
-            href={'/[spaceId]/edit'}
-            as={editSpaceUrl(profile.struct)}
+            href={editSpaceUrl(profile.struct, true)}
             className='bg-transparent'
           >
             <EditOutlined /> Edit

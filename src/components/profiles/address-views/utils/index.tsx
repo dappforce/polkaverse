@@ -11,7 +11,7 @@ import { fetchProfileSpaces } from '../../../../rtk/features/profiles/profilesSl
 import { useSubsocialApi } from '../../../substrate/SubstrateContext'
 import { BaseTxButtonProps } from '../../../substrate/SubstrateTxButton'
 import { TxDiv } from '../../../substrate/TxDiv'
-import { editSpaceUrl } from '../../../urls/subsocial'
+import { editSpaceUrl, newSpaceUrl } from '../../../urls/subsocial'
 
 export const useExtensionName = (address: AnyAccountId) => {
   const { accounts } = useMyAccounts()
@@ -34,13 +34,13 @@ export const CreateOrEditProfileSpace = ({ address, onClick, ...props }: Profile
   const profileSpace = useSelectProfile(address.toString())
 
   const actionButton = profileSpace ? (
-    <Link href={'/[spaceId]/edit'} as={editSpaceUrl(profileSpace.struct)}>
+    <Link href={editSpaceUrl(profileSpace.struct, true)}>
       <a className='item' onClick={onClick} {...props}>
         Edit profile
       </a>
     </Link>
   ) : (
-    <Link href='/spaces/new' as='/spaces/new'>
+    <Link href={newSpaceUrl(true)}>
       <a className='item' onClick={onClick} {...props}>
         Create profile
       </a>
