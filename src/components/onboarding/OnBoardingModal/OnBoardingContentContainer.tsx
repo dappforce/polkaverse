@@ -5,7 +5,6 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { subsocialUrl } from 'src/components/urls'
 import LoadingTransaction from 'src/components/utils/LoadingTransaction'
 import { MutedDiv, MutedSpan } from 'src/components/utils/MutedText'
-import RememberMeButton from 'src/components/utils/OffchainSigner/RememberMeButton'
 import PrivacyPolicyText from 'src/components/utils/PrivacyPolicyText'
 import TwitterMock from 'src/components/utils/TwitterMock'
 import TxButton from 'src/components/utils/TxButton'
@@ -38,18 +37,12 @@ export default function OnBoardingContentContainer({
   success,
   setLoading,
   setSuccess,
-  loadingProxy,
-  proxyAdded,
-  setProxyAdded,
-  offchainSigner,
-  setOffchainSigner,
-  onProxyAdded,
-  setLoadingProxy,
   buttonText = 'Continue',
   customButtonOnClick,
   hideSubmitBtn,
   loadingSubmitBtn,
   showPrivacyPolicy,
+  customContinueButtonGroup,
 }: OnBoardingContentContainerProps) {
   const openState = useOnBoardingModalOpenState()
   const currentStep = useCurrentOnBoardingStep()
@@ -69,8 +62,6 @@ export default function OnBoardingContentContainer({
     title = "🎉 You're all set"
     subtitle = 'Your profile is ready to use, and you can edit it at any time.'
   }
-
-  const showSignerConfirmBtn = !hideSubmitBtn && currentStep === 'signer'
 
   const showContinueBtn = !loading && !success && !hideSubmitBtn && currentStep !== 'signer'
 
@@ -136,45 +127,11 @@ export default function OnBoardingContentContainer({
             />
           </MutedDiv>
         )}
-        {showSignerConfirmBtn && (
-          <div className={clsx('d-flex justify-center align-center GapNormal')}>
-            <Button
-              className={clsx('w-100')}
-              size='large'
-              onClick={() => {
-                goToNextStep()
-              }}
-            >
-              No, I’m fine
-            </Button>
-            <RememberMeButton
-              className={clsx('w-100')}
-              type='primary'
-              size='large'
-              withSpinner={true}
-              loading={loadingProxy}
-              disabled={loadingProxy}
-              onClick={() => {
-                setLoadingProxy && setLoadingProxy(true)
 
-                dispatch(markStepAsDraftOnBoardingModal(false))
-                if (proxyAdded && offchainSigner) {
-                  goToNextStep()
-                } else {
-                  setLoadingProxy && setLoadingProxy(false)
-                }
-              }}
-              onFailedAuth={() => setLoadingProxy && setLoadingProxy(false)}
-              onSuccessAuth={() => {
-                setLoadingProxy && setLoadingProxy(false)
-                setProxyAdded && setProxyAdded(true)
-                setOffchainSigner && setOffchainSigner(true)
-                onProxyAdded && onProxyAdded()
-                goToNextStep()
-              }}
-            />
-          </div>
-        )}
+        {customContinueButtonGroup &&
+          customContinueButtonGroup(() => {
+            dispatch(markStepAsDraftOnBoardingModal(true))
+          })}
 
         {showContinueBtn && (
           <ContinueBtn
