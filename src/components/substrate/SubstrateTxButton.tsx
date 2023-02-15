@@ -12,18 +12,19 @@ import { useCreateSendGaUserEvent } from 'src/ga'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import messages from 'src/messages'
 import { AnyAccountId } from 'src/types'
-import { createStorageKey } from 'src/utils/storage'
-import store from 'store'
 import { useSubstrate } from '.'
 import { useAuth } from '../auth/AuthContext'
 import { getCurrentWallet } from '../auth/utils'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { controlledMessage, Message, showErrorMessage, showSuccessMessage } from '../utils/Message'
 import {
+  isCurrentOffchainAddress,
+  OFFCHAIN_TOKEN_KEY,
+} from '../utils/OffchainSigner/ExternalStorage'
+import {
   isAccountOnboarded,
   submitSignedCallData,
 } from '../utils/OffchainSigner/OffchainSignerUtils'
-import { OFFCHAIN_ADDRESS_KEY, OFFCHAIN_TOKEN_KEY } from '../utils/OffchainSigner/RememberMeButton'
 import { getWalletBySource } from '../wallets/supportedWallets'
 import styles from './SubstrateTxButton.module.sass'
 import useToggle from './useToggle'
@@ -97,11 +98,10 @@ function TxButton({
     storageKeyType: 'user',
   })
 
-  const isCurrentOffchainAddress =
-    store.get(createStorageKey(OFFCHAIN_ADDRESS_KEY, accountId as string)) === 1 ? true : false
+  const isOffchainAddress = isCurrentOffchainAddress(accountId as string)
 
   const isOffchainSignerTx =
-    !!offchainToken && isCurrentOffchainAddress && isAccountOnboarded(accountId as string)
+    !!offchainToken && isOffchainAddress && isAccountOnboarded(accountId as string)
 
   const api = customNodeApi || subsocialApi
 

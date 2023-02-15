@@ -8,7 +8,7 @@ import { useCallback, useEffect } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { newWritePermission } from 'src/components/spaces/permissions/space-permissions'
 import { useSubsocialApi, useSubstrate } from 'src/components/substrate'
-import { getProxyAddress } from 'src/components/utils/OffchainSigner/RememberMeButton'
+import { getProxyAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
 import { useSelectProfile } from '../profiles/profilesHooks'
 import {
