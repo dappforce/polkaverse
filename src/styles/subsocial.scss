@@ -1943,6 +1943,15 @@ hr {
   margin-bottom: $space_small;
 }
 
+.DfButtonGroupRoot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  button:first-child {
+    margin-right: 1rem;
+  }
+}
+
 .DfButtonAsMenuItem {
   color: inherit !important;
   padding-left: 0 !important;

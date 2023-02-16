@@ -21,7 +21,7 @@ export default function Signer(props: OnBoardingContentProps) {
     <OnBoardingContentContainer
       {...props}
       customContinueButtonGroup={saveAsDraft => (
-        <div className={clsx('d-flex justify-center align-center GapNormal')}>
+        <div className={clsx('DfButtonGroupRoot')}>
           <Button
             className={clsx('w-100')}
             size='large'
