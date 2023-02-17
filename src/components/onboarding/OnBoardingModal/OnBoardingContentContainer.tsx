@@ -106,6 +106,7 @@ export default function OnBoardingContentContainer({
           styles.ContentContainer,
           !success && 'overflow-auto',
           openState === 'full-on-boarding' && styles.ContentContainerFull,
+          currentStep === 'signer' && styles.ContentImage,
           'scrollbar',
         )}
       >
@@ -129,8 +130,13 @@ export default function OnBoardingContentContainer({
         )}
 
         {customContinueButtonGroup &&
-          customContinueButtonGroup(() => {
-            dispatch(markStepAsDraftOnBoardingModal(true))
+          customContinueButtonGroup({
+            saveAsDraft: () => {
+              dispatch(markStepAsDraftOnBoardingModal(true))
+            },
+            loading,
+            setLoading,
+            isPartial: openState === 'partial',
           })}
 
         {showContinueBtn && (

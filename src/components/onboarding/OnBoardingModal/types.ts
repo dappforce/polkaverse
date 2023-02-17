@@ -19,6 +19,13 @@ export interface OnBoardingContentProps {
   setLoading: (loading: boolean) => void
 }
 
+export interface CustomContinueButtonGroupProps {
+  saveAsDraft: () => void
+  loading: boolean
+  setLoading: (loading: boolean) => void
+  isPartial?: boolean
+}
+
 export interface OnBoardingContentContainerProps extends OnBoardingContentProps {
   onSubmitValidation?: () => boolean | Promise<boolean>
   disableSubmitBtn?: boolean
@@ -29,5 +36,5 @@ export interface OnBoardingContentContainerProps extends OnBoardingContentProps 
   buttonText?: string
   customButtonOnClick?: () => void
   showPrivacyPolicy?: boolean
-  customContinueButtonGroup?: (saveAsDraft: () => void) => JSX.Element
+  customContinueButtonGroup?: (props: CustomContinueButtonGroupProps) => JSX.Element
 }
