@@ -20,6 +20,7 @@ import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { controlledMessage, Message, showErrorMessage, showSuccessMessage } from '../utils/Message'
 import {
   isCurrentOffchainAddress,
+  OFFCHAIN_ADDRESS_KEY,
   OFFCHAIN_TOKEN_KEY,
 } from '../utils/OffchainSigner/ExternalStorage'
 import {
@@ -97,6 +98,12 @@ function TxButton({
   } = useAuth()
 
   const { data: offchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY, {
+    storageKeyType: 'user',
+  })
+
+  const { setData: setOffchainAddress } = useExternalStorage(OFFCHAIN_ADDRESS_KEY, {
+    parseStorageToState: data => data === '1',
+    parseStateToStorage: state => (state ? '1' : undefined),
     storageKeyType: 'user',
   })
 
@@ -219,7 +226,7 @@ function TxButton({
 
       const { signedCall } = res?.data
 
-      api.tx(signedCall).send(onSuccessHandler)
+      await api.tx(signedCall).send(onSuccessHandler)
     } catch (err: any) {
       log.warn(err)
       onFailedHandler(err instanceof Error ? err.message : err)
@@ -230,6 +237,10 @@ function TxButton({
     if (!accountId) {
       throw new Error('No account id provided')
     }
+
+    let hideRememberMePopup = false
+    if ((tx === 'utility.batch' && offchainToken) || tx === 'proxy.addProxy')
+      hideRememberMePopup = true
 
     try {
       const extrinsic = await getExtrinsic()
@@ -253,6 +264,9 @@ function TxButton({
         }
 
         const tx = await extrinsic.signAsync(accountId, { signer })
+        if (hideRememberMePopup) {
+          setOffchainAddress(true)
+        }
         unsub = await tx.send(onSuccessHandler)
       }
 

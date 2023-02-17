@@ -19,7 +19,7 @@ import { getWalletBySource } from 'src/components/wallets/supportedWallets'
 import { hCaptchaSiteKey } from 'src/config/env'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { showErrorMessage } from '../Message'
-import { OFFCHAIN_ADDRESS_KEY, OFFCHAIN_TOKEN_KEY, PROXY_ADDRESS_KEY } from './ExternalStorage'
+import { OFFCHAIN_TOKEN_KEY, PROXY_ADDRESS_KEY } from './ExternalStorage'
 const log = newLogger('RememberMeButton')
 
 interface RememberMeButtonProps extends TxButtonProps {
@@ -47,11 +47,6 @@ function RememberMeButton({
     storageKeyType: 'user',
   })
   const { setData: setProxyAddress } = useExternalStorage(PROXY_ADDRESS_KEY, {
-    storageKeyType: 'user',
-  })
-  const { setData: setOffchainAddress } = useExternalStorage(OFFCHAIN_ADDRESS_KEY, {
-    parseStorageToState: data => data === '1',
-    parseStateToStorage: state => (state ? '1' : undefined),
     storageKeyType: 'user',
   })
 
@@ -234,7 +229,6 @@ function RememberMeButton({
       const dataSignature = await sendSignedMessage(signedMessageJwt, messageJwt, token)
       const { accessToken } = dataSignature
 
-      setOffchainAddress(true)
       setOffchainToken(accessToken)
 
       axios.interceptors.request.use(
