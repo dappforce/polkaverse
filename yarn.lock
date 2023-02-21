@@ -2300,18 +2300,10 @@
   resolved "https://registry.yarnpkg.com/@subsocial/config/-/config-0.7.1.tgz#5dbd8dcd4540390e2c3ea4ab38466d7f5fee03b8"
   integrity sha512-zF+u865sZ++4+V1GRVtIeeBri+UMh6W+mVg04ysTNosk2gZ3xajv5m2EF8OdSvydrq2PSFTznSVVYGKACPNvjQ==
 
-"@subsocial/definitions@0.7.13":
+"@subsocial/definitions@0.7.13", "@subsocial/definitions@latest":
   version "0.7.13"
   resolved "https://registry.yarnpkg.com/@subsocial/definitions/-/definitions-0.7.13.tgz#5ee7aa2888fb37295eb609cc61568189e9d434a2"
   integrity sha512-BOkRK1cxStnhQ0Orw0aH/BcI00iMdxmHh7saO2tp1ub79mfPjDLtd48y2lfJpCX0ddsEJ6GCDitCr7Ai7TOECA==
-  dependencies:
-    "@polkadot/api" latest
-    lodash.camelcase "^4.3.0"
-
-"@subsocial/definitions@latest":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@subsocial/definitions/-/definitions-0.8.1.tgz#346047bf9fd49c7acf731026e4e3b2a346dcd339"
-  integrity sha512-4SXwa9UHLzft56i51DXO769QFI7LH+bxWYGCrOFNJJWEHV6mIEyKNz+v6lB+tonbmJ3mrAy1jKzDKGv9oE17CQ==
   dependencies:
     "@polkadot/api" latest
     lodash.camelcase "^4.3.0"
@@ -2324,32 +2316,10 @@
     "@elastic/elasticsearch" "7.4.0"
     "@subsocial/utils" latest
 
-"@subsocial/utils@0.7.13":
+"@subsocial/utils@0.7.13", "@subsocial/utils@latest":
   version "0.7.13"
   resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.7.13.tgz#546abef2c4fa5e1f3d8e3de3ee69fb107f977309"
   integrity sha512-HNHV+ZG/1yHgi4JcOLAWW0p4oaa6JCrv5///DzUuJbhpLjR7k6gKnF+ReXqEp9hFJggH4WCWPtNUCODD1FxlSA==
-  dependencies:
-    "@polkadot/util-crypto" latest
-    "@sindresorhus/slugify" "^1.1.0"
-    autolinker "^4.0.0"
-    bignumber.js "^9.0.1"
-    bn.js "^5.1.1"
-    chalk "^3.0.0"
-    dayjs "^1.10.7"
-    lodash.isempty "^4.4.0"
-    lodash.memoize "^4.1.2"
-    lodash.truncate "^4.4.2"
-    loglevel "^1.7.0"
-    loglevel-plugin-prefix "^0.8.4"
-    remark "^13.0.0"
-    remark-gfm "^1.0.0"
-    remark-html "^13.0.1"
-    strip-markdown "^4.0.0"
-
-"@subsocial/utils@latest":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.8.1.tgz#a29c9ac5a4526465b5bbce52245ac45083d5ea4c"
-  integrity sha512-m8jGczCahSMYsx9KZpSSi9GECFYITVb2Rl04aCzokeWrKyXh0buwYeF1RoXFacKKOVUs5R1g7mboJ9uIvJHjmg==
   dependencies:
     "@polkadot/util-crypto" latest
     "@sindresorhus/slugify" "^1.1.0"
