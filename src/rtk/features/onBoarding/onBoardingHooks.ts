@@ -168,7 +168,7 @@ export function useOnBoardingBatchTxs(specificData?: keyof OnBoardingDataTypes) 
   return useCallback(async () => {
     if (!myAddress) throw new Error('No address found')
 
-    const proxyAddress = getProxyAddress()
+    const proxyAddress = getProxyAddress(myAddress)
 
     const generateBatchData = async (dataKey: keyof OnBoardingDataTypes) => {
       const additionalData = {
@@ -176,7 +176,7 @@ export function useOnBoardingBatchTxs(specificData?: keyof OnBoardingDataTypes) 
         myAddress,
         allData,
         profileSpace,
-        proxyAddress,
+        proxyAddress: proxyAddress!,
       }
       const generator = txGenerators[dataKey]
       if (!generator) throw new Error(`Batch data with key: ${dataKey} does not exists`)
