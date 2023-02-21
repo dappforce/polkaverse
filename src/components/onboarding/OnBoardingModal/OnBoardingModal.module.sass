@@ -20,6 +20,11 @@
         padding-left: $space_small
         padding-right: $space_small
 
+.DfOnboardingSignerModal
+  @extends .DfOnBoardingModal
+  :global(.ant-modal-body)
+    min-height: 596px
+
 .Title
   font-weight: bold
   color: #222222
@@ -38,6 +43,7 @@
     display: flex
     justify-content: center
     align-items: center
+    margin-top: auto
 
   :global(.on-boarding-image)
     width: 210px

@@ -64,7 +64,7 @@ const steps: {
     content: Signer,
     title: '🔒 Remembering you',
     subtitle:
-      'Avoid approving every interaction with your wallet by allowing PolkaVerse to remember you. This only affects social actions; your assets will remain secure.',
+      'Avoid approving every interaction with your wallet by allowing PolkaVerse to remember you. This only affects social actions. Your assets will remain secure.',
   },
   confirmation: {
     content: Confirmation,
@@ -184,6 +184,7 @@ export default function OnBoardingModal({
         footer={null}
         className={clsx(
           styles.DfOnBoardingModal,
+          currentStep === 'signer' && openState === 'partial' && styles.DfOnboardingSignerModal,
           openState === 'full-on-boarding' && !success && styles.DfOnBoardingModalFull,
         )}
       >
