@@ -88,6 +88,7 @@ const ButtonGroup = ({
           className={clsx('w-100')}
           size='large'
           onClick={() => {
+            if (isPartial) goToNextStep({ forceTerminateFlow: true })
             goToNextStep()
           }}
         >
