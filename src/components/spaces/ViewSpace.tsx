@@ -90,7 +90,15 @@ export const InnerViewSpace = (props: Props) => {
   const Avatar = useCallback(() => {
     if (!spaceData) return null
     const space = spaceData.struct
-    return <SpaceAvatar space={space} avatar={spaceData.content?.image} size={imageSize} />
+    const name = spaceData.content?.name
+    return (
+      <SpaceAvatar
+        space={space}
+        avatar={spaceData.content?.image}
+        size={imageSize}
+        isUnnamedSpace={isEmptyStr(name) ? true : false}
+      />
+    )
   }, [spaceData, imageSize])
 
   // We do not return 404 page here, because this component could be used to render a space in list.
