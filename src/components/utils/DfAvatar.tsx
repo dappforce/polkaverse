@@ -1,16 +1,16 @@
+import { AnyAccountId } from '@subsocial/api/types'
 import { isEmptyStr } from '@subsocial/utils'
 import clsx from 'clsx'
 import { CSSProperties } from 'react'
 import { DfBgImg, PreviewType } from 'src/components/utils/DfBgImg'
 import IdentityIcon from 'src/components/utils/IdentityIcon'
 import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config'
-import { AnyAccountId } from 'src/types'
 
 export type BaseAvatarProps = {
   size?: number
   style?: CSSProperties
   avatar?: string
-  address?: AnyAccountId
+  identityValue?: string | AnyAccountId
   avatarPreview?: boolean | PreviewType
   noMargin?: boolean
 }
@@ -20,12 +20,19 @@ const avatarCss = 'DfAvatar space ui--IdentityIcon'
 // gray overlay comes from antd component
 
 export const BaseAvatar = (props: BaseAvatarProps) => {
-  const { size = DEFAULT_AVATAR_SIZE, avatar, style, address, avatarPreview, noMargin } = props
+  const {
+    size = DEFAULT_AVATAR_SIZE,
+    avatar,
+    style,
+    identityValue,
+    avatarPreview,
+    noMargin,
+  } = props
 
   if (!avatar || isEmptyStr(avatar)) {
     return (
       <span className='d-flex align-items-center'>
-        <IdentityIcon style={style} size={size} value={address} />
+        <IdentityIcon style={style} size={size} value={identityValue?.toString() || ''} />
       </span>
     )
   }

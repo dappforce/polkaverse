@@ -55,11 +55,10 @@ export const SpacePreview = ({
   ) : null
 
   const { struct: space, content = {} as SpaceContent } = spaceData
-  const { ownerId: owner } = space
 
   const { image } = content
 
-  const Avatar = () => <SpaceAvatar space={space} address={owner} avatar={image} size={46} />
+  const Avatar = () => <SpaceAvatar space={space} avatar={image} size={46} />
 
   const spaceName = renderSpaceName(spaceData)
 

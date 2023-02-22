@@ -118,7 +118,7 @@ export const DonationSection = ({ recipientAddress }: DonateProps) => {
           <Link passHref href={`/accounts/${recipientAddress}`}>
             <a>
               <BaseAvatar
-                address={recipientAddress}
+                identityValue={recipientAddress}
                 avatar={profileData?.content?.image}
                 size={64}
               />

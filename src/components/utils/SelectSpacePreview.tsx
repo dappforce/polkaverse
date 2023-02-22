@@ -33,13 +33,7 @@ const SpaceOption = ({ spaceId, imageSize }: SpaceOptionProps) => {
 
   return (
     <div className={'d-flex align-items-center'}>
-      <SpaceAvatar
-        address={struct.ownerId}
-        space={struct}
-        avatar={content?.image}
-        size={imageSize}
-        asLink={false}
-      />
+      <SpaceAvatar space={struct} avatar={content?.image} size={imageSize} asLink={false} />
       <div className='content'>
         <div className='handle'>{content?.name}</div>
       </div>
