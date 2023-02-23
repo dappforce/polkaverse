@@ -184,6 +184,7 @@ export default function OnBoardingModal({
         footer={null}
         className={clsx(
           styles.DfOnBoardingModal,
+          'DfOnBoardingModal',
           currentStep === 'signer' && openState === 'partial' && styles.DfOnboardingSignerModal,
           openState === 'full-on-boarding' && !success && styles.DfOnBoardingModalFull,
         )}
