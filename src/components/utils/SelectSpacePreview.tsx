@@ -43,7 +43,7 @@ const SpaceOption = ({ spaceId, imageSize }: SpaceOptionProps) => {
         asLink={false}
       />
       <div className='content'>
-        {!content && <MutedDiv>{'<Unnamed Space>'}</MutedDiv>}
+        {!content && <MutedDiv>{'Unnamed Space'}</MutedDiv>}
         {content && <div className='handle'>{content?.name}</div>}
       </div>
     </div>
