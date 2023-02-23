@@ -176,6 +176,7 @@ export default function OnBoardingModal({
       footer={null}
       className={clsx(
         styles.DfOnBoardingModal,
+        'DfOnBoardingModal',
         openState === 'full-on-boarding' && !success && styles.DfOnBoardingModalFull,
       )}
     >
