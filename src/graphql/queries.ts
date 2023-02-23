@@ -633,7 +633,7 @@ export const GET_NOTIFICATIONS_COUNT = gql`
       orderBy: id_ASC
       where: {
         account: { id_eq: $address }
-        activity: { aggregated_eq: true, account: { id_not_eq: $address }, date_gt: $afterDate }
+        activity: { aggregated_eq: true, date_gt: $afterDate }
       }
     ) {
       totalCount
@@ -645,10 +645,7 @@ export const GET_NOTIFICATIONS = gql`
   ${ACTIVITY_REQUIRED_FRAGMENT}
   query GetNotifications($address: String!, $offset: Int = 0, $limit: Int!) {
     notifications(
-      where: {
-        account: { id_eq: $address }
-        activity: { aggregated_eq: true, account: { id_not_eq: $address } }
-      }
+      where: { account: { id_eq: $address }, activity: { aggregated_eq: true } }
       limit: $limit
       offset: $offset
       orderBy: activity_date_DESC
