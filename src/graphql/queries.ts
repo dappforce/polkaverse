@@ -95,6 +95,10 @@ export const POST_SIMPLE_FRAGMENT = gql`
     updatedAtTime
     canonical
     tagsOriginal
+    tweetId
+    tweetDetails {
+      username
+    }
     ownedByAccount {
       id
     }
@@ -149,6 +153,14 @@ export const POST_FRAGMENT = gql`
 
 // Post queries
 // ------------------------------------------------------------------------------------
+
+export const GET_LATEST_POST_ID = gql`
+  query GetLatestPostId {
+    posts(limit: 1, orderBy: createdAtTime_DESC) {
+      id
+    }
+  }
+`
 
 export const GET_LATEST_POST_IDS = gql`
   query GetLatestPostIds($kind: PostKind = RegularPost, $offset: Int = 0, $limit: Int!) {
@@ -251,6 +263,14 @@ export const GET_POSTS_DATA = gql`
 // Space queries
 // ------------------------------------------------------------------------------------
 
+export const GET_LATEST_SPACE_ID = gql`
+  query GetLatestSpaceId {
+    spaces(limit: 1, orderBy: createdAtTime_DESC) {
+      id
+    }
+  }
+`
+
 export const GET_LATEST_SPACE_IDS = gql`
   query GetLatestSpaceIds($offset: Int = 0, $limit: Int!) {
     spaces(offset: $offset, limit: $limit, orderBy: id_DESC) {
@@ -330,6 +350,14 @@ export const GET_SPACES_DATA = gql`
   }
 `
 
+export const GET_PROFILES_COUNT = gql`
+  query GetProfilesCount {
+    accountsConnection(where: { profileSpace_isNull: false }, orderBy: id_ASC) {
+      totalCount
+    }
+  }
+`
+
 export const GET_PROFILES_DATA = gql`
   ${PROFILE_FRAGMENT}
   query GetProfilesData($ids: [String!]) {
@@ -400,36 +428,29 @@ export const GET_ACTIVITY_COUNTS = gql`
     ) {
       totalCount
     }
-    posts: activitiesConnection(
+    posts: postsConnection(
+      orderBy: id_ASC
+      where: { ownedByAccount: { id_eq: $address }, isComment_eq: false, hidden_eq: false }
+    ) {
+      totalCount
+    }
+    tweets: postsConnection(
       orderBy: id_ASC
       where: {
-        account: { id_eq: $address }
-        event_in: [PostCreated]
-        post: { isComment_eq: false }
+        ownedByAccount: { id_eq: $address }
+        tweetId_isNull: false
+        isComment_eq: false
+        hidden_eq: false
       }
     ) {
       totalCount
     }
-    spaces: activitiesConnection(
-      orderBy: id_ASC
-      where: { account: { id_eq: $address }, event_in: [SpaceCreated] }
-    ) {
+    spaces: spacesConnection(orderBy: id_ASC, where: { ownedByAccount: { id_eq: $address } }) {
       totalCount
     }
-    comments: activitiesConnection(
+    comments: postsConnection(
       orderBy: id_ASC
-      where: {
-        account: { id_eq: $address }
-        event_in: [
-          CommentCreated
-          CommentShared
-          CommentReplyCreated
-          CommentReplyShared
-          PostCreated
-          PostShared
-        ]
-        post: { isComment_eq: true }
-      }
+      where: { ownedByAccount: { id_eq: $address }, isComment_eq: true, hidden_eq: false }
     ) {
       totalCount
     }
@@ -534,15 +555,8 @@ export const GET_REACTION_ACTIVITIES = gql`
 export const GET_SPACE_ACTIVITIES = gql`
   query GetSpaceActivities($address: String!, $offset: Int = 0, $limit: Int!) {
     accountById(id: $address) {
-      activities(
-        where: { event_in: [SpaceCreated] }
-        limit: $limit
-        offset: $offset
-        orderBy: date_DESC
-      ) {
-        space {
-          id
-        }
+      spacesOwned(limit: $limit, offset: $offset, orderBy: createdAtTime_DESC) {
+        id
       }
     }
   }
@@ -551,15 +565,28 @@ export const GET_SPACE_ACTIVITIES = gql`
 export const GET_POST_ACTIVITIES = gql`
   query GetPostActivities($address: String!, $offset: Int = 0, $limit: Int!) {
     accountById(id: $address) {
-      activities(
-        where: { event_in: [PostCreated] }
+      posts(
         limit: $limit
         offset: $offset
-        orderBy: date_DESC
+        orderBy: createdAtTime_DESC
+        where: { isComment_eq: false, hidden_eq: false }
       ) {
-        post {
-          id
-        }
+        id
+      }
+    }
+  }
+`
+
+export const GET_TWEET_ACTIVITIES = gql`
+  query GetTweetActivities($address: String!, $offset: Int = 0, $limit: Int!) {
+    accountById(id: $address) {
+      posts(
+        limit: $limit
+        offset: $offset
+        orderBy: createdAtTime_DESC
+        where: { isComment_eq: false, hidden_eq: false, tweetId_isNull: false }
+      ) {
+        id
       }
     }
   }
@@ -568,13 +595,25 @@ export const GET_POST_ACTIVITIES = gql`
 export const GET_COMMENT_ACTIVITIES = gql`
   query GetCommentActivities($address: String!, $offset: Int = 0, $limit: Int!) {
     accountById(id: $address) {
-      activities(
-        where: { event_in: [CommentCreated, CommentReplyCreated, CommentShared] }
+      posts(
         limit: $limit
         offset: $offset
-        orderBy: date_DESC
+        orderBy: createdAtTime_DESC
+        where: { isComment_eq: true, hidden_eq: false }
       ) {
-        post {
+        id
+      }
+    }
+  }
+`
+
+// Follows
+// ------------------------------------------------------------------------------------
+export const GET_FOLLOWING_SPACES = gql`
+  query GetFollowingSpaces($address: String!) {
+    accountById(id: $address) {
+      spacesFollowed {
+        followingSpace {
           id
         }
       }

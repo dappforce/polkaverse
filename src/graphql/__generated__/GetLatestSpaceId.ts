@@ -4,10 +4,10 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetSpaceIdsSortedByPostsCount
+// GraphQL query operation: GetLatestSpaceId
 // ====================================================
 
-export interface GetSpaceIdsSortedByPostsCount_spaces {
+export interface GetLatestSpaceId_spaces {
   __typename: "Space";
   /**
    * The ID of a Space, which will have the same value and Space ID on the blockchain.
@@ -15,11 +15,6 @@ export interface GetSpaceIdsSortedByPostsCount_spaces {
   id: string;
 }
 
-export interface GetSpaceIdsSortedByPostsCount {
-  spaces: GetSpaceIdsSortedByPostsCount_spaces[];
-}
-
-export interface GetSpaceIdsSortedByPostsCountVariables {
-  offset?: number | null;
-  limit: number;
+export interface GetLatestSpaceId {
+  spaces: GetLatestSpaceId_spaces[];
 }

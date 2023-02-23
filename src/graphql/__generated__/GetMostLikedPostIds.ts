@@ -11,6 +11,9 @@ import { PostKind } from "./../../types/graphql-global-types";
 
 export interface GetMostLikedPostIds_posts {
   __typename: "Post";
+  /**
+   * The Post ID, the same as it is on the blockchain.
+   */
   id: string;
 }
 

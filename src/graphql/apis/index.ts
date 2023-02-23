@@ -21,6 +21,12 @@ import {
   GetFollowActivities,
   GetFollowActivitiesVariables,
 } from '../__generated__/GetFollowActivities'
+import {
+  GetFollowingSpaces,
+  GetFollowingSpacesVariables,
+} from '../__generated__/GetFollowingSpaces'
+import { GetLatestPostId } from '../__generated__/GetLatestPostId'
+import { GetLatestSpaceId } from '../__generated__/GetLatestSpaceId'
 import { GetNewsFeeds, GetNewsFeedsVariables } from '../__generated__/GetNewsFeeds'
 import { GetNewsFeedsCount, GetNewsFeedsCountVariables } from '../__generated__/GetNewsFeedsCount'
 import { GetNotifications, GetNotificationsVariables } from '../__generated__/GetNotifications'
@@ -34,12 +40,16 @@ import {
   GetPostIdsBySpacesVariables,
 } from '../__generated__/GetPostIdsBySpaces'
 import { GetPostsData, GetPostsDataVariables } from '../__generated__/GetPostsData'
+import { GetProfilesCount } from '../__generated__/GetProfilesCount'
 import { GetProfilesData, GetProfilesDataVariables } from '../__generated__/GetProfilesData'
 import {
   GetReactionActivities,
   GetReactionActivitiesVariables,
 } from '../__generated__/GetReactionActivities'
-import { GetSpaceActivitiesVariables } from '../__generated__/GetSpaceActivities'
+import {
+  GetSpaceActivities,
+  GetSpaceActivitiesVariables,
+} from '../__generated__/GetSpaceActivities'
 import { GetSpacesData, GetSpacesDataVariables } from '../__generated__/GetSpacesData'
 import {
   mapActivityQueryResult,
@@ -85,21 +95,23 @@ export async function getPostIdsBySpaces(
   return res.data.posts.map(({ id }) => id)
 }
 
+export type ActivityCounts = Counts & { tweetsCount: number }
 export async function getActivityCounts(
   client: GqlClient,
   variables: GetActivityCountsVariables,
-): Promise<Counts> {
+): Promise<ActivityCounts> {
   const res = await client.query<GetActivityCounts, GetActivityCountsVariables>({
     query: q.GET_ACTIVITY_COUNTS,
     variables,
   })
 
-  const { activities, comments, follows, posts, reactions, spaces } = res.data
+  const { activities, comments, follows, posts, reactions, spaces, tweets } = res.data
   return {
     activitiesCount: activities.totalCount,
     commentsCount: comments.totalCount,
     followsCount: follows.totalCount,
     postsCount: posts.totalCount,
+    tweetsCount: tweets.totalCount,
     reactionsCount: reactions.totalCount,
     spacesCount: spaces.totalCount,
   }
@@ -163,13 +175,13 @@ export async function getSpaceActivities(
   client: GqlClient,
   variables: GetSpaceActivitiesVariables,
 ) {
-  const activities = await client.query<GetFollowActivities, GetFollowActivitiesVariables>({
+  const activities = await client.query<GetSpaceActivities, GetSpaceActivitiesVariables>({
     query: q.GET_SPACE_ACTIVITIES,
     variables,
   })
   const spaceIds: string[] = []
-  activities.data.accountById?.activities.forEach(activity => {
-    const spaceId = activity.space?.id
+  activities.data.accountById?.spacesOwned.forEach(space => {
+    const spaceId = space?.id
     if (spaceId) {
       spaceIds.push(spaceId)
     }
@@ -183,8 +195,23 @@ export async function getPostActivities(client: GqlClient, variables: GetPostAct
     variables,
   })
   const postIds: string[] = []
-  activities.data.accountById?.activities.forEach(activity => {
-    const postId = activity.post?.id
+  activities.data.accountById?.posts.forEach(post => {
+    const postId = post?.id
+    if (postId) {
+      postIds.push(postId)
+    }
+  })
+  return postIds
+}
+
+export async function getTweetActivities(client: GqlClient, variables: GetPostActivitiesVariables) {
+  const activities = await client.query<GetPostActivities, GetPostActivitiesVariables>({
+    query: q.GET_TWEET_ACTIVITIES,
+    variables,
+  })
+  const postIds: string[] = []
+  activities.data.accountById?.posts.forEach(post => {
+    const postId = post?.id
     if (postId) {
       postIds.push(postId)
     }
@@ -201,8 +228,8 @@ export async function getCommentActivities(
     variables,
   })
   const commentIds: string[] = []
-  activities.data.accountById?.activities.forEach(activity => {
-    const commentId = activity.post?.id
+  activities.data.accountById?.posts.forEach(post => {
+    const commentId = post?.id
     if (commentId) {
       commentIds.push(commentId)
     }
@@ -315,4 +342,38 @@ export async function getActivityCountStat(
     todayCount: res.data.today.totalCount,
     statisticsData,
   }
+}
+
+export async function getLatestSpaceId(client: GqlClient) {
+  const res = await client.query<GetLatestSpaceId>({
+    query: q.GET_LATEST_SPACE_ID,
+  })
+  const [latestSpace] = res.data.spaces
+  return latestSpace?.id
+}
+
+export async function getLatestPostId(client: GqlClient) {
+  const res = await client.query<GetLatestPostId>({
+    query: q.GET_LATEST_POST_ID,
+  })
+  const [latestPost] = res.data.posts
+  return latestPost?.id
+}
+
+export async function getProfileSpaceCount(client: GqlClient) {
+  const res = await client.query<GetProfilesCount>({
+    query: q.GET_PROFILES_COUNT,
+  })
+  return res.data.accountsConnection.totalCount
+}
+
+export async function getFollowingSpaces(
+  client: GqlClient,
+  variables: GetFollowingSpacesVariables,
+) {
+  const res = await client.query<GetFollowingSpaces, GetFollowingSpacesVariables>({
+    query: q.GET_FOLLOWING_SPACES,
+    variables,
+  })
+  return res.data.accountById?.spacesFollowed.map(space => space.followingSpace.id)
 }

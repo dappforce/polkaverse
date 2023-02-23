@@ -2,14 +2,14 @@ import { MessageOutlined } from '@ant-design/icons'
 import { BN } from '@polkadot/util'
 import { PostId } from '@subsocial/api/types/substrate'
 import { isEmptyObj, isEmptyStr } from '@subsocial/utils'
-import { Alert, Button, Tooltip } from 'antd'
+import { Alert, Button, Image, Tooltip } from 'antd'
 import clsx from 'clsx'
 import isEmpty from 'lodash.isempty'
 import Error from 'next/error'
 import React, { FC, useState } from 'react'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
-import { HasDataForSlug, postUrl } from 'src/components/urls'
+import { HasDataForSlug } from 'src/components/urls'
 import { DfMd } from 'src/components/utils/DfMd'
 import NoData from 'src/components/utils/EmptyList'
 import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels'
@@ -21,7 +21,14 @@ import { resolveIpfsUrl } from 'src/ipfs'
 import messages from 'src/messages'
 import { isBlockedPost } from 'src/moderation'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
-import { PostData, PostStruct, PostWithSomeDetails, SpaceData, SpaceStruct } from 'src/types'
+import {
+  PostContent as PostContentType,
+  PostData,
+  PostStruct,
+  PostWithSomeDetails,
+  SpaceData,
+  SpaceStruct,
+} from 'src/types'
 import { getTimeRelativeToNow } from 'src/utils/date'
 import { RegularPreview } from '.'
 import { useSelectSpace } from '../../../rtk/features/spaces/spacesHooks'
@@ -29,13 +36,13 @@ import { useIsMyAddress } from '../../auth/MyAccountsContext'
 import AuthorPreview from '../../profiles/address-views/AuthorPreview'
 import { SpaceNameAsLink } from '../../spaces/ViewSpace'
 import { formatDate, IconWithLabel, isHidden, toShortUrl, useIsVisible } from '../../utils'
-import { DfBgImageLink } from '../../utils/DfBgImg'
 import { SummarizeMd } from '../../utils/md/SummarizeMd'
 import ViewTags from '../../utils/ViewTags'
 import Embed from '../embed/Embed'
 import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
 import { PostDropDownMenu } from './PostDropDownMenu'
+import TwitterPost from './TwitterPost'
 
 type IsUnlistedPostProps = {
   post?: PostStruct
@@ -174,13 +181,12 @@ export const PostCreator: FC<PostCreatorProps> = ({
   )
 }
 
-type PostImageProps = {
-  post: PostData
-  space?: SpaceStruct
+export type PostImageProps = {
+  content: PostContentType | undefined
+  className?: string
 }
 
-const PostImage = React.memo(({ post, space }: PostImageProps) => {
-  const { content } = post
+export const PostImage = React.memo(({ content, className }: PostImageProps) => {
   const image = content?.image
   const [shouldImageBeCropped, setShouldImageBeCropped] = useState(true)
 
@@ -193,17 +199,15 @@ const PostImage = React.memo(({ post, space }: PostImageProps) => {
     setShouldImageBeCropped(isTallerThan16By9)
   }
 
-  const wrapperClassName = clsx({
+  const wrapperClassName = clsx(className, {
     DfPostImagePreviewWrapperCropped: shouldImageBeCropped,
     DfPostImagePreviewWrapper: true,
   })
   return (
-    <DfBgImageLink
-      href={'/[spaceId]/[slug]'}
-      as={postUrl(space, post)}
+    <Image
       src={resolveIpfsUrl(image)}
       className='DfPostImagePreview'
-      preview={false}
+      preview={{ mask: null }}
       wrapperClassName={wrapperClassName}
       onLoad={onImgLoad}
     />
@@ -227,6 +231,7 @@ type PostContentProps = {
   postDetails: PostWithSomeDetails
   space?: SpaceStruct
   withImage?: boolean
+  withMarginForCardType?: boolean
 }
 
 type PostContentMemoizedProps = PostContentProps & {
@@ -234,7 +239,7 @@ type PostContentMemoizedProps = PostContentProps & {
 }
 
 const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
-  const { postDetails, space, withImage } = props
+  const { postDetails, space, withImage, withMarginForCardType } = props
 
   if (!postDetails) return null
 
@@ -242,15 +247,22 @@ const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
   const { content } = post
 
   if (!content || isEmptyObj(content)) return null
+  if (content.tweet?.id) {
+    return (
+      <div className={clsx(withMarginForCardType && 'mb-3 pb-1')}>
+        <TwitterPost withLinkToDetailPage space={space} post={post} className={clsx('mt-3')} />
+      </div>
+    )
+  }
 
   return (
     <div className='DfContent'>
+      {withImage && <PostImage content={post.content} />}
       <ViewPostLink
         post={post}
         space={space}
         title={
           <div>
-            {withImage && <PostImage post={post} space={space} />}
             <PostName post={postDetails} withLink />
             <PostSummary space={space} post={post} />
           </div>
@@ -334,6 +346,7 @@ type PostPreviewProps = {
   space?: SpaceData
   withImage?: boolean
   withTags?: boolean
+  withMarginForCardType?: boolean
 }
 
 const SharedPostMd = (props: PostPreviewProps) => {
@@ -381,7 +394,7 @@ export const SharePostContent = (props: PostPreviewProps) => {
 }
 
 export const InfoPostPreview: FC<PostPreviewProps> = props => {
-  const { postDetails, space, withImage = true, withTags } = props
+  const { postDetails, space, withImage = true, withTags, withMarginForCardType } = props
   const {
     post: { struct, content },
   } = postDetails
@@ -402,7 +415,12 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
             />
           </div>
           {content.link && <Embed link={content.link} className='mt-3' />}
-          <PostContent postDetails={postDetails} space={space?.struct} withImage={withImage} />
+          <PostContent
+            withMarginForCardType={withMarginForCardType && !withTags}
+            postDetails={postDetails}
+            space={space?.struct}
+            withImage={withImage}
+          />
           {withTags && <ViewTags tags={content?.tags} />}
           {/* {withStats && <StatsPanel id={post.id}/>} */}
         </div>

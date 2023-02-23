@@ -1,5 +1,5 @@
 import { summarizeMd } from '@subsocial/utils'
-import { Activity } from 'src/types'
+import { Activity, PostContent } from 'src/types'
 import { ActivityRequiredFragment } from '../__generated__/ActivityRequiredFragment'
 import { GetPostsData_posts } from '../__generated__/GetPostsData'
 import { PostFragment } from '../__generated__/PostFragment'
@@ -92,17 +92,24 @@ export const mapSimpleSpaceFragment = (space: SpaceSimpleFragment): SpaceSimpleF
 }
 
 export const mapSimplePostFragment = (post: PostSimpleFragment): PostSimpleFragmentMapped => {
-  const getContent = () => {
+  const getContent = (): PostContent => {
     const summary = summarizeMd(post.body ?? '')
     return {
       summary: summary.summary ?? '',
       image: post.image ?? '',
       title: post.title ?? '',
       link: post.link ?? undefined,
-      body: '',
+      body: post.body || '',
       canonical: post.canonical ?? '',
       isShowMore: summary.isShowMore,
       tags: getTokensFromUnifiedString(post.tagsOriginal),
+      tweet: post.tweetId
+        ? {
+            id: post.tweetId,
+            edit_history_tweet_ids: [],
+            username: post.tweetDetails?.username ?? '',
+          }
+        : undefined,
     }
   }
   const isIpfsDataError = post.content && !post.body && !post.image && !post.title

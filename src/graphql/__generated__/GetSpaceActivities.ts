@@ -7,19 +7,20 @@
 // GraphQL query operation: GetSpaceActivities
 // ====================================================
 
-export interface GetSpaceActivities_accountById_activities_space {
+export interface GetSpaceActivities_accountById_spacesOwned {
   __typename: "Space";
+  /**
+   * The ID of a Space, which will have the same value and Space ID on the blockchain.
+   */
   id: string;
-}
-
-export interface GetSpaceActivities_accountById_activities {
-  __typename: "Activity";
-  space: GetSpaceActivities_accountById_activities_space | null;
 }
 
 export interface GetSpaceActivities_accountById {
   __typename: "Account";
-  activities: GetSpaceActivities_accountById_activities[];
+  /**
+   * A One-To-Many relationship with the Spaces that are currently owned by an Account  (foreign key - "ownedByAccount")
+   */
+  spacesOwned: GetSpaceActivities_accountById_spacesOwned[];
 }
 
 export interface GetSpaceActivities {

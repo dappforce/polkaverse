@@ -15,7 +15,6 @@ const createRobotsTxt = () => `
   Disallow: /feed
   Disallow: /notifications
 
-  Sitemap: ${appBaseUrl}/sitemap/profiles/index.xml
   Sitemap: ${appBaseUrl}/sitemap/spaces/index.xml
   Sitemap: ${appBaseUrl}/sitemap/posts/index.xml
 `

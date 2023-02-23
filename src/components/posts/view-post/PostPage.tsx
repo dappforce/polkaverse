@@ -1,5 +1,6 @@
-import { summarize, summarizeMd } from '@subsocial/utils'
+import { parseTwitterTextToMarkdown, summarize, summarizeMd } from '@subsocial/utils'
 import { getPostIdFromSlug } from '@subsocial/utils/slugify'
+import clsx from 'clsx'
 import { NextPage } from 'next'
 import router from 'next/router'
 import { FC } from 'react'
@@ -45,6 +46,7 @@ import {
   useIsUnlistedPost,
 } from './helpers'
 import { PostDropDownMenu } from './PostDropDownMenu'
+import TwitterPost from './TwitterPost'
 
 export type PostDetailsProps = {
   postData: PostWithAllDetails
@@ -80,7 +82,11 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const spaceStruct = space.struct
   const spaceData = space
 
-  const { title, body, image, tags, link } = content
+  const { title, image, tags, link, tweet } = content
+  let body = content.body
+  if (tweet?.id) {
+    body = parseTwitterTextToMarkdown(body)
+  }
 
   const goToCommentsId = 'comments'
 
@@ -103,18 +109,15 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
 
   const titleMsg = struct.isComment ? renderResponseTitle(rootPostData?.post) : title
   let metaTitle = title
-  if (!metaTitle) {
-    if (typeof body === 'string') {
-      metaTitle = summarizeMd(body, { limit: MAX_META_TITLE_LEN }).summary
-    } else {
-      metaTitle = config.metaTags.title
-    }
+  const defaultMetaTitle = config.metaTags.title
+  if (!metaTitle && typeof body === 'string') {
+    metaTitle = summarizeMd(body, { limit: MAX_META_TITLE_LEN }).summary
   }
 
   return (
     <PageContent
       meta={{
-        title: metaTitle,
+        title: metaTitle || defaultMetaTitle,
         desc: content.summary,
         image,
         tags,
@@ -146,23 +149,32 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               )}
             </div>
             <OriginalPostPanel canonicalUrl={content.canonical} />
-            <div className='DfPostContent'>
-              {titleMsg && <h1 className='DfPostName'>{titleMsg}</h1>}
-              {struct.isSharedPost ? (
-                <SharePostContent postDetails={postData} space={space} />
-              ) : (
-                <>
-                  {image && (
-                    <div className='d-flex justify-content-center'>
-                      <DfImage src={resolveIpfsUrl(image)} className='DfPostImage' />
-                    </div>
-                  )}
-                  {link && <Embed link={link} className={!!body ? 'mb-3' : 'mb-0'} />}
-                  {body && <DfMd source={body} />}
-                  <ViewTags tags={tags} className='mt-2' />
-                </>
-              )}
-            </div>
+            {content.tweet?.id ? (
+              <TwitterPost
+                withLargeFont
+                className='DfBoxShadowLight mt-4 mb-3'
+                post={post}
+                space={space.struct}
+              />
+            ) : (
+              <div className='DfPostContent'>
+                {titleMsg && <h1 className={clsx('DfPostName', !body && 'mb-0')}>{titleMsg}</h1>}
+                {struct.isSharedPost ? (
+                  <SharePostContent postDetails={postData} space={space} />
+                ) : (
+                  <>
+                    {image && (
+                      <div className='d-flex justify-content-center'>
+                        <DfImage src={resolveIpfsUrl(image)} className='DfPostImage' />
+                      </div>
+                    )}
+                    {link && <Embed link={link} className={!!body ? 'mb-3' : 'mb-0'} />}
+                    {body && <DfMd source={body} />}
+                    <ViewTags tags={tags} className='mt-2' />
+                  </>
+                )}
+              </div>
+            )}
 
             <div className='DfRow mt-2'>
               <PostActionsPanel postDetails={postData} space={space.struct} />

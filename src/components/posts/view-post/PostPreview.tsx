@@ -28,13 +28,13 @@ export function PostPreview(props: PreviewProps) {
   const space = externalSpace || globalSpace
   const isUnlisted = useIsUnlistedPost({ post, space: space?.struct })
 
-  if (!space || isUnlisted) return null
+  if (isUnlisted) return null
 
   log.debug('Render a post w/ id:', post.id)
 
   return (
     <Segment className='DfPostPreview'>
-      <HiddenPostAlert post={post} space={space.struct} preview />
+      <HiddenPostAlert post={post} space={space?.struct} preview />
       {isSharedPost ? (
         <SharedPreview space={space} {...props} />
       ) : (

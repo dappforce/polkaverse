@@ -4,10 +4,10 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetPostIdsBySpaces
+// GraphQL query operation: GetLatestPostId
 // ====================================================
 
-export interface GetPostIdsBySpaces_posts {
+export interface GetLatestPostId_posts {
   __typename: "Post";
   /**
    * The Post ID, the same as it is on the blockchain.
@@ -15,10 +15,6 @@ export interface GetPostIdsBySpaces_posts {
   id: string;
 }
 
-export interface GetPostIdsBySpaces {
-  posts: GetPostIdsBySpaces_posts[];
-}
-
-export interface GetPostIdsBySpacesVariables {
-  spaceIds: string[];
+export interface GetLatestPostId {
+  posts: GetLatestPostId_posts[];
 }

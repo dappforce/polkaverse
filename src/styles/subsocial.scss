@@ -35,8 +35,6 @@ input[type='number'] {
   font-family: 'Unbounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
     Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
     'Noto Color Emoji';
-  position: relative;
-  top: 2px;
 }
 
 #__next {
@@ -158,6 +156,12 @@ a {
   gap: $space_huge;
 }
 
+.VertAlignMiddleChildren {
+  > * {
+    vertical-align: middle;
+  }
+}
+
 .LineHeightNormal {
   line-height: $line-height-normal;
 }
@@ -176,6 +180,10 @@ a {
 
 .ColorCurrentColor {
   color: currentColor;
+}
+
+.RoundedNone {
+  border-radius: 0 !important;
 }
 
 .RoundedNormal {
@@ -198,6 +206,10 @@ a {
 .IconFontSize {
   font-size: 1.25rem;
   cursor: pointer;
+}
+
+.BorderNone {
+  border: none !important;
 }
 
 .DfSegment {
@@ -573,7 +585,7 @@ a {
 .DfPostName {
   @extend .DfUnboundedTitle;
   margin-top: 0;
-  margin-bottom: $space_big !important;
+  margin-bottom: $space_big;
   margin-right: $space_normal;
   line-height: 1.25;
   color: $color_font_normal;
@@ -932,30 +944,31 @@ hr {
     padding: 0.25rem 0;
     justify-content: space-evenly;
   }
+}
 
-  .DfPostImagePreviewWrapper {
-    width: 100%;
-    margin-bottom: $space_normal;
-    border-radius: $border_radius_normal;
-    overflow: hidden;
-    border: 1px solid $color_light_border;
-    background-color: #f0f0f0;
-  }
+.DfPostImagePreviewWrapper {
+  width: 100%;
+  margin-bottom: $space_normal;
+  border-radius: $border_radius_normal;
+  overflow: hidden;
+  border: 1px solid $color_light_border;
+  background-color: #f0f0f0;
+}
+
+.DfPostImagePreview {
+  cursor: pointer;
+  object-fit: cover;
+}
+
+.DfPostImagePreviewWrapperCropped {
+  position: relative;
+  padding-top: calc(9 / 16 * 100%);
 
   .DfPostImagePreview {
-    object-fit: cover;
-  }
-
-  .DfPostImagePreviewWrapperCropped {
-    position: relative;
-    padding-top: calc(9 / 16 * 100%);
-
-    .DfPostImagePreview {
-      inset: 0;
-      position: absolute;
-      height: 100%;
-      width: 100%;
-    }
+    inset: 0;
+    position: absolute;
+    height: 100%;
+    width: 100%;
   }
 }
 

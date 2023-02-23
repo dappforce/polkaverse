@@ -1,12 +1,15 @@
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { HasTitleOrBody } from '@subsocial/utils'
+import BN from 'bn.js'
 import dayjs, { Dayjs } from 'dayjs'
 import { NextPageContext } from 'next'
 import React from 'react'
-import { postUrl, spaceUrl } from 'src/components/urls'
+import { HasSpaceIdOrHandle, postUrl, spaceUrl } from 'src/components/urls'
 import { fullUrl } from 'src/components/urls/helpers'
 import config from 'src/config'
-import { flattenSpaceStructs, HasCreated } from 'src/types'
-import { getSubsocialApi } from '../utils/SubsocialConnect'
-
+import { getLatestPostId, getLatestSpaceId, getPostsData, getSpacesData } from 'src/graphql/apis'
+import { getApolloClient } from 'src/graphql/client'
+import { flattenSpaceStructs, HasCreated, PostStruct } from 'src/types'
 import {
   approxCountOfPostPages,
   approxCountOfSpacePages,
@@ -15,6 +18,7 @@ import {
   ParsedPaginationQuery,
   parsePageQuery,
 } from '../utils/getIds'
+import { getSubsocialApi } from '../utils/SubsocialConnect'
 
 const { seoSitemapLastmod, seoSitemapPageSize } = config
 
@@ -110,11 +114,95 @@ const getPageAndSize = (props: NextPageContext): ParsedPaginationQuery => {
   return { page, size: seoSitemapPageSize }
 }
 
+function generateFetcher<ReturnValue, Params>({
+  chain,
+  squid,
+}: {
+  squid: (client: ApolloClient<NormalizedCacheObject>, params: Params) => Promise<ReturnValue>
+  chain: (params: Params) => Promise<ReturnValue>
+}) {
+  return (params: Params) => {
+    const client = getApolloClient()
+    if (client) {
+      return squid(client, params)
+    }
+    return chain(params)
+  }
+}
+
+const getNextSpaceId = generateFetcher({
+  chain: async () => {
+    const { blockchain } = await getSubsocialApi()
+    const nextSpaceId = await blockchain.nextSpaceId()
+    return new BN(nextSpaceId)
+  },
+  squid: async client => {
+    const latestSpaceId = await getLatestSpaceId(client)
+    const nextSpaceId = new BN(latestSpaceId).add(new BN(1))
+    return nextSpaceId
+  },
+})
+
+const getNextPostId = generateFetcher({
+  chain: async () => {
+    const subsocial = await getSubsocialApi()
+    const nextPostId = await subsocial.blockchain.nextPostId()
+    return new BN(nextPostId)
+  },
+  squid: async client => {
+    const latestPostId = await getLatestPostId(client)
+    const nextPostId = new BN(latestPostId).add(new BN(1))
+    return nextPostId
+  },
+})
+
+const getSpacesByIds = generateFetcher<(HasSpaceIdOrHandle & HasCreatedOrUpdated)[], BN[]>({
+  chain: async ids => {
+    const { blockchain } = await getSubsocialApi()
+    const structs = await blockchain.findSpaces({ ids, visibility: 'onlyPublic' })
+    return flattenSpaceStructs(structs)
+  },
+  squid: async (client, ids) => {
+    const spaces = await getSpacesData(client, { where: { id_in: ids.map(id => id.toString()) } })
+    spaces.sort((a, b) => {
+      return new Date(b.createdAtTime).getTime() - new Date(a.createdAtTime).getTime()
+    })
+    return spaces
+  },
+})
+
+const getPostsByIds = generateFetcher<
+  { postStruct: PostStruct; postContent?: HasTitleOrBody; space?: HasSpaceIdOrHandle }[],
+  BN[]
+>({
+  chain: async ids => {
+    const subsocial = await getSubsocialApi()
+    const posts = await subsocial.findPublicPostsWithSomeDetails({ ids, withSpace: true })
+    return posts.map(({ post, space }) => ({
+      postStruct: post.struct,
+      space,
+      postContent: post.content,
+    }))
+  },
+  squid: async (client, ids) => {
+    const posts = await getPostsData(client, {
+      where: { id_in: ids.map(id => id.toString()), hidden_eq: false },
+    })
+    posts.sort((a, b) => {
+      return new Date(b.createdAtTime).getTime() - new Date(a.createdAtTime).getTime()
+    })
+    return posts.map(post => ({
+      postStruct: post,
+      space: post.space || undefined,
+      postContent: post.ipfsContent,
+    }))
+  },
+})
+
 export class SpacesSitemapIndex extends React.Component {
   static async getInitialProps(props: NextPageContext) {
     const query = getPageAndSize(props)
-    const { blockchain } = await getSubsocialApi()
-    const nextSpaceId = await blockchain.nextSpaceId()
+    const nextSpaceId = await getNextSpaceId(undefined)
     const totalPages = approxCountOfSpacePages(nextSpaceId, query)
     const xml = renderSitemapIndexOfResource({ resource: 'spaces', totalPages })
     sendXml(props, xml)
@@ -124,21 +212,9 @@ export class SpacesSitemapIndex extends React.Component {
 export class PostsSitemapIndex extends React.Component {
   static async getInitialProps(props: NextPageContext) {
     const query = getPageAndSize(props)
-    const subsocial = await getSubsocialApi()
-    const nextPostId = await subsocial.blockchain.nextPostId()
+    const nextPostId = await getNextPostId(undefined)
     const totalPages = approxCountOfPostPages(nextPostId, query)
     const xml = renderSitemapIndexOfResource({ resource: 'posts', totalPages })
-    sendXml(props, xml)
-  }
-}
-
-export class ProfilesSitemapIndex extends React.Component {
-  static async getInitialProps(props: NextPageContext) {
-    const { size } = getPageAndSize(props)
-    const { blockchain } = await getSubsocialApi()
-    const profileKeys = await (await blockchain.api).query.profiles.profileSpaceIdByAccount.keys()
-    const totalPages = Math.ceil(profileKeys.length / size)
-    const xml = renderSitemapIndexOfResource({ resource: 'profiles', totalPages })
     sendXml(props, xml)
   }
 }
@@ -146,11 +222,10 @@ export class ProfilesSitemapIndex extends React.Component {
 export class SpacesUrlSet extends React.Component {
   static async getInitialProps(props: NextPageContext) {
     const query = getPageAndSize(props)
-    const { blockchain } = await getSubsocialApi()
-    const nextSpaceId = await blockchain.nextSpaceId()
+    const nextSpaceId = await getNextSpaceId(undefined)
+
     const ids = getReversePageOfSpaceIds(nextSpaceId, query)
-    const structs = await blockchain.findSpaces({ ids, visibility: 'onlyPublic' })
-    const spaces = flattenSpaceStructs(structs)
+    const spaces = await getSpacesByIds(ids)
 
     const items: UrlItem[] = []
 
@@ -178,17 +253,15 @@ export class SpacesUrlSet extends React.Component {
 export class PostsUrlSet extends React.Component {
   static async getInitialProps(props: NextPageContext) {
     const query = getPageAndSize(props)
-    const subsocial = await getSubsocialApi()
 
-    const nextPostId = await subsocial.blockchain.nextPostId()
+    const nextPostId = await getNextPostId(undefined)
     const ids = getReversePageOfPostIds(nextPostId, query)
-    const posts = await subsocial.findPublicPostsWithSomeDetails({ ids, withSpace: true })
+    const posts = await getPostsByIds(ids)
 
-    const items: UrlItem[] = posts.map(({ post, space }) => {
+    const items: UrlItem[] = posts.map(({ postStruct, postContent, space }) => {
       return {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        loc: postUrl(space!.struct, post),
-        lastmod: getLastModFromStruct(post.struct),
+        loc: postUrl(space, { struct: postStruct, content: postContent }),
+        lastmod: getLastModFromStruct(postStruct),
         changefreq: 'weekly',
       }
     })

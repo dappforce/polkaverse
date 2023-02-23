@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Extract branch name
         shell: bash
-        run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV        
+        run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
         id: extract_branch
 
       - name: Prepare
@@ -48,16 +48,16 @@ jobs:
           file: docker/Dockerfile
           push: true
           build-args: |
-                  GH_SUBSTRATE_URL=wss://para.f3joule.space
-                  GH_SUBSTRATE_RPC_URL=https://rco-para.subsocial.network/http
-                  GH_OFFCHAIN_URL=https://staging-api.subsocial.network
-                  GH_IPFS_NODE_URL=https://ipfs.subsocial.network
-                  GH_GA_ID=fake
-                  GH_APP_KIND=staging
-                  GH_CONNECTION_KIND=dev
+            GH_SUBSTRATE_URL=wss://para.subsocial.network
+            GH_SUBSTRATE_RPC_URL=https://rco-para.subsocial.network/http
+            GH_OFFCHAIN_URL=https://staging-api.subsocial.network
+            GH_IPFS_NODE_URL=https://ipfs.subsocial.network
+            GH_GA_ID=fake
+            GH_APP_KIND=staging
+            GH_CONNECTION_KIND=dev
 
           tags: |
-                  ${{ env.image }}
+            ${{ env.image }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
@@ -70,26 +70,24 @@ jobs:
           file: docker/Dockerfile
           push: true
           build-args: |
-                  GH_SUBSTRATE_URL=wss://para.f3joule.space
-                  GH_SUBSTRATE_RPC_URL=https://para.subsocial.network
-                  GH_OFFCHAIN_URL=https://api.subsocial.network
-                  GH_IPFS_NODE_URL=https://ipfs.subsocial.network
-                  GH_GA_ID=UA-204866512-2
-                  GH_APP_KIND=polkaverse
-                  GH_CONNECTION_KIND=main
+            GH_SUBSTRATE_URL=wss://para.subsocial.network
+            GH_SUBSTRATE_RPC_URL=https://para.subsocial.network
+            GH_OFFCHAIN_URL=https://api.subsocial.network
+            GH_IPFS_NODE_URL=https://ipfs.subsocial.network
+            GH_GA_ID=UA-204866512-2
+            GH_APP_KIND=polkaverse
+            GH_CONNECTION_KIND=main
 
           tags: |
-                  ${{ env.image }}
-                  docker.io/dappforce/subsocial-web-app:master-latest
+            ${{ env.image }}
+            docker.io/dappforce/subsocial-web-app:master-latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
-
 
       - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-
 
   staging_deploy:
     name: staging-deploy
@@ -102,7 +100,7 @@ jobs:
 
       - name: Extract branch name
         shell: bash
-        run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV        
+        run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
         id: extract_branch
 
       - name: Install doctl
@@ -121,7 +119,6 @@ jobs:
       - name: Verify deployment
         run: kubectl -n sub-back rollout status deployment/web-app
 
-
   pro_deploy:
     name: pro-deploy
     needs: front_build
@@ -133,7 +130,7 @@ jobs:
 
       - name: Extract branch name
         shell: bash
-        run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV        
+        run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
         id: extract_branch
 
       - name: Install doctl
@@ -170,7 +167,7 @@ jobs:
 
       - name: Extract branch name
         shell: bash
-        run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV        
+        run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
         id: extract_branch
 
       - name: executing remote ssh commands

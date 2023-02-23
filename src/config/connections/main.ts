@@ -4,7 +4,7 @@ import { SubsocialConfig } from '../types'
 const mainConfig: SubsocialConfig = {
   sudoOne: '3osmnRNnrcScHsgkTJH1xyBF5kGjpbWHsGrqM31BJpy4vwn8',
 
-  substrateUrl: 'wss://para.f3joule.space',
+  substrateUrl: 'wss://para.subsocial.network',
   kusamaUrl: 'wss://kusama-rpc.polkadot.io',
 
   offchainUrl: 'https://api.subsocial.network',

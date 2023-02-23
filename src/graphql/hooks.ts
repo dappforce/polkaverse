@@ -12,6 +12,7 @@ import {
   getPostActivities,
   getReactionActivities,
   getSpaceActivities,
+  getTweetActivities,
 } from './apis'
 import { GqlClient, useDfApolloClient } from './ApolloProvider'
 
@@ -40,12 +41,14 @@ export const useGetActivityCounts = createGqlHooks(getActivityCounts, {
   postsCount: 0,
   reactionsCount: 0,
   spacesCount: 0,
+  tweetsCount: 0,
 })
 export const useGetAllActivities = createGqlHooks(getAllActivities, [])
 export const useGetFollowActivities = createGqlHooks(getFollowActivities, [])
 export const useGetReactionActivities = createGqlHooks(getReactionActivities, [])
 export const useGetSpaceActivities = createGqlHooks(getSpaceActivities, [])
 export const useGetPostActivities = createGqlHooks(getPostActivities, [])
+export const useGetTweetActivities = createGqlHooks(getTweetActivities, [])
 export const useGetCommentActivities = createGqlHooks(getCommentActivities, [])
 
 export const useGetNotificationsCount = createGqlHooks(getNotificationCount, 0)

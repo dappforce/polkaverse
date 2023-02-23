@@ -23,6 +23,7 @@ export const RegularPreview: ComponentType = props => {
         space={space}
         withImage={withImage}
         withTags={withTags}
+        withMarginForCardType={!withActions}
       />
       {withActions && (
         <PostActionsPanel
@@ -30,7 +31,6 @@ export const RegularPreview: ComponentType = props => {
           space={space?.struct}
           toogleCommentSection={() => setCommentsSection(!commentsSection)}
           preview
-          withBorder
         />
       )}
       {commentsSection && (

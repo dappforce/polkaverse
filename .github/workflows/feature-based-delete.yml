@@ -6,13 +6,13 @@ on:
 
 jobs:
   delete:
-    if: github.event.pull_request.merged == true       
+    if: github.event.pull_request.merged == true
     name: deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
         uses: actions/checkout@v3
- 
+
       - uses: mdecoleman/pr-branch-name@1.2.0
         id: vars
         with:
@@ -20,7 +20,7 @@ jobs:
 
       - name: Extract branch name
         shell: bash
-        run: echo "name=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^deploy\///')" >> $GITHUB_ENV
+        run: echo "name=$(echo ${{ steps.vars.outputs.branch }} | sed 's/^deploy\///')" >> $GITHUB_ENV
         id: extract_branch
 
       - name: Install doctl
@@ -29,7 +29,7 @@ jobs:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_STAGING }}
 
       - name: remove previous feature
-        continue-on-error: true        
+        continue-on-error: true
         run: |
           doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.K8S_STAGING }}
           NAME=${{ env.name }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/features/all.yaml
@@ -45,7 +45,7 @@ jobs:
       - name: delete CF A record
         continue-on-error: true
         run: curl -X DELETE "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE }}/dns_records/${{ env.record }}"  -H "X-Auth-Email:${{ secrets.CF_MAIL }}"      -H "Authorization:Bearer ${{ secrets.CF_TOKEN }}"      -H "Content-Type:application/json"
-          
+
       - name: final task
         if: always()
-        run: echo "finished successfully"        
+        run: echo "finished successfully"

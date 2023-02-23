@@ -47,7 +47,7 @@ export const ProfilePreview: FC<ProfilePreviewProps> = ({
         {left}
         <Avatar size={size || LARGE_AVATAR_SIZE} address={address} avatar={owner?.content?.image} />
       </Col>
-      <Col span={spans?.main} className='ml-2 ProfilePreview-Main'>
+      <Col span={spans?.main} className='ProfilePreview-Main'>
         <NameDetails
           owner={owner}
           address={address}
