@@ -96,7 +96,7 @@ export const InnerViewSpace = (props: Props) => {
         space={space}
         avatar={spaceData.content?.image}
         size={imageSize}
-        isUnnamedSpace={isEmptyStr(name) ? true : false}
+        isUnnamedSpace={isEmptyStr(name)}
       />
     )
   }, [spaceData, imageSize])

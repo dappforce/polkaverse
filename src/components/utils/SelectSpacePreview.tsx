@@ -39,12 +39,11 @@ const SpaceOption = ({ spaceId, imageSize }: SpaceOptionProps) => {
         space={struct}
         avatar={content?.image}
         size={imageSize}
-        isUnnamedSpace={isEmptyStr(name) ? true : false}
+        isUnnamedSpace={isEmptyStr(name)}
         asLink={false}
       />
       <div className='content'>
-        {!content && <MutedDiv>{'Unnamed Space'}</MutedDiv>}
-        {content && <div className='handle'>{content?.name}</div>}
+        {!name ? <MutedDiv>{'Unnamed Space'}</MutedDiv> : <div className='handle'>{name}</div>}
       </div>
     </div>
   )
