@@ -1,9 +1,11 @@
 /* eslint-disable react/display-name */
+import { isEmptyStr } from '@subsocial/utils'
 import { Select } from 'antd'
 import { LabeledValue } from 'antd/lib/select'
 import { DataSourceTypes, SpaceId } from 'src/types'
 import { useFetchSpaces, useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { SpaceAvatar } from '../spaces/helpers'
+import { MutedDiv } from './MutedText'
 import { BareProps } from './types'
 
 type Props = BareProps & {
@@ -29,13 +31,20 @@ const SpaceOption = ({ spaceId, imageSize }: SpaceOptionProps) => {
 
   const { struct, content } = spaceStruct
 
-  if (!content) return spaceStub
+  const name = content?.name
 
   return (
     <div className={'d-flex align-items-center'}>
-      <SpaceAvatar space={struct} avatar={content?.image} size={imageSize} asLink={false} />
+      <SpaceAvatar
+        space={struct}
+        avatar={content?.image}
+        size={imageSize}
+        isUnnamedSpace={isEmptyStr(name) ? true : false}
+        asLink={false}
+      />
       <div className='content'>
-        <div className='handle'>{content?.name}</div>
+        {!content && <MutedDiv>{'<Unnamed Space>'}</MutedDiv>}
+        {content && <div className='handle'>{content?.name}</div>}
       </div>
     </div>
   )

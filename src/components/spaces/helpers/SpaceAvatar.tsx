@@ -15,5 +15,5 @@ export const SpaceAvatar = ({ asLink = true, isUnnamedSpace = false, space, ...p
       title={<BaseAvatar identityValue={isUnnamedSpace ? space.id : space.ownerId} {...props} />}
     />
   ) : (
-    <BaseAvatar identityValue={space.id} {...props} />
+    <BaseAvatar identityValue={isUnnamedSpace ? space.id : space.ownerId} {...props} />
   )
