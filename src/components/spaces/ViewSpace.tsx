@@ -43,7 +43,7 @@ type Props = ViewSpaceProps
 
 export const renderSpaceName = (space: SpaceWithSomeDetails) => {
   const name = space?.content?.name
-  const spaceName = isEmptyStr(name) ? <MutedSpan>{'<Unnamed Space>'}</MutedSpan> : name
+  const spaceName = isEmptyStr(name) ? <MutedSpan>{'Unnamed Space'}</MutedSpan> : name
 
   return spaceName
 }
