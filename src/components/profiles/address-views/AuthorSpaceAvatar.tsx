@@ -38,12 +38,7 @@ export default function AuthorSpaceAvatar({
           leftAvatar={authorAvatar}
           rightAvatarSize={size}
           rightAvatar={
-            <SpaceAvatar
-              space={spaceData.struct}
-              avatar={spaceData.content?.image}
-              address={spaceData.struct.ownerId}
-              size={size}
-            />
+            <SpaceAvatar space={spaceData.struct} avatar={spaceData.content?.image} size={size} />
           }
         />
       ) : (

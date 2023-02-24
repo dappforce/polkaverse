@@ -2,14 +2,18 @@ import BaseAvatar, { BaseAvatarProps } from 'src/components/utils/DfAvatar'
 import { SpaceStruct } from 'src/types'
 import ViewSpaceLink from '../ViewSpaceLink'
 
-type Props = BaseAvatarProps & {
+type Props = Omit<BaseAvatarProps, 'identityValue'> & {
   space: SpaceStruct
   asLink?: boolean
+  isUnnamedSpace?: boolean
 }
 
-export const SpaceAvatar = ({ asLink = true, ...props }: Props) =>
+export const SpaceAvatar = ({ asLink = true, isUnnamedSpace = false, space, ...props }: Props) =>
   asLink ? (
-    <ViewSpaceLink space={props.space} title={<BaseAvatar {...props} />} />
+    <ViewSpaceLink
+      space={space}
+      title={<BaseAvatar identityValue={isUnnamedSpace ? space.id : space.ownerId} {...props} />}
+    />
   ) : (
-    <BaseAvatar {...props} />
+    <BaseAvatar identityValue={isUnnamedSpace ? space.id : space.ownerId} {...props} />
   )

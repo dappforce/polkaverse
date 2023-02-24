@@ -43,7 +43,7 @@ type Props = ViewSpaceProps
 
 export const renderSpaceName = (space: SpaceWithSomeDetails) => {
   const name = space?.content?.name
-  const spaceName = isEmptyStr(name) ? <MutedSpan>{'<Unnamed Space>'}</MutedSpan> : name
+  const spaceName = isEmptyStr(name) ? <MutedSpan>{'Unnamed Space'}</MutedSpan> : name
 
   return spaceName
 }
@@ -90,12 +90,13 @@ export const InnerViewSpace = (props: Props) => {
   const Avatar = useCallback(() => {
     if (!spaceData) return null
     const space = spaceData.struct
+    const name = spaceData.content?.name
     return (
       <SpaceAvatar
         space={space}
-        address={space.ownerId}
         avatar={spaceData.content?.image}
         size={imageSize}
+        isUnnamedSpace={isEmptyStr(name)}
       />
     )
   }, [spaceData, imageSize])
