@@ -1,6 +1,6 @@
 import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons'
 import { AccountId } from '@polkadot/types/interfaces'
-import { isEmptyStr } from '@subsocial/utils'
+import { isEmptyStr, toSubsocialAddress } from '@subsocial/utils'
 import { Button, Dropdown, Menu } from 'antd'
 import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
@@ -29,6 +29,7 @@ import Avatar from './address-views/Avatar'
 import Name from './address-views/Name'
 import { CopyAddress } from './address-views/utils'
 
+import router from 'next/router'
 import { Donate } from 'src/components/donate'
 import { isBlockedAccount } from 'src/moderation'
 import { useFetchSpaceIdsByFollower } from 'src/rtk/app/hooks'
@@ -222,9 +223,23 @@ getInitialPropsWithRedux(ProfilePage, async ({ context, subsocial, dispatch, red
   const {
     query: { address },
     res,
+    req,
   } = context
 
   const addressStr = address as string
+
+  const subsocialAddress = toSubsocialAddress(addressStr)
+  if (subsocialAddress !== addressStr) {
+    if (req) {
+      res?.writeHead(301, {
+        Location: accountUrl({ address: subsocialAddress ?? '' }),
+      })
+      res?.end()
+    } else {
+      router.push(accountUrl({ address: subsocialAddress ?? '' }))
+    }
+    return { statusCode: 301 } as any
+  }
 
   if (!addressStr) {
     if (res) {
