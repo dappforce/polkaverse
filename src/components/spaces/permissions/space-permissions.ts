@@ -23,6 +23,19 @@ const createWritePermission = () => {
     'UpdateOwnPosts',
     'DeleteOwnPosts',
     'HideOwnPosts',
+    'UpdateOwnSubspaces',
+    'DeleteOwnSubspaces',
+    'HideOwnSubspaces',
+    'UpdateOwnPosts',
+    'DeleteOwnPosts',
+    'HideOwnPosts',
+    'CreateComments',
+    'UpdateOwnComments',
+    'DeleteOwnComments',
+    'HideOwnComments',
+    'Upvote',
+    'Downvote',
+    'Share',
   ] as unknown as ISpacePermissionSet
 }
 
