@@ -33,7 +33,6 @@ export type CompletedSteps = {
 
 export type AuthState = {
   currentStep: number
-  currentEmailStep: number
   completedSteps: CompletedSteps
   canReserveHandle: boolean
 }
@@ -52,7 +51,6 @@ export type AuthContextProps = {
   withBackButton?: boolean
   hideSignInModal: () => void
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>
-  setCurrentEmailStep: React.Dispatch<React.SetStateAction<number>>
 }
 
 const energyStub: EnergyState = { status: 'normal', transactionsCount: 0, coefficient: 1 }
@@ -60,7 +58,6 @@ const energyStub: EnergyState = { status: 'normal', transactionsCount: 0, coeffi
 const contextStub: AuthContextProps = {
   state: {
     currentStep: 0,
-    currentEmailStep: 0,
     completedSteps: {
       isSignedIn: false,
       hasTokens: false,
@@ -74,20 +71,17 @@ const contextStub: AuthContextProps = {
   openSignInModal: functionStub,
   hideSignInModal: functionStub,
   setCurrentStep: functionStub,
-  setCurrentEmailStep: functionStub,
 }
 
 export enum StepsEnum {
   Disabled = -1,
   SelectWallet,
   SelectAccount,
-}
-
-export enum EmailStepsEnum {
   SignIn,
   SignUp,
   Confirmation,
   ShowMnemonic,
+  SignInDone,
 }
 
 const useGetCurrentStep = (isMobile: boolean) => {
@@ -97,23 +91,6 @@ const useGetCurrentStep = (isMobile: boolean) => {
   useEffect(() => {
     if (!isSignedIn) {
       setStep(getCurrentWallet() || isMobile ? StepsEnum.SelectAccount : StepsEnum.SelectWallet)
-    }
-  }, [isSignedIn])
-
-  return step
-}
-
-const useGetCurrentEmailStep = (isMobile: boolean) => {
-  const isSignedIn = useIsSignedIn()
-  const [step, setStep] = useState<number>(EmailStepsEnum.SignIn)
-
-  useEffect(() => {
-    if (!isSignedIn) {
-      //TODO: replace getCurrentWallet() with getAccessToken() from localstorage
-      setStep(
-        //getCurrentWallet()
-        isMobile ? EmailStepsEnum.SignIn : EmailStepsEnum.SignUp,
-      )
     }
   }, [isSignedIn])
 
@@ -139,11 +116,8 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
 
   const [hasTokens, setTokens] = useState(false)
   const step = useGetCurrentStep(isMobile)
-  const emailStep = useGetCurrentEmailStep(isMobile)
 
   const [currentStep, setCurrentStep] = useState(step)
-
-  const [currentEmailStep, setCurrentEmailStep] = useState(emailStep)
 
   const accountsFromStorage = store.get(ONBOARDED_ACCS)
 
@@ -163,10 +137,6 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
   useEffect(() => {
     setCurrentStep(step)
   }, [step])
-
-  useEffect(() => {
-    setCurrentEmailStep(emailStep)
-  }, [emailStep])
 
   useSubsocialEffect(
     ({ substrate }) => {
@@ -237,7 +207,6 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
   const contextValue: AuthContextProps = {
     state: {
       currentStep,
-      currentEmailStep,
       completedSteps: {
         isSignedIn,
         hasTokens,
@@ -256,7 +225,6 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
       setShowModal(false)
     },
     setCurrentStep,
-    setCurrentEmailStep,
   }
 
   const onAccountChosen = (address: string) => {

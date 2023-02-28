@@ -12,7 +12,11 @@ import { MutedDiv } from '../../utils/MutedText'
 import PrivacyPolicyLinks from '../../utils/PrivacyPolicyLinks'
 import WalletList from '../../wallets/wallet-list/WalletsList'
 import { CompletedSteps, StepsEnum, useAuth } from '../AuthContext'
+import ConfirmationModalContent from './email/ConfirmationModalContent'
+import ShowMnemonicModalContent from './email/ShowMnemonicModalContent'
 import SignInEmailButton from './email/SignInEmailButton'
+import SignInModalContent from './email/SignInModalContent'
+import SignUpModalContent from './email/SignUpModalContent'
 import styles from './SignInModal.module.sass'
 
 const { mobileAppLogo } = config
@@ -106,7 +110,8 @@ const ModalContent = ({
             title='Sign In'
             desc={
               <>
-                Choose one of the available wallet providers to connect to {config.appName}.{' '}
+                Choose one of the available wallet providers to connect to {config.appName}, or sign
+                in with your email address.{' '}
                 <ExternalLink
                   url='https://docs.subsocial.network/docs/tutorials/#polkadotjs'
                   value='How do I set up a wallet?'
@@ -114,7 +119,7 @@ const ModalContent = ({
               </>
             }
           >
-            <SignInEmailButton />
+            <SignInEmailButton setCurrentStep={setCurrentStep} />
             <Divider className='px-2'>Or connect wallet</Divider>
             <WalletList setCurrentStep={setCurrentStep} />
           </ModalBodyWrapper>
@@ -134,6 +139,57 @@ const ModalContent = ({
         </div>
       )
     }
+
+    case StepsEnum.SignIn: {
+      return (
+        <div>
+          <ModalBodyWrapper title={'Sign in with email'} desc={''}>
+            <SignInModalContent setCurrentStep={setCurrentStep} />
+          </ModalBodyWrapper>
+        </div>
+      )
+    }
+
+    case StepsEnum.SignUp: {
+      return (
+        <div>
+          <ModalBodyWrapper title={'Sign up with email'} desc={''}>
+            <SignUpModalContent setCurrentStep={setCurrentStep} />
+          </ModalBodyWrapper>
+        </div>
+      )
+    }
+
+    case StepsEnum.Confirmation: {
+      return (
+        <div>
+          <ModalBodyWrapper
+            title={'Email confirmation'}
+            desc={
+              'We have just sent a confirmation code to your email, please enter it in the field below'
+            }
+          >
+            <ConfirmationModalContent setCurrentStep={setCurrentStep} />
+          </ModalBodyWrapper>
+        </div>
+      )
+    }
+
+    case StepsEnum.ShowMnemonic: {
+      return (
+        <div>
+          <ModalBodyWrapper
+            title={'Mnemonic phrase'}
+            desc={
+              'Write down and copy these words in the correct order and save them somewhere safe Read more.'
+            }
+          >
+            <ShowMnemonicModalContent setCurrentStep={setCurrentStep} />
+          </ModalBodyWrapper>
+        </div>
+      )
+    }
+
     default:
       return null
   }
