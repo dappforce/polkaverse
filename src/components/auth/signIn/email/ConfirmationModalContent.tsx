@@ -1,4 +1,6 @@
-import { Button, Form, Input } from 'antd'
+import { Button, Form } from 'antd'
+import { useState } from 'react'
+import AuthCode from 'react-auth-code-input'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 
@@ -15,16 +17,18 @@ type Props = {
 }
 
 const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
-  const [form] = Form.useForm()
+  const [, setResult] = useState<undefined | string>()
+  const handleOnChange = (res: string) => {
+    setResult(res)
+  }
 
   return (
-    <div className={styles.SignInModalContent}>
+    <div className={styles.ConfirmationModalContent}>
       <Form.Item name={fieldName('confirmationCode')} className='mb-0' validateTrigger='onBlur'>
-        <Input
-          onBlur={e =>
-            form.setFieldsValue({ [fieldName('confirmationCode')]: e.target.value.trim() })
-          }
-          placeholder='Email'
+        <AuthCode
+          allowedCharacters='numeric'
+          onChange={handleOnChange}
+          inputClassName={styles.InputOTP}
         />
       </Form.Item>
 

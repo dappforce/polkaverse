@@ -7,6 +7,10 @@
     gap: $space_normal
     margin-top: $space_big
 
+.ConfirmationModalContent
+    @extend .SignInModalContent
+    gap: $space_big
+
 
 .InnerCard
     :global(.ant-card-body)
@@ -21,3 +25,26 @@
 .MnemonicText
     text-align: left
     max-width: 372px
+
+.InputOTP
+  width: 40px
+  height: 44px
+  padding: 0
+
+  font-size: 24px
+  text-align: center
+  font-weight: 500
+  line-height: 140%
+  color: #222222
+  text-transform: uppercase
+
+  margin-right: 10px
+  border: 1px solid #d6d6d6
+  border-radius: 12px
+  background: #fafafa
+  background-clip: padding-box
+
+.InputOTP:focus
+  appearance: none
+  outline: 0
+  border: 1px solid $color_primary
