@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { ArrowLeftOutlined } from '@ant-design/icons'
+import { Divider } from 'antd'
 import Modal from 'antd/lib/modal'
 import clsx from 'clsx'
 import config from 'src/config'
@@ -11,6 +12,7 @@ import { MutedDiv } from '../../utils/MutedText'
 import PrivacyPolicyLinks from '../../utils/PrivacyPolicyLinks'
 import WalletList from '../../wallets/wallet-list/WalletsList'
 import { CompletedSteps, StepsEnum, useAuth } from '../AuthContext'
+import SignInEmailButton from './email/SignInEmailButton'
 import styles from './SignInModal.module.sass'
 
 const { mobileAppLogo } = config
@@ -101,7 +103,7 @@ const ModalContent = ({
       return (
         <div>
           <ModalBodyWrapper
-            title='Select your wallet'
+            title='Sign In'
             desc={
               <>
                 Choose one of the available wallet providers to connect to {config.appName}.{' '}
@@ -112,6 +114,8 @@ const ModalContent = ({
               </>
             }
           >
+            <SignInEmailButton />
+            <Divider className='px-2'>Or connect wallet</Divider>
             <WalletList setCurrentStep={setCurrentStep} />
           </ModalBodyWrapper>
         </div>
