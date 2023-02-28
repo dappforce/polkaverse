@@ -1,7 +1,7 @@
 @import 'src/styles/subsocial-vars.scss'
 
 .SignInModalBody
-  padding: $space_normal $space_large
+  padding: $space_normal $space_huge
   position: relative
 
   \:global .ant-menu-horizontal
@@ -31,6 +31,10 @@
 
       &:hover
         background-color: #ffedf6
+
+.SignInModalBodyOnConfirm 
+  @extend .SignInModalBody
+  padding: 0 $space_huge $space_huge
 
 .TitleContainer
   position: relative

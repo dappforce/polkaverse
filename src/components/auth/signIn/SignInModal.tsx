@@ -153,7 +153,7 @@ const ModalContent = ({
     case StepsEnum.SignUp: {
       return (
         <div>
-          <ModalBodyWrapper title={'Sign up with email'} desc={''}>
+          <ModalBodyWrapper title={'Create account with email'} desc={''}>
             <SignUpModalContent setCurrentStep={setCurrentStep} />
           </ModalBodyWrapper>
         </div>
@@ -215,7 +215,7 @@ export const SignInModalView = ({ open, hide, onAccountChosen }: SignInModalProp
           />
         </div>
       }
-      footer={<ModalFooter />}
+      footer={currentStep !== StepsEnum.Confirmation && <ModalFooter />}
       className={clsx('text-center DfSignInModal', {
         [styles.SignInModal]:
           currentStep !== StepsEnum.SelectAccount && currentStep !== StepsEnum.SelectWallet,
@@ -223,7 +223,11 @@ export const SignInModalView = ({ open, hide, onAccountChosen }: SignInModalProp
       onCancel={hide}
       destroyOnClose
     >
-      <div className={clsx(styles.SignInModalBody)}>
+      <div
+        className={clsx(styles.SignInModalBody, {
+          [styles.SignInModalBodyOnConfirm]: currentStep === StepsEnum.Confirmation,
+        })}
+      >
         <ModalContent
           onAccountChosen={onAccountChosen}
           completedSteps={completedSteps}
