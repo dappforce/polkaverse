@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { Divider } from 'antd'
@@ -64,19 +64,55 @@ const ModalFooter = () => {
 
 type ModalBodyWrapperProps = {
   children?: React.ReactNode
+  moreDesc?: React.ReactNode
   title: React.ReactNode
   desc: React.ReactNode
 }
 
-const ModalBodyWrapper = ({ children, title, desc }: ModalBodyWrapperProps) => (
-  <div>
-    <div className={styles.BodyTitle}>
-      <h2 className='font-weight-bold'>{title}</h2>
-      <MutedDiv>{desc}</MutedDiv>
+const ModalBodyWrapper = ({ children, moreDesc, title, desc }: ModalBodyWrapperProps) => {
+  const [isExpanded, setExpanded] = useState(false)
+
+  if (moreDesc) {
+    return isExpanded ? (
+      <div>
+        <div className={styles.BodyTitle}>
+          <h2 className='font-weight-bold'>{title}</h2>
+          <MutedDiv>
+            {desc}
+            <MutedDiv>{moreDesc}</MutedDiv>{' '}
+            <span className={styles.ReadMore} onClick={() => setExpanded(false)}>
+              Read less
+            </span>
+          </MutedDiv>
+        </div>
+        {children}
+      </div>
+    ) : (
+      <div>
+        <div className={styles.BodyTitle}>
+          <h2 className='font-weight-bold'>{title}</h2>
+          <MutedDiv>
+            {desc}{' '}
+            <span className={styles.ReadMore} onClick={() => setExpanded(true)}>
+              Read more
+            </span>
+          </MutedDiv>
+        </div>
+        {children}
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <div className={styles.BodyTitle}>
+        <h2 className='font-weight-bold'>{title}</h2>
+        <MutedDiv>{desc}</MutedDiv>
+      </div>
+      {children}
     </div>
-    {children}
-  </div>
-)
+  )
+}
 
 type AdditionalModalProps = {
   onAccountChosen: (address: string) => void
@@ -181,7 +217,10 @@ const ModalContent = ({
           <ModalBodyWrapper
             title={'Mnemonic phrase'}
             desc={
-              'Write down and copy these words in the correct order and save them somewhere safe Read more.'
+              'Write down and copy these words in the correct order and save them somewhere safe.'
+            }
+            moreDesc={
+              'Your mnemonic phrase will allow you to recover your account, and is encrypted by your password and stored locally in your browser; nobody else can access it.'
             }
           >
             <ShowMnemonicModalContent setCurrentStep={setCurrentStep} />
