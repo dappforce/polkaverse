@@ -37,6 +37,14 @@ const ModalTitle = ({ setCurrentStep, currentStep, withBackButton }: ModalTitleP
   const isShowBackButton = currentStep !== StepsEnum.SelectWallet
 
   const onBackButtonClick = () => {
+    if (currentStep === StepsEnum.SignIn) {
+      setCurrentStep(StepsEnum.SelectWallet)
+      return
+    }
+    if (currentStep === StepsEnum.Confirmation) {
+      setCurrentStep(StepsEnum.SignIn)
+      return
+    }
     currentStep !== -1 && setCurrentStep(currentStep - 1)
   }
 

@@ -47,7 +47,12 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
         />
       </Form.Item>
 
-      <Button type='primary' size='large' onClick={() => console.log('clicked')} block>
+      <Button
+        type='primary'
+        size='large'
+        onClick={() => setCurrentStep(StepsEnum.Confirmation)}
+        block
+      >
         Sign Up
       </Button>
       <div className='d-flex justify-content-center align-items-center'>
