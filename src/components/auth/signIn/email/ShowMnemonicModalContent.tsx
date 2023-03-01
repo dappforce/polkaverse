@@ -1,6 +1,6 @@
 import { Button, Card, Divider } from 'antd'
 import { Copy } from 'src/components/urls/helpers'
-import { LocalIcon } from 'src/components/utils'
+import CopyOutlinedIcon from 'src/components/utils/icons/CopyOutlined'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 
@@ -17,7 +17,9 @@ const ShowMnemonicModalContent = ({ setCurrentStep }: Props) => {
         <div className={styles.MnemonicText}>{MNEMONIC}</div>
         <Divider type={'vertical'} className={styles.InnerDivider} />
         <Copy text={MNEMONIC} message='Your mnemonic phrase copied'>
-          <LocalIcon path={'signIn/CopyOutlined.svg'} />
+          <div className={styles.CopyIcon}>
+            <CopyOutlinedIcon />
+          </div>
         </Copy>
       </Card>
       <Button
