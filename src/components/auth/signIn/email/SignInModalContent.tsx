@@ -47,7 +47,11 @@ const SignInModalContent = ({ setCurrentStep }: Props) => {
       <div className='d-flex justify-content-center align-items-center'>
         <MutedDiv>
           New user?
-          <Button className='p-0 ml-1' type='link' onClick={() => setCurrentStep(StepsEnum.SignUp)}>
+          <Button
+            className={styles.ButtonLinkDiv}
+            type='link'
+            onClick={() => setCurrentStep(StepsEnum.SignUp)}
+          >
             Create account
           </Button>
         </MutedDiv>

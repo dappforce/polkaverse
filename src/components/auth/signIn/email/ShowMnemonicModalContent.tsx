@@ -12,7 +12,7 @@ const ShowMnemonicModalContent = ({ setCurrentStep }: Props) => {
   const MNEMONIC = 'nurse type awful punch cat pool brain artefact entire sight adult silly'
 
   return (
-    <div className={styles.SignInModalContent}>
+    <div className={styles.ConfirmationStepContent}>
       <Card className={styles.InnerCard}>
         <div className={styles.MnemonicText}>{MNEMONIC}</div>
         <Divider type={'vertical'} className={styles.InnerDivider} />

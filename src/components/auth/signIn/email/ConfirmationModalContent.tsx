@@ -23,7 +23,7 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
   }
 
   return (
-    <div className={styles.ConfirmationModalContent}>
+    <div className={styles.ConfirmationStepContent}>
       <Form.Item name={fieldName('confirmationCode')} className='mb-0' validateTrigger='onBlur'>
         <AuthCode
           allowedCharacters='numeric'
@@ -32,7 +32,11 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
         />
       </Form.Item>
 
-      <Button className='p-0 ml-1' type='link' onClick={() => console.log('resend code')}>
+      <Button
+        className={styles.ButtonLinkMedium}
+        type='link'
+        onClick={() => console.log('resend code')}
+      >
         Resend code
       </Button>
 
