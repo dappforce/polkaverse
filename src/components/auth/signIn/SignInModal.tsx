@@ -215,7 +215,10 @@ export const SignInModalView = ({ open, hide, onAccountChosen }: SignInModalProp
           />
         </div>
       }
-      footer={currentStep !== StepsEnum.Confirmation && <ModalFooter />}
+      footer={
+        currentStep !== StepsEnum.Confirmation &&
+        currentStep !== StepsEnum.ShowMnemonic && <ModalFooter />
+      }
       className={clsx('text-center DfSignInModal', {
         [styles.SignInModal]:
           currentStep !== StepsEnum.SelectAccount && currentStep !== StepsEnum.SelectWallet,
@@ -225,7 +228,8 @@ export const SignInModalView = ({ open, hide, onAccountChosen }: SignInModalProp
     >
       <div
         className={clsx(styles.SignInModalBody, {
-          [styles.SignInModalBodyOnConfirm]: currentStep === StepsEnum.Confirmation,
+          [styles.SignInModalBodyOnConfirm]:
+            currentStep === StepsEnum.Confirmation || currentStep === StepsEnum.ShowMnemonic,
         })}
       >
         <ModalContent
