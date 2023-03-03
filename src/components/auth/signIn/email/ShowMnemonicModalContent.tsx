@@ -1,4 +1,5 @@
-import { Button, Card, Divider } from 'antd'
+import { Button, Card, Checkbox, Divider } from 'antd'
+import { useState } from 'react'
 import { Copy } from 'src/components/urls/helpers'
 import CopyOutlinedIcon from 'src/components/utils/icons/CopyOutlined'
 import { StepsEnum } from '../../AuthContext'
@@ -10,6 +11,7 @@ type Props = {
 
 const ShowMnemonicModalContent = ({ setCurrentStep }: Props) => {
   const MNEMONIC = 'nurse type awful punch cat pool brain artefact entire sight adult silly'
+  const [isMnemonicSaved, setIsMnemonicSaved] = useState(false)
 
   return (
     <div className={styles.ConfirmationStepContent}>
@@ -22,9 +24,13 @@ const ShowMnemonicModalContent = ({ setCurrentStep }: Props) => {
           </div>
         </Copy>
       </Card>
+      <Checkbox className='align-self-start' onChange={e => setIsMnemonicSaved(e.target.checked)}>
+        I have saved my mnemonic
+      </Checkbox>
       <Button
         type='primary'
         size='large'
+        disabled={!isMnemonicSaved}
         onClick={() => setCurrentStep(StepsEnum.SignInDone)}
         block
       >
