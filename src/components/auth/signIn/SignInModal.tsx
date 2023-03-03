@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import { ArrowLeftOutlined } from '@ant-design/icons'
-import { Divider } from 'antd'
+import { Button } from 'antd'
 import Modal from 'antd/lib/modal'
 import clsx from 'clsx'
 import config from 'src/config'
@@ -164,7 +164,13 @@ const ModalContent = ({
             }
           >
             <SignInEmailButton setCurrentStep={setCurrentStep} />
-            <Divider className='px-2'>Or connect wallet</Divider>
+
+            <div className={styles.Divider}>
+              <h2>
+                <span>Or connect wallet</span>
+              </h2>
+            </div>
+
             <WalletList setCurrentStep={setCurrentStep} />
           </ModalBodyWrapper>
         </div>
@@ -250,6 +256,8 @@ export const SignInModalView = ({ open, hide, onAccountChosen }: SignInModalProp
     withBackButton,
   } = useAuth()
 
+  const withSkipButton = currentStep === StepsEnum.ShowMnemonic
+
   return (
     <Modal
       visible={open}
@@ -272,6 +280,13 @@ export const SignInModalView = ({ open, hide, onAccountChosen }: SignInModalProp
       })}
       onCancel={hide}
       destroyOnClose
+      closeIcon={
+        withSkipButton && (
+          <Button type='link' className='px-0 mr-4 font-weight-bold' onClick={hideSignInModal}>
+            <MutedDiv>Skip</MutedDiv>
+          </Button>
+        )
+      }
     >
       <div
         className={clsx(styles.SignInModalBody, {
