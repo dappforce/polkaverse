@@ -78,20 +78,18 @@ const SignInModalContent = ({ setCurrentStep }: Props) => {
           />
         </Form.Item>
 
-        <Form.Item>
-          <Button
-            type='primary'
-            size='large'
-            htmlType='submit'
-            disabled={!isFormValid}
-            // onClick={() => setCurrentStep(StepsEnum.Confirmation)}
-            block
-          >
-            Log In
-          </Button>
-        </Form.Item>
+        <Button
+          type='primary'
+          size='large'
+          htmlType='submit'
+          disabled={!isFormValid}
+          // onClick={() => setCurrentStep(StepsEnum.Confirmation)}
+          block
+        >
+          Log In
+        </Button>
         <div className='d-flex justify-content-center align-items-center'>
-          <MutedDiv>
+          <MutedDiv className='font-weight-normal FontNormal'>
             New user?
             <Button
               className={styles.ButtonLinkDiv}

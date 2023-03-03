@@ -116,7 +116,7 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
           Sign Up
         </Button>
         <div className='d-flex justify-content-center align-items-center'>
-          <MutedDiv>
+          <MutedDiv className='font-weight-normal FontNormal'>
             Already have an account?
             <Button
               className={styles.ButtonLinkDiv}
