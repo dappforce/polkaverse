@@ -1,7 +1,9 @@
+import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { Button, Form, Input } from 'antd'
 import { RuleObject } from 'rc-field-form/lib/interface'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
+import { hCaptchaSiteKey } from 'src/config/env'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 
@@ -23,6 +25,40 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
   const [form] = Form.useForm()
 
   const [isFormValid, setIsFormValid] = useState(false)
+
+  const [token, setToken] = useState<string | undefined>()
+  const [, setCaptchaReady] = useState(false)
+  const hCaptchaRef = useRef(null)
+
+  const onExpire = () => {
+    console.warn('hCaptcha Token Expired')
+  }
+
+  const onError = (err: any) => {
+    console.warn(`hCaptcha Error: ${err}`)
+  }
+
+  const onLoad = () => {
+    // this reaches out to the hCaptcha JS API and runs the
+    // execute function on it. you can use other functions as
+    // documented here:
+    // https://docs.hcaptcha.com/configuration#jsapi
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    hCaptchaRef.current?.execute()
+  }
+
+  useEffect(() => {
+    setCaptchaReady(true)
+  }, [])
+
+  useEffect(() => {
+    if (token) {
+      //TODO: add logic for sending token to /signUp endpoint (backend)
+      // if success, then go to confirmation step
+      setCurrentStep(StepsEnum.Confirmation)
+    }
+  }, [token])
 
   const handleSubmit = (values: FormValues) => {
     console.log('form values:', values)
@@ -110,10 +146,23 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
           size='large'
           htmlType='submit'
           disabled={!isFormValid}
-          // onClick={() => setCurrentStep(StepsEnum.Confirmation)}
+          onClick={() => {
+            onLoad()
+          }}
           block
         >
           Sign Up
+          <HCaptcha
+            size='invisible'
+            sitekey={hCaptchaSiteKey}
+            onVerify={setToken}
+            onLoad={() => {
+              setCaptchaReady(true)
+            }}
+            onError={onError}
+            onExpire={onExpire}
+            ref={hCaptchaRef}
+          />
         </Button>
         <div className='d-flex justify-content-center align-items-center'>
           <MutedDiv className='font-weight-normal FontNormal'>
