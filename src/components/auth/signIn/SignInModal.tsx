@@ -86,8 +86,7 @@ const ModalBodyWrapper = ({ children, moreDesc, title, desc }: ModalBodyWrapperP
         <div className={styles.BodyTitle}>
           <h2 className='font-weight-bold'>{title}</h2>
           <MutedDiv>
-            {desc}
-            <MutedDiv>{moreDesc}</MutedDiv>{' '}
+            {desc} {moreDesc}{' '}
             <span className={styles.ReadMore} onClick={() => setExpanded(false)}>
               Read less
             </span>
@@ -274,7 +273,7 @@ export const SignInModalView = ({ open, hide, onAccountChosen }: SignInModalProp
         currentStep !== StepsEnum.Confirmation &&
         currentStep !== StepsEnum.ShowMnemonic && <ModalFooter />
       }
-      className={clsx('text-center DfSignInModal', {
+      className={clsx('DfSignInModal', {
         [styles.SignInModal]:
           currentStep !== StepsEnum.SelectAccount && currentStep !== StepsEnum.SelectWallet,
       })}
