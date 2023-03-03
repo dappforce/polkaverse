@@ -144,17 +144,21 @@ jobs:
       - name: Update deploy file
         run: TAG=${{ env.name }}-$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|dappforce/subsocial-web-app:'${TAG}'|' $GITHUB_WORKSPACE/deployment/base/deployment.yaml
 
+      - name: Remove HPA 
+        run: kubectl delete hpa -n sub-back web-app
+        
       - name: Deploy to DigitalOcean Kubernetes
         run: kubectl apply -k $GITHUB_WORKSPACE/deployment/overlays/production/
 
       - name: Verify deployment
         run: kubectl -n sub-back rollout status deployment/web-app
 
-      - name: add replicas
-        run: kubectl -n sub-back scale deployment/web-app --replicas=4
-
       - name: Verify deployment
         run: kubectl -n sub-back rollout status deployment/web-app
+
+      - name: Recreate HPA
+        run: kubectl create -f $GITHUB_WORKSPACE/deployment/hpa/hpa.yaml
+
 
   front-bk-prod-deploy:
     name: bk-prod-deploy
