@@ -66,13 +66,16 @@ export const submitSignedCallData = async ({ data, jwt }: SubmitSignedCallDataPr
 }
 
 export const OffchainSignerEndpoint = {
-  SIGNUP: 'auth/signup',
-  SIGNIN: 'auth/signin',
-  CONFIRM: 'auth/confirm-email',
-  SIGNER_SIGN: 'signer/sign',
-  GENERATE_PROOF: 'auth/generateAuthByAddressProof',
-  SEND_SIGNED_PROOF: 'auth/authByAddress',
+  EMAIL_SIGN_IN: 'auth/email-sign-in',
+  EMAIL_SIGN_UP: 'auth/email-sign-up',
+  GENERATE_PROOF: 'auth/generate-address-verification-proof',
+  // SEND_SIGNED_PROOF: 'auth/authByAddress',
+  ADDRESS_SIGN_IN: 'auth/address-sign-in',
+  CONFIRM_EMAIL: 'auth/confirm-email',
+  REFRESH_TOKEN: 'auth/refresh-token',
+  REVOKE_TOKEN: 'auth/revoke-token',
   FETCH_MAIN_PROXY: 'signer/main-proxy-address',
+  SIGNER_SIGN: 'signer/sign',
 } as const
 
 export type OffchainSignerEndpoint =

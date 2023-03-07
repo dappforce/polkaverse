@@ -123,7 +123,7 @@ function RememberMeButton({
     try {
       const res = await offchainSignerRequest({
         data,
-        endpoint: 'auth/generateAuthByAddressProof',
+        endpoint: 'auth/generate-address-verification-proof',
         method: 'POST',
       })
 
@@ -176,16 +176,15 @@ function RememberMeButton({
     if (!token) throw new Error('Please confirm hCaptcha!')
 
     const data = {
-      accountAddress: myAddress as string,
-      signedMessageJwt,
-      messageJwt,
+      signedProof: signedMessageJwt,
+      proof: messageJwt,
       hcaptchaResponse: token,
     }
 
     try {
       const res = await offchainSignerRequest({
         data,
-        endpoint: 'auth/authByAddress',
+        endpoint: 'auth/address-sign-in',
         method: 'POST',
       })
 
