@@ -4,11 +4,11 @@ import store from 'store'
 const OFFCHAIN_ADDRESS_KEY = 'df.OffchainAddress'
 const PROXY_ADDRESS_KEY = 'df.ProxyAddress'
 const OFFCHAIN_TOKEN_KEY = 'df.OffchainToken'
-const OFFCHAIN_REFRESH_TOKEN_KEY = 'OffchainRefreshToken'
-const SECRET_KEY = 'SecretKey'
-const NONCE = 'Nonce'
-const SALT = 'Salt'
-const SALT_NONCE = 'SaltNonce'
+const OFFCHAIN_REFRESH_TOKEN_KEY = 'df.OffchainRefreshToken'
+const SECRET_KEY = 'df.SecretKey'
+const NONCE = 'df.Nonce'
+const SALT = 'df.Salt'
+const SALT_NONCE = 'df.SaltNonce'
 
 const isCurrentOffchainAddress = (myAddress: string) =>
   store.get(createStorageKey(OFFCHAIN_ADDRESS_KEY, myAddress)) === 1 ? true : false
