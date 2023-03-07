@@ -1,9 +1,9 @@
 import { createStorageKey } from 'src/utils/storage'
 import store from 'store'
 
-const OFFCHAIN_ADDRESS_KEY = 'OffchainAddress'
-const PROXY_ADDRESS_KEY = 'ProxyAddress'
-const OFFCHAIN_TOKEN_KEY = 'OffchainToken'
+const OFFCHAIN_ADDRESS_KEY = 'df.OffchainAddress'
+const PROXY_ADDRESS_KEY = 'df.ProxyAddress'
+const OFFCHAIN_TOKEN_KEY = 'df.OffchainToken'
 const OFFCHAIN_REFRESH_TOKEN_KEY = 'OffchainRefreshToken'
 const SECRET_KEY = 'SecretKey'
 const NONCE = 'Nonce'
