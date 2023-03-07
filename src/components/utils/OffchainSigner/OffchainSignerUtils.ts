@@ -1,12 +1,14 @@
-import { newLogger } from '@subsocial/utils'
+import { ApiPromise, SubmittableResult } from '@polkadot/api'
+import { SubmittableExtrinsic } from '@polkadot/api/promise/types'
+
 import axios, { AxiosRequestConfig } from 'axios'
 
 import { truncateAddress } from 'src/utils/storage'
 
+import { newLogger } from '@subsocial/utils'
 const log = newLogger('OffchainSignerRequests')
 
 import config from 'src/config'
-
 const { offchainSignerUrl } = config
 
 type AxiosResponse<T = any> = {
@@ -112,5 +114,29 @@ export const offchainSignerRequest = async (
   } catch (error) {
     log.error('Failed request to offchain signer with error', error)
     return undefined
+  }
+}
+
+export const sendOffchainTx = async (
+  api: ApiPromise,
+  extrinsic: SubmittableExtrinsic,
+  offchainToken: string,
+  onSuccessHandler: (result: SubmittableResult) => Promise<void>,
+  onFailedHandler: (err: Error) => void,
+) => {
+  try {
+    const hexCallData = extrinsic.inner.toHex()
+
+    const res = await submitSignedCallData({
+      data: hexCallData,
+      jwt: offchainToken,
+    })
+
+    const { signedCall } = res?.data
+
+    await api.tx(signedCall).send(onSuccessHandler)
+  } catch (err: any) {
+    log.error(err)
+    onFailedHandler(err instanceof Error ? err.message : err)
   }
 }

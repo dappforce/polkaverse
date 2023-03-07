@@ -23,10 +23,7 @@ import {
   OFFCHAIN_ADDRESS_KEY,
   OFFCHAIN_TOKEN_KEY,
 } from '../utils/OffchainSigner/ExternalStorage'
-import {
-  isAccountOnboarded,
-  submitSignedCallData,
-} from '../utils/OffchainSigner/OffchainSignerUtils'
+import { isAccountOnboarded, sendOffchainTx } from '../utils/OffchainSigner/OffchainSignerUtils'
 import { getWalletBySource } from '../wallets/supportedWallets'
 import styles from './SubstrateTxButton.module.sass'
 import useToggle from './useToggle'
@@ -211,24 +208,6 @@ function TxButton({
     doOnFailed(null)
   }
 
-  const sendOffchainTx = async (extrinsic: SubmittableExtrinsic, offchainToken: string) => {
-    try {
-      const hexCallData = extrinsic.inner.toHex()
-
-      const res = await submitSignedCallData({
-        data: hexCallData,
-        jwt: offchainToken,
-      })
-
-      const { signedCall } = res?.data
-
-      await api.tx(signedCall).send(onSuccessHandler)
-    } catch (err: any) {
-      log.warn(err)
-      onFailedHandler(err instanceof Error ? err.message : err)
-    }
-  }
-
   const sendSignedTx = async () => {
     if (!accountId) {
       throw new Error('No account id provided')
@@ -242,7 +221,7 @@ function TxButton({
       const extrinsic = await getExtrinsic()
 
       if (isOffchainSignerTx) {
-        sendOffchainTx(extrinsic, offchainToken)
+        sendOffchainTx(api, extrinsic, offchainToken, onSuccessHandler, onFailedHandler)
       } else {
         let signer: Signer | undefined
 
