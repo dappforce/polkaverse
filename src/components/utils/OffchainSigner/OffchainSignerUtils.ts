@@ -34,7 +34,7 @@ export const setAuthOnRequest = (props: AuthProps) => {
       },
     )
   } catch (err) {
-    console.warn(err)
+    log.error('Failed setting auth header', err)
   }
 }
 
@@ -65,7 +65,7 @@ export const submitSignedCallData = async ({ data, jwt }: SubmitSignedCallDataPr
 
     return res
   } catch (err) {
-    console.warn(err)
+    log.error('Failed submitting signed call data', err)
     return Promise.reject(err)
   }
 }
