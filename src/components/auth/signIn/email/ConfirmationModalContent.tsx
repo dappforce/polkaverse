@@ -1,6 +1,7 @@
 import { Button, Form } from 'antd'
 import { useState } from 'react'
 import AuthCode from 'react-auth-code-input'
+import CountdownTimerButton from 'src/components/utils/OffchainSigner/CountdownTimerButton'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 
@@ -57,13 +58,11 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
           />
         </Form.Item>
 
-        <Button
+        <CountdownTimerButton
           className={styles.ButtonLinkMedium}
+          baseLabel='Resend code'
           type='link'
-          onClick={() => console.log('resend code')}
-        >
-          Resend code
-        </Button>
+        />
 
         <Button
           type='primary'
