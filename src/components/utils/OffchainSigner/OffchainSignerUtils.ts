@@ -36,7 +36,7 @@ const setAuthOnRequest = (jwt: string) => {
 }
 
 type SubmitSignedCallDataProps = {
-  data: any
+  data: string
   jwt: string
 }
 

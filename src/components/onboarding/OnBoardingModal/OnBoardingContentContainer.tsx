@@ -72,13 +72,7 @@ export default function OnBoardingContentContainer({
           <MutedDiv className={clsx('d-flex align-items-center')}>
             <ArrowLeftOutlined
               className='mr-2'
-              onClick={
-                loading
-                  ? undefined
-                  : () => {
-                      onBackClick()
-                    }
-              }
+              onClick={!loading ? () => onBackClick() : undefined}
             />
             <span className='font-weight-bold'>
               Step {currentStepIndex + firstStepOffset}/{totalSteps - 1 + firstStepOffset}
