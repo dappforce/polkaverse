@@ -41,7 +41,7 @@ export const setAuthOnRequest = (props: AuthProps) => {
 }
 
 type SubmitSignedCallDataProps = {
-  data: any
+  data: string
   jwt: string
 }
 
