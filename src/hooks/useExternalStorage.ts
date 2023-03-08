@@ -50,7 +50,7 @@ export default function useExternalStorage<T = string>(
   }, [storageKey, storageKeyType])
 
   const setData = useCallback(
-    (newData: T | undefined) => {
+    (newData: T | undefined, tempAddress?: string) => {
       _setData(newData)
       if (!storageKey) return
       if (newData === undefined) {
@@ -58,7 +58,13 @@ export default function useExternalStorage<T = string>(
       } else {
         const newStorageData = parseStateToStorage(newData)
         if (newStorageData === undefined) removeStorageData(storageKey)
-        else setStorageData(storageKey, newStorageData)
+        else {
+          if (tempAddress) {
+            setStorageData(createStorageKey(key, tempAddress), newStorageData)
+            return
+          }
+          setStorageData(storageKey, newStorageData)
+        }
       }
     },
     [key, address],
