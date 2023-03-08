@@ -112,6 +112,9 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
           />
         </Form.Item>
 
+        {
+          //TODO: call api onclick
+        }
         <CountdownTimerButton
           className={styles.ButtonLinkMedium}
           baseLabel='Resend code'
