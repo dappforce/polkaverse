@@ -14,13 +14,18 @@ type AxiosResponse<T = any> = {
   status: number
 }
 
-const setAuthOnRequest = (jwt: string) => {
+type AuthProps = {
+  accessToken: string
+  refreshToken: string
+}
+
+export const setAuthOnRequest = (props: AuthProps) => {
   try {
     axios.interceptors.request.use(
       async (config: AxiosRequestConfig) => {
         config.headers = config.headers ?? {}
 
-        config.headers.Authorization = jwt
+        config.headers = props
 
         return config
       },
@@ -87,17 +92,18 @@ type OffchainSignerRequestProps = {
   endpoint: OffchainSignerEndpoint
   method: Method
   data?: any
-  jwt?: string
+  accessToken?: string
+  refreshToken?: string
 }
 
 export const offchainSignerRequest = async (
   props: OffchainSignerRequestProps,
 ): Promise<AxiosResponse | undefined> => {
-  const { data, endpoint, method, jwt } = props
+  const { data, endpoint, method, accessToken, refreshToken } = props
 
   let headers: undefined | { Authorization: string }
-  if (jwt) {
-    setAuthOnRequest(jwt)
+  if (accessToken && refreshToken) {
+    setAuthOnRequest({ accessToken, refreshToken })
   }
 
   try {

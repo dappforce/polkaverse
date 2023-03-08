@@ -5,7 +5,10 @@ import { Button, Form, Input } from 'antd'
 import { RuleObject } from 'rc-field-form/lib/interface'
 import { useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
-import { offchainSignerRequest } from 'src/components/utils/OffchainSigner/OffchainSignerUtils'
+import {
+  offchainSignerRequest,
+  setAuthOnRequest,
+} from 'src/components/utils/OffchainSigner/OffchainSignerUtils'
 import useMnemonicGenerate from 'src/components/utils/OffchainSigner/useMnemonicGenerate'
 import { hCaptchaSiteKey } from 'src/config/env'
 import { StepsEnum } from '../../AuthContext'
@@ -73,6 +76,8 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
       // if success, then go to confirmation step
       // setCurrentStep(StepsEnum.Confirmation)
       handleSubmit(form.getFieldsValue(), token)
+      // setCurrentStep(StepsEnum.Confirmation)
+      handleSubmit(form.getFieldsValue(), token)
     }
   }, [token])
 
@@ -108,32 +113,36 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
   }
 
   const handleSubmit = async (values: FormValues, token: string) => {
-    const keyring = new Keyring({ type: 'sr25519' })
-    const newPair = keyring.addFromUri(mnemonic)
-    const { proof } = await requestProof(newPair.address)
+    try {
+      const keyring = new Keyring({ type: 'sr25519' })
+      const newPair = keyring.addFromUri(mnemonic)
+      const { proof } = await requestProof(newPair.address)
 
-    // construct the proof
-    const message = stringToU8a(proof)
-    const signedProof = newPair.sign(message)
-    const isValid = newPair.verify(message, signedProof, newPair.publicKey)
-    console.log({ isValid })
+      // construct the proof
+      const message = stringToU8a(proof)
+      const signedProof = newPair.sign(message)
+      const isValid = newPair.verify(message, signedProof, newPair.publicKey)
+      console.log({ isValid })
 
-    if (!token) throw new Error('hCaptcha token is not set')
+      if (!token) throw new Error('hCaptcha token is not set')
 
-    const props = {
-      email: values.email,
-      password: values.password,
-      accountAddress: newPair.address,
-      signedProof: u8aToHex(signedProof),
-      proof,
-      hcaptchaResponse: token,
+      const props = {
+        email: values.email,
+        password: values.password,
+        accountAddress: newPair.address,
+        signedProof: u8aToHex(signedProof),
+        proof,
+        hcaptchaResponse: token,
+      }
+
+      const data = await emailSignUp(props)
+      const { accessToken, refreshToken } = data
+      setAuthOnRequest({ accessToken, refreshToken })
+
+      setCurrentStep(StepsEnum.Confirmation)
+    } catch (error) {
+      console.warn({ error })
     }
-
-    const { data } = await emailSignUp(props)
-
-    console.log({ data })
-
-    console.log('form values:', values)
   }
 
   const handleValuesChange = (_: FormValues, allValues: FormValues) => {
