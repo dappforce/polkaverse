@@ -2,6 +2,10 @@ import { Button, Form } from 'antd'
 import { useState } from 'react'
 import AuthCode from 'react-auth-code-input'
 import CountdownTimerButton from 'src/components/utils/OffchainSigner/CountdownTimerButton'
+import {
+  offchainSignerRequest,
+  setAuthOnRequest,
+} from 'src/components/utils/OffchainSigner/OffchainSignerUtils'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 
@@ -22,8 +26,34 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
   const [isFormValid, setIsFormValid] = useState(false)
 
-  const handleSubmit = (values: FormValues) => {
-    console.log('form values:', values)
+  const confirmEmail = async (code: string) => {
+    try {
+      const res = await offchainSignerRequest({
+        method: 'POST',
+        endpoint: 'auth/confirm-email',
+        data: {
+          code,
+        },
+      })
+
+      if (!res) throw new Error('Something went wrong')
+
+      return res.data
+    } catch (error) {
+      console.warn({ error })
+    }
+  }
+
+  const handleSubmit = async (values: FormValues) => {
+    try {
+      const data = await confirmEmail(values.confirmationCode.toString())
+      const { accessToken, refreshToken } = data
+      setAuthOnRequest({ accessToken, refreshToken })
+
+      setCurrentStep(StepsEnum.ShowMnemonic)
+    } catch (error) {
+      console.warn({ error })
+    }
   }
 
   const handleChange = (value: string) => {
@@ -32,7 +62,7 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
   const handleValuesChange = (_: FormValues, allValues: FormValues) => {
     const isFilled = Object.values(allValues).every(value => Boolean(value))
-    const isValidConfirmationCode = /^[0-9]{6}$/.test(allValues.confirmationCode.toString())
+    const isValidConfirmationCode = /^[0-9]{8}$/.test(allValues.confirmationCode.toString())
     const isValid = isFilled && isValidConfirmationCode
     setIsFormValid(isValid)
   }
@@ -46,32 +76,29 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
           validateTrigger='onBlur'
           rules={[
             {
-              pattern: /^[0-9]{6}$/,
+              pattern: /^[0-9]{8}$/,
               message: 'Please enter a valid confirmation code.',
             },
           ]}
         >
           <AuthCode
+            length={8}
             allowedCharacters='numeric'
             onChange={handleChange}
             inputClassName={styles.InputOTP}
           />
         </Form.Item>
 
+        {
+          //TODO: call api onclick
+        }
         <CountdownTimerButton
           className={styles.ButtonLinkMedium}
           baseLabel='Resend code'
           type='link'
         />
 
-        <Button
-          type='primary'
-          size='large'
-          htmlType='submit'
-          disabled={!isFormValid}
-          onClick={() => setCurrentStep(StepsEnum.ShowMnemonic)}
-          block
-        >
+        <Button type='primary' size='large' htmlType='submit' disabled={!isFormValid} block>
           Confirm
         </Button>
       </div>

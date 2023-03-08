@@ -2,15 +2,20 @@ import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { Keyring } from '@polkadot/api'
 import { stringToU8a, u8aToHex } from '@polkadot/util'
 import { Button, Form, Input } from 'antd'
+import axios from 'axios'
 import { RuleObject } from 'rc-field-form/lib/interface'
 import { useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
 import {
-  offchainSignerRequest,
-  setAuthOnRequest,
-} from 'src/components/utils/OffchainSigner/OffchainSignerUtils'
+  MNEMONIC,
+  OFFCHAIN_REFRESH_TOKEN_KEY,
+  OFFCHAIN_TOKEN_KEY,
+  REGISTERING_ADDRESS,
+} from 'src/components/utils/OffchainSigner/ExternalStorage'
+import { offchainSignerRequest } from 'src/components/utils/OffchainSigner/OffchainSignerUtils'
 import useMnemonicGenerate from 'src/components/utils/OffchainSigner/useMnemonicGenerate'
 import { hCaptchaSiteKey } from 'src/config/env'
+import useExternalStorage from 'src/hooks/useExternalStorage'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 
@@ -47,6 +52,11 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
   const [token, setToken] = useState<string | undefined>()
   const [, setCaptchaReady] = useState(false)
   const hCaptchaRef = useRef(null)
+
+  const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY)
+  const { setData: setOffchainRefreshToken } = useExternalStorage(OFFCHAIN_REFRESH_TOKEN_KEY)
+  const { setData: setRegisteringAccount } = useExternalStorage(REGISTERING_ADDRESS)
+  const { setData: setMnemonicFromAddress } = useExternalStorage(MNEMONIC)
 
   const onExpire = () => {
     console.warn('hCaptcha Token Expired')
@@ -116,20 +126,19 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
     try {
       const keyring = new Keyring({ type: 'sr25519' })
       const newPair = keyring.addFromUri(mnemonic)
+      const accountAddress = newPair.address
       const { proof } = await requestProof(newPair.address)
 
       // construct the proof
       const message = stringToU8a(proof)
       const signedProof = newPair.sign(message)
-      const isValid = newPair.verify(message, signedProof, newPair.publicKey)
-      console.log({ isValid })
 
       if (!token) throw new Error('hCaptcha token is not set')
 
       const props = {
         email: values.email,
         password: values.password,
-        accountAddress: newPair.address,
+        accountAddress,
         signedProof: u8aToHex(signedProof),
         proof,
         hcaptchaResponse: token,
@@ -137,7 +146,13 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
       const data = await emailSignUp(props)
       const { accessToken, refreshToken } = data
-      setAuthOnRequest({ accessToken, refreshToken })
+
+      axios.defaults.headers.common['Authorization'] = accessToken
+
+      setOffchainToken(accessToken, accountAddress)
+      setOffchainRefreshToken(refreshToken, accountAddress)
+      setRegisteringAccount(accountAddress)
+      setMnemonicFromAddress(mnemonic, accountAddress)
 
       setCurrentStep(StepsEnum.Confirmation)
     } catch (error) {

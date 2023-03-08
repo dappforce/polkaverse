@@ -2,7 +2,10 @@ import { Button, Card, Checkbox, Divider } from 'antd'
 import { useState } from 'react'
 import { Copy } from 'src/components/urls/helpers'
 import CopyOutlinedIcon from 'src/components/utils/icons/CopyOutlined'
-import useMnemonicGenerate from 'src/components/utils/OffchainSigner/useMnemonicGenerate'
+import {
+  getMnemonicFromAddress,
+  getRegisteringAddress,
+} from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 
@@ -11,9 +14,11 @@ type Props = {
 }
 
 const ShowMnemonicModalContent = ({ setCurrentStep }: Props) => {
-  //TODO: only shown once (during sign up flow)
-  const { mnemonic } = useMnemonicGenerate()
+  const registeringAddress = getRegisteringAddress()
+  const mnemonic = getMnemonicFromAddress(registeringAddress!)
   const [isMnemonicSaved, setIsMnemonicSaved] = useState(false)
+
+  if (!mnemonic) return null
 
   return (
     <div className={styles.ConfirmationStepContent}>
