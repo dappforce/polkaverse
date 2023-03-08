@@ -20,6 +20,7 @@ import {
   resetOnBoardingData,
 } from 'src/rtk/features/onBoarding/onBoardingSlice'
 import styles from './OnBoardingModal.module.sass'
+import CustomFooterAction from './steps/Signer/CustomFooterAction'
 import { OnBoardingContentContainerProps } from './types'
 
 export default function OnBoardingContentContainer({
@@ -42,7 +43,8 @@ export default function OnBoardingContentContainer({
   hideSubmitBtn,
   loadingSubmitBtn,
   showPrivacyPolicy,
-  customContinueButtonGroup,
+  isUsingCustomFooter = false,
+  signerProps,
 }: OnBoardingContentContainerProps) {
   const openState = useOnBoardingModalOpenState()
   const currentStep = useCurrentOnBoardingStep()
@@ -123,15 +125,18 @@ export default function OnBoardingContentContainer({
           </MutedDiv>
         )}
 
-        {customContinueButtonGroup &&
-          customContinueButtonGroup({
-            saveAsDraft: () => {
+        {isUsingCustomFooter && (
+          <CustomFooterAction
+            goToNextStep={goToNextStep}
+            loading={loading}
+            setLoading={setLoading}
+            saveAsDraft={() => {
               dispatch(markStepAsDraftOnBoardingModal(true))
-            },
-            loading,
-            setLoading,
-            isPartial: openState === 'partial',
-          })}
+            }}
+            isPartial={openState === 'partial'}
+            signerProps={signerProps}
+          />
+        )}
 
         {showContinueBtn && (
           <ContinueBtn

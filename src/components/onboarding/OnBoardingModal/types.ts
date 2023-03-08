@@ -1,3 +1,4 @@
+import { SignerProps } from './steps/Signer/Signer'
 export interface OnBoardingModalProps {
   firstStepOffset?: number
   onBackClickInFirstStep?: () => void
@@ -36,5 +37,6 @@ export interface OnBoardingContentContainerProps extends OnBoardingContentProps 
   buttonText?: string
   customButtonOnClick?: () => void
   showPrivacyPolicy?: boolean
-  customContinueButtonGroup?: (props: CustomContinueButtonGroupProps) => JSX.Element
+  isUsingCustomFooter?: boolean
+  signerProps?: SignerProps
 }
