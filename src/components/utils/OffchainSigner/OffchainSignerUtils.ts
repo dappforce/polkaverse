@@ -25,7 +25,7 @@ export const setAuthOnRequest = (props: AuthProps) => {
       async (config: AxiosRequestConfig) => {
         config.headers = config.headers ?? {}
 
-        config.headers = props
+        config.headers.Authorization = props.accessToken
 
         return config
       },
