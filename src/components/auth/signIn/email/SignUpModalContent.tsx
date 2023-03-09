@@ -12,12 +12,12 @@ import {
   OFFCHAIN_TOKEN_KEY,
   REGISTERING_ADDRESS,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
-import { offchainSignerRequest } from 'src/components/utils/OffchainSigner/OffchainSignerUtils'
 import useMnemonicGenerate from 'src/components/utils/OffchainSigner/useMnemonicGenerate'
 import { hCaptchaSiteKey } from 'src/config/env'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
+import useOffchainSignerApi from './useOffchainSignerApi'
 
 type FormValues = {
   email: string
@@ -33,17 +33,9 @@ type Props = {
   setCurrentStep: (step: number) => void
 }
 
-type EmailSignUpProps = {
-  email: string
-  password: string
-  accountAddress: string
-  signedProof: string
-  proof: string
-  hcaptchaResponse: string
-}
-
 const SignUpModalContent = ({ setCurrentStep }: Props) => {
   const { mnemonic } = useMnemonicGenerate()
+  const { emailSignUp, requestProof } = useOffchainSignerApi()
 
   const [form] = Form.useForm()
 
@@ -82,45 +74,11 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
   useEffect(() => {
     if (token) {
-      //TODO: add logic for sending token to /signUp endpoint (backend)
-      // if success, then go to confirmation step
-      // setCurrentStep(StepsEnum.Confirmation)
       handleSubmit(form.getFieldsValue(), token)
       // setCurrentStep(StepsEnum.Confirmation)
       handleSubmit(form.getFieldsValue(), token)
     }
   }, [token])
-
-  const requestProof = async (accountAddress: string) => {
-    try {
-      const res = await offchainSignerRequest({
-        method: 'POST',
-        endpoint: 'auth/generate-address-verification-proof',
-        data: { accountAddress },
-      })
-
-      if (!res) throw new Error('Something went wrong')
-
-      return res.data
-    } catch (error) {
-      console.warn({ error })
-    }
-  }
-
-  const emailSignUp = async (props: EmailSignUpProps) => {
-    try {
-      const res = await offchainSignerRequest({
-        method: 'POST',
-        endpoint: 'auth/email-sign-up',
-        data: props,
-      })
-      if (!res) throw new Error('Something went wrong')
-
-      return res.data
-    } catch (error) {
-      console.warn({ error })
-    }
-  }
 
   const handleSubmit = async (values: FormValues, token: string) => {
     try {
@@ -129,7 +87,6 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
       const accountAddress = newPair.address
       const { proof } = await requestProof(newPair.address)
 
-      // construct the proof
       const message = stringToU8a(proof)
       const signedProof = newPair.sign(message)
 

@@ -77,6 +77,7 @@ export const OffchainSignerEndpoint = {
   // SEND_SIGNED_PROOF: 'auth/authByAddress',
   ADDRESS_SIGN_IN: 'auth/address-sign-in',
   CONFIRM_EMAIL: 'auth/confirm-email',
+  RESEND_EMAIL_CONFIRMATION: 'auth/resend-email-confirmation',
   REFRESH_TOKEN: 'auth/refresh-token',
   REVOKE_TOKEN: 'auth/revoke-token',
   FETCH_MAIN_PROXY: 'signer/main-proxy-address',
