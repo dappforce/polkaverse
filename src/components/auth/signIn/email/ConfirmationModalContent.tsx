@@ -2,12 +2,10 @@ import { Button, Form } from 'antd'
 import { useState } from 'react'
 import AuthCode from 'react-auth-code-input'
 import CountdownTimerButton from 'src/components/utils/OffchainSigner/CountdownTimerButton'
-import {
-  offchainSignerRequest,
-  setAuthOnRequest,
-} from 'src/components/utils/OffchainSigner/OffchainSignerUtils'
+import { setAuthOnRequest } from 'src/components/utils/OffchainSigner/OffchainSignerUtils'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
+import useOffchainSignerApi from './useOffchainSignerApi'
 
 type FormValues = {
   confirmationCode: number
@@ -22,27 +20,11 @@ type Props = {
 }
 
 const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
+  const { confirmEmail, resendEmailConfirmation, emailConfirmationPayload } = useOffchainSignerApi()
+
   const [form] = Form.useForm()
 
   const [isFormValid, setIsFormValid] = useState(false)
-
-  const confirmEmail = async (code: string) => {
-    try {
-      const res = await offchainSignerRequest({
-        method: 'POST',
-        endpoint: 'auth/confirm-email',
-        data: {
-          code,
-        },
-      })
-
-      if (!res) throw new Error('Something went wrong')
-
-      return res.data
-    } catch (error) {
-      console.warn({ error })
-    }
-  }
 
   const handleSubmit = async (values: FormValues) => {
     try {
@@ -67,6 +49,16 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
     setIsFormValid(isValid)
   }
 
+  const handleResendCode = async () => {
+    try {
+      if (!emailConfirmationPayload) return
+
+      await resendEmailConfirmation(emailConfirmationPayload)
+    } catch (error) {
+      console.warn({ error })
+    }
+  }
+
   return (
     <Form form={form} onValuesChange={handleValuesChange} onFinish={handleSubmit}>
       <div className={styles.ConfirmationStepContent}>
@@ -89,13 +81,11 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
           />
         </Form.Item>
 
-        {
-          //TODO: call api onclick
-        }
         <CountdownTimerButton
           className={styles.ButtonLinkMedium}
           baseLabel='Resend code'
           type='link'
+          onClick={handleResendCode}
         />
 
         <Button type='primary' size='large' htmlType='submit' disabled={!isFormValid} block>

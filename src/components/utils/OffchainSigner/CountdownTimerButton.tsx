@@ -6,14 +6,16 @@ interface BaseButtonProps extends ButtonProps {
   baseLabel?: React.ReactNode
   className?: string
   type?: 'text' | 'link' | 'ghost' | 'default' | 'primary' | 'dashed' | undefined
+  onClick?: () => void
 }
 
-const CountdownTimerButton = ({ className, baseLabel, type }: BaseButtonProps) => {
+const CountdownTimerButton = ({ className, baseLabel, type, onClick }: BaseButtonProps) => {
   const [isCountingDown, setIsCountingDown] = useState<boolean>(false)
-  const remainingSeconds: number = useCountdownTimer(60, isCountingDown) // countdown from 60 seconds
+  const remainingSeconds: number = useCountdownTimer(10, isCountingDown) // countdown from 60 seconds
 
   const handleButtonClick = (): void => {
     setIsCountingDown(true)
+    onClick && onClick()
   }
 
   let buttonLabel = baseLabel
