@@ -35,6 +35,8 @@ export type AuthState = {
   currentStep: number
   completedSteps: CompletedSteps
   canReserveHandle: boolean
+  mnemonic: string | null
+  password: string | null
 }
 
 function functionStub() {
@@ -51,6 +53,8 @@ export type AuthContextProps = {
   withBackButton?: boolean
   hideSignInModal: () => void
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>
+  setMnemonic: React.Dispatch<React.SetStateAction<string | null>>
+  setPassword: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 const energyStub: EnergyState = { status: 'normal', transactionsCount: 0, coefficient: 1 }
@@ -58,6 +62,8 @@ const energyStub: EnergyState = { status: 'normal', transactionsCount: 0, coeffi
 const contextStub: AuthContextProps = {
   state: {
     currentStep: 0,
+    mnemonic: null,
+    password: null,
     completedSteps: {
       isSignedIn: false,
       hasTokens: false,
@@ -71,6 +77,8 @@ const contextStub: AuthContextProps = {
   openSignInModal: functionStub,
   hideSignInModal: functionStub,
   setCurrentStep: functionStub,
+  setMnemonic: functionStub,
+  setPassword: functionStub,
 }
 
 export enum StepsEnum {
@@ -116,6 +124,9 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
 
   const [hasTokens, setTokens] = useState(false)
   const step = useGetCurrentStep(isMobile)
+
+  const [mnemonic, setMnemonic] = useState<string | null>(null)
+  const [password, setPassword] = useState<string | null>(null)
 
   const [currentStep, setCurrentStep] = useState(step)
 
@@ -206,6 +217,8 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
 
   const contextValue: AuthContextProps = {
     state: {
+      mnemonic,
+      password,
       currentStep,
       completedSteps: {
         isSignedIn,
@@ -225,6 +238,8 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
       setShowModal(false)
     },
     setCurrentStep,
+    setMnemonic,
+    setPassword,
   }
 
   const onAccountChosen = (address: string) => {

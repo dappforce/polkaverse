@@ -7,15 +7,13 @@ import { RuleObject } from 'rc-field-form/lib/interface'
 import { useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
 import {
-  MNEMONIC,
   OFFCHAIN_REFRESH_TOKEN_KEY,
   OFFCHAIN_TOKEN_KEY,
-  REGISTERING_ADDRESS,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import useMnemonicGenerate from 'src/components/utils/OffchainSigner/useMnemonicGenerate'
 import { hCaptchaSiteKey } from 'src/config/env'
 import useExternalStorage from 'src/hooks/useExternalStorage'
-import { StepsEnum } from '../../AuthContext'
+import { StepsEnum, useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 import useOffchainSignerApi from './useOffchainSignerApi'
 
@@ -35,6 +33,7 @@ type Props = {
 
 const SignUpModalContent = ({ setCurrentStep }: Props) => {
   const { mnemonic } = useMnemonicGenerate()
+  const { setMnemonic, setPassword } = useAuth()
   const { emailSignUp, requestProof } = useOffchainSignerApi()
 
   const [form] = Form.useForm()
@@ -47,8 +46,6 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
   const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY)
   const { setData: setOffchainRefreshToken } = useExternalStorage(OFFCHAIN_REFRESH_TOKEN_KEY)
-  const { setData: setRegisteringAccount } = useExternalStorage(REGISTERING_ADDRESS)
-  const { setData: setMnemonicFromAddress } = useExternalStorage(MNEMONIC)
 
   const onExpire = () => {
     console.warn('hCaptcha Token Expired')
@@ -106,10 +103,13 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
       axios.defaults.headers.common['Authorization'] = accessToken
 
+      // save to local storage
       setOffchainToken(accessToken, accountAddress)
       setOffchainRefreshToken(refreshToken, accountAddress)
-      setRegisteringAccount(accountAddress)
-      setMnemonicFromAddress(mnemonic, accountAddress)
+
+      // save to context
+      setMnemonic(mnemonic)
+      setPassword(values.password)
 
       setCurrentStep(StepsEnum.Confirmation)
     } catch (error) {
