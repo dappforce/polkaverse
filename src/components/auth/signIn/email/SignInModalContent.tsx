@@ -1,8 +1,13 @@
+import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { Button, Form, Input } from 'antd'
-import { useState } from 'react'
+import axios from 'axios'
+import jwtDecode from 'jwt-decode'
+import { useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
+import { hCaptchaSiteKey } from 'src/config/env'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
+import useOffchainSignerApi, { JwtPayload } from './useOffchainSignerApi'
 
 type FormValues = {
   email: string
@@ -18,12 +23,68 @@ type Props = {
 }
 
 const SignInModalContent = ({ setCurrentStep }: Props) => {
+  const { emailSignIn, resendEmailConfirmation } = useOffchainSignerApi()
+
   const [form] = Form.useForm()
 
   const [isFormValid, setIsFormValid] = useState(false)
 
-  const handleSubmit = (values: FormValues) => {
-    console.log('form values:', values)
+  const [token, setToken] = useState<string | undefined>()
+  const [, setCaptchaReady] = useState(false)
+  const hCaptchaRef = useRef(null)
+
+  const onExpire = () => {
+    console.warn('hCaptcha Token Expired')
+  }
+
+  const onError = (err: any) => {
+    console.warn(`hCaptcha Error: ${err}`)
+  }
+
+  const onLoad = () => {
+    // this reaches out to the hCaptcha JS API and runs the
+    // execute function on it. you can use other functions as
+    // documented here:
+    // https://docs.hcaptcha.com/configuration#jsapi
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    hCaptchaRef.current?.execute()
+  }
+
+  useEffect(() => {
+    setCaptchaReady(true)
+  }, [])
+
+  useEffect(() => {
+    if (token) {
+      handleSubmit(form.getFieldsValue(), token)
+    }
+  }, [token])
+
+  const handleSubmit = async (values: FormValues, token: string) => {
+    try {
+      const props = {
+        email: values.email,
+        password: values.password,
+        hcaptchaResponse: token,
+      }
+
+      const data = await emailSignIn(props)
+      const { accessToken, refreshToken } = data
+
+      const decoded = jwtDecode<JwtPayload>(accessToken)
+
+      if (!decoded.emailVerified) {
+        const data = await resendEmailConfirmation({ accessToken, refreshToken })
+        const { message } = data
+        if (message === 'sent') setCurrentStep(StepsEnum.Confirmation)
+      } else {
+        axios.defaults.headers.common['Authorization'] = accessToken
+        console.log({ accessToken, refreshToken })
+      }
+    } catch (error) {
+      console.warn({ error })
+    }
   }
 
   const handleValuesChange = (_: FormValues, allValues: FormValues) => {
@@ -35,7 +96,7 @@ const SignInModalContent = ({ setCurrentStep }: Props) => {
   }
 
   return (
-    <Form form={form} onValuesChange={handleValuesChange} onFinish={handleSubmit}>
+    <Form form={form} onValuesChange={handleValuesChange}>
       <div className={styles.SignInModalContent}>
         <Form.Item
           name={fieldName('email')}
@@ -83,10 +144,23 @@ const SignInModalContent = ({ setCurrentStep }: Props) => {
           size='large'
           htmlType='submit'
           disabled={!isFormValid}
-          // onClick={() => setCurrentStep(StepsEnum.Confirmation)}
+          onClick={() => {
+            onLoad()
+          }}
           block
         >
           Log In
+          <HCaptcha
+            size='invisible'
+            sitekey={hCaptchaSiteKey}
+            onVerify={setToken}
+            onLoad={() => {
+              setCaptchaReady(true)
+            }}
+            onError={onError}
+            onExpire={onExpire}
+            ref={hCaptchaRef}
+          />
         </Button>
         <div className='d-flex justify-content-center align-items-center'>
           <MutedDiv className='font-weight-normal FontNormal'>
