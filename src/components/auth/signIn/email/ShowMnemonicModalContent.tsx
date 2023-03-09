@@ -1,12 +1,12 @@
 import { Button, Card, Checkbox, Divider } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Copy } from 'src/components/urls/helpers'
 import CopyOutlinedIcon from 'src/components/utils/icons/CopyOutlined'
-import {
-  getMnemonicFromAddress,
-  getRegisteringAddress,
-} from 'src/components/utils/OffchainSigner/ExternalStorage'
-import { StepsEnum } from '../../AuthContext'
+
+import { NONCE, SALT, SECRET_KEY } from 'src/components/utils/OffchainSigner/ExternalStorage'
+import useExternalStorage from 'src/hooks/useExternalStorage'
+import { encryptKey, generateAccount } from 'src/utils/crypto'
+import { useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 
 type Props = {
@@ -14,9 +14,36 @@ type Props = {
 }
 
 const ShowMnemonicModalContent = ({ setCurrentStep }: Props) => {
-  const registeringAddress = getRegisteringAddress()
-  const mnemonic = getMnemonicFromAddress(registeringAddress!)
+  const { state } = useAuth()
+  const { mnemonic, password } = state
   const [isMnemonicSaved, setIsMnemonicSaved] = useState(false)
+
+  const { setData: setSecretKey } = useExternalStorage(SECRET_KEY)
+  const { setData: setNonce } = useExternalStorage(NONCE)
+  const { setData: setSalt } = useExternalStorage(SALT)
+
+  useEffect(() => {
+    const createEncryptedAccountAndSave = async (mnemonic: string, password: string) => {
+      const { secretKey, publicAddress } = await generateAccount(mnemonic)
+      encryptAndSaveToStorage(secretKey, publicAddress, password)
+    }
+
+    if (isMnemonicSaved && mnemonic && password) {
+      createEncryptedAccountAndSave(mnemonic, password)
+    }
+  }, [isMnemonicSaved, mnemonic, password])
+
+  const encryptAndSaveToStorage = (secretKey: string, storageKey: string, password: string) => {
+    const {
+      encryptedMessage: encryptedSecretKey,
+      nonceStr,
+      saltStr,
+    } = encryptKey(secretKey, password)
+
+    setSecretKey(encryptedSecretKey, storageKey)
+    setNonce(nonceStr, storageKey)
+    setSalt(saltStr, storageKey)
+  }
 
   if (!mnemonic) return null
 
@@ -38,7 +65,7 @@ const ShowMnemonicModalContent = ({ setCurrentStep }: Props) => {
         type='primary'
         size='large'
         disabled={!isMnemonicSaved}
-        onClick={() => setCurrentStep(StepsEnum.SignInDone)}
+        // onClick={() => setCurrentStep(StepsEnum.SignInDone)}
         block
       >
         Continue
