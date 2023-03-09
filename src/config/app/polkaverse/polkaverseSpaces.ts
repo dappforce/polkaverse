@@ -3,96 +3,58 @@ export default [
   '1',
   // Bill's Polkadot Digest
   '1354',
-  // Substrate Newsletters
-  '10647',
-  // DotMarketCap
-  '1599',
-  // PolkaWarriors
-  '1573',
-  // RMRK
-  '2425',
   // The Kusamarian
   '4809',
+  // WagMedia Weekly News
+  '6111',
+  // Substrate Newsletters
+  '10647',
+  // Zeitgeist
+  '4306',
+  // RMRK
+  '2425',
   // Bifrost
   '1013',
-  // Blinkin.dot
-  '5066',
+  // Ajuna Network
+  '6363',
+  // Gafi Network
+  '7248',
+  // Astar Network
+  '10802',
   // Astar | Portuguese
   '6917',
   // Pitcoin
   '6283',
-  // PromoTeam
-  '1224',
+  // Polkadot Arena (Italian)
+  '7218',
+  // Todo en cripto (Spanish)
+  '7272',
+  // Web3 Chinese
+  '10900',
   // Tagalog Dotsma
   '10140',
-  // Unique Network
-  '4864',
+  // Polkadot Hungary
+  '11025',
+  // Polkadot Romania
+  '7171',
+  // Dotsama Bulgaria
+  '10652',
+  // Blinkin.dot
+  '5066',
+  // SORA
+  '1162',
   // DotLeap
   '1040',
   // Everything Blockchain
   '4473',
-  // Kusama Community
-  '1625',
   // Everything Blockchain - Video
   '4917',
-  // WagMedia Weekly News
-  '6111',
-  '5743',
-  '4459',
-  '1162',
-  '5857',
-  // Mangata
-  '10790',
-  // Ajuna Network
-  '6363',
+  // Pnin's "KSM/DOT Ecosystem: Thoughts, NFTs, Rumors, News and Events"
   '5892',
-  '5905',
-  '4306',
-  '1624',
-  '5521',
-  '1049',
-  '1447',
-  '5549',
-  '6321',
-  '4286',
-  '1141',
-  '4877',
-  '4846',
-  '5213',
-  '6110',
-  '5213',
-  '7272',
-  '6246',
-  '5874',
-  '5115',
-  '5902',
-  '1731',
-  '6336',
-  '4994',
-  '6144',
-  '1238',
-  '5068',
-  '6119',
-  '6302',
-  '7248',
-  '4544',
-  '6251',
-  '1163',
-  '1097',
-  '6289',
+  // Parachain Boy - John Rhodel (Filipino/Portuguese guy)
   '8730',
-  '1231',
-  '1112',
-  '5527',
-  '1036',
-  '1042',
-  '6821',
-  '5798',
-  '5664',
-  '5671',
-  '6259',
-  '5903',
+  // Polkadot & Kusama Brazil
   '10067',
+  // Nova Wallet
   '10128',
-  '10129',
 ]
