@@ -43,6 +43,8 @@ export default [
   '5857',
   // Mangata
   '10790',
+  // Ajuna Network
+  '6363',
   '5892',
   '5905',
   '4306',
