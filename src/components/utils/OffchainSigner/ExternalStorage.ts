@@ -6,8 +6,9 @@ const PROXY_ADDRESS_KEY = 'ProxyAddress'
 const OFFCHAIN_TOKEN_KEY = 'OffchainToken'
 const OFFCHAIN_REFRESH_TOKEN_KEY = 'OffchainRefreshToken'
 const SECRET_KEY = 'SecretKey'
-const SALT = 'Salt'
 const NONCE = 'Nonce'
+const SALT = 'Salt'
+const SALT_NONCE = 'SaltNonce'
 
 const isCurrentOffchainAddress = (myAddress: string) =>
   store.get(createStorageKey(OFFCHAIN_ADDRESS_KEY, myAddress)) === 1 ? true : false
@@ -26,10 +27,11 @@ export {
   OFFCHAIN_ADDRESS_KEY,
   OFFCHAIN_TOKEN_KEY,
   OFFCHAIN_REFRESH_TOKEN_KEY,
-  SECRET_KEY,
   PROXY_ADDRESS_KEY,
-  SALT,
+  SECRET_KEY,
   NONCE,
+  SALT,
+  SALT_NONCE,
   getProxyAddress,
   getOffchainToken,
   getOffchainRefreshToken,

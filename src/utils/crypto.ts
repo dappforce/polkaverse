@@ -30,13 +30,20 @@ const encryptKey = (key: string, password: string) => {
 
   const salt = generateSalt()
 
+  // Encrypt secret key + password with salt
   const { encrypted, nonce } = naclEncrypt(bufferKey, salt)
 
   const encryptedMessage = u8aToHex(encrypted)
   const nonceStr = u8aToHex(nonce)
-  const saltStr = u8aToHex(salt)
 
-  return { encryptedMessage, nonceStr, saltStr }
+  // Encrypt salt with password
+  const passwordBuffer = Buffer.from(password.padEnd(32, '\0'))
+  const { encrypted: encryptedData, nonce: nonceData } = naclEncrypt(salt, passwordBuffer)
+
+  const encryptedSalt = u8aToHex(encryptedData)
+  const saltNonce = u8aToHex(nonceData)
+
+  return { encryptedMessage, nonceStr, encryptedSalt, saltNonce }
 }
 
 const decryptKey = (encryptedKey: string, nonceStr: string, secretStr: string) => {

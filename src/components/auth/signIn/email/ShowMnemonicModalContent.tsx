@@ -3,7 +3,12 @@ import { useEffect, useState } from 'react'
 import { Copy } from 'src/components/urls/helpers'
 import CopyOutlinedIcon from 'src/components/utils/icons/CopyOutlined'
 
-import { NONCE, SALT, SECRET_KEY } from 'src/components/utils/OffchainSigner/ExternalStorage'
+import {
+  NONCE,
+  SALT,
+  SALT_NONCE,
+  SECRET_KEY,
+} from 'src/components/utils/OffchainSigner/ExternalStorage'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { encryptKey, generateAccount } from 'src/utils/crypto'
 import { useAuth } from '../../AuthContext'
@@ -21,6 +26,7 @@ const ShowMnemonicModalContent = ({ setCurrentStep }: Props) => {
   const { setData: setSecretKey } = useExternalStorage(SECRET_KEY)
   const { setData: setNonce } = useExternalStorage(NONCE)
   const { setData: setSalt } = useExternalStorage(SALT)
+  const { setData: setSaltNonce } = useExternalStorage(SALT_NONCE)
 
   useEffect(() => {
     const createEncryptedAccountAndSave = async (mnemonic: string, password: string) => {
@@ -37,12 +43,14 @@ const ShowMnemonicModalContent = ({ setCurrentStep }: Props) => {
     const {
       encryptedMessage: encryptedSecretKey,
       nonceStr,
-      saltStr,
+      encryptedSalt,
+      saltNonce,
     } = encryptKey(secretKey, password)
 
     setSecretKey(encryptedSecretKey, storageKey)
     setNonce(nonceStr, storageKey)
-    setSalt(saltStr, storageKey)
+    setSalt(encryptedSalt, storageKey)
+    setSaltNonce(saltNonce, storageKey)
   }
 
   if (!mnemonic) return null
