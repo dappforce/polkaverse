@@ -21,7 +21,7 @@ const generateAccount = async (seed: string) => {
 
   const publicKey = convertBufferToHex(publicKeyBuffer)
   const secretKey = convertBufferToHex(miniSecret)
-  console.log({ publicKey })
+
   return { publicAddress: toSubsocialAddress(publicKey)!, secretKey }
 }
 

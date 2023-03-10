@@ -20,9 +20,10 @@ export const fieldName = (name: FieldName): FieldName => name
 
 type Props = {
   setCurrentStep: (step: number) => void
+  onSignInSuccess: (address: string) => void
 }
 
-const SignInModalContent = ({ setCurrentStep }: Props) => {
+const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
   const { emailSignIn, resendEmailConfirmation } = useOffchainSignerApi()
 
   const [form] = Form.useForm()
@@ -80,7 +81,7 @@ const SignInModalContent = ({ setCurrentStep }: Props) => {
         if (message === 'sent') setCurrentStep(StepsEnum.Confirmation)
       } else {
         axios.defaults.headers.common['Authorization'] = accessToken
-        console.log({ accessToken, refreshToken })
+        onSignInSuccess(decoded.accountAddress)
       }
     } catch (error) {
       console.warn({ error })

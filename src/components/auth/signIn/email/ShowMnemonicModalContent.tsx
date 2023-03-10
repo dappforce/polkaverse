@@ -1,3 +1,4 @@
+import { Keyring } from '@polkadot/api'
 import { Button, Card, Checkbox, Divider } from 'antd'
 import { useEffect, useState } from 'react'
 import { Copy } from 'src/components/urls/helpers'
@@ -15,10 +16,10 @@ import { useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 
 type Props = {
-  setCurrentStep: (step: number) => void
+  onRegisterDone: (address: string) => void
 }
 
-const ShowMnemonicModalContent = ({ setCurrentStep }: Props) => {
+const ShowMnemonicModalContent = ({ onRegisterDone }: Props) => {
   const { state } = useAuth()
   const { mnemonic, password } = state
   const [isMnemonicSaved, setIsMnemonicSaved] = useState(false)
@@ -55,6 +56,12 @@ const ShowMnemonicModalContent = ({ setCurrentStep }: Props) => {
 
   if (!mnemonic) return null
 
+  const handleRegisterDone = () => {
+    const keyring = new Keyring({ type: 'sr25519' })
+    const { address } = keyring.addFromUri(mnemonic)
+    onRegisterDone(address)
+  }
+
   return (
     <div className={styles.ConfirmationStepContent}>
       <Card className={styles.InnerCard}>
@@ -73,7 +80,7 @@ const ShowMnemonicModalContent = ({ setCurrentStep }: Props) => {
         type='primary'
         size='large'
         disabled={!isMnemonicSaved}
-        // onClick={() => setCurrentStep(StepsEnum.SignInDone)}
+        onClick={handleRegisterDone}
         block
       >
         Continue

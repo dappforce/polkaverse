@@ -12,6 +12,7 @@ import { MutedDiv } from '../../utils/MutedText'
 import PrivacyPolicyLinks from '../../utils/PrivacyPolicyLinks'
 import WalletList from '../../wallets/wallet-list/WalletsList'
 import { CompletedSteps, StepsEnum, useAuth } from '../AuthContext'
+import { useMyAccountsContext } from '../MyAccountsContext'
 import ConfirmationModalContent from './email/ConfirmationModalContent'
 import ShowMnemonicModalContent from './email/ShowMnemonicModalContent'
 import SignInEmailButton from './email/SignInEmailButton'
@@ -140,6 +141,14 @@ const ModalContent = ({
   hideSignInModal,
   onAccountChosen,
 }: GetModalContentProps) => {
+  const { setAddress } = useMyAccountsContext()
+
+  const onAuthSuccess = (address: string) => {
+    hideSignInModal()
+    setAddress(address)
+    onAccountChosen?.(address)
+  }
+
   const onAccountClick = (address: string) => {
     hideSignInModal()
     onAccountChosen?.(address)
@@ -193,7 +202,7 @@ const ModalContent = ({
       return (
         <div>
           <ModalBodyWrapper title={'Sign in with email'} desc={''}>
-            <SignInModalContent setCurrentStep={setCurrentStep} />
+            <SignInModalContent setCurrentStep={setCurrentStep} onSignInSuccess={onAuthSuccess} />
           </ModalBodyWrapper>
         </div>
       )
@@ -236,7 +245,7 @@ const ModalContent = ({
               'Your mnemonic phrase will allow you to recover your account, and is encrypted by your password and stored locally in your browser; nobody else can access it.'
             }
           >
-            <ShowMnemonicModalContent setCurrentStep={setCurrentStep} />
+            <ShowMnemonicModalContent onRegisterDone={onAuthSuccess} />
           </ModalBodyWrapper>
         </div>
       )
