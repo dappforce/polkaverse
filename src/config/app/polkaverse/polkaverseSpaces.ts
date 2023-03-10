@@ -21,6 +21,8 @@ export default [
   '7248',
   // Astar Network
   '10802',
+  // Aster Network dApp Staking updates
+  '11132',
   // Astar | Portuguese
   '6917',
   // Pitcoin
