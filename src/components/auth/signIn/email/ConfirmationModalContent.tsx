@@ -27,7 +27,7 @@ type Props = {
 }
 
 const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
-  const { confirmEmail, resendEmailConfirmation, emailConfirmationPayload } = useOffchainSignerApi()
+  const { confirmEmail, resendEmailConfirmation } = useOffchainSignerApi()
   const { state } = useAuth()
   const { mnemonic } = state
 
@@ -38,10 +38,10 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
   const [isFormValid, setIsFormValid] = useState(false)
 
+  if (!mnemonic) return null
+  const { address: userAddress } = generateKeypairBySecret(mnemonic)
+
   const handleSubmit = async (values: FormValues) => {
-    if (!mnemonic) return
-    const userPair = generateKeypairBySecret(mnemonic)
-    const userAddress = userPair.address
     const accessToken = getOffchainToken(userAddress)
     const refreshToken = getOffchainToken(userAddress)
 
@@ -77,9 +77,14 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
   const handleResendCode = async () => {
     try {
-      if (!emailConfirmationPayload) return
+      const offchainToken = getOffchainToken(userAddress)
+      const refreshToken = getOffchainToken(userAddress)
 
-      await resendEmailConfirmation(emailConfirmationPayload)
+      if (!offchainToken || !refreshToken) throw new Error('Tokens are not defined')
+      await resendEmailConfirmation({
+        accessToken: offchainToken,
+        refreshToken,
+      })
     } catch (error) {
       console.warn({ error })
     }
