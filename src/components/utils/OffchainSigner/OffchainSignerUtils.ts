@@ -74,7 +74,6 @@ export const OffchainSignerEndpoint = {
   EMAIL_SIGN_IN: 'auth/email-sign-in',
   EMAIL_SIGN_UP: 'auth/email-sign-up',
   GENERATE_PROOF: 'auth/generate-address-verification-proof',
-  // SEND_SIGNED_PROOF: 'auth/authByAddress',
   ADDRESS_SIGN_IN: 'auth/address-sign-in',
   CONFIRM_EMAIL: 'auth/confirm-email',
   RESEND_EMAIL_CONFIRMATION: 'auth/resend-email-confirmation',
@@ -104,7 +103,9 @@ export const offchainSignerRequest = async (
 
   let headers: undefined | { Authorization: string }
   if (accessToken && refreshToken) {
-    setAuthOnRequest({ accessToken, refreshToken })
+    headers = {
+      Authorization: accessToken,
+    }
   }
 
   try {

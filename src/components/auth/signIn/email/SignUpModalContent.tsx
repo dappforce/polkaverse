@@ -2,7 +2,6 @@ import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { Keyring } from '@polkadot/api'
 import { stringToU8a, u8aToHex } from '@polkadot/util'
 import { Button, Form, Input } from 'antd'
-import axios from 'axios'
 import { RuleObject } from 'rc-field-form/lib/interface'
 import { useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
@@ -89,9 +88,11 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
       if (!token) throw new Error('hCaptcha token is not set')
 
+      const { email, password } = values
+
       const props = {
-        email: values.email,
-        password: values.password,
+        email,
+        password,
         accountAddress,
         signedProof: u8aToHex(signedProof),
         proof,
@@ -101,15 +102,13 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
       const data = await emailSignUp(props)
       const { accessToken, refreshToken } = data
 
-      axios.defaults.headers.common['Authorization'] = accessToken
-
-      // save to local storage
+      // save to local storage for usage in ConfirmationModal
       setOffchainToken(accessToken, accountAddress)
       setOffchainRefreshToken(refreshToken, accountAddress)
 
-      // save to context
+      // save to context (to be reused in ShowMnemonic)
       setMnemonic(mnemonic)
-      setPassword(values.password)
+      setPassword(password)
 
       setCurrentStep(StepsEnum.Confirmation)
     } catch (error) {
