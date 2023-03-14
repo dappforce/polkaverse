@@ -1,11 +1,18 @@
 import { Button, Form } from 'antd'
+import jwtDecode from 'jwt-decode'
 import { useState } from 'react'
 import AuthCode from 'react-auth-code-input'
 import CountdownTimerButton from 'src/components/utils/OffchainSigner/CountdownTimerButton'
-import { setAuthOnRequest } from 'src/components/utils/OffchainSigner/OffchainSignerUtils'
-import { StepsEnum } from '../../AuthContext'
+import {
+  getOffchainToken,
+  OFFCHAIN_REFRESH_TOKEN_KEY,
+  OFFCHAIN_TOKEN_KEY,
+} from 'src/components/utils/OffchainSigner/ExternalStorage'
+import useExternalStorage from 'src/hooks/useExternalStorage'
+import { generateKeypairBySecret } from 'src/utils/crypto'
+import { StepsEnum, useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
-import useOffchainSignerApi from './useOffchainSignerApi'
+import useOffchainSignerApi, { JwtPayload } from './useOffchainSignerApi'
 
 type FormValues = {
   confirmationCode: number
@@ -21,16 +28,35 @@ type Props = {
 
 const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
   const { confirmEmail, resendEmailConfirmation, emailConfirmationPayload } = useOffchainSignerApi()
+  const { state } = useAuth()
+  const { mnemonic } = state
+
+  const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY)
+  const { setData: setOffchainRefreshToken } = useExternalStorage(OFFCHAIN_REFRESH_TOKEN_KEY)
 
   const [form] = Form.useForm()
 
   const [isFormValid, setIsFormValid] = useState(false)
 
   const handleSubmit = async (values: FormValues) => {
+    if (!mnemonic) return
+    const userPair = generateKeypairBySecret(mnemonic)
+    const userAddress = userPair.address
+    const accessToken = getOffchainToken(userAddress)
+    const refreshToken = getOffchainToken(userAddress)
+
     try {
-      const data = await confirmEmail(values.confirmationCode.toString())
-      const { accessToken, refreshToken } = data
-      setAuthOnRequest({ accessToken, refreshToken })
+      const data = await confirmEmail(values.confirmationCode.toString(), accessToken, refreshToken)
+
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken } = data
+
+      const { accountAddress } = jwtDecode<JwtPayload>(newAccessToken)
+
+      if (!accountAddress) throw new Error('Account address is not defined')
+
+      // Save auth tokens to local storage for getMainProxyAddress request
+      setOffchainToken(newAccessToken, accountAddress)
+      setOffchainRefreshToken(newRefreshToken, accountAddress)
 
       setCurrentStep(StepsEnum.ShowMnemonic)
     } catch (error) {
