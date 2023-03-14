@@ -23,6 +23,15 @@ const getOffchainRefreshToken = (myAddress: string): string | undefined =>
 const getSecretKeyByAddress = (myAddress: string): string | undefined =>
   store.get(createStorageKey(SECRET_KEY, myAddress))
 
+const getNonceByAddress = (myAddress: string): string | undefined =>
+  store.get(createStorageKey(NONCE, myAddress))
+
+const getSaltByAddress = (myAddress: string): string | undefined =>
+  store.get(createStorageKey(SALT, myAddress))
+
+const getSaltNonceByAddress = (myAddress: string): string | undefined =>
+  store.get(createStorageKey(SALT_NONCE, myAddress))
+
 export {
   OFFCHAIN_ADDRESS_KEY,
   OFFCHAIN_TOKEN_KEY,
@@ -37,4 +46,7 @@ export {
   getOffchainRefreshToken,
   isCurrentOffchainAddress,
   getSecretKeyByAddress,
+  getNonceByAddress,
+  getSaltByAddress,
+  getSaltNonceByAddress,
 }
