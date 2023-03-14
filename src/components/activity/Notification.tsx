@@ -49,15 +49,12 @@ const NotificationMessage = ({
   aggregationCount,
   withAggregation = true,
 }: NotificationMessageProps) => {
+  const aggCount = aggregationCount - 1
   const aggregationMsg = withAggregation
-    ? aggregationCount > 0 && (
+    ? aggCount > 0 && (
         <>
           {' and '}
-          <Pluralize
-            count={aggregationCount}
-            singularText='other person'
-            pluralText='other people'
-          />
+          <Pluralize count={aggCount} singularText='other person' pluralText='other people' />
         </>
       )
     : undefined
