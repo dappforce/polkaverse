@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { offchainSignerRequest } from 'src/components/utils/OffchainSigner/OffchainSignerUtils'
 
 type EmailSignUpProps = {
@@ -16,7 +15,7 @@ type EmailSignInProps = {
   hcaptchaResponse: string
 }
 
-type ResendEmailConfirmationProps = {
+type AuthProps = {
   accessToken: string
   refreshToken: string
 }
@@ -31,10 +30,6 @@ export type JwtPayload = {
 }
 
 const useOffchainSignerApi = () => {
-  const [emailConfirmationPayload, setEmailConfirmationPayload] =
-    useState<ResendEmailConfirmationProps | null>(null)
-  const [emailSignUpPayload, setEmailSignUpPayload] = useState<EmailSignUpProps | null>(null)
-
   const requestProof = async (accountAddress: string) => {
     try {
       const res = await offchainSignerRequest({
@@ -60,18 +55,13 @@ const useOffchainSignerApi = () => {
       })
       if (!res) throw new Error('Something went wrong')
 
-      setEmailSignUpPayload(props)
-
-      const { accessToken, refreshToken } = res.data
-      setEmailConfirmationPayload({ accessToken, refreshToken })
-
       return res.data
     } catch (error) {
       console.warn({ error })
     }
   }
 
-  const resendEmailConfirmation = async (props: ResendEmailConfirmationProps) => {
+  const resendEmailConfirmation = async (props: AuthProps) => {
     const { accessToken, refreshToken } = props
 
     try {
@@ -105,7 +95,7 @@ const useOffchainSignerApi = () => {
     }
   }
 
-  const confirmEmail = async (code: string) => {
+  const confirmEmail = async (code: string, accessToken?: string, refreshToken?: string) => {
     try {
       const res = await offchainSignerRequest({
         method: 'POST',
@@ -113,6 +103,27 @@ const useOffchainSignerApi = () => {
         data: {
           code,
         },
+        accessToken,
+        refreshToken,
+      })
+
+      if (!res) throw new Error('Something went wrong')
+
+      return res.data
+    } catch (error) {
+      console.warn({ error })
+    }
+  }
+
+  const getMainProxyAddress = async (props: AuthProps) => {
+    const { accessToken, refreshToken } = props
+
+    try {
+      const res = await offchainSignerRequest({
+        method: 'GET',
+        endpoint: 'signer/main-proxy-address',
+        accessToken,
+        refreshToken,
       })
 
       if (!res) throw new Error('Something went wrong')
@@ -129,8 +140,7 @@ const useOffchainSignerApi = () => {
     confirmEmail,
     resendEmailConfirmation,
     emailSignIn,
-    emailConfirmationPayload,
-    emailSignUpPayload,
+    getMainProxyAddress,
   }
 }
 
