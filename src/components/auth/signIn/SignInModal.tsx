@@ -146,6 +146,7 @@ const ModalContent = ({
   const onAuthSuccess = (address: string) => {
     hideSignInModal()
     setAddress(address)
+    setCurrentStep(StepsEnum.SelectWallet)
     onAccountChosen?.(address)
   }
 
