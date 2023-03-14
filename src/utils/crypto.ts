@@ -1,3 +1,4 @@
+import { Keyring } from '@polkadot/api'
 import { hexToU8a, u8aToHex, u8aToString } from '@polkadot/util'
 import { keccakAsU8a, naclDecrypt, naclEncrypt } from '@polkadot/util-crypto'
 
@@ -56,4 +57,12 @@ const decryptKey = (encryptedKey: string, nonceStr: string, secretStr: string) =
   return u8aToString(keyDecrypted)
 }
 
-export { generateSalt, generateAccount, encryptKey, decryptKey }
+// works with mnemonic or raw string seed
+const generateKeypairBySecret = (secret: string) => {
+  const keyring = new Keyring({ type: 'sr25519' })
+
+  const keypair = keyring.addFromUri(secret, {}, 'sr25519')
+  return keypair
+}
+
+export { generateSalt, generateAccount, encryptKey, decryptKey, generateKeypairBySecret }
