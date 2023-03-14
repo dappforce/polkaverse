@@ -3,8 +3,8 @@ import Button from 'antd/lib/button'
 import React, { useEffect, useRef, useState } from 'react'
 import { TxButtonProps } from 'src/components/substrate/SubstrateTxButton'
 
-import axios, { AxiosRequestConfig } from 'axios'
-import { offchainSignerRequest } from './OffchainSignerUtils'
+import { fetchProxyAddress, requestMessage, sendSignedMessage } from './api/requests'
+import { setAuthOnRequest } from './api/utils'
 
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 import type { Signer } from '@polkadot/api/types'
@@ -111,29 +111,6 @@ function RememberMeButton({
     }
   }
 
-  const requestMessage = async () => {
-    if (!myAddress) {
-      throw new Error('No account id provided')
-    }
-
-    const data = {
-      accountAddress: myAddress,
-    }
-
-    try {
-      const res = await offchainSignerRequest({
-        data,
-        endpoint: 'auth/generateAuthByAddressProof',
-        method: 'POST',
-      })
-
-      return res?.data
-    } catch (err: any) {
-      onFailedHandler(err instanceof Error ? err.message : err)
-      return
-    }
-  }
-
   const signMessage = async (messageJwt: string): Promise<`0x${string}` | undefined> => {
     if (!myAddress) {
       throw new Error('No account id provided')
@@ -172,51 +149,13 @@ function RememberMeButton({
     }
   }
 
-  const sendSignedMessage = async (signedMessageJwt: string, messageJwt: string, token: string) => {
-    if (!token) throw new Error('Please confirm hCaptcha!')
-
-    const data = {
-      accountAddress: myAddress as string,
-      signedMessageJwt,
-      messageJwt,
-      hcaptchaResponse: token,
-    }
-
-    try {
-      const res = await offchainSignerRequest({
-        data,
-        endpoint: 'auth/authByAddress',
-        method: 'POST',
-      })
-
-      return res?.data
-    } catch (err: any) {
-      onFailedHandler(err instanceof Error ? err.message : err)
-      return
-    }
-  }
-
-  const fetchProxyAddress = async () => {
-    try {
-      const res = await offchainSignerRequest({
-        endpoint: 'signer/main-proxy-address',
-        method: 'GET',
-      })
-
-      return res?.data
-    } catch (err: any) {
-      onFailedHandler(err instanceof Error ? err.message : err)
-      return
-    }
-  }
-
   const finaliseOffchainSigner = async (token: string) => {
     if (!myAddress) {
       throw new Error('No account id provided')
     }
 
     try {
-      const dataMessage = await requestMessage()
+      const dataMessage = await requestMessage(myAddress, onFailedHandler)
       const { jwt: messageJwt } = dataMessage
 
       const signedMessageJwt = await signMessage(messageJwt)
@@ -226,25 +165,19 @@ function RememberMeButton({
         return
       }
 
-      const dataSignature = await sendSignedMessage(signedMessageJwt, messageJwt, token)
+      const dataSignature = await sendSignedMessage(
+        myAddress,
+        signedMessageJwt,
+        messageJwt,
+        token,
+        onFailedHandler,
+      )
       const { accessToken } = dataSignature
 
       setOffchainToken(accessToken)
+      setAuthOnRequest(accessToken)
 
-      axios.interceptors.request.use(
-        async (config: AxiosRequestConfig) => {
-          config.headers = config.headers ?? {}
-
-          config.headers.Authorization = accessToken
-
-          return config
-        },
-        error => {
-          return Promise.reject(error)
-        },
-      )
-
-      const { address } = await fetchProxyAddress()
+      const { address } = await fetchProxyAddress(onFailedHandler)
       setProxyAddress(address)
       onSuccessAuth()
     } catch (err: any) {
