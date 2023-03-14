@@ -1,9 +1,9 @@
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { Button, Form, Input } from 'antd'
-import axios from 'axios'
 import jwtDecode from 'jwt-decode'
 import { useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
+import { setAuthOnRequest } from 'src/components/utils/OffchainSigner/OffchainSignerUtils'
 import { hCaptchaSiteKey } from 'src/config/env'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
@@ -63,10 +63,11 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
   }, [token])
 
   const handleSubmit = async (values: FormValues, token: string) => {
+    const { email, password } = values
     try {
       const props = {
-        email: values.email,
-        password: values.password,
+        email,
+        password,
         hcaptchaResponse: token,
       }
 
@@ -75,13 +76,15 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
 
       const decoded = jwtDecode<JwtPayload>(accessToken)
 
-      if (!decoded.emailVerified) {
+      const { emailVerified, accountAddress } = decoded
+
+      if (!emailVerified) {
         const data = await resendEmailConfirmation({ accessToken, refreshToken })
         const { message } = data
         if (message === 'sent') setCurrentStep(StepsEnum.Confirmation)
       } else {
-        axios.defaults.headers.common['Authorization'] = accessToken
-        onSignInSuccess(decoded.accountAddress)
+        setAuthOnRequest({ accessToken, refreshToken })
+        onSignInSuccess(accountAddress)
       }
     } catch (error) {
       console.warn({ error })
