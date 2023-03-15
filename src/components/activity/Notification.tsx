@@ -12,7 +12,7 @@ import React from 'react'
 import { NAME_MAX_LEN } from 'src/config/ValidationsConfig'
 import messages from 'src/messages'
 import { useSelectPost, useSelectProfile, useSelectSpace } from 'src/rtk/app/hooks'
-import { Activity, asCommentData, asSharedPostStruct, EventsName, PostData } from 'src/types'
+import { Activity, asCommentData, asSharedPostStruct, PostData } from 'src/types'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import ViewPostLink from '../posts/ViewPostLink'
 import Avatar from '../profiles/address-views/Avatar'
@@ -274,9 +274,8 @@ const CommentNotification = (props: NotificationProps) => {
 }
 
 export const Notification = React.memo((props: NotificationProps) => {
-  const { event, type } = props
-  const isActivity = type === 'activities'
-  const eventName = event as EventsName
+  const { event } = props
+  const eventName = event
 
   switch (eventName) {
     case 'AccountFollowed':
@@ -290,7 +289,7 @@ export const Notification = React.memo((props: NotificationProps) => {
     case 'CommentReplyCreated':
       return <CommentNotification {...props} />
     case 'PostShared':
-      return isActivity ? null : <PostNotification {...props} />
+      return <PostNotification {...props} />
     case 'CommentShared':
       return <CommentNotification {...props} />
     case 'PostReactionCreated':
@@ -298,7 +297,7 @@ export const Notification = React.memo((props: NotificationProps) => {
     case 'CommentReactionCreated':
       return <CommentNotification {...props} />
     case 'PostCreated':
-      return isActivity ? <PostNotification {...props} /> : null
+      return <PostNotification {...props} />
     default:
       return null
   }
