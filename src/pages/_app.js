@@ -27,6 +27,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import { DfApolloProvider } from 'src/graphql/ApolloProvider'
 import { ThemeProvider } from 'next-themes'
+import NextNProgress from 'nextjs-progressbar'
 
 import config from 'src/config'
 import '@subsocial/definitions/interfaces/types-lookup'
@@ -61,6 +62,7 @@ function MyApp(props) {
           rel='stylesheet'
         />
       </Head>
+      <NextNProgress color='#eb2f96' />
       <Provider store={store}>
         {/* <AdBlockModal /> */}
         <DfApolloProvider initialApolloState={pageProps.initialApolloState}>
