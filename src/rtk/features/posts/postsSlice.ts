@@ -1,3 +1,4 @@
+import { xxhashAsHex } from '@polkadot/util-crypto'
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { SubsocialApi } from '@subsocial/api'
 import { FindPostsQuery } from '@subsocial/api/filters'
@@ -42,7 +43,6 @@ import { Content, fetchContents, selectPostContentById } from '../contents/conte
 import { fetchProfileSpaces } from '../profiles/profilesSlice'
 import { fetchMyReactionsByPostIds } from '../reactions/myPostReactionsSlice'
 import { fetchSpaces } from '../spaces/spacesSlice'
-
 export interface PostState extends PostStruct {
   isOverview?: boolean
 }
@@ -200,7 +200,18 @@ const getPosts = createFetchDataFn<PostState[]>([])({
         hidden_not_eq: publicOnly ? true : undefined,
       },
     })
-    return posts.map<PostState>(post => ({ ...post, isOverview: true }))
+    // TODO It is fix bug of Squid, so we need to remove it after fix
+    const fixedPosts = await Promise.all(
+      posts.map(async post => {
+        if (!post.contentId && post.ipfsContent) {
+          const newCid = xxhashAsHex(Buffer.from(JSON.stringify(post.ipfsContent)), 128, true)
+          post.contentId = Buffer.from(newCid).toString('hex')
+        }
+        return post
+      }),
+    )
+
+    return fixedPosts.map<PostState>(post => ({ ...post, isOverview: true }))
   },
 })
 export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkApiConfig>(
@@ -316,6 +327,7 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
           entity.sharedPost = null
           flattenedEntities.push(entity)
         })
+
         return flattenedEntities
       }
 
