@@ -3,7 +3,7 @@ import { createTwitterURL, parseTwitterTextToMarkdown } from '@subsocial/utils'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { HTMLProps } from 'react'
-import { BsTwitter } from 'react-icons/bs'
+import { BsQuestionCircle, BsTwitter } from 'react-icons/bs'
 import { DfMd } from 'src/components/utils/DfMd'
 import ViewPostLink from '../ViewPostLink'
 import { PostImage } from './helpers'
@@ -39,12 +39,13 @@ export default function TwitterPost({
             className='d-flex align-items-center font-weight-bold CursorPointer'
           >
             <BsTwitter className='mr-2 FontLarge CursorPointer' />
-            <span className='CursorPointer'>Saved from Twitter</span>
+            <span className='CursorPointer'>{content.tweet.username || 'Saved Tweet'}</span>
           </a>
         </Link>
         <Link href='https://post4ever.app/' passHref>
-          <a target='_blank' rel='noreferrer noopener'>
-            How it works?
+          <a className='d-flex align-items-center' target='_blank' rel='noreferrer noopener'>
+            <span className='mr-2'>Saved from Twitter</span>
+            <BsQuestionCircle className='position-relative' style={{ top: 1 }} />
           </a>
         </Link>
       </div>

@@ -37,7 +37,7 @@ const SelectAccount = ({ address, ss58Format }: SelectAccountProps) => {
   return (
     <div className='d-flex justify-content-between align-items-center'>
       <div className='d-flex justify-content-center align-items-center'>
-        <BaseAvatar size={24} address={address} avatar={profileData?.content?.image} />
+        <BaseAvatar size={24} identityValue={address} avatar={profileData?.content?.image} />
         <Name
           containerClassName='position-relative'
           style={{ top: '-1px' }}
@@ -126,7 +126,11 @@ export const DonateCard = ({ recipientAddress }: DonateProps) => {
     <Form form={form} layout='vertical' className='mt-0 p-3'>
       <div className='d-flex align-items-center mb-3'>
         <div>
-          <BaseAvatar address={recipientAddress} avatar={profileData?.content?.image} size={64} />
+          <BaseAvatar
+            identityValue={recipientAddress}
+            avatar={profileData?.content?.image}
+            size={64}
+          />
         </div>
         <div>
           <MutedDiv>Recipient:</MutedDiv>

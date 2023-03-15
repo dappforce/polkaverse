@@ -1,5 +1,6 @@
-import { ApolloClient, InMemoryCache, NormalizedCacheObject } from '@apollo/client'
+import { ApolloClient, DefaultOptions, InMemoryCache, NormalizedCacheObject } from '@apollo/client'
 import { useMemo } from 'react'
+import { isServerSide } from 'src/components/utils'
 import config from 'src/config'
 
 const { enableGraphQl, graphqlUrl } = config
@@ -12,8 +13,18 @@ export function getApolloClient() {
 }
 
 const createApolloClient = (graphqlUrl: string): ApolloClient<NormalizedCacheObject> => {
+  let config: DefaultOptions = {}
+  if (isServerSide()) {
+    config = {
+      query: {
+        fetchPolicy: 'no-cache',
+      },
+    }
+  }
+
   return new ApolloClient({
     uri: graphqlUrl,
+    defaultOptions: config,
     cache: new InMemoryCache(),
   })
 }

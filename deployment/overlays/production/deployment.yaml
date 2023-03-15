@@ -19,6 +19,13 @@ spec:
             topologyKey: kubernetes.io/hostname            
       containers:
         - name: web-app
+          resources:
+            requests:
+              memory: "950Mi"
+              cpu: "500m"
+            limits:
+              memory: "5000Mi"
+              cpu: "3"
           readinessProbe:
             httpGet:
               path: /
