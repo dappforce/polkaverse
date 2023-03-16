@@ -2,6 +2,11 @@ import { Button, Form } from 'antd'
 import jwtDecode from 'jwt-decode'
 import { useState } from 'react'
 import AuthCode from 'react-auth-code-input'
+import {
+  confirmEmail,
+  JwtPayload,
+  resendEmailConfirmation,
+} from 'src/components/utils/OffchainSigner/api/requests'
 import CountdownTimerButton from 'src/components/utils/OffchainSigner/CountdownTimerButton'
 import {
   getOffchainToken,
@@ -12,7 +17,6 @@ import useExternalStorage from 'src/hooks/useExternalStorage'
 import { generateKeypairBySecret } from 'src/utils/crypto'
 import { StepsEnum, useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
-import useOffchainSignerApi, { JwtPayload } from './useOffchainSignerApi'
 
 type FormValues = {
   confirmationCode: number
@@ -27,7 +31,6 @@ type Props = {
 }
 
 const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
-  const { confirmEmail, resendEmailConfirmation } = useOffchainSignerApi()
   const { state } = useAuth()
   const { mnemonic } = state
 
@@ -43,16 +46,18 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
   const handleSubmit = async (values: FormValues) => {
     const accessToken = getOffchainToken(userAddress)
-    const refreshToken = getOffchainToken(userAddress)
+    if (!accessToken) throw new Error('Access token is not defined')
 
     try {
-      const data = await confirmEmail(values.confirmationCode.toString(), accessToken, refreshToken)
+      const props = {
+        code: values.confirmationCode.toString(),
+        accessToken,
+      }
+      const data = await confirmEmail(props)
 
       const { accessToken: newAccessToken, refreshToken: newRefreshToken } = data
 
       const { accountAddress } = jwtDecode<JwtPayload>(newAccessToken)
-
-      if (!accountAddress) throw new Error('Account address is not defined')
 
       // Save auth tokens to local storage for getMainProxyAddress request
       setOffchainToken(newAccessToken, accountAddress)
@@ -77,14 +82,10 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
   const handleResendCode = async () => {
     try {
-      const offchainToken = getOffchainToken(userAddress)
-      const refreshToken = getOffchainToken(userAddress)
+      const accessToken = getOffchainToken(userAddress)
 
-      if (!offchainToken || !refreshToken) throw new Error('Tokens are not defined')
-      await resendEmailConfirmation({
-        accessToken: offchainToken,
-        refreshToken,
-      })
+      if (!accessToken) throw new Error('Token is not defined')
+      await resendEmailConfirmation(accessToken)
     } catch (error) {
       console.warn({ error })
     }

@@ -16,13 +16,13 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from 'src/components/utils/Message'
+import { fetchMainProxyAddress } from 'src/components/utils/OffchainSigner/api/requests'
 import { getOffchainToken } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import messages from 'src/messages'
 import { generateKeypairBySecret } from 'src/utils/crypto'
 import { useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 import useEncryptionToStorage from './useEncryptionToStorage'
-import useOffchainSignerApi from './useOffchainSignerApi'
 
 const log = newLogger('ShowMnemonicModalContent')
 
@@ -36,7 +36,6 @@ const ShowMnemonicModalContent = ({ onRegisterDone }: Props) => {
 
   const { api } = useSubstrate()
   const { createEncryptedAccountAndSave } = useEncryptionToStorage()
-  const { getMainProxyAddress } = useOffchainSignerApi()
   const { isMobile } = useResponsiveSize()
 
   const [isMnemonicSaved, setIsMnemonicSaved] = useState(false)
@@ -139,7 +138,7 @@ const ShowMnemonicModalContent = ({ onRegisterDone }: Props) => {
       if (!accessToken || !refreshToken)
         throw new Error('Access token or refresh token is not defined')
 
-      const data = await getMainProxyAddress({ accessToken, refreshToken })
+      const data = await fetchMainProxyAddress(accessToken)
       const { address: mainProxyAddress } = data
 
       // TODO: check after free proxy is available

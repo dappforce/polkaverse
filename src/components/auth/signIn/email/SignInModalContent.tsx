@@ -3,11 +3,20 @@ import { Button, Form, Input } from 'antd'
 import jwtDecode from 'jwt-decode'
 import { useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
-import { setAuthOnRequest } from 'src/components/utils/OffchainSigner/OffchainSignerUtils'
+import {
+  emailSignIn,
+  JwtPayload,
+  resendEmailConfirmation,
+} from 'src/components/utils/OffchainSigner/api/requests'
+import { setAuthOnRequest } from 'src/components/utils/OffchainSigner/api/utils'
+import {
+  OFFCHAIN_REFRESH_TOKEN_KEY,
+  OFFCHAIN_TOKEN_KEY,
+} from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { hCaptchaSiteKey } from 'src/config/env'
+import useExternalStorage from 'src/hooks/useExternalStorage'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
-import useOffchainSignerApi, { JwtPayload } from './useOffchainSignerApi'
 
 type FormValues = {
   email: string
@@ -24,11 +33,13 @@ type Props = {
 }
 
 const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
-  const { emailSignIn, resendEmailConfirmation } = useOffchainSignerApi()
+  const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY)
+  const { setData: setOffchainRefreshToken } = useExternalStorage(OFFCHAIN_REFRESH_TOKEN_KEY)
 
   const [form] = Form.useForm()
 
   const [isFormValid, setIsFormValid] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const [token, setToken] = useState<string | undefined>()
   const [, setCaptchaReady] = useState(false)
@@ -62,6 +73,10 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
     }
   }, [token])
 
+  const onFailedCallback = (err: Error) => {
+    setError(err.message)
+  }
+
   const handleSubmit = async (values: FormValues, token: string) => {
     const { email, password } = values
     try {
@@ -71,7 +86,7 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
         hcaptchaResponse: token,
       }
 
-      const data = await emailSignIn(props)
+      const data = await emailSignIn(props, onFailedCallback)
       const { accessToken, refreshToken } = data
 
       const decoded = jwtDecode<JwtPayload>(accessToken)
@@ -79,12 +94,16 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
       const { emailVerified, accountAddress } = decoded
 
       if (!emailVerified) {
-        const data = await resendEmailConfirmation({ accessToken, refreshToken })
+        const data = await resendEmailConfirmation(accessToken)
         const { message } = data
         if (message === 'sent') setCurrentStep(StepsEnum.Confirmation)
       } else {
-        setAuthOnRequest({ accessToken, refreshToken })
+        setAuthOnRequest(accessToken)
         onSignInSuccess(accountAddress)
+
+        // Save auth tokens to local storage for future use in the app
+        setOffchainToken(accessToken, accountAddress)
+        setOffchainRefreshToken(refreshToken, accountAddress)
       }
     } catch (error) {
       console.warn({ error })
@@ -131,6 +150,8 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
                 'Your password should contain at least 8 characters, with at least one letter and one number.',
             },
           ]}
+          help={error}
+          validateStatus={'error'}
         >
           <Input
             required

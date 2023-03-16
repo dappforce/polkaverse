@@ -3,7 +3,7 @@ import Button from 'antd/lib/button'
 import React, { useEffect, useRef, useState } from 'react'
 import { TxButtonProps } from 'src/components/substrate/SubstrateTxButton'
 
-import { fetchProxyAddress, requestMessage, sendSignedMessage } from './api/requests'
+import { addressSignIn, fetchMainProxyAddress, requestProof } from './api/requests'
 import { setAuthOnRequest } from './api/utils'
 
 import HCaptcha from '@hcaptcha/react-hcaptcha'
@@ -19,7 +19,11 @@ import { getWalletBySource } from 'src/components/wallets/supportedWallets'
 import { hCaptchaSiteKey } from 'src/config/env'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { showErrorMessage } from '../Message'
-import { OFFCHAIN_TOKEN_KEY, PROXY_ADDRESS_KEY } from './ExternalStorage'
+import {
+  OFFCHAIN_REFRESH_TOKEN_KEY,
+  OFFCHAIN_TOKEN_KEY,
+  PROXY_ADDRESS_KEY,
+} from './ExternalStorage'
 const log = newLogger('RememberMeButton')
 
 interface RememberMeButtonProps extends TxButtonProps {
@@ -43,12 +47,9 @@ function RememberMeButton({
   const { isMobile } = useResponsiveSize()
   const myAddress = useMyAddress()
 
-  const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY, {
-    storageKeyType: 'user',
-  })
-  const { setData: setProxyAddress } = useExternalStorage(PROXY_ADDRESS_KEY, {
-    storageKeyType: 'user',
-  })
+  const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY)
+  const { setData: setOffchainRefreshToken } = useExternalStorage(OFFCHAIN_REFRESH_TOKEN_KEY)
+  const { setData: setProxyAddress } = useExternalStorage(PROXY_ADDRESS_KEY)
 
   const [token, setToken] = useState<string | undefined>()
   const [captchaReady, setCaptchaReady] = useState(false)
@@ -149,36 +150,41 @@ function RememberMeButton({
     }
   }
 
-  const finaliseOffchainSigner = async (token: string) => {
+  const finaliseOffchainSigner = async (hcaptchaResponse: string) => {
     if (!myAddress) {
       throw new Error('No account id provided')
     }
 
     try {
-      const dataMessage = await requestMessage(myAddress, onFailedHandler)
-      const { jwt: messageJwt } = dataMessage
+      const dataMessage = await requestProof(myAddress, onFailedHandler)
+      const { jwt: proof } = dataMessage
 
-      const signedMessageJwt = await signMessage(messageJwt)
+      const signedProof = await signMessage(proof)
 
-      if (!signedMessageJwt) {
-        console.warn('Error when retrieving signed message')
+      if (!signedProof) {
+        console.warn('Error when generating signed')
         return
       }
 
-      const dataSignature = await sendSignedMessage(
-        myAddress,
-        signedMessageJwt,
-        messageJwt,
-        token,
-        onFailedHandler,
-      )
-      const { accessToken } = dataSignature
+      const props = {
+        proof,
+        signedProof,
+        hcaptchaResponse,
+      }
 
-      setOffchainToken(accessToken)
+      const dataSignature = await addressSignIn(props, onFailedHandler)
+      const { accessToken, refreshToken } = dataSignature
+
       setAuthOnRequest(accessToken)
 
-      const { address } = await fetchProxyAddress(onFailedHandler)
-      setProxyAddress(address)
+      setOffchainToken(accessToken, myAddress)
+      setOffchainRefreshToken(refreshToken, myAddress)
+
+      const { address: mainProxyAddress } = await fetchMainProxyAddress(
+        accessToken,
+        onFailedHandler,
+      )
+      setProxyAddress(mainProxyAddress, myAddress)
       onSuccessAuth()
     } catch (err: any) {
       onFailedHandler(err instanceof Error ? err.message : err)

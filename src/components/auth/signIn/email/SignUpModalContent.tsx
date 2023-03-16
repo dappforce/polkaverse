@@ -5,6 +5,7 @@ import { Button, Form, Input } from 'antd'
 import { RuleObject } from 'rc-field-form/lib/interface'
 import { useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
+import { emailSignUp, requestProof } from 'src/components/utils/OffchainSigner/api/requests'
 import {
   OFFCHAIN_REFRESH_TOKEN_KEY,
   OFFCHAIN_TOKEN_KEY,
@@ -14,7 +15,6 @@ import { hCaptchaSiteKey } from 'src/config/env'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { StepsEnum, useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
-import useOffchainSignerApi from './useOffchainSignerApi'
 
 type FormValues = {
   email: string
@@ -33,11 +33,11 @@ type Props = {
 const SignUpModalContent = ({ setCurrentStep }: Props) => {
   const { mnemonic } = useMnemonicGenerate()
   const { setMnemonic, setPassword } = useAuth()
-  const { emailSignUp, requestProof } = useOffchainSignerApi()
 
   const [form] = Form.useForm()
 
   const [isFormValid, setIsFormValid] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const [token, setToken] = useState<string | undefined>()
   const [, setCaptchaReady] = useState(false)
@@ -77,6 +77,10 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
     }
   }, [token])
 
+  const onFailedCallback = (err: Error) => {
+    setError(err.message)
+  }
+
   const handleSubmit = async (values: FormValues, token: string) => {
     try {
       const keyring = new Keyring({ type: 'sr25519' })
@@ -100,7 +104,7 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
         hcaptchaResponse: token,
       }
 
-      const data = await emailSignUp(props)
+      const data = await emailSignUp(props, onFailedCallback)
       const { accessToken, refreshToken } = data
 
       // save to local storage for usage in ConfirmationModal
@@ -182,6 +186,8 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
           className='mb-0'
           validateTrigger='onBlur'
           rules={[{ validator: validateRepeatPassword }]}
+          help={error}
+          validateStatus='error'
         >
           <Input
             required
