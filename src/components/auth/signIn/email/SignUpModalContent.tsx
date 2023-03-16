@@ -70,9 +70,6 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
   useEffect(() => {
     if (token) {
-      //TODO: add logic for sending token to /signUp endpoint (backend)
-      // if success, then go to confirmation step
-      // setCurrentStep(StepsEnum.Confirmation)
       handleSubmit(form.getFieldsValue(), token)
     }
   }, [token])

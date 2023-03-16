@@ -34,16 +34,6 @@ export default function useOnBoardingStepsOrder(
       : transactionsCount < 20
     if (showEnergyStep) usedSteps.push('energy')
 
-    // const offchainToken = getOffchainToken(myAddress)
-
-    // const showSignerStep = !(
-    //   isOffchainAddress &&
-    //   typeof offchainToken === 'string' &&
-    //   offchainToken.length > 0
-    // )
-
-    // if (showSignerStep) usedSteps.push('signer')
-
     if (usedSteps.length > 0) usedSteps.push('confirmation')
 
     return usedSteps
