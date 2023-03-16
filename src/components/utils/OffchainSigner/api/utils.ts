@@ -6,12 +6,15 @@ const { offchainSignerUrl } = config
 const log = newLogger('OffchainSignerRequests')
 
 export const OffchainSignerEndpoint = {
-  SIGNUP: 'auth/signup',
-  SIGNIN: 'auth/signin',
+  GENERATE_PROOF: 'auth/generate-address-verification-proof',
+  ADDRESS_SIGN_IN: 'auth/address-sign-in',
+  REFRESH_TOKEN: 'auth/refresh-token',
+  REVOKE_TOKEN: 'auth/revoke-token',
+  SIGNUP: 'auth/email-sign-up',
+  SIGNIN: 'auth/email-sign-in',
   CONFIRM: 'auth/confirm-email',
+  RESEND_CONFIRMATION: 'auth/resend-email-confirmation',
   SIGNER_SIGN: 'signer/sign',
-  GENERATE_PROOF: 'auth/generateAuthByAddressProof',
-  SEND_SIGNED_PROOF: 'auth/authByAddress',
   FETCH_MAIN_PROXY: 'signer/main-proxy-address',
 } as const
 
