@@ -95,13 +95,16 @@ export const emailSignUp = async (
 }
 
 export const confirmEmail = async (props: ConfirmEmailProps) => {
+  const { code, accessToken } = props
   const res = await sendHttpRequest({
     params: {
       url: OffchainSignerEndpoint.CONFIRM,
-      data: props.code,
+      data: {
+        code,
+      },
       config: {
         headers: {
-          Authorization: props.accessToken,
+          Authorization: accessToken,
         },
       },
     },
