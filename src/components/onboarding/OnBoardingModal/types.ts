@@ -1,3 +1,4 @@
+import { SignerProps } from './steps/Signer/Signer'
 export interface OnBoardingModalProps {
   firstStepOffset?: number
   onBackClickInFirstStep?: () => void
@@ -19,6 +20,13 @@ export interface OnBoardingContentProps {
   setLoading: (loading: boolean) => void
 }
 
+export interface CustomContinueButtonGroupProps {
+  saveAsDraft: () => void
+  loading: boolean
+  setLoading: (loading: boolean) => void
+  isPartial?: boolean
+}
+
 export interface OnBoardingContentContainerProps extends OnBoardingContentProps {
   onSubmitValidation?: () => boolean | Promise<boolean>
   disableSubmitBtn?: boolean
@@ -29,4 +37,6 @@ export interface OnBoardingContentContainerProps extends OnBoardingContentProps 
   buttonText?: string
   customButtonOnClick?: () => void
   showPrivacyPolicy?: boolean
+  isUsingCustomFooter?: boolean
+  signerProps?: SignerProps
 }

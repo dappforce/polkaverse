@@ -28,6 +28,7 @@ import styles from './OnBoardingModal.module.sass'
 import Confirmation from './steps/Confirmation'
 import Energy from './steps/Energy'
 import Profile from './steps/Profile'
+import Signer from './steps/Signer'
 import Spaces from './steps/Spaces'
 import Topics from './steps/Topics'
 import { OnBoardingContentProps, OnBoardingModalProps } from './types'
@@ -58,6 +59,12 @@ const steps: {
     content: Energy,
     title: '⚡ Energy',
     subtitle: `Energy allows you to use ${config.appName}. You can create energy here by burning SUB or get a small amount of energy for free (only for new users), allowing you to start posting without getting tokens.`,
+  },
+  signer: {
+    content: Signer,
+    title: '🔒 Remember me',
+    subtitle:
+      'Avoid approving every interaction with your wallet by allowing PolkaVerse to remember you. This only affects social actions. Your assets will remain secure.',
   },
   confirmation: {
     content: Confirmation,
@@ -163,38 +170,42 @@ export default function OnBoardingModal({
   const modalClosable = !loading && openState === 'partial'
 
   return (
-    <Modal
-      visible={
-        openState !== '' &&
-        !(openState === 'full-on-boarding' && onBoardingModalStepsOrder.length === 0)
-      }
-      destroyOnClose
-      closable={success || modalClosable}
-      maskClosable={modalClosable}
-      keyboard={modalClosable}
-      onCancel={() => afterDoneOnBoarding(!success)}
-      footer={null}
-      className={clsx(
-        styles.DfOnBoardingModal,
-        openState === 'full-on-boarding' && !success && styles.DfOnBoardingModalFull,
-      )}
-    >
-      {currentContent && Component && (
-        <Component
-          loading={loading}
-          success={success}
-          setLoading={setLoading}
-          setSuccess={setSuccess}
-          currentStepIndex={currentStepIndex}
-          firstStepOffset={firstStepOffset}
-          goToNextStep={goToNextStep}
-          onBackClick={onBackClick}
-          totalSteps={onBoardingModalStepsOrder.length}
-          title={currentContent.title}
-          subtitle={currentContent.subtitle}
-        />
-      )}
-    </Modal>
+    <>
+      <Modal
+        visible={
+          openState !== '' &&
+          !(openState === 'full-on-boarding' && onBoardingModalStepsOrder.length === 0)
+        }
+        destroyOnClose
+        closable={success || modalClosable}
+        maskClosable={modalClosable}
+        keyboard={modalClosable}
+        onCancel={() => afterDoneOnBoarding(!success)}
+        footer={null}
+        className={clsx(
+          styles.DfOnBoardingModal,
+          'DfOnBoardingModal',
+          currentStep === 'signer' && openState === 'partial' && styles.DfOnboardingSignerModal,
+          openState === 'full-on-boarding' && !success && styles.DfOnBoardingModalFull,
+        )}
+      >
+        {currentContent && Component && (
+          <Component
+            loading={loading}
+            success={success}
+            setLoading={setLoading}
+            setSuccess={setSuccess}
+            currentStepIndex={currentStepIndex}
+            firstStepOffset={firstStepOffset}
+            goToNextStep={goToNextStep}
+            onBackClick={onBackClick}
+            totalSteps={onBoardingModalStepsOrder.length}
+            title={currentContent.title}
+            subtitle={currentContent.subtitle}
+          />
+        )}
+      </Modal>
+    </>
   )
 }
 

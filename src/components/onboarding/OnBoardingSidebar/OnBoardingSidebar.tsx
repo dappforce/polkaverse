@@ -38,6 +38,10 @@ const buttonTexts: {
     emoji: '⚡',
     text: 'Get energy',
   },
+  signer: {
+    emoji: '🙅‍♂️',
+    text: 'Remove confirmation pop-ups',
+  },
 }
 
 export interface OnBoardingSidebarProps extends HTMLProps<HTMLDivElement> {

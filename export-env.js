@@ -30,12 +30,15 @@ const varsToExport = [
 
   'GA_ID',
 
+  'HCAPTCHA_SITE_KEY',
+
   'SUBSTRATE_URL',
   'SUBSTRATE_RPC_URL',
   'OFFCHAIN_URL',
   'OFFCHAIN_WS',
   'GRAPHQL_URL',
   'IPFS_NODE_URL',
+  'OFFCHAIN_SIGNER_URL',
 ]
 
 function getSerializedVal(varName) {

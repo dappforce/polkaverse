@@ -7,6 +7,7 @@ import { Form } from 'antd'
 import { useCallback, useEffect } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { useSubsocialApi, useSubstrate } from 'src/components/substrate'
+import { getProxyAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
 import { useSelectProfile } from '../profiles/profilesHooks'
 import {
@@ -122,6 +123,7 @@ const txGenerators: {
       decimals: number
       allData: OnBoardingFullData
       profileSpace: SpaceData | undefined
+      proxyAddress: string
     },
   ) => Promise<any | any[]>
 } = {
@@ -152,6 +154,9 @@ const txGenerators: {
     if (!cid) throw new Error('Unable to save data to IPFS')
     return upsertProfile(api, cid, profileSpace?.id)
   },
+  signer: async ({ api }, _, { proxyAddress }) => {
+    return api.tx.proxy.addProxy(proxyAddress, 'Any', 0)
+  },
 }
 export function useOnBoardingBatchTxs(specificData?: keyof OnBoardingDataTypes) {
   const allData = useAllOnBoardingData()
@@ -163,12 +168,15 @@ export function useOnBoardingBatchTxs(specificData?: keyof OnBoardingDataTypes) 
   return useCallback(async () => {
     if (!myAddress) throw new Error('No address found')
 
+    const proxyAddress = getProxyAddress(myAddress)
+
     const generateBatchData = async (dataKey: keyof OnBoardingDataTypes) => {
       const additionalData = {
         decimals: tokenDecimal,
         myAddress,
         allData,
         profileSpace,
+        proxyAddress: proxyAddress!,
       }
       const generator = txGenerators[dataKey]
       if (!generator) throw new Error(`Batch data with key: ${dataKey} does not exists`)

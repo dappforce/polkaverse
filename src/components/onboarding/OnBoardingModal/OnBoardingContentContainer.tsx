@@ -20,6 +20,7 @@ import {
   resetOnBoardingData,
 } from 'src/rtk/features/onBoarding/onBoardingSlice'
 import styles from './OnBoardingModal.module.sass'
+import CustomFooterAction from './steps/Signer/CustomFooterAction'
 import { OnBoardingContentContainerProps } from './types'
 
 export default function OnBoardingContentContainer({
@@ -42,12 +43,15 @@ export default function OnBoardingContentContainer({
   hideSubmitBtn,
   loadingSubmitBtn,
   showPrivacyPolicy,
+  isUsingCustomFooter = false,
+  signerProps,
 }: OnBoardingContentContainerProps) {
   const openState = useOnBoardingModalOpenState()
   const currentStep = useCurrentOnBoardingStep()
   const dispatch = useAppDispatch()
 
   const isLastStep = totalSteps - 1 <= (currentStepIndex ?? -1)
+
   const shouldSubmitTxWhenContinue = isLastStep || openState === 'partial'
 
   const ContinueBtn = shouldSubmitTxWhenContinue && !customButtonOnClick ? TxButton : Button
@@ -61,14 +65,17 @@ export default function OnBoardingContentContainer({
     subtitle = 'Your profile is ready to use, and you can edit it at any time.'
   }
 
-  const showContinueBtn = !loading && !success && !hideSubmitBtn
+  const showContinueBtn = !loading && !success && !hideSubmitBtn && currentStep !== 'signer'
 
   return (
     <>
       {openState === 'full-on-boarding' && !success && (
         <div className={clsx('d-flex justify-content-between mb-3')}>
           <MutedDiv className={clsx('d-flex align-items-center')}>
-            <ArrowLeftOutlined className='mr-2' onClick={loading ? undefined : onBackClick} />
+            <ArrowLeftOutlined
+              className='mr-2'
+              onClick={!loading ? () => onBackClick() : undefined}
+            />
             <span className='font-weight-bold'>
               Step {currentStepIndex + firstStepOffset}/{totalSteps - 1 + firstStepOffset}
             </span>
@@ -95,6 +102,7 @@ export default function OnBoardingContentContainer({
           styles.ContentContainer,
           !success && 'overflow-auto',
           openState === 'full-on-boarding' && styles.ContentContainerFull,
+          currentStep === 'signer' && styles.ContentImage,
           'scrollbar',
         )}
       >
@@ -116,6 +124,20 @@ export default function OnBoardingContentContainer({
             />
           </MutedDiv>
         )}
+
+        {isUsingCustomFooter && (
+          <CustomFooterAction
+            goToNextStep={goToNextStep}
+            loading={loading}
+            setLoading={setLoading}
+            saveAsDraft={() => {
+              dispatch(markStepAsDraftOnBoardingModal(true))
+            }}
+            isPartial={openState === 'partial'}
+            signerProps={signerProps}
+          />
+        )}
+
         {showContinueBtn && (
           <ContinueBtn
             isFreeTx

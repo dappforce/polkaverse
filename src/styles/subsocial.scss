@@ -1943,11 +1943,27 @@ hr {
   margin-bottom: $space_small;
 }
 
+.DfButtonGroupRoot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  button:first-child {
+    margin-right: 1rem;
+  }
+}
+
 .DfButtonAsMenuItem {
   color: inherit !important;
   padding-left: 0 !important;
   transition: none !important;
   -webkit-transition: none !important;
+}
+
+.DfOnBoardingModal {
+  .ant-modal-close {
+    top: 10px;
+    right: 10px;
+  }
 }
 
 .DfSignInModal {

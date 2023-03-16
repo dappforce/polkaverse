@@ -9,6 +9,7 @@ import type { Signer } from '@polkadot/api/types'
 import { VoidFn } from '@polkadot/api/types'
 import { isEmptyStr, newLogger } from '@subsocial/utils'
 import { useCreateSendGaUserEvent } from 'src/ga'
+import useExternalStorage from 'src/hooks/useExternalStorage'
 import messages from 'src/messages'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
 import { AnyAccountId } from 'src/types'
@@ -17,7 +18,13 @@ import { useAuth } from '../auth/AuthContext'
 import { getCurrentWallet } from '../auth/utils'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { controlledMessage, Message, showErrorMessage, showSuccessMessage } from '../utils/Message'
-import { getWalletBySource } from '../wallets/supportedWallets/index'
+import {
+  isCurrentOffchainAddress,
+  OFFCHAIN_ADDRESS_KEY,
+  OFFCHAIN_TOKEN_KEY,
+} from '../utils/OffchainSigner/ExternalStorage'
+import { isAccountOnboarded, sendOffchainTx } from '../utils/OffchainSigner/OffchainSignerUtils'
+import { getWalletBySource } from '../wallets/supportedWallets'
 import styles from './SubstrateTxButton.module.sass'
 import useToggle from './useToggle'
 const log = newLogger('TxButton')
@@ -86,6 +93,21 @@ function TxButton({
       completedSteps: { hasTokens },
     },
   } = useAuth()
+
+  const { data: offchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY, {
+    storageKeyType: 'user',
+  })
+
+  const { setData: setOffchainAddress } = useExternalStorage(OFFCHAIN_ADDRESS_KEY, {
+    parseStorageToState: data => data === '1',
+    parseStateToStorage: state => (state ? '1' : undefined),
+    storageKeyType: 'user',
+  })
+
+  const isOffchainAddress = isCurrentOffchainAddress(accountId as string)
+
+  const isOffchainSignerTx =
+    !!offchainToken && isOffchainAddress && isAccountOnboarded(accountId as string)
 
   const api = customNodeApi || subsocialApi
 
@@ -191,26 +213,38 @@ function TxButton({
       throw new Error('No account id provided')
     }
 
-    let signer: Signer | undefined
-
-    if (isMobile) {
-      const { web3FromAddress } = await import('@polkadot/extension-dapp')
-      signer = await (await web3FromAddress(accountId.toString())).signer
-    } else {
-      const currentWallet = getCurrentWallet()
-      const wallet = getWalletBySource(currentWallet)
-      signer = wallet?.signer
-    }
-
-    if (!signer) {
-      throw new Error('No signer provided')
-    }
+    let hideRememberMePopup = false
+    if ((tx === 'utility.batch' && offchainToken) || tx === 'proxy.addProxy')
+      hideRememberMePopup = true
 
     try {
       const extrinsic = await getExtrinsic()
 
-      const tx = await extrinsic.signAsync(accountId, { signer })
-      unsub = await tx.send(onSuccessHandler)
+      if (isOffchainSignerTx) {
+        sendOffchainTx(api, extrinsic, offchainToken, onSuccessHandler, onFailedHandler)
+      } else {
+        let signer: Signer | undefined
+
+        if (isMobile) {
+          const { web3FromAddress } = await import('@polkadot/extension-dapp')
+          signer = await (await web3FromAddress(accountId.toString())).signer
+        } else {
+          const currentWallet = getCurrentWallet()
+          const wallet = getWalletBySource(currentWallet)
+          signer = wallet?.signer
+        }
+
+        if (!signer) {
+          throw new Error('No signer provided')
+        }
+
+        const tx = await extrinsic.signAsync(accountId, { signer })
+        if (hideRememberMePopup) {
+          setOffchainAddress(true)
+        }
+        unsub = await tx.send(onSuccessHandler)
+      }
+
       waitMessage.open()
       sendGaEvent()
     } catch (err: any) {

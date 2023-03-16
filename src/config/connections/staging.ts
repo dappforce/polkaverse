@@ -13,6 +13,8 @@ const stagingConfig: SubsocialConfig = {
 
   subIdApiUrl: 'https://sub.id/api/v1',
   subsocialParaId: 2100,
+
+  offchainSignerUrl: 'https://staging-signer.subsocial.network',
 }
 
 export default stagingConfig
