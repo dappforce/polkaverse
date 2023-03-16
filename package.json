@@ -117,7 +117,6 @@
     "graphql": "^15.5.0",
     "graphql-tag": "^2.11.0",
     "isbot": "^3.0.14",
-    "jwt-decode": "^3.1.2",
     "jdenticon": "^3.2.0",
     "jwt-decode": "^3.1.2",
     "localforage": "^1.7.4",
