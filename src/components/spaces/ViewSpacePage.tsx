@@ -83,7 +83,10 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
   const spaceId = idToBn(data.id)
 
   // We need to reverse post ids to display posts in a descending order on a space page.
-  const postIds = (await subsocial.blockchain.postIdsBySpaceId(spaceId)).reverse()
+  const postIds = (await subsocial.blockchain.postIdsBySpaceId(spaceId)).sort((a, b) =>
+    b.sub(a).toNumber(),
+  )
+
   const pageIds = bnsToIds(getPageOfIds(postIds, query))
 
   await dispatch(

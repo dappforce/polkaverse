@@ -1,9 +1,9 @@
 import { TagOutlined } from '@ant-design/icons'
-import { BaseProps } from '@polkadot/react-identicon/types'
 import { isEmptyArray, isEmptyStr, nonEmptyStr } from '@subsocial/utils'
 import { Tag } from 'antd'
 import Link from 'next/link'
 import React from 'react'
+import { BareProps } from './types'
 
 type ViewTagProps = {
   tag?: string
@@ -24,7 +24,7 @@ const ViewTag = React.memo(({ tag }: ViewTagProps) => {
   )
 })
 
-type ViewTagsProps = BaseProps & {
+type ViewTagsProps = BareProps & {
   tags?: string[]
 }
 

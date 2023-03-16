@@ -30,6 +30,10 @@ export function PostPreview(props: PreviewProps) {
 
   if (isUnlisted) return null
 
+  const postContent = postDetails.post.content
+  const isEmptyContent = !isSharedPost && !postContent?.title && !postContent?.body
+  if (isEmptyContent) return null
+
   log.debug('Render a post w/ id:', post.id)
 
   return (

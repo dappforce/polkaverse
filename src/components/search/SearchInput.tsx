@@ -37,7 +37,7 @@ const SpaceFilter = ({ visible, setVisible, space }: SpaceTagProps) => {
         <Tag className={style.SpaceTag} closable onClose={() => setVisible(false)}>
           {' '}
           <>
-            <BaseAvatar address={owner} avatar={image} size={16} />
+            <BaseAvatar identityValue={owner} avatar={image} size={16} />
             <span className={style.SpaceName}>{name}</span>
           </>
         </Tag>

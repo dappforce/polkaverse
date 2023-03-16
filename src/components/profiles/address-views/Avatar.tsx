@@ -11,7 +11,11 @@ export type AvatarProps = BaseAvatarProps & {
 export const Avatar: FC<AvatarProps> = React.memo(
   ({ asLink = true, address, avatarPreview, ...props }) => {
     const baseAvatar = (
-      <BaseAvatar address={address} avatarPreview={avatarPreview && { mask: null }} {...props} />
+      <BaseAvatar
+        identityValue={address}
+        avatarPreview={avatarPreview && { mask: null }}
+        {...props}
+      />
     )
 
     return <>{asLink ? <ViewProfileLink account={{ address }} title={baseAvatar} /> : baseAvatar}</>
