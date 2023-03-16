@@ -73,9 +73,12 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
     form.setFieldsValue({ [fieldName('confirmationCode')]: value })
   }
 
+  const CODE_DIGIT = 6
+  const patternToMatch = new RegExp(`^[0-9]{${CODE_DIGIT}}$`)
+
   const handleValuesChange = (_: FormValues, allValues: FormValues) => {
     const isFilled = Object.values(allValues).every(value => Boolean(value))
-    const isValidConfirmationCode = /^[0-9]{8}$/.test(allValues.confirmationCode.toString())
+    const isValidConfirmationCode = patternToMatch.test(allValues.confirmationCode.toString())
     const isValid = isFilled && isValidConfirmationCode
     setIsFormValid(isValid)
   }
@@ -100,22 +103,19 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
           validateTrigger='onBlur'
           rules={[
             {
-              pattern: /^[0-9]{8}$/,
+              pattern: patternToMatch,
               message: 'Please enter a valid confirmation code.',
             },
           ]}
         >
           <AuthCode
-            length={8}
+            length={CODE_DIGIT}
             allowedCharacters='numeric'
             onChange={handleChange}
             inputClassName={styles.InputOTP}
           />
         </Form.Item>
 
-        {
-          //TODO: call api onclick
-        }
         <CountdownTimerButton
           className={styles.ButtonLinkMedium}
           baseLabel='Resend code'
