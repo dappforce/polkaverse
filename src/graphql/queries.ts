@@ -422,6 +422,8 @@ export const GET_ACTIVITY_COUNTS = gql`
           PostShared
           AccountFollowed
           SpaceFollowed
+          AccountUnfollowed
+          SpaceUnfollowed
           PostReactionCreated
         ]
       }
@@ -462,7 +464,10 @@ export const GET_ACTIVITY_COUNTS = gql`
     }
     follows: activitiesConnection(
       orderBy: id_ASC
-      where: { account: { id_eq: $address }, event_in: [AccountFollowed, SpaceFollowed] }
+      where: {
+        account: { id_eq: $address }
+        event_in: [AccountFollowed, SpaceFollowed, AccountUnfollowed, SpaceUnfollowed]
+      }
     ) {
       totalCount
     }
@@ -516,7 +521,7 @@ export const GET_FOLLOW_ACTIVITIES = gql`
   query GetFollowActivities($address: String!, $offset: Int = 0, $limit: Int!) {
     accountById(id: $address) {
       activities(
-        where: { event_in: [AccountFollowed, SpaceFollowed] }
+        where: { event_in: [AccountFollowed, SpaceFollowed, AccountUnfollowed, SpaceUnfollowed] }
         limit: $limit
         offset: $offset
         orderBy: date_DESC

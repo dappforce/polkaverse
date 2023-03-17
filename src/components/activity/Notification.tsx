@@ -4,6 +4,7 @@ import {
   MessageOutlined,
   ShareAltOutlined,
   UserAddOutlined,
+  UserDeleteOutlined,
 } from '@ant-design/icons'
 import { nonEmptyStr } from '@subsocial/utils'
 import { summarize } from '@subsocial/utils/summarize'
@@ -85,6 +86,8 @@ const iconProps = {
 const iconByEvent: Record<string, React.ReactNode> = {
   AccountFollowed: <UserAddOutlined {...iconProps} />,
   SpaceFollowed: <UserAddOutlined {...iconProps} />,
+  AccountUnfollowed: <UserDeleteOutlined {...iconProps} />,
+  SpaceUnfollowed: <UserDeleteOutlined {...iconProps} />,
   SpaceCreated: <HomeOutlined {...iconProps} />,
   PostCreated: <ShareAltOutlined {...iconProps} />,
   CommentCreated: <MessageOutlined {...iconProps} />,
@@ -281,6 +284,10 @@ export const Notification = React.memo((props: NotificationProps) => {
     case 'AccountFollowed':
       return <AccountNotification {...props} />
     case 'SpaceFollowed':
+      return <SpaceNotification {...props} />
+    case 'AccountUnfollowed':
+      return <AccountNotification {...props} />
+    case 'SpaceUnfollowed':
       return <SpaceNotification {...props} />
     case 'SpaceCreated':
       return <SpaceNotification {...props} />

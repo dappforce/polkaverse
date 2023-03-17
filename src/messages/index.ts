@@ -23,6 +23,8 @@ export default {
   notifications: {
     AccountFollowed: 'followed your account',
     SpaceFollowed: 'followed your space',
+    AccountUnfollowed: 'unfollowed your account',
+    SpaceUnfollowed: 'unfollowed your account',
     SpaceCreated: 'created a new space',
     CommentCreated: 'commented on your post',
     CommentReplyCreated: 'replied to your comment on',
@@ -34,6 +36,8 @@ export default {
   activities: {
     AccountFollowed: 'followed the account',
     SpaceFollowed: 'followed the space',
+    AccountUnfollowed: 'unfollowed the account',
+    SpaceUnfollowed: 'unfollowed the space',
     SpaceCreated: 'created the space',
     PostCreated: 'created the post',
     PostSharing: 'shared the post',
