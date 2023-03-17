@@ -9,17 +9,19 @@ import {
 import { nonEmptyStr } from '@subsocial/utils'
 import { summarize } from '@subsocial/utils/summarize'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NAME_MAX_LEN } from 'src/config/ValidationsConfig'
 import messages from 'src/messages'
 import { useSelectPost, useSelectProfile, useSelectSpace } from 'src/rtk/app/hooks'
-import { Activity, asCommentData, asSharedPostStruct, PostData } from 'src/types'
+import { useAppDispatch } from 'src/rtk/app/store'
+import { fetchPost } from 'src/rtk/features/posts/postsSlice'
+import { Activity, asCommentData, asSharedPostStruct, DataSourceTypes, PostData } from 'src/types'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import ViewPostLink from '../posts/ViewPostLink'
 import Avatar from '../profiles/address-views/Avatar'
 import Name from '../profiles/address-views/Name'
 import { ViewSpace } from '../spaces/ViewSpace'
-import { equalAddresses } from '../substrate'
+import { equalAddresses, useSubsocialApi } from '../substrate'
 import { accountUrl, postUrl, spaceUrl } from '../urls'
 import { formatDate } from '../utils'
 import { DfBgImageLink } from '../utils/DfBgImg'
@@ -201,6 +203,13 @@ const PostNotification = (props: NotificationProps) => {
   const { postId, event } = props
   const postDetails = useSelectPost(postId)
 
+  const dispatch = useAppDispatch()
+  const { subsocial: api } = useSubsocialApi()
+  useEffect(() => {
+    if (!postId) return
+    dispatch(fetchPost({ id: postId, api, dataSource: DataSourceTypes.SQUID }))
+  }, [dispatch])
+
   let originalPostId = ''
   if (postDetails && postDetails.post.struct.isSharedPost) {
     const sharedPost = asSharedPostStruct(postDetails?.post.struct)
@@ -250,12 +259,18 @@ const PostNotification = (props: NotificationProps) => {
 
 const CommentNotification = (props: NotificationProps) => {
   const { commentId } = props
+  const dispatch = useAppDispatch()
+  const { subsocial: api } = useSubsocialApi()
   const commentDetails = useSelectPost(commentId)
 
   const rootPostId = commentDetails
     ? asCommentData(commentDetails.post)?.struct?.rootPostId
     : undefined
   const postDetails = useSelectPost(rootPostId)
+  useEffect(() => {
+    if (!rootPostId) return
+    dispatch(fetchPost({ id: rootPostId, api, dataSource: DataSourceTypes.SQUID }))
+  }, [dispatch, rootPostId])
 
   if (!postDetails) return null
 
