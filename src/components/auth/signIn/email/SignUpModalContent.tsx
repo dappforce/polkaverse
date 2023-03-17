@@ -22,6 +22,9 @@ import useExternalStorage from 'src/hooks/useExternalStorage'
 import { StepsEnum, useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 
+import config from 'src/config'
+const { offchainSignerUrl } = config
+
 type FormValues = {
   email: string
   password: string
@@ -138,6 +141,7 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
   }
 
   console.log('the sitekey:', { hCaptchaSiteKey })
+  console.log('offchain signer url: ', { offchainSignerUrl })
 
   const isError = isStr(error)
 
