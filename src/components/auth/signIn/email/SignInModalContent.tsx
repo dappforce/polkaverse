@@ -121,8 +121,6 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
 
   const isError = isStr(error)
 
-  console.log('sitekey: ', { hCaptchaSiteKey })
-
   return (
     <Form form={form} onValuesChange={handleValuesChange}>
       <div className={styles.SignInModalContent}>
