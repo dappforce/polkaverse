@@ -24,7 +24,7 @@ export default {
     AccountFollowed: 'followed your account',
     SpaceFollowed: 'followed your space',
     AccountUnfollowed: 'unfollowed your account',
-    SpaceUnfollowed: 'unfollowed your account',
+    SpaceUnfollowed: 'unfollowed your space',
     SpaceCreated: 'created a new space',
     CommentCreated: 'commented on your post',
     CommentReplyCreated: 'replied to your comment on',
