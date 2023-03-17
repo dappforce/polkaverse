@@ -137,6 +137,8 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
     return Promise.resolve()
   }
 
+  console.log('sitekey: ', { hCaptchaSiteKey })
+
   const isError = isStr(error)
 
   return (
