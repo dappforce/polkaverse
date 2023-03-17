@@ -1,4 +1,4 @@
-import { isFunction } from '@polkadot/util'
+import { AxiosError } from 'axios'
 import { OffchainSignerEndpoint, sendHttpRequest, SendHttpRequestProps } from './utils'
 
 type EmailSignUpProps = {
@@ -36,10 +36,17 @@ export type JwtPayload = {
   exp: number
 }
 
-export const requestProof = async (
-  accountAddress: string,
-  onFailedCallback?: (err: Error) => void,
-) => {
+interface Error {
+  message: string[]
+  statusCode: number
+}
+
+export function getErrorMessage(error: unknown) {
+  const err = error as AxiosError<Error>
+  return err.response?.data?.message ?? err.message
+}
+
+export const requestProof = async (accountAddress: string) => {
   const data = {
     accountAddress,
   }
@@ -50,44 +57,35 @@ export const requestProof = async (
       data,
     },
     method: 'POST',
-    onFaileReturnedValue:
-      isFunction(onFailedCallback) && onFailedCallback(new Error('Failed to generate proof')),
+    onFaileReturnedValue: undefined,
     onFailedText: 'Failed to generate proof',
   })
 
   return res
 }
 
-export const addressSignIn = async (
-  props: AddressSignInProps,
-  onFailedCallback: (err: Error) => void,
-) => {
+export const addressSignIn = async (props: AddressSignInProps) => {
   const res = await sendHttpRequest({
     params: {
       url: OffchainSignerEndpoint.ADDRESS_SIGN_IN,
       data: props,
     },
     method: 'POST',
-    onFaileReturnedValue:
-      isFunction(onFailedCallback) && onFailedCallback(new Error('Failed to sign in with address')),
+    onFaileReturnedValue: undefined,
     onFailedText: 'Failed to sign in with address',
   })
 
   return res
 }
 
-export const emailSignUp = async (
-  props: EmailSignUpProps,
-  onFailedCallback: (err: Error) => void,
-) => {
+export const emailSignUp = async (props: EmailSignUpProps) => {
   const res = await sendHttpRequest({
     params: {
       url: OffchainSignerEndpoint.SIGNUP,
       data: props,
     },
     method: 'POST',
-    onFaileReturnedValue:
-      isFunction(onFailedCallback) && onFailedCallback(new Error('Failed to sign up with email')),
+    onFaileReturnedValue: undefined,
     onFailedText: 'Failed to sign up with email',
   })
 
@@ -134,28 +132,21 @@ export const resendEmailConfirmation = async (accessToken: string) => {
   return res
 }
 
-export const emailSignIn = async (
-  props: EmailSignInProps,
-  onFailedCallback: (err: Error) => void,
-) => {
+export const emailSignIn = async (props: EmailSignInProps) => {
   const res = await sendHttpRequest({
     params: {
       url: OffchainSignerEndpoint.SIGNIN,
       data: props,
     },
     method: 'POST',
-    onFaileReturnedValue:
-      isFunction(onFailedCallback) && onFailedCallback(new Error('Failed to sign in with email')),
+    onFaileReturnedValue: undefined,
     onFailedText: 'Failed to sign in with email',
   })
 
   return res
 }
 
-export const fetchMainProxyAddress = async (
-  accessToken: string,
-  onFailedCallback?: (err: Error) => void,
-) => {
+export const fetchMainProxyAddress = async (accessToken: string) => {
   const res = await sendHttpRequest({
     params: {
       url: OffchainSignerEndpoint.FETCH_MAIN_PROXY,
@@ -166,8 +157,7 @@ export const fetchMainProxyAddress = async (
       },
     },
     method: 'GET',
-    onFaileReturnedValue:
-      isFunction(onFailedCallback) && onFailedCallback(new Error('Failed to fetch proxy address')),
+    onFaileReturnedValue: undefined,
     onFailedText: 'Failed to fetch proxy address',
   })
 

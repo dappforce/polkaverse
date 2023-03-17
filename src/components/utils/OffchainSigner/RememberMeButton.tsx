@@ -156,7 +156,7 @@ function RememberMeButton({
     }
 
     try {
-      const dataMessage = await requestProof(myAddress, onFailedHandler)
+      const dataMessage = await requestProof(myAddress)
       const { jwt: proof } = dataMessage
 
       const signedProof = await signMessage(proof)
@@ -172,7 +172,7 @@ function RememberMeButton({
         hcaptchaResponse,
       }
 
-      const dataSignature = await addressSignIn(props, onFailedHandler)
+      const dataSignature = await addressSignIn(props)
       const { accessToken, refreshToken } = dataSignature
 
       setAuthOnRequest(accessToken)
@@ -180,10 +180,7 @@ function RememberMeButton({
       setOffchainToken(accessToken, myAddress)
       setOffchainRefreshToken(refreshToken, myAddress)
 
-      const { address: mainProxyAddress } = await fetchMainProxyAddress(
-        accessToken,
-        onFailedHandler,
-      )
+      const { address: mainProxyAddress } = await fetchMainProxyAddress(accessToken)
       setProxyAddress(mainProxyAddress, myAddress)
       onSuccessAuth()
     } catch (err: any) {

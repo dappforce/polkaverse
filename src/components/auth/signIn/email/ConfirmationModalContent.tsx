@@ -1,9 +1,11 @@
+import { isStr } from '@subsocial/utils'
 import { Button, Form } from 'antd'
 import jwtDecode from 'jwt-decode'
 import { useState } from 'react'
 import AuthCode from 'react-auth-code-input'
 import {
   confirmEmail,
+  getErrorMessage,
   JwtPayload,
   resendEmailConfirmation,
 } from 'src/components/utils/OffchainSigner/api/requests'
@@ -40,6 +42,7 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
   const [form] = Form.useForm()
 
   const [isFormValid, setIsFormValid] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   if (!mnemonic) return null
   const { address: userAddress } = generateKeypairBySecret(mnemonic)
@@ -65,7 +68,8 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
       setCurrentStep(StepsEnum.ShowMnemonic)
     } catch (error) {
-      console.warn({ error })
+      const errorMessage = getErrorMessage(error)
+      setError(errorMessage as string)
     }
   }
 
@@ -94,12 +98,14 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
     }
   }
 
+  const isError = isStr(error)
+
   return (
     <Form form={form} onValuesChange={handleValuesChange} onFinish={handleSubmit}>
       <div className={styles.ConfirmationStepContent}>
         <Form.Item
           name={fieldName('confirmationCode')}
-          className='mb-0'
+          className={styles.CodeFormItem}
           validateTrigger='onBlur'
           rules={[
             {
@@ -107,18 +113,17 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
               message: 'Please enter a valid confirmation code.',
             },
           ]}
+          help={error}
+          validateStatus={isError ? 'error' : undefined}
         >
           <AuthCode
             length={CODE_DIGIT}
             allowedCharacters='numeric'
             onChange={handleChange}
-            inputClassName={styles.InputOTP}
+            inputClassName={isError ? styles.InputOTPError : styles.InputOTP}
           />
         </Form.Item>
 
-        {
-          //TODO: call api onclick
-        }
         <CountdownTimerButton
           className={styles.ButtonLinkMedium}
           baseLabel='Resend code'
@@ -126,7 +131,13 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
           onClick={handleResendCode}
         />
 
-        <Button type='primary' size='large' htmlType='submit' disabled={!isFormValid} block>
+        <Button
+          type='primary'
+          size='large'
+          htmlType='submit'
+          disabled={!isFormValid || isError}
+          block
+        >
           Confirm
         </Button>
       </div>

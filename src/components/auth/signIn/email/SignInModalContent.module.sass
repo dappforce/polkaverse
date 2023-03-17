@@ -53,6 +53,26 @@
     &:hover
         color: $color_link_hover
 
+.BaseFormItem
+    margin-bottom: 0
+    :global(.ant-form-item-explain)
+        font-weight: 400
+        font-size: 14px
+        line-height: 19px
+        color: $color_error
+
+.BaseFormItemError
+    @extend .BaseFormItem
+    border-color: $color_error
+
+.CodeFormItem
+    @extend .BaseFormItem
+    :global(.ant-form-item-explain)
+        text-align: center
+        margin-right: 10px
+        margin-top: 0.5rem
+
+
 .InputOTP
   width: 40px
   height: 44px
@@ -70,6 +90,10 @@
   border-radius: 12px
   background: #fafafa
   background-clip: padding-box
+
+.InputOTPError
+    @extend .InputOTP
+    border: 1px solid $color_error
 
 .InputOTP:focus
   appearance: none

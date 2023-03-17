@@ -48,15 +48,11 @@ export const setAuthOnRequest = (accessToken: string) => {
 
 type SendRequestProps = {
   request: () => Promise<AxiosResponse<any, any>>
-  onFaileReturnedValue: any
   onFailedText: string
+  onFaileReturnedValue?: any
 }
 
-export const sendRequest = async ({
-  request,
-  onFaileReturnedValue,
-  onFailedText,
-}: SendRequestProps) => {
+export const sendRequest = async ({ request, onFailedText }: SendRequestProps) => {
   try {
     const res = await request()
     if (res.status !== 200) {
@@ -65,8 +61,7 @@ export const sendRequest = async ({
 
     return res.data
   } catch (err) {
-    console.error(onFailedText, err)
-    return onFaileReturnedValue
+    return Promise.reject(err)
   }
 }
 

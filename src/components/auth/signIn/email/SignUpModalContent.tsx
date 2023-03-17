@@ -1,11 +1,17 @@
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { Keyring } from '@polkadot/api'
 import { stringToU8a, u8aToHex } from '@polkadot/util'
+import { isStr } from '@subsocial/utils'
 import { Button, Form, Input } from 'antd'
+import clsx from 'clsx'
 import { RuleObject } from 'rc-field-form/lib/interface'
 import { useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
-import { emailSignUp, requestProof } from 'src/components/utils/OffchainSigner/api/requests'
+import {
+  emailSignUp,
+  getErrorMessage,
+  requestProof,
+} from 'src/components/utils/OffchainSigner/api/requests'
 import {
   OFFCHAIN_REFRESH_TOKEN_KEY,
   OFFCHAIN_TOKEN_KEY,
@@ -74,10 +80,6 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
     }
   }, [token])
 
-  const onFailedCallback = (err: Error) => {
-    setError(err.message)
-  }
-
   const handleSubmit = async (values: FormValues, token: string) => {
     try {
       const keyring = new Keyring({ type: 'sr25519' })
@@ -101,7 +103,7 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
         hcaptchaResponse: token,
       }
 
-      const data = await emailSignUp(props, onFailedCallback)
+      const data = await emailSignUp(props)
       const { accessToken, refreshToken } = data
 
       // save to local storage for usage in ConfirmationModal
@@ -114,7 +116,8 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
       setCurrentStep(StepsEnum.Confirmation)
     } catch (error) {
-      console.warn({ error })
+      const errorMessage = getErrorMessage(error)
+      setError(errorMessage as string)
     }
   }
 
@@ -134,14 +137,18 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
     return Promise.resolve()
   }
 
+  const isError = isStr(error)
+
   return (
     <Form form={form} onValuesChange={handleValuesChange}>
       <div className={styles.SignInModalContent}>
         <Form.Item
           name={fieldName('email')}
-          className='mb-0'
+          className={clsx(styles.BaseFormItem, isError && styles.BaseFormItemError)}
           validateTrigger='onBlur'
           rules={[{ pattern: /\S+@\S+\.\S+/, message: 'Please enter a valid email address.' }]}
+          help={error}
+          validateStatus={isStr(error) ? 'error' : undefined}
         >
           <Input
             required
@@ -156,7 +163,7 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
         <Form.Item
           name={fieldName('password')}
-          className='mb-0'
+          className={clsx(styles.BaseFormItem, isError && styles.BaseFormItemError)}
           validateTrigger='onBlur'
           rules={[
             {
@@ -180,11 +187,9 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
         <Form.Item
           name={fieldName('repeatPassword')}
-          className='mb-0'
+          className={clsx(styles.BaseFormItem, isError && styles.BaseFormItemError)}
           validateTrigger='onBlur'
           rules={[{ validator: validateRepeatPassword }]}
-          help={error}
-          validateStatus='error'
         >
           <Input
             required

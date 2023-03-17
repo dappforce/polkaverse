@@ -1,10 +1,13 @@
 import HCaptcha from '@hcaptcha/react-hcaptcha'
+import { isStr } from '@subsocial/utils'
 import { Button, Form, Input } from 'antd'
+import clsx from 'clsx'
 import jwtDecode from 'jwt-decode'
 import { useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
 import {
   emailSignIn,
+  getErrorMessage,
   JwtPayload,
   resendEmailConfirmation,
 } from 'src/components/utils/OffchainSigner/api/requests'
@@ -73,10 +76,6 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
     }
   }, [token])
 
-  const onFailedCallback = (err: Error) => {
-    setError(err.message)
-  }
-
   const handleSubmit = async (values: FormValues, token: string) => {
     const { email, password } = values
     try {
@@ -86,7 +85,8 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
         hcaptchaResponse: token,
       }
 
-      const data = await emailSignIn(props, onFailedCallback)
+      const data = await emailSignIn(props)
+
       const { accessToken, refreshToken } = data
 
       const decoded = jwtDecode<JwtPayload>(accessToken)
@@ -106,7 +106,8 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
         setOffchainRefreshToken(refreshToken, accountAddress)
       }
     } catch (error) {
-      console.warn({ error })
+      const errorMessage = getErrorMessage(error)
+      setError(errorMessage as string)
     }
   }
 
@@ -118,14 +119,17 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
     setIsFormValid(isValid)
   }
 
+  const isError = isStr(error)
+
   return (
     <Form form={form} onValuesChange={handleValuesChange}>
       <div className={styles.SignInModalContent}>
         <Form.Item
           name={fieldName('email')}
-          className='mb-0'
+          className={clsx(styles.BaseFormItem, isError && styles.BaseFormItemError)}
           validateTrigger='onBlur'
           rules={[{ pattern: /\S+@\S+\.\S+/, message: 'Please enter a valid email address.' }]}
+          validateStatus={isStr(error) ? 'error' : undefined}
         >
           <Input
             required
@@ -140,7 +144,7 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
 
         <Form.Item
           name={fieldName('password')}
-          className='mb-0'
+          className={clsx(styles.BaseFormItem, isError && styles.BaseFormItemError)}
           validateTrigger='onBlur'
           rules={[
             {
@@ -151,7 +155,7 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
             },
           ]}
           help={error}
-          validateStatus={'error'}
+          validateStatus={isStr(error) ? 'error' : undefined}
         >
           <Input
             required
