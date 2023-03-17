@@ -425,6 +425,14 @@ export const GET_ACTIVITY_COUNTS = gql`
           AccountUnfollowed
           SpaceUnfollowed
           PostReactionCreated
+          PostReactionUpdated
+          PostReactionDeleted
+          CommentReactionCreated
+          CommentReactionUpdated
+          CommentReactionDeleted
+          CommentReplyReactionCreated
+          CommentReplyReactionUpdated
+          CommentReplyReactionDeleted
         ]
       }
     ) {
@@ -458,7 +466,20 @@ export const GET_ACTIVITY_COUNTS = gql`
     }
     reactions: activitiesConnection(
       orderBy: id_ASC
-      where: { account: { id_eq: $address }, event_in: [PostReactionCreated] }
+      where: {
+        account: { id_eq: $address }
+        event_in: [
+          PostReactionCreated
+          PostReactionUpdated
+          PostReactionDeleted
+          CommentReactionCreated
+          CommentReactionUpdated
+          CommentReactionDeleted
+          CommentReplyReactionCreated
+          CommentReplyReactionUpdated
+          CommentReplyReactionDeleted
+        ]
+      }
     ) {
       totalCount
     }
@@ -491,6 +512,14 @@ export const GET_ALL_ACTIVITY = gql`
             AccountFollowed
             SpaceFollowed
             PostReactionCreated
+            PostReactionUpdated
+            PostReactionDeleted
+            CommentReactionCreated
+            CommentReactionUpdated
+            CommentReactionDeleted
+            CommentReplyReactionCreated
+            CommentReplyReactionUpdated
+            CommentReplyReactionDeleted
           ]
         }
         limit: $limit
@@ -543,7 +572,19 @@ export const GET_REACTION_ACTIVITIES = gql`
   query GetReactionActivities($address: String!, $offset: Int = 0, $limit: Int!) {
     accountById(id: $address) {
       activities(
-        where: { event_in: [PostReactionCreated, CommentReactionCreated] }
+        where: {
+          event_in: [
+            PostReactionCreated
+            PostReactionUpdated
+            PostReactionDeleted
+            CommentReactionCreated
+            CommentReactionUpdated
+            CommentReactionDeleted
+            CommentReplyReactionCreated
+            CommentReplyReactionUpdated
+            CommentReplyReactionDeleted
+          ]
+        }
         limit: $limit
         offset: $offset
         orderBy: date_DESC

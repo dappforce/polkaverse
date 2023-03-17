@@ -95,7 +95,14 @@ const iconByEvent: Record<string, React.ReactNode> = {
   PostShared: <ShareAltOutlined {...iconProps} />,
   CommentShared: <ShareAltOutlined {...iconProps} />,
   PostReactionCreated: <LikeOutlined {...iconProps} />,
+  PostReactionUpdated: <LikeOutlined {...iconProps} />,
+  PostReactionDeleted: <LikeOutlined {...iconProps} />,
   CommentReactionCreated: <LikeOutlined {...iconProps} />,
+  CommentReactionUpdated: <LikeOutlined {...iconProps} />,
+  CommentReactionDeleted: <LikeOutlined {...iconProps} />,
+  CommentReplyReactionCreated: <LikeOutlined {...iconProps} />,
+  CommentReplyReactionUpdated: <LikeOutlined {...iconProps} />,
+  CommentReplyReactionDeleted: <LikeOutlined {...iconProps} />,
 }
 
 export function InnerNotification(props: InnerNotificationProps) {
@@ -134,7 +141,7 @@ export function InnerNotification(props: InnerNotificationProps) {
             <Name owner={owner} address={account} />
             <span className='DfActivityMsg'>
               <NotificationMessage
-                msg={customMsg || eventMsg[event]}
+                msg={customMsg || eventMsg[event] || 'Unknown event'}
                 aggregationCount={aggCount}
                 withAggregation={msgType === 'notifications'}
               />
@@ -282,11 +289,9 @@ export const Notification = React.memo((props: NotificationProps) => {
 
   switch (eventName) {
     case 'AccountFollowed':
-      return <AccountNotification {...props} />
-    case 'SpaceFollowed':
-      return <SpaceNotification {...props} />
     case 'AccountUnfollowed':
       return <AccountNotification {...props} />
+    case 'SpaceFollowed':
     case 'SpaceUnfollowed':
       return <SpaceNotification {...props} />
     case 'SpaceCreated':
@@ -300,6 +305,14 @@ export const Notification = React.memo((props: NotificationProps) => {
     case 'CommentShared':
       return <CommentNotification {...props} />
     case 'PostReactionCreated':
+    case 'PostReactionUpdated':
+    case 'PostReactionDeleted':
+    case 'CommentReactionCreated':
+    case 'CommentReactionUpdated':
+    case 'CommentReactionDeleted':
+    case 'CommentReplyReactionCreated':
+    case 'CommentReplyReactionUpdated':
+    case 'CommentReplyReactionDeleted':
       return <PostNotification {...props} />
     case 'CommentReactionCreated':
       return <CommentNotification {...props} />

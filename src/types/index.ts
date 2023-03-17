@@ -1,13 +1,14 @@
-import { EventsName as _EventsName, SpaceContent } from '@subsocial/api/types'
+import { SpaceContent } from '@subsocial/api/types'
 import { bnsToIds, bnToId, idsToBns, idToBn } from '@subsocial/utils/bn'
 import { ReactionId, ReactionType, SpaceData } from 'src/types'
+import { EventName } from './graphql-global-types'
 
 export * from '@subsocial/api/subsocial/flatteners'
 export * from '@subsocial/api/subsocial/flatteners/utils'
 export * from '@subsocial/api/types'
 export * from '@subsocial/elasticsearch/types'
 export { idToBn, bnToId, idsToBns, bnsToIds }
-export type EventsName = _EventsName | 'AccountUnfollowed' | 'SpaceUnfollowed'
+export type EventsName = EventName
 
 export type ProfileData = SpaceData
 
