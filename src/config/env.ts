@@ -16,8 +16,6 @@ export const maintenanceMsg = getEnv('MAINTENANCE_TEXT')
 
 export const gaId = getEnv('GA_ID') || ''
 
-export const hCaptchaSiteKey = getEnv('HCAPTCHA_SITE_KEY') || ''
-
 export const appOverrides: Partial<AppConfig> = {
   appBaseUrl: getEnv('APP_BASE_URL'),
 }
@@ -47,7 +45,7 @@ export const connectionsOverrides: Partial<ConnectionsSettings> = {
   offchainSignerUrl: getEnv('OFFCHAIN_SIGNER_URL'),
 }
 
-function getEnv(varName: string): string | undefined {
+export function getEnv(varName: string): string | undefined {
   const { env } = process
   return env[varName]
 }

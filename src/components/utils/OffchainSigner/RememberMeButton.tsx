@@ -16,7 +16,6 @@ import { useResponsiveSize } from 'src/components/responsive'
 import { useSubstrate } from 'src/components/substrate'
 import useToggle from 'src/components/substrate/useToggle'
 import { getWalletBySource } from 'src/components/wallets/supportedWallets'
-import { hCaptchaSiteKey } from 'src/config/env'
 import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
 import { showErrorMessage } from '../Message'
 const log = newLogger('RememberMeButton')
@@ -201,7 +200,7 @@ function RememberMeButton({
       </Component>
       <HCaptcha
         size='invisible'
-        sitekey={hCaptchaSiteKey}
+        sitekey={config.hCaptchaSiteKey}
         onVerify={setToken}
         onLoad={() => {
           setCaptchaReady(true)
