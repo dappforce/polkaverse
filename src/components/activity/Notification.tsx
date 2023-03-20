@@ -316,9 +316,9 @@ export const Notification = React.memo((props: NotificationProps) => {
     case 'CommentReplyCreated':
       return <CommentNotification {...props} />
     case 'PostShared':
-      return <PostNotification {...props} />
     case 'CommentShared':
-      return <CommentNotification {...props} />
+    case 'CommentReplyShared':
+      return <PostNotification {...props} />
     case 'PostReactionCreated':
     case 'PostReactionUpdated':
     case 'PostReactionDeleted':
