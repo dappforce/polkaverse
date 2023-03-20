@@ -260,18 +260,12 @@ const PostNotification = (props: NotificationProps) => {
 
 const CommentNotification = (props: NotificationProps) => {
   const { commentId } = props
-  const dispatch = useAppDispatch()
-  const { subsocial: api } = useSubsocialApi()
   const commentDetails = useSelectPost(commentId)
 
   const rootPostId = commentDetails
     ? asCommentData(commentDetails.post)?.struct?.rootPostId
     : undefined
   const postDetails = useSelectPost(rootPostId)
-  useEffect(() => {
-    if (!rootPostId) return
-    dispatch(fetchPost({ id: rootPostId, api, dataSource: DataSourceTypes.SQUID }))
-  }, [dispatch, rootPostId])
 
   if (!postDetails) return null
 
