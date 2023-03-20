@@ -218,7 +218,6 @@ const PostNotification = (props: NotificationProps) => {
   }
   const sharedPostOriginal = useSelectPost(originalPostId)
 
-  console.log(event, postDetails)
   if (!postDetails) return null
 
   const { post } = postDetails
