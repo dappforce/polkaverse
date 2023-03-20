@@ -725,7 +725,9 @@ export const GET_NOTIFICATIONS = gql`
 
 export const GET_ADDRESS_POSTS_REACTION = gql`
   query GetAddressPostsReaction($address: String!, $postIds: [String!]!) {
-    reactions(where: { post: { id_in: $postIds }, account: { id_eq: $address } }) {
+    reactions(
+      where: { status_eq: Active, post: { id_in: $postIds }, account: { id_eq: $address } }
+    ) {
       id
       kind
       post {
