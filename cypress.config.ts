@@ -10,6 +10,9 @@ export default defineConfig({
 
       fresh_account: '5HbAUnWjfS6xix33S5RMi1R99oG2TDMraQSRY4bP3fvycbSa',
       account_with_energy: '5FHYXx3iHURLfdNk5svSQMuZA7nvzsk5CfwFtQMtivYWcYjG',
+
+      // related to sign up with email
+      offchainSignerApiBaseUrl: 'https://staging-signer.subsocial.network',
     },
   },
 })
