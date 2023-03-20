@@ -218,6 +218,7 @@ const PostNotification = (props: NotificationProps) => {
   }
   const sharedPostOriginal = useSelectPost(originalPostId)
 
+  console.log(event, postDetails)
   if (!postDetails) return null
 
   const { post } = postDetails
@@ -323,14 +324,13 @@ export const Notification = React.memo((props: NotificationProps) => {
     case 'PostReactionCreated':
     case 'PostReactionUpdated':
     case 'PostReactionDeleted':
+      return <PostNotification {...props} />
     case 'CommentReactionCreated':
     case 'CommentReactionUpdated':
     case 'CommentReactionDeleted':
     case 'CommentReplyReactionCreated':
     case 'CommentReplyReactionUpdated':
     case 'CommentReplyReactionDeleted':
-      return <PostNotification {...props} />
-    case 'CommentReactionCreated':
       return <CommentNotification {...props} />
     case 'PostCreated':
       return <PostNotification {...props} />
