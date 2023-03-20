@@ -96,6 +96,7 @@ const iconByEvent: Record<string, React.ReactNode> = {
   CommentReplyCreated: <MessageOutlined {...iconProps} />,
   PostShared: <ShareAltOutlined {...iconProps} />,
   CommentShared: <ShareAltOutlined {...iconProps} />,
+  CommentReplyShared: <ShareAltOutlined {...iconProps} />,
   PostReactionCreated: <LikeOutlined {...iconProps} />,
   PostReactionUpdated: <LikeOutlined {...iconProps} />,
   PostReactionDeleted: <LikeOutlined {...iconProps} />,
