@@ -45,7 +45,9 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
   const [error, setError] = useState<string | null>(null)
 
   const [token, setToken] = useState<string | undefined>()
-  const [, setCaptchaReady] = useState(false)
+  const [captchaReady, setCaptchaReady] = useState(false)
+  const [loading, setLoading] = useState(false)
+
   const hCaptchaRef = useRef(null)
 
   const onExpire = () => {
@@ -57,6 +59,7 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
   }
 
   const onLoad = () => {
+    setLoading(false)
     // this reaches out to the hCaptcha JS API and runs the
     // execute function on it. you can use other functions as
     // documented here:
@@ -119,6 +122,10 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
     setIsFormValid(isValid)
   }
 
+  const handleCreateAccount = () => {
+    setCurrentStep(StepsEnum.SignUp)
+  }
+
   const isError = isStr(error)
 
   return (
@@ -172,8 +179,9 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
           type='primary'
           size='large'
           htmlType='submit'
-          disabled={!isFormValid}
+          disabled={!isFormValid || loading || !captchaReady}
           onClick={() => {
+            setLoading(true)
             onLoad()
           }}
           block
@@ -194,11 +202,7 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
         <div className='d-flex justify-content-center align-items-center'>
           <MutedDiv className='font-weight-normal FontNormal'>
             New user?
-            <Button
-              className={styles.ButtonLinkDiv}
-              type='link'
-              onClick={() => setCurrentStep(StepsEnum.SignUp)}
-            >
+            <Button className={styles.ButtonLinkDiv} type='link' onClick={handleCreateAccount}>
               Create account
             </Button>
           </MutedDiv>

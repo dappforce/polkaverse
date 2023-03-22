@@ -46,7 +46,9 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
   const [error, setError] = useState<string | null>(null)
 
   const [token, setToken] = useState<string | undefined>()
-  const [, setCaptchaReady] = useState(false)
+  const [captchaReady, setCaptchaReady] = useState(false)
+  const [loading, setLoading] = useState(false)
+
   const hCaptchaRef = useRef(null)
 
   const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY)
@@ -61,6 +63,7 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
   }
 
   const onLoad = () => {
+    setLoading(false)
     // this reaches out to the hCaptcha JS API and runs the
     // execute function on it. you can use other functions as
     // documented here:
@@ -206,8 +209,10 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
           type='primary'
           size='large'
           htmlType='submit'
-          disabled={!isFormValid}
+          loading={loading}
+          disabled={!isFormValid || loading || !captchaReady}
           onClick={() => {
+            setLoading(true)
             onLoad()
           }}
           block
