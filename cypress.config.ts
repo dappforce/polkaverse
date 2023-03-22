@@ -36,6 +36,7 @@ async function setupNodeEvents(
 export default defineConfig({
   e2e: {
     baseUrl: 'http://localhost:3003',
+    responseTimeout: 50000,
     env: {
       my_address: '3shk6xYyNwwL5yvDVCUoUVoa8iUu3QmsR64kVqi2jL25kyzf',
       my_space: '5496',
@@ -44,8 +45,8 @@ export default defineConfig({
       fresh_account: '5HbAUnWjfS6xix33S5RMi1R99oG2TDMraQSRY4bP3fvycbSa',
       account_with_energy: '5FHYXx3iHURLfdNk5svSQMuZA7nvzsk5CfwFtQMtivYWcYjG',
 
-      // related to sign up with email
-      offchainSignerApiBaseUrl: 'https://staging-signer.subsocial.network',
+      // will have to run server locally to bypass hCaptcha  verification
+      offchainSignerApiBaseUrl: 'http://127.0.0.1:3102',
     },
     setupNodeEvents,
   },
