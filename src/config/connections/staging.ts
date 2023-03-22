@@ -11,7 +11,7 @@ const stagingConfig: SubsocialConfig = {
   dagHttpMethod: 'get',
   useOffchainForIpfs: false,
 
-  subIdApiUrl: 'https://sub.id/api/v1',
+  subIdApiUrl: 'https://rococo-subid.subsocial.network/api/v1',
   subsocialParaId: 2100,
 
   offchainSignerUrl: 'https://staging-signer.subsocial.network',

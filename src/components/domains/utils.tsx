@@ -13,13 +13,18 @@ import styles from './index.module.sass'
 
 const { resolvedDomain } = config
 
+type ResultContainerProps = Omit<HTMLProps<HTMLDivElement>, 'title'> & {
+  title: React.ReactNode
+  icon: JSX.Element
+}
+
 export const ResultContainer = ({
   title,
   className,
   icon,
   children,
   ...props
-}: { title: string; icon: JSX.Element } & HTMLProps<HTMLDivElement>) => {
+}: ResultContainerProps) => {
   return (
     <div className={clsx('d-flex flex-column', className)}>
       <h2 {...props} className={clsx('d-flex align-items-center ColorCurrentColor')}>
