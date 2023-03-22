@@ -1,21 +1,30 @@
-// import { gaId } from '../env'
+import { gaId } from '../env'
 import { SubsocialConfig } from '../types'
 
 const mainConfig: SubsocialConfig = {
-  sudoOne: '3si9SFRhEPKvpk2xW9dUkcud1AanQxJwok2QFqppqE5ZeShp',
+  sudoOne: '3osmnRNnrcScHsgkTJH1xyBF5kGjpbWHsGrqM31BJpy4vwn8',
 
-  substrateUrl: 'wss://rco-para.subsocial.network',
-  offchainUrl: 'https://staging-api.subsocial.network',
-  graphqlUrl: 'https://squid.subsquid.io/soonsocial/graphql',
+  substrateUrl: 'wss://para.subsocial.network',
+  kusamaUrl: 'wss://kusama-rpc.polkadot.io',
 
-  ipfsNodeUrl: 'https://staging-ipfs.subsocial.network',
-  dagHttpMethod: 'get',
+  offchainUrl: 'https://api.subsocial.network',
+  graphqlUrl: 'https://squid.subsquid.io/subsocial/graphql',
+
+  ipfsNodeUrl: 'https://ipfs.subsocial.network',
+
+  dagHttpMethod: 'post',
   useOffchainForIpfs: false,
 
-  subIdApiUrl: 'https://rococo-subid.subsocial.network/api/v1',
+  subIdApiUrl: 'https://sub.id/api/v1',
   subsocialParaId: 2100,
 
-  offchainSignerUrl: 'https://staging-signer.subsocial.network',
+  nodes: {
+    kusama: 'wss://kusama-rpc.polkadot.io',
+  },
+
+  ga: {
+    id: gaId,
+  },
 }
 
 export default mainConfig
