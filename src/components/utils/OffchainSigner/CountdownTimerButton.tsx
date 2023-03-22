@@ -11,7 +11,7 @@ interface BaseButtonProps extends ButtonProps {
 
 const CountdownTimerButton = ({ className, baseLabel, type, onClick }: BaseButtonProps) => {
   const [isCountingDown, setIsCountingDown] = useState<boolean>(false)
-  const remainingSeconds: number = useCountdownTimer(10, isCountingDown) // countdown from 60 seconds
+  const remainingSeconds: number = useCountdownTimer(30, isCountingDown) // countdown from 30 seconds
 
   const handleButtonClick = (): void => {
     setIsCountingDown(true)
