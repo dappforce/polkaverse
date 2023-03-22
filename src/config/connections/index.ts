@@ -1,4 +1,4 @@
-import { /* connectionKind, */ connectionsOverrides } from '../env'
+import { connectionKind, connectionsOverrides } from '../env'
 import { SubsocialConfig } from '../types'
 import dev from './dev'
 import local from './local'
@@ -12,8 +12,7 @@ const connectionPresets = {
   dev,
 }
 
-// const currentConfig: SubsocialConfig = connectionPresets[connectionKind]
-const currentConfig: SubsocialConfig = connectionPresets['staging']
+const currentConfig: SubsocialConfig = connectionPresets[connectionKind]
 
 Object.entries(connectionsOverrides).forEach(([key, value]) => {
   if (value) {
