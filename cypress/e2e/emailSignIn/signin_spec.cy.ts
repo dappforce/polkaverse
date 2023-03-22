@@ -1,6 +1,6 @@
-import { registeredUser } from './shared'
+import { HCAPTCHA_TEST_RESPONSE, registeredUser } from './shared'
 
-const { email, password, hCaptchaResponse } = registeredUser
+const { email, password } = registeredUser
 
 const apiUrl = `${Cypress.env('offchainSignerApiBaseUrl')}`
 
@@ -14,7 +14,6 @@ describe('sign in with email', () => {
 
   context('before testing forms', () => {
     const getMainSignInBtn = () => cy.contains('Sign in with email')
-    const getBackBtn = () => cy.get('.MutedText > .font-weight-bold').contains('Back')
 
     it('should open sign in modal', () => {
       cy.visit('/')
@@ -23,13 +22,6 @@ describe('sign in with email', () => {
     })
 
     context('testing forms', () => {
-      beforeEach(() => {
-        getBackBtn().click()
-        getMainSignInBtn().click()
-        cy.get('#email').clear()
-        cy.get('#password').clear()
-      })
-
       it('should fill up sign in form with incorrect data', () => {
         cy.get('#email').type('notarealemail').focus().blur()
         cy.get('.ant-form-item-explain > div').contains('Please enter a valid email address.')
@@ -40,16 +32,26 @@ describe('sign in with email', () => {
         )
 
         cy.contains('Log In').should('be.disabled')
+
+        cy.get('#email').clear()
+        cy.get('#password').clear()
       })
 
-      it('should fill up with wrong email/password', () => {
-        cy.get('#email').type(email)
-        cy.get('#password').type(`wrong${password}`)
-        cy.contains('Log In').should('not.be.disabled')
-
-        cy.contains('Log In').click()
-
-        cy.get('.ant-form-item-explain > div').contains('email or password is incorrect')
+      it('should return error when unregistered user try to login', () => {
+        cy.request({
+          method: 'POST',
+          url: `${apiUrl}/auth/email-sign-in`,
+          body: {
+            email: 'random@email.com',
+            password: 'randompassword',
+            hcaptchaResponse: HCAPTCHA_TEST_RESPONSE,
+          },
+          failOnStatusCode: false,
+        }).then(response => {
+          expect(response.status).to.eq(401)
+          expect(response.body.message).to.be.a('string')
+          expect(response.body.message).contains('email or password is not correct')
+        })
       })
 
       it('should fill up sign in form', () => {
@@ -68,7 +70,7 @@ describe('sign in with email', () => {
           body: {
             email,
             password,
-            hcaptchaResponse: hCaptchaResponse,
+            hcaptchaResponse: HCAPTCHA_TEST_RESPONSE,
           },
           failOnStatusCode: false,
         }).then(response => {
@@ -76,6 +78,25 @@ describe('sign in with email', () => {
           expect(response.body.accessToken).to.be.a('string')
           expect(response.body.refreshToken).to.a('string')
         })
+      })
+
+      it('should skip whole onboarding process', () => {
+        cy.get('.ant-btn > .MutedText').should('be.visible')
+        cy.get('.ant-btn > .MutedText').contains('Skip').click()
+        cy.get('.ant-btn > .MutedText').contains('Skip').click()
+        cy.get('.ant-btn > .MutedText').contains('Skip').click()
+        cy.get('.ant-btn > .MutedText').contains('Skip').click()
+        cy.get('.ant-btn > .MutedText').contains('Skip').click()
+      })
+
+      it('should open choose account sidebar', () => {
+        cy.get('.DfChooseAccount').should('be.visible')
+        cy.get('.DfChooseAccount').click()
+      })
+
+      it('should log out', () => {
+        cy.get('.ant-btn').contains('Sign out').should('be.visible')
+        cy.get('.ant-btn').contains('Sign out').click()
       })
     })
   })
