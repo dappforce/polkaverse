@@ -68,7 +68,7 @@ jobs:
           build-args: |
             GH_GA_ID=UA-204866512-2
             GH_APP_KIND=polkaverse
-            GH_CONNECTION_KIND=main
+            GH_CONNECTION_KIND=staging
 
           tags: |
             ${{ env.image }}
