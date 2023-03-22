@@ -58,6 +58,27 @@ export type TxButtonProps = BaseTxButtonProps & {
   customNodeApi?: ApiPromise
 }
 
+export const getExtrinsicByApi = async (
+  api: ApiPromise, 
+  tx?: string, 
+  params?: any[] | GetTxParamsFn | GetTxParamsAsyncFn
+): Promise<SubmittableExtrinsic> => {
+  const [ pallet, method ] = (tx || '').split('.')
+
+  if (!api.tx[pallet]) {
+    throw new Error(`Unable to find api.tx.${pallet}`)
+  } else if (!api.tx[pallet][method]) {
+    throw new Error(`Unable to find api.tx.${pallet}.${method}`)
+  }
+
+  let resultParams = (params || []) as any[]
+  if (isFunction(params)) {
+    resultParams = await params()
+  }
+
+  return api.tx[pallet][method](...(resultParams))
+}
+
 function LazyTxButton({
   accountId,
   network,
@@ -100,20 +121,7 @@ function LazyTxButton({
       throw `Connection for ${network} not found`
     }
 
-    const [pallet, method] = (tx || '').split('.')
-
-    if (!api.tx[pallet]) {
-      throw new Error(`Unable to find api.tx.${pallet}`)
-    } else if (!api.tx[pallet][method]) {
-      throw new Error(`Unable to find api.tx.${pallet}.${method}`)
-    }
-
-    let resultParams = (params || []) as any[]
-    if (isFunction(params)) {
-      resultParams = await params()
-    }
-
-    return api.tx[pallet][method](...resultParams)
+    return getExtrinsicByApi(api, tx, params)
   }
 
   const doOnSuccess: TxCallback = result => {

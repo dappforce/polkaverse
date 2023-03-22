@@ -1,0 +1,57 @@
+@import 'src/styles/subsocial-vars.scss'
+
+$element_height: 40px
+
+.ModalBody
+  padding: 1.5rem
+
+.Recipient
+  font-size: $font_small
+  margin-bottom: 4px
+
+.FooterButtons
+  display: flex
+  gap: 1rem
+
+  button
+    height: $element_height
+
+.ModalTitle
+  h2 
+    color: #222
+    line-height: 1.5
+    font-weight: bold
+
+  div
+    font-size: $font_normal
+
+  
+.Select
+  height: $element_height
+  overflow: hidden
+
+  \:global .ant-select-selector
+    height: $element_height !important
+
+    input
+      height: $element_height !important
+
+    .ant-select-selection-search
+      overflow: hidden
+
+    .ant-select-selection-item
+      align-self: center
+      font-size: $font_normal
+
+    .ant-select-selection-placeholder
+      align-self: center
+      font-size: $font_normal
+
+.RegisterButton
+  display: flex
+  align-items: center
+  gap: $space_tiny
+
+  button
+    font-size: $font_normal
+    padding: 0 $space_normal

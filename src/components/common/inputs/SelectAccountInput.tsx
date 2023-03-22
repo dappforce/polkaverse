@@ -1,20 +1,32 @@
-import { GenericAccountId } from '@polkadot/types'
-import { isAddress } from '@polkadot/util-crypto'
-import registry from '@subsocial/api/utils/registry'
-import { isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
 import { Select } from 'antd'
 import { useEffect, useState } from 'react'
-import { useMyAccounts } from 'src/components/auth/MyAccountsContext'
-import { equalAddresses } from 'src/components/substrate'
-import { useSelectProfile } from 'src/rtk/app/hooks'
 import { SelectAddressPreview } from '../../profile-selector/MyAccountMenu'
+import { isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
+import registry from '@subsocial/api/utils/registry'
+import { GenericAccountId } from '@polkadot/types'
 import Avatar from '../../profiles/address-views/Avatar'
 import styles from './inputs.module.sass'
+import { useSelectProfile } from 'src/rtk/app/hooks'
+import { useMyAccounts } from 'src/components/auth/MyAccountsContext'
+import { equalAddresses } from 'src/components/substrate'
+
+export const isValidAccount = (address?: string) => {
+  try {
+    if (address) {
+      return !!new GenericAccountId(registry, address)
+    }
+
+    return false
+  } catch {}
+
+  return false
+}
 
 type SelectAccountInputProps = {
   className?: string
   setValue: (value: string) => void
   value?: string
+  withAvatar?: boolean
 }
 
 const filterSelectOptions = (adresses: string[], value?: string) => {
@@ -31,12 +43,17 @@ const filterSelectOptions = (adresses: string[], value?: string) => {
     })
 }
 
-export const SelectAccountInput = ({ setValue, value, className }: SelectAccountInputProps) => {
+export const SelectAccountInput = ({
+  setValue,
+  value,
+  className,
+  withAvatar = true,
+}: SelectAccountInputProps) => {
   const { accounts, status } = useMyAccounts()
   const allExtensionAccounts = accounts.map(x => toSubsocialAddress(x.address) as string)
 
-  const [defaultOptions, setDefaultOptions] = useState<any[]>([])
-  const [selectOptions, setSelectOptions] = useState<any[]>(defaultOptions)
+  const [ defaultOptions, setDefaultOptions ] = useState<any[]>([])
+  const [ selectOptions, setSelectOptions ] = useState<any[]>(defaultOptions)
   const profile = useSelectProfile(value)
 
   useEffect(() => {
@@ -45,7 +62,7 @@ export const SelectAccountInput = ({ setValue, value, className }: SelectAccount
     const options = status === 'OK' ? filterSelectOptions(allExtensionAccounts, value) : []
     setDefaultOptions(options)
     setSelectOptions(options)
-  }, [value, status])
+  }, [ value, status ])
 
   const onSelectChange = (value: string) => {
     setValue(value)
@@ -54,7 +71,7 @@ export const SelectAccountInput = ({ setValue, value, className }: SelectAccount
   const onSearchHandler = (searchValue: any) => {
     const options = []
 
-    if (isAddress(searchValue)) {
+    if (isValidAccount(searchValue)) {
       options.push({
         key: 'key-' + searchValue,
         label: (
@@ -84,19 +101,23 @@ export const SelectAccountInput = ({ setValue, value, className }: SelectAccount
     }
   }
 
+  const avatar = (
+    <div className='mr-2'>
+      {value 
+        ? <Avatar address={value} avatar={profile?.content?.image} size={50} /> 
+        : <div className={`${styles.Circle} mr-2`}></div>}
+    </div>
+  )
+
   return (
     <div className='d-flex align-items-center'>
-      {value ? (
-        <Avatar address={value} avatar={profile?.content?.image} size={50} />
-      ) : (
-        <div className={`${styles.Circle} mr-2`}></div>
-      )}
+      {withAvatar && avatar}
       <Select
         showSearch
         allowClear
         value={value}
         size='large'
-        className={`${className} ml-2`}
+        className={className}
         options={selectOptions}
         onSearch={onSearchHandler}
         onSelect={onSelectHandler}
