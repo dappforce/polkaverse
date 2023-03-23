@@ -20,10 +20,10 @@ const CountdownTimerButton = ({ className, baseLabel, type, onClick }: BaseButto
 
   let buttonLabel = baseLabel
   if (isCountingDown) {
-    buttonLabel = remainingSeconds === 0 ? baseLabel : `${baseLabel} in ${remainingSeconds} seconds`
-
     if (remainingSeconds === 0) {
       setIsCountingDown(false)
+    } else {
+      buttonLabel = `${baseLabel} in ${remainingSeconds} seconds`
     }
   }
 
