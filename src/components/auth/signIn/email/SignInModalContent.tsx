@@ -13,8 +13,8 @@ import {
 } from 'src/components/utils/OffchainSigner/api/requests'
 import { setAuthOnRequest } from 'src/components/utils/OffchainSigner/api/utils'
 import {
-  OFFCHAIN_REFRESH_TOKEN_KEY,
-  OFFCHAIN_TOKEN_KEY,
+  SIGNER_REFRESH_TOKEN_KEY,
+  SIGNER_TOKEN_KEY,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { hCaptchaSiteKey } from 'src/config/env'
 import useExternalStorage from 'src/hooks/useExternalStorage'
@@ -102,8 +102,8 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
     setPassword,
   } = useAuth()
 
-  const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY)
-  const { setData: setOffchainRefreshToken } = useExternalStorage(OFFCHAIN_REFRESH_TOKEN_KEY)
+  const { setData: setSignerToken } = useExternalStorage(SIGNER_TOKEN_KEY)
+  const { setData: setSignerRefreshToken } = useExternalStorage(SIGNER_REFRESH_TOKEN_KEY)
 
   const [form] = Form.useForm()
 
@@ -174,8 +174,8 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
         onSignInSuccess(accountAddress)
 
         // Save auth tokens to local storage for future use in the app
-        setOffchainToken(accessToken, accountAddress)
-        setOffchainRefreshToken(refreshToken, accountAddress)
+        setSignerToken(accessToken, accountAddress)
+        setSignerRefreshToken(refreshToken, accountAddress)
       }
     } catch (error) {
       const errorMessage = getErrorMessage(error)

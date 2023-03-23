@@ -13,8 +13,8 @@ import {
   requestProof,
 } from 'src/components/utils/OffchainSigner/api/requests'
 import {
-  OFFCHAIN_REFRESH_TOKEN_KEY,
-  OFFCHAIN_TOKEN_KEY,
+  SIGNER_REFRESH_TOKEN_KEY,
+  SIGNER_TOKEN_KEY,
   TEMP_REGISTER_ACCOUNT,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import useMnemonicGenerate from 'src/components/utils/OffchainSigner/useMnemonicGenerate'
@@ -60,8 +60,8 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
   const hCaptchaRef = useRef(null)
 
-  const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY)
-  const { setData: setOffchainRefreshToken } = useExternalStorage(OFFCHAIN_REFRESH_TOKEN_KEY)
+  const { setData: setSignerToken } = useExternalStorage(SIGNER_TOKEN_KEY)
+  const { setData: setSignerRefreshToken } = useExternalStorage(SIGNER_REFRESH_TOKEN_KEY)
   const { setData: setTempRegisterAccount } = useExternalStorage(TEMP_REGISTER_ACCOUNT)
 
   const onExpire = () => {
@@ -121,8 +121,8 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
       // save to local storage for usage in ConfirmationModal
       const subsocialAddress = toSubsocialAddress(accountAddress)
-      setOffchainToken(accessToken, subsocialAddress)
-      setOffchainRefreshToken(refreshToken, subsocialAddress)
+      setSignerToken(accessToken, subsocialAddress)
+      setSignerRefreshToken(refreshToken, subsocialAddress)
       setTempRegisterAccount(subsocialAddress)
 
       // save secret to local storage (in case of page reload)

@@ -11,10 +11,10 @@ const log = newLogger('OffchainSignerRequests')
 export const isAccountOnboarded = (accountId: string) =>
   localStorage.getItem(`df.onBoardingModalFinished:${truncateAddress(accountId)}`) === '1'
 
-export const sendOffchainTx = async (
+export const sendSignerTx = async (
   api: ApiPromise,
   extrinsic: SubmittableExtrinsic,
-  offchainToken: string,
+  signerToken: string,
   onSuccessHandler: (result: SubmittableResult) => Promise<void>,
   onFailedHandler: (err: Error) => void,
 ) => {
@@ -23,7 +23,7 @@ export const sendOffchainTx = async (
 
     const res = await submitSignedCallData({
       data: hexCallData,
-      jwt: offchainToken,
+      jwt: signerToken,
     })
 
     const { signedCall } = res?.data

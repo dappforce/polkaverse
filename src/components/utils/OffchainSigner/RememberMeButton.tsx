@@ -19,11 +19,7 @@ import { getWalletBySource } from 'src/components/wallets/supportedWallets'
 import { hCaptchaSiteKey } from 'src/config/env'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { showErrorMessage } from '../Message'
-import {
-  OFFCHAIN_REFRESH_TOKEN_KEY,
-  OFFCHAIN_TOKEN_KEY,
-  PROXY_ADDRESS_KEY,
-} from './ExternalStorage'
+import { PROXY_ADDRESS_KEY, SIGNER_REFRESH_TOKEN_KEY, SIGNER_TOKEN_KEY } from './ExternalStorage'
 const log = newLogger('RememberMeButton')
 
 interface RememberMeButtonProps extends TxButtonProps {
@@ -47,8 +43,8 @@ function RememberMeButton({
   const { isMobile } = useResponsiveSize()
   const myAddress = useMyAddress()
 
-  const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY)
-  const { setData: setOffchainRefreshToken } = useExternalStorage(OFFCHAIN_REFRESH_TOKEN_KEY)
+  const { setData: setSignerToken } = useExternalStorage(SIGNER_TOKEN_KEY)
+  const { setData: setSignerRefreshToken } = useExternalStorage(SIGNER_REFRESH_TOKEN_KEY)
   const { setData: setProxyAddress } = useExternalStorage(PROXY_ADDRESS_KEY)
 
   const [token, setToken] = useState<string | undefined>()
@@ -177,8 +173,8 @@ function RememberMeButton({
 
       setAuthOnRequest(accessToken)
 
-      setOffchainToken(accessToken, myAddress)
-      setOffchainRefreshToken(refreshToken, myAddress)
+      setSignerToken(accessToken, myAddress)
+      setSignerRefreshToken(refreshToken, myAddress)
 
       const { address: mainProxyAddress } = await fetchMainProxyAddress(accessToken)
       setProxyAddress(mainProxyAddress, myAddress)

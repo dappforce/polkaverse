@@ -19,11 +19,11 @@ import { getCurrentWallet } from '../auth/utils'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { controlledMessage, Message, showErrorMessage, showSuccessMessage } from '../utils/Message'
 import {
-  isCurrentOffchainAddress,
-  OFFCHAIN_ADDRESS_KEY,
-  OFFCHAIN_TOKEN_KEY,
+  isCurrentSignerAddress,
+  SIGNER_ADDRESS_KEY,
+  SIGNER_TOKEN_KEY,
 } from '../utils/OffchainSigner/ExternalStorage'
-import { isAccountOnboarded, sendOffchainTx } from '../utils/OffchainSigner/OffchainSignerUtils'
+import { isAccountOnboarded, sendSignerTx } from '../utils/OffchainSigner/OffchainSignerUtils'
 import { getWalletBySource } from '../wallets/supportedWallets'
 import styles from './SubstrateTxButton.module.sass'
 import useToggle from './useToggle'
@@ -94,20 +94,19 @@ function TxButton({
     },
   } = useAuth()
 
-  const { data: offchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY, {
+  const { data: signerToken } = useExternalStorage(SIGNER_TOKEN_KEY, {
     storageKeyType: 'user',
   })
 
-  const { setData: setOffchainAddress } = useExternalStorage(OFFCHAIN_ADDRESS_KEY, {
+  const { setData: setSignerAddress } = useExternalStorage(SIGNER_ADDRESS_KEY, {
     parseStorageToState: data => data === '1',
     parseStateToStorage: state => (state ? '1' : undefined),
     storageKeyType: 'user',
   })
 
-  const isOffchainAddress = isCurrentOffchainAddress(accountId as string)
+  const isSignerAddress = isCurrentSignerAddress(accountId as string)
 
-  const isOffchainSignerTx =
-    !!offchainToken && isOffchainAddress && isAccountOnboarded(accountId as string)
+  const isSignerTx = !!signerToken && isSignerAddress && isAccountOnboarded(accountId as string)
 
   const api = customNodeApi || subsocialApi
 
@@ -214,14 +213,14 @@ function TxButton({
     }
 
     let hideRememberMePopup = false
-    if ((tx === 'utility.batch' && offchainToken) || tx === 'proxy.addProxy')
+    if ((tx === 'utility.batch' && signerToken) || tx === 'proxy.addProxy')
       hideRememberMePopup = true
 
     try {
       const extrinsic = await getExtrinsic()
 
-      if (isOffchainSignerTx) {
-        sendOffchainTx(api, extrinsic, offchainToken, onSuccessHandler, onFailedHandler)
+      if (isSignerTx) {
+        sendSignerTx(api, extrinsic, signerToken, onSuccessHandler, onFailedHandler)
       } else {
         let signer: Signer | undefined
 
@@ -240,7 +239,7 @@ function TxButton({
 
         const tx = await extrinsic.signAsync(accountId, { signer })
         if (hideRememberMePopup) {
-          setOffchainAddress(true)
+          setSignerAddress(true)
         }
         unsub = await tx.send(onSuccessHandler)
       }

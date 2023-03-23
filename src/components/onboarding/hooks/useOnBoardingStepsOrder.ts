@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useAuth } from 'src/components/auth/AuthContext'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
-import { isCurrentOffchainAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
+import { isCurrentSignerAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { OnBoardingDataTypes } from 'src/rtk/features/onBoarding/onBoardingSlice'
 import { useIsFollowSpaceModalUsedContext } from '../contexts/IsFollowSpaceModalUsed'
@@ -18,7 +18,7 @@ export default function useOnBoardingStepsOrder(
   const myAddress = useMyAddress()
   const profile = useSelectProfile(myAddress)
   const { isFollowSpaceModalUsed } = useIsFollowSpaceModalUsedContext()
-  const isOffchainAddress = isCurrentOffchainAddress(myAddress!)
+  const isSignerAddress = isCurrentSignerAddress(myAddress!)
 
   return useMemo(() => {
     if (!myAddress) return []
@@ -42,7 +42,7 @@ export default function useOnBoardingStepsOrder(
     profile,
     status,
     isFollowSpaceModalUsed,
-    isOffchainAddress,
+    isSignerAddress,
     additionalData?.energySnapshot,
   ])
 }
