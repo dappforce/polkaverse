@@ -1,6 +1,8 @@
 import { Keyring } from '@polkadot/api'
-import { hexToU8a, u8aToHex, u8aToString } from '@polkadot/util'
+import { hexToU8a, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util'
 import { keccakAsU8a, naclDecrypt, naclEncrypt } from '@polkadot/util-crypto'
+
+const convertBufferToHex = (buffer: Uint8Array) => u8aToHex(buffer)
 
 const generateSalt = () => {
   // has to be 32 bytes, otherwise naclEncrypt will throw an error
@@ -11,7 +13,9 @@ const generateSalt = () => {
   return arrayResult
 }
 
-const convertBufferToHex = (buffer: Uint8Array) => u8aToHex(buffer)
+const HEX_CONSTANT = '0x80001f'
+
+const generateNonce = () => Buffer.from(HEX_CONSTANT.padEnd(24, '\0'))
 
 const generateAccount = async (seed: string) => {
   const { sr25519PairFromSeed, mnemonicToMiniSecret } = await import('@polkadot/util-crypto')
@@ -26,35 +30,40 @@ const generateAccount = async (seed: string) => {
   return { publicAddress: toSubsocialAddress(publicKey)!, secretKey }
 }
 
-const encryptKey = (key: string, password: string) => {
-  const bufferKey = keccakAsU8a(key + password)
+const generateSecret = (password: string, inputSaltStr?: string) => {
+  const salt = inputSaltStr ? hexToU8a(inputSaltStr) : generateSalt()
+  const saltStr = u8aToHex(salt)
+  const secret = keccakAsU8a(saltStr + password)
 
-  const salt = generateSalt()
-
-  // Encrypt secret key + password with salt
-  const { encrypted, nonce } = naclEncrypt(bufferKey, salt)
-
-  const encryptedMessage = u8aToHex(encrypted)
-  const nonceStr = u8aToHex(nonce)
-
-  // Encrypt salt with password
-  const passwordBuffer = Buffer.from(password.padEnd(32, '\0'))
-  const { encrypted: encryptedData, nonce: nonceData } = naclEncrypt(salt, passwordBuffer)
-
-  const encryptedSalt = u8aToHex(encryptedData)
-  const saltNonce = u8aToHex(nonceData)
-
-  return { encryptedMessage, nonceStr, encryptedSalt, saltNonce }
+  return {
+    saltStr,
+    secret,
+  }
 }
 
-const decryptKey = (encryptedKey: string, nonceStr: string, secretStr: string) => {
-  const encrypted = hexToU8a(encryptedKey)
-  const nonce = hexToU8a(nonceStr)
-  const secret = hexToU8a(secretStr)
+const encryptKey = (key: string, password: string) => {
+  const messagePreEncryption = stringToU8a(key)
 
-  const keyDecrypted = naclDecrypt(encrypted, nonce, secret)
+  const { saltStr, secret } = generateSecret(password)
 
-  return u8aToString(keyDecrypted)
+  // use a static nonce
+  const NONCE = generateNonce()
+
+  const { encrypted } = naclEncrypt(messagePreEncryption, secret, NONCE)
+
+  const encryptedMessage = u8aToHex(encrypted)
+
+  return { encryptedMessage, saltStr }
+}
+
+const decryptKey = (encryptedMessage: string, saltStr: string, password: string) => {
+  const { secret } = generateSecret(password, saltStr)
+  const message = hexToU8a(encryptedMessage)
+  const NONCE = generateNonce()
+
+  const decrypted = naclDecrypt(message, NONCE, secret)
+
+  return u8aToString(decrypted)
 }
 
 // works with mnemonic or raw string seed
