@@ -11,10 +11,10 @@ import {
 } from 'src/components/utils/OffchainSigner/api/requests'
 import CountdownTimerButton from 'src/components/utils/OffchainSigner/CountdownTimerButton'
 import {
-  getOffchainToken,
+  getSignerToken,
   getTempRegisterAccount,
-  OFFCHAIN_REFRESH_TOKEN_KEY,
-  OFFCHAIN_TOKEN_KEY,
+  SIGNER_REFRESH_TOKEN_KEY,
+  SIGNER_TOKEN_KEY,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { StepsEnum } from '../../AuthContext'
@@ -33,8 +33,8 @@ type Props = {
 }
 
 const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
-  const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY)
-  const { setData: setOffchainRefreshToken } = useExternalStorage(OFFCHAIN_REFRESH_TOKEN_KEY)
+  const { setData: setSignerToken } = useExternalStorage(SIGNER_TOKEN_KEY)
+  const { setData: setSignerRefreshToken } = useExternalStorage(SIGNER_REFRESH_TOKEN_KEY)
 
   const userAddress = getTempRegisterAccount()
 
@@ -44,7 +44,7 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
   const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (values: FormValues) => {
-    const accessToken = getOffchainToken(userAddress!)
+    const accessToken = getSignerToken(userAddress!)
     if (!accessToken) throw new Error('Access token is not defined')
 
     try {
@@ -59,8 +59,8 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
       const { accountAddress } = jwtDecode<JwtPayload>(newAccessToken)
 
       // Save auth tokens to local storage for getMainProxyAddress request
-      setOffchainToken(newAccessToken, accountAddress)
-      setOffchainRefreshToken(newRefreshToken, accountAddress)
+      setSignerToken(newAccessToken, accountAddress)
+      setSignerRefreshToken(newRefreshToken, accountAddress)
 
       setCurrentStep(StepsEnum.ShowMnemonic)
     } catch (error) {
@@ -85,7 +85,7 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
   const handleResendCode = async () => {
     try {
-      const accessToken = getOffchainToken(userAddress!)
+      const accessToken = getSignerToken(userAddress!)
 
       if (!accessToken) throw new Error('Token is not defined')
       await resendEmailConfirmation(accessToken)

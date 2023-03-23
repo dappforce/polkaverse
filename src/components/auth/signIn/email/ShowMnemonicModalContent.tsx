@@ -6,7 +6,8 @@ import useToggle from 'src/components/substrate/useToggle'
 import { Copy } from 'src/components/urls/helpers'
 import CopyOutlinedIcon from 'src/components/utils/icons/CopyOutlined'
 import {
-  getOffchainToken,
+  getSignerRefreshToken,
+  getSignerToken,
   getTempRegisterAccount,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { useAuth } from '../../AuthContext'
@@ -42,8 +43,8 @@ const ShowMnemonicModalContent = ({ onRegisterDone }: Props) => {
       const userPair = keyring.addFromUri(mnemnonicToBeShown)
       const userAddress = userPair.address
 
-      const accessToken = getOffchainToken(userAddress)
-      const refreshToken = getOffchainToken(userAddress)
+      const accessToken = getSignerToken(userAddress)
+      const refreshToken = getSignerRefreshToken(userAddress)
       if (!accessToken || !refreshToken)
         throw new Error('Access token or refresh token is not defined')
 
