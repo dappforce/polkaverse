@@ -1,6 +1,6 @@
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { isStr } from '@subsocial/utils'
-import { Button, Form, Input } from 'antd'
+import { Button, Form, FormInstance, Input } from 'antd'
 import clsx from 'clsx'
 import jwtDecode from 'jwt-decode'
 import { useEffect, useRef, useState } from 'react'
@@ -18,7 +18,7 @@ import {
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { hCaptchaSiteKey } from 'src/config/env'
 import useExternalStorage from 'src/hooks/useExternalStorage'
-import { StepsEnum } from '../../AuthContext'
+import { StepsEnum, useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 
 type FormValues = {
@@ -35,7 +35,72 @@ type Props = {
   onSignInSuccess: (address: string) => void
 }
 
+type InputProps = {
+  error: string | null
+  isError: boolean
+  form: FormInstance<FormValues>
+  data?: string
+}
+
+export const EmailInput = ({ data, error, isError, form }: InputProps) => {
+  return (
+    <Form.Item
+      initialValue={data}
+      name={fieldName('email')}
+      className={clsx(styles.BaseFormItem, isError && styles.BaseFormItemError)}
+      validateTrigger='onBlur'
+      rules={[{ pattern: /\S+@\S+\.\S+/, message: 'Please enter a valid email address.' }]}
+      validateStatus={isStr(error) ? 'error' : undefined}
+    >
+      <Input
+        required
+        type='email'
+        placeholder='Email'
+        onBlur={e => {
+          form.validateFields(['email'])
+          form.setFieldsValue({ [fieldName('email')]: e.target.value.trim() })
+        }}
+      />
+    </Form.Item>
+  )
+}
+
+export const PasswordInput = ({ error, isError, form }: InputProps) => {
+  return (
+    <Form.Item
+      name={fieldName('password')}
+      className={clsx(styles.BaseFormItem, isError && styles.BaseFormItemError)}
+      validateTrigger='onBlur'
+      rules={[
+        {
+          min: 8,
+          pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+          message:
+            'Your password should contain at least 8 characters, with at least one letter and one number.',
+        },
+      ]}
+      help={error}
+      validateStatus={isStr(error) ? 'error' : undefined}
+    >
+      <Input
+        required
+        type='password'
+        onBlur={e => {
+          form.validateFields(['password'])
+          form.setFieldsValue({ [fieldName('password')]: e.target.value.trim() })
+        }}
+        placeholder='Password'
+      />
+    </Form.Item>
+  )
+}
+
 const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
+  const {
+    state: { email },
+    setEmail,
+  } = useAuth()
+
   const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY)
   const { setData: setOffchainRefreshToken } = useExternalStorage(OFFCHAIN_REFRESH_TOKEN_KEY)
 
@@ -123,6 +188,9 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
   }
 
   const handleCreateAccount = () => {
+    let tempEmail = form.getFieldValue('email')
+    if (tempEmail && tempEmail.length > 0) setEmail(tempEmail)
+
     setCurrentStep(StepsEnum.SignUp)
   }
 
@@ -131,49 +199,14 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
   return (
     <Form form={form} onValuesChange={handleValuesChange}>
       <div className={styles.SignInModalContent}>
-        <Form.Item
-          name={fieldName('email')}
-          className={clsx(styles.BaseFormItem, isError && styles.BaseFormItemError)}
-          validateTrigger='onBlur'
-          rules={[{ pattern: /\S+@\S+\.\S+/, message: 'Please enter a valid email address.' }]}
-          validateStatus={isStr(error) ? 'error' : undefined}
-        >
-          <Input
-            required
-            type='email'
-            placeholder='Email'
-            onBlur={e => {
-              form.validateFields(['email'])
-              form.setFieldsValue({ [fieldName('email')]: e.target.value.trim() })
-            }}
-          />
-        </Form.Item>
+        <EmailInput
+          data={email ?? form.getFieldValue('email')}
+          error={error}
+          isError={isError}
+          form={form}
+        />
 
-        <Form.Item
-          name={fieldName('password')}
-          className={clsx(styles.BaseFormItem, isError && styles.BaseFormItemError)}
-          validateTrigger='onBlur'
-          rules={[
-            {
-              min: 8,
-              pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
-              message:
-                'Your password should contain at least 8 characters, with at least one letter and one number.',
-            },
-          ]}
-          help={error}
-          validateStatus={isStr(error) ? 'error' : undefined}
-        >
-          <Input
-            required
-            type='password'
-            onBlur={e => {
-              form.validateFields(['password'])
-              form.setFieldsValue({ [fieldName('password')]: e.target.value.trim() })
-            }}
-            placeholder='Password'
-          />
-        </Form.Item>
+        <PasswordInput error={error} isError={isError} form={form} />
 
         <Button
           type='primary'
