@@ -37,6 +37,7 @@ export type AuthState = {
   canReserveHandle: boolean
   mnemonic: string | null
   password: string | null
+  email: string | null
 }
 
 function functionStub() {
@@ -55,6 +56,7 @@ export type AuthContextProps = {
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>
   setMnemonic: React.Dispatch<React.SetStateAction<string | null>>
   setPassword: React.Dispatch<React.SetStateAction<string | null>>
+  setEmail: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 const energyStub: EnergyState = { status: 'normal', transactionsCount: 0, coefficient: 1 }
@@ -64,6 +66,7 @@ const contextStub: AuthContextProps = {
     currentStep: 0,
     mnemonic: null,
     password: null,
+    email: null,
     completedSteps: {
       isSignedIn: false,
       hasTokens: false,
@@ -79,6 +82,7 @@ const contextStub: AuthContextProps = {
   setCurrentStep: functionStub,
   setMnemonic: functionStub,
   setPassword: functionStub,
+  setEmail: functionStub,
 }
 
 export enum StepsEnum {
@@ -127,6 +131,7 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
 
   const [mnemonic, setMnemonic] = useState<string | null>(null)
   const [password, setPassword] = useState<string | null>(null)
+  const [email, setEmail] = useState<string | null>(null)
 
   const [currentStep, setCurrentStep] = useState(step)
 
@@ -219,6 +224,7 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
     state: {
       mnemonic,
       password,
+      email,
       currentStep,
       completedSteps: {
         isSignedIn,
@@ -240,6 +246,7 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
     setCurrentStep,
     setMnemonic,
     setPassword,
+    setEmail,
   }
 
   const onAccountChosen = (address: string) => {

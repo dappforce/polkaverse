@@ -20,6 +20,7 @@ import useMnemonicGenerate from 'src/components/utils/OffchainSigner/useMnemonic
 import { hCaptchaSiteKey } from 'src/config/env'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { StepsEnum, useAuth } from '../../AuthContext'
+import { EmailInput, PasswordInput } from './SignInModalContent'
 import styles from './SignInModalContent.module.sass'
 
 type FormValues = {
@@ -38,7 +39,12 @@ type Props = {
 
 const SignUpModalContent = ({ setCurrentStep }: Props) => {
   const { mnemonic } = useMnemonicGenerate()
-  const { setMnemonic, setPassword } = useAuth()
+  const {
+    state: { email },
+    setMnemonic,
+    setPassword,
+    setEmail,
+  } = useAuth()
 
   const [form] = Form.useForm()
 
@@ -117,6 +123,9 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
       setMnemonic(mnemonic)
       setPassword(password)
 
+      // email to be shown in ConfirmationModal
+      setEmail(email)
+
       setCurrentStep(StepsEnum.Confirmation)
     } catch (error) {
       const errorMessage = getErrorMessage(error)
@@ -145,48 +154,14 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
   return (
     <Form form={form} onValuesChange={handleValuesChange}>
       <div className={styles.SignInModalContent}>
-        <Form.Item
-          name={fieldName('email')}
-          className={clsx(styles.BaseFormItem, isError && styles.BaseFormItemError)}
-          validateTrigger='onBlur'
-          rules={[{ pattern: /\S+@\S+\.\S+/, message: 'Please enter a valid email address.' }]}
-          help={error}
-          validateStatus={isStr(error) ? 'error' : undefined}
-        >
-          <Input
-            required
-            type='email'
-            placeholder='Email'
-            onBlur={e => {
-              form.validateFields(['email'])
-              form.setFieldsValue({ [fieldName('email')]: e.target.value.trim() })
-            }}
-          />
-        </Form.Item>
+        <EmailInput
+          data={email ?? form.getFieldValue('email')}
+          error={error}
+          isError={isError}
+          form={form}
+        />
 
-        <Form.Item
-          name={fieldName('password')}
-          className={clsx(styles.BaseFormItem, isError && styles.BaseFormItemError)}
-          validateTrigger='onBlur'
-          rules={[
-            {
-              min: 8,
-              pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
-              message:
-                'Your password should contain at least 8 characters, with at least one letter and one number.',
-            },
-          ]}
-        >
-          <Input
-            required
-            type='password'
-            onBlur={e => {
-              form.validateFields(['password'])
-              form.setFieldsValue({ [fieldName('password')]: e.target.value.trim() })
-            }}
-            placeholder='Password'
-          />
-        </Form.Item>
+        <PasswordInput error={error} isError={isError} form={form} />
 
         <Form.Item
           name={fieldName('repeatPassword')}
