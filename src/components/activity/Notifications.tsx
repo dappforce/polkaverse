@@ -52,7 +52,9 @@ export const createLoadMoreActivities =
     const fetches: Promise<any>[] = [
       dispatch(fetchSpaces({ ids: spaceIds, api, dataSource: DataSourceTypes.SQUID })),
       dispatch(fetchProfileSpaces({ ids: ownerIds, api, dataSource: DataSourceTypes.SQUID })),
-      dispatch(fetchPosts({ ids: postIds, api, dataSource: DataSourceTypes.SQUID })),
+      dispatch(
+        fetchPosts({ ids: postIds, api, dataSource: DataSourceTypes.SQUID, withRootPost: true }),
+      ),
     ]
 
     await Promise.all(fetches)

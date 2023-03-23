@@ -49,7 +49,7 @@ jobs:
           build-args: |
             GH_GA_ID=fake
             GH_APP_KIND=staging
-            GH_CONNECTION_KIND=dev
+            GH_CONNECTION_KIND=staging
           tags: |
             ${{ env.image }}
           cache-from: type=local,src=/tmp/.buildx-cache

@@ -422,7 +422,17 @@ export const GET_ACTIVITY_COUNTS = gql`
           PostShared
           AccountFollowed
           SpaceFollowed
+          AccountUnfollowed
+          SpaceUnfollowed
           PostReactionCreated
+          PostReactionUpdated
+          PostReactionDeleted
+          CommentReactionCreated
+          CommentReactionUpdated
+          CommentReactionDeleted
+          CommentReplyReactionCreated
+          CommentReplyReactionUpdated
+          CommentReplyReactionDeleted
         ]
       }
     ) {
@@ -456,13 +466,29 @@ export const GET_ACTIVITY_COUNTS = gql`
     }
     reactions: activitiesConnection(
       orderBy: id_ASC
-      where: { account: { id_eq: $address }, event_in: [PostReactionCreated] }
+      where: {
+        account: { id_eq: $address }
+        event_in: [
+          PostReactionCreated
+          PostReactionUpdated
+          PostReactionDeleted
+          CommentReactionCreated
+          CommentReactionUpdated
+          CommentReactionDeleted
+          CommentReplyReactionCreated
+          CommentReplyReactionUpdated
+          CommentReplyReactionDeleted
+        ]
+      }
     ) {
       totalCount
     }
     follows: activitiesConnection(
       orderBy: id_ASC
-      where: { account: { id_eq: $address }, event_in: [AccountFollowed, SpaceFollowed] }
+      where: {
+        account: { id_eq: $address }
+        event_in: [AccountFollowed, SpaceFollowed, AccountUnfollowed, SpaceUnfollowed]
+      }
     ) {
       totalCount
     }
@@ -486,6 +512,14 @@ export const GET_ALL_ACTIVITY = gql`
             AccountFollowed
             SpaceFollowed
             PostReactionCreated
+            PostReactionUpdated
+            PostReactionDeleted
+            CommentReactionCreated
+            CommentReactionUpdated
+            CommentReactionDeleted
+            CommentReplyReactionCreated
+            CommentReplyReactionUpdated
+            CommentReplyReactionDeleted
           ]
         }
         limit: $limit
@@ -516,7 +550,7 @@ export const GET_FOLLOW_ACTIVITIES = gql`
   query GetFollowActivities($address: String!, $offset: Int = 0, $limit: Int!) {
     accountById(id: $address) {
       activities(
-        where: { event_in: [AccountFollowed, SpaceFollowed] }
+        where: { event_in: [AccountFollowed, SpaceFollowed, AccountUnfollowed, SpaceUnfollowed] }
         limit: $limit
         offset: $offset
         orderBy: date_DESC
@@ -538,7 +572,19 @@ export const GET_REACTION_ACTIVITIES = gql`
   query GetReactionActivities($address: String!, $offset: Int = 0, $limit: Int!) {
     accountById(id: $address) {
       activities(
-        where: { event_in: [PostReactionCreated, CommentReactionCreated] }
+        where: {
+          event_in: [
+            PostReactionCreated
+            PostReactionUpdated
+            PostReactionDeleted
+            CommentReactionCreated
+            CommentReactionUpdated
+            CommentReactionDeleted
+            CommentReplyReactionCreated
+            CommentReplyReactionUpdated
+            CommentReplyReactionDeleted
+          ]
+        }
         limit: $limit
         offset: $offset
         orderBy: date_DESC
@@ -632,23 +678,8 @@ export const GET_NOTIFICATIONS_COUNT = gql`
     notificationsConnection(
       orderBy: id_ASC
       where: {
-        AND: {
-          account: { id_eq: $address }
-          OR: {
-            activity: {
-              event_eq: CommentCreated
-              post: {
-                OR: [
-                  { OR: { ownedByAccount: { id_eq: $address } } }
-                  { OR: { rootPost: { ownedByAccount: { id_eq: $address } } } }
-                  { OR: { parentPost: { ownedByAccount: { id_eq: $address } } } }
-                  { OR: { rootPost: { space: { ownedByAccount: { id_eq: $address } } } } }
-                ]
-              }
-            }
-          }
-        }
-        activity: { aggregated_eq: true, account: { id_not_eq: $address }, date_gt: $afterDate }
+        account: { id_eq: $address }
+        activity: { aggregated_eq: true, date_gt: $afterDate, account: { id_not_eq: $address } }
       }
     ) {
       totalCount
@@ -661,22 +692,7 @@ export const GET_NOTIFICATIONS = gql`
   query GetNotifications($address: String!, $offset: Int = 0, $limit: Int!) {
     notifications(
       where: {
-        AND: {
-          account: { id_eq: $address }
-          OR: {
-            activity: {
-              event_eq: CommentCreated
-              post: {
-                OR: [
-                  { OR: { ownedByAccount: { id_eq: $address } } }
-                  { OR: { rootPost: { ownedByAccount: { id_eq: $address } } } }
-                  { OR: { parentPost: { ownedByAccount: { id_eq: $address } } } }
-                  { OR: { rootPost: { space: { ownedByAccount: { id_eq: $address } } } } }
-                ]
-              }
-            }
-          }
-        }
+        account: { id_eq: $address }
         activity: { aggregated_eq: true, account: { id_not_eq: $address } }
       }
       limit: $limit
@@ -709,7 +725,9 @@ export const GET_NOTIFICATIONS = gql`
 
 export const GET_ADDRESS_POSTS_REACTION = gql`
   query GetAddressPostsReaction($address: String!, $postIds: [String!]!) {
-    reactions(where: { post: { id_in: $postIds }, account: { id_eq: $address } }) {
+    reactions(
+      where: { status_eq: Active, post: { id_in: $postIds }, account: { id_eq: $address } }
+    ) {
       id
       kind
       post {

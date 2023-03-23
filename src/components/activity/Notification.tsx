@@ -4,21 +4,24 @@ import {
   MessageOutlined,
   ShareAltOutlined,
   UserAddOutlined,
+  UserDeleteOutlined,
 } from '@ant-design/icons'
 import { nonEmptyStr } from '@subsocial/utils'
 import { summarize } from '@subsocial/utils/summarize'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NAME_MAX_LEN } from 'src/config/ValidationsConfig'
 import messages from 'src/messages'
 import { useSelectPost, useSelectProfile, useSelectSpace } from 'src/rtk/app/hooks'
-import { Activity, asCommentData, asSharedPostStruct, EventsName, PostData } from 'src/types'
+import { useAppDispatch } from 'src/rtk/app/store'
+import { fetchPost } from 'src/rtk/features/posts/postsSlice'
+import { Activity, asCommentData, asSharedPostStruct, DataSourceTypes, PostData } from 'src/types'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import ViewPostLink from '../posts/ViewPostLink'
 import Avatar from '../profiles/address-views/Avatar'
 import Name from '../profiles/address-views/Name'
 import { ViewSpace } from '../spaces/ViewSpace'
-import { equalAddresses } from '../substrate'
+import { equalAddresses, useSubsocialApi } from '../substrate'
 import { accountUrl, postUrl, spaceUrl } from '../urls'
 import { formatDate } from '../utils'
 import { DfBgImageLink } from '../utils/DfBgImg'
@@ -49,15 +52,12 @@ const NotificationMessage = ({
   aggregationCount,
   withAggregation = true,
 }: NotificationMessageProps) => {
+  const aggCount = aggregationCount - 1
   const aggregationMsg = withAggregation
-    ? aggregationCount > 0 && (
+    ? aggCount > 0 && (
         <>
           {' and '}
-          <Pluralize
-            count={aggregationCount}
-            singularText='other person'
-            pluralText='other people'
-          />
+          <Pluralize count={aggCount} singularText='other person' pluralText='other people' />
         </>
       )
     : undefined
@@ -88,14 +88,24 @@ const iconProps = {
 const iconByEvent: Record<string, React.ReactNode> = {
   AccountFollowed: <UserAddOutlined {...iconProps} />,
   SpaceFollowed: <UserAddOutlined {...iconProps} />,
+  AccountUnfollowed: <UserDeleteOutlined {...iconProps} />,
+  SpaceUnfollowed: <UserDeleteOutlined {...iconProps} />,
   SpaceCreated: <HomeOutlined {...iconProps} />,
   PostCreated: <ShareAltOutlined {...iconProps} />,
   CommentCreated: <MessageOutlined {...iconProps} />,
   CommentReplyCreated: <MessageOutlined {...iconProps} />,
   PostShared: <ShareAltOutlined {...iconProps} />,
   CommentShared: <ShareAltOutlined {...iconProps} />,
+  CommentReplyShared: <ShareAltOutlined {...iconProps} />,
   PostReactionCreated: <LikeOutlined {...iconProps} />,
+  PostReactionUpdated: <LikeOutlined {...iconProps} />,
+  PostReactionDeleted: <LikeOutlined {...iconProps} />,
   CommentReactionCreated: <LikeOutlined {...iconProps} />,
+  CommentReactionUpdated: <LikeOutlined {...iconProps} />,
+  CommentReactionDeleted: <LikeOutlined {...iconProps} />,
+  CommentReplyReactionCreated: <LikeOutlined {...iconProps} />,
+  CommentReplyReactionUpdated: <LikeOutlined {...iconProps} />,
+  CommentReplyReactionDeleted: <LikeOutlined {...iconProps} />,
 }
 
 export function InnerNotification(props: InnerNotificationProps) {
@@ -134,7 +144,7 @@ export function InnerNotification(props: InnerNotificationProps) {
             <Name owner={owner} address={account} />
             <span className='DfActivityMsg'>
               <NotificationMessage
-                msg={customMsg || eventMsg[event]}
+                msg={customMsg || eventMsg[event] || 'Unknown event'}
                 aggregationCount={aggCount}
                 withAggregation={msgType === 'notifications'}
               />
@@ -193,6 +203,13 @@ const AccountNotification = (props: NotificationProps) => {
 const PostNotification = (props: NotificationProps) => {
   const { postId, event } = props
   const postDetails = useSelectPost(postId)
+
+  const dispatch = useAppDispatch()
+  const { subsocial: api } = useSubsocialApi()
+  useEffect(() => {
+    if (!postId) return
+    dispatch(fetchPost({ id: postId, api, dataSource: DataSourceTypes.SQUID }))
+  }, [dispatch])
 
   let originalPostId = ''
   if (postDetails && postDetails.post.struct.isSharedPost) {
@@ -277,14 +294,15 @@ const CommentNotification = (props: NotificationProps) => {
 }
 
 export const Notification = React.memo((props: NotificationProps) => {
-  const { event, type } = props
-  const isActivity = type === 'activities'
-  const eventName = event as EventsName
+  const { event } = props
+  const eventName = event
 
   switch (eventName) {
     case 'AccountFollowed':
+    case 'AccountUnfollowed':
       return <AccountNotification {...props} />
     case 'SpaceFollowed':
+    case 'SpaceUnfollowed':
       return <SpaceNotification {...props} />
     case 'SpaceCreated':
       return <SpaceNotification {...props} />
@@ -293,15 +311,22 @@ export const Notification = React.memo((props: NotificationProps) => {
     case 'CommentReplyCreated':
       return <CommentNotification {...props} />
     case 'PostShared':
-      return isActivity ? null : <PostNotification {...props} />
     case 'CommentShared':
-      return <CommentNotification {...props} />
+    case 'CommentReplyShared':
+      return <PostNotification {...props} />
     case 'PostReactionCreated':
+    case 'PostReactionUpdated':
+    case 'PostReactionDeleted':
       return <PostNotification {...props} />
     case 'CommentReactionCreated':
+    case 'CommentReactionUpdated':
+    case 'CommentReactionDeleted':
+    case 'CommentReplyReactionCreated':
+    case 'CommentReplyReactionUpdated':
+    case 'CommentReplyReactionDeleted':
       return <CommentNotification {...props} />
     case 'PostCreated':
-      return isActivity ? <PostNotification {...props} /> : null
+      return <PostNotification {...props} />
     default:
       return null
   }
