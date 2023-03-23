@@ -5,7 +5,10 @@ import { useSubstrate } from 'src/components/substrate'
 import useToggle from 'src/components/substrate/useToggle'
 import { Copy } from 'src/components/urls/helpers'
 import CopyOutlinedIcon from 'src/components/utils/icons/CopyOutlined'
-import { getOffchainToken } from 'src/components/utils/OffchainSigner/ExternalStorage'
+import {
+  getOffchainToken,
+  getTempRegisterAccount,
+} from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 import useEncryptionToStorage from './useEncryptionToStorage'
@@ -19,7 +22,7 @@ const ShowMnemonicModalContent = ({ onRegisterDone }: Props) => {
   const { mnemonic, password } = state
 
   const { api } = useSubstrate()
-  const { createEncryptedAccountAndSave } = useEncryptionToStorage()
+  const { createEncryptedAccountAndSave, getEncryptedStoredAccount } = useEncryptionToStorage()
 
   const [isMnemonicSaved, setIsMnemonicSaved] = useState(false)
   const [isSending, ,] = useToggle(false)
@@ -30,12 +33,13 @@ const ShowMnemonicModalContent = ({ onRegisterDone }: Props) => {
     }
   }, [isMnemonicSaved, mnemonic, password])
 
-  if (!mnemonic) return null
+  const accountAddress = getTempRegisterAccount()
+  const mnemnonicToBeShown = mnemonic ?? getEncryptedStoredAccount(accountAddress!, password!)
 
   const handleRegisterDone = async () => {
     try {
       const keyring = new Keyring({ type: 'sr25519' })
-      const userPair = keyring.addFromUri(mnemonic)
+      const userPair = keyring.addFromUri(mnemnonicToBeShown)
       const userAddress = userPair.address
 
       const accessToken = getOffchainToken(userAddress)
@@ -52,9 +56,9 @@ const ShowMnemonicModalContent = ({ onRegisterDone }: Props) => {
   return (
     <div className={styles.ConfirmationStepContent}>
       <Card className={styles.InnerCard}>
-        <div className={styles.MnemonicText}>{mnemonic}</div>
+        <div className={styles.MnemonicText}>{mnemnonicToBeShown}</div>
         <Divider type={'vertical'} className={styles.InnerDivider} />
-        <Copy text={mnemonic} message='Your mnemonic phrase copied'>
+        <Copy text={mnemnonicToBeShown} message='Your mnemonic phrase copied'>
           <div className={styles.CopyIcon}>
             <CopyOutlinedIcon />
           </div>

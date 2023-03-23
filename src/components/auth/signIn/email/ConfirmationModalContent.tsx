@@ -12,12 +12,12 @@ import {
 import CountdownTimerButton from 'src/components/utils/OffchainSigner/CountdownTimerButton'
 import {
   getOffchainToken,
+  getTempRegisterAccount,
   OFFCHAIN_REFRESH_TOKEN_KEY,
   OFFCHAIN_TOKEN_KEY,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import useExternalStorage from 'src/hooks/useExternalStorage'
-import { generateKeypairBySecret } from 'src/utils/crypto'
-import { StepsEnum, useAuth } from '../../AuthContext'
+import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 
 type FormValues = {
@@ -33,22 +33,18 @@ type Props = {
 }
 
 const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
-  const { state } = useAuth()
-  const { mnemonic } = state
-
   const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY)
   const { setData: setOffchainRefreshToken } = useExternalStorage(OFFCHAIN_REFRESH_TOKEN_KEY)
+
+  const userAddress = getTempRegisterAccount()
 
   const [form] = Form.useForm()
 
   const [isFormValid, setIsFormValid] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  if (!mnemonic) return null
-  const { address: userAddress } = generateKeypairBySecret(mnemonic)
-
   const handleSubmit = async (values: FormValues) => {
-    const accessToken = getOffchainToken(userAddress)
+    const accessToken = getOffchainToken(userAddress!)
     if (!accessToken) throw new Error('Access token is not defined')
 
     try {
@@ -89,7 +85,7 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
   const handleResendCode = async () => {
     try {
-      const accessToken = getOffchainToken(userAddress)
+      const accessToken = getOffchainToken(userAddress!)
 
       if (!accessToken) throw new Error('Token is not defined')
       await resendEmailConfirmation(accessToken)
