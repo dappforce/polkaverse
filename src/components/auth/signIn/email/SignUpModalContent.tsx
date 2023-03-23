@@ -1,7 +1,7 @@
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { Keyring } from '@polkadot/api'
 import { stringToU8a, u8aToHex } from '@polkadot/util'
-import { isStr } from '@subsocial/utils'
+import { isStr, toSubsocialAddress } from '@subsocial/utils'
 import { Button, Form, Input } from 'antd'
 import clsx from 'clsx'
 import { RuleObject } from 'rc-field-form/lib/interface'
@@ -15,6 +15,7 @@ import {
 import {
   OFFCHAIN_REFRESH_TOKEN_KEY,
   OFFCHAIN_TOKEN_KEY,
+  TEMP_REGISTER_ACCOUNT,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import useMnemonicGenerate from 'src/components/utils/OffchainSigner/useMnemonicGenerate'
 import { hCaptchaSiteKey } from 'src/config/env'
@@ -22,6 +23,7 @@ import useExternalStorage from 'src/hooks/useExternalStorage'
 import { StepsEnum, useAuth } from '../../AuthContext'
 import { EmailInput, PasswordInput } from './SignInModalContent'
 import styles from './SignInModalContent.module.sass'
+import useEncryptionToStorage from './useEncryptionToStorage'
 
 type FormValues = {
   email: string
@@ -39,6 +41,7 @@ type Props = {
 
 const SignUpModalContent = ({ setCurrentStep }: Props) => {
   const { mnemonic } = useMnemonicGenerate()
+  const { createEncryptedAccountAndSave } = useEncryptionToStorage()
   const {
     state: { email },
     setMnemonic,
@@ -59,6 +62,7 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
   const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY)
   const { setData: setOffchainRefreshToken } = useExternalStorage(OFFCHAIN_REFRESH_TOKEN_KEY)
+  const { setData: setTempRegisterAccount } = useExternalStorage(TEMP_REGISTER_ACCOUNT)
 
   const onExpire = () => {
     console.warn('hCaptcha Token Expired')
@@ -116,8 +120,13 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
       const { accessToken, refreshToken } = data
 
       // save to local storage for usage in ConfirmationModal
-      setOffchainToken(accessToken, accountAddress)
-      setOffchainRefreshToken(refreshToken, accountAddress)
+      const subsocialAddress = toSubsocialAddress(accountAddress)
+      setOffchainToken(accessToken, subsocialAddress)
+      setOffchainRefreshToken(refreshToken, subsocialAddress)
+      setTempRegisterAccount(subsocialAddress)
+
+      // save secret to local storage (in case of page reload)
+      createEncryptedAccountAndSave(mnemonic, password)
 
       // save to context (to be reused in ShowMnemonic)
       setMnemonic(mnemonic)

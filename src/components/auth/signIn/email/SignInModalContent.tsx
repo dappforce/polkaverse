@@ -99,6 +99,7 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
   const {
     state: { email },
     setEmail,
+    setPassword,
   } = useAuth()
 
   const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY)
@@ -164,7 +165,10 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
       if (!emailVerified) {
         const data = await resendEmailConfirmation(accessToken)
         const { message } = data
-        if (message === 'sent') setCurrentStep(StepsEnum.Confirmation)
+        if (message === 'sent') {
+          setPassword(password)
+          setCurrentStep(StepsEnum.Confirmation)
+        }
       } else {
         setAuthOnRequest(accessToken)
         onSignInSuccess(accountAddress)
