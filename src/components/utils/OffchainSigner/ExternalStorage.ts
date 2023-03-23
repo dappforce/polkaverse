@@ -1,13 +1,13 @@
 import { createStorageKey } from 'src/utils/storage'
 import store from 'store'
 
-const OFFCHAIN_ADDRESS_KEY = 'df.OffchainAddress'
-const PROXY_ADDRESS_KEY = 'df.ProxyAddress'
-const OFFCHAIN_TOKEN_KEY = 'df.OffchainToken'
-const OFFCHAIN_REFRESH_TOKEN_KEY = 'df.OffchainRefreshToken'
-const TEMP_REGISTER_ACCOUNT = 'df.TempRegisterAccount'
-const SECRET_KEY = 'df.SecretKey'
-const SALT = 'df.Salt'
+const OFFCHAIN_ADDRESS_KEY = 'OffchainAddress'
+const PROXY_ADDRESS_KEY = 'ProxyAddress'
+const OFFCHAIN_TOKEN_KEY = 'OffchainToken'
+const OFFCHAIN_REFRESH_TOKEN_KEY = 'OffchainRefreshToken'
+const TEMP_REGISTER_ACCOUNT = 'TempRegisterAccount'
+const SECRET_KEY = 'SecretKey'
+const SALT = 'Salt'
 
 const getTempRegisterAccount = (): string | undefined =>
   store.get(createStorageKey(TEMP_REGISTER_ACCOUNT))
