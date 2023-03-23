@@ -5,7 +5,7 @@ const stagingConfig: SubsocialConfig = {
 
   substrateUrl: 'wss://rco-para.subsocial.network',
   offchainUrl: 'https://staging-api.subsocial.network',
-  graphqlUrl: 'https://squid.subsquid.io/soonsocial-staging/graphql',
+  graphqlUrl: 'https://squid.subsquid.io/soonsocial/graphql',
 
   ipfsNodeUrl: 'https://staging-ipfs.subsocial.network',
   dagHttpMethod: 'get',
