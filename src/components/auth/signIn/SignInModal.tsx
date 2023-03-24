@@ -78,11 +78,13 @@ type ModalBodyWrapperProps = {
   desc: React.ReactNode
 }
 
-const ModalBodyWrapper = ({ children, moreDesc, title, desc }: ModalBodyWrapperProps) => {
+const ExpandableDescription = (props: ModalBodyWrapperProps) => {
+  const { children, title, desc, moreDesc } = props
+
   const [isExpanded, setExpanded] = useState(false)
 
-  if (moreDesc) {
-    return isExpanded ? (
+  if (isExpanded)
+    return (
       <div>
         <div className={styles.BodyTitle}>
           <h2 className='font-weight-bold'>{title}</h2>
@@ -95,21 +97,26 @@ const ModalBodyWrapper = ({ children, moreDesc, title, desc }: ModalBodyWrapperP
         </div>
         {children}
       </div>
-    ) : (
-      <div>
-        <div className={styles.BodyTitle}>
-          <h2 className='font-weight-bold'>{title}</h2>
-          <MutedDiv>
-            {desc}{' '}
-            <span className={styles.ReadMore} onClick={() => setExpanded(true)}>
-              Read more
-            </span>
-          </MutedDiv>
-        </div>
-        {children}
-      </div>
     )
-  }
+
+  return (
+    <div>
+      <div className={styles.BodyTitle}>
+        <h2 className='font-weight-bold'>{title}</h2>
+        <MutedDiv>
+          {desc}{' '}
+          <span className={styles.ReadMore} onClick={() => setExpanded(true)}>
+            Read more
+          </span>
+        </MutedDiv>
+      </div>
+      {children}
+    </div>
+  )
+}
+
+const ModalBodyWrapper = ({ children, moreDesc, title, desc }: ModalBodyWrapperProps) => {
+  if (moreDesc) return <ExpandableDescription {...{ children, moreDesc, title, desc }} />
 
   return (
     <div>
