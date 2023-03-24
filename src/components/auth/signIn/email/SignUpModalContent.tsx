@@ -4,13 +4,16 @@ import { stringToU8a, u8aToHex } from '@polkadot/util'
 import { isStr, toSubsocialAddress } from '@subsocial/utils'
 import { Button, Form, Input } from 'antd'
 import clsx from 'clsx'
+import jwtDecode from 'jwt-decode'
 import { RuleObject } from 'rc-field-form/lib/interface'
 import { useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
 import {
   emailSignUp,
   getErrorMessage,
+  JwtPayload,
   requestProof,
+  resendEmailConfirmation,
 } from 'src/components/utils/OffchainSigner/api/requests'
 import {
   SIGNER_REFRESH_TOKEN_KEY,
@@ -119,23 +122,34 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
       const data = await emailSignUp(props)
       const { accessToken, refreshToken } = data
 
-      // save to local storage for usage in ConfirmationModal
-      const subsocialAddress = toSubsocialAddress(accountAddress)
-      setSignerToken(accessToken, subsocialAddress)
-      setSignerRefreshToken(refreshToken, subsocialAddress)
-      setTempRegisterAccount(subsocialAddress)
+      const decoded = jwtDecode<JwtPayload>(accessToken)
 
-      // save secret to local storage (in case of page reload)
-      createEncryptedAccountAndSave(mnemonic, password)
+      const { emailVerified } = decoded
 
-      // save to context (to be reused in ShowMnemonic)
-      setMnemonic(mnemonic)
-      setPassword(password)
+      if (!emailVerified) {
+        const data = await resendEmailConfirmation(accessToken)
+        const { message } = data
 
-      // email to be shown in ConfirmationModal
-      setEmail(email)
+        if (message === 'sent') {
+          // save to local storage for usage in ConfirmationModal
+          const subsocialAddress = toSubsocialAddress(accountAddress)
+          setSignerToken(accessToken, subsocialAddress)
+          setSignerRefreshToken(refreshToken, subsocialAddress)
+          setTempRegisterAccount(subsocialAddress)
 
-      setCurrentStep(StepsEnum.Confirmation)
+          // save secret to local storage (in case of page reload)
+          createEncryptedAccountAndSave(mnemonic, password)
+
+          // save to context (to be reused in ShowMnemonic)
+          setMnemonic(mnemonic)
+          setPassword(password)
+
+          // email to be shown in ConfirmationModal
+          setEmail(email)
+
+          setCurrentStep(StepsEnum.Confirmation)
+        }
+      }
     } catch (error) {
       const errorMessage = getErrorMessage(error)
       setError(errorMessage as string)
