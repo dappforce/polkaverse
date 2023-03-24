@@ -76,11 +76,17 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
   const patternToMatch = new RegExp(`^[0-9]{${CODE_DIGIT}}$`)
 
+  const isError = isStr(error)
+
   const handleValuesChange = (_: FormValues, allValues: FormValues) => {
     const isFilled = Object.values(allValues).every(value => Boolean(value))
     const isValidConfirmationCode = patternToMatch.test(allValues.confirmationCode.toString())
     const isValid = isFilled && isValidConfirmationCode
+
     setIsFormValid(isValid)
+
+    const isReset = isError && !isFilled
+    if (isReset) setError(null)
   }
 
   const handleResendCode = async () => {
@@ -93,8 +99,6 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
       console.warn({ error })
     }
   }
-
-  const isError = isStr(error)
 
   return (
     <Form form={form} onValuesChange={handleValuesChange} onFinish={handleSubmit}>
