@@ -20,6 +20,7 @@ import { CODE_DIGIT } from 'src/config/ValidationsConfig'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
+import { RegexValidations, useFormValidation } from './useFormValidation'
 
 type FormValues = {
   confirmationCode: number
@@ -34,6 +35,8 @@ type Props = {
 }
 
 const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
+  const { isValidCode } = useFormValidation()
+
   const { setData: setSignerToken } = useExternalStorage(SIGNER_TOKEN_KEY)
   const { setData: setSignerRefreshToken } = useExternalStorage(SIGNER_REFRESH_TOKEN_KEY)
 
@@ -74,14 +77,12 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
     form.setFieldsValue({ [fieldName('confirmationCode')]: value })
   }
 
-  const patternToMatch = new RegExp(`^[0-9]{${CODE_DIGIT}}$`)
-
   const isError = isStr(error)
 
   const handleValuesChange = (_: FormValues, allValues: FormValues) => {
     const isFilled = Object.values(allValues).every(value => Boolean(value))
-    const isValidConfirmationCode = patternToMatch.test(allValues.confirmationCode.toString())
-    const isValid = isFilled && isValidConfirmationCode
+    const isCodeValid = isValidCode(allValues.confirmationCode.toString())
+    const isValid = isFilled && isCodeValid
 
     setIsFormValid(isValid)
 
@@ -109,7 +110,7 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
           validateTrigger='onBlur'
           rules={[
             {
-              pattern: patternToMatch,
+              pattern: RegexValidations.ValidCode,
               message: 'Please enter a valid confirmation code.',
             },
           ]}
