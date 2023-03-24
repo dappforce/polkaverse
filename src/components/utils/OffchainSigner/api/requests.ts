@@ -27,6 +27,11 @@ type ConfirmEmailProps = {
   accessToken: string
 }
 
+type SubmitSignedCallDataProps = {
+  data: string
+  jwt: string
+}
+
 export type JwtPayload = {
   accountAddress: string
   accountAddressVerified: boolean
@@ -35,7 +40,6 @@ export type JwtPayload = {
   iat: number
   exp: number
 }
-
 interface Error {
   message: string[]
   statusCode: number
@@ -92,23 +96,18 @@ export const emailSignUp = async (props: EmailSignUpProps) => {
   return res
 }
 
-export const confirmEmail = async (props: ConfirmEmailProps) => {
-  const { code, accessToken } = props
+export const confirmEmail = async ({ code, ...otherProps }: ConfirmEmailProps) => {
   const res = await sendHttpRequest({
     params: {
       url: OffchainSignerEndpoint.CONFIRM,
       data: {
         code,
       },
-      config: {
-        headers: {
-          Authorization: accessToken,
-        },
-      },
     },
     method: 'POST',
     onFaileReturnedValue: undefined,
     onFailedText: 'Failed to confirm email',
+    ...otherProps,
   })
 
   return res
@@ -118,12 +117,8 @@ export const resendEmailConfirmation = async (accessToken: string) => {
   const res = await sendHttpRequest({
     params: {
       url: OffchainSignerEndpoint.RESEND_CONFIRMATION,
-      config: {
-        headers: {
-          Authorization: accessToken,
-        },
-      },
     },
+    accessToken,
     method: 'POST',
     onFaileReturnedValue: undefined,
     onFailedText: 'Failed to resend email confirmation',
@@ -150,23 +145,14 @@ export const fetchMainProxyAddress = async (accessToken: string) => {
   const res = await sendHttpRequest({
     params: {
       url: OffchainSignerEndpoint.FETCH_MAIN_PROXY,
-      config: {
-        headers: {
-          Authorization: accessToken,
-        },
-      },
     },
+    accessToken,
     method: 'GET',
     onFaileReturnedValue: undefined,
     onFailedText: 'Failed to fetch proxy address',
   })
 
   return res
-}
-
-type SubmitSignedCallDataProps = {
-  data: string
-  jwt: string
 }
 
 export const submitSignedCallData = async ({ data, jwt }: SubmitSignedCallDataProps) => {
