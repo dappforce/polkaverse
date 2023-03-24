@@ -5,3 +5,5 @@ export const DESC_MAX_LEN = 20_000
 
 export const MIN_HANDLE_LEN = 5
 export const MAX_HANDLE_LEN = 50
+
+export const CODE_DIGIT = 6

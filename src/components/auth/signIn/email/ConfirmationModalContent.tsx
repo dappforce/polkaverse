@@ -16,6 +16,7 @@ import {
   SIGNER_REFRESH_TOKEN_KEY,
   SIGNER_TOKEN_KEY,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
+import { CODE_DIGIT } from 'src/config/ValidationsConfig'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
@@ -73,7 +74,6 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
     form.setFieldsValue({ [fieldName('confirmationCode')]: value })
   }
 
-  const CODE_DIGIT = 6
   const patternToMatch = new RegExp(`^[0-9]{${CODE_DIGIT}}$`)
 
   const handleValuesChange = (_: FormValues, allValues: FormValues) => {
