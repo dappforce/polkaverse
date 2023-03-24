@@ -27,6 +27,7 @@ import { StepsEnum, useAuth } from '../../AuthContext'
 import { EmailInput, PasswordInput } from './SignInModalContent'
 import styles from './SignInModalContent.module.sass'
 import useEncryptionToStorage from './useEncryptionToStorage'
+import { useFormValidation } from './useFormValidation'
 
 type FormValues = {
   email: string
@@ -51,6 +52,7 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
     setPassword,
     setEmail,
   } = useAuth()
+  const { isValidEmail, isValidPassword } = useFormValidation()
 
   const [form] = Form.useForm()
 
@@ -158,10 +160,10 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
   const handleValuesChange = (_: FormValues, allValues: FormValues) => {
     const isFilled = Object.values(allValues).every(value => Boolean(value))
-    const isValidEmail = /\S+@\S+\.\S+/.test(allValues.email)
-    const isValidPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(allValues.password)
+    const isEmailValid = isValidEmail(allValues.email)
+    const isPasswordValid = isValidPassword(allValues.password)
     const isMatched = allValues.password === allValues.repeatPassword
-    const isValid = isFilled && isValidEmail && isValidPassword && isMatched
+    const isValid = isFilled && isEmailValid && isPasswordValid && isMatched
     setIsFormValid(isValid)
   }
 

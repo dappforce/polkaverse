@@ -20,6 +20,7 @@ import { hCaptchaSiteKey } from 'src/config/env'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { StepsEnum, useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
+import { RegexValidations, useFormValidation } from './useFormValidation'
 
 type FormValues = {
   email: string
@@ -49,7 +50,9 @@ export const EmailInput = ({ data, error, isError, form }: InputProps) => {
       name={fieldName('email')}
       className={clsx(styles.BaseFormItem, isError && styles.BaseFormItemError)}
       validateTrigger='onBlur'
-      rules={[{ pattern: /\S+@\S+\.\S+/, message: 'Please enter a valid email address.' }]}
+      rules={[
+        { pattern: RegexValidations.ValidEmail, message: 'Please enter a valid email address.' },
+      ]}
       validateStatus={isStr(error) ? 'error' : undefined}
     >
       <Input
@@ -74,7 +77,7 @@ export const PasswordInput = ({ error, isError, form }: InputProps) => {
       rules={[
         {
           min: 8,
-          pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+          pattern: RegexValidations.ValidPassword,
           message:
             'Your password should contain at least 8 characters, with at least one letter and one number.',
         },
@@ -101,6 +104,8 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
     setEmail,
     setPassword,
   } = useAuth()
+
+  const { isValidEmail, isValidPassword } = useFormValidation()
 
   const { setData: setSignerToken } = useExternalStorage(SIGNER_TOKEN_KEY)
   const { setData: setSignerRefreshToken } = useExternalStorage(SIGNER_REFRESH_TOKEN_KEY)
@@ -155,7 +160,6 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
       }
 
       const data = await emailSignIn(props)
-
       const { accessToken, refreshToken } = data
 
       const decoded = jwtDecode<JwtPayload>(accessToken)
@@ -185,9 +189,9 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
 
   const handleValuesChange = (_: FormValues, allValues: FormValues) => {
     const isFilled = Object.values(allValues).every(value => Boolean(value))
-    const isValidEmail = /\S+@\S+\.\S+/.test(allValues.email)
-    const isValidPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(allValues.password)
-    const isValid = isFilled && isValidEmail && isValidPassword
+    const isEmailValid = isValidEmail(allValues.email)
+    const isPasswordValid = isValidPassword(allValues.password)
+    const isValid = isFilled && isEmailValid && isPasswordValid
     setIsFormValid(isValid)
   }
 
