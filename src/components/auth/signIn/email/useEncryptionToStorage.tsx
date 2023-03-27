@@ -4,8 +4,10 @@ import {
   SALT,
   SECRET_KEY,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
+import SignerKeyringManager from 'src/components/utils/OffchainSigner/SignerKeyringManager'
 import useExternalStorage from 'src/hooks/useExternalStorage'
-import { decryptKey, encryptKey, generateAccount } from 'src/utils/crypto'
+
+const signerKeyringManager = new SignerKeyringManager()
 
 const useEncryptionToStorage = () => {
   const { setData: setSecretKey } = useExternalStorage(SECRET_KEY)
@@ -14,14 +16,17 @@ const useEncryptionToStorage = () => {
   const getEncryptedStoredAccount = (accountAddress: string, password: string) => {
     const secretKey = getSecretKeyByAddress(accountAddress)
     const salt = getSaltByAddress(accountAddress)
-    const decryptedKey = decryptKey(secretKey!, salt!, password)
+    const decryptedKey = signerKeyringManager.decryptKey(secretKey!, salt!, password)
 
     return decryptedKey
   }
 
   const createEncryptedAccountAndSave = async (mnemonic: string, password: string) => {
-    const { publicAddress } = await generateAccount(mnemonic)
-    const { encryptedMessage: encryptedPhrase, saltStr } = encryptKey(mnemonic, password)
+    const { publicAddress } = await signerKeyringManager.generateAccount(mnemonic)
+    const { encryptedMessage: encryptedPhrase, saltStr } = signerKeyringManager.encryptKey(
+      mnemonic,
+      password,
+    )
 
     setSecretKey(encryptedPhrase, publicAddress)
     setSalt(saltStr, publicAddress)
