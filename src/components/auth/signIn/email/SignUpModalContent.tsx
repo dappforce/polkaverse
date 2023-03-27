@@ -48,7 +48,6 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
   const { createEncryptedAccountAndSave } = useEncryptionToStorage()
   const {
     state: { email },
-    setMnemonic,
     setPassword,
     setEmail,
   } = useAuth()
@@ -142,8 +141,7 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
           // save secret to local storage (in case of page reload)
           createEncryptedAccountAndSave(mnemonic, password)
 
-          // save to context (to be reused in ShowMnemonic)
-          setMnemonic(mnemonic)
+          // for decryption
           setPassword(password)
 
           // email to be shown in ConfirmationModal
