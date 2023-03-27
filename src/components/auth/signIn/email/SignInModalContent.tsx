@@ -11,12 +11,8 @@ import {
   JwtPayload,
 } from 'src/components/utils/OffchainSigner/api/requests'
 import { setAuthOnRequest } from 'src/components/utils/OffchainSigner/api/utils'
-import {
-  SIGNER_REFRESH_TOKEN_KEY,
-  SIGNER_TOKEN_KEY,
-} from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { hCaptchaSiteKey } from 'src/config/env'
-import useExternalStorage from 'src/hooks/useExternalStorage'
+import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
 import { StepsEnum, useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 import { RegexValidations, useFormValidation } from './useFormValidation'
@@ -106,8 +102,7 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
 
   const { isValidEmail, isValidPassword } = useFormValidation()
 
-  const { setData: setSignerToken } = useExternalStorage(SIGNER_TOKEN_KEY)
-  const { setData: setSignerRefreshToken } = useExternalStorage(SIGNER_REFRESH_TOKEN_KEY)
+  const { setSignerTokensByAddress } = useSignerExternalStorage()
 
   const [form] = Form.useForm()
 
@@ -175,8 +170,11 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
         onSignInSuccess(accountAddress)
 
         // Save auth tokens to local storage for future use in the app
-        setSignerToken(accessToken, accountAddress)
-        setSignerRefreshToken(refreshToken, accountAddress)
+        setSignerTokensByAddress({
+          userAddress: accountAddress,
+          token: accessToken,
+          refreshToken,
+        })
       }
     } catch (error) {
       const errorMessage = getErrorMessage(error)
