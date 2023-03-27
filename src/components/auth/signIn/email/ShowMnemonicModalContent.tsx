@@ -35,12 +35,12 @@ const ShowMnemonicModalContent = ({ onRegisterDone }: Props) => {
   }, [isMnemonicSaved, mnemonic, password])
 
   const accountAddress = getTempRegisterAccount()
-  const mnemnonicToBeShown = mnemonic ?? getEncryptedStoredAccount(accountAddress!, password!)
+  const mnemonicToBeShown = mnemonic ?? getEncryptedStoredAccount(accountAddress!, password!)
 
   const handleRegisterDone = async () => {
     try {
       const keyring = new Keyring({ type: 'sr25519' })
-      const userPair = keyring.addFromUri(mnemnonicToBeShown)
+      const userPair = keyring.addFromUri(mnemonicToBeShown)
       const userAddress = userPair.address
 
       const accessToken = getSignerToken(userAddress)
@@ -57,9 +57,9 @@ const ShowMnemonicModalContent = ({ onRegisterDone }: Props) => {
   return (
     <div className={styles.ConfirmationStepContent}>
       <Card className={styles.InnerCard}>
-        <div className={styles.MnemonicText}>{mnemnonicToBeShown}</div>
+        <div className={styles.MnemonicText}>{mnemonicToBeShown}</div>
         <Divider type={'vertical'} className={styles.InnerDivider} />
-        <Copy text={mnemnonicToBeShown} message='Your mnemonic phrase copied'>
+        <Copy text={mnemonicToBeShown} message='Your mnemonic phrase copied'>
           <div className={styles.CopyIcon}>
             <CopyOutlinedIcon />
           </div>
