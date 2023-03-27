@@ -13,11 +13,9 @@ import CountdownTimerButton from 'src/components/utils/OffchainSigner/CountdownT
 import {
   getSignerToken,
   getTempRegisterAccount,
-  SIGNER_REFRESH_TOKEN_KEY,
-  SIGNER_TOKEN_KEY,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { CODE_DIGIT } from 'src/config/ValidationsConfig'
-import useExternalStorage from 'src/hooks/useExternalStorage'
+import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 import { RegexValidations, useFormValidation } from './useFormValidation'
@@ -37,8 +35,7 @@ type Props = {
 const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
   const { isValidCode } = useFormValidation()
 
-  const { setData: setSignerToken } = useExternalStorage(SIGNER_TOKEN_KEY)
-  const { setData: setSignerRefreshToken } = useExternalStorage(SIGNER_REFRESH_TOKEN_KEY)
+  const { setSignerTokensByAddress } = useSignerExternalStorage()
 
   const userAddress = getTempRegisterAccount()
 
@@ -63,8 +60,11 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
       const { accountAddress } = jwtDecode<JwtPayload>(newAccessToken)
 
       // Save auth tokens to local storage for getMainProxyAddress request
-      setSignerToken(newAccessToken, accountAddress)
-      setSignerRefreshToken(newRefreshToken, accountAddress)
+      setSignerTokensByAddress({
+        userAddress: accountAddress,
+        token: newAccessToken,
+        refreshToken: newRefreshToken,
+      })
 
       setCurrentStep(StepsEnum.ShowMnemonic)
     } catch (error) {

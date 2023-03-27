@@ -15,14 +15,9 @@ import {
   requestProof,
   resendEmailConfirmation,
 } from 'src/components/utils/OffchainSigner/api/requests'
-import {
-  SIGNER_REFRESH_TOKEN_KEY,
-  SIGNER_TOKEN_KEY,
-  TEMP_REGISTER_ACCOUNT,
-} from 'src/components/utils/OffchainSigner/ExternalStorage'
 import useMnemonicGenerate from 'src/components/utils/OffchainSigner/useMnemonicGenerate'
 import { hCaptchaSiteKey } from 'src/config/env'
-import useExternalStorage from 'src/hooks/useExternalStorage'
+import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
 import { StepsEnum, useAuth } from '../../AuthContext'
 import { EmailInput, PasswordInput } from './SignInModalContent'
 import styles from './SignInModalContent.module.sass'
@@ -64,9 +59,7 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
   const hCaptchaRef = useRef(null)
 
-  const { setData: setSignerToken } = useExternalStorage(SIGNER_TOKEN_KEY)
-  const { setData: setSignerRefreshToken } = useExternalStorage(SIGNER_REFRESH_TOKEN_KEY)
-  const { setData: setTempRegisterAccount } = useExternalStorage(TEMP_REGISTER_ACCOUNT)
+  const { setSignerTokensByAddress, setSignerTempRegisterAccount } = useSignerExternalStorage()
 
   const onExpire = () => {
     console.warn('hCaptcha Token Expired')
@@ -133,10 +126,13 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
         if (message === 'sent') {
           // save to local storage for usage in ConfirmationModal
-          const subsocialAddress = toSubsocialAddress(accountAddress)
-          setSignerToken(accessToken, subsocialAddress)
-          setSignerRefreshToken(refreshToken, subsocialAddress)
-          setTempRegisterAccount(subsocialAddress)
+          const subsocialAddress = toSubsocialAddress(accountAddress) ?? accountAddress
+          setSignerTokensByAddress({
+            userAddress: subsocialAddress,
+            token: accessToken,
+            refreshToken,
+          })
+          setSignerTempRegisterAccount(subsocialAddress)
 
           // save secret to local storage (in case of page reload)
           createEncryptedAccountAndSave(mnemonic, password)
