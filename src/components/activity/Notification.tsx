@@ -292,17 +292,11 @@ const reactionWordingMap = {
     Upvote: 'removed upvote',
     Downvote: 'removed downvote',
   },
-  ReactionUpdated: {
-    Upvote: 'upvoted',
-    Downvote: 'downvoted',
-  },
 }
 function getReactionType(event: EventsName, reactionKind: ReactionType | undefined) {
   let reactionType: keyof typeof reactionWordingMap
   if (event.endsWith('ReactionDeleted')) {
     reactionType = 'ReactionDeleted'
-  } else if (event.endsWith('ReactionUpdated')) {
-    reactionType = 'ReactionUpdated'
   } else {
     reactionType = 'ReactionCreated'
   }
