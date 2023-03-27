@@ -595,6 +595,7 @@ export const GET_REACTION_ACTIVITIES = gql`
           kind
         }
         post {
+          isComment
           id
         }
       }

@@ -28,6 +28,10 @@ export interface GetReactionActivities_accountById_activities_reaction {
 export interface GetReactionActivities_accountById_activities_post {
   __typename: "Post";
   /**
+   * Is the current Post a Comment to a Regular Post or a Comment Post?
+   */
+  isComment: boolean;
+  /**
    * The Post ID, the same as it is on the blockchain.
    */
   id: string;

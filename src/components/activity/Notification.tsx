@@ -293,7 +293,11 @@ const reactionWordingMap = {
     Downvote: 'removed downvote',
   },
 }
-function getReactionType(event: EventsName, reactionKind: ReactionType | undefined) {
+function getReactionType(
+  event: EventsName,
+  reactionKind: ReactionType | undefined,
+  type: NotifActivitiesType = 'activities',
+) {
   let reactionType: keyof typeof reactionWordingMap
   if (event.endsWith('ReactionDeleted')) {
     reactionType = 'ReactionDeleted'
@@ -301,13 +305,15 @@ function getReactionType(event: EventsName, reactionKind: ReactionType | undefin
     reactionType = 'ReactionCreated'
   }
   const kind = reactionKind || ReactionKind.Upvote
+  const entity = event.startsWith('Post') ? 'post' : 'comment on'
+  const suffix = type === 'activities' ? `the ${entity}` : `your ${entity}`
   return {
-    wording: reactionWordingMap[reactionType][kind],
+    wording: `${reactionWordingMap[reactionType][kind]} ${suffix}`,
     icon: iconByEvent[kind],
   }
 }
 const PostReactionNotification = (props: NotificationProps) => {
-  const { postId, reactionKind, event } = props
+  const { postId, reactionKind, event, type } = props
   const postDetails = useSelectPost(postId)
 
   if (!postDetails) return null
@@ -316,12 +322,12 @@ const PostReactionNotification = (props: NotificationProps) => {
 
   let space = postDetails.space!
 
-  const { wording: msg, icon } = getReactionType(event, reactionKind)
+  const { wording: msg, icon } = getReactionType(event, reactionKind, type)
   let content = post.content
 
   const links = {
     href: '/[spaceId]/[slug]',
-    as: postUrl(space!, post),
+    as: postUrl(space, post),
   }
 
   return (
@@ -344,13 +350,14 @@ const PostReactionNotification = (props: NotificationProps) => {
 }
 
 const CommentReactionNotification = (props: NotificationProps) => {
-  const { commentId, event, reactionKind } = props
+  const { commentId, event, reactionKind, type } = props
   const commentDetails = useSelectPost(commentId)
 
   const rootPostId = commentDetails
     ? asCommentData(commentDetails.post)?.struct?.rootPostId
     : undefined
   const postDetails = useSelectPost(rootPostId)
+  console.log(commentId, commentDetails, rootPostId, postDetails)
 
   if (!postDetails) return null
 
@@ -361,7 +368,7 @@ const CommentReactionNotification = (props: NotificationProps) => {
     as: postUrl(space!, post),
   }
 
-  const { wording: msg, icon } = getReactionType(event, reactionKind)
+  const { wording: msg, icon } = getReactionType(event, reactionKind, type)
 
   return (
     <InnerNotification
