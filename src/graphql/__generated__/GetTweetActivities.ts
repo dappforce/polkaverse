@@ -9,11 +9,17 @@
 
 export interface GetTweetActivities_accountById_posts {
   __typename: "Post";
+  /**
+   * The Post ID, the same as it is on the blockchain.
+   */
   id: string;
 }
 
 export interface GetTweetActivities_accountById {
   __typename: "Account";
+  /**
+   * A One-To-Many relationship with the Posts which are created by an Account (foreign key - "createdByAccount")
+   */
   posts: GetTweetActivities_accountById_posts[];
 }
 

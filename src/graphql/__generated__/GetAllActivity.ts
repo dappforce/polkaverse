@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { EventName } from "./../../types/graphql-global-types";
+import { EventName, ReactionKind } from "./../../types/graphql-global-types";
 
 // ====================================================
 // GraphQL query operation: GetAllActivity
@@ -51,6 +51,10 @@ export interface GetAllActivity_accountById_activities_reaction {
    * The ID of a Reaction, which will have the same value and reaction ID on the blockchain.
    */
   id: string;
+  /**
+   * The type of Reaction (Upvote, Downvote).
+   */
+  kind: ReactionKind;
 }
 
 export interface GetAllActivity_accountById_activities {

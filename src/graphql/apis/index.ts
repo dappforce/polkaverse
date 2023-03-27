@@ -131,6 +131,7 @@ export async function getAllActivities(client: GqlClient, variables: GetAllActiv
         postId: !isComment ? activity.post?.id : undefined,
         commentId: isComment ? activity.post?.id : undefined,
         event: mapCommentEventNames(activity.event, isComment),
+        reactionKind: activity.reaction?.kind,
       })
     }) ?? []
   )
@@ -166,6 +167,7 @@ export async function getReactionActivities(
     activities.data.accountById?.activities.map<Activity>(activity => {
       return mapActivityQueryResult(activity, {
         postId: activity.post?.id,
+        reactionKind: activity.reaction?.kind,
       })
     }) ?? []
   )
@@ -262,6 +264,7 @@ export async function getAllNotifications(client: GqlClient, variables: GetNotif
         postId: !isComment ? activity.post?.id : undefined,
         commentId: isComment ? activity.post?.id : undefined,
         event: mapCommentEventNames(activity.event, isComment),
+        reactionKind: activity.reaction?.kind,
       })
     }) ?? []
   )

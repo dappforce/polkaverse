@@ -1,4 +1,5 @@
 import {
+  DislikeOutlined,
   HomeOutlined,
   LikeOutlined,
   MessageOutlined,
@@ -6,22 +7,22 @@ import {
   UserAddOutlined,
   UserDeleteOutlined,
 } from '@ant-design/icons'
+import { ReactionType } from '@subsocial/api/types'
 import { nonEmptyStr } from '@subsocial/utils'
 import { summarize } from '@subsocial/utils/summarize'
 import Link from 'next/link'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { NAME_MAX_LEN } from 'src/config/ValidationsConfig'
 import messages from 'src/messages'
 import { useSelectPost, useSelectProfile, useSelectSpace } from 'src/rtk/app/hooks'
-import { useAppDispatch } from 'src/rtk/app/store'
-import { fetchPost } from 'src/rtk/features/posts/postsSlice'
-import { Activity, asCommentData, asSharedPostStruct, DataSourceTypes, PostData } from 'src/types'
+import { Activity, asCommentData, asSharedPostStruct, EventsName, PostData } from 'src/types'
+import { ReactionKind } from 'src/types/graphql-global-types'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import ViewPostLink from '../posts/ViewPostLink'
 import Avatar from '../profiles/address-views/Avatar'
 import Name from '../profiles/address-views/Name'
 import { ViewSpace } from '../spaces/ViewSpace'
-import { equalAddresses, useSubsocialApi } from '../substrate'
+import { equalAddresses } from '../substrate'
 import { accountUrl, postUrl, spaceUrl } from '../urls'
 import { formatDate } from '../utils'
 import { DfBgImageLink } from '../utils/DfBgImg'
@@ -79,6 +80,7 @@ type InnerNotificationProps = NotificationProps &
     entityOwner?: string
     msg?: string
     image?: string
+    icon?: React.ReactNode
   }
 
 const iconProps = {
@@ -97,15 +99,9 @@ const iconByEvent: Record<string, React.ReactNode> = {
   PostShared: <ShareAltOutlined {...iconProps} />,
   CommentShared: <ShareAltOutlined {...iconProps} />,
   CommentReplyShared: <ShareAltOutlined {...iconProps} />,
-  PostReactionCreated: <LikeOutlined {...iconProps} />,
-  PostReactionUpdated: <LikeOutlined {...iconProps} />,
-  PostReactionDeleted: <LikeOutlined {...iconProps} />,
-  CommentReactionCreated: <LikeOutlined {...iconProps} />,
-  CommentReactionUpdated: <LikeOutlined {...iconProps} />,
-  CommentReactionDeleted: <LikeOutlined {...iconProps} />,
-  CommentReplyReactionCreated: <LikeOutlined {...iconProps} />,
-  CommentReplyReactionUpdated: <LikeOutlined {...iconProps} />,
-  CommentReplyReactionDeleted: <LikeOutlined {...iconProps} />,
+
+  Upvote: <LikeOutlined {...iconProps} />,
+  Downvote: <DislikeOutlined {...iconProps} />,
 }
 
 export function InnerNotification(props: InnerNotificationProps) {
@@ -121,6 +117,7 @@ export function InnerNotification(props: InnerNotificationProps) {
     event,
     account,
     date,
+    icon: _icon,
   } = props
   const owner = useSelectProfile(account.toString())
 
@@ -130,7 +127,7 @@ export function InnerNotification(props: InnerNotificationProps) {
 
   const eventMsg = messages[msgType] as EventsMsg
 
-  const icon = iconByEvent[event]
+  const icon = _icon ?? iconByEvent[event]
 
   return (
     <Link {...links}>
@@ -203,13 +200,6 @@ const AccountNotification = (props: NotificationProps) => {
 const PostNotification = (props: NotificationProps) => {
   const { postId, event } = props
   const postDetails = useSelectPost(postId)
-
-  const dispatch = useAppDispatch()
-  const { subsocial: api } = useSubsocialApi()
-  useEffect(() => {
-    if (!postId) return
-    dispatch(fetchPost({ id: postId, api, dataSource: DataSourceTypes.SQUID }))
-  }, [dispatch])
 
   let originalPostId = ''
   if (postDetails && postDetails.post.struct.isSharedPost) {
@@ -293,10 +283,114 @@ const CommentNotification = (props: NotificationProps) => {
   )
 }
 
+const reactionWordingMap = {
+  ReactionCreated: {
+    Upvote: 'upvoted',
+    Downvote: 'downvoted',
+  },
+  ReactionDeleted: {
+    Upvote: 'removed upvote',
+    Downvote: 'removed downvote',
+  },
+  ReactionUpdated: {
+    Upvote: 'upvoted',
+    Downvote: 'downvoted',
+  },
+}
+function getReactionType(event: EventsName, reactionKind: ReactionType | undefined) {
+  let reactionType: keyof typeof reactionWordingMap
+  if (event.endsWith('ReactionDeleted')) {
+    reactionType = 'ReactionDeleted'
+  } else if (event.endsWith('ReactionUpdated')) {
+    reactionType = 'ReactionUpdated'
+  } else {
+    reactionType = 'ReactionCreated'
+  }
+  const kind = reactionKind || ReactionKind.Upvote
+  return {
+    wording: reactionWordingMap[reactionType][kind],
+    icon: iconByEvent[kind],
+  }
+}
+const PostReactionNotification = (props: NotificationProps) => {
+  const { postId, reactionKind, event } = props
+  const postDetails = useSelectPost(postId)
+
+  if (!postDetails) return null
+
+  const { post } = postDetails
+
+  let space = postDetails.space!
+
+  const { wording: msg, icon } = getReactionType(event, reactionKind)
+  let content = post.content
+
+  const links = {
+    href: '/[spaceId]/[slug]',
+    as: postUrl(space!, post),
+  }
+
+  return (
+    <InnerNotification
+      preview={
+        <ViewPostLink
+          post={post}
+          space={space?.struct}
+          title={<PostTitleForActivity post={post} />}
+        />
+      }
+      icon={icon}
+      image={content?.image}
+      entityOwner={post.struct.ownerId}
+      msg={msg}
+      links={links}
+      {...props}
+    />
+  )
+}
+
+const CommentReactionNotification = (props: NotificationProps) => {
+  const { commentId, event, reactionKind } = props
+  const commentDetails = useSelectPost(commentId)
+
+  const rootPostId = commentDetails
+    ? asCommentData(commentDetails.post)?.struct?.rootPostId
+    : undefined
+  const postDetails = useSelectPost(rootPostId)
+
+  if (!postDetails) return null
+
+  const { post, space } = postDetails
+
+  const links = {
+    href: '/[spaceId]/[slug]',
+    as: postUrl(space!, post),
+  }
+
+  const { wording: msg, icon } = getReactionType(event, reactionKind)
+
+  return (
+    <InnerNotification
+      preview={
+        <ViewPostLink
+          post={post}
+          space={space?.struct}
+          title={<PostTitleForActivity post={post} />}
+        />
+      }
+      msg={msg}
+      icon={icon}
+      image={post.content?.image}
+      entityOwner={post.struct.ownerId}
+      links={links}
+      {...props}
+    />
+  )
+}
+
 export const Notification = React.memo((props: NotificationProps) => {
   const { event } = props
   const eventName = event
-  console.log(event)
 
   switch (eventName) {
     case 'AccountFollowed':
@@ -318,14 +412,14 @@ export const Notification = React.memo((props: NotificationProps) => {
     case 'PostReactionCreated':
     case 'PostReactionUpdated':
     case 'PostReactionDeleted':
-      return <PostNotification {...props} />
+      return <PostReactionNotification {...props} />
     case 'CommentReactionCreated':
     case 'CommentReactionUpdated':
     case 'CommentReactionDeleted':
     case 'CommentReplyReactionCreated':
     case 'CommentReplyReactionUpdated':
     case 'CommentReplyReactionDeleted':
-      return <CommentNotification {...props} />
+      return <CommentReactionNotification {...props} />
     case 'PostCreated':
       return <PostNotification {...props} />
     default:
