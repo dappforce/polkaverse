@@ -1,5 +1,4 @@
 import Button, { ButtonSize, ButtonType } from 'antd/lib/button'
-import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import { useAuth } from './AuthContext'
 import { useMyAccountsContext } from './MyAccountsContext'
 
@@ -23,14 +22,12 @@ export function OpenAuthButton({
   block = false,
   ghost = false,
 }: OpenAuthButton) {
-  const { isApiReady } = useSubsocialApi()
   const { openSignInModal } = useAuth()
 
   return (
     <Button
       size={size}
       className={className}
-      disabled={!isApiReady}
       type={type}
       block={block}
       ghost={ghost}
