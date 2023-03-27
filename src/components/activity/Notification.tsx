@@ -183,13 +183,13 @@ const AccountNotification = (props: NotificationProps) => {
   const { followingId } = props
   const profile = useSelectProfile(followingId)
 
-  if (!profile) return null
+  if (!followingId) return null
 
-  const address = profile.struct.ownerId
+  const address = followingId
   return (
     <InnerNotification
       preview={<Name owner={profile} address={address} />}
-      image={profile.content?.image}
+      image={profile?.content?.image}
       entityOwner={address}
       links={{
         href: '/[spaceId]',
@@ -296,6 +296,7 @@ const CommentNotification = (props: NotificationProps) => {
 export const Notification = React.memo((props: NotificationProps) => {
   const { event } = props
   const eventName = event
+  console.log(event)
 
   switch (eventName) {
     case 'AccountFollowed':
