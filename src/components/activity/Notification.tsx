@@ -357,7 +357,6 @@ const CommentReactionNotification = (props: NotificationProps) => {
     ? asCommentData(commentDetails.post)?.struct?.rootPostId
     : undefined
   const postDetails = useSelectPost(rootPostId)
-  console.log(commentId, commentDetails, rootPostId, postDetails)
 
   if (!postDetails) return null
 
