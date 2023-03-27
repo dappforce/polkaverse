@@ -46,7 +46,7 @@ export default defineConfig({
       account_with_energy: '5FHYXx3iHURLfdNk5svSQMuZA7nvzsk5CfwFtQMtivYWcYjG',
 
       // will have to run server locally to bypass hCaptcha  verification
-      offchainSignerApiBaseUrl: 'http://127.0.0.1:3102',
+      offchainSignerApiBaseUrl: 'http://127.0.0.1:3000',
     },
     setupNodeEvents,
   },

@@ -2,9 +2,8 @@ import { Keyring } from '@polkadot/api'
 import { KeyringPair } from '@polkadot/keyring/types'
 import { stringToU8a, u8aToHex } from '@polkadot/util'
 import { mnemonicGenerate } from '@polkadot/util-crypto'
-import { HCAPTCHA_TEST_RESPONSE, registeredUser } from './shared'
-// const { email, password, hCaptchaResponse } = newUser
-const { email, password } = registeredUser
+import { HCAPTCHA_TEST_RESPONSE, newUser } from './shared'
+const { email, password } = newUser
 
 const apiUrl = `${Cypress.env('offchainSignerApiBaseUrl')}`
 
@@ -87,6 +86,21 @@ describe('sign up with email', () => {
           expect(response.body.refreshToken).to.be.a('string')
           ctx.accessToken = response.body.accessToken
           ctx.refreshToken = response.body.refreshToken
+        })
+      })
+
+      it('should ask for sending email confirmation code', () => {
+        cy.request({
+          method: 'POST',
+          url: `${apiUrl}/auth/resend-email-confirmation`,
+          headers: {
+            Authorization: ctx.accessToken,
+          },
+          failOnStatusCode: false,
+        }).then(response => {
+          expect(response.status).to.eq(201)
+          expect(response.body.message).to.be.a('string')
+          expect(response.body.message).to.be.equal('sent')
         })
       })
     })

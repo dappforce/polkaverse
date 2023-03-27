@@ -9,6 +9,6 @@ export const registeredUser = {
 
 // generate new email and put it here, e.g. using temp-mail.org
 export const newUser = {
-  email: 'tipada5450@kaudat.com',
+  email: 'yidabi4949@jthoven.com',
   password: 'test12345',
 }
