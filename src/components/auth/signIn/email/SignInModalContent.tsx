@@ -9,7 +9,6 @@ import {
   emailSignIn,
   getErrorMessage,
   JwtPayload,
-  resendEmailConfirmation,
 } from 'src/components/utils/OffchainSigner/api/requests'
 import { setAuthOnRequest } from 'src/components/utils/OffchainSigner/api/utils'
 import {
@@ -167,12 +166,10 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
       const { emailVerified, accountAddress } = decoded
 
       if (!emailVerified) {
-        const data = await resendEmailConfirmation(accessToken)
-        const { message } = data
-        if (message === 'sent') {
-          setPassword(password)
-          setCurrentStep(StepsEnum.Confirmation)
-        }
+        // for decryption
+        setPassword(password)
+
+        setCurrentStep(StepsEnum.Confirmation)
       } else {
         setAuthOnRequest(accessToken)
         onSignInSuccess(accountAddress)
