@@ -41,11 +41,13 @@ type PostTitleForActivityProps = {
   post: PostData
 }
 const PostTitleForActivity = React.memo(({ post: { content } }: PostTitleForActivityProps) => {
-  if (!content) return null // ? Maybe use some text? Example: 'link' or 'see here'
+  const noContentText = 'link'
+  if (!content) return <>{noContentText}</>
 
   const { title, summary } = content
 
-  return <>{title || summarize(summary, { limit: NAME_MAX_LEN })}</>
+  const summarizedContent = title || summarize(summary, { limit: NAME_MAX_LEN })
+  return <>{summarizedContent || noContentText}</>
 })
 
 const NotificationMessage = ({
@@ -358,6 +360,7 @@ const CommentReactionNotification = (props: NotificationProps) => {
     : undefined
   const postDetails = useSelectPost(rootPostId)
 
+  console.log(postDetails)
   if (!postDetails) return null
 
   const { post, space } = postDetails
