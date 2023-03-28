@@ -1,12 +1,12 @@
-import { isStr } from '@subsocial/utils'
+import { isStr, toSubsocialAddress } from '@subsocial/utils'
 import { Button, Form } from 'antd'
 import jwtDecode from 'jwt-decode'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import AuthCode from 'react-auth-code-input'
 import {
   confirmEmail,
-  getErrorMessage,
   JwtPayload,
+  onErrorHandler,
   resendEmailConfirmation,
 } from 'src/components/utils/OffchainSigner/api/requests'
 import CountdownTimerButton from 'src/components/utils/OffchainSigner/CountdownTimerButton'
@@ -33,11 +33,26 @@ type Props = {
 }
 
 const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
+  const userAddress = getTempRegisterAccount()
+  const subsocialAddress = toSubsocialAddress(userAddress)
+
+  if (!subsocialAddress) throw new Error('Subsocial address is not defined')
+  const accessToken = getSignerToken(subsocialAddress)
+
+  useEffect(() => {
+    ;(async () => {
+      if (!accessToken) return
+      try {
+        await resendEmailConfirmation(accessToken)
+      } catch (error) {
+        onErrorHandler(error, setError)
+      }
+    })()
+  }, [])
+
   const { isValidCode } = useFormValidation()
 
   const { setSignerTokensByAddress } = useSignerExternalStorage()
-
-  const userAddress = getTempRegisterAccount()
 
   const [form] = Form.useForm()
 
@@ -45,7 +60,6 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
   const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (values: FormValues) => {
-    const accessToken = getSignerToken(userAddress!)
     if (!accessToken) throw new Error('Access token is not defined')
 
     try {
@@ -68,8 +82,7 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
       setCurrentStep(StepsEnum.ShowMnemonic)
     } catch (error) {
-      const errorMessage = getErrorMessage(error)
-      setError(errorMessage as string)
+      onErrorHandler(error, setError)
     }
   }
 
@@ -97,7 +110,7 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
       if (!accessToken) throw new Error('Token is not defined')
       await resendEmailConfirmation(accessToken)
     } catch (error) {
-      console.warn({ error })
+      onErrorHandler(error, setError, true)
     }
   }
 
