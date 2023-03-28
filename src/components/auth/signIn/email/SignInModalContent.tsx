@@ -154,11 +154,20 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
       }
 
       const data = await emailSignIn(props)
+
+      if (!data) throw new Error('No data returned from emailSignIn')
       const { accessToken, refreshToken } = data
+      setAuthOnRequest(accessToken as string)
 
       const decoded = jwtDecode<JwtPayload>(accessToken)
-
       const { emailVerified, accountAddress } = decoded
+
+      // Save auth tokens to local storage for future use in the app
+      setSignerTokensByAddress({
+        userAddress: accountAddress,
+        token: accessToken,
+        refreshToken,
+      })
 
       if (!emailVerified) {
         // for decryption
@@ -166,15 +175,7 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
 
         setCurrentStep(StepsEnum.Confirmation)
       } else {
-        setAuthOnRequest(accessToken)
         onSignInSuccess(accountAddress)
-
-        // Save auth tokens to local storage for future use in the app
-        setSignerTokensByAddress({
-          userAddress: accountAddress,
-          token: accessToken,
-          refreshToken,
-        })
       }
     } catch (error) {
       const errorMessage = getErrorMessage(error)

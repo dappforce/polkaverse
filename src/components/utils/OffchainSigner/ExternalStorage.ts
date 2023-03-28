@@ -1,3 +1,4 @@
+import { toSubsocialAddress } from '@subsocial/utils'
 import { createStorageKey } from 'src/utils/storage'
 import store from 'store'
 
@@ -9,24 +10,32 @@ const TEMP_REGISTER_ACCOUNT = 'TempRegisterAccount'
 const SECRET_KEY = 'SecretKey'
 const SALT = 'Salt'
 
+const createStorageKeyWithSubAddress = (key: string, myAddress: string) => {
+  const subsocialAddress = toSubsocialAddress(myAddress)
+  if (!subsocialAddress) throw new Error('Unable to define subsocial address')
+  return createStorageKey(key, subsocialAddress)
+}
+
 const getTempRegisterAccount = (): string | undefined =>
   store.get(createStorageKey(TEMP_REGISTER_ACCOUNT))
 
 const isCurrentSignerAddress = (myAddress: string) =>
-  store.get(createStorageKey(SIGNER_ADDRESS_KEY, myAddress)) === 0 ? true : false
+  store.get(createStorageKey(SIGNER_ADDRESS_KEY, toSubsocialAddress(myAddress))) === 0
+    ? true
+    : false
 const getProxyAddress = (myAddress: string): string | undefined =>
-  store.get(createStorageKey(PROXY_ADDRESS_KEY, myAddress))
+  store.get(createStorageKeyWithSubAddress(PROXY_ADDRESS_KEY, myAddress))
 
 const getSignerToken = (myAddress: string): string | undefined =>
-  store.get(createStorageKey(SIGNER_TOKEN_KEY, myAddress))
+  store.get(createStorageKeyWithSubAddress(SIGNER_TOKEN_KEY, myAddress))
 const getSignerRefreshToken = (myAddress: string): string | undefined =>
-  store.get(createStorageKey(SIGNER_REFRESH_TOKEN_KEY, myAddress))
+  store.get(createStorageKeyWithSubAddress(SIGNER_REFRESH_TOKEN_KEY, myAddress))
 
 const getSecretKeyByAddress = (myAddress: string): string | undefined =>
-  store.get(createStorageKey(SECRET_KEY, myAddress))
+  store.get(createStorageKeyWithSubAddress(SECRET_KEY, myAddress))
 
 const getSaltByAddress = (myAddress: string): string | undefined =>
-  store.get(createStorageKey(SALT, myAddress))
+  store.get(createStorageKeyWithSubAddress(SALT, myAddress))
 
 export {
   SIGNER_ADDRESS_KEY,

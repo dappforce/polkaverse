@@ -1,3 +1,4 @@
+import { toSubsocialAddress } from '@subsocial/utils'
 import {
   SIGNER_REFRESH_TOKEN_KEY,
   SIGNER_TOKEN_KEY,
@@ -18,8 +19,11 @@ const useSignerExternalStorage = () => {
   const { setData: setTempRegisterAccount } = useExternalStorage(TEMP_REGISTER_ACCOUNT)
 
   const setSignerTokensByAddress = ({ userAddress, token, refreshToken }: Props) => {
-    setSignerToken(token, userAddress)
-    setSignerRefreshToken(refreshToken, userAddress)
+    const subsocialAddress = toSubsocialAddress(userAddress)
+    if (!subsocialAddress) throw new Error('Unable to define subsocial address')
+
+    setSignerToken(token, subsocialAddress)
+    setSignerRefreshToken(refreshToken, subsocialAddress)
   }
 
   const setSignerTempRegisterAccount = (userAddress: string) => {
