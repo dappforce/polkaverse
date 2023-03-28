@@ -37,7 +37,7 @@ const ShowMnemonicModalContent = ({ onRegisterDone }: Props) => {
   const accountAddress = getTempRegisterAccount()
   const mnemonicToBeShown = mnemonic ?? getEncryptedStoredAccount(accountAddress!, password!)
 
-  const handleRegisterDone = async () => {
+  const handleRegisterDone = () => {
     try {
       const keyring = new Keyring({ type: 'sr25519' })
       const userPair = keyring.addFromUri(mnemonicToBeShown)
@@ -45,6 +45,7 @@ const ShowMnemonicModalContent = ({ onRegisterDone }: Props) => {
 
       const accessToken = getSignerToken(userAddress)
       const refreshToken = getSignerRefreshToken(userAddress)
+
       if (!accessToken || !refreshToken)
         throw new Error('Access token or refresh token is not defined')
 
