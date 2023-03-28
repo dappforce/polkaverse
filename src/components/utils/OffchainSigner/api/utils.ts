@@ -33,7 +33,9 @@ export const setAuthOnRequest = (accessToken: string) => {
       async (config: AxiosRequestConfig) => {
         config.headers = config.headers ?? {}
 
-        config.headers.Authorization = accessToken
+        config.headers = {
+          Authorization: accessToken,
+        }
 
         return config
       },
