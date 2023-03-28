@@ -7,8 +7,8 @@ import { useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
 import {
   emailSignIn,
-  getErrorMessage,
   JwtPayload,
+  onErrorHandler,
 } from 'src/components/utils/OffchainSigner/api/requests'
 import { setAuthOnRequest } from 'src/components/utils/OffchainSigner/api/utils'
 import { hCaptchaSiteKey } from 'src/config/env'
@@ -178,8 +178,7 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
         onSignInSuccess(accountAddress)
       }
     } catch (error) {
-      const errorMessage = getErrorMessage(error)
-      setError(errorMessage as string)
+      onErrorHandler(error, setError)
     }
   }
 
