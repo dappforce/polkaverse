@@ -45,8 +45,36 @@ interface Error {
   statusCode: number
 }
 
-export function getErrorMessage(error: unknown) {
+type ErrorMessageProps = {
+  error: unknown
+  showError?: boolean
+}
+
+export function onErrorHandler(
+  error: unknown,
+  callback: (errorMessage: string) => void,
+  showError?: boolean,
+) {
+  const errorMessage = getErrorMessage({ error, showError })
+  if (errorMessage) {
+    callback(errorMessage as string)
+  }
+}
+
+export function getErrorMessage({ error, showError = false }: ErrorMessageProps) {
   const err = error as AxiosError<Error>
+  if (!err.response?.data) return err.message
+  const { message, statusCode } = err.response?.data
+
+  // Handle specific error message from resend confirmation endpoint
+  if (
+    statusCode === 400 &&
+    typeof message === 'string' &&
+    message === 'Wait before sending another confirmation.' &&
+    !showError
+  )
+    return
+
   return err.response?.data?.message ?? err.message
 }
 
