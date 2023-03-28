@@ -1,7 +1,7 @@
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { Keyring } from '@polkadot/api'
 import { stringToU8a, u8aToHex } from '@polkadot/util'
-import { isStr, toSubsocialAddress } from '@subsocial/utils'
+import { isStr } from '@subsocial/utils'
 import { Button, Form, Input } from 'antd'
 import clsx from 'clsx'
 import jwtDecode from 'jwt-decode'
@@ -10,11 +10,11 @@ import { useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
 import {
   emailSignUp,
-  getErrorMessage,
   JwtPayload,
+  onErrorHandler,
   requestProof,
-  resendEmailConfirmation,
 } from 'src/components/utils/OffchainSigner/api/requests'
+import { setAuthOnRequest } from 'src/components/utils/OffchainSigner/api/utils'
 import useMnemonicGenerate from 'src/components/utils/OffchainSigner/useMnemonicGenerate'
 import { hCaptchaSiteKey } from 'src/config/env'
 import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
@@ -85,9 +85,8 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
   }, [])
 
   useEffect(() => {
-    if (token) {
-      handleSubmit(form.getFieldsValue(), token)
-    }
+    if (!token) return
+    handleSubmit(form.getFieldsValue(), token)
   }, [token])
 
   const handleSubmit = async (values: FormValues, token: string) => {
@@ -115,40 +114,33 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
       const data = await emailSignUp(props)
       const { accessToken, refreshToken } = data
+      setAuthOnRequest(accessToken as string)
 
       const decoded = jwtDecode<JwtPayload>(accessToken)
-
       const { emailVerified } = decoded
 
       if (!emailVerified) {
-        const data = await resendEmailConfirmation(accessToken)
-        const { message } = data
+        // save to local storage for usage in ConfirmationModal
+        setSignerTokensByAddress({
+          userAddress: accountAddress,
+          token: accessToken,
+          refreshToken,
+        })
+        setSignerTempRegisterAccount(accountAddress)
 
-        if (message === 'sent') {
-          // save to local storage for usage in ConfirmationModal
-          const subsocialAddress = toSubsocialAddress(accountAddress) ?? accountAddress
-          setSignerTokensByAddress({
-            userAddress: subsocialAddress,
-            token: accessToken,
-            refreshToken,
-          })
-          setSignerTempRegisterAccount(subsocialAddress)
+        // save secret to local storage (in case of page reload)
+        createEncryptedAccountAndSave(mnemonic, password)
 
-          // save secret to local storage (in case of page reload)
-          createEncryptedAccountAndSave(mnemonic, password)
+        // for decryption
+        setPassword(password)
 
-          // for decryption
-          setPassword(password)
+        // email to be shown in ConfirmationModal
+        setEmail(email)
 
-          // email to be shown in ConfirmationModal
-          setEmail(email)
-
-          setCurrentStep(StepsEnum.Confirmation)
-        }
+        setCurrentStep(StepsEnum.Confirmation)
       }
     } catch (error) {
-      const errorMessage = getErrorMessage(error)
-      setError(errorMessage as string)
+      onErrorHandler(error, setError)
     }
   }
 
