@@ -48,6 +48,12 @@ describe('sign up with email', () => {
         ctx.accountAddress = ctx.newPair.address
       })
 
+      it('should fill up the sign up form', () => {
+        cy.get('#email').type(email)
+        cy.get('#password').type(password)
+        cy.get('#repeatPassword').type(password)
+      })
+
       it('should generate proof successfully', () => {
         cy.request({
           method: 'POST',
