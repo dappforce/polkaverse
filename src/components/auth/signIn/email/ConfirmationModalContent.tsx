@@ -88,6 +88,8 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
   const handleChange = (value: string) => {
     form.setFieldsValue({ [fieldName('confirmationCode')]: value })
+
+    if (value.length === CODE_DIGIT) setError(null)
   }
 
   const isError = isStr(error)
