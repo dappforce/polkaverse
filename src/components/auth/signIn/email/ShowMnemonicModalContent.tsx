@@ -1,4 +1,3 @@
-import { Keyring } from '@polkadot/api'
 import { Button, Card, Checkbox, Divider } from 'antd'
 import { useEffect, useState } from 'react'
 import { useSubstrate } from 'src/components/substrate'
@@ -10,6 +9,7 @@ import {
   getSignerToken,
   getTempRegisterAccount,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
+import SignerKeyringManager from 'src/components/utils/OffchainSigner/SignerKeyringManager'
 import { useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 import useEncryptionToStorage from './useEncryptionToStorage'
@@ -17,6 +17,8 @@ import useEncryptionToStorage from './useEncryptionToStorage'
 type Props = {
   onRegisterDone: (address: string) => void
 }
+
+const signerKeyringManager = new SignerKeyringManager()
 
 const ShowMnemonicModalContent = ({ onRegisterDone }: Props) => {
   const { state } = useAuth()
@@ -39,8 +41,7 @@ const ShowMnemonicModalContent = ({ onRegisterDone }: Props) => {
 
   const handleRegisterDone = () => {
     try {
-      const keyring = new Keyring({ type: 'sr25519' })
-      const userPair = keyring.addFromUri(mnemonicToBeShown)
+      const userPair = signerKeyringManager.generateKeypairBySecret(mnemonicToBeShown)
       const userAddress = userPair.address
 
       const accessToken = getSignerToken(userAddress)
