@@ -1,5 +1,4 @@
 import HCaptcha from '@hcaptcha/react-hcaptcha'
-import { Keyring } from '@polkadot/api'
 import { stringToU8a, u8aToHex } from '@polkadot/util'
 import { isStr } from '@subsocial/utils'
 import { Button, Form, Input } from 'antd'
@@ -15,6 +14,7 @@ import {
   requestProof,
 } from 'src/components/utils/OffchainSigner/api/requests'
 import { setAuthOnRequest } from 'src/components/utils/OffchainSigner/api/utils'
+import SignerKeyringManager from 'src/components/utils/OffchainSigner/SignerKeyringManager'
 import useMnemonicGenerate from 'src/components/utils/OffchainSigner/useMnemonicGenerate'
 import { hCaptchaSiteKey } from 'src/config/env'
 import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
@@ -37,6 +37,8 @@ export const fieldName = (name: FieldName): FieldName => name
 type Props = {
   setCurrentStep: (step: number) => void
 }
+
+const signerKeyringManager = new SignerKeyringManager()
 
 const SignUpModalContent = ({ setCurrentStep }: Props) => {
   const { mnemonic } = useMnemonicGenerate()
@@ -90,8 +92,7 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
   const handleSubmit = async (values: FormValues, token: string) => {
     try {
-      const keyring = new Keyring({ type: 'sr25519' })
-      const newPair = keyring.addFromUri(mnemonic)
+      const newPair = signerKeyringManager.generateKeypairBySecret(mnemonic)
       const accountAddress = newPair.address
       const { proof } = await requestProof(newPair.address)
 
