@@ -124,7 +124,6 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
   }
 
   const onLoad = () => {
-    setLoading(false)
     // this reaches out to the hCaptcha JS API and runs the
     // execute function on it. you can use other functions as
     // documented here:
@@ -215,6 +214,7 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
           type='primary'
           size='large'
           htmlType='submit'
+          loading={loading}
           disabled={!isFormValid || loading || !captchaReady}
           onClick={() => {
             setLoading(true)
@@ -226,9 +226,15 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
           <HCaptcha
             size='invisible'
             sitekey={hCaptchaSiteKey}
-            onVerify={setToken}
+            onVerify={token => {
+              setLoading(false)
+              setToken(token)
+            }}
             onLoad={() => {
               setCaptchaReady(true)
+            }}
+            onClose={() => {
+              setLoading(false)
             }}
             onError={onError}
             onExpire={onExpire}
