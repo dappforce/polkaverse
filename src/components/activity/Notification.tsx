@@ -360,7 +360,6 @@ const CommentReactionNotification = (props: NotificationProps) => {
     : undefined
   const postDetails = useSelectPost(rootPostId)
 
-  console.log(postDetails)
   if (!postDetails) return null
 
   const { post, space } = postDetails
