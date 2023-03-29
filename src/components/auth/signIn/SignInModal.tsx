@@ -273,7 +273,8 @@ export const SignInModalView = ({ open, hide, onAccountChosen }: SignInModalProp
   } = useAuth()
 
   const withSkipButton = currentStep === StepsEnum.ShowMnemonic
-  const isAbleToGoBack = currentStep !== StepsEnum.Confirmation
+  const isAbleToGoBack =
+    currentStep !== StepsEnum.Confirmation && currentStep !== StepsEnum.ShowMnemonic
 
   return (
     <Modal
