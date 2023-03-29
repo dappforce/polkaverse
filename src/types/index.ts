@@ -19,6 +19,7 @@ export type Activity = {
   blockNumber: string
   eventIndex: number
   event: EventsName
+  reactionKind?: ReactionType
   /** Account id. */
   followingId?: string
   spaceId?: string

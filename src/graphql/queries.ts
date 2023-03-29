@@ -539,6 +539,7 @@ export const GET_ALL_ACTIVITY = gql`
         }
         reaction {
           id
+          kind
         }
       }
     }
@@ -590,7 +591,11 @@ export const GET_REACTION_ACTIVITIES = gql`
         orderBy: date_DESC
       ) {
         ...ActivityRequiredFragment
+        reaction {
+          kind
+        }
         post {
+          isComment
           id
         }
       }
@@ -714,6 +719,7 @@ export const GET_NOTIFICATIONS = gql`
         }
         reaction {
           id
+          kind
         }
       }
     }

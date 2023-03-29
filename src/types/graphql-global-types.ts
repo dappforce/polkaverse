@@ -52,6 +52,7 @@
  * * SpaceFollowed
  * * SpaceUnfollowed
  * * SpaceOwnershipTransferAccepted
+ * * SpaceOwnershipTransferCreated
  * * AccountFollowed
  * * AccountUnfollowed
  * * ProfileUpdated
@@ -103,6 +104,7 @@ export enum EventName {
   SpaceCreated = 'SpaceCreated',
   SpaceFollowed = 'SpaceFollowed',
   SpaceOwnershipTransferAccepted = 'SpaceOwnershipTransferAccepted',
+  SpaceOwnershipTransferCreated = 'SpaceOwnershipTransferCreated',
   SpaceUnfollowed = 'SpaceUnfollowed',
   SpaceUpdated = 'SpaceUpdated',
   UserNameRegistered = 'UserNameRegistered',
