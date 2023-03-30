@@ -1,14 +1,23 @@
-import { Keyring } from '@polkadot/api'
+/// <reference types="cypress-mailslurp" />
+
 import { KeyringPair } from '@polkadot/keyring/types'
-import { stringToU8a, u8aToHex } from '@polkadot/util'
-import { mnemonicGenerate } from '@polkadot/util-crypto'
-import { HCAPTCHA_TEST_RESPONSE, newUser } from './shared'
-const { email, password } = newUser
+import {
+  fillUpSignUpForm,
+  goToSignInModal,
+  HCAPTCHA_TEST_RESPONSE,
+  newUser,
+  resetSignInForm,
+  shouldLogout,
+  shouldOpenSignInModal,
+  shouldSkipOnboarding,
+} from './shared'
+const { password } = newUser
 
 const apiUrl = `${Cypress.env('offchainSignerApiBaseUrl')}`
 
 type NewUserContext = {
   email?: string
+  inboxId?: string
   password?: string
   proof?: string
   signedProof?: Uint8Array
@@ -41,89 +50,141 @@ describe('sign up with email', () => {
     // })
 
     let ctx: NewUserContext = {}
-    const getMainSignInBtn = () => cy.contains('Sign in with email')
-    const getBackBtn = () => cy.get('.MutedText > .font-weight-bold').contains('Back')
 
-    it('should open sign up modal', () => {
+    it('should visit home page', function () {
       cy.visit('/')
-      cy.get('button').contains('Sign in').click()
-      getMainSignInBtn().click()
+    })
+
+    it('should open sign up modal', function () {
+      shouldOpenSignInModal()
       cy.get('button').contains('Create account').click()
     })
 
     context('testing forms', () => {
-      beforeEach(() => {
-        ctx.mnemonic = mnemonicGenerate()
-        const keyring = new Keyring({ type: 'sr25519' })
-        ctx.newPair = keyring.addFromUri(ctx.mnemonic)
-        ctx.accountAddress = ctx.newPair.address
-
+      before(() => {
         // Using the same inbox in mailslurp from before hook
         ctx.inboxId = '9d93062d-8d38-44fc-acc1-65c2aced1e17'
         ctx.email = '9d93062d-8d38-44fc-acc1-65c2aced1e17@mailslurp.com'
       })
 
-      it('should fill up the sign up form', () => {
-        cy.get('#email').type(email)
-        cy.get('#password').type(password)
-        cy.get('#repeatPassword').type(password)
+      it('should fill up the sign up form', function () {
+        fillUpSignUpForm(ctx.email!, password)
       })
 
-      it('should generate proof successfully', () => {
-        cy.request({
-          method: 'POST',
-          url: `${apiUrl}/auth/generate-address-verification-proof`,
-          body: {
-            accountAddress: ctx.accountAddress,
-          },
-          failOnStatusCode: false,
-        }).then(response => {
-          expect(response.status).to.eq(201)
-          expect(response.body.proof).to.be.a('string')
-          ctx.proof = response.body.proof
-          const keyring = new Keyring({ type: 'sr25519' })
-          const newPair = keyring.addFromUri(ctx.mnemonic)
-          const message = stringToU8a(ctx.proof)
-          ctx.signedProof = newPair.sign(message)
-        })
+      it('should show email confirmation modal', function () {
+        // check if email confirmation modal is visible
+        cy.contains('h2', 'Email confirmation').should('be.visible')
       })
 
-      it('should try to sign up with already registered user', () => {
+      it('should show error with invalid code', function () {
+        cy.get('[autocomplete="one-time-code"]').should('be.empty')
+        cy.get('[autocomplete="one-time-code"]').type('000000')
+
+        cy.get('.ant-btn-primary').should('be.enabled')
+        cy.get('.ant-btn-primary').click()
+
+        cy.get('div[role="alert"]').contains('Verification code is incorrect.').should('be.visible')
+
+        for (let i = 1; i <= 6; i++) {
+          cy.get(`input[type="tel"][aria-label="Character ${i}."]`).as(`character${i}Input`).clear()
+        }
+      })
+
+      it('should receive a code and confirm it', function () {
+        // app will send user an email containing a code, use mailslurp to wait for the latest email
+        cy.mailslurp()
+          // use inbox id and a timeout of 30 seconds
+          .then(mailslurp => mailslurp.waitForLatestEmail(ctx.inboxId, 30000, true))
+          // extract the confirmation code from the email body
+          .then(email => /.*confirmation code is: (\d{6}).*/.exec(email.body!!)!![1])
+          // fill out the confirmation form and submit
+          .then(code => {
+            cy.get('[autocomplete="one-time-code"]').should('be.empty')
+            cy.get('[autocomplete="one-time-code"]').type(code)
+
+            cy.get('.ant-btn-primary').should('be.enabled')
+            cy.get('.ant-btn-primary').click()
+          })
+      })
+
+      it('should open mnemonic modal and confirm saving mnemonic', function () {
+        // check if mnemonic phrase modal is visible
+        cy.contains('h2', 'Mnemonic phrase').should('be.visible')
+
+        // confirm saving mnemonic
+        cy.contains('span', 'I have saved my mnemonic').prev().click()
+
+        cy.get('.ant-btn-primary').should('be.enabled')
+        cy.get('.ant-btn-primary').click()
+      })
+
+      shouldSkipOnboarding()
+      shouldLogout()
+
+      it('should open sign in modal', function () {
+        shouldOpenSignInModal()
+      })
+
+      it('should fill up the sign up form with already registered user', function () {
+        cy.get('button').contains('Create account').click()
+
+        fillUpSignUpForm(ctx.email!, password)
+
+        cy.get('div[role="alert"]')
+          .contains('This email address is already registered.')
+          .should('be.visible')
+      })
+
+      it('should switch to sign in modal', function () {
+        goToSignInModal()
+
+        // check if mnemonic phrase modal is visible
+        cy.contains('h2', 'Sign in with email').should('be.visible')
+      })
+
+      it('should fill up sign in form with incorrect data', () => {
+        resetSignInForm()
+
+        cy.get('#email').type('notarealemail').focus().blur()
+        cy.get('.ant-form-item-explain > div').contains('Please enter a valid email address.')
+
+        cy.get('#password').type('notarealpassword').focus().blur()
+        cy.get(':nth-child(2) > .ant-col > .ant-form-item-explain > div').contains(
+          'Your password should contain at least 8 characters, with at least one letter and one number.',
+        )
+
+        cy.contains('Log In').should('be.disabled')
+
+        resetSignInForm()
+      })
+
+      it('should return error when unregistered user tries to login', () => {
         cy.request({
           method: 'POST',
-          url: `${apiUrl}/auth/email-sign-up`,
+          url: `${apiUrl}/auth/email-sign-in`,
           body: {
-            email,
-            password,
-            accountAddress: ctx.accountAddress,
-            signedProof: u8aToHex(ctx.signedProof),
-            proof: ctx.proof,
+            email: 'random@email.com',
+            password: 'randompassword',
             hcaptchaResponse: HCAPTCHA_TEST_RESPONSE,
           },
           failOnStatusCode: false,
         }).then(response => {
-          expect(response.status).to.eq(201)
-          expect(response.body.accessToken).to.be.a('string')
-          expect(response.body.refreshToken).to.be.a('string')
-          ctx.accessToken = response.body.accessToken
-          ctx.refreshToken = response.body.refreshToken
+          expect(response.status).to.eq(401)
+          expect(response.body.message).to.be.a('string')
+          expect(response.body.message).contains('Email or password is incorrect.')
         })
       })
 
-      it('should ask for sending email confirmation code', () => {
-        cy.request({
-          method: 'POST',
-          url: `${apiUrl}/auth/resend-email-confirmation`,
-          headers: {
-            Authorization: ctx.accessToken,
-          },
-          failOnStatusCode: false,
-        }).then(response => {
-          expect(response.status).to.eq(201)
-          expect(response.body.message).to.be.a('string')
-          expect(response.body.message).to.be.equal('sent')
-        })
+      it('should fill up sign in form', () => {
+        cy.get('#email').type(ctx.email!)
+        cy.get('#password').type(password)
+
+        cy.contains('Log In').should('be.enabled')
+        cy.contains('Log In').click()
       })
+
+      shouldSkipOnboarding()
+      shouldLogout()
     })
   })
 })

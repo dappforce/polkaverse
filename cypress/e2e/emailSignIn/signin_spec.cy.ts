@@ -1,4 +1,10 @@
-import { HCAPTCHA_TEST_RESPONSE, registeredUser } from './shared'
+import {
+  HCAPTCHA_TEST_RESPONSE,
+  registeredUser,
+  resetSignInForm,
+  shouldLogout,
+  shouldSkipOnboarding,
+} from './shared'
 
 const { email, password } = registeredUser
 
@@ -33,8 +39,7 @@ describe('sign in with email', () => {
 
         cy.contains('Log In').should('be.disabled')
 
-        cy.get('#email').clear()
-        cy.get('#password').clear()
+        resetSignInForm()
       })
 
       it('should return error when unregistered user try to login', () => {
@@ -50,7 +55,7 @@ describe('sign in with email', () => {
         }).then(response => {
           expect(response.status).to.eq(401)
           expect(response.body.message).to.be.a('string')
-          expect(response.body.message).contains('email or password is not correct')
+          expect(response.body.message).contains('Email or password is incorrect.')
         })
       })
 
@@ -80,24 +85,8 @@ describe('sign in with email', () => {
         })
       })
 
-      it('should skip whole onboarding process', () => {
-        cy.get('.ant-btn > .MutedText').should('be.visible')
-        cy.get('.ant-btn > .MutedText').contains('Skip').click()
-        cy.get('.ant-btn > .MutedText').contains('Skip').click()
-        cy.get('.ant-btn > .MutedText').contains('Skip').click()
-        cy.get('.ant-btn > .MutedText').contains('Skip').click()
-        cy.get('.ant-btn > .MutedText').contains('Skip').click()
-      })
-
-      it('should open choose account sidebar', () => {
-        cy.get('.DfChooseAccount').should('be.visible')
-        cy.get('.DfChooseAccount').click()
-      })
-
-      it('should log out', () => {
-        cy.get('.ant-btn').contains('Sign out').should('be.visible')
-        cy.get('.ant-btn').contains('Sign out').click()
-      })
+      shouldSkipOnboarding()
+      shouldLogout()
     })
   })
 })
