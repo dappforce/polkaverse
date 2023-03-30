@@ -29,6 +29,17 @@ describe('sign up with email', () => {
   })
 
   context('before testing forms', () => {
+    // Useful for creating new inbox everytime before test runs
+    // Note: free mailslurp account is limited to 50 inboxes/month,
+    // so it's better to use the same inbox for all tests
+    // before(async function () {
+    //   const mailslurp = await cy.mailslurp()
+    //   const inbox = await mailslurp.createInbox()
+    //   cy.log(`Inbox created with id ${inbox.id} and email address ${inbox.emailAddress}`)
+    //   cy.wrap(inbox.id).as('inboxId')
+    //   cy.wrap(inbox.emailAddress).as('emailAddress')
+    // })
+
     let ctx: NewUserContext = {}
     const getMainSignInBtn = () => cy.contains('Sign in with email')
     const getBackBtn = () => cy.get('.MutedText > .font-weight-bold').contains('Back')
@@ -46,6 +57,10 @@ describe('sign up with email', () => {
         const keyring = new Keyring({ type: 'sr25519' })
         ctx.newPair = keyring.addFromUri(ctx.mnemonic)
         ctx.accountAddress = ctx.newPair.address
+
+        // Using the same inbox in mailslurp from before hook
+        ctx.inboxId = '9d93062d-8d38-44fc-acc1-65c2aced1e17'
+        ctx.email = '9d93062d-8d38-44fc-acc1-65c2aced1e17@mailslurp.com'
       })
 
       it('should fill up the sign up form', () => {

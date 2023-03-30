@@ -35,8 +35,10 @@ async function setupNodeEvents(
 
 export default defineConfig({
   e2e: {
-    baseUrl: 'http://localhost:3003',
-    responseTimeout: 50000,
+    baseUrl: 'http://127.0.0.1:3003',
+    requestTimeout: 30000,
+    responseTimeout: 30000,
+    defaultCommandTimeout: 30000,
     env: {
       my_address: '3shk6xYyNwwL5yvDVCUoUVoa8iUu3QmsR64kVqi2jL25kyzf',
       my_space: '5496',
