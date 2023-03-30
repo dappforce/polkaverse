@@ -12,7 +12,7 @@ import { AccountId, PostId, ReactionStruct } from 'src/types'
 
 const sliceName = 'reactions'
 
-const idSeparator = '-'
+// const idSeparator = '-'
 
 type Args = {
   myAddress?: AccountId
