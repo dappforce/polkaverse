@@ -1,7 +1,5 @@
 import {
   EditOutlined,
-  LoginOutlined,
-  LogoutOutlined,
   SettingOutlined,
   TagsOutlined,
   UserOutlined,
@@ -14,14 +12,12 @@ import { BiUserPin } from 'react-icons/bi'
 import { BsCaretRight } from 'react-icons/bs'
 import config from 'src/config'
 import { useAppSelector } from 'src/rtk/app/store'
-import { selectProfileSpaceStructById } from 'src/rtk/features/profiles/profilesSlice'
 import { selectSpaceIdsWithRolesByAccount } from 'src/rtk/features/spaceIds/spaceIdsWithRolesByAccountSlice'
 import { SpaceId } from 'src/types'
 import { useMyDomains } from '../../rtk/features/domains/domainHooks'
 import { selectSpaceIdsByOwner } from '../../rtk/features/spaceIds/ownSpaceIdsSlice'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { useShowOnBoardingSidebarContext } from '../onboarding/contexts/ShowOnBoardingSidebarContext'
-import { AccountFollowersModal, AccountFollowingModal } from '../profiles/AccountsListModal'
 import { CreateOrEditProfileSpace, SettingsLink } from '../profiles/address-views/utils/index'
 import { SwitchProfileSpaceButton } from '../profiles/address-views/utils/SwitchProfileSpaceModal'
 import ViewProfileLink from '../profiles/ViewProfileLink'
@@ -34,8 +30,8 @@ const { enableEmailSettings, enableDomains } = config
 const OnBoardingIcon = (
   <SubIcon Icon={BsCaretRight} className='position-relative' style={{ left: '-1.5px' }} />
 )
-const FollowingIcon = <LogoutOutlined />
-const FollowersIcon = <LoginOutlined />
+// const FollowingIcon = <LogoutOutlined />
+// const FollowersIcon = <LoginOutlined />
 const MyProfileIcon = <UserOutlined />
 const SwithcProfileSpace = <UserSwitchOutlined />
 const EditProfileIcon = <EditOutlined />
@@ -51,14 +47,14 @@ export const ActionMenu = () => {
 
   const { showOnBoardingSidebar, setShowOnBoardingSidebar } = useShowOnBoardingSidebarContext()
 
-  const profileSpaceByAccount = useAppSelector(state =>
-    address ? selectProfileSpaceStructById(state, address) : undefined,
-  )
+  // const profileSpaceByAccount = useAppSelector(state =>
+  //   address ? selectProfileSpaceStructById(state, address) : undefined,
+  // )
 
   const ownSpaceIds =
     useAppSelector(state => (address ? selectSpaceIdsByOwner(state, address) : [])) || []
 
-  const { accountFollowedCount, accountFollowersCount } = profileSpaceByAccount || {}
+  // const { accountFollowedCount, accountFollowersCount } = profileSpaceByAccount || {}
 
   const hasMyRoles = !!useAppSelector(state =>
     address ? selectSpaceIdsWithRolesByAccount(state, address) : emptyArr,
@@ -66,8 +62,8 @@ export const ActionMenu = () => {
 
   const { domains } = useMyDomains()
 
-  const hasFollowers = !!accountFollowersCount
-  const hasFollowing = !!accountFollowedCount
+  // const hasFollowers = !!accountFollowersCount
+  // const hasFollowing = !!accountFollowedCount
   const hasDomains = enableDomains && !isEmptyArray(domains)
 
   if (!address) return null
@@ -85,7 +81,7 @@ export const ActionMenu = () => {
             <span onClick={continueOnBoarding}>Show Quickstart</span>
           </Menu.Item>
         )}
-        {hasFollowing && (
+        {/* {hasFollowing && (
           <Menu.Item key='following' icon={FollowingIcon}>
             <AccountFollowingModal
               address={address}
@@ -93,8 +89,8 @@ export const ActionMenu = () => {
               renderOpenButton={(open, count) => <a onClick={open}>{`My following (${count})`}</a>}
             />
           </Menu.Item>
-        )}
-        {hasFollowers && (
+        )} */}
+        {/* {hasFollowers && (
           <Menu.Item key='followers' icon={FollowersIcon}>
             <AccountFollowersModal
               address={address}
@@ -102,7 +98,7 @@ export const ActionMenu = () => {
               renderOpenButton={(open, count) => <a onClick={open}>{`My followers (${count})`}</a>}
             />
           </Menu.Item>
-        )}
+        )} */}
 
         <Menu.Item key='my-profile' icon={MyProfileIcon}>
           <ViewProfileLink account={{ address }} title='My profile' />

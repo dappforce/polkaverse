@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { SpaceStruct } from 'src/types'
-import { SpaceEditorsModal, SpaceFollowersModal } from '../profiles/AccountsListModal'
+import { SpaceEditorsModal } from '../profiles/AccountsListModal'
 import { useResponsiveSize } from '../responsive'
 import { spaceUrl } from '../urls'
 import { MutedSpan } from '../utils/MutedText'
@@ -27,7 +27,7 @@ export const SpaceStatsRow = ({ space }: Props) => {
         </a>
       </Link>
 
-      <SpaceFollowersModal
+      {/* <SpaceFollowersModal
         address={id}
         pluralizeTitle='Follower'
         renderOpenButton={(open, count) =>
@@ -37,7 +37,7 @@ export const SpaceStatsRow = ({ space }: Props) => {
             </div>
           )
         }
-      />
+      /> */}
 
       <SpaceEditorsModal
         spaceId={id}

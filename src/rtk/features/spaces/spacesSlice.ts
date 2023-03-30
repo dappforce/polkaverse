@@ -158,7 +158,7 @@ export const fetchSpaces = createAsyncThunk<SpaceStruct[], FetchSpacesArgs, Thun
     selectEntityIds: selectSpaceIds,
     handleAfterDataFetch: async (
       entities,
-      { api, withContent = true, withOwner = true, dataSource, eagerLoadHandles },
+      { api, withContent = true, withOwner = true, dataSource },
       { dispatch },
     ) => {
       const fetches: Promise<any>[] = []
@@ -193,11 +193,11 @@ export const fetchSpaces = createAsyncThunk<SpaceStruct[], FetchSpacesArgs, Thun
       await Promise.all(fetches)
 
       // Lazy loading of space handles
-      if (!eagerLoadHandles) {
-        dispatch(fetchSpaceHandles({ params: entities, api }))
-      }
+      // if (!eagerLoadHandles) {
+      //   dispatch(fetchSpaceHandles({ params: entities, api }))
+      // }
     },
-    getData: async ({ api, dataSource, newIds: _newIds, eagerLoadHandles }) => {
+    getData: async ({ api, dataSource, newIds: _newIds }) => {
       const newIds = _newIds as string[]
       const entities = await getSpaces(dataSource, {
         chain: { api, ids: idsToBns(newIds) },
@@ -206,14 +206,14 @@ export const fetchSpaces = createAsyncThunk<SpaceStruct[], FetchSpacesArgs, Thun
       if (dataSource === DataSourceTypes.CHAIN) {
         await getSpacesCountDataFromChain(api, entities)
       }
-      if (eagerLoadHandles) {
-        const domains = await getSpaceHandles(api, entities)
-        domains.forEach((handle, i) => {
-          if (handle) {
-            entities[i].handle = handle
-          }
-        })
-      }
+      // if (eagerLoadHandles) {
+      //   const domains = await getSpaceHandles(api, entities)
+      //   domains.forEach((handle, i) => {
+      //     if (handle) {
+      //       entities[i].handle = handle
+      //     }
+      //   })
+      // }
       return entities
     },
   }),

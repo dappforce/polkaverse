@@ -1,7 +1,5 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
-import { SubsocialApi } from '@subsocial/api'
-import { bnsToIds, toSubsocialAddress } from '@subsocial/utils'
-import { getProfilesData } from 'src/graphql/apis'
+import { toSubsocialAddress } from '@subsocial/utils'
 import { ProfileFragmentMapped } from 'src/graphql/apis/types'
 import {
   CommonVisibility,
@@ -12,11 +10,7 @@ import {
   ThunkApiConfig,
 } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
-import {
-  createFetchDataFn,
-  createFetchManyDataWrapper,
-  generatePrefetchDataFn,
-} from 'src/rtk/app/wrappers'
+import { createFetchManyDataWrapper, generatePrefetchDataFn } from 'src/rtk/app/wrappers'
 import { ProfileSpaceIdByAccount, SpaceStruct } from 'src/types'
 import { fetchSpaces } from '../spaces/spacesSlice'
 
@@ -56,30 +50,30 @@ export const selectProfileSpace = (
   return profileSpacesSelectors.selectById(state, subsocialAddress as EntityId)
 }
 
-const getProfiles = createFetchDataFn<ProfileSpaceIdByAccount[]>([])({
-  chain: async ({ api, ids }: { api: SubsocialApi; ids: string[] }) => {
-    const spaceBnIds = await api.blockchain.profileSpaceIdsByAccounts(ids)
-    const spaceIds = bnsToIds(spaceBnIds)
+// const getProfiles = createFetchDataFn<ProfileSpaceIdByAccount[]>([])({
+//   chain: async ({ api, ids }: { api: SubsocialApi; ids: string[] }) => {
+//     const spaceBnIds = await api.blockchain.profileSpaceIdsByAccounts(ids)
+//     const spaceIds = bnsToIds(spaceBnIds)
 
-    const spaceIdsByAccoutsPromise = spaceIds.map(async (spaceId, i) => {
-      const accountFollowersCount = await api.blockchain.accountFollowersCountByAccountId(ids[i])
-      const accountFollowedCount = await api.blockchain.accountsFollowedCountByAccount(ids[i])
+//     const spaceIdsByAccoutsPromise = spaceIds.map(async (spaceId, i) => {
+//       const accountFollowersCount = await api.blockchain.accountFollowersCountByAccountId(ids[i])
+//       const accountFollowedCount = await api.blockchain.accountsFollowedCountByAccount(ids[i])
 
-      return {
-        id: ids[i],
-        spaceId: spaceId.toString(),
-        accountFollowersCount: accountFollowersCount.toNumber(),
-        accountFollowedCount: accountFollowedCount.toNumber(),
-      }
-    })
-    const spaceIdsByAccouts = await Promise.all(spaceIdsByAccoutsPromise)
-    return spaceIdsByAccouts.filter(x => !!x.id)
-  },
-  squid: async ({ ids }: { ids: string[] }, client) => {
-    const profiles = await getProfilesData(client, { ids })
-    return profiles
-  },
-})
+//       return {
+//         id: ids[i],
+//         spaceId: spaceId.toString(),
+//         accountFollowersCount: accountFollowersCount.toNumber(),
+//         accountFollowedCount: accountFollowedCount.toNumber(),
+//       }
+//     })
+//     const spaceIdsByAccouts = await Promise.all(spaceIdsByAccoutsPromise)
+//     return spaceIdsByAccouts.filter(x => !!x.id)
+//   },
+//   squid: async ({ ids }: { ids: string[] }, client) => {
+//     const profiles = await getProfilesData(client, { ids })
+//     return profiles
+//   },
+// })
 
 export const fetchProfileSpaces = createAsyncThunk<
   ProfileSpaceIdByAccount[],
@@ -116,12 +110,8 @@ export const fetchProfileSpaces = createAsyncThunk<
         )
       }
     },
-    getData: async ({ api, newIds: _newIds, dataSource }) => {
-      const newIds = _newIds as string[]
-      return getProfiles(dataSource, {
-        chain: { api, ids: newIds },
-        squid: { ids: newIds },
-      })
+    getData: async () => {
+      return [] as any[]
     },
   }),
 )

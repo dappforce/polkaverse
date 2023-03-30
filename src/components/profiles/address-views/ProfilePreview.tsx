@@ -2,11 +2,9 @@ import { Col, Row } from 'antd'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
 import React, { FC } from 'react'
-import { Pluralize } from 'src/components/utils/Plularize'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import { ProfileData } from 'src/types'
 import { useSelectProfile } from '../../../rtk/features/profiles/profilesHooks'
-import { AccountFollowersModal, AccountFollowingModal } from '../AccountsListModal'
 import Avatar from './Avatar'
 import { CreateOrEditProfileSpace } from './utils/index'
 import NameDetails from './utils/NameDetails'
@@ -73,7 +71,7 @@ export const ProfilePreviewPopup: FC<ProfilePreviewProps> = props => {
         <>
           {withDetails && (
             <>
-              <div className='DfPopup-links'>
+              {/* <div className='DfPopup-links'>
                 <AccountFollowersModal
                   address={address}
                   pluralizeTitle='Follower'
@@ -98,7 +96,7 @@ export const ProfilePreviewPopup: FC<ProfilePreviewProps> = props => {
                     </div>
                   )}
                 />
-              </div>
+              </div> */}
               <CreateOrEditProfileSpace address={address} className='DfGreyLink FontNormal mb-2' />
             </>
           )}

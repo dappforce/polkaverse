@@ -1,47 +1,36 @@
-import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons'
+import { EllipsisOutlined } from '@ant-design/icons'
 import { AccountId } from '@polkadot/types/interfaces'
 import { isEmptyStr, toSubsocialAddress } from '@subsocial/utils'
-import { Button, Dropdown, Menu } from 'antd'
+import { Dropdown, Menu } from 'antd'
 import { NextPage } from 'next'
-import dynamic from 'next/dynamic'
-import Link from 'next/link'
 import { useCallback } from 'react'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
-import {
-  fetchProfileSpace,
-  selectProfileSpace,
-  selectProfileSpaceStructById,
-} from 'src/rtk/features/profiles/profilesSlice'
-import { AnyAccountId, DataSourceTypes, ProfileContent, ProfileData, SpaceData } from 'src/types'
+import { fetchProfileSpace, selectProfileSpace } from 'src/rtk/features/profiles/profilesSlice'
+import { AnyAccountId, ProfileContent, ProfileData, SpaceData } from 'src/types'
 import { AccountActivity } from '../activity/AccountActivity'
 import { useIsMyAddress } from '../auth/MyAccountsContext'
 import { Balance } from '../common/balances'
 import { PageContent } from '../main/PageWrapper'
-import { accountUrl, newSpaceUrl } from '../urls'
+import { accountUrl } from '../urls'
 import { DfMd } from '../utils/DfMd'
 import { MutedDiv } from '../utils/MutedText'
 import MyEntityLabel from '../utils/MyEntityLabel'
-import { Pluralize } from '../utils/Plularize'
 import Section from '../utils/Section'
-import { AccountFollowersModal, AccountFollowingModal } from './AccountsListModal'
 import Avatar from './address-views/Avatar'
 import Name from './address-views/Name'
 import { CopyAddress } from './address-views/utils'
 
 import router from 'next/router'
-import { Donate } from 'src/components/donate'
 import { isBlockedAccount } from 'src/moderation'
-import { useFetchSpaceIdsByFollower } from 'src/rtk/app/hooks'
 import { fetchEntityOfSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
-import { useAppSelector } from '../../rtk/app/store'
 import { useSelectProfile } from '../../rtk/features/profiles/profilesHooks'
 import { fetchSpaceIdsOwnedByAccount } from '../../rtk/features/spaceIds/ownSpaceIdsSlice'
 import { selectSpace } from '../../rtk/features/spaces/spacesSlice'
 import { SettingsLink } from './address-views/utils'
 import { CreateOrEditProfileSpace } from './address-views/utils/index'
 
-const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false })
+// const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false })
 
 export type Props = {
   address: AnyAccountId
@@ -55,19 +44,19 @@ const Component = (props: Props) => {
   const { address, size = LARGE_AVATAR_SIZE } = props
 
   const owner = useSelectProfile(address.toString()) || props.owner
-  const profileSpaceByAccount = useAppSelector(state =>
-    address ? selectProfileSpaceStructById(state, address.toString()) : undefined,
-  )
+  // const profileSpaceByAccount = useAppSelector(state =>
+  //   address ? selectProfileSpaceStructById(state, address.toString()) : undefined,
+  // )
   const isMyAccount = useIsMyAddress(address)
   const shouldHideContent = isBlockedAccount(address.toString()) && !isMyAccount
-  const { spaceIds } = useFetchSpaceIdsByFollower(props.address.toString(), DataSourceTypes.SQUID)
+  // const { spaceIds } = useFetchSpaceIdsByFollower(props.address.toString(), DataSourceTypes.SQUID)
 
-  const noProfile = !owner?.struct
+  // const noProfile = !owner?.struct
 
-  const { accountFollowersCount, accountFollowedCount } = profileSpaceByAccount || {}
+  // const { accountFollowersCount, accountFollowedCount } = profileSpaceByAccount || {}
 
-  const followers = accountFollowersCount || 0
-  const following = (accountFollowedCount || 0) + spaceIds.length
+  // const followers = accountFollowersCount || 0
+  // const following = (accountFollowedCount || 0) + spaceIds.length
 
   if (shouldHideContent && owner) {
     owner.content = undefined
@@ -75,14 +64,14 @@ const Component = (props: Props) => {
 
   const { image, about } = owner?.content || ({} as ProfileContent)
 
-  const createProfileButton = noProfile && isMyAccount && (
-    <Link href={newSpaceUrl(true)}>
-      <Button type='primary' ghost>
-        <PlusOutlined />
-        Create profile
-      </Button>
-    </Link>
-  )
+  // const createProfileButton = noProfile && isMyAccount && (
+  //   <Link href={newSpaceUrl(true)}>
+  //     <Button type='primary' ghost>
+  //       <PlusOutlined />
+  //       Create profile
+  //     </Button>
+  //   </Link>
+  // )
 
   const DropDownMenu = useCallback(() => {
     const menu = (
@@ -112,8 +101,8 @@ const Component = (props: Props) => {
     )
   }, [address, isMyAccount])
 
-  const followersText = <Pluralize count={followers} singularText='Follower' />
-  const followingText = <Pluralize count={following} singularText='Following' />
+  // const followersText = <Pluralize count={followers} singularText='Follower' />
+  // const followingText = <Pluralize count={following} singularText='Following' />
 
   return (
     <Section outerClassName='d-flex mb-2'>
@@ -144,7 +133,7 @@ const Component = (props: Props) => {
             </MutedDiv>
             {/* <MutedDiv>{`Reputation: ${reputation}`}</MutedDiv> */}
             <div className='about'>{about && <DfMd className='mt-3' source={about} />}</div>
-            <div className='mt-3'>
+            {/* <div className='mt-3'>
               <AccountFollowersModal
                 address={address}
                 title={followersText}
@@ -175,7 +164,7 @@ const Component = (props: Props) => {
                 {!isMyAccount && <Donate recipientAddress={address.toString()} />}
                 <FollowAccountButton address={address} />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
