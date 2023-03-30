@@ -48,8 +48,8 @@ jobs:
           push: true
           build-args: |
             GH_GA_ID=fake
-            GH_APP_KIND=staging
-            GH_CONNECTION_KIND=staging
+            GH_APP_KIND=main
+            GH_CONNECTION_KIND=main
           tags: |
             ${{ env.image }}
           cache-from: type=local,src=/tmp/.buildx-cache
