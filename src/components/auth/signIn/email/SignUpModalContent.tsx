@@ -71,7 +71,7 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
     setError(`hCaptcha Error: ${err}`)
   }
 
-  const onLoad = () => {
+  const loadCaptcha = () => {
     // this reaches out to the hCaptcha JS API and runs the
     // execute function on it. you can use other functions as
     // documented here:
@@ -197,7 +197,7 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
           disabled={!isFormValid || loading || !captchaReady}
           onClick={() => {
             setLoading(true)
-            onLoad()
+            loadCaptcha()
           }}
           block
         >
