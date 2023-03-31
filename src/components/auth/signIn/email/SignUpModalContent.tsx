@@ -64,11 +64,11 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
   const { setSignerTokensByAddress, setSignerTempRegisterAccount } = useSignerExternalStorage()
 
   const onExpire = () => {
-    console.warn('hCaptcha Token Expired')
+    setError('hCaptcha Token Expired')
   }
 
   const onError = (err: any) => {
-    console.warn(`hCaptcha Error: ${err}`)
+    setError(`hCaptcha Error: ${err}`)
   }
 
   const onLoad = () => {
@@ -98,8 +98,6 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
       const message = stringToU8a(proof)
       const signedProof = newPair.sign(message)
-
-      if (!token) throw new Error('hCaptcha token is not set')
 
       const { email, password } = values
 

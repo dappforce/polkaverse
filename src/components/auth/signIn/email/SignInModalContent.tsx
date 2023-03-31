@@ -116,11 +116,11 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
   const hCaptchaRef = useRef(null)
 
   const onExpire = () => {
-    console.warn('hCaptcha Token Expired')
+    setError('hCaptcha Token Expired')
   }
 
   const onError = (err: any) => {
-    console.warn(`hCaptcha Error: ${err}`)
+    setError(`hCaptcha Error: ${err}`)
   }
 
   const onLoad = () => {
@@ -154,7 +154,7 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
 
       const data = await emailSignIn(props)
 
-      if (!data) throw new Error('No data returned from emailSignIn')
+      if (!data) console.error('No data returned from emailSignIn')
       const { accessToken, refreshToken } = data
       setAuthOnRequest(accessToken as string)
 
