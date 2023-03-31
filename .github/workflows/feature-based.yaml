@@ -48,7 +48,7 @@ jobs:
           push: true
           build-args: |
             GH_GA_ID=fake
-            GH_APP_KIND=staging
+            GH_APP_KIND=polkaverse
             GH_CONNECTION_KIND=staging
           tags: |
             ${{ env.image }}
