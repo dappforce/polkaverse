@@ -173,12 +173,12 @@ export function InnerForm(props: FormProps) {
     })
 
   const onFailed: TxFailedCallback = () => {
-    ipfsCid && ipfs.unpinContentFromIpfs(ipfsCid).catch(err => new Error(err))
+    ipfsCid && ipfs.removeContent(ipfsCid).catch(err => new Error(err))
   }
 
   const onSuccess: TxCallback = txResult => {
     const prevCid = space?.struct.contentId
-    prevCid && ipfs.unpinContentFromIpfs(prevCid).catch(err => new Error(err))
+    prevCid && ipfs.removeContent(prevCid).catch(err => new Error(err))
 
     clearAutoSavedContent('space')
     const id = space?.struct.id || getNewIdFromEvent(txResult)?.toString()

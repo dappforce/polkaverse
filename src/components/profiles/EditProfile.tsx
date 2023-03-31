@@ -111,7 +111,7 @@ export function InnerForm(props: FormProps) {
   }
 
   const onFailed: TxFailedCallback = () => {
-    IpfsCid && ipfs.unpinContentFromIpfs(IpfsCid).catch(err => new Error(err))
+    IpfsCid && ipfs.removeContent(IpfsCid).catch(err => new Error(err))
   }
 
   const onSuccess: TxCallback = () => {

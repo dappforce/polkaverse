@@ -99,12 +99,12 @@ function EditPostForm(props: PostFormProps) {
   }
 
   const onFailed: TxFailedCallback = () => {
-    IpfsCid && ipfs.unpinContentFromIpfs(IpfsCid).catch(err => new Error(err))
+    IpfsCid && ipfs.removeContent(IpfsCid).catch(err => new Error(err))
   }
 
   const onSuccess: TxCallback = txResult => {
     const prevCid = post?.struct.contentId
-    prevCid && ipfs.unpinContentFromIpfs(prevCid).catch(err => new Error(err))
+    prevCid && ipfs.removeContent(prevCid).catch(err => new Error(err))
 
     clearDraft()
     const id = post?.struct.id || getNewIdFromEvent(txResult)?.toString()
