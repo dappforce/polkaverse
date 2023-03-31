@@ -68,7 +68,7 @@ export const CommentEditor = (props: Props) => {
   }
 
   const onTxFailed: TxFailedCallback = () => {
-    ipfsCid && ipfs.removeContent(ipfsCid).catch(err => new Error(err))
+    ipfsCid && ipfs.unpinContentFromIpfs(ipfsCid).catch(err => new Error(err))
     callback && callback()
     setIsLoading(false)
   }
