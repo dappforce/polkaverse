@@ -1,10 +1,13 @@
 import {
+  DislikeOutlined,
   HomeOutlined,
   LikeOutlined,
   MessageOutlined,
   ShareAltOutlined,
   UserAddOutlined,
+  UserDeleteOutlined,
 } from '@ant-design/icons'
+import { ReactionType } from '@subsocial/api/types'
 import { nonEmptyStr } from '@subsocial/utils'
 import { summarize } from '@subsocial/utils/summarize'
 import Link from 'next/link'
@@ -13,6 +16,7 @@ import { NAME_MAX_LEN } from 'src/config/ValidationsConfig'
 import messages from 'src/messages'
 import { useSelectPost, useSelectProfile, useSelectSpace } from 'src/rtk/app/hooks'
 import { Activity, asCommentData, asSharedPostStruct, EventsName, PostData } from 'src/types'
+import { ReactionKind } from 'src/types/graphql-global-types'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import ViewPostLink from '../posts/ViewPostLink'
 import Avatar from '../profiles/address-views/Avatar'
@@ -37,11 +41,13 @@ type PostTitleForActivityProps = {
   post: PostData
 }
 const PostTitleForActivity = React.memo(({ post: { content } }: PostTitleForActivityProps) => {
-  if (!content) return null // ? Maybe use some text? Example: 'link' or 'see here'
+  const noContentText = 'link'
+  if (!content) return <>{noContentText}</>
 
   const { title, summary } = content
 
-  return <>{title || summarize(summary, { limit: NAME_MAX_LEN })}</>
+  const summarizedContent = title || summarize(summary, { limit: NAME_MAX_LEN })
+  return <>{summarizedContent || noContentText}</>
 })
 
 const NotificationMessage = ({
@@ -49,15 +55,12 @@ const NotificationMessage = ({
   aggregationCount,
   withAggregation = true,
 }: NotificationMessageProps) => {
+  const aggCount = aggregationCount - 1
   const aggregationMsg = withAggregation
-    ? aggregationCount > 0 && (
+    ? aggCount > 0 && (
         <>
           {' and '}
-          <Pluralize
-            count={aggregationCount}
-            singularText='other person'
-            pluralText='other people'
-          />
+          <Pluralize count={aggCount} singularText='other person' pluralText='other people' />
         </>
       )
     : undefined
@@ -79,6 +82,7 @@ type InnerNotificationProps = NotificationProps &
     entityOwner?: string
     msg?: string
     image?: string
+    icon?: React.ReactNode
   }
 
 const iconProps = {
@@ -88,14 +92,18 @@ const iconProps = {
 const iconByEvent: Record<string, React.ReactNode> = {
   AccountFollowed: <UserAddOutlined {...iconProps} />,
   SpaceFollowed: <UserAddOutlined {...iconProps} />,
+  AccountUnfollowed: <UserDeleteOutlined {...iconProps} />,
+  SpaceUnfollowed: <UserDeleteOutlined {...iconProps} />,
   SpaceCreated: <HomeOutlined {...iconProps} />,
   PostCreated: <ShareAltOutlined {...iconProps} />,
   CommentCreated: <MessageOutlined {...iconProps} />,
   CommentReplyCreated: <MessageOutlined {...iconProps} />,
   PostShared: <ShareAltOutlined {...iconProps} />,
   CommentShared: <ShareAltOutlined {...iconProps} />,
-  PostReactionCreated: <LikeOutlined {...iconProps} />,
-  CommentReactionCreated: <LikeOutlined {...iconProps} />,
+  CommentReplyShared: <ShareAltOutlined {...iconProps} />,
+
+  Upvote: <LikeOutlined {...iconProps} />,
+  Downvote: <DislikeOutlined {...iconProps} />,
 }
 
 export function InnerNotification(props: InnerNotificationProps) {
@@ -111,6 +119,7 @@ export function InnerNotification(props: InnerNotificationProps) {
     event,
     account,
     date,
+    icon: _icon,
   } = props
   const owner = useSelectProfile(account.toString())
 
@@ -120,7 +129,7 @@ export function InnerNotification(props: InnerNotificationProps) {
 
   const eventMsg = messages[msgType] as EventsMsg
 
-  const icon = iconByEvent[event]
+  const icon = _icon ?? iconByEvent[event]
 
   return (
     <Link {...links}>
@@ -134,7 +143,7 @@ export function InnerNotification(props: InnerNotificationProps) {
             <Name owner={owner} address={account} />
             <span className='DfActivityMsg'>
               <NotificationMessage
-                msg={customMsg || eventMsg[event]}
+                msg={customMsg || eventMsg[event] || 'Unknown event'}
                 aggregationCount={aggCount}
                 withAggregation={msgType === 'notifications'}
               />
@@ -173,13 +182,13 @@ const AccountNotification = (props: NotificationProps) => {
   const { followingId } = props
   const profile = useSelectProfile(followingId)
 
-  if (!profile) return null
+  if (!followingId) return null
 
-  const address = profile.struct.ownerId
+  const address = followingId
   return (
     <InnerNotification
       preview={<Name owner={profile} address={address} />}
-      image={profile.content?.image}
+      image={profile?.content?.image}
       entityOwner={address}
       links={{
         href: '/[spaceId]',
@@ -276,15 +285,121 @@ const CommentNotification = (props: NotificationProps) => {
   )
 }
 
+const reactionWordingMap = {
+  ReactionCreated: {
+    Upvote: 'upvoted',
+    Downvote: 'downvoted',
+  },
+  ReactionDeleted: {
+    Upvote: 'removed upvote',
+    Downvote: 'removed downvote',
+  },
+}
+function getReactionType(
+  event: EventsName,
+  reactionKind: ReactionType | undefined,
+  type: NotifActivitiesType = 'activities',
+) {
+  let reactionType: keyof typeof reactionWordingMap
+  if (event.endsWith('ReactionDeleted')) {
+    reactionType = 'ReactionDeleted'
+  } else {
+    reactionType = 'ReactionCreated'
+  }
+  const kind = reactionKind || ReactionKind.Upvote
+  const entity = event.startsWith('Post') ? 'post' : 'comment on'
+  const suffix = type === 'activities' ? `the ${entity}` : `your ${entity}`
+  return {
+    wording: `${reactionWordingMap[reactionType][kind]} ${suffix}`,
+    icon: iconByEvent[kind],
+  }
+}
+const PostReactionNotification = (props: NotificationProps) => {
+  const { postId, reactionKind, event, type } = props
+  const postDetails = useSelectPost(postId)
+
+  if (!postDetails) return null
+
+  const { post } = postDetails
+
+  let space = postDetails.space!
+
+  const { wording: msg, icon } = getReactionType(event, reactionKind, type)
+  let content = post.content
+
+  const links = {
+    href: '/[spaceId]/[slug]',
+    as: postUrl(space, post),
+  }
+
+  return (
+    <InnerNotification
+      preview={
+        <ViewPostLink
+          post={post}
+          space={space?.struct}
+          title={<PostTitleForActivity post={post} />}
+        />
+      }
+      icon={icon}
+      image={content?.image}
+      entityOwner={post.struct.ownerId}
+      msg={msg}
+      links={links}
+      {...props}
+    />
+  )
+}
+
+const CommentReactionNotification = (props: NotificationProps) => {
+  const { commentId, event, reactionKind, type } = props
+  const commentDetails = useSelectPost(commentId)
+
+  const rootPostId = commentDetails
+    ? asCommentData(commentDetails.post)?.struct?.rootPostId
+    : undefined
+  const postDetails = useSelectPost(rootPostId)
+
+  if (!postDetails) return null
+
+  const { post, space } = postDetails
+
+  const links = {
+    href: '/[spaceId]/[slug]',
+    as: postUrl(space!, post),
+  }
+
+  const { wording: msg, icon } = getReactionType(event, reactionKind, type)
+
+  return (
+    <InnerNotification
+      preview={
+        <ViewPostLink
+          post={post}
+          space={space?.struct}
+          title={<PostTitleForActivity post={post} />}
+        />
+      }
+      msg={msg}
+      icon={icon}
+      image={post.content?.image}
+      entityOwner={post.struct.ownerId}
+      links={links}
+      {...props}
+    />
+  )
+}
+
 export const Notification = React.memo((props: NotificationProps) => {
-  const { event, type } = props
-  const isActivity = type === 'activities'
-  const eventName = event as EventsName
+  const { event } = props
+  const eventName = event
 
   switch (eventName) {
     case 'AccountFollowed':
+    case 'AccountUnfollowed':
       return <AccountNotification {...props} />
     case 'SpaceFollowed':
+    case 'SpaceUnfollowed':
       return <SpaceNotification {...props} />
     case 'SpaceCreated':
       return <SpaceNotification {...props} />
@@ -293,15 +408,22 @@ export const Notification = React.memo((props: NotificationProps) => {
     case 'CommentReplyCreated':
       return <CommentNotification {...props} />
     case 'PostShared':
-      return isActivity ? null : <PostNotification {...props} />
     case 'CommentShared':
-      return <CommentNotification {...props} />
-    case 'PostReactionCreated':
+    case 'CommentReplyShared':
       return <PostNotification {...props} />
+    case 'PostReactionCreated':
+    case 'PostReactionUpdated':
+    case 'PostReactionDeleted':
+      return <PostReactionNotification {...props} />
     case 'CommentReactionCreated':
-      return <CommentNotification {...props} />
+    case 'CommentReactionUpdated':
+    case 'CommentReactionDeleted':
+    case 'CommentReplyReactionCreated':
+    case 'CommentReplyReactionUpdated':
+    case 'CommentReplyReactionDeleted':
+      return <CommentReactionNotification {...props} />
     case 'PostCreated':
-      return isActivity ? <PostNotification {...props} /> : null
+      return <PostNotification {...props} />
     default:
       return null
   }

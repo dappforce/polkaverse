@@ -47,11 +47,6 @@ jobs:
           file: docker/Dockerfile
           push: true
           build-args: |
-            GH_SUBSTRATE_URL=wss://para.subsocial.network
-            GH_SUBSTRATE_RPC_URL=https://rco-para.subsocial.network/http
-            GH_OFFCHAIN_URL=https://staging-api.subsocial.network
-            GH_OFFCHAIN_WS=wss://staging.subsocial.network/notif-ws
-            GH_IPFS_NODE_URL=https://ipfs.subsocial.network
             GH_GA_ID=fake
             GH_APP_KIND=staging
             GH_HCAPTCHA_SITE_KEY=fc5815a2-6662-420f-8d94-ed72200d8a39

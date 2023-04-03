@@ -27,6 +27,7 @@ import {
   AnyPostId,
   asCommentStruct,
   asSharedPostStruct,
+  CommentStruct,
   DataSourceTypes,
   getUniqueContentIds,
   getUniqueOwnerIds,
@@ -74,6 +75,7 @@ type Args = {
   withOwner?: boolean
   withSpace?: boolean
   withExt?: boolean
+  withRootPost?: boolean
   withReactionByAccount?: AccountId
 }
 
@@ -228,6 +230,7 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
         withContent = true,
         withOwner = true,
         withSpace = true,
+        withRootPost,
         dataSource,
         eagerLoadHandles,
       } = args
@@ -279,6 +282,28 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
                 dataSource,
                 prefetchedData,
                 eagerLoadHandles: eagerLoadHandles,
+              }),
+            ),
+          )
+        }
+      }
+
+      if (withRootPost) {
+        const needToFetchRootPostIds: string[] = []
+        entities.forEach(entity => {
+          const rootPostId = (entity as CommentStruct).rootPostId
+          if (rootPostId) {
+            needToFetchRootPostIds.push(rootPostId)
+          }
+        })
+        if (needToFetchRootPostIds.length) {
+          fetches.push(
+            dispatch(
+              fetchPosts({
+                ...args,
+                api,
+                ids: needToFetchRootPostIds,
+                withRootPost: false,
               }),
             ),
           )

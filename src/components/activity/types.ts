@@ -42,7 +42,7 @@ export type InnerActivitiesProps<T> = ActivityProps<T> &
   }
 
 export type EventsMsg = {
-  [key in EventsName]: string
+  [key in EventsName]?: string
 }
 
 export type PathLinks = {

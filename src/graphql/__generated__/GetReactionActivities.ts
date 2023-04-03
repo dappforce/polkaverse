@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { EventName } from "./../../types/graphql-global-types";
+import { EventName, ReactionKind } from "./../../types/graphql-global-types";
 
 // ====================================================
 // GraphQL query operation: GetReactionActivities
@@ -17,8 +17,20 @@ export interface GetReactionActivities_accountById_activities_account {
   id: string;
 }
 
+export interface GetReactionActivities_accountById_activities_reaction {
+  __typename: "Reaction";
+  /**
+   * The type of Reaction (Upvote, Downvote).
+   */
+  kind: ReactionKind;
+}
+
 export interface GetReactionActivities_accountById_activities_post {
   __typename: "Post";
+  /**
+   * Is the current Post a Comment to a Regular Post or a Comment Post?
+   */
+  isComment: boolean;
   /**
    * The Post ID, the same as it is on the blockchain.
    */
@@ -55,6 +67,10 @@ export interface GetReactionActivities_accountById_activities {
    * Is this Activity the most recent in the list of Activities of this type (same event) from this account?
    */
   aggregated: boolean | null;
+  /**
+   * A One-to-One relationship with the Reaction that is involved in the current Activity
+   */
+  reaction: GetReactionActivities_accountById_activities_reaction | null;
   /**
    * A One-to-One relationship with the Post that is involved in the current Activity
    */
