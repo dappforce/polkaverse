@@ -6,7 +6,7 @@ const devConfig: SubsocialConfig = {
   substrateUrl: 'wss://para.subsocial.network',
 
   // needed for e2e test env
-  offchainSignerUrl: 'https://staging-signer.subsocial.network',
+  offchainSignerUrl: 'http://127.0.0.1:3000',
 }
 
 export default devConfig

@@ -11,11 +11,13 @@ import {
   onErrorHandler,
 } from 'src/components/utils/OffchainSigner/api/requests'
 import { setAuthOnRequest } from 'src/components/utils/OffchainSigner/api/utils'
-import { hCaptchaSiteKey } from 'src/config/env'
+import config from 'src/config'
 import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
 import { StepsEnum, useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 import { RegexValidations, useFormValidation } from './useFormValidation'
+
+const { hCaptchaSiteKey } = config
 
 type FormValues = {
   email: string

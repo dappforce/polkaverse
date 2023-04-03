@@ -15,7 +15,6 @@ const stagingConfig: SubsocialConfig = {
   subsocialParaId: 2100,
 
   offchainSignerUrl: 'https://staging-signer.subsocial.network',
-  // offchainSignerUrl: 'http://127.0.0.1:3102', for e2e tests purposes, run server locally
 }
 
 export default stagingConfig

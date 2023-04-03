@@ -1,7 +1,7 @@
 import connections from './connections'
 import { connectionKind, getEnv } from './env'
 
-const stagingSiteKey = getEnv('HCAPTCHA_SITE_KEY') || ''
+const stagingHCaptchaSiteKey = getEnv('HCAPTCHA_SITE_KEY') || ''
 
 export default {
   // Static URLs:
@@ -17,5 +17,5 @@ export default {
   seoSitemapPageSize: 100,
 
   hCaptchaSiteKey:
-    connectionKind !== 'dev' ? stagingSiteKey : '10000000-ffff-ffff-ffff-000000000001',
+    connectionKind === 'dev' ? '10000000-ffff-ffff-ffff-000000000001' : stagingHCaptchaSiteKey,
 }

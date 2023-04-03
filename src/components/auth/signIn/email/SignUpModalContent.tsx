@@ -16,13 +16,15 @@ import {
 import { setAuthOnRequest } from 'src/components/utils/OffchainSigner/api/utils'
 import SignerKeyringManager from 'src/components/utils/OffchainSigner/SignerKeyringManager'
 import useMnemonicGenerate from 'src/components/utils/OffchainSigner/useMnemonicGenerate'
-import { hCaptchaSiteKey } from 'src/config/env'
+import config from 'src/config'
 import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
 import { StepsEnum, useAuth } from '../../AuthContext'
 import { EmailInput, PasswordInput } from './SignInModalContent'
 import styles from './SignInModalContent.module.sass'
 import useEncryptionToStorage from './useEncryptionToStorage'
 import { useFormValidation } from './useFormValidation'
+
+const { hCaptchaSiteKey } = config
 
 type FormValues = {
   email: string
@@ -47,6 +49,7 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
     state: { email },
     setPassword,
     setEmail,
+    setMnemonic,
   } = useAuth()
   const { isValidEmail, isValidPassword } = useFormValidation()
 
@@ -136,6 +139,9 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
 
         // email to be shown in ConfirmationModal
         setEmail(email)
+
+        // backup state for showing mnemonic
+        setMnemonic(mnemonic)
 
         setCurrentStep(StepsEnum.Confirmation)
       }
