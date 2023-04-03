@@ -62,6 +62,7 @@ typings/
 # dotenv environment variables file
 .env
 public/env.js
+.as-a.ini
 
 # next.js build output
 .next
