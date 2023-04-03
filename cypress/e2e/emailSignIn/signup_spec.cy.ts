@@ -1,6 +1,5 @@
 /// <reference types="cypress-mailslurp" />
 
-import { KeyringPair } from '@polkadot/keyring/types'
 import {
   fillUpSignUpForm,
   goToSignInModal,
@@ -11,23 +10,9 @@ import {
   shouldOpenSignInModal,
   shouldSkipOnboarding,
 } from './shared'
-const { password } = newUser
+const { email, inboxId, password } = newUser
 
 const apiUrl = `${Cypress.env('offchainSignerApiBaseUrl')}`
-
-type NewUserContext = {
-  email?: string
-  inboxId?: string
-  password?: string
-  proof?: string
-  signedProof?: Uint8Array
-  hCaptchaResponse?: string
-  mnemonic?: string
-  newPair?: KeyringPair
-  accountAddress?: string
-  accessToken?: string
-  refreshToken?: string
-}
 
 describe('sign up with email', () => {
   context('run before all tests', () => {
@@ -49,8 +34,6 @@ describe('sign up with email', () => {
     //   cy.wrap(inbox.emailAddress).as('emailAddress')
     // })
 
-    let ctx: NewUserContext = {}
-
     it('should visit home page', function () {
       cy.visit('/')
     })
@@ -61,14 +44,8 @@ describe('sign up with email', () => {
     })
 
     context('testing forms', () => {
-      before(() => {
-        // Using the same inbox in mailslurp from before hook
-        ctx.inboxId = '9d93062d-8d38-44fc-acc1-65c2aced1e17'
-        ctx.email = '9d93062d-8d38-44fc-acc1-65c2aced1e17@mailslurp.com'
-      })
-
       it('should fill up the sign up form', function () {
-        fillUpSignUpForm(ctx.email!, password)
+        fillUpSignUpForm(email, password)
       })
 
       it('should show email confirmation modal', function () {
@@ -94,7 +71,7 @@ describe('sign up with email', () => {
         // app will send user an email containing a code, use mailslurp to wait for the latest email
         cy.mailslurp()
           // use inbox id and a timeout of 30 seconds
-          .then(mailslurp => mailslurp.waitForLatestEmail(ctx.inboxId, 30000, true))
+          .then(mailslurp => mailslurp.waitForLatestEmail(inboxId, 30000, true))
           // extract the confirmation code from the email body
           .then(email => /.*confirmation code is: (\d{6}).*/.exec(email.body!!)!![1])
           // fill out the confirmation form and submit
@@ -128,7 +105,7 @@ describe('sign up with email', () => {
       it('should fill up the sign up form with already registered user', function () {
         cy.get('button').contains('Create account').click()
 
-        fillUpSignUpForm(ctx.email!, password)
+        fillUpSignUpForm(email, password)
 
         cy.get('div[role="alert"]')
           .contains('This email address is already registered.')
@@ -176,7 +153,7 @@ describe('sign up with email', () => {
       })
 
       it('should fill up sign in form', () => {
-        cy.get('#email').type(ctx.email!)
+        cy.get('#email').type(email)
         cy.get('#password').type(password)
 
         cy.contains('Log In').should('be.enabled')

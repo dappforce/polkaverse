@@ -141,7 +141,7 @@ export const confirmEmail = async ({ code, ...otherProps }: ConfirmEmailProps) =
   return res
 }
 
-export const resendEmailConfirmation = async (accessToken: string) => {
+export const resendEmailConfirmation = async (accessToken?: string) => {
   const res = await sendHttpRequest({
     params: {
       url: OffchainSignerEndpoint.RESEND_CONFIRMATION,

@@ -12,8 +12,8 @@ const SALT = 'Salt'
 
 const createStorageKeyWithSubAddress = (key: string, myAddress: string) => {
   const subsocialAddress = toSubsocialAddress(myAddress)
-  if (!subsocialAddress) throw new Error('Unable to define subsocial address')
-  return createStorageKey(key, subsocialAddress)
+  if (!subsocialAddress) console.warn('Subsocial address is undefined')
+  return createStorageKey(key, subsocialAddress!)
 }
 
 const getTempRegisterAccount = (): string | undefined =>
