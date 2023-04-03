@@ -36,8 +36,8 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
   const userAddress = getTempRegisterAccount()
   const subsocialAddress = toSubsocialAddress(userAddress)
 
-  if (!subsocialAddress) throw new Error('Subsocial address is not defined')
-  const accessToken = getSignerToken(subsocialAddress)
+  if (!subsocialAddress) console.warn('Subsocial address is not defined')
+  const accessToken = getSignerToken(subsocialAddress!)
 
   useEffect(() => {
     ;(async () => {
@@ -60,12 +60,12 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
   const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (values: FormValues) => {
-    if (!accessToken) throw new Error('Access token is not defined')
+    if (!accessToken) console.warn('Access token is not defined')
 
     try {
       const props = {
         code: values.confirmationCode.toString(),
-        accessToken,
+        accessToken: accessToken!,
       }
       const data = await confirmEmail(props)
 
