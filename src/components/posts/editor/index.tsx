@@ -103,6 +103,9 @@ function EditPostForm(props: PostFormProps) {
   }
 
   const onSuccess: TxCallback = txResult => {
+    const prevCid = post?.struct.contentId
+    prevCid && ipfs.removeContent(prevCid).catch(err => new Error(err))
+
     clearDraft()
     const id = post?.struct.id || getNewIdFromEvent(txResult)?.toString()
     if (id) {
