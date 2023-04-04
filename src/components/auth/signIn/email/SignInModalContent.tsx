@@ -51,6 +51,7 @@ export const EmailInput = ({ data, error, isError, form }: InputProps) => {
       validateStatus={isStr(error) ? 'error' : undefined}
     >
       <Input
+        autoFocus
         required
         type='email'
         placeholder='Email'
