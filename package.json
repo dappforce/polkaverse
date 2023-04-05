@@ -57,6 +57,7 @@
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
     "@welldone-software/why-did-you-render": "^6.2.1",
+    "apollo": "^2.34.0",
     "cypress": "^10.11.0",
     "cypress-network-idle": "^1.10.2",
     "cypress-wait-until": "^1.7.2",
@@ -82,8 +83,8 @@
   "dependencies": {
     "@ant-design/icons": "^4.2.1",
     "@antv/g2plot": "^2.3.10",
-    "@hcaptcha/react-hcaptcha": "^1.4.4",
     "@apollo/client": "^3.7.10",
+    "@hcaptcha/react-hcaptcha": "^1.4.4",
     "@opd/g2plot-react": "^2.6.0",
     "@polkadot/extension-dapp": "^0.44.6",
     "@polkadot/ui-keyring": "^2.9.8",
