@@ -3,7 +3,7 @@ import { isStr } from '@subsocial/utils'
 import { Button, Form, FormInstance, Input } from 'antd'
 import clsx from 'clsx'
 import jwtDecode from 'jwt-decode'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
 import {
   emailSignIn,
@@ -12,7 +12,9 @@ import {
 } from 'src/components/utils/OffchainSigner/api/requests'
 import { setAuthOnRequest } from 'src/components/utils/OffchainSigner/api/utils'
 import { hCaptchaSiteKey } from 'src/config/env'
+import { VALIDATION_DELAY } from 'src/config/ValidationsConfig'
 import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
+import { debounceFunction } from 'src/utils/async'
 import { StepsEnum, useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 import { RegexValidations, useFormValidation } from './useFormValidation'
@@ -39,14 +41,27 @@ type InputProps = {
 }
 
 export const EmailInput = ({ data, error, isError, form }: InputProps) => {
+  const validateEmail = () => {
+    form.validateFields(['email'])
+  }
+  const debouncedValidateField = useCallback(debounceFunction(validateEmail, VALIDATION_DELAY), [])
+
+  const handleAfterInput = (value: string) => {
+    form.setFieldsValue({ [fieldName('email')]: value.trim() })
+    debouncedValidateField()
+  }
+
   return (
     <Form.Item
       initialValue={data}
       name={fieldName('email')}
       className={clsx(styles.BaseFormItem, isError && styles.BaseFormItemError)}
-      validateTrigger='onBlur'
       rules={[
-        { pattern: RegexValidations.ValidEmail, message: 'Please enter a valid email address.' },
+        {
+          pattern: RegexValidations.ValidEmail,
+          message: 'Please enter a valid email address.',
+          validateTrigger: ['onBlur'],
+        },
       ]}
       validateStatus={isStr(error) ? 'error' : undefined}
     >
@@ -55,9 +70,11 @@ export const EmailInput = ({ data, error, isError, form }: InputProps) => {
         required
         type='email'
         placeholder='Email'
+        onChange={e => {
+          handleAfterInput(e.target.value)
+        }}
         onBlur={e => {
-          form.validateFields(['email'])
-          form.setFieldsValue({ [fieldName('email')]: e.target.value.trim() })
+          handleAfterInput(e.target.value)
         }}
       />
     </Form.Item>
@@ -65,17 +82,30 @@ export const EmailInput = ({ data, error, isError, form }: InputProps) => {
 }
 
 export const PasswordInput = ({ error, isError, form }: InputProps) => {
+  const validatePassword = () => {
+    form.validateFields(['password'])
+  }
+  const debouncedValidateField = useCallback(
+    debounceFunction(validatePassword, VALIDATION_DELAY),
+    [],
+  )
+
+  const handleAfterInput = (value: string) => {
+    form.setFieldsValue({ [fieldName('password')]: value.trim() })
+    debouncedValidateField()
+  }
+
   return (
     <Form.Item
       name={fieldName('password')}
       className={clsx(styles.BaseFormItem, isError && styles.BaseFormItemError)}
-      validateTrigger='onBlur'
       rules={[
         {
           min: 8,
           pattern: RegexValidations.ValidPassword,
           message:
             'Your password should contain at least 8 characters, with at least one letter and one number.',
+          validateTrigger: ['onBlur'],
         },
       ]}
       help={error}
@@ -84,11 +114,13 @@ export const PasswordInput = ({ error, isError, form }: InputProps) => {
       <Input
         required
         type='password'
-        onBlur={e => {
-          form.validateFields(['password'])
-          form.setFieldsValue({ [fieldName('password')]: e.target.value.trim() })
-        }}
         placeholder='Password'
+        onChange={e => {
+          handleAfterInput(e.target.value)
+        }}
+        onBlur={e => {
+          handleAfterInput(e.target.value)
+        }}
       />
     </Form.Item>
   )

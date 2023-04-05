@@ -7,3 +7,5 @@ export const MIN_HANDLE_LEN = 5
 export const MAX_HANDLE_LEN = 50
 
 export const CODE_DIGIT = 6
+
+export const VALIDATION_DELAY = 500
