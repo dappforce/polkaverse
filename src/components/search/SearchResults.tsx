@@ -44,10 +44,6 @@ const panes = [
     key: 'posts',
     title: 'Posts',
   },
-  {
-    key: 'profiles',
-    title: 'Profiles',
-  },
 ]
 
 type ReqParam = 'tab' | 'q' | 'tags' | 'spaceId'
