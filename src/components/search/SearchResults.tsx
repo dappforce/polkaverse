@@ -1,25 +1,22 @@
-import { asAccountId } from '@subsocial/api'
+import { asAccountId, SubsocialApi } from '@subsocial/api'
 import { nonEmptyArr, nonEmptyStr } from '@subsocial/utils'
 import { Tabs } from 'antd'
 import { useRouter } from 'next/router'
 import { useCallback, useState } from 'react'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
-import { queryElasticSearch, SearchResultsType } from 'src/components/utils/OffchainUtils'
+import { SearchResultsType } from 'src/components/utils/OffchainUtils'
 import { Segment } from 'src/components/utils/Segment'
+import { searchResults } from 'src/graphql/apis'
+import { GetSearchResults_searchQuery_hits } from 'src/graphql/__generated__/GetSearchResults'
 import messages from 'src/messages'
 import { isBlockedAccount } from 'src/moderation'
 import { useAppDispatch } from 'src/rtk/app/store'
+import { createFetchDataFn } from 'src/rtk/app/wrappers'
 import { fetchPosts } from 'src/rtk/features/posts/postsSlice'
 import { fetchProfileSpaces } from 'src/rtk/features/profiles/profilesSlice'
 import { fetchSpaces } from 'src/rtk/features/spaces/spacesSlice'
-import {
-  AccountId,
-  DataSourceTypes,
-  ElasticIndex,
-  ElasticIndexTypes,
-  PostId,
-  SpaceId,
-} from 'src/types'
+import { AccountId, DataSourceTypes, ElasticIndex, PostId, SpaceId } from 'src/types'
+import { ElasticSearchIndexType } from 'src/types/graphql-global-types'
 import { DataListItemProps, InnerLoadMoreFn } from '../lists'
 import { DataListOptProps } from '../lists/DataList'
 import { InfiniteListByData } from '../lists/InfiniteList'
@@ -100,28 +97,72 @@ const InnerSearchResultList = <T extends SearchResultsType>(
     return router.query[param]
   }
 
+  const getSearchHits = createFetchDataFn<GetSearchResults_searchQuery_hits[]>([])({
+    // Need to define this since it can't be undefined
+    chain: async ({ api }: { api: SubsocialApi }) => {
+      return []
+    },
+    squid: async (
+      {
+        tab,
+        tags,
+        query,
+        spaceId,
+        offset,
+        limit,
+      }: {
+        tab: ElasticSearchIndexType[]
+        tags: string[]
+        query: string
+        spaceId: string
+        offset: number
+        limit: number
+      },
+      client,
+    ) => {
+      const hits = await searchResults(client, {
+        indexes: tab,
+        spaceId,
+        q: query,
+        tags,
+        offset,
+        limit,
+      })
+
+      const filteredHits: GetSearchResults_searchQuery_hits[] = hits.filter(
+        hit => hit !== null,
+      ) as GetSearchResults_searchQuery_hits[]
+
+      return filteredHits
+    },
+  })
+
   const querySearch: InnerLoadMoreFn<SearchResultsType> = async (page, size) => {
-    const tab = getReqParam('tab') as ElasticIndexTypes[]
+    const tab = getReqParam('tab') as ElasticSearchIndexType[]
     const query = getReqParam('q') as string
     const tags = getReqParam('tags') as string[]
     const spaceId = getReqParam('spaceId') as string
     const offset = (page - 1) * size
 
-    const res = await queryElasticSearch({
-      indexes: tab || AllTabKey,
-      spaceId,
-      q: query,
-      tags,
-      offset,
-      limit: size,
+    const hits = await getSearchHits(DataSourceTypes.SQUID, {
+      chain: {
+        api,
+      },
+      squid: {
+        tab,
+        spaceId,
+        query,
+        tags,
+        offset,
+        limit: size,
+      },
     })
-    if (!res) return []
 
     const ownerIds: AccountId[] = []
     const spaceIds: SpaceId[] = []
     const postIds: PostId[] = []
 
-    res.forEach(({ _index, _id }) => {
+    hits.forEach(({ _index, _id }) => {
       switch (_index) {
         case ElasticIndex.spaces: {
           spaceIds.push(_id)
@@ -143,7 +184,7 @@ const InnerSearchResultList = <T extends SearchResultsType>(
       dispatch(fetchProfileSpaces({ ids: ownerIds, api, dataSource: DataSourceTypes.SQUID })),
       dispatch(fetchPosts({ ids: postIds, api, dataSource: DataSourceTypes.SQUID })),
     ])
-    return res || []
+    return hits || []
   }
 
   const accountQuery = isQueryAnAccountAddress(getReqParam('q'))
