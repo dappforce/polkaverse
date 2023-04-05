@@ -742,3 +742,39 @@ export const GET_ADDRESS_POSTS_REACTION = gql`
     }
   }
 `
+// Search
+// ------------------------------------------------------------------------------------
+
+export const GET_SEARCH_RESULTS = gql`
+  query GetSearchResults(
+    $tags: [String!]
+    $q: String = ""
+    $indexes: [ElasticSearchIndexType!]
+    $spaceId: String
+    $limit: Int = 50
+    $offset: Int = 0
+  ) {
+    searchQuery(
+      q: $q
+      indexes: $indexes
+      tags: $tags
+      spaceId: $spaceId
+      limit: $limit
+      offset: $offset
+    ) {
+      hits {
+        _content {
+          name
+          about
+          username
+          title
+          body
+          spaceId
+          tags
+        }
+        _id
+        _index
+      }
+    }
+  }
+`
