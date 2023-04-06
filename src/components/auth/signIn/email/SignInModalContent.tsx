@@ -46,8 +46,8 @@ export const EmailInput = ({ data, error, isError, form }: InputProps) => {
   }
   const debouncedValidateField = useCallback(debounceFunction(validateEmail, VALIDATION_DELAY), [])
 
-  const handleAfterInput = (value: string) => {
-    form.setFieldsValue({ [fieldName('email')]: value.trim() })
+  const handleAfterInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setFieldsValue({ [fieldName('email')]: e.target.value.trim() })
     debouncedValidateField()
   }
 
@@ -70,12 +70,8 @@ export const EmailInput = ({ data, error, isError, form }: InputProps) => {
         required
         type='email'
         placeholder='Email'
-        onChange={e => {
-          handleAfterInput(e.target.value)
-        }}
-        onBlur={e => {
-          handleAfterInput(e.target.value)
-        }}
+        onChange={handleAfterInput}
+        onBlur={handleAfterInput}
       />
     </Form.Item>
   )
