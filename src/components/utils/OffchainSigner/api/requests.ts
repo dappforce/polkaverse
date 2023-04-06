@@ -66,14 +66,7 @@ export function getErrorMessage({ error, showError = false }: ErrorMessageProps)
   if (!err.response?.data) return err.message
   const { message, statusCode } = err.response?.data
 
-  // Handle specific error message from resend confirmation endpoint
-  if (
-    statusCode === 400 &&
-    typeof message === 'string' &&
-    message === 'Wait before sending another confirmation.' &&
-    !showError
-  )
-    return
+  if (statusCode === 400 && typeof message === 'string' && !showError) return
 
   return err.response?.data?.message ?? err.message
 }
