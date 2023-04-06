@@ -18,10 +18,10 @@
     font-size: $font_normal
     font-weight: $font_weight_medium
     &:disabled
-        color: #888888
+        color: $color_light_muted
 
     &:disabled:hover
-        color: #888888
+        color: $color_light_muted
 
 .ConfirmationStepContent
     @extend .SignInModalContent
@@ -31,7 +31,7 @@
 
 .InnerCard
     border-radius: 8px
-    border: 1px solid #d9d9d9
+    border: 1px solid $color_border
     :global(.ant-card-body)
         display: flex
         justify-content: space-between
@@ -40,7 +40,7 @@
 
 .InnerDivider
     height: 3rem
-    border-left: 1px solid #dddddd
+    border-left: 1px solid $color_xtralight_border
 
 .MnemonicText
     text-align: left
@@ -49,7 +49,7 @@
 
 .CopyIcon
     padding: 0 6.5px
-    color: #888888
+    color: $color_light_muted
     &:hover
         color: $color_link_hover
 
@@ -82,11 +82,11 @@
   text-align: center
   font-weight: $font_weight_medium
   line-height: 140%
-  color: #222222
+  color: $color_dark_text
   text-transform: uppercase
 
   margin-right: $space_semismall
-  border: 1px solid #d6d6d6
+  border: 1px solid $color_semilight_border
   border-radius: 12px
   background: #fafafa
   background-clip: padding-box
