@@ -2,6 +2,9 @@ import { Keyring } from '@polkadot/api'
 import { hexToU8a, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util'
 import { keccakAsU8a, naclDecrypt, naclEncrypt } from '@polkadot/util-crypto'
 
+const SALT_LENGTH = 32
+const HEX_CONSTANT = '0x80001f'
+
 class SignerKeyringManager {
   private readonly keyring: Keyring
 
@@ -11,7 +14,6 @@ class SignerKeyringManager {
 
   private generateSalt() {
     // has to be 32 bytes, otherwise naclEncrypt will throw an error
-    const SALT_LENGTH = 32
     const arr = new Uint8Array(SALT_LENGTH)
     const arrayResult = crypto.getRandomValues(arr)
 
@@ -30,7 +32,6 @@ class SignerKeyringManager {
   }
 
   private generateNonce() {
-    const HEX_CONSTANT = '0x80001f'
     return Buffer.from(HEX_CONSTANT.padEnd(24, '\0'))
   }
 
