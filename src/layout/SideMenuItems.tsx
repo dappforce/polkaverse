@@ -19,6 +19,8 @@ import config from 'src/config'
 
 const { enableSubnetMode, enableDomains } = config
 
+const suggestFeatureUrl = 'https://subnet.hellonext.co/'
+
 const issuesUrl = 'https://forms.clickup.com/9008022125/f/8ceq0kd-7261/7PAH62P0XTHM9UIV4Q'
 
 export type Divider = 'Divider'
@@ -97,9 +99,7 @@ export const DefaultMenu: MenuItem[] = [
   Divider,
   {
     name: 'Suggest Feature',
-    page: [
-      'https://forms.clickup.com/9008022125/p/f/8ceq0kd-8261/FLJSBRH2PYGGK5K7Z9/suggestafeature',
-    ],
+    page: [suggestFeatureUrl],
     icon: <BulbOutlined />,
     openInNewTab: true,
   },

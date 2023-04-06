@@ -57,6 +57,7 @@
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
     "@welldone-software/why-did-you-render": "^6.2.1",
+    "apollo": "^2.34.0",
     "cypress": "^10.11.0",
     "cypress-network-idle": "^1.10.2",
     "cypress-wait-until": "^1.7.2",

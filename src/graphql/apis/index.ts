@@ -46,6 +46,7 @@ import {
   GetReactionActivities,
   GetReactionActivitiesVariables,
 } from '../__generated__/GetReactionActivities'
+import { GetSearchResults, GetSearchResultsVariables } from '../__generated__/GetSearchResults'
 import {
   GetSpaceActivities,
   GetSpaceActivitiesVariables,
@@ -381,4 +382,15 @@ export async function getFollowingSpaces(
     variables,
   })
   return res.data.accountById?.spacesFollowed.map(space => space.followingSpace.id)
+}
+
+export async function searchResults(client: GqlClient, variables: GetSearchResultsVariables) {
+  const res = await client.query<GetSearchResults, GetSearchResultsVariables>({
+    query: q.GET_SEARCH_RESULTS,
+    variables,
+  })
+
+  const { hits } = res.data.searchQuery
+
+  return hits
 }

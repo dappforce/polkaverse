@@ -177,6 +177,9 @@ export function InnerForm(props: FormProps) {
   }
 
   const onSuccess: TxCallback = txResult => {
+    const prevCid = space?.struct.contentId
+    prevCid && ipfs.removeContent(prevCid).catch(err => new Error(err))
+
     clearAutoSavedContent('space')
     const id = space?.struct.id || getNewIdFromEvent(txResult)?.toString()
     if (props.asProfile) {

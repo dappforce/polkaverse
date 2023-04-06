@@ -7,6 +7,12 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum ElasticSearchIndexType {
+  all = 'all',
+  posts = 'posts',
+  spaces = 'spaces',
+}
+
 /**
  * # enum EventName
  *
