@@ -256,7 +256,6 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
             size='invisible'
             sitekey={hCaptchaSiteKey}
             onVerify={token => {
-              setLoading(false)
               setToken(token)
             }}
             onLoad={() => {

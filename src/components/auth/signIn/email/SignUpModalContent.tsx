@@ -206,7 +206,6 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
             size='invisible'
             sitekey={hCaptchaSiteKey}
             onVerify={token => {
-              setLoading(false)
               setToken(token)
             }}
             onLoad={() => {
