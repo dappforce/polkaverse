@@ -132,8 +132,6 @@ const InnerSearchResultList = <T extends SearchResultsType>(
 
   const querySearch = async (loadMoreValues: LoadMoreValuesProps) => {
     const { page, size } = loadMoreValues
-
-  const querySearch: InnerLoadMoreFn<SearchResultsType> = async (page, size) => {
     const tab = getReqParam('tab')
     const query = getReqParam('q') as string
     const tags = getReqParam('tags') as string[]
