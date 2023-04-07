@@ -43,7 +43,7 @@ export const NameDetails = ({
   return (
     <>
       <div className='header DfAccountTitle'>
-        <Name owner={owner} address={address} />
+        <Name owner={owner} address={address} isOnHeader />
         {withLabel && <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>}
       </div>
       {/* {extensionName && <div className='DfPopup-handle'>{extensionName}</div>} */}

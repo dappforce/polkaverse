@@ -8,6 +8,7 @@ import { ProfileData } from 'src/types'
 import { useSelectProfile } from '../../../rtk/features/profiles/profilesHooks'
 import { AccountFollowersModal, AccountFollowingModal } from '../AccountsListModal'
 import Avatar from './Avatar'
+import ProfileChip from './NameChip'
 import { CreateOrEditProfileSpace } from './utils/index'
 import NameDetails from './utils/NameDetails'
 import { AddressProps } from './utils/types'
@@ -41,6 +42,7 @@ export const ProfilePreview: FC<ProfilePreviewProps> = ({
   bottom,
   spans,
 }) => {
+  console.log({ spans })
   return (
     <Row className={clsx('flex-nowrap', 'align-items-center', className)}>
       <Col>
@@ -116,6 +118,7 @@ export const ProfilePreviewPopup: FC<ProfilePreviewProps> = props => {
 
 type ProfilePreviewByIdProps = ProfilePreviewProps & {
   withFollowButton?: boolean
+  withProfileChip?: boolean
 }
 
 export const ProfilePreviewById = (props: ProfilePreviewByIdProps) => {
@@ -127,7 +130,13 @@ export const ProfilePreviewById = (props: ProfilePreviewByIdProps) => {
     </Row>
   ) : null
 
-  return <ProfilePreview owner={owner} right={right} {...props} />
+  const chipRight = props.withProfileChip ? (
+    <Row justify='end' align='top'>
+      <ProfileChip>Email</ProfileChip>
+    </Row>
+  ) : null
+
+  return <ProfilePreview owner={owner} right={right || chipRight} {...props} />
 }
 
 export const ProfilePreviewByAccountId = withProfileByAccountId(ProfilePreview)

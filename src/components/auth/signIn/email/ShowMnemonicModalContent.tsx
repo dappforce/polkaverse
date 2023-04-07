@@ -15,14 +15,14 @@ import styles from './SignInModalContent.module.sass'
 import useEncryptionToStorage from './useEncryptionToStorage'
 
 type Props = {
-  onRegisterDone: (address: string) => void
+  onRegisterDone: (address: string, emailAddress: string) => void
 }
 
 const signerKeyringManager = new SignerKeyringManager()
 
 const ShowMnemonicModalContent = ({ onRegisterDone }: Props) => {
   const { state } = useAuth()
-  const { mnemonic, password } = state
+  const { mnemonic, email, password } = state
 
   const { api } = useSubstrate()
   const { createEncryptedAccountAndSave, getEncryptedStoredAccount } = useEncryptionToStorage()
@@ -50,7 +50,7 @@ const ShowMnemonicModalContent = ({ onRegisterDone }: Props) => {
       if (!accessToken || !refreshToken)
         throw new Error('Access token or refresh token is not defined')
 
-      onRegisterDone(userAddress)
+      onRegisterDone(userAddress, email!)
     } catch (error) {
       console.warn({ error })
     }

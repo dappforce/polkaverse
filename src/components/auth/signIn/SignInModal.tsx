@@ -148,11 +148,12 @@ const ModalContent = ({
   hideSignInModal,
   onAccountChosen,
 }: GetModalContentProps) => {
-  const { setAddress } = useMyAccountsContext()
+  const { setEmailAddress, setAddress } = useMyAccountsContext()
 
-  const onAuthSuccess = (address: string) => {
+  const onAuthSuccess = (address: string, emailAddress: string) => {
     hideSignInModal()
     setAddress(address)
+    setEmailAddress(emailAddress)
     setCurrentStep(StepsEnum.SelectWallet)
     onAccountChosen?.(address)
   }
