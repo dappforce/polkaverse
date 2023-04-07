@@ -134,18 +134,25 @@ const InnerSearchResultList = <T extends SearchResultsType>(
   })
 
   const querySearch: InnerLoadMoreFn<SearchResultsType> = async (page, size) => {
-    const tab = getReqParam('tab') as ElasticSearchIndexType[]
+    const tab = getReqParam('tab')
     const query = getReqParam('q') as string
     const tags = getReqParam('tags') as string[]
     const spaceId = getReqParam('spaceId') as string
     const offset = (page - 1) * size
+
+    let usedTab: ElasticSearchIndexType[] = []
+    const validTab = (!tab || tab === 'feed' ? 'all' : tab) as
+      | ElasticSearchIndexType
+      | ElasticSearchIndexType[]
+    if (Array.isArray(validTab)) usedTab = validTab
+    else usedTab = [validTab]
 
     const hits = await getSearchHits(DataSourceTypes.SQUID, {
       chain: {
         api,
       },
       squid: {
-        tab,
+        tab: usedTab,
         spaceId,
         query,
         tags,
