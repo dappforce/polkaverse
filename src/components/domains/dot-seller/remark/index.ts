@@ -1,1 +1,0 @@
-export { SocialRemark } from './core'

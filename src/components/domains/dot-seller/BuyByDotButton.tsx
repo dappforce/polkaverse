@@ -1,7 +1,6 @@
 import { useMyAddress } from '../../auth/MyAccountsContext'
 import { useLazyConnectionsContext } from '../../lazy-connection/LazyConnectionContext'
 import { randomAsNumber } from '@polkadot/util-crypto'
-import { SocialRemark } from './remark/core'
 import { DomainEntity } from '../../../rtk/features/domains/domainsSlice'
 import { useState } from 'react'
 import { Button, Modal } from 'antd'
@@ -11,7 +10,7 @@ import styles from './Index.module.sass'
 import { MutedDiv } from '../../utils/MutedText'
 import clsx from 'clsx'
 import { validDomainPrice, testRemarkTitle, treasuryAccount, domainsNetwork } from './config'
-import { SubSclSource } from './remark/types'
+import { SubSclSource, SocialRemark } from '@subsocial/utils'
 import { useGetDecimalAndSymbol } from './utils'
 import { FormatBalance } from '../../common/balances/Balance'
 import LazyTxButton from 'src/components/donate/LazyTxButton'
@@ -43,6 +42,8 @@ const BuyByDotTxButton = ({ domain, className, close }: BuyByDotTxButtonProps) =
       treasuryAccount,
       validDomainPrice,
     )
+
+    SocialRemark.setConfig({ protNames: [ testRemarkTitle ] })
 
     const regRmrkMsg: SubSclSource<'DMN_REG'> = {
       protName: testRemarkTitle,

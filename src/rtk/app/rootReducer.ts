@@ -19,6 +19,7 @@ import followedSpaceIds from '../features/spaceIds/followedSpaceIdsSlice'
 import ownSpaceIds from '../features/spaceIds/ownSpaceIdsSlice'
 import spaceIdsWithRolesByAccount from '../features/spaceIds/spaceIdsWithRolesByAccountSlice'
 import spaces from '../features/spaces/spacesSlice'
+import ordersById from '../features/domainPendingOrders/pendingOrdersByIdSlice'
 
 const rootReducer = combineReducers({
   contents,
@@ -41,6 +42,7 @@ const rootReducer = combineReducers({
   topLevelDomains,
   chainsInfo,
   onBoarding,
+  ordersById
 })
 
 export type RootState = ReturnType<typeof rootReducer>

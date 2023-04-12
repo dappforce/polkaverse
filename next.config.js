@@ -2,8 +2,8 @@
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
-const path = require('path')
-const Dotenv = require('dotenv-webpack')
+// const path = require('path')
+// const Dotenv = require('dotenv-webpack')
 
 // Required by Docker
 require('dotenv').config()
@@ -31,11 +31,11 @@ const nextConfig = {
     config.plugins = [
       ...config.plugins,
 
-      // Read the .env file
-      new Dotenv({
-        path: path.join(__dirname, '.env'),
-        systemvars: true, // Required by Docker
-      }),
+      // // Read the .env file
+      // new Dotenv({
+      //   path: path.join(__dirname, '.env'),
+      //   systemvars: true, // Required by Docker
+      // }),
     ]
 
     config.module.rules.push(
