@@ -78,7 +78,7 @@ export const UnamesLearnMoreLink = ({ className, ...props }: HTMLProps<HTMLAncho
     <a
       {...props}
       className={clsx(className)}
-      href='https://docs.subsocial.network/docs/tutorials/dotsama-domains'
+      href='https://docs.subsocial.network/docs/tutorials/usernames'
       target='_blank'
       rel='noreferrer'
     >
