@@ -15,6 +15,8 @@ type ManageDomainProviderState = {
   setVariant: (variant: Variant) => void
   recipient: string
   setRecipient: (recipient: string) => void
+  purchaser: string
+  setPurchaser: (recipient: string) => void
 }
 
 type Variant = 'SUB' | 'DOT'
@@ -28,7 +30,7 @@ export const ManageDomainProvider: React.FC<{ promoCode?: string }> = ({ childre
   const [visible, setVisible] = useState(true)
   const [ variant, setVariant ] = useState<Variant>('SUB')
   const [ recipient, setRecipient ] = useState<string>(myAddress || '')
-
+  const [ purchaser, setPurchaser ] = useState<string>(myAddress || '')
 
   const router = useRouter()
   const [activePromoCode, setActivePromoCode] = useState(promoCode)
@@ -59,7 +61,9 @@ export const ManageDomainProvider: React.FC<{ promoCode?: string }> = ({ childre
     recipient,
     setRecipient,
     promoCode: activePromoCode, 
-    clearPromoCode
+    clearPromoCode,
+    purchaser,
+    setPurchaser
   }
 
   return (

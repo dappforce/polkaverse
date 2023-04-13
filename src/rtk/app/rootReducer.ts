@@ -19,7 +19,7 @@ import followedSpaceIds from '../features/spaceIds/followedSpaceIdsSlice'
 import ownSpaceIds from '../features/spaceIds/ownSpaceIdsSlice'
 import spaceIdsWithRolesByAccount from '../features/spaceIds/spaceIdsWithRolesByAccountSlice'
 import spaces from '../features/spaces/spacesSlice'
-import ordersById from '../features/domainPendingOrders/pendingOrdersByIdSlice'
+import ordersById from '../features/domainPendingOrders/pendingOrdersSlice'
 
 const rootReducer = combineReducers({
   contents,

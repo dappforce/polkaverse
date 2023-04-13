@@ -1,6 +1,6 @@
 import { isFunction } from '@polkadot/util'
 import { isEmptyArray, newLogger, parseDomain } from '@subsocial/utils'
-import { Button, Card, Radio, Result, Row, Tag, RadioChangeEvent } from 'antd';
+import { Button, Card, Divider, Radio, RadioChangeEvent, Result, Row, Tag } from 'antd'
 import BN from 'bn.js'
 import clsx from 'clsx'
 import React, { useState } from 'react'
@@ -21,10 +21,11 @@ import useSubstrate from '../substrate/useSubstrate'
 import { Loading, LocalIcon } from '../utils'
 import TxButton from '../utils/TxButton'
 import ClaimFreeDomainModal from './ClaimFreeDomainModal'
+import BuyByDotButton from './dot-seller/BuyByDotModal'
 import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
 import { DomainDetails, ResultContainer } from './utils'
-import BuyByDotButton from './dot-seller/BuyByDotButton';
+import { MutedDiv } from '../utils/MutedText';
 
 const log = newLogger('DD')
 
@@ -144,12 +145,15 @@ const DomainAction = ({ domain }: DomainProps) => {
   const { owner } = domain
   const { promoCode, variant } = useManageDomainContext()
 
-  let DefaultDomainAction = promoCode && domain.id.endsWith('.sub') ? ClaimFreeDomainSection : BuyDomainSection
-  
-  const action = variant === 'SUB' 
-    ? <DefaultDomainAction domain={domain} /> 
-    : <BuyByDotButton domain={domain} className={styles.BuyBtn}/>
+  let DefaultDomainAction =
+    promoCode && domain.id.endsWith('.sub') ? ClaimFreeDomainSection : BuyDomainSection
 
+  const action =
+    variant === 'SUB' ? (
+      <DefaultDomainAction domain={domain} />
+    ) : (
+      <BuyByDotButton domain={domain} className={styles.BuyBtn} />
+    )
 
   return owner ? <UnavailableBtn domain={domain} /> : action
 }
@@ -268,7 +272,7 @@ const ReservedDomainCard = ({ domain }: Omit<DomainItemProps, 'action'>) => {
 
 const variantOpt = [
   { value: 'SUB', label: 'SUB' },
-  { value: 'DOT', label: 'DOT' }
+  { value: 'DOT', label: 'DOT' },
 ]
 
 const ChooseDomain = ({ domain }: DomainProps) => {
@@ -291,16 +295,25 @@ const ChooseDomain = ({ domain }: DomainProps) => {
     setVariant(e.target.value)
   }
 
-  const title = <div className='d-flex align-items-center justify-content-between w-100'>
-    <div>Result: </div>
-    <Radio.Group onChange={onVariantChange} defaultValue={'SUB'}>
-      {variantOpt.map(({ value, label }, i) => 
-        <Radio.Button key={i} value={value}>{label}</Radio.Button>)}
-    </Radio.Group>
-  </div>
+  const title = (
+    <div className='d-flex align-items-center justify-content-between w-100'>
+      <div>Result: </div>
+      <div className='d-flex aling-items-center'>
+        <MutedDiv className='mr-2 FontNormal lh-lg font-weight-normal'>Buy with</MutedDiv>
+        <Radio.Group onChange={onVariantChange} defaultValue={'SUB'} className={styles.BuyWithRadio}>
+          {variantOpt.map(({ value, label }, i) => (
+            <Radio.Button key={i} value={value}>
+              {label}
+            </Radio.Button>
+          ))}
+        </Radio.Group>
+      </div>
+    </div>
+  )
 
   return (
     <ResultContainer title={title} icon={<LocalIcon path={'/icons/reward.svg'} />}>
+      <Divider className='w-100 m-0 mt-1' />
       {content}
     </ResultContainer>
   )

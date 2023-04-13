@@ -72,6 +72,15 @@ $font_size: 1.1rem
     \:global .ant-card-body
       padding: $space_normal
 
+.BuyWithRadio
+  \:global .ant-radio-button-wrapper
+    &:last-child
+      border-radius: 0px 5px 5px 0px !important
+    &:first-child
+      border-radius: 5px 0px 0px 5px !important
+      
+
+
 .DomainName
   font-size: 4rem
   text-align: center
@@ -140,8 +149,16 @@ $font_size: 1.1rem
 
   \:global .ant-collapse-content-box
     padding-top: 0 !important
-    padding-left: 0 !important
+    padding-left: $space_big !important
     padding-right: 0 !important
 
   \:global .ant-collapse-arrow
     left: 0 !important
+    top: $space_big !important
+    
+    svg
+      path
+        color: $color_muted
+
+  p
+    color: $color_muted

@@ -46,7 +46,7 @@ export const InputDomain = ({ onChange }: DomainInputProps) => {
           onPressEnter={onSearchHandler}
           size='large'
         />
-        <Button type='primary' style={{ flexBasis: '15%' }} size='large' onClick={onSearchHandler}>
+        <Button type='primary' ghost={!!domain} style={{ flexBasis: '15%' }} size='large' onClick={onSearchHandler}>
           {isMobile ? <SearchOutlined /> : 'Search'}
         </Button>
       </Input.Group>

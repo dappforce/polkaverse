@@ -5,9 +5,20 @@ $element_height: 40px
 .ModalBody
   padding: 1.5rem
 
+  \:global .ant-select-selector
+    border-radius: $border_radius_large !important
+
+
+.DomainModal
+  \:global .ant-modal-footer
+    padding-top: 0 !important
+
+  \:global .ant-modal-header
+    padding-bottom: 0 !important
+
 .Recipient
   font-size: $font_small
-  margin-bottom: 4px
+  line-height: $font_small
 
 .FooterButtons
   display: flex
@@ -17,15 +28,15 @@ $element_height: 40px
     height: $element_height
 
 .ModalTitle
-  h2 
+  h2
     color: #222
     line-height: 1.5
     font-weight: bold
+    margin-bottom: 0 !important
 
   div
     font-size: $font_normal
 
-  
 .Select
   height: $element_height
   overflow: hidden
@@ -55,3 +66,20 @@ $element_height: 40px
   button
     font-size: $font_normal
     padding: 0 $space_normal
+
+.DomainInfo
+  background: #F5F5F5
+  border-radius: 10px
+  padding: $space_normal
+
+.Domain
+  font-weight: 600
+  font-size: $font-normal
+  line-height: 22px
+  background: linear-gradient(89.76deg, #F10286 55.71%, #C10AEC 101.74%)
+  background-clip: text
+  color: transparent
+
+.RecipientFieldDesc
+  font-size: $font_small
+  line-height: $font_small

@@ -20,6 +20,8 @@ import styles from './index.module.sass'
 import { ManageDomainProvider } from './manage/ManageDomainProvider'
 import { MyDomainsCard } from './MyDomains'
 import { DomainDetails, UnamesLearnMoreLink } from './utils'
+import { useFetchDomainPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
+import PendingOrdersSection from './pendingOrders'
 
 const tabs = ['register', 'manage'] as const
 type TabKey = typeof tabs[number]
@@ -46,6 +48,7 @@ const DomainMarketSection = ({ promoCode }: DomainServerProps) => {
     const hash = window.location.hash.substring(1)
     if ((tabs as unknown as string[]).includes(hash)) setActiveTab(hash as TabKey)
   }, [])
+  
   useEffect(() => {
     if (!myAddress) setActiveTab('register')
   }, [myAddress])
@@ -143,15 +146,19 @@ const DomainMarketSection = ({ promoCode }: DomainServerProps) => {
 }
 
 export const DomainRegisterPage = ({ promoCode }: DomainServerProps) => {
+  useFetchDomainPendingOrdersByAccount()
   const isMobile = useIsMobileWidthOrDevice()
+
   const rightPanelContent = (
     <>
+      <PendingOrdersSection />
       <FaqSection />
       {/*<CardWithContent title='Tutorial' className='mt-4'>*/}
       {/*  <Embed link='https://www.youtube.com/watch?v=v3MTo_tt5Z0' />*/}
       {/*</CardWithContent>*/}
     </>
   )
+
   return (
     <PageContent
       meta={{
