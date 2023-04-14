@@ -20698,7 +20698,7 @@ textarea.ant-input {
 .ant-drawer-header-no-title .ant-drawer-close {
   margin-right: var(--scroll-bar);
   /* stylelint-disable-next-line function-calc-no-invalid */
-  padding-right: calc(20px - var(--scroll-bar));
+  padding-right: calc(15px - var(--scroll-bar));
 }
 .ant-drawer-header {
   position: relative;

@@ -30,7 +30,7 @@ export const fieldName = (name: FieldName): FieldName => name
 
 type Props = {
   setCurrentStep: (step: number) => void
-  onSignInSuccess: (address: string) => void
+  onSignInSuccess: (address: string, emailAddress: string) => void
 }
 
 type InputProps = {
@@ -86,8 +86,8 @@ export const PasswordInput = ({ error, isError, form }: InputProps) => {
     [],
   )
 
-  const handleAfterInput = (value: string) => {
-    form.setFieldsValue({ [fieldName('password')]: value.trim() })
+  const handleAfterInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setFieldsValue({ [fieldName('password')]: e.target.value.trim() })
     debouncedValidateField()
   }
 
@@ -111,12 +111,8 @@ export const PasswordInput = ({ error, isError, form }: InputProps) => {
         required
         type='password'
         placeholder='Password'
-        onChange={e => {
-          handleAfterInput(e.target.value)
-        }}
-        onBlur={e => {
-          handleAfterInput(e.target.value)
-        }}
+        onChange={handleAfterInput}
+        onBlur={handleAfterInput}
       />
     </Form.Item>
   )
@@ -203,7 +199,7 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
 
         setCurrentStep(StepsEnum.Confirmation)
       } else {
-        onSignInSuccess(accountAddress)
+        onSignInSuccess(accountAddress, email)
       }
     } catch (error) {
       onErrorHandler(error, setError)

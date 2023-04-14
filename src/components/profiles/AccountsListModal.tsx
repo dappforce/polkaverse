@@ -90,7 +90,13 @@ const InnerProfilePreviewList = ({
         <>
           <div className='my-2'>
             {isValidAddress(item) ? (
-              <ProfilePreviewById address={item} className='m-0' size={46} withFollowButton />
+              <ProfilePreviewById
+                address={item}
+                className='m-0'
+                size={46}
+                withFollowButton
+                withProfileChip
+              />
             ) : (
               <LineSpacePreview withFollowButton spaceId={item} />
             )}

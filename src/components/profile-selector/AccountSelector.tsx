@@ -1,7 +1,12 @@
 import { Divider } from 'antd'
 import { useState } from 'react'
 import useSubsocialEffect from '../api/useSubsocialEffect'
-import { useMyAccounts, useMyAccountsContext, useMyAddress } from '../auth/MyAccountsContext'
+import {
+  useMyAccounts,
+  useMyAccountsContext,
+  useMyAddress,
+  useMyEmailAddress,
+} from '../auth/MyAccountsContext'
 import { ProfilePreviewByAccountId, SelectAddressPreview } from '../profiles/address-views'
 import SubTitle from '../utils/SubTitle'
 
@@ -28,6 +33,7 @@ type AccountItemProps = {
   onClick?: (address: string) => void
   withShortAddress?: boolean
 }
+
 const AccountItem = ({ address, onClick, withShortAddress }: AccountItemProps) => {
   const profile = useSelectProfile(address)
 
@@ -49,6 +55,9 @@ const SelectAccountItems = ({
 }: SelectAccountItems) => {
   const { setAddress } = useMyAccountsContext()
 
+  const emailAddress = useMyEmailAddress()
+  const myAddress = useMyAddress()
+
   const onAccountClick = (address: string) => {
     setAddress(address)
     onItemClick?.(address)
@@ -64,6 +73,14 @@ const SelectAccountItems = ({
           withShortAddress={withShortAddress}
         />
       ))}
+      {emailAddress && myAddress && (
+        <AccountItem
+          key={myAddress}
+          address={myAddress}
+          onClick={onAccountClick}
+          withShortAddress={withShortAddress}
+        />
+      )}
     </div>
   )
 }
@@ -71,7 +88,7 @@ const SelectAccountItems = ({
 const renderExtensionContent = (content: JSX.Element) => {
   return (
     <>
-      <SubTitle title={'Extension accounts:'} />
+      <SubTitle title={'Accounts:'} />
       {content}
     </>
   )
@@ -165,7 +182,7 @@ const CurrentAccount = ({ currentAddress }: CurrentAccountProps) => {
 
   return (
     <>
-      <div className='p-3 pb-0'>
+      <div className='p-3 pt-4 pb-0'>
         <ProfilePreviewByAccountId
           address={currentAddress}
           size={60}
