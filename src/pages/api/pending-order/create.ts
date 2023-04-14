@@ -38,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     )
 
     const requestHeaders = {
-      Authorization: 'Bearer ' + u8aToHex(signedToken.sealed) + 'asdasd',
+      Authorization: 'Bearer ' + u8aToHex(signedToken.sealed),
       'Client-Id': clientId,
     }
 
