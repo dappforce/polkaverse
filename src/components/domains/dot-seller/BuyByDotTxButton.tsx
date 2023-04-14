@@ -14,6 +14,7 @@ import { fetchPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrder
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useManageDomainContext } from '../manage/ManageDomainProvider'
 import { domainsNetwork, validDomainPrice } from './config'
+import { showErrorMessage } from 'src/components/utils/Message'
 
 type BuyByDotTxButtonProps = {
   domainName: string
@@ -89,8 +90,15 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
     const { sellerApiAuthTokenManager } = sellerConfig
 
     const result = await createPendingOrder(purchaser, domainName, sellerApiAuthTokenManager)
-    console.log(result)
-    dispatch(fetchPendingOrdersByAccount({ id: myAddress || '', reload: true }))
+
+    if(result?.success) {
+      dispatch(fetchPendingOrdersByAccount({ id: myAddress || '', reload: true }))
+      return false
+    } else {
+      showErrorMessage(result?.errors)
+
+      return true
+    }
   }
 
   return (

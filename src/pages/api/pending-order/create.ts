@@ -53,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     res.status(200).send({ success: true })
   } catch (e: any) {
-    res.status(e.response.status).send({
+    res.status(200).send({
       success: false,
       errors: e.response.errors?.[0].message,
     })

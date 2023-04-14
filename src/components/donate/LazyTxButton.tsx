@@ -48,7 +48,7 @@ export type TxButtonProps = BaseTxButtonProps & {
   title?: string
   unsigned?: boolean
   onValidate?: () => boolean | Promise<boolean>
-  onClick?: () => void
+  onClick?: () => Promise<boolean | undefined>
   onSuccess?: TxCallback
   onFailed?: TxFailedCallback
   successMessage?: SuccessMessage
@@ -238,7 +238,9 @@ function LazyTxButton({
       return
     }
 
-    isFunction(onClick) && onClick()
+    const preventTransaction = await onClick?.()
+
+    if(preventTransaction === true) return
 
     const txType = unsigned ? 'unsigned' : 'signed'
     log.debug(`Sending ${txType} tx...`)
