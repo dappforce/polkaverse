@@ -48,9 +48,9 @@ jobs:
           push: true
           build-args: |
             GH_GA_ID=fake
-            GH_APP_KIND=staging
+            GH_APP_KIND=polkaverse
             GH_HCAPTCHA_SITE_KEY=fc5815a2-6662-420f-8d94-ed72200d8a39
-            GH_OFFCHAIN_SIGNER_URL=https://staging-signer.subsocial.network            
+            GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network            
             GH_CONNECTION_KIND=dev
           tags: |
             ${{ env.image }}
