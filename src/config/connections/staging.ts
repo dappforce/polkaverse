@@ -5,6 +5,7 @@ const stagingConfig: SubsocialConfig = {
 
   substrateUrl: 'wss://rco-para.subsocial.network',
   offchainUrl: 'https://staging-api.subsocial.network',
+  offchainSignerUrl: 'https://staging-signer.subsocial.network',
   graphqlUrl: 'https://squid.subsquid.io/soonsocial/graphql',
 
   ipfsNodeUrl: 'https://staging-ipfs.subsocial.network',
@@ -13,8 +14,6 @@ const stagingConfig: SubsocialConfig = {
 
   subIdApiUrl: 'https://sub.id/api/v1',
   subsocialParaId: 2100,
-
-  offchainSignerUrl: 'https://staging-signer.subsocial.network',
 }
 
 export default stagingConfig
