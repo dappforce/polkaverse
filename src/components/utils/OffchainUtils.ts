@@ -95,3 +95,10 @@ export const registerDomainWithPromoCode = async ({
   })
   return res?.data
 }
+
+export const createPendingOrder = async (purchaser: string, domain: string, sellerApiAuthTokenManager: string) => {
+  const res = await axios.post('/api/pending-order/create', { purchaser, domain, sellerApiAuthTokenManager })
+  const data = res.data 
+  if (!data.success) throw new Error(data.errors)
+  return data
+}

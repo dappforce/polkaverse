@@ -7,7 +7,7 @@ import { useMyAddress } from '../../auth/MyAccountsContext'
 import { FormatBalance } from '../../common/balances/Balance'
 import { MutedDiv } from '../../utils/MutedText'
 import { useManageDomainContext } from '../manage/ManageDomainProvider'
-import BuyByDotTxButton, { BuyByDotButtonProps } from './BuyByDotTxButton'
+import BuyByDotTxButton from './BuyByDotTxButton'
 import { domainsNetwork, validDomainPrice } from './config'
 import styles from './Index.module.sass'
 import { useGetDecimalAndSymbol } from './utils'
@@ -79,14 +79,13 @@ const ModalBody = ({ domainName }: ModalBodyProps) => {
   )
 }
 
-type BuyDomainModalProps = BuyByDotButtonProps & {
+type BuyDomainModalProps = {
+  domainName: string
   open: boolean
   close: () => void
 }
 
-const BuyDomainModal = ({ domain, open, close }: BuyDomainModalProps) => {
-  const { id: domainName } = domain
-
+const BuyDomainModal = ({ domainName, open, close }: BuyDomainModalProps) => {
   const title = (
     <div className={styles.ModalTitle}>
       <h2>Register new domain</h2>
@@ -95,7 +94,7 @@ const BuyDomainModal = ({ domain, open, close }: BuyDomainModalProps) => {
 
   const modalFooter = (
     <div className={styles.FooterButtons}>
-      <BuyByDotTxButton domain={domain} className={'ml-0'} close={close} />
+      <BuyByDotTxButton domainName={domainName} className={'ml-0'} close={close} />
     </div>
   )
 
@@ -114,7 +113,13 @@ const BuyDomainModal = ({ domain, open, close }: BuyDomainModalProps) => {
   )
 }
 
-const BuyByDotButton = ({ domain }: BuyByDotButtonProps) => {
+type BuyByDotButtonProps = {
+  domainName: string
+  label?: string
+  withPrice?: boolean
+}
+
+const BuyByDotButton = ({ domainName, label = 'Register', withPrice = true }: BuyByDotButtonProps) => {
   const [open, setOpen] = useState(false)
   const { decimal, symbol } = useGetDecimalAndSymbol(domainsNetwork)
 
@@ -126,11 +131,11 @@ const BuyByDotButton = ({ domain }: BuyByDotButtonProps) => {
 
   return (
     <span className={styles.RegisterButton}>
-      <div>{price}</div>
+      {withPrice && <div>{price}</div>}
       <Button type={'primary'} block onClick={() => setOpen(true)}>
-        Register
+        {label}
       </Button>
-      <BuyDomainModal domain={domain} open={open} close={close} />
+      <BuyDomainModal domainName={domainName} open={open} close={close} />
     </span>
   )
 }

@@ -1,11 +1,13 @@
 import { isFunction } from '@polkadot/util'
 import { isEmptyArray, newLogger, parseDomain } from '@subsocial/utils'
-import { Button, Card, Divider, Radio, RadioChangeEvent, Result, Row, Tag } from 'antd'
+import { Button, Card, Divider, Radio, RadioChangeEvent, Result, Row, Tag, Tooltip } from 'antd'
 import BN from 'bn.js'
 import clsx from 'clsx'
 import React, { useState } from 'react'
 import { showErrorMessage } from 'src/components/utils/Message'
 import config from 'src/config'
+import { useFetchDomainPendingOrdersByIds } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
+import { useSelectPendingOrderById } from '../../rtk/features/domainPendingOrders/pendingOrdersHooks'
 import {
   useBuildDomainsWithTldByDomain,
   useCreateReloadMyDomains,
@@ -14,18 +16,18 @@ import {
   useIsSupportedTld,
 } from '../../rtk/features/domains/domainHooks'
 import { DomainEntity } from '../../rtk/features/domains/domainsSlice'
-import { useIsMyAddress } from '../auth/MyAccountsContext'
+import { useIsMyAddress, useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import { TxCallback } from '../substrate/SubstrateTxButton'
 import useSubstrate from '../substrate/useSubstrate'
 import { Loading, LocalIcon } from '../utils'
+import { MutedDiv } from '../utils/MutedText'
 import TxButton from '../utils/TxButton'
 import ClaimFreeDomainModal from './ClaimFreeDomainModal'
 import BuyByDotButton from './dot-seller/BuyByDotModal'
 import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
 import { DomainDetails, ResultContainer } from './utils'
-import { MutedDiv } from '../utils/MutedText';
 
 const log = newLogger('DD')
 
@@ -36,13 +38,14 @@ type DomainItemProps = {
 
 type DomainProps = {
   domain: DomainEntity
+  label?: string
 }
 
 const BLOCK_TIME = 12
 const SECS_IN_DAY = 60 * 60 * 24
 const BLOCKS_IN_YEAR = new BN((SECS_IN_DAY * 365) / BLOCK_TIME)
 
-const BuyDomainSection = ({ domain: { id: domain } }: DomainProps) => {
+const BuyDomainSection = ({ domain: { id: domain }, label = 'Register' }: DomainProps) => {
   const reloadMyDomains = useCreateReloadMyDomains()
   const { openManageModal } = useManageDomainContext()
   const { api, isApiReady } = useSubstrate()
@@ -74,7 +77,7 @@ const BuyDomainSection = ({ domain: { id: domain } }: DomainProps) => {
         customNodeApi={api}
         block
         size='middle'
-        label={'Register'}
+        label={label}
         tx={'domains.registerDomain'}
         onSuccess={onSuccess}
         onFailed={onFailed}
@@ -116,10 +119,21 @@ const ClaimFreeDomainSection = ({ domain: { id: domain } }: DomainProps) => {
 
 export const DomainItem = ({ domain, action }: DomainItemProps) => {
   const actionComponent = isFunction(action) ? action() : action
+  const myAddress = useMyAddress()
+  const pendingOrders = useSelectPendingOrderById(domain)
+
+  const { account } = pendingOrders || {}
 
   return (
     <Row justify='space-between' align='middle' className={styles.DomainResultItem}>
-      <span>{domain}</span>
+      <div className='d-flex align-items-center justify-content-between'>
+        <span>{domain}</span>
+        {account && myAddress === account && (
+          <Tag color='gold' className={clsx('ml-2', styles.PendingTag)}>
+            Pending
+          </Tag>
+        )}
+      </div>
       {actionComponent}
     </Row>
   )
@@ -144,15 +158,36 @@ const UnavailableBtn = ({ domain: { owner, id } }: DomainProps) => {
 const DomainAction = ({ domain }: DomainProps) => {
   const { owner } = domain
   const { promoCode, variant } = useManageDomainContext()
+  const myAddress = useMyAddress()
+  const pendingOrder = useSelectPendingOrderById(domain.id)
+
+  const { account } = pendingOrder || {}
+
+  if (account && account !== myAddress) {
+    return (
+      <Tooltip
+        title='Someone else currently has this domain reserved.
+    If they do not buy it within 10 minutes, it will
+    become available again.'
+      >
+        <Button disabled={true}>Reserved</Button>
+      </Tooltip>
+    )
+  }
+
+  const label = account === myAddress ? 'Continue' : undefined
 
   let DefaultDomainAction =
     promoCode && domain.id.endsWith('.sub') ? ClaimFreeDomainSection : BuyDomainSection
 
   const action =
     variant === 'SUB' ? (
-      <DefaultDomainAction domain={domain} />
+      <DefaultDomainAction domain={domain} label={label} />
     ) : (
-      <BuyByDotButton domain={domain} className={styles.BuyBtn} />
+      <BuyByDotButton
+        domainName={domain.id}
+        label={label}
+      />
     )
 
   return owner ? <UnavailableBtn domain={domain} /> : action
@@ -300,7 +335,11 @@ const ChooseDomain = ({ domain }: DomainProps) => {
       <div>Result: </div>
       <div className='d-flex aling-items-center'>
         <MutedDiv className='mr-2 FontNormal lh-lg font-weight-normal'>Buy with</MutedDiv>
-        <Radio.Group onChange={onVariantChange} defaultValue={'SUB'} className={styles.BuyWithRadio}>
+        <Radio.Group
+          onChange={onVariantChange}
+          defaultValue={'SUB'}
+          className={styles.BuyWithRadio}
+        >
           {variantOpt.map(({ value, label }, i) => (
             <Radio.Button key={i} value={value}>
               {label}
@@ -321,6 +360,7 @@ const ChooseDomain = ({ domain }: DomainProps) => {
 
 export const EligibleDomainsSection = ({ domain }: FoundDomainCardProps) => {
   const domains = useBuildDomainsWithTldByDomain(domain)
+  useFetchDomainPendingOrdersByIds(domains)
   const { isReserved, loading: checkingWord } = useIsReservedWord(domain.id)
 
   if (isEmptyArray(domains)) return null

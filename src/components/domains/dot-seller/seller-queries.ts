@@ -25,3 +25,30 @@ export const PENDING_ORDERS_BY_ACCOUNT = gql`
     }
   }
 `
+
+export const SELLER_CONFIG = gql`
+ query getSellerConfig {
+  sellerConfigInfo {
+    dmnRegPendingOrderExpTime
+    domainHostChain
+    domainHostChainPrefix
+    domainRegistrationPriceFixed
+    remarkProtName
+    remarkProtVersion
+    sellerApiAuthTokenManager
+    sellerChain
+    sellerChainPrefix
+    sellerTreasuryAccount
+    sellerToken {
+      decimal
+      name
+    }
+  }
+}
+`
+
+export const CREATE_PENDING_ORDER = gql`
+  mutation CreatePendingOrder($domain: String!, $account: String!) {
+    createPendingOrder(account: $account, domain: $domain)
+  }
+`

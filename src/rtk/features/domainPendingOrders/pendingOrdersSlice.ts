@@ -1,12 +1,15 @@
-import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
-import { isDef } from '@subsocial/utils'
+import { EntityId, createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
+import { isDef, isEmptyArray } from '@subsocial/utils'
 import { sellerSquidGraphQlClient } from 'src/components/domains/dot-seller/config'
 import {
   PENDING_ORDERS_BY_ACCOUNT,
   PENDING_ORDERS_BY_IDS,
 } from 'src/components/domains/dot-seller/seller-queries'
-import { FetchManyArgs, FetchOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
+import { ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
+import { encodeAddress } from '@polkadot/util-crypto' 
+import { GenericAccountId } from '@polkadot/types'
+import registry from '@subsocial/api/utils/registry'
 
 export type PendingDomainEntity = {
   id: string
@@ -24,10 +27,30 @@ const adapter = createEntityAdapter<PendingDomainEntity>()
 
 const selectors = adapter.getSelectors<RootState>(state => state.ordersById)
 
-type Args = {}
+type CommonFetchProps = {
+  reload?: boolean
+}
+
+type FetchOneWithoutApi = CommonFetchProps & {
+  id: EntityId
+}
+
+type FetchManyWithoutApi = CommonFetchProps & {
+  ids: EntityId[]
+}
 
 const selectEntitiesByIds = (state: RootState, ids: string[]) => {
   return ids.map(id => selectors.selectById(state, id)).filter(isDef)
+}
+
+export const selectPendingOrdersById = (state: RootState, id: string) => {
+  const keys = selectors.selectIds(state)
+
+  const entityId = keys.find(key => key.toString().includes(id))
+
+  if(!entityId) return undefined
+
+  return selectors.selectById(state, entityId)
 }
 
 export const selectPendingOrdersByIds = (state: RootState, ids: string[]) => {
@@ -41,15 +64,16 @@ export const selectPendingOrdersByIds = (state: RootState, ids: string[]) => {
 export const selectPendingOrdersByAccount = (state: RootState, address?: string) => {
   if (!address) return []
   const keys = selectors.selectIds(state)
+  const genericAddress = new GenericAccountId(registry, address).toString()
 
-  const entityIds = keys.filter(key => key.toString().includes(address))
+  const entityIds = keys.filter(key => key.toString().includes(genericAddress))
 
   return selectEntitiesByIds(state, entityIds as string[])
 }
 
 export const fetchPendingOrdersByIds = createAsyncThunk<
   MaybeEntity[],
-  FetchManyArgs<Args>,
+  FetchManyWithoutApi,
   ThunkApiConfig
 >(`${sliceName}/fetchManyByIds`, async ({ ids, reload }, { getState }): Promise<MaybeEntity[]> => {
   const entityIds = ids as string[]
@@ -59,49 +83,58 @@ export const fetchPendingOrdersByIds = createAsyncThunk<
     return []
   }
 
-  const result: Omit<PendingDomainEntity, 'domain'>[] = await sellerSquidGraphQlClient.request(
+  const result: any = await sellerSquidGraphQlClient.request(
     PENDING_ORDERS_BY_IDS,
     { ids },
   )
 
-  return result.map(item => {
+  const orders = result.getPendingOrdersByIds.orders as Omit<PendingDomainEntity, 'domain'>[]
+
+  return orders.map(item => {
     const { id, account } = item
 
+    const subsocialAddress: string = new GenericAccountId(registry, encodeAddress(account)).toString()
+    
     return {
       ...item,
-      id: `${id}-${account}`,
+      id: `${id}-${subsocialAddress}`,
       domain: id,
-      account,
+      account: subsocialAddress,
     }
   })
 })
 
 export const fetchPendingOrdersByAccount = createAsyncThunk<
   MaybeEntity[],
-  FetchOneArgs<Args>,
+  FetchOneWithoutApi,
   ThunkApiConfig
 >(
   `${sliceName}/fetchManyByAccount`,
   async ({ id: account, reload }, { getState }): Promise<MaybeEntity[]> => {
     const knownDomainsPendingOrders = selectPendingOrdersByAccount(getState(), account.toString())
 
-    if (!reload && knownDomainsPendingOrders) {
+    if (!reload && !isEmptyArray(knownDomainsPendingOrders)) {
       return []
     }
 
-    const result: Omit<PendingDomainEntity, 'domain'>[] = await sellerSquidGraphQlClient.request(
+    const result: any = await sellerSquidGraphQlClient.request(
       PENDING_ORDERS_BY_ACCOUNT,
       { account },
     )
 
-    return result.map(item => {
+    const orders = result.getPendingOrdersByAccount.orders as Omit<PendingDomainEntity, 'domain'>[]
+
+
+    return orders.map(item => {
       const { id, account } = item
 
+      const subsocialAddress: string = new GenericAccountId(registry, encodeAddress(account)).toString()
+      
       return {
         ...item,
-        id: `${id}-${account}`,
+        id: `${id}-${subsocialAddress}`,
         domain: id,
-        account,
+        account: subsocialAddress,
       }
     })
   },
