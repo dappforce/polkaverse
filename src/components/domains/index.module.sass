@@ -80,7 +80,6 @@ $font_size: 1.1rem
       border-radius: 5px 0px 0px 5px !important
       
 
-
 .DomainName
   font-size: 4rem
   text-align: center
@@ -119,14 +118,27 @@ $font_size: 1.1rem
     padding: 2*$space_normal
   
   \:global .ant-btn
-    width: 190px
+    width: 200px
+    border-radius: 8px !important
   
 .ModalTitle
-  font-size: 2rem
+  font-size: $font_big
+  font-weight: bold
+  margin-bottom: $space_mini
+
+.ModalSubtitle
+  margin-bottom: $space_huge
 
 .ModalDomainTitle
-  font-size: 2rem
+  margin-bottom: $space_huge
+  font-size: $font_big
+  line-height: 28.64px
   font-weight: 600
+
+.MenuModalDomainTitle
+  @extend .ModalDomainTitle
+
+  font-size: $font_huge !important
 
 .ModalLink
   font-size: $font_large
