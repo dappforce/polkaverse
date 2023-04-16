@@ -46,16 +46,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       headers: requestHeaders
     })
 
-    await sellerSquidGraphQlClient.request(
+    const result = await sellerSquidGraphQlClient.request(
       CREATE_PENDING_ORDER,
       { domain, account: purchaser },
     )
 
     res.status(200).send({ success: true })
+    return result
+
   } catch (e: any) {
     res.status(200).send({
       success: false,
       errors: e.response.errors?.[0].message,
     })
+    return undefined
   }
 }

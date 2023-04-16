@@ -17,6 +17,8 @@ type ManageDomainProviderState = {
   setRecipient: (recipient: string) => void
   purchaser: string
   setPurchaser: (recipient: string) => void
+  isFetchNewDomains: boolean
+  setIsFetchNewDomains: (isFetchNewDomains: boolean) => void
 }
 
 type Variant = 'SUB' | 'DOT'
@@ -31,6 +33,7 @@ export const ManageDomainProvider: React.FC<{ promoCode?: string }> = ({ childre
   const [ variant, setVariant ] = useState<Variant>('SUB')
   const [ recipient, setRecipient ] = useState<string>(myAddress || '')
   const [ purchaser, setPurchaser ] = useState<string>(myAddress || '')
+  const [ isFetchNewDomains, setIsFetchNewDomains ] = useState(false)
 
   const router = useRouter()
   const [activePromoCode, setActivePromoCode] = useState(promoCode)
@@ -63,7 +66,9 @@ export const ManageDomainProvider: React.FC<{ promoCode?: string }> = ({ childre
     promoCode: activePromoCode, 
     clearPromoCode,
     purchaser,
-    setPurchaser
+    setPurchaser,
+    isFetchNewDomains,
+    setIsFetchNewDomains
   }
 
   return (

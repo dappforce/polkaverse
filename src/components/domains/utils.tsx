@@ -10,6 +10,13 @@ import { AnyAccountId } from 'src/types'
 import { slugifyHandle } from '../urls/helpers'
 import { useAddClassNameToRootElement } from '../utils'
 import styles from './index.module.sass'
+import useSubsocialEffect from '../api/useSubsocialEffect'
+import { useMyAddress } from '../auth/MyAccountsContext'
+import { useManageDomainContext } from './manage/ManageDomainProvider'
+import { LoadingOutlined } from '@ant-design/icons'
+import { controlledMessage } from '../utils/Message'
+import { u8aToString } from '@polkadot/util';
+import { useCreateReloadDomain, useCreateReloadMyDomains } from 'src/rtk/features/domains/domainHooks'
 
 const { resolvedDomain } = config
 
@@ -89,5 +96,50 @@ export const UnamesLearnMoreLink = ({ className, ...props }: HTMLProps<HTMLAncho
     >
       <span>Learn More</span>
     </a>
+  )
+}
+
+const waitMessage = controlledMessage({
+  message: 'Waiting for domain registration',
+  type: 'info',
+  duration: 0,
+  icon: <LoadingOutlined />,
+})
+
+export const useFetchNewDomains = (domainName: string) => {
+  const myAddress = useMyAddress()
+  const { setIsFetchNewDomains, isFetchNewDomains, openManageModal } = useManageDomainContext()
+  const reloadMyDomains = useCreateReloadMyDomains()
+  const reloadDomain = useCreateReloadDomain()
+
+  useSubsocialEffect(
+    ({ substrate }) => {
+      setIsFetchNewDomains(false)
+      if (!myAddress || !isFetchNewDomains) return
+
+      let unsub: any
+
+
+      const subscription = async () => {
+        const api = await (await substrate.api).isReady
+        waitMessage.open()
+
+        unsub = await api.query.domains.domainsByOwner(myAddress, (data: any[]) => {
+          const dataHuman = data.map((x) => u8aToString(x))
+          
+          if (dataHuman.includes(domainName)) {
+            reloadMyDomains()
+            reloadDomain(domainName)
+            waitMessage.close()
+            openManageModal('success', domainName)
+          }
+        })
+      }
+
+      subscription().catch(err => console.error(err))
+
+      return () => unsub && unsub()
+    },
+    [isFetchNewDomains, myAddress],
   )
 }

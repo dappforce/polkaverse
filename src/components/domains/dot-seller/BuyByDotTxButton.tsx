@@ -8,13 +8,13 @@ import {
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import LazyTxButton from 'src/components/donate/LazyTxButton'
 import { useLazyConnectionsContext } from 'src/components/lazy-connection/LazyConnectionContext'
+import { showErrorMessage } from 'src/components/utils/Message'
 import { createPendingOrder } from 'src/components/utils/OffchainUtils'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { fetchPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useManageDomainContext } from '../manage/ManageDomainProvider'
 import { domainsNetwork, validDomainPrice } from './config'
-import { showErrorMessage } from 'src/components/utils/Message'
 
 type BuyByDotTxButtonProps = {
   domainName: string
@@ -27,11 +27,10 @@ function getKeyName(value: string) {
 }
 
 const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProps) => {
-  const { recipient, purchaser } = useManageDomainContext()
+  const { recipient, purchaser, setIsFetchNewDomains } = useManageDomainContext()
   const sellerConfig = useSelectSellerConfig()
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
-
   const { getApiByNetwork } = useLazyConnectionsContext()
 
   const getParams = async () => {
@@ -75,8 +74,11 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
     return [[transferTx, remarkTx]]
   }
 
-  const onSuccess = () => {
-    console.log('Extrinsic Success')
+  const onSuccess = async () => {
+    if (!myAddress) return
+
+    setIsFetchNewDomains(true)
+
     close()
   }
 
@@ -85,13 +87,13 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
   }
 
   const onClick = async () => {
-    if(!sellerConfig) return
+    if (!sellerConfig) return
 
     const { sellerApiAuthTokenManager } = sellerConfig
 
     const result = await createPendingOrder(purchaser, domainName, sellerApiAuthTokenManager)
 
-    if(result?.success) {
+    if (result?.success) {
       dispatch(fetchPendingOrdersByAccount({ id: myAddress || '', reload: true }))
       return false
     } else {

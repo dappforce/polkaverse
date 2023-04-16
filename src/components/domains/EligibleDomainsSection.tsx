@@ -1,4 +1,4 @@
-import { isFunction } from '@polkadot/util'
+import { isFunction } from '@polkadot/util';
 import { isEmptyArray, newLogger, parseDomain } from '@subsocial/utils'
 import { Button, Card, Divider, Radio, RadioChangeEvent, Result, Row, Tag, Tooltip } from 'antd'
 import BN from 'bn.js'
@@ -27,7 +27,7 @@ import ClaimFreeDomainModal from './ClaimFreeDomainModal'
 import BuyByDotButton from './dot-seller/BuyByDotModal'
 import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
-import { DomainDetails, ResultContainer } from './utils'
+import { DomainDetails, ResultContainer, useFetchNewDomains } from './utils'
 
 const log = newLogger('DD')
 
@@ -362,12 +362,14 @@ export const EligibleDomainsSection = ({ domain }: FoundDomainCardProps) => {
   const domains = useBuildDomainsWithTldByDomain(domain)
   useFetchDomainPendingOrdersByIds(domains)
   const { isReserved, loading: checkingWord } = useIsReservedWord(domain.id)
+  useFetchNewDomains(domain.id)
 
   if (isEmptyArray(domains)) return null
 
   if (checkingWord) return <Loading label='Check domain...' />
 
   if (isReserved) return <ReservedDomainCard domain={domain.id} />
+
 
   return (
     <div className='GapBig d-flex flex-column mt-4'>
