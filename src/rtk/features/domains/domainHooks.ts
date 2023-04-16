@@ -4,12 +4,13 @@ import { shallowEqual } from 'react-redux'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
 import { DomainDetails } from 'src/components/domains/utils'
 import { useMyAddress } from '../../../components/auth/MyAccountsContext'
+import { DomainStruct } from '../../../components/domains/utils'
 import useSubstrate from '../../../components/substrate/useSubstrate'
 import { useActions } from '../../app/helpers'
 import { useFetch } from '../../app/hooksCommon'
 import { useAppDispatch, useAppSelector } from '../../app/store'
-import { fetchDomainsByOwner, selectDomainsByOwner } from './domainsByOwnerSlice'
-import { fetchDomains, selectDomains } from './domainsSlice'
+import { fetchDomainsByOwner, selectDomainsByOwner, upsertOwnDomains } from './domainsByOwnerSlice'
+import { fetchDomains, selectDomains, upsertDomain } from './domainsSlice'
 import { setTopLevelDomains } from './topLevelDomains'
 
 export const useIsMyDomain = (domainName: string) => {
@@ -65,6 +66,21 @@ export const useCreateReloadMyDomains = () => {
 
   return useActions<void>(({ dispatch, api }) => {
     myAddress && dispatch(fetchDomainsByOwner({ id: myAddress, api, reload: true }))
+  })
+}
+
+type UpsertDomainsProps = {
+  address: string
+  domain: DomainStruct
+  domainName: string
+}
+
+export const useCreateUpsertDomains = () => {
+  return useActions<UpsertDomainsProps>(({ dispatch, args }) => {
+    const { address, domain, domainName } = args
+
+    dispatch(upsertDomain({ ...domain, id: domainName }))
+    dispatch(upsertOwnDomains({ address, newDomain: domainName }))
   })
 }
 

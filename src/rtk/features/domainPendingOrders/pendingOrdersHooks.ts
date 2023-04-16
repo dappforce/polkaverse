@@ -1,10 +1,13 @@
 import { EntityId } from '@reduxjs/toolkit'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import { useActions } from 'src/rtk/app/helpers'
 import { useFetch } from 'src/rtk/app/hooksCommon'
 import { useAppSelector } from 'src/rtk/app/store'
 import {
+  RemovePendingOrderProps,
   fetchPendingOrdersByAccount,
   fetchPendingOrdersByIds,
+  removePendingOrder,
   selectPendingOrdersByAccount,
   selectPendingOrdersById,
   selectPendingOrdersByIds,
@@ -33,4 +36,18 @@ export const useSelectPendingOrdersByIds = (ids: string[]) => {
 export const useSelectPendingOrdersByAccount = () => {
   const myAddress = useMyAddress()
   return useAppSelector(state => selectPendingOrdersByAccount(state, myAddress))
+}
+
+export const useCreateReloadPendingOrdersByAccount = () => {
+  const myAddress = useMyAddress()
+
+  return useActions<void>(({ dispatch }) => {
+    myAddress && dispatch(fetchPendingOrdersByAccount({ id: myAddress }))
+  })
+}
+
+export const useCreateRemovePendingOrders = () => {
+  return useActions<RemovePendingOrderProps>(({ dispatch, args }) => {
+    dispatch(removePendingOrder(args))
+  })
 }

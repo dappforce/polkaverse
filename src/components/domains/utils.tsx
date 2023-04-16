@@ -1,3 +1,4 @@
+import { LoadingOutlined } from '@ant-design/icons'
 import { parseDomain } from '@subsocial/utils'
 import clsx from 'clsx'
 import { FC, HTMLProps } from 'react'
@@ -6,17 +7,15 @@ import {
   CardWithTitleProps,
 } from 'src/components/utils/cards/WithTitle'
 import config from 'src/config'
-import { AnyAccountId } from 'src/types'
-import { slugifyHandle } from '../urls/helpers'
-import { useAddClassNameToRootElement } from '../utils'
-import styles from './index.module.sass'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { useMyAddress } from '../auth/MyAccountsContext'
-import { useManageDomainContext } from './manage/ManageDomainProvider'
-import { LoadingOutlined } from '@ant-design/icons'
+import { slugifyHandle } from '../urls/helpers'
+import { useAddClassNameToRootElement } from '../utils'
 import { controlledMessage } from '../utils/Message'
-import { u8aToString } from '@polkadot/util';
-import { useCreateReloadDomain, useCreateReloadMyDomains } from 'src/rtk/features/domains/domainHooks'
+import styles from './index.module.sass'
+import { useManageDomainContext } from './manage/ManageDomainProvider'
+import { useCreateRemovePendingOrders } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
+import { useCreateUpsertDomains } from 'src/rtk/features/domains/domainHooks'
 
 const { resolvedDomain } = config
 
@@ -50,7 +49,7 @@ export const CardWithTitle: FC<CardWithTitleProps> = props => (
 export const useAddAstronautBg = () => useAddClassNameToRootElement('astronaut-bg')
 
 export type DomainStruct = {
-  owner: AnyAccountId
+  owner: string
   outerValue?: string
   expiresAt: string
   soldFor: string
@@ -106,30 +105,34 @@ const waitMessage = controlledMessage({
   icon: <LoadingOutlined />,
 })
 
-export const useFetchNewDomains = (domainName: string) => {
+export const useFetchNewDomains = (domainName?: string) => {
   const myAddress = useMyAddress()
   const { setIsFetchNewDomains, isFetchNewDomains, openManageModal } = useManageDomainContext()
-  const reloadMyDomains = useCreateReloadMyDomains()
-  const reloadDomain = useCreateReloadDomain()
+  const upsertDomains = useCreateUpsertDomains()
+  const removePendingOrder = useCreateRemovePendingOrders()
 
   useSubsocialEffect(
     ({ substrate }) => {
       setIsFetchNewDomains(false)
-      if (!myAddress || !isFetchNewDomains) return
+      if (!myAddress || !isFetchNewDomains || !domainName) return
 
       let unsub: any
-
 
       const subscription = async () => {
         const api = await (await substrate.api).isReady
         waitMessage.open()
 
-        unsub = await api.query.domains.domainsByOwner(myAddress, (data: any[]) => {
-          const dataHuman = data.map((x) => u8aToString(x))
-          
-          if (dataHuman.includes(domainName)) {
-            reloadMyDomains()
-            reloadDomain(domainName)
+        unsub = await api.query.domains.registeredDomains(domainName, data => {
+          const domain = data.unwrapOr(undefined)
+
+          if (domain) {
+            const domainEntity = {
+              id: domainName,
+              ...(domain as unknown as DomainStruct),
+            }
+
+            upsertDomains({ domain: domainEntity, address: myAddress, domainName })
+            removePendingOrder({ address: myAddress, domainName })
             waitMessage.close()
             openManageModal('success', domainName)
           }

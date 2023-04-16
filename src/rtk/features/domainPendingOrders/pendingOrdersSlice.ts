@@ -1,4 +1,4 @@
-import { EntityId, createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
+import { EntityId, PayloadAction, createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { isDef, isEmptyArray } from '@subsocial/utils'
 import { sellerSquidGraphQlClient } from 'src/components/domains/dot-seller/config'
 import {
@@ -10,6 +10,11 @@ import { RootState } from 'src/rtk/app/rootReducer'
 import { encodeAddress } from '@polkadot/util-crypto' 
 import { GenericAccountId } from '@polkadot/types'
 import registry from '@subsocial/api/utils/registry'
+
+export type RemovePendingOrderProps = {
+  address: string
+  domainName: string
+}
 
 export type PendingDomainEntity = {
   id: string
@@ -144,7 +149,16 @@ const slice = createSlice({
   name: sliceName,
   initialState: adapter.getInitialState(),
   reducers: {
-    // upsertOwnDomains: adapter.upsertOne,
+    removePendingOrder: (
+      state,
+      action: PayloadAction<RemovePendingOrderProps>
+    ) => {
+      const { address, domainName } = action.payload
+
+      const id = `${domainName}-${address}`
+
+      adapter.removeOne(state, id)
+    }
   },
   extraReducers: builder => {
     builder
@@ -156,5 +170,7 @@ const slice = createSlice({
       })
   },
 })
+
+export const { removePendingOrder } = slice.actions 
 
 export default slice.reducer

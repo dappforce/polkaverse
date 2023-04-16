@@ -1,4 +1,4 @@
-import { isFunction } from '@polkadot/util';
+import { isFunction } from '@polkadot/util'
 import { isEmptyArray, newLogger, parseDomain } from '@subsocial/utils'
 import { Button, Card, Divider, Radio, RadioChangeEvent, Result, Row, Tag, Tooltip } from 'antd'
 import BN from 'bn.js'
@@ -6,7 +6,6 @@ import clsx from 'clsx'
 import React, { useState } from 'react'
 import { showErrorMessage } from 'src/components/utils/Message'
 import config from 'src/config'
-import { useFetchDomainPendingOrdersByIds } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { useSelectPendingOrderById } from '../../rtk/features/domainPendingOrders/pendingOrdersHooks'
 import {
   useBuildDomainsWithTldByDomain,
@@ -27,7 +26,7 @@ import ClaimFreeDomainModal from './ClaimFreeDomainModal'
 import BuyByDotButton from './dot-seller/BuyByDotModal'
 import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
-import { DomainDetails, ResultContainer, useFetchNewDomains } from './utils'
+import { DomainDetails, ResultContainer } from './utils'
 
 const log = newLogger('DD')
 
@@ -360,16 +359,13 @@ const ChooseDomain = ({ domain }: DomainProps) => {
 
 export const EligibleDomainsSection = ({ domain }: FoundDomainCardProps) => {
   const domains = useBuildDomainsWithTldByDomain(domain)
-  useFetchDomainPendingOrdersByIds(domains)
   const { isReserved, loading: checkingWord } = useIsReservedWord(domain.id)
-  useFetchNewDomains(domain.id)
 
   if (isEmptyArray(domains)) return null
 
   if (checkingWord) return <Loading label='Check domain...' />
 
   if (isReserved) return <ReservedDomainCard domain={domain.id} />
-
 
   return (
     <div className='GapBig d-flex flex-column mt-4'>

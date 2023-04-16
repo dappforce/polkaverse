@@ -22,7 +22,7 @@ import styles from './index.module.sass'
 import { ManageDomainProvider } from './manage/ManageDomainProvider'
 import { MyDomainsCard } from './MyDomains'
 import PendingOrdersSection from './pendingOrders'
-import { DomainDetails, UnamesLearnMoreLink } from './utils'
+import { DomainDetails, UnamesLearnMoreLink, useFetchNewDomains } from './utils'
 
 const tabs = ['register', 'manage'] as const
 type TabKey = typeof tabs[number]
@@ -33,6 +33,8 @@ const DomainMarketSection = ({ promoCode }: DomainServerProps) => {
   const myAddress = useMyAddress()
   const { domains } = useMyDomains()
   const { api, isApiReady, subsocial } = useSubstrate()
+  useFetchNewDomains(domain?.id)
+
 
   const onSearchDomain = async (domain?: string) => {
     if (!domain) return
