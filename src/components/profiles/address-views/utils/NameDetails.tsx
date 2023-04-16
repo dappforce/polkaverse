@@ -12,6 +12,7 @@ type Props = AddressProps & {
   withFollowButton?: boolean
   withLabel?: boolean
   withDetails?: boolean
+  network?: string
 }
 
 export const NameDetails = ({

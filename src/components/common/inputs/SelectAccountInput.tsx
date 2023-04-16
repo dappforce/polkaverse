@@ -9,6 +9,7 @@ import styles from './inputs.module.sass'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useMyAccounts } from 'src/components/auth/MyAccountsContext'
 import { equalAddresses } from 'src/components/substrate'
+import clsx from 'clsx'
 
 export const isValidAccount = (address?: string) => {
   try {
@@ -27,9 +28,26 @@ type SelectAccountInputProps = {
   setValue: (value: string) => void
   value?: string
   withAvatar?: boolean
+  network?: string
+  disabled?: boolean
 }
 
-const filterSelectOptions = (adresses: string[], value?: string) => {
+type SelectInputPreviewProps = {
+  address: string
+}
+
+export const SelectInputPreview = ({ address }: SelectInputPreviewProps) => {
+  const profile = useSelectProfile(address)
+
+  profile?.content?.image
+
+  return <div className='d-flex align-items-center'>
+      <Avatar size={32} address={address} avatar={profile?.content?.image} asLink={false} />
+      <div className={styles.AddressPreview}>{address}</div>
+    </div>
+}
+
+const filterSelectOptions = (adresses: string[], value?: string, network?: string) => {
   return adresses
     .filter(x => {
       return !equalAddresses(x, value)
@@ -37,8 +55,9 @@ const filterSelectOptions = (adresses: string[], value?: string) => {
     .map((address, index) => {
       return {
         key: address + index,
-        label: <SelectAddressPreview address={address} withShortAddress={true} />,
+        label: <SelectAddressPreview address={address} withShortAddress={true} network={network} />,
         value: address,
+        preview: <SelectInputPreview address={address} />
       }
     })
 }
@@ -48,6 +67,8 @@ export const SelectAccountInput = ({
   value,
   className,
   withAvatar = true,
+  network,
+  disabled
 }: SelectAccountInputProps) => {
   const { accounts, status } = useMyAccounts()
   const allExtensionAccounts = accounts.map(x => toSubsocialAddress(x.address) as string)
@@ -57,10 +78,15 @@ export const SelectAccountInput = ({
   const profile = useSelectProfile(value)
 
   useEffect(() => {
-    if (!value) return
+    const options =
+    status === 'OK'
+        ? filterSelectOptions(allExtensionAccounts, value, network)
+        : []
 
-    const options = status === 'OK' ? filterSelectOptions(allExtensionAccounts, value) : []
-    setDefaultOptions(options)
+    if (!defaultOptions || isEmptyArray(defaultOptions)) {
+      setDefaultOptions(options)
+    }
+
     setSelectOptions(options)
   }, [ value, status ])
 
@@ -79,8 +105,10 @@ export const SelectAccountInput = ({
             address={new GenericAccountId(registry, searchValue)}
             withoutBalances
             withShortAddress={true}
+            network={network}
           />
         ),
+        preview: <SelectInputPreview address={searchValue} />,
         value: searchValue,
       })
     } else {
@@ -95,10 +123,17 @@ export const SelectAccountInput = ({
   }
 
   const onSelectHandler = (searchValue: any) => {
-    const filterOptions = selectOptions.filter((x: any) => !x.value.includes(searchValue))
+    const filterOptions = defaultOptions.filter(
+      (x: any) => !x.value.includes(searchValue)
+    )
+
     if (filterOptions) {
       setSelectOptions(filterOptions as any[])
     }
+  }
+
+  const onClear = () => {
+    setSelectOptions(defaultOptions)
   }
 
   const avatar = (
@@ -109,20 +144,27 @@ export const SelectAccountInput = ({
     </div>
   )
 
+  console.log(selectOptions)
+
   return (
     <div className='d-flex align-items-center'>
       {withAvatar && avatar}
+
       <Select
+        disabled={disabled}
         showSearch
         allowClear
-        value={value}
         size='large'
-        className={className}
+        optionLabelProp='value'
+        defaultActiveFirstOption
+        className={clsx(className, styles.Select)}
+        value={value}
         options={selectOptions}
         onSearch={onSearchHandler}
         onSelect={onSelectHandler}
         onChange={onSelectChange}
-        placeholder='Substate-based address'
+        onClear={onClear}
+        placeholder={'Substate-based address'}
       />
     </div>
   )

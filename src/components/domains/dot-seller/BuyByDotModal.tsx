@@ -3,12 +3,12 @@ import clsx from 'clsx'
 import { useState } from 'react'
 import { SelectAccountInput } from 'src/components/common/inputs/SelectAccountInput'
 import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
-import { useMyAddress } from '../../auth/MyAccountsContext'
+import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { FormatBalance } from '../../common/balances/Balance'
 import { MutedDiv } from '../../utils/MutedText'
 import { useManageDomainContext } from '../manage/ManageDomainProvider'
 import BuyByDotTxButton from './BuyByDotTxButton'
-import { domainsNetwork, validDomainPrice } from './config'
+import { domainsNetwork } from './config'
 import styles from './Index.module.sass'
 import { useGetDecimalAndSymbol } from './utils'
 
@@ -18,17 +18,18 @@ type ModalBodyProps = {
 
 const ModalBody = ({ domainName }: ModalBodyProps) => {
   const { recipient, purchaser, setRecipient, setPurchaser } = useManageDomainContext()
-  const myAddress = useMyAddress()
+  const sellerConfig = useSelectSellerConfig()
 
   const { decimal, symbol } = useGetDecimalAndSymbol(domainsNetwork)
 
   const balance = useBalancesByNetwork({
-    account: myAddress,
+    account: purchaser,
     network: domainsNetwork,
     currency: symbol,
   })
 
   const { freeBalance } = balance || {}
+  const { domainRegistrationPriceFixed } = sellerConfig || {}
 
   return (
     <Space direction='vertical' size={24} className={clsx(styles.ModalBody, 'w-100')}>
@@ -49,6 +50,7 @@ const ModalBody = ({ domainName }: ModalBodyProps) => {
           setValue={setPurchaser}
           value={purchaser}
           withAvatar={false}
+          network={domainsNetwork}
         />
       </Space>
       <Space direction='vertical' size={8} className={'w-100'}>
@@ -60,6 +62,7 @@ const ModalBody = ({ domainName }: ModalBodyProps) => {
           setValue={setRecipient}
           value={recipient}
           withAvatar={false}
+          network={domainsNetwork}
         />
         <MutedDiv className={styles.RecipientFieldDesc}>
           Choose the recipient to whom the domain will be registered
@@ -72,7 +75,13 @@ const ModalBody = ({ domainName }: ModalBodyProps) => {
         </div>
         <div className='d-flex align-items-center justify-content-between'>
           <MutedDiv>Price:</MutedDiv>
-          <div className='font-weight-bold'>0.56 DOT</div>
+          <div className='font-weight-bold'>
+            <FormatBalance
+              value={domainRegistrationPriceFixed}
+              decimals={decimal}
+              currency={symbol}
+            />
+          </div>
         </div>
       </Space>
     </Space>
@@ -119,14 +128,27 @@ type BuyByDotButtonProps = {
   withPrice?: boolean
 }
 
-const BuyByDotButton = ({ domainName, label = 'Register', withPrice = true }: BuyByDotButtonProps) => {
+const BuyByDotButton = ({
+  domainName,
+  label = 'Register',
+  withPrice = true,
+}: BuyByDotButtonProps) => {
   const [open, setOpen] = useState(false)
   const { decimal, symbol } = useGetDecimalAndSymbol(domainsNetwork)
+  const sellerConfig = useSelectSellerConfig()
+
+  const { domainRegistrationPriceFixed } = sellerConfig || {}
 
   const close = () => setOpen(false)
 
-  const price = (
-    <FormatBalance value={validDomainPrice.toString()} decimals={decimal} currency={symbol} />
+  const price = domainRegistrationPriceFixed ? (
+    <FormatBalance
+      value={domainRegistrationPriceFixed.toString()}
+      decimals={decimal}
+      currency={symbol}
+    />
+  ) : (
+    <div>-</div>
   )
 
   return (

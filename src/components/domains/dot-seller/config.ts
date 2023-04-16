@@ -1,7 +1,4 @@
-import BN from 'bn.js'
 import { GraphQLClient } from 'graphql-request'
-
-export const validDomainPrice = new BN('100000000') // 0.01
 
 export const domainsNetwork = 'rococo'
 

@@ -1,7 +1,9 @@
 import { useChainInfo } from '../../../rtk/features/chainsInfo/chainsInfoHooks'
 
-export const useGetDecimalAndSymbol = (network: string) => {
+export const useGetDecimalAndSymbol = (network?: string) => {
   const chainsInfo = useChainInfo()
+
+  if(!network) return {}
 
   const { tokenDecimals, tokenSymbols, nativeToken } = chainsInfo[network] || {}
 

@@ -14,13 +14,14 @@ export type InfoProps = {
   address?: string | AccountId
   balance?: string | BN | number
   details?: JSX.Element
+  network?: string
 }
 
-export const InfoDetails: React.FC<InfoProps> = ({ details, balance, address }) => {
+export const InfoDetails: React.FC<InfoProps> = ({ details, balance, address, network }) => {
   return (
     <>
       <div className='Df--AddressComponents-details'>
-        {balance || (address && <Balance address={address.toString()} />)}
+        {balance || (address && <Balance address={address.toString()} network={network} />)}
         {details && <div>{details}</div>}
       </div>
     </>

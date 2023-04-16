@@ -14,7 +14,7 @@ import { useAppDispatch } from 'src/rtk/app/store'
 import { fetchPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useManageDomainContext } from '../manage/ManageDomainProvider'
-import { domainsNetwork, validDomainPrice } from './config'
+import { domainsNetwork } from './config'
 
 type BuyByDotTxButtonProps = {
   domainName: string
@@ -41,6 +41,7 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
       sellerTreasuryAccount,
       remarkProtVersion,
       domainHostChain,
+      domainRegistrationPriceFixed,
       sellerToken: { name: tokenName },
     } = sellerConfig
 
@@ -48,7 +49,7 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
 
     if (!api) return []
 
-    const transferTx = api.tx.balances.transfer(sellerTreasuryAccount, validDomainPrice)
+    const transferTx = api.tx.balances.transfer(sellerTreasuryAccount, domainRegistrationPriceFixed)
 
     SocialRemark.setConfig({ protNames: [remarkProtName] })
 

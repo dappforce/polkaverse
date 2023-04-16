@@ -10,6 +10,8 @@ import { NodeNames } from 'src/config/types'
 import { AnyAccountId } from 'src/types'
 import { useKusamaContext } from '../../kusama/KusamaContext'
 import useSubstrate from '../../substrate/useSubstrate'
+import { useGetDecimalAndSymbol } from 'src/components/domains/dot-seller/utils'
+import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
 
 const log = newLogger('useCreateBallance')
 
@@ -165,17 +167,34 @@ export const FormatKsmBalance = ({ value, decimals, currency, ...props }: Format
 type BalanceProps = {
   address: AnyAccountId
   label?: React.ReactNode
+  network?: string
 }
 
-export const Balance = ({ address, label }: BalanceProps) => {
+export const Balance = ({ address, label, network }: BalanceProps) => {
   const balance = useCreateBalance(address)
 
+  const { decimal, symbol } = useGetDecimalAndSymbol(network)
+
+  const otherNetworkBalance = useBalancesByNetwork({
+    account: address.toString(),
+    network: network,
+    currency: symbol,
+  })
+
   if (!balance) return null
+
+  let balanceView = <FormatBalance value={balance} />
+
+  if(network) {
+    if(!otherNetworkBalance) return null
+
+    balanceView = <FormatBalance value={otherNetworkBalance.freeBalance} decimals={decimal} currency={symbol} />
+  }
 
   return (
     <span>
       {label}
-      <FormatBalance value={balance} />
+      {balanceView}
     </span>
   )
 }
