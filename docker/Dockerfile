@@ -42,9 +42,7 @@ COPY . .
 RUN yarn
 
 COPY ci.env .env
-RUN yarn export-env \
-    && NODE_ENV=production yarn build  \
-    && yarn export-env
+RUN NODE_ENV=production yarn build
 
 FROM node:16-alpine3.15
 
