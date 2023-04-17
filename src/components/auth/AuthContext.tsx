@@ -20,6 +20,7 @@ import OnBoardingModal, {
 } from '../onboarding/OnBoardingModal/OnBoardingModal'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { useSubstrate } from '../substrate'
+import { getCurrentEmailAddress } from '../utils/OffchainSigner/ExternalStorage'
 import SignInModal from './signIn/SignInModal'
 import { getCurrentWallet } from './utils'
 
@@ -102,7 +103,11 @@ const useGetCurrentStep = (isMobile: boolean) => {
 
   useEffect(() => {
     if (!isSignedIn) {
-      setStep(getCurrentWallet() || isMobile ? StepsEnum.SelectAccount : StepsEnum.SelectWallet)
+      setStep(
+        getCurrentEmailAddress() || getCurrentWallet() || isMobile
+          ? StepsEnum.SelectAccount
+          : StepsEnum.SelectWallet,
+      )
     }
   }, [isSignedIn])
 

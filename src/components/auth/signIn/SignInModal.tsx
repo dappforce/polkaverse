@@ -4,6 +4,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import Modal from 'antd/lib/modal'
 import clsx from 'clsx'
+import { setCurrentEmailAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import config from 'src/config'
 import { AccountSelector } from '../../profile-selector/AccountSelector'
 import { useResponsiveSize } from '../../responsive/ResponsiveContext'
@@ -154,6 +155,7 @@ const ModalContent = ({
     hideSignInModal()
     setAddress(address)
     setEmailAddress(emailAddress)
+    setCurrentEmailAddress(emailAddress)
     setCurrentStep(StepsEnum.SelectWallet)
     onAccountChosen?.(address)
   }
