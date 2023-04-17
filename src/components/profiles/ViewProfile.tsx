@@ -128,7 +128,7 @@ const Component = (props: Props) => {
           <div className='ml-1 w-100'>
             <h1 className='header DfAccountTitle justify-content-between mb-2'>
               <span className='d-flex align-items-center'>
-                <Name owner={owner} address={address} className='mr-2' />
+                <Name owner={owner} address={address} className='mr-2' isOnViewProfile={true} />
                 <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
               </span>
               <DropDownMenu />
