@@ -9,12 +9,18 @@ const SIGNER_REFRESH_TOKEN_KEY = 'SignerRefreshToken'
 const TEMP_REGISTER_ACCOUNT = 'TempRegisterAccount'
 const SECRET_KEY = 'SecretKey'
 const SALT = 'Salt'
+const CURRENT_EMAIL_ADDRESS = 'CurrentEmailAddress'
 
 const createStorageKeyWithSubAddress = (key: string, myAddress: string) => {
   const subsocialAddress = toSubsocialAddress(myAddress)
   if (!subsocialAddress) throw new Error('Unable to define subsocial address')
   return createStorageKey(key, subsocialAddress)
 }
+
+const setCurrentEmailAddress = (currentEmail: string) =>
+  store.set(CURRENT_EMAIL_ADDRESS, currentEmail)
+
+const getCurrentEmailAddress = (): string => store.get(CURRENT_EMAIL_ADDRESS)
 
 const getTempRegisterAccount = (): string | undefined =>
   store.get(createStorageKey(TEMP_REGISTER_ACCOUNT))
@@ -52,4 +58,6 @@ export {
   isCurrentSignerAddress,
   getSecretKeyByAddress,
   getSaltByAddress,
+  setCurrentEmailAddress,
+  getCurrentEmailAddress,
 }

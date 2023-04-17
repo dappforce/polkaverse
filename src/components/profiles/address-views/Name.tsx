@@ -17,6 +17,7 @@ type Props = AddressProps & {
   className?: string
   containerClassName?: string
   isOnHeader?: boolean
+  isOnViewProfile?: boolean
   truncate?: number | boolean
 }
 
@@ -31,6 +32,7 @@ export const Name = ({
   containerClassName,
   truncate,
   isOnHeader = false,
+  isOnViewProfile = false,
   style,
 }: Props) => {
   const { content } = owner
@@ -48,18 +50,19 @@ export const Name = ({
   const isNameWithEmailAddress = nonEmptyStr(emailAddress) && emailAddress === name
 
   const renderName = () => {
+    if (isOnViewProfile) return emailAddress
     if (isNameWithEmailAddress)
       return `${name.substring(0, DEFAULT_MAX_NAME_LEN)}${
         name.length > DEFAULT_MAX_NAME_LEN ? '...' : ''
       }`
-    if (!truncate || !name) {
+    if (!truncate || !name || isOnViewProfile) {
       return name
     }
     const maxLen = typeof truncate === 'boolean' ? DEFAULT_MAX_NAME_LEN : truncate
     return `${name.substring(0, maxLen)}${name.length > maxLen ? '...' : ''}`
   }
 
-  const fullWidth = withShortAddress || isNameWithEmailAddress
+  const fullWidth = withShortAddress || (isNameWithEmailAddress && !isOnViewProfile)
 
   const ModifiedMutedSpan = () =>
     isNameWithEmailAddress ? (
