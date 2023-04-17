@@ -3,10 +3,10 @@ import { isEmptyArray, newLogger, parseDomain } from '@subsocial/utils'
 import { Button, Card, Divider, Radio, RadioChangeEvent, Result, Row, Tag, Tooltip } from 'antd'
 import BN from 'bn.js'
 import clsx from 'clsx'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { showErrorMessage } from 'src/components/utils/Message'
 import config from 'src/config'
-import { useSelectPendingOrderById } from '../../rtk/features/domainPendingOrders/pendingOrdersHooks'
+import { useCreateReloadPendingOrdersByAccount, useSelectPendingOrderById } from '../../rtk/features/domainPendingOrders/pendingOrdersHooks'
 import {
   useBuildDomainsWithTldByDomain,
   useCreateReloadMyDomains,
@@ -26,7 +26,8 @@ import ClaimFreeDomainModal from './ClaimFreeDomainModal'
 import BuyByDotButton from './dot-seller/BuyByDotModal'
 import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
-import { DomainDetails, ResultContainer } from './utils'
+import { DomainDetails, ResultContainer, getTime } from './utils'
+import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 
 const log = newLogger('DD')
 
@@ -48,6 +49,8 @@ const BuyDomainSection = ({ domain: { id: domain }, label = 'Register' }: Domain
   const reloadMyDomains = useCreateReloadMyDomains()
   const { openManageModal } = useManageDomainContext()
   const { api, isApiReady } = useSubstrate()
+  const reloadPendingOrders = useCreateReloadPendingOrdersByAccount()
+  const myAddress = useMyAddress()
 
   if (!isApiReady) return null
 
@@ -59,6 +62,7 @@ const BuyDomainSection = ({ domain: { id: domain }, label = 'Register' }: Domain
 
   const onSuccess: TxCallback = async () => {
     await reloadMyDomains()
+    reloadPendingOrders(myAddress)
     openManageModal('success', domain)
   }
 
@@ -80,7 +84,6 @@ const BuyDomainSection = ({ domain: { id: domain }, label = 'Register' }: Domain
         tx={'domains.registerDomain'}
         onSuccess={onSuccess}
         onFailed={onFailed}
-        // onClick={onSuccess} // ! for debug
         isFreeTx
         params={getTxParams}
         className={styles.DomainPrimaryButton}
@@ -157,17 +160,20 @@ const UnavailableBtn = ({ domain: { owner, id } }: DomainProps) => {
 const DomainAction = ({ domain }: DomainProps) => {
   const { owner } = domain
   const { promoCode, variant } = useManageDomainContext()
+  const sellerConfig = useSelectSellerConfig()
   const myAddress = useMyAddress()
   const pendingOrder = useSelectPendingOrderById(domain.id)
+
+  const { dmnRegPendingOrderExpTime } = sellerConfig || {}
 
   const { account } = pendingOrder || {}
 
   if (account && account !== myAddress) {
     return (
       <Tooltip
-        title='Someone else currently has this domain reserved.
-    If they do not buy it within 10 minutes, it will
-    become available again.'
+        title={`Someone else currently has this domain reserved.
+    If they do not buy it within ${getTime(dmnRegPendingOrderExpTime)} minutes, it will
+    become available again.`}
       >
         <Button disabled={true}>Reserved</Button>
       </Tooltip>
@@ -324,6 +330,10 @@ const ChooseDomain = ({ domain }: DomainProps) => {
   } else {
     content = <DomainItem key={id} domain={id} action={<DomainAction domain={domainStruct} />} />
   }
+
+  useEffect(() => {
+    setVariant('SUB')
+  }, [domain.id])
 
   const onVariantChange = (e: RadioChangeEvent) => {
     setVariant(e.target.value)

@@ -1,15 +1,16 @@
 import { InfoCircleOutlined } from '@ant-design/icons'
-import { SubDate, isEmptyArray } from '@subsocial/utils'
+import { isEmptyArray, SubDate } from '@subsocial/utils'
 import { Space, Tooltip } from 'antd'
+import dayjs from 'dayjs'
 import { useMemo } from 'react'
 import CardWithContent from 'src/components/utils/cards/CardWithContent'
 import { useSelectPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { PendingDomainEntity } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
-import { MutedDiv } from '../../utils/MutedText'
-import styles from './Index.module.sass'
-import dayjs from 'dayjs'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
+import { MutedDiv } from '../../utils/MutedText'
 import BuyByDotButton from '../dot-seller/BuyByDotModal'
+import { getTime } from '../utils'
+import styles from './Index.module.sass'
 
 type PendingDomainProps = {
   pendingDomain: PendingDomainEntity
@@ -21,7 +22,9 @@ const PendingDomain = ({ pendingDomain }: PendingDomainProps) => {
   const { domain, timestamp } = pendingDomain
   const { dmnRegPendingOrderExpTime } = sellerConfig || {}
 
-  const expiresAt = SubDate.formatDate((dayjs(timestamp).valueOf() + (dmnRegPendingOrderExpTime || 0)))
+  const expiresAt = SubDate.formatDate(
+    dayjs(timestamp).valueOf() + (dmnRegPendingOrderExpTime || 0),
+  )
 
   return (
     <div className='d-flex align-items-center justify-content-between'>
@@ -41,6 +44,9 @@ const PendingDomain = ({ pendingDomain }: PendingDomainProps) => {
 
 const PendingOrdersSection = () => {
   const pendingOrders = useSelectPendingOrdersByAccount()
+  const sellerConfig = useSelectSellerConfig()
+
+  const { dmnRegPendingOrderExpTime } = sellerConfig || {}
 
   const pendingDomains = useMemo(() => {
     const orders = pendingOrders.map((pendingDomain, i) => (
@@ -59,8 +65,8 @@ const PendingOrdersSection = () => {
   return (
     <CardWithContent title={'Pending'} className='mb-4'>
       <MutedDiv className='mb-3'>
-        You have a pending order to buy a domain. It will be canceled automatically after 10
-        minutes.
+        You have a pending order to buy a domain. It will be canceled automatically after{' '}
+        {getTime(dmnRegPendingOrderExpTime)} minutes.
       </MutedDiv>
       {pendingDomains}
     </CardWithContent>

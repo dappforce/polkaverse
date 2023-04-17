@@ -32,21 +32,6 @@ type SelectAccountInputProps = {
   disabled?: boolean
 }
 
-type SelectInputPreviewProps = {
-  address: string
-}
-
-export const SelectInputPreview = ({ address }: SelectInputPreviewProps) => {
-  const profile = useSelectProfile(address)
-
-  profile?.content?.image
-
-  return <div className='d-flex align-items-center'>
-      <Avatar size={32} address={address} avatar={profile?.content?.image} asLink={false} />
-      <div className={styles.AddressPreview}>{address}</div>
-    </div>
-}
-
 const filterSelectOptions = (adresses: string[], value?: string, network?: string) => {
   return adresses
     .filter(x => {
@@ -57,7 +42,6 @@ const filterSelectOptions = (adresses: string[], value?: string, network?: strin
         key: address + index,
         label: <SelectAddressPreview address={address} withShortAddress={true} network={network} />,
         value: address,
-        preview: <SelectInputPreview address={address} />
       }
     })
 }
@@ -108,7 +92,6 @@ export const SelectAccountInput = ({
             network={network}
           />
         ),
-        preview: <SelectInputPreview address={searchValue} />,
         value: searchValue,
       })
     } else {
@@ -143,8 +126,6 @@ export const SelectAccountInput = ({
         : <div className={`${styles.Circle} mr-2`}></div>}
     </div>
   )
-
-  console.log(selectOptions)
 
   return (
     <div className='d-flex align-items-center'>

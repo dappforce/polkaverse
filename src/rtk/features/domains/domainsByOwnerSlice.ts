@@ -56,8 +56,6 @@ export const fetchDomainsByOwner = createAsyncThunk<
 
   const domains: Domain[] = await api.blockchain.domainsByOwner(myAddress)
 
-  console.log('New domains', domains)
-
   return {
     id: myAddress,
     domains,

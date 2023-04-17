@@ -5,7 +5,9 @@ import {
   SocialRemarkMessageVersion,
   SubSclSource,
 } from '@subsocial/utils'
+import BN from 'bignumber.js'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
 import LazyTxButton from 'src/components/donate/LazyTxButton'
 import { useLazyConnectionsContext } from 'src/components/lazy-connection/LazyConnectionContext'
 import { showErrorMessage } from 'src/components/utils/Message'
@@ -14,7 +16,7 @@ import { useAppDispatch } from 'src/rtk/app/store'
 import { fetchPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useManageDomainContext } from '../manage/ManageDomainProvider'
-import { domainsNetwork } from './config'
+import { useGetDecimalAndSymbol } from './utils'
 
 type BuyByDotTxButtonProps = {
   domainName: string
@@ -33,6 +35,18 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
   const myAddress = useMyAddress()
   const { getApiByNetwork } = useLazyConnectionsContext()
 
+  const { sellerChain, domainRegistrationPriceFixed } = sellerConfig || {}
+
+  const { symbol } = useGetDecimalAndSymbol(sellerChain)
+
+  const balance = useBalancesByNetwork({
+    account: purchaser,
+    network: sellerChain,
+    currency: symbol,
+  })
+
+  const { freeBalance } = balance || {}
+
   const getParams = async () => {
     if (!purchaser || !sellerConfig) return []
 
@@ -43,9 +57,10 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
       domainHostChain,
       domainRegistrationPriceFixed,
       sellerToken: { name: tokenName },
+      sellerChain,
     } = sellerConfig
 
-    const api = await getApiByNetwork(domainsNetwork)
+    const api = await getApiByNetwork(sellerChain)
 
     if (!api) return []
 
@@ -76,26 +91,20 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
   }
 
   const onSuccess = async () => {
-    if (!myAddress) return
-
     setIsFetchNewDomains(true)
 
     close()
   }
 
-  const onFailed = () => {
-    console.log('Extrinsic failed')
-  }
-
   const onClick = async () => {
-    if (!sellerConfig) return
+    if (!sellerConfig || !myAddress) return
 
     const { sellerApiAuthTokenManager } = sellerConfig
 
     const result = await createPendingOrder(purchaser, domainName, sellerApiAuthTokenManager)
 
     if (result?.success) {
-      dispatch(fetchPendingOrdersByAccount({ id: myAddress || '', reload: true }))
+      dispatch(fetchPendingOrdersByAccount({ id: recipient, reload: true }))
       return false
     } else {
       showErrorMessage(result?.errors)
@@ -109,13 +118,17 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
       block
       type='primary'
       size='middle'
-      network={domainsNetwork}
+      network={sellerChain || ''}
       accountId={purchaser}
-      disabled={!recipient}
+      disabled={
+        !recipient ||
+        !freeBalance ||
+        !domainRegistrationPriceFixed ||
+        new BN(freeBalance).lt(domainRegistrationPriceFixed)
+      }
       tx={'utility.batchAll'}
       params={getParams}
       onSuccess={onSuccess}
-      onFailed={onFailed}
       onClick={() => onClick()}
       label={'Register'}
       className={className}

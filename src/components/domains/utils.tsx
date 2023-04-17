@@ -46,6 +46,12 @@ export const CardWithTitle: FC<CardWithTitleProps> = props => (
   <InnerCardWithTitle {...props} cardClassName={styles.DomainResults} />
 )
 
+export const getTime = (miliseconds?: number) => {
+  if(!miliseconds) return '-'
+
+  return miliseconds / 60 / 1000
+}
+
 export const useAddAstronautBg = () => useAddClassNameToRootElement('astronaut-bg')
 
 export type DomainStruct = {

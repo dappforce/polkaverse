@@ -39,10 +39,8 @@ export const useSelectPendingOrdersByAccount = () => {
 }
 
 export const useCreateReloadPendingOrdersByAccount = () => {
-  const myAddress = useMyAddress()
-
-  return useActions<void>(({ dispatch }) => {
-    myAddress && dispatch(fetchPendingOrdersByAccount({ id: myAddress }))
+  return useActions<string | undefined>(({ dispatch, args }) => {
+    args && dispatch(fetchPendingOrdersByAccount({ id: args }))
   })
 }
 

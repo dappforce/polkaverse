@@ -8,7 +8,6 @@ import { FormatBalance } from '../../common/balances/Balance'
 import { MutedDiv } from '../../utils/MutedText'
 import { useManageDomainContext } from '../manage/ManageDomainProvider'
 import BuyByDotTxButton from './BuyByDotTxButton'
-import { domainsNetwork } from './config'
 import styles from './Index.module.sass'
 import { useGetDecimalAndSymbol } from './utils'
 
@@ -20,16 +19,17 @@ const ModalBody = ({ domainName }: ModalBodyProps) => {
   const { recipient, purchaser, setRecipient, setPurchaser } = useManageDomainContext()
   const sellerConfig = useSelectSellerConfig()
 
-  const { decimal, symbol } = useGetDecimalAndSymbol(domainsNetwork)
+  const { domainRegistrationPriceFixed, sellerChain } = sellerConfig || {}
+
+  const { decimal, symbol } = useGetDecimalAndSymbol(sellerChain)
 
   const balance = useBalancesByNetwork({
     account: purchaser,
-    network: domainsNetwork,
+    network: sellerChain,
     currency: symbol,
   })
 
   const { freeBalance } = balance || {}
-  const { domainRegistrationPriceFixed } = sellerConfig || {}
 
   return (
     <Space direction='vertical' size={24} className={clsx(styles.ModalBody, 'w-100')}>
@@ -50,7 +50,7 @@ const ModalBody = ({ domainName }: ModalBodyProps) => {
           setValue={setPurchaser}
           value={purchaser}
           withAvatar={false}
-          network={domainsNetwork}
+          network={sellerChain}
         />
       </Space>
       <Space direction='vertical' size={8} className={'w-100'}>
@@ -62,7 +62,7 @@ const ModalBody = ({ domainName }: ModalBodyProps) => {
           setValue={setRecipient}
           value={recipient}
           withAvatar={false}
-          network={domainsNetwork}
+          network={sellerChain}
         />
         <MutedDiv className={styles.RecipientFieldDesc}>
           Choose the recipient to whom the domain will be registered
@@ -133,11 +133,11 @@ const BuyByDotButton = ({
   label = 'Register',
   withPrice = true,
 }: BuyByDotButtonProps) => {
-  const [open, setOpen] = useState(false)
-  const { decimal, symbol } = useGetDecimalAndSymbol(domainsNetwork)
   const sellerConfig = useSelectSellerConfig()
+  const { domainRegistrationPriceFixed, sellerChain } = sellerConfig || {}
 
-  const { domainRegistrationPriceFixed } = sellerConfig || {}
+  const [open, setOpen] = useState(false)
+  const { decimal, symbol } = useGetDecimalAndSymbol(sellerChain)
 
   const close = () => setOpen(false)
 
