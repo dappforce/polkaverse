@@ -16,7 +16,7 @@ cd polkaverse
 Create an `.env` file with settings that allow the app to connect to Subsocial's infrastructure:
 
 ```sh
-cp dev.env .env
+cp dev.env .env.local
 ```
 
 Install project dependencies:
