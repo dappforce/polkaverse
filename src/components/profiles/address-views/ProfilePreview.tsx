@@ -42,7 +42,6 @@ export const ProfilePreview: FC<ProfilePreviewProps> = ({
   bottom,
   spans,
 }) => {
-  console.log({ spans })
   return (
     <Row className={clsx('flex-nowrap', 'align-items-center', className)}>
       <Col>
