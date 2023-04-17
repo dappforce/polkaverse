@@ -47,7 +47,7 @@ function MyApp(props) {
   return (
     <>
       <Head>
-        <script src='/env.js' />
+        {/* <script src='/env.js' /> */}
         {/*
           See how to work with custom fonts in Next.js:
           https://codeconqueror.com/blog/using-google-fonts-with-next-js

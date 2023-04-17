@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       mnemonicToMiniSecret(process.env.SELLER_SOONSOCIAL_FE_CLIENT_TOKEN_SIGNER || ''),
     )
 
-    const clientId = process.env.CLIENT_ID as string
+    const clientId = process.env.SELLER_CLIENT_ID as string
 
     const signedToken = naclSeal(
       stringToU8a(tokenMessage),
