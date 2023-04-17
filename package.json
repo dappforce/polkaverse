@@ -25,7 +25,7 @@
     "analyze": "ANALYZE=true next build",
     "build": "next build",
     "export": "next export",
-    "start": "NODE_ENV=production yarn patch && next start -p 3003",
+    "start": "NODE_ENV=production next start -p 3003",
     "graphql:types": "./scripts/graphql-generate-types.sh",
     "prepare": "husky install",
     "format": "prettier --write src"
