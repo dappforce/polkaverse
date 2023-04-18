@@ -100,9 +100,23 @@ export const createPendingOrder = async (
   purchaser: string,
   domain: string,
   sellerApiAuthTokenManager: string,
+  destination: string,
 ) => {
   const res = await axios.post('/api/pending-order/create', {
     purchaser,
+    domain,
+    sellerApiAuthTokenManager,
+    destination
+  })
+
+  return res.data
+}
+
+export const deletePendingOrder = async (
+  domain: string,
+  sellerApiAuthTokenManager: string,
+) => {
+  const res = await axios.post('/api/pending-order/delete', {
     domain,
     sellerApiAuthTokenManager,
   })

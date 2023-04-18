@@ -51,7 +51,7 @@ export type TxButtonProps = BaseTxButtonProps & {
   title?: string
   unsigned?: boolean
   onValidate?: () => boolean | Promise<boolean>
-  onClick?: () => void
+  onClick?: () => Promise<any | undefined> | void
   onSuccess?: TxCallback
   isFreeTx?: boolean
   onFailed?: TxFailedCallback
@@ -86,6 +86,7 @@ function TxButton({
   const { api: subsocialApi } = useSubstrate()
   const openOnBoardingModal = useOpenCloseOnBoardingModal()
   const [isSending, , setIsSending] = useToggle(false)
+  console.log(accountId)
   const { isMobile } = useResponsiveSize()
   const {
     openSignInModal,
@@ -279,7 +280,9 @@ function TxButton({
       return
     }
 
-    isFunction(onClick) && onClick()
+    const preventTransaction = await onClick?.()
+
+    if (preventTransaction === true && preventTransaction !== undefined) return
 
     const txType = unsigned ? 'unsigned' : 'signed'
     log.debug(`Sending ${txType} tx...`)

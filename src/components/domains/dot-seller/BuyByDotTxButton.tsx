@@ -10,13 +10,12 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
 import LazyTxButton from 'src/components/donate/LazyTxButton'
 import { useLazyConnectionsContext } from 'src/components/lazy-connection/LazyConnectionContext'
-import { showErrorMessage } from 'src/components/utils/Message'
-import { createPendingOrder } from 'src/components/utils/OffchainUtils'
+import { createPendingOrder, deletePendingOrder } from 'src/components/utils/OffchainUtils'
 import { useAppDispatch } from 'src/rtk/app/store'
-import { fetchPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
+import { useSelectPendingOrderById } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useManageDomainContext } from '../manage/ManageDomainProvider'
-import { useGetDecimalAndSymbol } from './utils'
+import { pendingOrderAction, useGetDecimalAndSymbol } from './utils'
 
 type BuyByDotTxButtonProps = {
   domainName: string
@@ -34,6 +33,7 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
   const { getApiByNetwork } = useLazyConnectionsContext()
+  const pendingOrder = useSelectPendingOrderById(domainName)
 
   const { sellerChain, domainRegistrationPriceFixed } = sellerConfig || {}
 
@@ -101,16 +101,21 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
 
     const { sellerApiAuthTokenManager } = sellerConfig
 
-    const result = await createPendingOrder(purchaser, domainName, sellerApiAuthTokenManager)
-
-    if (result?.success) {
-      dispatch(fetchPendingOrdersByAccount({ id: recipient, reload: true }))
-      return false
-    } else {
-      showErrorMessage(result?.errors)
-
-      return true
+    if (pendingOrder) {
+      await pendingOrderAction({
+        action: deletePendingOrder,
+        args: [domainName, sellerApiAuthTokenManager],
+        account: purchaser,
+        dispatch
+      })
     }
+
+    return await pendingOrderAction({
+      action: createPendingOrder,
+      args: [purchaser, domainName, sellerApiAuthTokenManager, 'polkadot'],
+      account: purchaser,
+      dispatch
+    })
   }
 
   return (

@@ -8,7 +8,7 @@ import { useSelectPendingOrdersByAccount } from 'src/rtk/features/domainPendingO
 import { PendingDomainEntity } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { MutedDiv } from '../../utils/MutedText'
-import BuyByDotButton from '../dot-seller/BuyByDotModal'
+import RegisterDomainButton from '../dot-seller/RegisterDomainModal'
 import { getTime } from '../utils'
 import styles from './Index.module.sass'
 
@@ -37,7 +37,7 @@ const PendingDomain = ({ pendingDomain }: PendingDomainProps) => {
           <InfoCircleOutlined />
         </Tooltip>
       </div>
-      <BuyByDotButton domainName={domain} label={'Continue'} withPrice={false} />
+      <RegisterDomainButton domainName={domain} label={'Continue'} withPrice={false} />
     </div>
   )
 }

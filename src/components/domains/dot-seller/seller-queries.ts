@@ -68,7 +68,14 @@ export const PROCESSING_REGISTRATION_ORDERS = gql`
 `
 
 export const CREATE_PENDING_ORDER = gql`
-  mutation CreatePendingOrder($domain: String!, $account: String!) {
-    createPendingOrder(account: $account, domain: $domain)
+  mutation CreatePendingOrder($domain: String!, $destination: String!, $account: String!) {
+    createPendingOrder(account: $account, destination: $destination, domain: $domain)
   }
+`
+
+export const DELETE_PENDING_ORDER = gql`
+mutation DeletePendingOrderById($id: String!) {
+  deletePendingOrderById(id: $id)
+}
+
 `

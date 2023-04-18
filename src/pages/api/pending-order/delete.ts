@@ -10,12 +10,12 @@ import utc from 'dayjs/plugin/utc'
 import { GraphQLClient } from 'graphql-request'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { xSellerSquid } from 'src/components/domains/dot-seller/config'
-import { CREATE_PENDING_ORDER } from 'src/components/domains/dot-seller/seller-queries'
+import { DELETE_PENDING_ORDER } from 'src/components/domains/dot-seller/seller-queries'
 
 dayjs.extend(utc)
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { purchaser, domain, sellerApiAuthTokenManager, destination } = req.body
+  const { domain, sellerApiAuthTokenManager } = req.body
   const nonce = new Uint8Array(24)
   nonce[0] = 111
 
@@ -47,8 +47,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
 
     const result = await sellerSquidGraphQlClient.request(
-      CREATE_PENDING_ORDER,
-      { domain, account: purchaser, destination },
+      DELETE_PENDING_ORDER,
+      { id: domain },
     )
 
     res.status(200).send({ success: true })

@@ -24,7 +24,7 @@ function ResolvedTxButton(props: TxButtonProps) {
   return isStorybook ? (
     <AntdButton {...props} onClick={mockSendTx} />
   ) : (
-    <SubstrateTxButton {...props} accountId={myAddress} />
+    <SubstrateTxButton {...props} accountId={props.accountId || myAddress} />
   )
 }
 

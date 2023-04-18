@@ -48,7 +48,7 @@ export type TxButtonProps = BaseTxButtonProps & {
   title?: string
   unsigned?: boolean
   onValidate?: () => boolean | Promise<boolean>
-  onClick?: () => Promise<boolean | undefined>
+  onClick?: () => Promise<boolean | undefined> | void
   onSuccess?: TxCallback
   onFailed?: TxFailedCallback
   successMessage?: SuccessMessage
@@ -59,11 +59,11 @@ export type TxButtonProps = BaseTxButtonProps & {
 }
 
 export const getExtrinsicByApi = async (
-  api: ApiPromise, 
-  tx?: string, 
-  params?: any[] | GetTxParamsFn | GetTxParamsAsyncFn
+  api: ApiPromise,
+  tx?: string,
+  params?: any[] | GetTxParamsFn | GetTxParamsAsyncFn,
 ): Promise<SubmittableExtrinsic> => {
-  const [ pallet, method ] = (tx || '').split('.')
+  const [pallet, method] = (tx || '').split('.')
 
   if (!api.tx[pallet]) {
     throw new Error(`Unable to find api.tx.${pallet}`)
@@ -76,7 +76,7 @@ export const getExtrinsicByApi = async (
     resultParams = await params()
   }
 
-  return api.tx[pallet][method](...(resultParams))
+  return api.tx[pallet][method](...resultParams)
 }
 
 function LazyTxButton({
@@ -240,7 +240,7 @@ function LazyTxButton({
 
     const preventTransaction = await onClick?.()
 
-    if(preventTransaction === true) return
+    if (preventTransaction === true && preventTransaction !== undefined) return
 
     const txType = unsigned ? 'unsigned' : 'signed'
     log.debug(`Sending ${txType} tx...`)

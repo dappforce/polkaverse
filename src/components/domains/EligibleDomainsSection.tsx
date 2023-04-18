@@ -3,10 +3,15 @@ import { isEmptyArray, newLogger, parseDomain } from '@subsocial/utils'
 import { Button, Card, Divider, Radio, RadioChangeEvent, Result, Row, Tag, Tooltip } from 'antd'
 import BN from 'bn.js'
 import clsx from 'clsx'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { showErrorMessage } from 'src/components/utils/Message'
 import config from 'src/config'
-import { useCreateReloadPendingOrdersByAccount, useSelectPendingOrderById } from '../../rtk/features/domainPendingOrders/pendingOrdersHooks'
+import { useAppDispatch } from 'src/rtk/app/store'
+import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
+import {
+  useCreateReloadPendingOrdersByAccount,
+  useSelectPendingOrderById,
+} from '../../rtk/features/domainPendingOrders/pendingOrdersHooks'
 import {
   useBuildDomainsWithTldByDomain,
   useCreateReloadMyDomains,
@@ -14,20 +19,19 @@ import {
   useIsReservedWord,
   useIsSupportedTld,
 } from '../../rtk/features/domains/domainHooks'
-import { DomainEntity } from '../../rtk/features/domains/domainsSlice'
 import { useIsMyAddress, useMyAddress } from '../auth/MyAccountsContext'
-import { FormatBalance } from '../common/balances'
 import { TxCallback } from '../substrate/SubstrateTxButton'
 import useSubstrate from '../substrate/useSubstrate'
 import { Loading, LocalIcon } from '../utils'
 import { MutedDiv } from '../utils/MutedText'
+import { createPendingOrder, deletePendingOrder } from '../utils/OffchainUtils'
 import TxButton from '../utils/TxButton'
-import ClaimFreeDomainModal from './ClaimFreeDomainModal'
-import BuyByDotButton from './dot-seller/BuyByDotModal'
+import RegisterDomainButton from './dot-seller/RegisterDomainModal'
+import { pendingOrderAction } from './dot-seller/utils'
 import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
-import { DomainDetails, ResultContainer, getTime } from './utils'
-import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
+import { DomainDetails, getTime, ResultContainer } from './utils'
+import { DomainEntity } from 'src/rtk/features/domains/domainsSlice'
 
 const log = newLogger('DD')
 
@@ -45,25 +49,44 @@ const BLOCK_TIME = 12
 const SECS_IN_DAY = 60 * 60 * 24
 const BLOCKS_IN_YEAR = new BN((SECS_IN_DAY * 365) / BLOCK_TIME)
 
-const BuyDomainSection = ({ domain: { id: domain }, label = 'Register' }: DomainProps) => {
+type BuyDomainSectionProps = {
+  domainName: string
+  label?: string
+}
+
+export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSectionProps) => {
   const reloadMyDomains = useCreateReloadMyDomains()
   const { openManageModal } = useManageDomainContext()
   const { api, isApiReady } = useSubstrate()
   const reloadPendingOrders = useCreateReloadPendingOrdersByAccount()
+  const { purchaser } = useManageDomainContext()
+  const sellerConfig = useSelectSellerConfig()
   const myAddress = useMyAddress()
+  const pendingOrder = useSelectPendingOrderById(domainName)
+  const dispatch = useAppDispatch()
 
   if (!isApiReady) return null
 
-  const price = api?.consts.domains.baseDomainDeposit.toString()
-
   const getTxParams = () => {
-    return [domain, null, BLOCKS_IN_YEAR]
+    return [domainName, null, BLOCKS_IN_YEAR]
   }
 
   const onSuccess: TxCallback = async () => {
-    await reloadMyDomains()
-    reloadPendingOrders(myAddress)
-    openManageModal('success', domain)
+    if (!sellerConfig) return
+
+    const { sellerApiAuthTokenManager } = sellerConfig
+
+    reloadMyDomains()
+
+    await pendingOrderAction({
+      action: deletePendingOrder,
+      args: [domainName, sellerApiAuthTokenManager],
+      account: purchaser,
+      dispatch,
+    })
+
+    reloadPendingOrders(purchaser)
+    openManageModal('success', domainName)
   }
 
   const onFailed = async (errorInfo: any) => {
@@ -72,12 +95,34 @@ const BuyDomainSection = ({ domain: { id: domain }, label = 'Register' }: Domain
     showErrorMessage(jsonErr)
   }
 
+  const onClick = async () => {
+    if (!sellerConfig || !myAddress) return
+
+    const { sellerApiAuthTokenManager } = sellerConfig
+
+    if (pendingOrder) {
+      await pendingOrderAction({
+        action: deletePendingOrder,
+        args: [domainName, sellerApiAuthTokenManager],
+        account: purchaser,
+        dispatch,
+      })
+    }
+
+    return await pendingOrderAction({
+      action: createPendingOrder,
+      args: [purchaser, domainName, sellerApiAuthTokenManager, 'polkadot'],
+      account: purchaser,
+      dispatch,
+    })
+  }
+
   return (
-    <span className='d-flex align-items-center'>
-      {price && <FormatBalance className='mr-2' value={price} isShort />}
+    <span className='d-flex align-items-center w-100'>
       <TxButton
         type='primary'
         customNodeApi={api}
+        accountId={purchaser}
         block
         size='middle'
         label={label}
@@ -85,6 +130,7 @@ const BuyDomainSection = ({ domain: { id: domain }, label = 'Register' }: Domain
         onSuccess={onSuccess}
         onFailed={onFailed}
         isFreeTx
+        onClick={() => onClick()}
         params={getTxParams}
         className={styles.DomainPrimaryButton}
       />
@@ -92,32 +138,32 @@ const BuyDomainSection = ({ domain: { id: domain }, label = 'Register' }: Domain
   )
 }
 
-const ClaimFreeDomainSection = ({ domain: { id: domain } }: DomainProps) => {
-  const [openConfirmation, setOpenConfirmation] = useState(false)
-  const { promoCode } = useManageDomainContext()
-  return (
-    <div className='d-flex align-items-center'>
-      <ClaimFreeDomainModal
-        onCancel={() => setOpenConfirmation(false)}
-        visible={openConfirmation}
-        domain={domain}
-        promoCode={promoCode}
-      />
-      <span className='font-weight-bold mr-2'>Free</span>
-      <Button
-        type='primary'
-        size='middle'
-        className={clsx(styles.DomainPrimaryButton)}
-        onClick={() => setOpenConfirmation(true)}
-      >
-        <span style={{ position: 'relative', top: '-1px' }} className='mr-1'>
-          🎁
-        </span>
-        Claim
-      </Button>
-    </div>
-  )
-}
+// const ClaimFreeDomainSection = ({ domain: { id: domain } }: DomainProps) => {
+//   const [openConfirmation, setOpenConfirmation] = useState(false)
+//   const { promoCode } = useManageDomainContext()
+//   return (
+//     <div className='d-flex align-items-center'>
+//       <ClaimFreeDomainModal
+//         onCancel={() => setOpenConfirmation(false)}
+//         visible={openConfirmation}
+//         domain={domain}
+//         promoCode={promoCode}
+//       />
+//       <span className='font-weight-bold mr-2'>Free</span>
+//       <Button
+//         type='primary'
+//         size='middle'
+//         className={clsx(styles.DomainPrimaryButton)}
+//         onClick={() => setOpenConfirmation(true)}
+//       >
+//         <span style={{ position: 'relative', top: '-1px' }} className='mr-1'>
+//           🎁
+//         </span>
+//         Claim
+//       </Button>
+//     </div>
+//   )
+// }
 
 export const DomainItem = ({ domain, action }: DomainItemProps) => {
   const actionComponent = isFunction(action) ? action() : action
@@ -159,11 +205,10 @@ const UnavailableBtn = ({ domain: { owner, id } }: DomainProps) => {
 
 const DomainAction = ({ domain }: DomainProps) => {
   const { owner } = domain
-  const { promoCode, variant } = useManageDomainContext()
+  // const { variant } = useManageDomainContext()
   const sellerConfig = useSelectSellerConfig()
   const myAddress = useMyAddress()
   const pendingOrder = useSelectPendingOrderById(domain.id)
-
   const { dmnRegPendingOrderExpTime } = sellerConfig || {}
 
   const { account } = pendingOrder || {}
@@ -182,20 +227,11 @@ const DomainAction = ({ domain }: DomainProps) => {
 
   const label = account === myAddress ? 'Continue' : undefined
 
-  let DefaultDomainAction =
-    promoCode && domain.id.endsWith('.sub') ? ClaimFreeDomainSection : BuyDomainSection
-
-  const action =
-    variant === 'SUB' ? (
-      <DefaultDomainAction domain={domain} label={label} />
-    ) : (
-      <BuyByDotButton
-        domainName={domain.id}
-        label={label}
-      />
-    )
-
-  return owner ? <UnavailableBtn domain={domain} /> : action
+  return owner ? (
+    <UnavailableBtn domain={domain} />
+  ) : (
+    <RegisterDomainButton domainName={domain.id} label={label} />
+  )
 }
 
 // type FoundDomainsProps = {
@@ -215,6 +251,7 @@ const DomainAction = ({ domain }: DomainProps) => {
 //   )
 // }
 //
+
 type FoundDomainCardProps = {
   domain: DomainDetails
   err?: string

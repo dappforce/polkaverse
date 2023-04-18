@@ -20,6 +20,7 @@ export type PendingDomainEntity = {
   id: string
   domain: string
   account: string
+  destination: string
   clientId: string
   timestamp: string
 }

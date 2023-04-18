@@ -7,7 +7,6 @@ import { DomainServerProps } from 'src/pages/dd'
 import { useMyDomains } from 'src/rtk/features/domains/domainHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { PageContent } from '../main/PageWrapper'
-// import Embed from '../posts/embed/Embed'
 import { useFetchDomainPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { useFetchSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useIsMobileWidthOrDevice } from '../responsive'
@@ -34,7 +33,6 @@ const DomainMarketSection = ({ promoCode }: DomainServerProps) => {
   const { domains } = useMyDomains()
   const { api, isApiReady, subsocial } = useSubstrate()
   useFetchNewDomains(domain?.id)
-
 
   const onSearchDomain = async (domain?: string) => {
     if (!domain) return
