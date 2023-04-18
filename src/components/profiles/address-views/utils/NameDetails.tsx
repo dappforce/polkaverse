@@ -12,6 +12,7 @@ type Props = AddressProps & {
   withFollowButton?: boolean
   withLabel?: boolean
   withDetails?: boolean
+  emailAddress?: string
 }
 
 export const NameDetails = ({
@@ -19,6 +20,7 @@ export const NameDetails = ({
   address,
   withLabel,
   withDetails,
+  emailAddress = '',
 }: Props) => {
   // const { struct } = owner
 
@@ -43,7 +45,7 @@ export const NameDetails = ({
   return (
     <>
       <div className='header DfAccountTitle'>
-        <Name owner={owner} address={address} isOnHeader />
+        <Name owner={owner} address={address} isOnHeader emailAddress={emailAddress} />
         {withLabel && <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>}
       </div>
       {/* {extensionName && <div className='DfPopup-handle'>{extensionName}</div>} */}

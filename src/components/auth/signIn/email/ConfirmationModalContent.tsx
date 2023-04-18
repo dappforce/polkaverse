@@ -54,7 +54,7 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
   const { isValidCode } = useFormValidation()
 
-  const { setSignerTokensByAddress } = useSignerExternalStorage()
+  const { setSignerTokensByAddress, setSignerEmailAddress } = useSignerExternalStorage()
 
   const [form] = Form.useForm()
 
@@ -72,7 +72,7 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
       const { accessToken: newAccessToken, refreshToken: newRefreshToken } = data
 
-      const { accountAddress } = jwtDecode<JwtPayload>(newAccessToken)
+      const { accountAddress, email } = jwtDecode<JwtPayload>(newAccessToken)
 
       // Save auth tokens to local storage for getMainProxyAddress request
       setSignerTokensByAddress({
@@ -80,6 +80,9 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
         token: newAccessToken,
         refreshToken: newRefreshToken,
       })
+
+      // save a new key-value pair to local storage
+      setSignerEmailAddress(email, accountAddress)
 
       setCurrentStep(StepsEnum.ShowMnemonic)
     } catch (error) {

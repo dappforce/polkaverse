@@ -1,6 +1,7 @@
 import { toSubsocialAddress } from '@subsocial/utils'
 import {
   PROXY_ADDRESS_KEY,
+  SIGNER_EMAIL_ADDRESS_KEY,
   SIGNER_REFRESH_TOKEN_KEY,
   SIGNER_TOKEN_KEY,
   TEMP_REGISTER_ACCOUNT,
@@ -20,6 +21,8 @@ const useSignerExternalStorage = () => {
   const { setData: setTempRegisterAccount } = useExternalStorage(TEMP_REGISTER_ACCOUNT)
 
   const { setData: setProxyAddress } = useExternalStorage(PROXY_ADDRESS_KEY)
+
+  const { setData: setEmailAddress } = useExternalStorage(SIGNER_EMAIL_ADDRESS_KEY)
 
   const convertToSubsocialAddress = (userAddress: string) => {
     const subsocialAddress = toSubsocialAddress(userAddress)
@@ -44,7 +47,17 @@ const useSignerExternalStorage = () => {
     setProxyAddress(proxyAddress, subsocialAddress)
   }
 
-  return { setSignerTokensByAddress, setSignerTempRegisterAccount, setSignerProxyAddress }
+  const setSignerEmailAddress = (emailAddress: string, userAddress: string) => {
+    const subsocialAddress = convertToSubsocialAddress(userAddress)
+    setEmailAddress(emailAddress, subsocialAddress)
+  }
+
+  return {
+    setSignerTokensByAddress,
+    setSignerTempRegisterAccount,
+    setSignerProxyAddress,
+    setSignerEmailAddress,
+  }
 }
 
 export default useSignerExternalStorage

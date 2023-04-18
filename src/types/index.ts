@@ -60,3 +60,8 @@ export type ReactionStruct = Reaction & {
 export type HasStatusCode = {
   statusCode?: number
 }
+
+export type EmailAccount = {
+  accountAddress: string
+  email: string
+}

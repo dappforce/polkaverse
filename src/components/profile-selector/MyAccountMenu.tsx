@@ -2,6 +2,7 @@ import { Drawer } from 'antd'
 import dynamic from 'next/dynamic'
 import React, { createContext, FC, useContext, useState } from 'react'
 import { isMobileDevice } from 'src/config/Size.config'
+import { useMyEmailAddress } from '../auth/MyAccountsContext'
 import { InfoDetails } from '../profiles/address-views'
 import Avatar from '../profiles/address-views/Avatar'
 import Address from '../profiles/address-views/Name'
@@ -16,6 +17,7 @@ type SelectAddressType = AddressProps & {
   onClick?: () => void
   withShortAddress?: boolean
   withoutBalances?: boolean
+  emailAddress?: string
 }
 
 export const SelectAddressPreview: FC<SelectAddressType> = ({
@@ -24,6 +26,7 @@ export const SelectAddressPreview: FC<SelectAddressType> = ({
   onClick,
   owner,
   withoutBalances = false,
+  emailAddress = '',
 }) => {
   return (
     <div className='DfChooseAccount' onClick={onClick}>
@@ -37,6 +40,7 @@ export const SelectAddressPreview: FC<SelectAddressType> = ({
           owner={owner}
           address={address}
           withShortAddress={withShortAddress}
+          emailAddress={emailAddress}
         />
         {!withoutBalances && <InfoDetails address={address} />}
       </div>
@@ -71,13 +75,15 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
   const open = () => setVisible(true)
   const close = () => setVisible(false)
 
+  const emailAddress = useMyEmailAddress()
+
   return (
     <>
       <span className='DfCurrentAddress icon' onClick={open}>
         {isMobile ? (
           <Avatar address={address} avatar={owner?.content?.image} asLink={false} />
         ) : (
-          <SelectAddressPreview address={address} owner={owner} />
+          <SelectAddressPreview address={address} owner={owner} emailAddress={emailAddress} />
         )}
       </span>
       <Drawer

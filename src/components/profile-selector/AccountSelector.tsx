@@ -1,12 +1,8 @@
 import { Divider } from 'antd'
 import { useState } from 'react'
+import { EmailAccount } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
-import {
-  useMyAccounts,
-  useMyAccountsContext,
-  useMyAddress,
-  useMyEmailAddress,
-} from '../auth/MyAccountsContext'
+import { useMyAccounts, useMyAccountsContext, useMyAddress } from '../auth/MyAccountsContext'
 import { ProfilePreviewByAccountId, SelectAddressPreview } from '../profiles/address-views'
 import SubTitle from '../utils/SubTitle'
 
@@ -14,6 +10,7 @@ import { asAccountId } from '@subsocial/api'
 import { isEmptyArray } from '@subsocial/utils'
 import config from 'src/config'
 import { isMobileDevice } from 'src/config/Size.config'
+import useEmailAddress from 'src/hooks/useEmailAddress'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { fetchProfileSpaces } from 'src/rtk/features/profiles/profilesSlice'
@@ -26,24 +23,31 @@ type SelectAccountItems = {
   accounts: string[]
   withShortAddress?: boolean
   onItemClick?: (address: string) => void
+  emailAccounts?: EmailAccount[]
 }
 
 type AccountItemProps = {
   address: string
-  onClick?: (address: string) => void
+  onClick?: (address: string, emailAddress?: string) => void
   withShortAddress?: boolean
+  emailAddress?: string
 }
 
-const AccountItem = ({ address, onClick, withShortAddress }: AccountItemProps) => {
+const AccountItem = ({ address, onClick, withShortAddress, emailAddress }: AccountItemProps) => {
   const profile = useSelectProfile(address)
 
   return (
     <div
       className='SelectAccountItem'
       style={{ cursor: 'pointer', height: 'auto' }}
-      onClick={() => onClick && onClick(address)}
+      onClick={() => onClick && onClick(address, emailAddress)}
     >
-      <SelectAddressPreview address={address} owner={profile} withShortAddress={withShortAddress} />
+      <SelectAddressPreview
+        address={address}
+        owner={profile}
+        withShortAddress={withShortAddress}
+        emailAddress={emailAddress}
+      />
     </div>
   )
 }
@@ -52,13 +56,16 @@ const SelectAccountItems = ({
   accounts: addresses,
   withShortAddress,
   onItemClick,
+  emailAccounts,
 }: SelectAccountItems) => {
-  const { setAddress } = useMyAccountsContext()
+  const { setAddress, setEmailAddress } = useMyAccountsContext()
 
-  const emailAddress = useMyEmailAddress()
-  const myAddress = useMyAddress()
-
-  const onAccountClick = (address: string) => {
+  const onAccountClick = (address: string, emailAddress?: string) => {
+    if (emailAddress) setEmailAddress(emailAddress)
+    if (!emailAddress) {
+      console.log('masuk sini')
+      setEmailAddress('')
+    }
     setAddress(address)
     onItemClick?.(address)
   }
@@ -73,14 +80,16 @@ const SelectAccountItems = ({
           withShortAddress={withShortAddress}
         />
       ))}
-      {emailAddress && myAddress && (
-        <AccountItem
-          key={myAddress}
-          address={myAddress}
-          onClick={onAccountClick}
-          withShortAddress={withShortAddress}
-        />
-      )}
+      {emailAccounts &&
+        emailAccounts.map(({ accountAddress, email }) => (
+          <AccountItem
+            key={accountAddress}
+            address={accountAddress}
+            emailAddress={email}
+            onClick={onAccountClick}
+            withShortAddress={withShortAddress}
+          />
+        ))}
     </div>
   )
 }
@@ -212,6 +221,10 @@ export const AccountSelector = ({
   })
   const { apiState } = useSubstrate()
 
+  const { getAllEmailAccounts } = useEmailAddress()
+
+  const emailAccounts = getAllEmailAccounts()
+
   const ExtensionAccountPanel = () => {
     const count = switchAccountsSet.size
 
@@ -234,6 +247,7 @@ export const AccountSelector = ({
         accounts={extensionAddresses}
         withShortAddress
         onItemClick={onItemClick}
+        emailAccounts={emailAccounts}
       />,
     )
   }

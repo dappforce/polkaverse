@@ -10,6 +10,7 @@ const TEMP_REGISTER_ACCOUNT = 'TempRegisterAccount'
 const SECRET_KEY = 'SecretKey'
 const SALT = 'Salt'
 const CURRENT_EMAIL_ADDRESS = 'CurrentEmailAddress'
+const SIGNER_EMAIL_ADDRESS_KEY = 'SignerEmailAddress'
 
 const createStorageKeyWithSubAddress = (key: string, myAddress: string) => {
   const subsocialAddress = toSubsocialAddress(myAddress)
@@ -21,6 +22,9 @@ const setCurrentEmailAddress = (currentEmail: string) =>
   store.set(CURRENT_EMAIL_ADDRESS, currentEmail)
 
 const getCurrentEmailAddress = (): string => store.get(CURRENT_EMAIL_ADDRESS)
+
+const getSignerEmailAddress = (myAddress: string): string =>
+  store.get(SIGNER_EMAIL_ADDRESS_KEY, myAddress)
 
 const getTempRegisterAccount = (): string | undefined =>
   store.get(createStorageKey(TEMP_REGISTER_ACCOUNT))
@@ -51,6 +55,7 @@ export {
   PROXY_ADDRESS_KEY,
   SECRET_KEY,
   SALT,
+  SIGNER_EMAIL_ADDRESS_KEY,
   getProxyAddress,
   getSignerToken,
   getSignerRefreshToken,
@@ -60,4 +65,5 @@ export {
   getSaltByAddress,
   setCurrentEmailAddress,
   getCurrentEmailAddress,
+  getSignerEmailAddress,
 }

@@ -1,6 +1,5 @@
 import { nonEmptyStr } from '@subsocial/utils'
 import clsx from 'clsx'
-import { useMyAddress, useMyEmailAddress } from 'src/components/auth/MyAccountsContext'
 import { toShortAddress } from 'src/components/utils'
 import { MutedSpan } from 'src/components/utils/MutedText'
 import { ProfileData } from 'src/types'
@@ -18,6 +17,7 @@ type Props = AddressProps & {
   containerClassName?: string
   isOnHeader?: boolean
   isOnViewProfile?: boolean
+  emailAddress?: string
   truncate?: number | boolean
 }
 
@@ -33,20 +33,15 @@ export const Name = ({
   truncate,
   isOnHeader = false,
   isOnViewProfile = false,
+  emailAddress = '',
   style,
 }: Props) => {
   const { content } = owner
 
-  const emailAddress = useMyEmailAddress()
-
-  const myAddress = useMyAddress()
-
-  const isMyProfile = myAddress === address
-
   const shortAddress = toShortAddress(address)
   const addressString = isShort ? shortAddress : address.toString()
   const extensionName = useExtensionName(address)
-  const name = isMyProfile ? emailAddress : content?.name || extensionName
+  const name = content ? content.name : emailAddress || extensionName
   const isNameWithEmailAddress = nonEmptyStr(emailAddress) && emailAddress === name
 
   const renderName = () => {
