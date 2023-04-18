@@ -4,6 +4,7 @@ on:
     branches:
       - staging
       - main
+      - xsocial-cms
 
 jobs:
   front_build:
@@ -76,6 +77,24 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
+      - if: ${{ github.ref == 'refs/heads/xsocial-cms' }}
+        name: Build staging image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: docker/Dockerfile
+          push: true
+          build-args: |
+            GH_GA_ID=fake
+            GH_APP_KIND=polkaverse
+            GH_CONNECTION_KIND=main            
+
+          tags: |
+            ${{ env.image }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+          
       - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
@@ -176,3 +195,42 @@ jobs:
           script: |
             cd /root/webapp
             ./update.sh
+
+
+  xsocial_deploy:
+    name: xsocial-deploy
+    needs: front_build
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/xsocial-cms' }}
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v3
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        id: extract_branch
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_PROD }}
+
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.K8S_PROD }}
+
+      - name: Update deploy file
+        run: TAG=${{ env.name }}-$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|dappforce/subsocial-web-app:'${TAG}'|' $GITHUB_WORKSPACE/deployment/xsocial-cms/deployment.yaml
+
+      - name: Remove HPA
+        run: kubectl delete hpa -n sub-back xsocial-cms-web-app
+
+      - name: Deploy to DigitalOcean Kubernetes
+        run: kubectl apply -f $GITHUB_WORKSPACE/deployment/xsocial-cms/
+
+      - name: Verify deployment
+        run: kubectl -n sub-back rollout status deployment/xsocial-cms-web-app
+
+      - name: Recreate HPA
+        run: kubectl create -f $GITHUB_WORKSPACE/deployment/hpa/xsocial-cms-hpa.yaml
+
