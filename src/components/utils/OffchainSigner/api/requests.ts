@@ -29,7 +29,8 @@ type ConfirmEmailProps = {
 
 type SubmitSignedCallDataProps = {
   data: string
-  jwt: string
+  accessToken: string
+  refreshToken: string
 }
 
 export type JwtPayload = {
@@ -176,7 +177,27 @@ export const fetchMainProxyAddress = async (accessToken: string) => {
   return res
 }
 
-export const submitSignedCallData = async ({ data, jwt }: SubmitSignedCallDataProps) => {
+export const callRefreshToken = async (refreshToken: string) => {
+  const res = await sendHttpRequest({
+    params: {
+      url: OffchainSignerEndpoint.REFRESH_TOKEN,
+      data: {
+        refreshToken,
+      },
+    },
+    method: 'POST',
+    onFaileReturnedValue: undefined,
+    onFailedText: 'Failed to refresh token',
+  })
+
+  return res
+}
+
+export const submitSignedCallData = async ({
+  data,
+  accessToken,
+  refreshToken,
+}: SubmitSignedCallDataProps) => {
   const payload: SendHttpRequestProps = {
     params: {
       url: OffchainSignerEndpoint.SIGNER_SIGN,
@@ -185,7 +206,8 @@ export const submitSignedCallData = async ({ data, jwt }: SubmitSignedCallDataPr
       },
     },
     method: 'POST',
-    accessToken: jwt,
+    accessToken,
+    refreshToken,
     onFaileReturnedValue: undefined,
     onFailedText: 'Failed submitting signed call data',
   }

@@ -1,6 +1,7 @@
 import { newLogger } from '@subsocial/utils'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import config from 'src/config'
+import offchainSignerApi from './axios'
 const { offchainSignerUrl } = config
 
 const log = newLogger('OffchainSignerRequests')
@@ -54,6 +55,32 @@ type SendRequestProps = {
   onFaileReturnedValue?: any
 }
 
+type WrappedRequestProps = {
+  backEndUrl: string
+  method: string
+  config: any
+  data?: any
+  accessToken?: string
+  refreshToken?: string
+}
+
+const wrappedRequest = ({
+  backEndUrl,
+  method,
+  config,
+  data,
+  accessToken,
+  refreshToken,
+}: WrappedRequestProps) => {
+  const requestConfig: AxiosRequestConfig<any> = {
+    baseURL: backEndUrl,
+    method,
+    data: data ?? undefined,
+    ...config,
+  }
+  return offchainSignerApi(accessToken, refreshToken).request(requestConfig)
+}
+
 export const sendRequest = async ({ request, onFailedText }: SendRequestProps) => {
   try {
     const res = await request()
@@ -79,6 +106,7 @@ export type SendHttpRequestProps = {
   onFailedText: string
   method: Method
   accessToken?: string
+  refreshToken?: string
 }
 
 export const sendHttpRequest = ({
@@ -88,16 +116,48 @@ export const sendHttpRequest = ({
 }: SendHttpRequestProps) => {
   if (props.accessToken) setAuthOnRequest(props.accessToken)
 
+  let currentRefreshToken = ''
+
+  if (props.refreshToken) {
+    currentRefreshToken = props.refreshToken
+  }
+
+  if (url === OffchainSignerEndpoint.REFRESH_TOKEN) {
+    return sendRequest({
+      request: () =>
+        wrappedRequest({
+          backEndUrl: getBackendUrl(url),
+          data,
+          method,
+          config,
+        }),
+      ...props,
+    })
+  }
+
   switch (method) {
     case 'GET': {
       return sendRequest({
-        request: () => axios.get(getBackendUrl(url), config),
+        request: () =>
+          wrappedRequest({
+            backEndUrl: getBackendUrl(url),
+            method,
+            config,
+          }),
         ...props,
       })
     }
     case 'POST': {
       return sendRequest({
-        request: () => axios.post(getBackendUrl(url), data, config),
+        request: () =>
+          wrappedRequest({
+            backEndUrl: getBackendUrl(url),
+            method,
+            config,
+            data,
+            refreshToken: currentRefreshToken,
+            accessToken: props.accessToken,
+          }),
         ...props,
       })
     }
