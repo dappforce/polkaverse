@@ -15,18 +15,21 @@ export const sendSignerTx = async (
   api: ApiPromise,
   extrinsic: SubmittableExtrinsic,
   signerToken: string,
+  refreshToken: string,
   onSuccessHandler: (result: SubmittableResult) => Promise<void>,
   onFailedHandler: (err: Error) => void,
 ) => {
+  const hexCallData = extrinsic.inner.toHex()
   try {
-    const hexCallData = extrinsic.inner.toHex()
-
     const res = await submitSignedCallData({
       data: hexCallData,
-      jwt: signerToken,
+      accessToken: signerToken,
+      refreshToken,
     })
 
-    const { signedCall } = res?.data
+    if (!res) throw new Error('No response from server')
+
+    const { signedCall } = res
 
     await api.tx(signedCall).send(onSuccessHandler)
   } catch (err: any) {

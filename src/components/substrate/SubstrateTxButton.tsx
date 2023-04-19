@@ -1,3 +1,4 @@
+import { isStr } from '@subsocial/utils'
 import Button, { ButtonProps } from 'antd/lib/button'
 import React from 'react'
 
@@ -19,8 +20,11 @@ import { getCurrentWallet } from '../auth/utils'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { controlledMessage, Message, showErrorMessage, showSuccessMessage } from '../utils/Message'
 import {
+  getSignerRefreshToken,
+  getSignerToken,
   isCurrentSignerAddress,
   SIGNER_ADDRESS_KEY,
+  SIGNER_REFRESH_TOKEN_KEY,
   SIGNER_TOKEN_KEY,
 } from '../utils/OffchainSigner/ExternalStorage'
 import { isAccountOnboarded, sendSignerTx } from '../utils/OffchainSigner/OffchainSignerUtils'
@@ -38,8 +42,8 @@ export type TxFailedCallback = (status: SubmittableResult | null) => void
 type SuccessMessageFn = (status: SubmittableResult) => Message
 type FailedMessageFn = (status: SubmittableResult | null) => Message
 
-type SuccessMessage = Message | SuccessMessageFn
-type FailedMessage = Message | FailedMessageFn
+export type SuccessMessage = Message | SuccessMessageFn
+export type FailedMessage = Message | FailedMessageFn
 
 export type BaseTxButtonProps = Omit<ButtonProps, 'onClick' | 'form'>
 
@@ -97,6 +101,9 @@ function TxButton({
   const { data: signerToken } = useExternalStorage(SIGNER_TOKEN_KEY, {
     storageKeyType: 'user',
   })
+  const { data: refreshToken } = useExternalStorage(SIGNER_REFRESH_TOKEN_KEY, {
+    storageKeyType: 'user',
+  })
 
   const { setData: setSignerAddress } = useExternalStorage(SIGNER_ADDRESS_KEY, {
     parseStorageToState: data => data === '1',
@@ -104,9 +111,18 @@ function TxButton({
     storageKeyType: 'user',
   })
 
-  const isSignerAddress = isCurrentSignerAddress(accountId as string)
+  const emailSignerToken = getSignerToken(accountId as string)
+  const emailRefreshToken = getSignerRefreshToken(accountId as string)
+  const isSigningWithEmail = isStr(emailSignerToken)
 
-  const isSignerTx = !!signerToken && isSignerAddress && isAccountOnboarded(accountId as string)
+  const currentUserSignerToken = isSigningWithEmail ? emailSignerToken : signerToken
+  const currentUserRefreshToken = isSigningWithEmail ? emailRefreshToken : refreshToken
+  const isSignerAddress = isSigningWithEmail || isCurrentSignerAddress(accountId as string)
+  const isSignerTx =
+    !!currentUserSignerToken &&
+    !!currentUserRefreshToken &&
+    isSignerAddress &&
+    isAccountOnboarded(accountId as string)
 
   const api = customNodeApi || subsocialApi
 
@@ -220,7 +236,14 @@ function TxButton({
       const extrinsic = await getExtrinsic()
 
       if (isSignerTx) {
-        sendSignerTx(api, extrinsic, signerToken, onSuccessHandler, onFailedHandler)
+        sendSignerTx(
+          api,
+          extrinsic,
+          currentUserSignerToken,
+          currentUserRefreshToken,
+          onSuccessHandler,
+          onFailedHandler,
+        )
       } else {
         let signer: Signer | undefined
 

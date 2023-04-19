@@ -14,8 +14,8 @@ const SIGNER_EMAIL_ADDRESS_KEY = 'SignerEmailAddress'
 
 const createStorageKeyWithSubAddress = (key: string, myAddress: string) => {
   const subsocialAddress = toSubsocialAddress(myAddress)
-  if (!subsocialAddress) throw new Error('Unable to define subsocial address')
-  return createStorageKey(key, subsocialAddress)
+  if (!subsocialAddress) console.warn('Unable to create subsocial address')
+  return createStorageKey(key, subsocialAddress!)
 }
 
 const setCurrentEmailAddress = (currentEmail: string) =>
