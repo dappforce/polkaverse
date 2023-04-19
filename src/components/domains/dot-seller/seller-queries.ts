@@ -48,11 +48,11 @@ export const SELLER_CONFIG = gql`
 `
 
 export const PROCESSING_REGISTRATION_ORDERS = gql`
-  query getRegistationOrdersByDomain($domain: String, $recipient: Stirng) {
+  query getRegistationOrdersByDomain($domains: [String!]!, $recipient: String!) {
     domainRegistrationOrders(
       limit: 10
       where: {
-        domain: { id_eq: $domain }
+        domain: { id_in: $domains }
         status_eq: Processing
         target: { id_eq: $recipient }
       }

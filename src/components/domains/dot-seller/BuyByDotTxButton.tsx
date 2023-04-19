@@ -16,6 +16,7 @@ import { useSelectPendingOrderById } from 'src/rtk/features/domainPendingOrders/
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useManageDomainContext } from '../manage/ManageDomainProvider'
 import { pendingOrderAction, useGetDecimalAndSymbol } from './utils'
+import { useCreateReloadProcessingOrdersByAccount } from 'src/rtk/features/processingRegistrationOrders/processingRegistratoinOrdersHooks'
 
 type BuyByDotTxButtonProps = {
   domainName: string
@@ -28,12 +29,13 @@ function getKeyName(value: string) {
 }
 
 const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProps) => {
-  const { recipient, purchaser, setIsFetchNewDomains } = useManageDomainContext()
+  const { recipient, purchaser, setIsFetchNewDomains, setProcessingDomains } = useManageDomainContext()
   const sellerConfig = useSelectSellerConfig()
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
   const { getApiByNetwork } = useLazyConnectionsContext()
   const pendingOrder = useSelectPendingOrderById(domainName)
+  const reloadProcessingOrders = useCreateReloadProcessingOrdersByAccount()
 
   const { sellerChain, domainRegistrationPriceFixed } = sellerConfig || {}
 
@@ -92,7 +94,9 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
 
   const onSuccess = async () => {
     setIsFetchNewDomains(true)
-
+    reloadProcessingOrders({ domains: [domainName], recipient })
+    setProcessingDomains({ [domainName]: true })
+    
     close()
   }
 
@@ -112,7 +116,7 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
 
     return await pendingOrderAction({
       action: createPendingOrder,
-      args: [purchaser, domainName, sellerApiAuthTokenManager, 'polkadot'],
+      args: [purchaser, domainName, sellerApiAuthTokenManager, 'DOT'],
       account: purchaser,
       dispatch
     })

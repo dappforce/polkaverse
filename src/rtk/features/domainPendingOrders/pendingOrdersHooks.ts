@@ -40,7 +40,7 @@ export const useSelectPendingOrdersByAccount = () => {
 
 export const useCreateReloadPendingOrdersByAccount = () => {
   return useActions<string | undefined>(({ dispatch, args }) => {
-    args && dispatch(fetchPendingOrdersByAccount({ id: args }))
+    args && dispatch(fetchPendingOrdersByAccount({ id: args, reload: true }))
   })
 }
 

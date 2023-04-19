@@ -113,7 +113,7 @@ const waitMessage = controlledMessage({
 
 export const useFetchNewDomains = (domainName?: string) => {
   const myAddress = useMyAddress()
-  const { setIsFetchNewDomains, isFetchNewDomains, openManageModal } = useManageDomainContext()
+  const { setIsFetchNewDomains, isFetchNewDomains, openManageModal, setProcessingDomains } = useManageDomainContext()
   const upsertDomains = useCreateUpsertDomains()
   const removePendingOrder = useCreateRemovePendingOrders()
 
@@ -139,6 +139,7 @@ export const useFetchNewDomains = (domainName?: string) => {
 
             upsertDomains({ domain: domainEntity, address: myAddress, domainName })
             removePendingOrder({ address: myAddress, domainName })
+            setProcessingDomains({ [domainName]: false })
             waitMessage.close()
             openManageModal('success', domainName)
           }

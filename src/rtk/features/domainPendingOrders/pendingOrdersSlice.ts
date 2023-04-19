@@ -130,7 +130,6 @@ export const fetchPendingOrdersByAccount = createAsyncThunk<
 
     const orders = result.getPendingOrdersByAccount.orders as Omit<PendingDomainEntity, 'domain'>[]
 
-
     return orders.map(item => {
       const { id, account } = item
 
@@ -164,10 +163,12 @@ const slice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(fetchPendingOrdersByIds.fulfilled, (state, { payload }) => {
-        if (payload) adapter.upsertMany(state, payload.filter(isDef))
+        adapter.removeAll(state)
+        adapter.upsertMany(state, payload.filter(isDef))
       })
       .addCase(fetchPendingOrdersByAccount.fulfilled, (state, { payload }) => {
-        if (payload) adapter.upsertMany(state, payload.filter(isDef))
+        adapter.removeAll(state)
+        adapter.addMany(state, payload.filter(isDef))
       })
   },
 })

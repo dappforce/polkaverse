@@ -32,6 +32,7 @@ import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
 import { DomainDetails, getTime, ResultContainer } from './utils'
 import { DomainEntity } from 'src/rtk/features/domains/domainsSlice'
+import { useSelectProcessingOrderById } from 'src/rtk/features/processingRegistrationOrders/processingRegistratoinOrdersHooks'
 
 const log = newLogger('DD')
 
@@ -56,7 +57,7 @@ type BuyDomainSectionProps = {
 
 export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSectionProps) => {
   const reloadMyDomains = useCreateReloadMyDomains()
-  const { openManageModal } = useManageDomainContext()
+  const { openManageModal, setProcessingDomains } = useManageDomainContext()
   const { api, isApiReady } = useSubstrate()
   const reloadPendingOrders = useCreateReloadPendingOrdersByAccount()
   const { purchaser } = useManageDomainContext()
@@ -78,6 +79,8 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
 
     reloadMyDomains()
 
+    setProcessingDomains({ [domainName]: false })
+
     await pendingOrderAction({
       action: deletePendingOrder,
       args: [domainName, sellerApiAuthTokenManager],
@@ -93,12 +96,15 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
     const jsonErr = JSON.stringify(errorInfo)
     log.error('Failed:', jsonErr)
     showErrorMessage(jsonErr)
+    setProcessingDomains({ [domainName]: false })
   }
 
   const onClick = async () => {
     if (!sellerConfig || !myAddress) return
 
     const { sellerApiAuthTokenManager } = sellerConfig
+
+    setProcessingDomains({ [domainName]: true })
 
     if (pendingOrder) {
       await pendingOrderAction({
@@ -111,10 +117,12 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
 
     return await pendingOrderAction({
       action: createPendingOrder,
-      args: [purchaser, domainName, sellerApiAuthTokenManager, 'polkadot'],
+      args: [purchaser, domainName, sellerApiAuthTokenManager, 'SUB'],
       account: purchaser,
       dispatch,
     })
+
+
   }
 
   return (
@@ -169,8 +177,12 @@ export const DomainItem = ({ domain, action }: DomainItemProps) => {
   const actionComponent = isFunction(action) ? action() : action
   const myAddress = useMyAddress()
   const pendingOrders = useSelectPendingOrderById(domain)
+  const processingOrder = useSelectProcessingOrderById(domain)
+  const { processingDomains } = useManageDomainContext()
 
   const { account } = pendingOrders || {}
+
+  const isDomainProcessing = processingDomains[domain]
 
   return (
     <Row justify='space-between' align='middle' className={styles.DomainResultItem}>
@@ -178,7 +190,7 @@ export const DomainItem = ({ domain, action }: DomainItemProps) => {
         <span>{domain}</span>
         {account && myAddress === account && (
           <Tag color='gold' className={clsx('ml-2', styles.PendingTag)}>
-            Pending
+            {processingOrder || isDomainProcessing ? 'Processing' : 'Pending'}
           </Tag>
         )}
       </div>
@@ -205,7 +217,7 @@ const UnavailableBtn = ({ domain: { owner, id } }: DomainProps) => {
 
 const DomainAction = ({ domain }: DomainProps) => {
   const { owner } = domain
-  // const { variant } = useManageDomainContext()
+  const { variant } = useManageDomainContext()
   const sellerConfig = useSelectSellerConfig()
   const myAddress = useMyAddress()
   const pendingOrder = useSelectPendingOrderById(domain.id)
@@ -230,7 +242,7 @@ const DomainAction = ({ domain }: DomainProps) => {
   return owner ? (
     <UnavailableBtn domain={domain} />
   ) : (
-    <RegisterDomainButton domainName={domain.id} label={label} />
+    <RegisterDomainButton domainName={domain.id} label={label} variant={variant} />
   )
 }
 

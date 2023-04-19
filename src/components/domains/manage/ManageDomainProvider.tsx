@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import React, { createContext, useContext, useState } from 'react'
+import { useMyAddress } from '../../auth/MyAccountsContext'
 import { ManageDomainModal } from './DomainManageModal'
-import { useMyAddress } from '../../auth/MyAccountsContext';
 
 export type MenuSteps = 'subid' | 'inner' | 'outer' | 'menu' | 'success'
 type OpenManageModalFn = (step: MenuSteps, domain?: string) => void
@@ -19,9 +19,11 @@ type ManageDomainProviderState = {
   setPurchaser: (recipient: string) => void
   isFetchNewDomains: boolean
   setIsFetchNewDomains: (isFetchNewDomains: boolean) => void
+  processingDomains: Record<string, boolean>
+  setProcessingDomains: (processingDomains: Record<string, boolean>) => void
 }
 
-type Variant = 'SUB' | 'DOT'
+export type Variant = 'SUB' | 'DOT'
 
 const ManageDomainContext = createContext<ManageDomainProviderState>({} as any)
 
@@ -30,10 +32,11 @@ export const ManageDomainProvider: React.FC<{ promoCode?: string }> = ({ childre
   const [currentStep, setStep] = useState<MenuSteps>()
   const [domain, setDomain] = useState<string>()
   const [visible, setVisible] = useState(true)
-  const [ variant, setVariant ] = useState<Variant>('SUB')
-  const [ recipient, setRecipient ] = useState<string>(myAddress || '')
-  const [ purchaser, setPurchaser ] = useState<string>(myAddress || '')
-  const [ isFetchNewDomains, setIsFetchNewDomains ] = useState(false)
+  const [variant, setVariant] = useState<Variant>('SUB')
+  const [recipient, setRecipient] = useState<string>(myAddress || '')
+  const [purchaser, setPurchaser] = useState<string>(myAddress || '')
+  const [isFetchNewDomains, setIsFetchNewDomains] = useState(false)
+  const [processingDomains, setProcessingDomains] = useState<Record<string, boolean>>({})
 
   const router = useRouter()
   const [activePromoCode, setActivePromoCode] = useState(promoCode)
@@ -57,18 +60,21 @@ export const ManageDomainProvider: React.FC<{ promoCode?: string }> = ({ childre
   }
 
   const value = {
-    currentStep, 
-    openManageModal, 
-    variant, 
+    currentStep,
+    openManageModal,
+    variant,
     setVariant,
     recipient,
     setRecipient,
-    promoCode: activePromoCode, 
+    promoCode: activePromoCode,
     clearPromoCode,
     purchaser,
     setPurchaser,
     isFetchNewDomains,
-    setIsFetchNewDomains
+    setIsFetchNewDomains,
+    processingDomains,
+    setProcessingDomains: (newData: Record<string, boolean>) =>
+      setProcessingDomains({ ...processingDomains, ...newData }),
   }
 
   return (

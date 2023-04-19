@@ -1,19 +1,19 @@
 import { Button, Modal, Space, Tag } from 'antd'
 import clsx from 'clsx'
 import { useMemo, useState } from 'react'
+import { useIsMyAddress } from 'src/components/auth/MyAccountsContext'
 import { SelectAccountInput } from 'src/components/common/inputs/SelectAccountInput'
 import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
 import { useSubstrate } from 'src/components/substrate'
+import { useSelectProcessingOrderById } from 'src/rtk/features/processingRegistrationOrders/processingRegistratoinOrdersHooks'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
-import { FormatBalance } from '../../common/balances/Balance'
+import { FormatBalance, useCreateBalance } from '../../common/balances/Balance'
 import { MutedDiv } from '../../utils/MutedText'
 import { BuyDomainSection } from '../EligibleDomainsSection'
-import { useManageDomainContext } from '../manage/ManageDomainProvider'
+import { useManageDomainContext, Variant } from '../manage/ManageDomainProvider'
 import BuyByDotTxButton from './BuyByDotTxButton'
 import styles from './Index.module.sass'
 import { useGetDecimalAndSymbol } from './utils'
-import { useCreateBalance } from '../../common/balances/Balance'
-import { useIsMyAddress } from 'src/components/auth/MyAccountsContext'
 
 type ModalBodyProps = {
   domainName: string
@@ -67,22 +67,28 @@ const ModalBody = ({ domainName, price }: ModalBodyProps) => {
           network={isSub ? undefined : sellerChain}
         />
       </Space>
-      {variant !== 'SUB' && <Space direction='vertical' size={8} className={'w-100'}>
-        <div className={clsx(styles.Recipient, 'd-flex align-items-center')}>
-          <div>Recipient </div>
-          {isMyAddress && <Tag color='green' className='ml-2'>Your account</Tag>}
-        </div>
-        <SelectAccountInput
-          className={`${styles.Select} w-100`}
-          setValue={setRecipient}
-          value={recipient}
-          withAvatar={false}
-          network={isSub ? undefined : sellerChain}
-        />
-        <MutedDiv className={styles.RecipientFieldDesc}>
-          Choose the recipient to whom the domain will be registered
-        </MutedDiv>
-      </Space>}
+      {variant !== 'SUB' && (
+        <Space direction='vertical' size={8} className={'w-100'}>
+          <div className={clsx(styles.Recipient, 'd-flex align-items-center')}>
+            <div>Recipient </div>
+            {isMyAddress && (
+              <Tag color='green' className='ml-2'>
+                Your account
+              </Tag>
+            )}
+          </div>
+          <SelectAccountInput
+            className={`${styles.Select} w-100`}
+            setValue={setRecipient}
+            value={recipient}
+            withAvatar={false}
+            network={isSub ? undefined : sellerChain}
+          />
+          <MutedDiv className={styles.RecipientFieldDesc}>
+            Choose the recipient to whom the domain will be registered
+          </MutedDiv>
+        </Space>
+      )}
       <Space direction='vertical' size={16} className={clsx(styles.DomainInfo, 'w-100')}>
         <div className='d-flex align-items-center justify-content-between'>
           <MutedDiv>Domain name:</MutedDiv>
@@ -91,10 +97,7 @@ const ModalBody = ({ domainName, price }: ModalBodyProps) => {
         <div className='d-flex align-items-center justify-content-between'>
           <MutedDiv>Price:</MutedDiv>
           <div className='font-weight-bold'>
-            <FormatBalance
-              value={price}
-              {...chainProps}
-            />
+            <FormatBalance value={price} {...chainProps} />
           </div>
         </div>
       </Space>
@@ -106,7 +109,7 @@ type BuyDomainModalProps = {
   domainName: string
   open: boolean
   close: () => void
-  variant: RegisterDomainVairant
+  variant: Variant
   price?: string
 }
 
@@ -144,23 +147,24 @@ const BuyDomainModal = ({ domainName, open, close, price }: BuyDomainModalProps)
   )
 }
 
-type RegisterDomainVairant = 'DOT' | 'SUB'
-
 type BuyByDotButtonProps = {
   domainName: string
   label?: string
   withPrice?: boolean
+  variant?: Variant
 }
 
 const RegisterDomainButton = ({
   domainName,
   label = 'Register',
   withPrice = true,
+  variant,
 }: BuyByDotButtonProps) => {
   const sellerConfig = useSelectSellerConfig()
   const { domainRegistrationPriceFixed, sellerChain } = sellerConfig || {}
-  const { variant } = useManageDomainContext()
   const { api } = useSubstrate()
+  const processingOrder = useSelectProcessingOrderById(domainName)
+  const { processingDomains } = useManageDomainContext()
 
   const [open, setOpen] = useState(false)
   const { decimal, symbol } = useGetDecimalAndSymbol(sellerChain)
@@ -175,13 +179,26 @@ const RegisterDomainButton = ({
 
   const chainProps = variant === 'SUB' ? {} : { decimals: decimal, currency: symbol }
 
+  const isProcessingDomain = processingDomains[domainName]
+
   return (
     <span className={styles.RegisterButton}>
       {withPrice && <div>{price ? <FormatBalance value={price} {...chainProps} /> : <>-</>}</div>}
-      <Button type={'primary'} block onClick={() => setOpen(true)}>
+      <Button
+        type={'primary'}
+        block
+        disabled={isProcessingDomain || !!processingOrder}
+        onClick={() => setOpen(true)}
+      >
         {label}
       </Button>
-      <BuyDomainModal domainName={domainName} open={open} close={close} variant={variant} price={price} />
+      <BuyDomainModal
+        domainName={domainName}
+        open={open}
+        close={close}
+        variant={variant || 'SUB'}
+        price={price}
+      />
     </span>
   )
 }

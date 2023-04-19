@@ -27,7 +27,7 @@ type CommonFetchProps = {
 }
 
 type FetchOneWithoutApi = CommonFetchProps & {
-  domain: string
+  domains: string[]
   recipient: string
 }
 
@@ -45,7 +45,7 @@ export const selectProcessingOrdersById = (state: RootState, id: string) => {
   return selectors.selectById(state, entityId)
 }
 
-export const selectPendingOrdersByIds = (state: RootState, ids: string[]) => {
+export const selectProcessingOrdersByIds = (state: RootState, ids: string[]) => {
   const keys = selectors.selectIds(state)
 
   const entityIds = keys.filter(key => ids.find(x => key.toString().includes(x)))
@@ -53,40 +53,46 @@ export const selectPendingOrdersByIds = (state: RootState, ids: string[]) => {
   return selectEntitiesByIds(state, entityIds as string[])
 }
 
-export const selectPendingOrdersByAccount = (
-  state: RootState,
-  domain: string,
-  recipient: string,
-) => {
-  selectors.selectById(state, `${domain}-${recipient}`)
+export const selectProcessingOrdersByAccount = (state: RootState, address?: string) => {
+  if (!address) return []
+  const keys = selectors.selectIds(state)
+
+  const entityIds = keys.filter(key => key.toString().includes(address))
+
+  return selectEntitiesByIds(state, entityIds as string[])
 }
 
-export const fetchPendingOrdersByAccount = createAsyncThunk<
-  MaybeEntity,
+export const fetchProcessingOrdersByAccount = createAsyncThunk<
+  MaybeEntity[],
   FetchOneWithoutApi,
   ThunkApiConfig
 >(
-  `${sliceName}/fetchManyByAccount`,
-  async ({ domain, recipient, reload }, { getState }): Promise<MaybeEntity> => {
-    const knownDomainsPendingOrders = selectPendingOrdersByAccount(getState(), domain, recipient)
+  `${sliceName}/fetchMany`,
+  async ({ domains, recipient, reload }, { getState }): Promise<MaybeEntity[]> => {
+    const knownDomainsPendingOrders = selectProcessingOrdersByAccount(getState(), recipient)
 
     if (!reload && !isEmptyArray(knownDomainsPendingOrders)) {
-      return
+      return []
     }
 
     const result: any = await sellerSquidGraphQlClient.request(PROCESSING_REGISTRATION_ORDERS, {
-      domain,
+      domains,
       recipient,
     })
 
-    const order = result.getPendingOrdersByAccount.orders?.[0] as ProcessingOrdersEntity | undefined
+    const orders = result.domainRegistrationOrders as
+      | ProcessingOrdersEntity[]
+      | undefined
 
-    if(!order) return 
-    
-    return {
-      ...order,
-      id: `${recipient}-${domain}`,
-    }
+    return (
+      orders
+        ?.map(item => {
+          return {
+            ...item,
+          }
+        })
+        .filter(isDef) || []
+    )
   },
 )
 
@@ -97,8 +103,8 @@ const slice = createSlice({
     // upsertOwnDomains: adapter.upsertOne,
   },
   extraReducers: builder => {
-    builder.addCase(fetchPendingOrdersByAccount.fulfilled, (state, { payload }) => {
-      if (payload) adapter.upsertOne(state, payload)
+    builder.addCase(fetchProcessingOrdersByAccount.fulfilled, (state, { payload }) => {
+      if (payload) adapter.upsertMany(state, payload.filter(isDef))
     })
   },
 })
