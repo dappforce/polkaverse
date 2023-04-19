@@ -116,7 +116,7 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
 
     return await pendingOrderAction({
       action: createPendingOrder,
-      args: [purchaser, domainName, sellerApiAuthTokenManager, 'DOT'],
+      args: [purchaser, domainName, sellerApiAuthTokenManager, 'DOT', recipient],
       account: purchaser,
       dispatch
     })

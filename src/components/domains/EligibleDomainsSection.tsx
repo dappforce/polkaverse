@@ -117,7 +117,7 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
 
     return await pendingOrderAction({
       action: createPendingOrder,
-      args: [purchaser, domainName, sellerApiAuthTokenManager, 'SUB'],
+      args: [purchaser, domainName, sellerApiAuthTokenManager, 'SUB', purchaser],
       account: purchaser,
       dispatch,
     })

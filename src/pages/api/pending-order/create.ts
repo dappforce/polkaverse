@@ -15,7 +15,7 @@ import { CREATE_PENDING_ORDER } from 'src/components/domains/dot-seller/seller-q
 dayjs.extend(utc)
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { purchaser, domain, sellerApiAuthTokenManager, destination } = req.body
+  const { purchaser, domain, sellerApiAuthTokenManager, destination, target } = req.body
   const nonce = new Uint8Array(24)
   nonce[0] = 111
 
@@ -48,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const result = await sellerSquidGraphQlClient.request(
       CREATE_PENDING_ORDER,
-      { domain, account: purchaser, destination },
+      { domain, account: purchaser, destination, target },
     )
 
     res.status(200).send({ success: true })
