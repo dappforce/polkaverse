@@ -1,6 +1,6 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { SubsocialApi } from '@subsocial/api'
-import { bnsToIds, toSubsocialAddress } from '@subsocial/utils'
+import { toSubsocialAddress } from '@subsocial/utils'
 import { getProfilesData } from 'src/graphql/apis'
 import { ProfileFragmentMapped } from 'src/graphql/apis/types'
 import {
@@ -58,8 +58,7 @@ export const selectProfileSpace = (
 
 const getProfiles = createFetchDataFn<ProfileSpaceIdByAccount[]>([])({
   chain: async ({ api, ids }: { api: SubsocialApi; ids: string[] }) => {
-    const spaceBnIds = await api.blockchain.profileSpaceIdsByAccounts(ids)
-    const spaceIds = bnsToIds(spaceBnIds)
+    const spaceIds = await api.blockchain.profileSpaceIdsByAccounts(ids)
 
     const spaceIdsByAccoutsPromise = spaceIds.map(async (spaceId, i) => {
       const accountFollowersCount = await api.blockchain.accountFollowersCountByAccountId(ids[i])

@@ -6,7 +6,7 @@ import { FetchOneArgs, ThunkApiConfig, validateDataSource } from 'src/rtk/app/he
 import { SelectOneFn } from 'src/rtk/app/hooksCommon'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createFetchDataFn } from 'src/rtk/app/wrappers'
-import { AccountId, bnsToIds, SpaceId } from 'src/types'
+import { AccountId, SpaceId } from 'src/types'
 import { fetchFeedByAccount } from '../posts/myFeedSlice'
 
 type Entity = {
@@ -35,7 +35,7 @@ type FetchOneSpaceIdsArgs = FetchOneArgs<Args>
 
 const getFollowedSpaceIds = createFetchDataFn<string[]>([])({
   chain: async ({ api, account }: { api: SubsocialApi; account: string }) => {
-    return bnsToIds(await api.blockchain.spaceIdsFollowedByAccount(account))
+    return await api.blockchain.spaceIdsFollowedByAccount(account)
   },
   squid: async ({ account }: { account: string }, client) => {
     const posts = await getFollowingSpaces(client, {

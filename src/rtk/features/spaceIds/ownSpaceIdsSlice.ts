@@ -3,7 +3,7 @@ import config from 'src/config'
 import { FetchOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { SelectOneFn } from 'src/rtk/app/hooksCommon'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { AccountId, SpaceId } from 'src/types'
+import { AccountId, idsToBns, SpaceId } from 'src/types'
 import { findSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
 import { fetchPostIdsOwnedByAccount } from '../posts/ownPostIdsSlice'
 
@@ -48,9 +48,11 @@ export const fetchSpaceIdsOwnedByAccount = createAsyncThunk<
 
   const allSpaceIds = await api.blockchain.spaceIdsByOwner(myAddress)
 
+  const allSpaceBnIds = idsToBns(allSpaceIds)
+
   const { sudoOne } = config
   const spaceIds = sudoOne
-    ? findSpaceIdsThatCanSuggestIfSudo(sudoOne, myAddress, allSpaceIds)
+    ? findSpaceIdsThatCanSuggestIfSudo(sudoOne, myAddress, allSpaceBnIds)
     : allSpaceIds
 
   await dispatch(fetchPostIdsOwnedByAccount({ ...args, spaceIds }))
