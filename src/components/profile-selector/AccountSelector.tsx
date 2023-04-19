@@ -61,11 +61,7 @@ const SelectAccountItems = ({
   const { setAddress, setEmailAddress } = useMyAccountsContext()
 
   const onAccountClick = (address: string, emailAddress?: string) => {
-    if (emailAddress) setEmailAddress(emailAddress)
-    if (!emailAddress) {
-      console.log('masuk sini')
-      setEmailAddress('')
-    }
+    emailAddress ? setEmailAddress(emailAddress) : setEmailAddress('')
     setAddress(address)
     onItemClick?.(address)
   }

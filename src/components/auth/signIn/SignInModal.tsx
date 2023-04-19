@@ -256,7 +256,11 @@ const ModalContent = ({
               'Your mnemonic phrase will allow you to recover your account, and is encrypted by your password and stored locally in your browser; nobody else can access it.'
             }
           >
-            <ShowMnemonicModalContent onRegisterDone={onAuthSuccess} />
+            <ShowMnemonicModalContent
+              onRegisterDone={onAuthSuccess}
+              failedMessage={'Setting free proxy failed'}
+              successMessage={'Setting free proxy successful'}
+            />
           </ModalBodyWrapper>
         </div>
       )
