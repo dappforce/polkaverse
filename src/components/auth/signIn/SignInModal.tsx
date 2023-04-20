@@ -274,8 +274,8 @@ const ModalContent = ({
             <ShowMnemonicModalContent
               onRegisterDone={onAuthSuccess}
               setLoading={setLoading}
-              failedMessage={'Setting free proxy failed'}
-              successMessage={'Setting free proxy successful'}
+              failedMessage={'Account creation failed'}
+              successMessage={'Account creation successful'}
             />
           </ModalBodyWrapper>
         </div>
