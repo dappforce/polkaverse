@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import LoadingTransaction from 'src/components/utils/LoadingTransaction'
 
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
@@ -151,6 +152,20 @@ const ModalContent = ({
 }: GetModalContentProps) => {
   const { setEmailAddress, setAddress } = useMyAccountsContext()
 
+  const [loading, setLoading] = useState(false)
+
+  if (loading)
+    return (
+      <div>
+        <ModalBodyWrapper
+          title='Please wait'
+          desc='We are recording your information on the blockchain.'
+        >
+          <LoadingTransaction />
+        </ModalBodyWrapper>
+      </div>
+    )
+
   const onAuthSuccess = (address: string, emailAddress: string) => {
     hideSignInModal()
     setAddress(address)
@@ -258,6 +273,7 @@ const ModalContent = ({
           >
             <ShowMnemonicModalContent
               onRegisterDone={onAuthSuccess}
+              setLoading={setLoading}
               failedMessage={'Setting free proxy failed'}
               successMessage={'Setting free proxy successful'}
             />

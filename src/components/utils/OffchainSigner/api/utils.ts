@@ -112,16 +112,10 @@ export type SendHttpRequestProps = {
 export const sendHttpRequest = ({
   params: { url, data, config },
   method,
+  accessToken,
+  refreshToken,
   ...props
 }: SendHttpRequestProps) => {
-  if (props.accessToken) setAuthOnRequest(props.accessToken)
-
-  let currentRefreshToken = ''
-
-  if (props.refreshToken) {
-    currentRefreshToken = props.refreshToken
-  }
-
   if (url === OffchainSignerEndpoint.REFRESH_TOKEN) {
     return sendRequest({
       request: () =>
@@ -143,6 +137,8 @@ export const sendHttpRequest = ({
             backEndUrl: getBackendUrl(url),
             method,
             config,
+            accessToken,
+            refreshToken,
           }),
         ...props,
       })
@@ -155,8 +151,8 @@ export const sendHttpRequest = ({
             method,
             config,
             data,
-            refreshToken: currentRefreshToken,
-            accessToken: props.accessToken,
+            refreshToken,
+            accessToken,
           }),
         ...props,
       })

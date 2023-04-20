@@ -38,13 +38,19 @@ const log = newLogger('MnemonicModalContent')
 
 type Props = {
   onRegisterDone: (address: string, emailAddress: string) => void
+  setLoading: (loading: boolean) => void
   successMessage?: SuccessMessage
   failedMessage?: FailedMessage
 }
 
 const signerKeyringManager = new SignerKeyringManager()
 
-const ShowMnemonicModalContent = ({ onRegisterDone, failedMessage, successMessage }: Props) => {
+const ShowMnemonicModalContent = ({
+  onRegisterDone,
+  setLoading,
+  failedMessage,
+  successMessage,
+}: Props) => {
   const { state } = useAuth()
   const { mnemonic, email, password } = state
 
@@ -133,17 +139,20 @@ const ShowMnemonicModalContent = ({ onRegisterDone, failedMessage, successMessag
   }
 
   const onSuccess = () => {
+    setLoading(false)
     const userAddress = userPair?.address
     onRegisterDone(userAddress, email!)
   }
 
   const onFailed = () => {
+    setLoading(false)
     const userAddress = userPair?.address
     onRegisterDone(userAddress, email!)
   }
 
   const handleRegisterDone = async () => {
     try {
+      setLoading(true)
       const accessToken = getSignerToken(userAddress)
       const refreshToken = getSignerRefreshToken(userAddress)
 
@@ -153,7 +162,6 @@ const ShowMnemonicModalContent = ({ onRegisterDone, failedMessage, successMessag
       const data = await fetchMainProxyAddress(accessToken)
       const { address: mainProxyAddress } = data
 
-      // TODO: check after free proxy is available
       unsub = await api.tx.freeProxy
         .addFreeProxy(mainProxyAddress, 'SocialActions', 0)
         .signAndSend(userPair, onSuccessHandler)
