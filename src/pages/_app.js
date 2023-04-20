@@ -62,7 +62,12 @@ function MyApp(props) {
           rel='stylesheet'
         />
       </Head>
-      <NextNProgress color='#eb2f96' />
+      <NextNProgress
+        color='#eb2f96'
+        options={{
+          showSpinner: false,
+        }}
+      />
       <Provider store={store}>
         {/* <AdBlockModal /> */}
         <DfApolloProvider initialApolloState={pageProps.initialApolloState}>
