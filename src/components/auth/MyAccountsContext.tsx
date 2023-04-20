@@ -10,7 +10,12 @@ import {
   useCreateReloadSpaceIdsRelatedToAccount,
 } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
-import { setMyAddress, setMyEmailAddress, signOut } from 'src/rtk/features/accounts/myAccountSlice'
+import {
+  setMyAddress,
+  setMyEmailAddress,
+  signOut,
+  unsetMyEmailAddress,
+} from 'src/rtk/features/accounts/myAccountSlice'
 import { fetchChainsInfo } from 'src/rtk/features/chainsInfo/chainsInfoSlice'
 import { fetchProfileSpace } from 'src/rtk/features/profiles/profilesSlice'
 import { fetchEntityOfSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
@@ -47,6 +52,7 @@ function functionStub(): any {
 
 export type MyAccountsContextProps = {
   setEmailAddress: (emailAddress: string) => void
+  unsetEmailAddress: () => void
   setAddress: (address: string) => void
   signOut: () => void
   state: StateProps
@@ -56,6 +62,7 @@ export type MyAccountsContextProps = {
 
 const contextStub: MyAccountsContextProps = {
   setEmailAddress: functionStub,
+  unsetEmailAddress: functionStub,
   setAddress: functionStub,
   signOut: functionStub,
   setAccounts: functionStub,
@@ -148,6 +155,7 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
   const value: MyAccountsContextProps = useMemo(() => {
     return {
       setEmailAddress: (emailAddress: string) => dispatch(setMyEmailAddress(emailAddress)),
+      unsetEmailAddress: () => dispatch(unsetMyEmailAddress()),
       setAddress: (address: string) => dispatch(setMyAddress(address)),
       signOut: () => dispatch(signOut()),
       setAccounts,

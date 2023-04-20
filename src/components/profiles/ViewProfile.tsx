@@ -123,7 +123,7 @@ const Component = (props: Props) => {
   )
 
   const NameOrEmail =
-    noProfile && isMyAccount && myEmailAccount ? (
+    isMyAccount && myEmailAccount ? (
       <Name
         address={address}
         isOnViewProfile={true}

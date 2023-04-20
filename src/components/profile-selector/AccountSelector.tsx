@@ -58,10 +58,10 @@ const SelectAccountItems = ({
   onItemClick,
   emailAccounts,
 }: SelectAccountItems) => {
-  const { setAddress, setEmailAddress } = useMyAccountsContext()
+  const { setAddress, setEmailAddress, unsetEmailAddress } = useMyAccountsContext()
 
   const onAccountClick = (address: string, emailAddress?: string) => {
-    emailAddress ? setEmailAddress(emailAddress) : setEmailAddress('')
+    emailAddress ? setEmailAddress(emailAddress) : unsetEmailAddress()
     setAddress(address)
     onItemClick?.(address)
   }

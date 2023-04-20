@@ -63,6 +63,10 @@ const myAccountSlice = createSlice({
         state.emailAddress = emailAddress
       }
     },
+    unsetMyEmailAddress(state) {
+      store.remove(MY_EMAIL_ADDRESS)
+      delete state.emailAddress
+    },
     loadMyEmailAddress(state) {
       const emailAddress = readMyEmailAddress()
 
@@ -98,7 +102,13 @@ const myAccountSlice = createSlice({
   },
 })
 
-export const { setMyEmailAddress, loadMyEmailAddress, setMyAddress, loadMyAddress, signOut } =
-  myAccountSlice.actions
+export const {
+  setMyEmailAddress,
+  loadMyEmailAddress,
+  setMyAddress,
+  unsetMyEmailAddress,
+  loadMyAddress,
+  signOut,
+} = myAccountSlice.actions
 
 export default myAccountSlice.reducer
