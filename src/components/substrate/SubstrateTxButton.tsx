@@ -189,7 +189,7 @@ function TxButton({
     const { status } = result
     if (status.isFinalized || status.isInBlock) {
       setIsSending(false)
-      await unsubscribe()
+      unsubscribe()
 
       const blockHash = status.isFinalized ? status.asFinalized : status.asInBlock
 
@@ -266,7 +266,6 @@ function TxButton({
         }
         unsub = await tx.send(onSuccessHandler)
       }
-
       waitMessage.open()
       sendGaEvent()
     } catch (err: any) {
@@ -286,8 +285,8 @@ function TxButton({
   }
 
   const unsubscribe = () => {
+    waitMessage.close()
     if (unsub) {
-      waitMessage.close()
       unsub()
     }
   }
