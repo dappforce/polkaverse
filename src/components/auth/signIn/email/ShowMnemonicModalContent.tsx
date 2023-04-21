@@ -4,6 +4,7 @@ import { isFunction } from '@polkadot/util'
 import { newLogger } from '@subsocial/utils'
 import { Button, Card, Checkbox, Divider } from 'antd'
 import { useEffect, useState } from 'react'
+import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
 import { useResponsiveSize } from 'src/components/responsive'
 import { useSubstrate } from 'src/components/substrate'
 import {
@@ -36,6 +37,8 @@ import useEncryptionToStorage from './useEncryptionToStorage'
 
 const log = newLogger('MnemonicModalContent')
 
+export const ESTIMATED_ENERGY_FOR_ONE_TX = 100_000_000
+
 type Props = {
   onRegisterDone: (address: string, emailAddress: string) => void
   setLoading: (loading: boolean) => void
@@ -60,6 +63,7 @@ const ShowMnemonicModalContent = ({
 
   const [isMnemonicSaved, setIsMnemonicSaved] = useState(false)
   const [isSending, , setIsSending] = useToggle(false)
+  const [isAccountReady, setIsAccountReady] = useState(false)
 
   useEffect(() => {
     if (isMnemonicSaved && mnemonic && password) {
@@ -72,6 +76,34 @@ const ShowMnemonicModalContent = ({
 
   const userPair = signerKeyringManager.generateKeypairBySecret(mnemonicToBeShown)
   const userAddress = userPair.address
+
+  useSubsocialEffect(
+    ({ substrate }) => {
+      if (!userAddress) return
+
+      let unsubEnergy: VoidFn | undefined
+
+      const subEnergy = async () => {
+        const api = await substrate.api
+
+        unsubEnergy = await api.query.energy.energyBalance(userAddress, energyAmount => {
+          const energyBalance = parseFloat(energyAmount.toPrimitive().toString())
+          if (energyBalance > ESTIMATED_ENERGY_FOR_ONE_TX) {
+            setIsAccountReady(true)
+          } else {
+            setIsAccountReady(false)
+          }
+        })
+      }
+
+      subEnergy()
+
+      return () => {
+        unsubEnergy && unsubEnergy()
+      }
+    },
+    [userAddress],
+  )
 
   const waitMessage = controlledMessage({
     message: messages.waitingForTx,
@@ -156,8 +188,10 @@ const ShowMnemonicModalContent = ({
       const accessToken = getSignerToken(userAddress)
       const refreshToken = getSignerRefreshToken(userAddress)
 
-      if (!accessToken || !refreshToken)
-        throw new Error('Access token or refresh token is not defined')
+      if (!accessToken || !refreshToken) {
+        log.warn('No access token or refresh token')
+        return
+      }
 
       const data = await fetchMainProxyAddress(accessToken)
       const { address: mainProxyAddress } = data
@@ -187,12 +221,12 @@ const ShowMnemonicModalContent = ({
       <Button
         type='primary'
         size='large'
-        disabled={!isMnemonicSaved || !api || !api.isReady}
-        loading={isSending}
+        disabled={!isMnemonicSaved || !isAccountReady}
+        loading={isSending || !isAccountReady}
         onClick={handleRegisterDone}
         block
       >
-        Continue
+        {!isAccountReady ? 'Preparing your account' : 'Continue'}
       </Button>
     </div>
   )
