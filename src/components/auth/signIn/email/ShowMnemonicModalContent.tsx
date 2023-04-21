@@ -29,6 +29,7 @@ import {
   getTempRegisterAccount,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import SignerKeyringManager from 'src/components/utils/OffchainSigner/SignerKeyringManager'
+import { ESTIMATED_ENERGY_FOR_ONE_TX } from 'src/config/constants'
 import messages from 'src/messages'
 import notificationStyles from '../../../substrate/SubstrateTxButton.module.sass'
 import { useAuth } from '../../AuthContext'
@@ -36,8 +37,6 @@ import styles from './SignInModalContent.module.sass'
 import useEncryptionToStorage from './useEncryptionToStorage'
 
 const log = newLogger('MnemonicModalContent')
-
-export const ESTIMATED_ENERGY_FOR_ONE_TX = 100_000_000
 
 type Props = {
   onRegisterDone: (address: string, emailAddress: string) => void
