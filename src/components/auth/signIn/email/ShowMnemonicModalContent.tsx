@@ -30,6 +30,7 @@ import {
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import SignerKeyringManager from 'src/components/utils/OffchainSigner/SignerKeyringManager'
 import { ESTIMATED_ENERGY_FOR_ONE_TX } from 'src/config/constants'
+import useWaitNewBlock from 'src/hooks/useWaitNewBlock'
 import messages from 'src/messages'
 import notificationStyles from '../../../substrate/SubstrateTxButton.module.sass'
 import { useAuth } from '../../AuthContext'
@@ -59,6 +60,7 @@ const ShowMnemonicModalContent = ({
   const { api } = useSubstrate()
   const { createEncryptedAccountAndSave, getEncryptedStoredAccount } = useEncryptionToStorage()
   const { isMobile } = useResponsiveSize()
+  const waitNewBlock = useWaitNewBlock()
 
   const [isMnemonicSaved, setIsMnemonicSaved] = useState(false)
   const [isSending, , setIsSending] = useToggle(false)
@@ -85,9 +87,10 @@ const ShowMnemonicModalContent = ({
       const subEnergy = async () => {
         const api = await substrate.api
 
-        unsubEnergy = await api.query.energy.energyBalance(userAddress, energyAmount => {
+        unsubEnergy = await api.query.energy.energyBalance(userAddress, async energyAmount => {
           const energyBalance = parseFloat(energyAmount.toPrimitive().toString())
           if (energyBalance > ESTIMATED_ENERGY_FOR_ONE_TX) {
+            await waitNewBlock()
             setIsAccountReady(true)
           } else {
             setIsAccountReady(false)
