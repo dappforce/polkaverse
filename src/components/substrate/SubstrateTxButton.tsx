@@ -220,6 +220,8 @@ function TxButton({
       showErrorMessage(errMsg)
     }
 
+    waitMessage.close()
+
     doOnFailed(null)
   }
 
