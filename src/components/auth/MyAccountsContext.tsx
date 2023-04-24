@@ -179,6 +179,10 @@ export function useMyEmailAddress() {
   return useAppSelector(state => state.myAccount.emailAddress)
 }
 
+export function useIsUsingEmail() {
+  return nonEmptyStr(useMyEmailAddress())
+}
+
 export function useMyAddress() {
   return useAppSelector(state => state.myAccount.address)
 }

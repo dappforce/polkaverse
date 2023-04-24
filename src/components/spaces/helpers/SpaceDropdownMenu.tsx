@@ -1,4 +1,3 @@
-import { isStr } from '@subsocial/utils'
 import { Menu } from 'antd'
 import Link from 'next/link'
 import { Donate } from 'src/components/donate'
@@ -9,7 +8,7 @@ import { useSendGaUserEvent } from 'src/ga'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
 import { SpaceData } from 'src/types'
 import { useSelectProfile } from '../../../rtk/features/profiles/profilesHooks'
-import { useMyAddress, useMyEmailAddress } from '../../auth/MyAccountsContext'
+import { useIsUsingEmail, useMyAddress } from '../../auth/MyAccountsContext'
 import { ProfileSpaceAction } from '../../profiles/address-views/utils/index'
 import HiddenSpaceButton from '../HiddenSpaceButton'
 import { OpenEditPermissions } from '../permissions/EditPermissionsModal'
@@ -35,8 +34,7 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
   const address = useMyAddress()
   const { id: profileSpaceId } = useSelectProfile(address) || {}
 
-  const myEmailAddress = useMyEmailAddress()
-  const isUsingEmail = isStr(myEmailAddress)
+  const isUsingEmail = useIsUsingEmail()
 
   const showMakeAsProfileButton = isMySpace && (!profileSpaceId || profileSpaceId !== id)
 
@@ -99,13 +97,15 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
             <Menu.Item key={`edit-permissions-${spaceKey}`}>
               <OpenEditPermissions space={struct} />
             </Menu.Item>
-            <Menu.Item key={`edit-editors-${spaceKey}`}>
-              <EditorsLink space={struct} />
-            </Menu.Item>
             {!isUsingEmail && (
-              <Menu.Item key={`transfer-ownership-${spaceKey}`}>
-                <TransferOwnershipLink space={struct} />
-              </Menu.Item>
+              <>
+                <Menu.Item key={`edit-editors-${spaceKey}`}>
+                  <EditorsLink space={struct} />
+                </Menu.Item>
+                <Menu.Item key={`transfer-ownership-${spaceKey}`}>
+                  <TransferOwnershipLink space={struct} />
+                </Menu.Item>
+              </>
             )}
           </>
         )}
