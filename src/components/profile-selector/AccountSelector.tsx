@@ -293,6 +293,9 @@ export const useAccountSelector = ({
       let isMounted = true
 
       let switchAccounts = accounts.map(x => asAccountId(x.address)?.toString()) as string[]
+      let switchEmailAddresses = emailAccounts.map(x =>
+        asAccountId(x.accountAddress)?.toString(),
+      ) as string[]
 
       if (!includeCurrentAccount) {
         switchAccounts = switchAccounts.filter(acc => acc && acc !== currentAddress)
@@ -301,7 +304,11 @@ export const useAccountSelector = ({
       if (withProfiles) {
         isMounted &&
           dispatch(
-            fetchProfileSpaces({ api, ids: switchAccounts, dataSource: DataSourceTypes.SQUID }),
+            fetchProfileSpaces({
+              api,
+              ids: [...switchAccounts, ...switchEmailAddresses],
+              dataSource: DataSourceTypes.SQUID,
+            }),
           )
       }
 
@@ -314,7 +321,7 @@ export const useAccountSelector = ({
         isMounted = false
       }
     },
-    [currentAddress, dispatch, accounts.length, includeCurrentAccount],
+    [currentAddress, dispatch, accounts.length, emailAccounts.length, includeCurrentAccount],
   )
 
   return {

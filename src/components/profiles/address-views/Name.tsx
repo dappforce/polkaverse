@@ -44,8 +44,8 @@ export const Name = ({
   const addressString = isShort ? shortAddress : address.toString()
   const extensionName = useExtensionName(address)
   const isNameWithEmailAddress = nonEmptyStr(emailAddress) && content === undefined
-  let name = content ? content.name : extensionName || ''
-  name = isNameWithEmailAddress ? emailAddress : name
+  let name = isNameWithEmailAddress ? emailAddress : extensionName || ''
+  name = content ? content.name : name
 
   const renderName = () => {
     if (isOnViewProfile) return emailAddress
