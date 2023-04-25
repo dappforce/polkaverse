@@ -19,6 +19,7 @@ type Props = AddressProps & {
   isOnViewProfile?: boolean
   emailAddress?: string
   truncate?: number | boolean
+  isOnSelectAccount?: boolean
 }
 
 const DEFAULT_MAX_NAME_LEN = 15
@@ -34,6 +35,7 @@ export const Name = ({
   isOnHeader = false,
   isOnViewProfile = false,
   emailAddress = '',
+  isOnSelectAccount = false,
   style,
 }: Props) => {
   const { content } = owner
@@ -41,8 +43,9 @@ export const Name = ({
   const shortAddress = toShortAddress(address)
   const addressString = isShort ? shortAddress : address.toString()
   const extensionName = useExtensionName(address)
-  const name = content ? content.name : emailAddress || extensionName
-  const isNameWithEmailAddress = nonEmptyStr(emailAddress) && emailAddress === name
+  const isNameWithEmailAddress = nonEmptyStr(emailAddress) && content === undefined
+  let name = content ? content.name : extensionName || ''
+  name = isNameWithEmailAddress ? emailAddress : name
 
   const renderName = () => {
     if (isOnViewProfile) return emailAddress
@@ -60,7 +63,7 @@ export const Name = ({
   const fullWidth = withShortAddress || (isNameWithEmailAddress && !isOnViewProfile)
 
   const ModifiedMutedSpan = () =>
-    isNameWithEmailAddress ? (
+    isNameWithEmailAddress || isOnSelectAccount ? (
       <NameChip>Email</NameChip>
     ) : (
       <MutedSpan>

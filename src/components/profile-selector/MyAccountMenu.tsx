@@ -18,6 +18,7 @@ type SelectAddressType = AddressProps & {
   withShortAddress?: boolean
   withoutBalances?: boolean
   emailAddress?: string
+  isOnSelectAccount?: boolean
 }
 
 export const SelectAddressPreview: FC<SelectAddressType> = ({
@@ -27,6 +28,7 @@ export const SelectAddressPreview: FC<SelectAddressType> = ({
   owner,
   withoutBalances = false,
   emailAddress = '',
+  isOnSelectAccount,
 }) => {
   return (
     <div className='DfChooseAccount' onClick={onClick}>
@@ -41,6 +43,7 @@ export const SelectAddressPreview: FC<SelectAddressType> = ({
           address={address}
           withShortAddress={withShortAddress}
           emailAddress={emailAddress}
+          isOnSelectAccount={isOnSelectAccount}
         />
         {!withoutBalances && <InfoDetails address={address} />}
       </div>

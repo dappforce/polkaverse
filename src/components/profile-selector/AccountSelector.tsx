@@ -31,9 +31,16 @@ type AccountItemProps = {
   onClick?: (address: string, emailAddress?: string) => void
   withShortAddress?: boolean
   emailAddress?: string
+  isOnSelectAccount?: boolean
 }
 
-const AccountItem = ({ address, onClick, withShortAddress, emailAddress }: AccountItemProps) => {
+const AccountItem = ({
+  address,
+  onClick,
+  withShortAddress,
+  emailAddress,
+  isOnSelectAccount,
+}: AccountItemProps) => {
   const profile = useSelectProfile(address)
 
   return (
@@ -47,6 +54,7 @@ const AccountItem = ({ address, onClick, withShortAddress, emailAddress }: Accou
         owner={profile}
         withShortAddress={withShortAddress}
         emailAddress={emailAddress}
+        isOnSelectAccount={isOnSelectAccount}
       />
     </div>
   )
@@ -84,6 +92,7 @@ const SelectAccountItems = ({
             emailAddress={email}
             onClick={onAccountClick}
             withShortAddress={withShortAddress}
+            isOnSelectAccount={true}
           />
         ))}
     </div>
