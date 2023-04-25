@@ -2,6 +2,7 @@ import { PlayCircleOutlined } from '@ant-design/icons'
 import { Button, Tooltip } from 'antd'
 import clsx from 'clsx'
 import { HTMLProps, useState } from 'react'
+import { useIsUsingEmail } from 'src/components/auth/MyAccountsContext'
 import useAccountName from 'src/components/profiles/hooks/useAccountName'
 import config from 'src/config'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
@@ -59,6 +60,7 @@ export default function OnBoardingSidebar({
 
   const name = useAccountName()
   const { isOnBoardingSkipped } = useIsOnBoardingSkippedContext()
+  const isUsingEmail = useIsUsingEmail()
 
   return (
     <>
@@ -94,7 +96,7 @@ export default function OnBoardingSidebar({
           )
         })}
         <WritePostButton />
-        <DotsamaDomainButton />
+        {!isUsingEmail && <DotsamaDomainButton />}
         <Tooltip
           title={
             <div className={clsx(styles.DismissTooltip, 'p-3')}>
