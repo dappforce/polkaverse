@@ -10,7 +10,6 @@ import { asAccountId } from '@subsocial/api'
 import { isEmptyArray } from '@subsocial/utils'
 import config from 'src/config'
 import { isMobileDevice } from 'src/config/Size.config'
-import useEmailAddress from 'src/hooks/useEmailAddress'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { fetchProfileSpaces } from 'src/rtk/features/profiles/profilesSlice'
@@ -221,14 +220,10 @@ export const AccountSelector = ({
   overviewCurrentAccount,
   onItemClick,
 }: SelectorProps) => {
-  const { switchAccountsSet, currentAddress, status } = useAccountSelector({
+  const { switchAccountsSet, emailAccountsSet, currentAddress, status } = useAccountSelector({
     includeCurrentAccount: overviewCurrentAccount,
   })
   const { apiState } = useSubstrate()
-
-  const { getAllEmailAccounts } = useEmailAddress()
-
-  const emailAccounts = getAllEmailAccounts()
 
   const ExtensionAccountPanel = () => {
     const count = switchAccountsSet.size
@@ -246,6 +241,8 @@ export const AccountSelector = ({
     if (status === 'NOACCOUNT') return renderExtensionContent(noExtensionAccounts)
 
     const extensionAddresses = [...switchAccountsSet]
+
+    const emailAccounts = [...emailAccountsSet]
 
     return renderExtensionContent(
       <SelectAccountItems
@@ -284,8 +281,9 @@ export const useAccountSelector = ({
   includeCurrentAccount,
 }: AccountSelectorProps) => {
   const [switchAccountsSet, setSwitchAccounts] = useState<Set<string>>(new Set())
+  const [emailAccountsSet, setEmailAccounts] = useState<Set<EmailAccount>>(new Set())
   const currentAddress = useMyAddress()
-  const { accounts, status } = useMyAccounts()
+  const { accounts, emailAccounts, status } = useMyAccounts()
   const dispatch = useAppDispatch()
 
   useSubsocialEffect(
@@ -307,7 +305,10 @@ export const useAccountSelector = ({
           )
       }
 
-      isMounted && setSwitchAccounts(new Set(switchAccounts))
+      if (isMounted) {
+        setSwitchAccounts(new Set(switchAccounts))
+        setEmailAccounts(new Set(emailAccounts))
+      }
 
       return () => {
         isMounted = false
@@ -318,6 +319,7 @@ export const useAccountSelector = ({
 
   return {
     switchAccountsSet,
+    emailAccountsSet,
     currentAddress,
     status,
   }

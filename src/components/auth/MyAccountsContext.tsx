@@ -4,7 +4,7 @@ import { asAccountId } from '@subsocial/api'
 import { newLogger, nonEmptyStr } from '@subsocial/utils'
 import React, { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import useEmailAddress from 'src/hooks/useEmailAddress'
+import useEmailAccount from 'src/hooks/useEmailAccount'
 import {
   useCreateReloadAccountIdsByFollower,
   useCreateReloadSpaceIdsRelatedToAccount,
@@ -87,7 +87,7 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
   const reloadSpaceIdsRelatedToAccount = useCreateReloadSpaceIdsRelatedToAccount()
   const address = useMyAddress()
   const { isMobile } = useResponsiveSize()
-  const { getAllEmailAccounts } = useEmailAddress()
+  const { getAllEmailAccounts } = useEmailAccount()
   const [recheckId, recheck] = useReducer(x => (x + 1) % 16384, 0)
 
   const [status, setStatus] = useState<Status>('LOADING')
