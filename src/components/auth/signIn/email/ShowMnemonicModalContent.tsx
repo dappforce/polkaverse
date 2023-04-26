@@ -34,6 +34,7 @@ import useWaitNewBlock from 'src/hooks/useWaitNewBlock'
 import messages from 'src/messages'
 import notificationStyles from '../../../substrate/SubstrateTxButton.module.sass'
 import { useAuth } from '../../AuthContext'
+import { useMyAccountsContext } from '../../MyAccountsContext'
 import styles from './SignInModalContent.module.sass'
 import useEncryptionToStorage from './useEncryptionToStorage'
 
@@ -61,6 +62,7 @@ const ShowMnemonicModalContent = ({
   const { createEncryptedAccountAndSave, getEncryptedStoredAccount } = useEncryptionToStorage()
   const { isMobile } = useResponsiveSize()
   const waitNewBlock = useWaitNewBlock()
+  const { resetEmailAccounts } = useMyAccountsContext()
 
   const [isMnemonicSaved, setIsMnemonicSaved] = useState(false)
   const [isSending, , setIsSending] = useToggle(false)
@@ -126,6 +128,8 @@ const ShowMnemonicModalContent = ({
   }
 
   const doOnSuccess: TxCallback = result => {
+    resetEmailAccounts()
+
     isFunction(onSuccess) && onSuccess()
 
     const message: Message = isFunction(successMessage) ? successMessage(result) : successMessage
@@ -165,7 +169,6 @@ const ShowMnemonicModalContent = ({
           }
         })
     } else if (result.isError || result.dispatchError || result.internalError) {
-      console.warn('result', { result })
       doOnFailed(result)
     } else {
       log.debug(`⏱ Current tx status: ${status.type}`)

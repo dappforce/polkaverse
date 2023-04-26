@@ -2,7 +2,15 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { AccountInfo } from '@polkadot/types/interfaces'
 import { asAccountId } from '@subsocial/api'
 import { newLogger, nonEmptyStr } from '@subsocial/utils'
-import React, { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react'
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react'
 import { useDispatch } from 'react-redux'
 import useEmailAccount from 'src/hooks/useEmailAccount'
 import {
@@ -58,6 +66,7 @@ export type MyAccountsContextProps = {
   state: StateProps
   setAccounts: (account: InjectedAccountWithMeta[]) => void
   setEmailAccounts: (emailAccounts: EmailAccount[]) => void
+  resetEmailAccounts: () => void
 }
 
 const contextStub: MyAccountsContextProps = {
@@ -67,6 +76,7 @@ const contextStub: MyAccountsContextProps = {
   signOut: functionStub,
   setAccounts: functionStub,
   setEmailAccounts: functionStub,
+  resetEmailAccounts: functionStub,
   state: {
     accounts: [],
     emailAccounts: [],
@@ -95,9 +105,13 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
 
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([])
 
-  useEffect(() => {
+  const resetEmailAccounts = useCallback(() => {
     const emailAccounts = getAllEmailAccounts()
     setEmailAccounts(emailAccounts)
+  }, [setEmailAccounts])
+
+  useEffect(() => {
+    resetEmailAccounts()
   }, [])
 
   useEffect(() => {
@@ -160,6 +174,7 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
       signOut: () => dispatch(signOut()),
       setAccounts,
       setEmailAccounts,
+      resetEmailAccounts,
       state,
     }
   }, [state])
