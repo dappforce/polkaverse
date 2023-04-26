@@ -7,10 +7,10 @@ import { getOrFalse, getOrTrue } from './utils'
 
 const enableGraphQl = getOrTrue(env.enableGraphQl) && nonEmptyStr(connections.graphqlUrl)
 const commonFeatures: CommonSubsocialFeatures = {
-  enableSearch: getOrTrue(env.enableSearch),
-  enableFeed: getOrTrue(env.enableFeed),
-  enableNotifications: getOrTrue(env.enableNotifications),
-  enableActivity: getOrTrue(env.enableActivity),
+  enableSearch: getOrFalse(env.enableSearch),
+  enableFeed: getOrFalse(env.enableFeed),
+  enableNotifications: getOrFalse(env.enableNotifications),
+  enableActivity: getOrFalse(env.enableActivity),
   enableSessionKey: getOrFalse(env.enableSessionKey),
   enableEmailSettings: getOrFalse(env.enableEmailSettings),
   enableFaucet: getOrFalse(env.enableFaucet),
