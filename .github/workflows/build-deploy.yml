@@ -68,7 +68,7 @@ jobs:
           push: true
           build-args: |
             GH_GA_ID=UA-204866512-2
-            GH_APP_KIND=polkaverse
+            GH_APP_KIND=gazer
             GH_CONNECTION_KIND=main
 
           tags: |
@@ -87,14 +87,14 @@ jobs:
           push: true
           build-args: |
             GH_GA_ID=fake
-            GH_APP_KIND=polkaverse
-            GH_CONNECTION_KIND=main            
+            GH_APP_KIND=gazer
+            GH_CONNECTION_KIND=main
 
           tags: |
             ${{ env.image }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
-          
+
       - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
@@ -155,9 +155,9 @@ jobs:
       - name: Update deploy file
         run: TAG=${{ env.name }}-$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|dappforce/subsocial-web-app:'${TAG}'|' $GITHUB_WORKSPACE/deployment/base/deployment.yaml
 
-      - name: Remove HPA 
+      - name: Remove HPA
         run: kubectl delete hpa -n sub-back web-app
-        
+
       - name: Deploy to DigitalOcean Kubernetes
         run: kubectl apply -k $GITHUB_WORKSPACE/deployment/overlays/production/
 
@@ -169,7 +169,6 @@ jobs:
 
       - name: Recreate HPA
         run: kubectl create -f $GITHUB_WORKSPACE/deployment/hpa/hpa.yaml
-
 
   front-bk-prod-deploy:
     name: bk-prod-deploy
@@ -195,7 +194,6 @@ jobs:
           script: |
             cd /root/webapp
             ./update.sh
-
 
   xsocial_deploy:
     name: xsocial-deploy
@@ -233,4 +231,3 @@ jobs:
 
       - name: Recreate HPA
         run: kubectl create -f $GITHUB_WORKSPACE/deployment/hpa/xsocial-cms-hpa.yaml
-

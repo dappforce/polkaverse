@@ -1,10 +1,12 @@
 import { appKind, appOverrides } from '../env'
+import gazer from './gazer'
 import polkaverse from './polkaverse'
 import staging from './staging'
 
 const apps = {
   polkaverse,
   staging,
+  gazer,
 }
 
 const currentConfig = apps[appKind]
