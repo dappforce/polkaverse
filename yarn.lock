@@ -2057,10 +2057,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@subsocial/api@0.8.10":
-  version "0.8.10"
-  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.8.10.tgz#e01ed8bca71846e9697edc6d8e220c82bb2e078f"
-  integrity sha512-HMxeTY/FVY7xIWPl/OwVkeaXS0XMHw1M0Kxatcw9RM3zuFF0Bqmk7KNjitHGGCl3VkoXbjl09HTSjKJUYFUEMw==
+"@subsocial/api@0.7.13":
+  version "0.7.13"
+  resolved "https://registry.yarnpkg.com/@subsocial/api/-/api-0.7.13.tgz#19dc7062c53b8b568d0784757e458163e49a3467"
+  integrity sha512-RvcNKxP7uPa2tr65KcW9AOQs/+rQvBWGNvuCZBpXb4Hs/veBjnYdStU68rN25xccDLFRynlFw4w6GziU05KVdw==
   dependencies:
     "@polkadot/api" latest
     "@polkadot/types" latest
@@ -2070,14 +2070,13 @@
     "@subsocial/utils" latest
     axios "^0.24.0"
     ipfs-http-client "56.0.3"
-    json-stable-stringify "^1.0.2"
 
 "@subsocial/config@0.7.1":
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/@subsocial/config/-/config-0.7.1.tgz#5dbd8dcd4540390e2c3ea4ab38466d7f5fee03b8"
   integrity sha512-zF+u865sZ++4+V1GRVtIeeBri+UMh6W+mVg04ysTNosk2gZ3xajv5m2EF8OdSvydrq2PSFTznSVVYGKACPNvjQ==
 
-"@subsocial/definitions@latest":
+"@subsocial/definitions@0.7.13", "@subsocial/definitions@latest":
   version "0.7.13"
   resolved "https://registry.yarnpkg.com/@subsocial/definitions/-/definitions-0.7.13.tgz#5ee7aa2888fb37295eb609cc61568189e9d434a2"
   integrity sha512-BOkRK1cxStnhQ0Orw0aH/BcI00iMdxmHh7saO2tp1ub79mfPjDLtd48y2lfJpCX0ddsEJ6GCDitCr7Ai7TOECA==
@@ -2085,15 +2084,15 @@
     "@polkadot/api" latest
     lodash.camelcase "^4.3.0"
 
-"@subsocial/elasticsearch@0.8.10":
-  version "0.8.10"
-  resolved "https://registry.yarnpkg.com/@subsocial/elasticsearch/-/elasticsearch-0.8.10.tgz#c4e6dc3538f25fb34e1506d44941fdb99cb77c82"
-  integrity sha512-q1UvmAX87FbQVD30xIAQbIJLHolErQoPgZN+jGMbo87khSiE16D2UjuuL3OCQxXxizmgJbjW1Gz5MOlszsKllw==
+"@subsocial/elasticsearch@0.7.13":
+  version "0.7.13"
+  resolved "https://registry.yarnpkg.com/@subsocial/elasticsearch/-/elasticsearch-0.7.13.tgz#1ec625cb9912b70f9d1f14866d6b7f50882699d2"
+  integrity sha512-BLv4wMdwPVvOD47TH5Qw54SY11nP7PG8MbFKob62xxv0uiZbdA3KiFshgMF4FYIVk6oCbCgs/X3KBaqzfOz13w==
   dependencies:
     "@elastic/elasticsearch" "7.4.0"
     "@subsocial/utils" latest
 
-"@subsocial/utils@latest":
+"@subsocial/utils@0.7.13", "@subsocial/utils@latest":
   version "0.7.13"
   resolved "https://registry.yarnpkg.com/@subsocial/utils/-/utils-0.7.13.tgz#546abef2c4fa5e1f3d8e3de3ee69fb107f977309"
   integrity sha512-HNHV+ZG/1yHgi4JcOLAWW0p4oaa6JCrv5///DzUuJbhpLjR7k6gKnF+ReXqEp9hFJggH4WCWPtNUCODD1FxlSA==
@@ -7783,13 +7782,6 @@ json-stable-stringify-without-jsonify@^1.0.1:
   resolved "https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
   integrity sha1-nbe1lJatPzz+8wp1FC0tkwrXJlE=
 
-json-stable-stringify@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/json-stable-stringify/-/json-stable-stringify-1.0.2.tgz#e06f23128e0bbe342dc996ed5a19e28b57b580e0"
-  integrity sha512-eunSSaEnxV12z+Z73y/j5N37/In40GK4GmsSy+tEHJMxknvqnA7/djeYtAgW0GsWHUfg+847WJjKaEylk2y09g==
-  dependencies:
-    jsonify "^0.0.1"
-
 json-stringify-safe@^5.0.1, json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
@@ -7831,11 +7823,6 @@ jsonfile@^6.0.1:
     universalify "^2.0.0"
   optionalDependencies:
     graceful-fs "^4.1.6"
-
-jsonify@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/jsonify/-/jsonify-0.0.1.tgz#2aa3111dae3d34a0f151c63f3a45d995d9420978"
-  integrity sha512-2/Ki0GcmuqSrgFyelQq9M05y7PS0mEwuIzrf3f1fPqkVDVRvZrPZtVSMHxdgo8Aq0sxAOb/cr2aqqA3LeWHVPg==
 
 jsprim@^2.0.2:
   version "2.0.2"
@@ -10470,20 +10457,7 @@ read-pkg@^5.2.0:
     parse-json "^5.0.0"
     type-fest "^0.6.0"
 
-readable-stream@^2.0.0:
-  version "2.3.8"
-  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.8.tgz#91125e8042bba1b9887f49345f6277027ce8be9b"
-  integrity sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==
-  dependencies:
-    core-util-is "~1.0.0"
-    inherits "~2.0.3"
-    isarray "~1.0.0"
-    process-nextick-args "~2.0.0"
-    safe-buffer "~5.1.1"
-    string_decoder "~1.1.1"
-    util-deprecate "~1.0.1"
-
-readable-stream@^2.0.2, readable-stream@^2.3.3, readable-stream@^2.3.6:
+readable-stream@^2.0.0, readable-stream@^2.0.2, readable-stream@^2.3.3, readable-stream@^2.3.6:
   version "2.3.7"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.7.tgz#1eca1cf711aef814c04f62252a36a62f6cb23b57"
   integrity sha512-Ebho8K4jIbHAxnuxi7o42OrZgF/ZTNcsZj6nRKyUmkhLFq8CHItp/fy6hQZuZmP/n3yZ9VBUbp4zz/mX8hmYPw==
