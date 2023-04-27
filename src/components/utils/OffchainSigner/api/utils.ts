@@ -24,7 +24,7 @@ export const getBackendUrl = (paramsUrl: string) => {
 }
 
 export type OffchainSignerEndpoint =
-  typeof OffchainSignerEndpoint[keyof typeof OffchainSignerEndpoint]
+  (typeof OffchainSignerEndpoint)[keyof typeof OffchainSignerEndpoint]
 
 export type Method = 'GET' | 'POST'
 
@@ -85,7 +85,7 @@ export const sendRequest = async ({ request, onFailedText }: SendRequestProps) =
   try {
     const res = await request()
     if (res.status !== 200) {
-      console.warn(onFailedText)
+      log.warn(onFailedText)
     }
 
     return res.data

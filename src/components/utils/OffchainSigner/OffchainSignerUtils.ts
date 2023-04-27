@@ -6,7 +6,7 @@ import { submitSignedCallData } from './api/requests'
 import { truncateAddress } from 'src/utils/storage'
 
 import { newLogger } from '@subsocial/utils'
-const log = newLogger('OffchainSignerRequests')
+const log = newLogger('OffchainSignerUtils')
 
 export const isAccountOnboarded = (accountId: string) =>
   localStorage.getItem(`df.onBoardingModalFinished:${truncateAddress(accountId)}`) === '1'

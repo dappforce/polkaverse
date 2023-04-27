@@ -55,11 +55,11 @@ function RememberMeButton({
   }, [token])
 
   const onExpire = () => {
-    console.warn('hCaptcha Token Expired')
+    log.warn('hCaptcha Token Expired')
   }
 
   const onError = (err: any) => {
-    console.warn(`hCaptcha Error: ${err}`)
+    log.warn(`hCaptcha Error: ${err}`)
   }
 
   const onLoad = () => {
@@ -155,7 +155,7 @@ function RememberMeButton({
       const signedProof = await signMessage(proof)
 
       if (!signedProof) {
-        console.warn('Error when generating signed')
+        log.warn('Error when generating signed')
         return
       }
 
