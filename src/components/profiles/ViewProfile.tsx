@@ -1,11 +1,10 @@
-import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined } from '@ant-design/icons'
 import { AccountId } from '@polkadot/types/interfaces'
 import { isEmptyStr, toSubsocialAddress } from '@subsocial/utils'
-import { Button, Dropdown, Menu } from 'antd'
+import { Button } from 'antd'
 import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useCallback } from 'react'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import {
@@ -38,8 +37,6 @@ import { useAppSelector } from '../../rtk/app/store'
 import { useSelectProfile } from '../../rtk/features/profiles/profilesHooks'
 import { fetchSpaceIdsOwnedByAccount } from '../../rtk/features/spaceIds/ownSpaceIdsSlice'
 import { selectSpace } from '../../rtk/features/spaces/spacesSlice'
-import { SettingsLink } from './address-views/utils'
-import { CreateOrEditProfileSpace } from './address-views/utils/index'
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false })
 
@@ -84,34 +81,6 @@ const Component = (props: Props) => {
     </Link>
   )
 
-  const DropDownMenu = useCallback(() => {
-    const menu = (
-      <Menu>
-        {isMyAccount && (
-          <Menu.Item key='edit'>
-            <CreateOrEditProfileSpace address={address} className='item' />
-          </Menu.Item>
-        )}
-        {isMyAccount && (
-          <Menu.Item key='settings'>
-            <SettingsLink address={address} className='item' />
-          </Menu.Item>
-        )}
-      </Menu>
-    )
-
-    return (
-      <>
-        {isMyAccount && (
-          <Dropdown overlay={menu} placement='bottomRight'>
-            <EllipsisOutlined />
-          </Dropdown>
-        )}
-        {/* open && <ProfileHistoryModal id={id} open={open} close={close} /> */}
-      </>
-    )
-  }, [address, isMyAccount])
-
   const followersText = <Pluralize count={followers} singularText='Follower' />
   const followingText = <Pluralize count={following} singularText='Following' />
 
@@ -150,7 +119,6 @@ const Component = (props: Props) => {
                 {NameOrEmail}
                 <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
               </span>
-              <DropDownMenu />
             </h1>
             <MutedDiv>
               {'Address: '}
