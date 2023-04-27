@@ -1,11 +1,12 @@
 import HCaptcha from '@hcaptcha/react-hcaptcha'
-import { isStr } from '@subsocial/utils'
+import { isStr, newLogger } from '@subsocial/utils'
 import { Button, Form, FormInstance, Input } from 'antd'
 import clsx from 'clsx'
 import jwtDecode from 'jwt-decode'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
 import {
+  callRefreshToken,
   emailSignIn,
   JwtPayload,
   onErrorHandler,
@@ -18,6 +19,8 @@ import { debounceFunction } from 'src/utils/async'
 import { StepsEnum, useAuth } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 import { RegexValidations, useFormValidation } from './useFormValidation'
+
+const log = newLogger('SignInModalContent')
 
 type FormValues = {
   email: string
@@ -181,7 +184,13 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
 
       if (!data) console.error('No data returned from emailSignIn')
       const { accessToken, refreshToken } = data
-      setAuthOnRequest(accessToken as string)
+
+      const dataRefreshToken = await callRefreshToken(refreshToken)
+
+      if (!dataRefreshToken) log.warn('No data returned from callRefreshToken')
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken } = dataRefreshToken
+
+      setAuthOnRequest(newAccessToken as string)
 
       const decoded = jwtDecode<JwtPayload>(accessToken)
       const { emailVerified, accountAddress } = decoded
@@ -189,8 +198,8 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
       // Save auth tokens to local storage for future use in the app
       setSignerTokensByAddress({
         userAddress: accountAddress,
-        token: accessToken,
-        refreshToken,
+        token: newAccessToken,
+        refreshToken: newRefreshToken,
       })
 
       if (!emailVerified) {
