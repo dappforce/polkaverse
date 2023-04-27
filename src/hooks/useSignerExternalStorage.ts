@@ -33,8 +33,8 @@ const useSignerExternalStorage = () => {
 
   const setSignerTokensByAddress = ({ userAddress, token, refreshToken }: Props) => {
     const subsocialAddress = convertToSubsocialAddress(userAddress)
-    setSignerToken(token, subsocialAddress)
-    setSignerRefreshToken(refreshToken, subsocialAddress)
+    setSignerToken(token, subsocialAddress!)
+    setSignerRefreshToken(refreshToken, subsocialAddress!)
   }
 
   const setSignerTempRegisterAccount = (userAddress: string) => {
