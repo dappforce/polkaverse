@@ -1,5 +1,12 @@
 import axios from 'axios'
 import config from 'src/config'
+import { readMyAddress } from 'src/rtk/features/accounts/myAccountSlice'
+import store from 'store'
+import {
+  createStorageKeyWithSubAddress,
+  SIGNER_REFRESH_TOKEN_KEY,
+  SIGNER_TOKEN_KEY,
+} from '../ExternalStorage'
 import { callRefreshToken } from './requests'
 
 const { offchainSignerUrl } = config
@@ -27,23 +34,30 @@ const offchainSignerApi = (accessToken?: string, refreshToken?: string) => {
 
       try {
         // If the error is due to an expired access token and a refresh token is available
-        if (
-          error.response.status === 401 &&
-          originalRequest &&
-          !originalRequest._retry &&
-          refreshToken
-        ) {
+        if (error.response.status === 401 && originalRequest && refreshToken) {
           originalRequest._retry = true
 
           const response = await callRefreshToken(refreshToken)
 
-          const { accessToken: newAccessToken } = response.data
+          if (!response) console.error('No data returned from callRefreshToken')
+          const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response
 
-          // Update the access token in the Axios instance
-          instance.defaults.headers.common['Authorization'] = newAccessToken
+          const address = readMyAddress()
+          store.set(createStorageKeyWithSubAddress(SIGNER_TOKEN_KEY, address!), newAccessToken)
+          store.set(
+            createStorageKeyWithSubAddress(SIGNER_REFRESH_TOKEN_KEY, address!),
+            newRefreshToken,
+          )
 
-          // Retry the original request with the new access token
-          return instance(originalRequest)
+          const newRequest = {
+            ...originalRequest,
+            headers: {
+              ...originalRequest.headers,
+              Authorization: newAccessToken,
+            },
+          }
+
+          return axios(newRequest)
         }
 
         // If the error is not due to an expired access token or a refresh token is not available, throw the error

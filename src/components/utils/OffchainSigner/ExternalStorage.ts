@@ -14,7 +14,7 @@ const SIGNER_EMAIL_ADDRESS_KEY = 'SignerEmailAddress'
 
 const log = newLogger('OffchainSignerExternalStorage')
 
-const createStorageKeyWithSubAddress = (key: string, myAddress: string) => {
+export const createStorageKeyWithSubAddress = (key: string, myAddress: string) => {
   const subsocialAddress = toSubsocialAddress(myAddress)
   if (!subsocialAddress) log.warn('Unable to create subsocial address')
   return createStorageKey(key, subsocialAddress!)
