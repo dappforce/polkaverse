@@ -64,21 +64,14 @@ type WrappedRequestProps = {
   refreshToken?: string
 }
 
-const wrappedRequest = ({
-  backEndUrl,
-  method,
-  config,
-  data,
-  accessToken,
-  refreshToken,
-}: WrappedRequestProps) => {
+const wrappedRequest = ({ backEndUrl, method, config, data }: WrappedRequestProps) => {
   const requestConfig: AxiosRequestConfig<any> = {
     baseURL: backEndUrl,
     method,
     data: data ?? undefined,
     ...config,
   }
-  return offchainSignerApi(accessToken, refreshToken).request(requestConfig)
+  return offchainSignerApi().request(requestConfig)
 }
 
 export const sendRequest = async ({ request, onFailedText }: SendRequestProps) => {

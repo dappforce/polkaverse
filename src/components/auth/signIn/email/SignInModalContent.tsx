@@ -6,7 +6,6 @@ import jwtDecode from 'jwt-decode'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MutedDiv } from 'src/components/utils/MutedText'
 import {
-  callRefreshToken,
   emailSignIn,
   JwtPayload,
   onErrorHandler,
@@ -182,15 +181,10 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
 
       const data = await emailSignIn(props)
 
-      if (!data) console.error('No data returned from emailSignIn')
+      if (!data) log.error('No data returned from emailSignIn')
       const { accessToken, refreshToken } = data
 
-      const dataRefreshToken = await callRefreshToken(refreshToken)
-
-      if (!dataRefreshToken) log.warn('No data returned from callRefreshToken')
-      const { accessToken: newAccessToken, refreshToken: newRefreshToken } = dataRefreshToken
-
-      setAuthOnRequest(newAccessToken as string)
+      setAuthOnRequest(accessToken as string)
 
       const decoded = jwtDecode<JwtPayload>(accessToken)
       const { emailVerified, accountAddress } = decoded
@@ -198,8 +192,8 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
       // Save auth tokens to local storage for future use in the app
       setSignerTokensByAddress({
         userAddress: accountAddress,
-        token: newAccessToken,
-        refreshToken: newRefreshToken,
+        token: accessToken,
+        refreshToken,
       })
 
       if (!emailVerified) {
