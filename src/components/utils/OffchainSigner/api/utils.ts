@@ -57,7 +57,7 @@ type SendRequestProps = {
 
 type WrappedRequestProps = {
   backEndUrl: string
-  method: string
+  method: Method
   config: any
   data?: any
   accessToken?: string
@@ -106,9 +106,14 @@ export const sendHttpRequest = ({
   params: { url, data, config },
   method,
   accessToken,
-  refreshToken,
   ...props
 }: SendHttpRequestProps) => {
+  const newConfig = {
+    ...config,
+    headers: {
+      Authorization: accessToken!,
+    },
+  }
   if (url === OffchainSignerEndpoint.REFRESH_TOKEN) {
     return sendRequest({
       request: () =>
@@ -116,7 +121,7 @@ export const sendHttpRequest = ({
           backEndUrl: getBackendUrl(url),
           data,
           method,
-          config,
+          config: newConfig,
         }),
       ...props,
     })
@@ -129,9 +134,7 @@ export const sendHttpRequest = ({
           wrappedRequest({
             backEndUrl: getBackendUrl(url),
             method,
-            config,
-            accessToken,
-            refreshToken,
+            config: newConfig,
           }),
         ...props,
       })
@@ -142,10 +145,8 @@ export const sendHttpRequest = ({
           wrappedRequest({
             backEndUrl: getBackendUrl(url),
             method,
-            config,
+            config: newConfig,
             data,
-            refreshToken,
-            accessToken,
           }),
         ...props,
       })
