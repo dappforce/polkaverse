@@ -95,6 +95,7 @@ export enum StepsEnum {
   Confirmation,
   ShowMnemonic,
   SignInDone,
+  CreatingAccount,
 }
 
 const useGetCurrentStep = (isMobile: boolean) => {

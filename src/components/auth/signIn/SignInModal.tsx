@@ -152,20 +152,6 @@ const ModalContent = ({
 }: GetModalContentProps) => {
   const { setEmailAddress, setAddress } = useMyAccountsContext()
 
-  const [loading, setLoading] = useState(false)
-
-  if (loading)
-    return (
-      <div>
-        <ModalBodyWrapper
-          title='Please wait'
-          desc='We are recording your information on the blockchain.'
-        >
-          <LoadingTransaction />
-        </ModalBodyWrapper>
-      </div>
-    )
-
   const onAuthSuccess = (address: string, emailAddress: string) => {
     hideSignInModal()
     setAddress(address)
@@ -178,6 +164,10 @@ const ModalContent = ({
   const onAccountClick = (address: string) => {
     hideSignInModal()
     onAccountChosen?.(address)
+  }
+
+  const handleSetLoading = () => {
+    setCurrentStep(StepsEnum.CreatingAccount)
   }
 
   switch (currentStep) {
@@ -273,10 +263,23 @@ const ModalContent = ({
           >
             <ShowMnemonicModalContent
               onRegisterDone={onAuthSuccess}
-              setLoading={setLoading}
+              setLoading={handleSetLoading}
               failedMessage={'Account creation failed'}
               successMessage={'Account creation successful'}
             />
+          </ModalBodyWrapper>
+        </div>
+      )
+    }
+
+    case StepsEnum.CreatingAccount: {
+      return (
+        <div>
+          <ModalBodyWrapper
+            title='Please wait'
+            desc='We are recording your information on the blockchain.'
+          >
+            <LoadingTransaction />
           </ModalBodyWrapper>
         </div>
       )
