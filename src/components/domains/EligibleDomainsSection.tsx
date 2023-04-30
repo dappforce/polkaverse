@@ -1,17 +1,17 @@
+import { InfoCircleOutlined } from '@ant-design/icons'
 import { isFunction } from '@polkadot/util'
 import { isEmptyArray, newLogger, parseDomain } from '@subsocial/utils'
 import { Button, Card, Divider, Radio, RadioChangeEvent, Result, Row, Tag, Tooltip } from 'antd'
 import BN from 'bn.js'
-import clsx from 'clsx'
 import React, { useEffect } from 'react'
 import { showErrorMessage } from 'src/components/utils/Message'
 import config from 'src/config'
 import { useAppDispatch } from 'src/rtk/app/store'
+import { fetchPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
 import { DomainEntity } from 'src/rtk/features/domains/domainsSlice'
-import { useSelectProcessingOrderById } from 'src/rtk/features/processingRegistrationOrders/processingRegistratoinOrdersHooks'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import {
-  useCreateReloadPendingOrdersByAccount,
+  useCreateReloadPendingOrders,
   useSelectPendingOrderById,
 } from '../../rtk/features/domainPendingOrders/pendingOrdersHooks'
 import {
@@ -21,12 +21,12 @@ import {
   useIsReservedWord,
   useIsSupportedTld,
 } from '../../rtk/features/domains/domainHooks'
-import { useIsMyAddress, useMyAddress } from '../auth/MyAccountsContext'
+import { useIsMyAddress, useMyAccountsContext, useMyAddress } from '../auth/MyAccountsContext'
 import { TxCallback } from '../substrate/SubstrateTxButton'
 import useSubstrate from '../substrate/useSubstrate'
 import { Loading, LocalIcon } from '../utils'
-import { MutedDiv } from '../utils/MutedText'
-import { createPendingOrder, deletePendingOrder } from '../utils/OffchainUtils'
+import { MutedDiv, MutedSpan } from '../utils/MutedText'
+import { createPendingOrder, deletePendingOrder, updatePendingOrder } from '../utils/OffchainUtils'
 import TxButton from '../utils/TxButton'
 import RegisterDomainButton from './dot-seller/RegisterDomainModal'
 import { pendingOrderAction } from './dot-seller/utils'
@@ -59,7 +59,7 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
   const reloadMyDomains = useCreateReloadMyDomains()
   const { openManageModal, setProcessingDomains } = useManageDomainContext()
   const { api, isApiReady } = useSubstrate()
-  const reloadPendingOrders = useCreateReloadPendingOrdersByAccount()
+  const reloadPendingOrders = useCreateReloadPendingOrders()
   const { purchaser } = useManageDomainContext()
   const sellerConfig = useSelectSellerConfig()
   const myAddress = useMyAddress()
@@ -132,6 +132,16 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
     })
   }
 
+  const onCancel = async () => {
+    if (!sellerConfig || !myAddress) return
+
+    const { sellerApiAuthTokenManager } = sellerConfig
+
+    await updatePendingOrder(domainName, true, sellerApiAuthTokenManager)
+
+    dispatch(fetchPendingOrdersByAccount({ id: myAddress, reload: true }))
+  }
+
   return (
     <span className='d-flex align-items-center w-100'>
       <TxButton
@@ -144,6 +154,7 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
         tx={'domains.registerDomain'}
         onSuccess={onSuccess}
         onFailed={onFailed}
+        onCancel={onCancel}
         isFreeTx
         onClick={() => onClick()}
         params={getTxParams}
@@ -182,25 +193,10 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
 
 export const DomainItem = ({ domain, action }: DomainItemProps) => {
   const actionComponent = isFunction(action) ? action() : action
-  const myAddress = useMyAddress()
-  const pendingOrders = useSelectPendingOrderById(domain)
-  const processingOrder = useSelectProcessingOrderById(domain)
-  const { processingDomains } = useManageDomainContext()
-
-  const { createdByAccount: account } = pendingOrders || {}
-
-  const isDomainProcessing = processingDomains[domain]
 
   return (
     <Row justify='space-between' align='middle' className={styles.DomainResultItem}>
-      <div className='d-flex align-items-center justify-content-between'>
-        <span>{domain}</span>
-        {account && myAddress === account && (
-          <Tag color='gold' className={clsx('ml-2', styles.PendingTag)}>
-            {processingOrder || isDomainProcessing ? 'Processing' : 'Pending'}
-          </Tag>
-        )}
-      </div>
+      <span>{domain}</span>
       {actionComponent}
     </Row>
   )
@@ -228,11 +224,12 @@ const DomainAction = ({ domain }: DomainProps) => {
   const sellerConfig = useSelectSellerConfig()
   const myAddress = useMyAddress()
   const pendingOrder = useSelectPendingOrderById(domain.id)
+  const { setAddress } = useMyAccountsContext()
   const { dmnRegPendingOrderExpTime } = sellerConfig || {}
 
-  const { createdByAccount: account } = pendingOrder || {}
+  const { createdByAccount: account, signer } = pendingOrder || {}
 
-  if (account && account !== myAddress) {
+  if (account && signer && account !== myAddress && signer !== myAddress) {
     return (
       <Tooltip
         title={`Someone else currently has this domain reserved.
@@ -244,7 +241,26 @@ const DomainAction = ({ domain }: DomainProps) => {
     )
   }
 
-  const label = account === myAddress ? 'Continue' : undefined
+  if (account && signer && account === myAddress && signer !== myAddress) {
+    const onClick = () => {
+      setAddress(signer)
+    }
+
+    return (
+      <div>
+        <Tooltip title={'You are not a purchaser. Switch to the purchaser account'}>
+          <MutedSpan>
+            <InfoCircleOutlined />
+          </MutedSpan>
+        </Tooltip>
+        <Button type='primary' onClick={onClick} className='ml-2'>
+          Switch account
+        </Button>
+      </div>
+    )
+  }
+
+  const label = signer === myAddress ? 'Continue' : undefined
 
   return owner ? (
     <UnavailableBtn domain={domain} />

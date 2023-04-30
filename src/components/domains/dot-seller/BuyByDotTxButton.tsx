@@ -10,13 +10,14 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
 import LazyTxButton from 'src/components/donate/LazyTxButton'
 import { useLazyConnectionsContext } from 'src/components/lazy-connection/LazyConnectionContext'
-import { createPendingOrder, deletePendingOrder } from 'src/components/utils/OffchainUtils'
+import { createPendingOrder, deletePendingOrder, updatePendingOrder } from 'src/components/utils/OffchainUtils'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { useSelectPendingOrderById } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { useCreateReloadProcessingOrdersByAccount } from 'src/rtk/features/processingRegistrationOrders/processingRegistratoinOrdersHooks'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useManageDomainContext } from '../manage/ManageDomainProvider'
 import { pendingOrderAction, useGetDecimalAndSymbol } from './utils'
+import { fetchPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
 
 type BuyByDotTxButtonProps = {
   domainName: string
@@ -132,6 +133,16 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
     })
   }
 
+  const onCancel = async () => {
+    if (!sellerConfig || !myAddress) return
+
+    const { sellerApiAuthTokenManager } = sellerConfig
+
+    await updatePendingOrder(domainName, true, sellerApiAuthTokenManager)
+
+    dispatch(fetchPendingOrdersByAccount({ id: myAddress, reload: true }))
+  }
+
   return (
     <LazyTxButton
       block
@@ -148,6 +159,7 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
       tx={'utility.batchAll'}
       params={getParams}
       onSuccess={onSuccess}
+      onCancel={onCancel}
       onClick={() => onClick()}
       label={'Register'}
       className={className}

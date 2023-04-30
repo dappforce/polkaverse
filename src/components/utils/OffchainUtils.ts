@@ -119,3 +119,13 @@ export const deletePendingOrder = async (domain: string, sellerApiAuthTokenManag
 
   return res.data
 }
+
+export const updatePendingOrder = async (domain: string, interrupted: boolean, sellerApiAuthTokenManager: string) => {
+  const res = await axios.post('/api/pending-order/update', {
+    domain,
+    sellerApiAuthTokenManager,
+    interrupted
+  })
+
+  return res.data
+}

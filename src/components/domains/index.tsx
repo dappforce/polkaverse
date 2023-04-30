@@ -145,8 +145,11 @@ const DomainMarketSection = ({ promoCode }: DomainServerProps) => {
 }
 
 export const DomainRegisterPage = ({ promoCode }: DomainServerProps) => {
-  useFetchDomainPendingOrdersByAccount()
+  const myAddress = useMyAddress()
+
+  useFetchDomainPendingOrdersByAccount(myAddress)
   useFetchSellerConfig()
+  
   const isMobile = useIsMobileWidthOrDevice()
 
   const rightPanelContent = (

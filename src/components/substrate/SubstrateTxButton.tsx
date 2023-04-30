@@ -53,6 +53,7 @@ export type TxButtonProps = BaseTxButtonProps & {
   onValidate?: () => boolean | Promise<boolean>
   onClick?: () => Promise<any | undefined> | void
   onSuccess?: TxCallback
+  onCancel?: () => void
   isFreeTx?: boolean
   onFailed?: TxFailedCallback
   successMessage?: SuccessMessage
@@ -74,6 +75,7 @@ function TxButton({
   onClick,
   onSuccess,
   onFailed,
+  onCancel,
   isFreeTx = false,
   successMessage,
   failedMessage,
@@ -86,7 +88,7 @@ function TxButton({
   const { api: subsocialApi } = useSubstrate()
   const openOnBoardingModal = useOpenCloseOnBoardingModal()
   const [isSending, , setIsSending] = useToggle(false)
-  console.log(accountId)
+
   const { isMobile } = useResponsiveSize()
   const {
     openSignInModal,
@@ -203,6 +205,11 @@ function TxButton({
     if (err) {
       const errMsg = `Tx failed: ${err.toString()}`
       log.debug(`❌ ${errMsg}`)
+
+      if(errMsg.includes('Cancelled')) {
+        onCancel?.()
+      }
+
       showErrorMessage(errMsg)
     }
 

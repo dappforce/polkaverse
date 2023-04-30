@@ -7,6 +7,7 @@ import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
 import { useSubstrate } from 'src/components/substrate'
 import { useSelectProcessingOrderById } from 'src/rtk/features/processingRegistrationOrders/processingRegistratoinOrdersHooks'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
+import { useSelectPendingOrderById } from '../../../rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { FormatBalance, useCreateBalance } from '../../common/balances/Balance'
 import { MutedDiv } from '../../utils/MutedText'
 import { BuyDomainSection } from '../EligibleDomainsSection'
@@ -24,12 +25,14 @@ const ModalBody = ({ domainName, price }: ModalBodyProps) => {
   const { recipient, purchaser, setRecipient, setPurchaser } = useManageDomainContext()
   const sellerConfig = useSelectSellerConfig()
   const { variant } = useManageDomainContext()
+  const pendingOrder = useSelectPendingOrderById(domainName)
   const nativeBalance = useCreateBalance(purchaser)
   const isMyAddress = useIsMyAddress(recipient)
 
+  const { destination } = pendingOrder || {}
   const { sellerChain } = sellerConfig || {}
 
-  const isSub = variant === 'SUB'
+  const isSub = destination ? destination === 'SUB' : variant === 'SUB'
 
   const { decimal, symbol } = useGetDecimalAndSymbol(sellerChain)
 
@@ -67,7 +70,7 @@ const ModalBody = ({ domainName, price }: ModalBodyProps) => {
           network={isSub ? undefined : sellerChain}
         />
       </Space>
-      {variant !== 'SUB' && (
+      {!isSub && (
         <Space direction='vertical' size={8} className={'w-100'}>
           <div className={clsx(styles.Recipient, 'd-flex align-items-center')}>
             <div>Recipient </div>
@@ -115,6 +118,9 @@ type BuyDomainModalProps = {
 
 const BuyDomainModal = ({ domainName, open, close, price }: BuyDomainModalProps) => {
   const { variant } = useManageDomainContext()
+  const pendingOrder = useSelectPendingOrderById(domainName)
+
+  const { destination } = pendingOrder || {}
 
   const title = (
     <div className={styles.ModalTitle}>
@@ -122,9 +128,11 @@ const BuyDomainModal = ({ domainName, open, close, price }: BuyDomainModalProps)
     </div>
   )
 
+  const isByDot = destination ? destination === 'DOT' : variant === 'DOT'
+
   const modalFooter = (
     <div className={styles.FooterButtons}>
-      {variant === 'DOT' ? (
+      {isByDot ? (
         <BuyByDotTxButton domainName={domainName} className={'ml-0'} close={close} />
       ) : (
         <BuyDomainSection domainName={domainName} />
@@ -165,19 +173,22 @@ const RegisterDomainButton = ({
   const { api } = useSubstrate()
   const processingOrder = useSelectProcessingOrderById(domainName)
   const { processingDomains } = useManageDomainContext()
+  const pendingOrder = useSelectPendingOrderById(domainName)
 
   const [open, setOpen] = useState(false)
   const { decimal, symbol } = useGetDecimalAndSymbol(sellerChain)
 
   const close = () => setOpen(false)
 
-  const price = useMemo(() => {
-    return variant === 'SUB'
-      ? api?.consts.domains.baseDomainDeposit.toString()
-      : domainRegistrationPriceFixed
-  }, [variant])
+  const { destination } = pendingOrder || {}
 
-  const chainProps = variant === 'SUB' ? {} : { decimals: decimal, currency: symbol }
+  const isSub = destination ? destination === 'SUB' : variant === 'SUB'
+
+  const price = useMemo(() => {
+    return isSub ? api?.consts.domains.baseDomainDeposit.toString() : domainRegistrationPriceFixed
+  }, [isSub])
+
+  const chainProps = isSub ? {} : { decimals: decimal, currency: symbol }
 
   const isProcessingDomain = processingDomains[domainName]
 

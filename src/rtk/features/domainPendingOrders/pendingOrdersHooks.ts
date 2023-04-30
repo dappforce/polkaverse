@@ -20,15 +20,19 @@ export const useFetchDomainPendingOrdersByIds = (domains: string[]) => {
   useFetch(fetchPendingOrdersByIds, { ids })
 }
 
-export const useFetchDomainPendingOrdersByAccount = () => {
+export const useFetchDomainPendingOrdersByCreatedByAccount = () => {
   const myAddress = useMyAddress()
 
   useFetch(fetchPendingOrdersByAccount, { id: myAddress || '' })
 }
 
-export const useFetchDomainPendingOrdersBySigner = (address?: string) => {
-
+export const useFetchDomainPendingOrdersBySigner = (address?: string) => (
   useFetch(fetchPendingOrdersBySigner, { id: address || '' })
+)
+
+export const useFetchDomainPendingOrdersByAccount = (address?: string) => {
+  useFetchDomainPendingOrdersByCreatedByAccount()
+  useFetchDomainPendingOrdersBySigner(address)
 }
 
 export const useSelectPendingOrderById = (id: string) => {
@@ -49,9 +53,24 @@ export const useSelectPendingOrdersBySigner = (address?: string) => {
   return useAppSelector(state => selectPendingOrdersByAccount(state, 'signer', address))
 }
 
-export const useCreateReloadPendingOrdersByAccount = () => {
+export const useSelectPendingOrders = () => {
+  const myAddress = useMyAddress()
+  
+  const ordersByAccount = useSelectPendingOrdersByAccount()
+  const ordersBySigner = useSelectPendingOrdersBySigner(myAddress)
+
+  const ordersSet = new Set([...ordersByAccount, ...ordersBySigner])
+
+  return Array.from(ordersSet)
+}
+
+
+export const useCreateReloadPendingOrders = () => {
   return useActions<string | undefined>(({ dispatch, args }) => {
-    args && dispatch(fetchPendingOrdersByAccount({ id: args, reload: true }))
+    if(args) {
+      dispatch(fetchPendingOrdersByAccount({ id: args, reload: true }))
+      dispatch(fetchPendingOrdersBySigner({ id: args, reload: true }))
+    }
   })
 }
 

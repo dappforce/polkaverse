@@ -18,7 +18,7 @@ export const PENDING_ORDERS_BY_IDS = gql`
 
 export const PENDING_ORDERS_BY_SIGNER = gql`
   query GetPendingOrdersBySigner($signer: String!) {
-    getPendingOrdersByAccount(signer: $signer) {
+    getPendingOrdersBySigner(signer: $signer) {
       orders {
         id
         createdByAccount
@@ -106,5 +106,11 @@ export const CREATE_PENDING_ORDER = gql`
 export const DELETE_PENDING_ORDER = gql`
   mutation DeletePendingOrderById($id: String!) {
     deletePendingOrderById(id: $id)
+  }
+`
+
+export const UPDATE_PENDING_ORDER = gql`
+  mutation updatePendingOrderPurchaseStatusById($id: String!, $interrupted: Boolean!) {
+    updatePendingOrderPurchaseStatusById(id: $id, interrupted: $interrupted)
   }
 `

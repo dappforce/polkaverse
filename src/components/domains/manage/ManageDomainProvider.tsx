@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useMyAddress } from '../../auth/MyAccountsContext'
 import { ManageDomainModal } from './DomainManageModal'
 
@@ -29,6 +29,7 @@ const ManageDomainContext = createContext<ManageDomainProviderState>({} as any)
 
 export const ManageDomainProvider: React.FC<{ promoCode?: string }> = ({ children, promoCode }) => {
   const myAddress = useMyAddress()
+
   const [currentStep, setStep] = useState<MenuSteps>()
   const [domain, setDomain] = useState<string>()
   const [visible, setVisible] = useState(true)
@@ -37,6 +38,13 @@ export const ManageDomainProvider: React.FC<{ promoCode?: string }> = ({ childre
   const [purchaser, setPurchaser] = useState<string>(myAddress || '')
   const [isFetchNewDomains, setIsFetchNewDomains] = useState(false)
   const [processingDomains, setProcessingDomains] = useState<Record<string, boolean>>({})
+
+  useEffect(() => {
+    if(!myAddress) return
+
+    setRecipient(myAddress)
+    setPurchaser(myAddress)
+  }, [ myAddress])
 
   const router = useRouter()
   const [activePromoCode, setActivePromoCode] = useState(promoCode)

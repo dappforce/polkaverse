@@ -6,7 +6,10 @@ import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import CardWithContent from 'src/components/utils/cards/CardWithContent'
-import { useCreateReloadPendingOrdersByAccount, useSelectPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
+import {
+  useCreateReloadPendingOrders,
+  useSelectPendingOrders,
+} from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { PendingDomainEntity } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
 import {
   useFetchProcessingOrdersByIds,
@@ -27,27 +30,39 @@ type PendingDomainProps = {
 const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
   const sellerConfig = useSelectSellerConfig()
   const processingOrder = useSelectProcessingOrderById(pendingDomain.id)
-  const reloadPendingOrders = useCreateReloadPendingOrdersByAccount()
+  const reloadPendingOrders = useCreateReloadPendingOrders()
   const myAddress = useMyAddress()
 
   const { processingDomains } = useManageDomainContext()
 
-  const { id, timestamp, destination } = pendingDomain
+  const { id, timestamp, destination, purchaseInterrupted, signer } = pendingDomain
   const { dmnRegPendingOrderExpTime } = sellerConfig || {}
 
   const expiresAt = useMemo(() => {
-    const expiresAtValue = dayjs(timestamp).valueOf() + (dmnRegPendingOrderExpTime || 0) 
+    const expiresAtValue = dayjs(timestamp).valueOf() + (dmnRegPendingOrderExpTime || 0)
 
-    if(time >= expiresAtValue + 12000) {
+    if (time >= expiresAtValue + 12000) {
       reloadPendingOrders(myAddress)
-
-      return
     }
 
     return SubDate.formatDate(expiresAtValue)
   }, [time])
 
   const isDomainProcessing = processingDomains[pendingDomain.id]
+
+  const registerButton =
+    processingOrder || isDomainProcessing ? (
+      <Tag color='gold' className={clsx(styles.PendingTag)}>
+        Processing
+      </Tag>
+    ) : (
+      <RegisterDomainButton
+        domainName={id}
+        label={'Continue'}
+        withPrice={false}
+        variant={destination as Variant}
+      />
+    )
 
   return (
     <div className='d-flex align-items-center justify-content-between'>
@@ -60,24 +75,13 @@ const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
           <InfoCircleOutlined />
         </Tooltip>
       </div>
-      {processingOrder || isDomainProcessing ? (
-        <Tag color='gold' className={clsx(styles.PendingTag)}>
-          Processing
-        </Tag>
-      ) : (
-        <RegisterDomainButton
-          domainName={id}
-          label={'Continue'}
-          withPrice={false}
-          variant={destination as Variant}
-        />
-      )}
+      {signer === myAddress && purchaseInterrupted && registerButton}
     </div>
   )
 }
 
 const PendingOrdersSection = () => {
-  const pendingOrders = useSelectPendingOrdersByAccount()
+  const pendingOrders = useSelectPendingOrders()
   const sellerConfig = useSelectSellerConfig()
   const myAddress = useMyAddress()
   const [time, setTime] = useState<number>(dayjs().valueOf())
@@ -106,7 +110,7 @@ const PendingOrdersSection = () => {
         {orders}
       </Space>
     )
-  }, [pendingOrders.length, time])
+  }, [pendingOrders.length, time, myAddress])
 
   if (!pendingOrders || isEmptyArray(pendingOrders)) return null
 

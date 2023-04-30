@@ -1,4 +1,7 @@
+import { decodeAddress } from '@polkadot/keyring'
 import { GenericAccountId } from '@polkadot/types'
+import { u8aToHex } from '@polkadot/util'
+import { encodeAddress } from '@polkadot/util-crypto'
 import {
   createAsyncThunk,
   createEntityAdapter,
@@ -7,7 +10,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit'
 import registry from '@subsocial/api/utils/registry'
-import { isDef, isEmptyArray } from '@subsocial/utils'
+import { isDef, isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
 import { sellerSquidGraphQlClient } from 'src/components/domains/dot-seller/config'
 import {
   PENDING_ORDERS_BY_ACCOUNT,
@@ -16,9 +19,6 @@ import {
 } from 'src/components/domains/dot-seller/seller-queries'
 import { ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { encodeAddress } from '@polkadot/util-crypto'
-import { decodeAddress } from '@polkadot/keyring'
-import { u8aToHex } from '@polkadot/util'
 
 export type RemovePendingOrderProps = {
   domainName: string
@@ -37,6 +37,11 @@ export type PendingDomainEntity = {
 const sliceName = 'domainPndingOrders'
 
 type MaybeEntity = PendingDomainEntity | undefined
+
+type FetchResult = {
+  idsToRemove: string[]
+  orders: MaybeEntity[]
+}
 
 const adapter = createEntityAdapter<PendingDomainEntity>()
 
@@ -76,77 +81,160 @@ export const selectPendingOrdersByIds = (state: RootState, ids: string[]) => {
   return selectEntitiesByIds(state, entityIds as string[])
 }
 
-export const selectPendingOrdersByAccount = (state: RootState, field: 'signer' | 'createdByAccount', address?: string) => {
+export const selectPendingOrdersByAccount = (
+  state: RootState,
+  field: 'signer' | 'createdByAccount',
+  address?: string,
+) => {
   const pendingOrdersStore = selectors.selectAll(state)
 
-  return pendingOrdersStore.filter((item) => {
+  return pendingOrdersStore.filter(item => {
     const account = item[field]
 
-    const subsocialAddress: string = new GenericAccountId(registry, encodeAddress(account)).toString()
+    const subsocialAddress: string = new GenericAccountId(
+      registry,
+      encodeAddress(account),
+    ).toString()
 
     return subsocialAddress === address
   })
 }
 
 export const fetchPendingOrdersByIds = createAsyncThunk<
-  MaybeEntity[],
+  FetchResult,
   FetchManyWithoutApi,
   ThunkApiConfig
->(`${sliceName}/fetchManyByIds`, async ({ ids, reload }, { getState }): Promise<MaybeEntity[]> => {
+>(`${sliceName}/fetchManyByIds`, async ({ ids, reload }, { getState }): Promise<FetchResult> => {
   const entityIds = ids as string[]
   const knownDomainsPendingOrders = selectPendingOrdersByIds(getState(), entityIds)
 
   if (!reload && knownDomainsPendingOrders) {
-    return []
+    return {
+      idsToRemove: [],
+      orders: []
+    }
   }
 
   const result: any = await sellerSquidGraphQlClient.request(PENDING_ORDERS_BY_IDS, { ids })
 
-  return result.getPendingOrdersByIds.orders as PendingDomainEntity[]
+  const orders = result.getPendingOrdersByIds.orders as PendingDomainEntity[]
+
+  const parsedOrders = orders.map(order => {
+    const { signer, createdByAccount } = order
+
+    return {
+      ...order,
+      signer: toSubsocialAddress(signer) || '',
+      createdByAccount: toSubsocialAddress(createdByAccount) || '',
+    }
+  })
+
+  const parsedOrdersIds = parsedOrders.map((order) => order.id)
+  const knownOrdersIds = knownDomainsPendingOrders.map((order) => order.id)
+
+  const idsToRemove: string[] = knownOrdersIds.filter(knownId => !parsedOrdersIds.includes(knownId))
+
+  return {
+    idsToRemove,
+    orders: parsedOrders
+  }
 })
 
 export const fetchPendingOrdersBySigner = createAsyncThunk<
-  MaybeEntity[],
+  FetchResult,
   FetchOneWithoutApi,
   ThunkApiConfig
 >(
   `${sliceName}/fetchManyBySigner`,
-  async ({ id: account, reload }, { getState }): Promise<MaybeEntity[]> => {
-    const knownDomainsPendingOrders = selectPendingOrdersByAccount(getState(), 'signer', account.toString())
+  async ({ id: account, reload }, { getState }): Promise<FetchResult> => {
+    const knownDomainsPendingOrders = selectPendingOrdersByAccount(
+      getState(),
+      'signer',
+      account.toString(),
+    )
 
     if (!reload && !isEmptyArray(knownDomainsPendingOrders)) {
-      return []
+      return {
+        idsToRemove: [],
+        orders: []
+      }
     }
 
     const result: any = await sellerSquidGraphQlClient.request(PENDING_ORDERS_BY_SIGNER, {
       signer: account,
     })
 
-    return result.getPendingOrdersBySigner.orders as PendingDomainEntity[]
+    const orders = result.getPendingOrdersBySigner.orders as PendingDomainEntity[]
+
+    const parsedOrders = orders.map(order => {
+      const { signer, createdByAccount } = order
+
+      return {
+        ...order,
+        signer: toSubsocialAddress(signer) || '',
+        createdByAccount: toSubsocialAddress(createdByAccount) || '',
+      }
+    })
+
+    const parsedOrdersIds = parsedOrders.map((order) => order.id)
+    const knownOrdersIds = knownDomainsPendingOrders.map((order) => order.id)
+
+    const idsToRemove: string[] = knownOrdersIds.filter(knownId => !parsedOrdersIds.includes(knownId))
+
+    return {
+      idsToRemove,
+      orders: parsedOrders
+    }
   },
 )
 
 export const fetchPendingOrdersByAccount = createAsyncThunk<
-  MaybeEntity[],
+  FetchResult,
   FetchOneWithoutApi,
   ThunkApiConfig
 >(
   `${sliceName}/fetchManyByAccount`,
-  async ({ id: account, reload }, { getState }): Promise<MaybeEntity[]> => {
-    const knownDomainsPendingOrders = selectPendingOrdersByAccount(getState(), 'createdByAccount', account.toString())
+  async ({ id: account, reload }, { getState }): Promise<FetchResult> => {
+    const knownDomainsPendingOrders = selectPendingOrdersByAccount(
+      getState(),
+      'createdByAccount',
+      account.toString(),
+    )
 
     if (!reload && !isEmptyArray(knownDomainsPendingOrders)) {
-      return []
+      return {
+        idsToRemove: [],
+        orders: []
+      }
     }
 
     const decodedAddress = u8aToHex(decodeAddress(account.toString()))
-    console.log(decodedAddress)
 
     const result: any = await sellerSquidGraphQlClient.request(PENDING_ORDERS_BY_ACCOUNT, {
       createdByAccount: decodedAddress,
     })
 
-    return result.getPendingOrdersByCreatedByAccount.orders as PendingDomainEntity[]
+    const orders = result.getPendingOrdersByCreatedByAccount.orders as PendingDomainEntity[]
+
+    const parsedOrders = orders.map(order => {
+      const { signer, createdByAccount } = order
+
+      return {
+        ...order,
+        signer: toSubsocialAddress(signer) || '',
+        createdByAccount: toSubsocialAddress(createdByAccount) || '',
+      }
+    })
+
+    const parsedOrdersIds = parsedOrders.map((order) => order.id)
+    const knownOrdersIds = knownDomainsPendingOrders.map((order) => order.id)
+
+    const idsToRemove: string[] = knownOrdersIds.filter(knownId => !parsedOrdersIds.includes(knownId))
+
+    return {
+      idsToRemove,
+      orders: parsedOrders
+    }
   },
 )
 
@@ -163,16 +251,37 @@ const slice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(fetchPendingOrdersByIds.fulfilled, (state, { payload }) => {
-        adapter.removeAll(state)
-        adapter.upsertMany(state, payload.filter(isDef))
+        const { idsToRemove, orders } = payload
+
+        if(!orders) return 
+
+        if(!isEmptyArray(idsToRemove)) {
+          adapter.removeMany(state, idsToRemove)
+        }
+
+        adapter.upsertMany(state, orders.filter(isDef))
       })
       .addCase(fetchPendingOrdersBySigner.fulfilled, (state, { payload }) => {
-        adapter.removeAll(state)
-        adapter.addMany(state, payload.filter(isDef))
+        const { idsToRemove, orders } = payload
+
+        if(!orders) return 
+
+        if(!isEmptyArray(idsToRemove)) {
+          adapter.removeMany(state, idsToRemove)
+        }
+
+        adapter.upsertMany(state, orders.filter(isDef))
       })
       .addCase(fetchPendingOrdersByAccount.fulfilled, (state, { payload }) => {
-        adapter.removeAll(state)
-        adapter.addMany(state, payload.filter(isDef))
+        const { idsToRemove, orders } = payload
+
+        if(!orders) return 
+
+        if(!isEmptyArray(idsToRemove)) {
+          adapter.removeMany(state, idsToRemove)
+        }
+
+        adapter.upsertMany(state, orders.filter(isDef))
       })
   },
 })

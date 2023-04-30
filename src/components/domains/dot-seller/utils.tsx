@@ -1,6 +1,6 @@
 import { AppDispatch } from 'src/rtk/app/store'
 import { useChainInfo } from '../../../rtk/features/chainsInfo/chainsInfoHooks'
-import { fetchPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
+import { fetchPendingOrdersByAccount, fetchPendingOrdersBySigner } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
 import { showErrorMessage } from 'src/components/utils/Message'
 
 export const useGetDecimalAndSymbol = (network?: string) => {
@@ -28,6 +28,7 @@ export const pendingOrderAction = async <T extends any>({ action, args, dispatch
 
   if (result?.success) {
     dispatch(fetchPendingOrdersByAccount({ id: account, reload: true }))
+    dispatch(fetchPendingOrdersBySigner({ id: account, reload: true }))
     return false
   } else {
     showErrorMessage(result?.errors)

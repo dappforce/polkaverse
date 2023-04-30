@@ -49,6 +49,7 @@ export type TxButtonProps = BaseTxButtonProps & {
   unsigned?: boolean
   onValidate?: () => boolean | Promise<boolean>
   onClick?: () => Promise<boolean | undefined> | void
+  onCancel?: () => void
   onSuccess?: TxCallback
   onFailed?: TxFailedCallback
   successMessage?: SuccessMessage
@@ -90,6 +91,7 @@ function LazyTxButton({
   onValidate,
   onClick,
   onSuccess,
+  onCancel,
   onFailed,
   successMessage,
   failedMessage,
@@ -176,6 +178,11 @@ function LazyTxButton({
     if (err) {
       const errMsg = `Tx failed: ${err.toString()}`
       log.debug(`❌ ${errMsg}`)
+
+      if(errMsg.includes('Cancelled')) {
+        onCancel?.()
+      }
+      
       showErrorMessage(errMsg)
     }
 
