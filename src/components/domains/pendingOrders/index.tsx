@@ -26,13 +26,13 @@ type PendingDomainProps = {
 
 const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
   const sellerConfig = useSelectSellerConfig()
-  const processingOrder = useSelectProcessingOrderById(pendingDomain.domain)
+  const processingOrder = useSelectProcessingOrderById(pendingDomain.id)
   const reloadPendingOrders = useCreateReloadPendingOrdersByAccount()
   const myAddress = useMyAddress()
 
   const { processingDomains } = useManageDomainContext()
 
-  const { domain, timestamp, destination } = pendingDomain
+  const { id, timestamp, destination } = pendingDomain
   const { dmnRegPendingOrderExpTime } = sellerConfig || {}
 
   const expiresAt = useMemo(() => {
@@ -47,12 +47,12 @@ const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
     return SubDate.formatDate(expiresAtValue)
   }, [time])
 
-  const isDomainProcessing = processingDomains[pendingDomain.domain]
+  const isDomainProcessing = processingDomains[pendingDomain.id]
 
   return (
     <div className='d-flex align-items-center justify-content-between'>
       <div className='d-flex align-items-center mr-2'>
-        <div className='mlr-2'>{domain}</div>
+        <div className='mlr-2'>{id}</div>
         <Tooltip
           title={`Your domain reservation expires ${expiresAt}`}
           className={styles.TimeTooltip}
@@ -66,7 +66,7 @@ const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
         </Tag>
       ) : (
         <RegisterDomainButton
-          domainName={domain}
+          domainName={id}
           label={'Continue'}
           withPrice={false}
           variant={destination as Variant}
@@ -82,7 +82,7 @@ const PendingOrdersSection = () => {
   const myAddress = useMyAddress()
   const [time, setTime] = useState<number>(dayjs().valueOf())
 
-  const pendingDomainsNames = pendingOrders?.map(order => order.domain)
+  const pendingDomainsNames = pendingOrders?.map(order => order.id)
 
   useFetchProcessingOrdersByIds(pendingDomainsNames, myAddress)
 

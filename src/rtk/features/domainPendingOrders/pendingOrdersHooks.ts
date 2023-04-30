@@ -7,6 +7,7 @@ import {
   RemovePendingOrderProps,
   fetchPendingOrdersByAccount,
   fetchPendingOrdersByIds,
+  fetchPendingOrdersBySigner,
   removePendingOrder,
   selectPendingOrdersByAccount,
   selectPendingOrdersById,
@@ -25,6 +26,11 @@ export const useFetchDomainPendingOrdersByAccount = () => {
   useFetch(fetchPendingOrdersByAccount, { id: myAddress || '' })
 }
 
+export const useFetchDomainPendingOrdersBySigner = (address?: string) => {
+
+  useFetch(fetchPendingOrdersBySigner, { id: address || '' })
+}
+
 export const useSelectPendingOrderById = (id: string) => {
   return useAppSelector(state => selectPendingOrdersById(state, id))
 }
@@ -35,7 +41,12 @@ export const useSelectPendingOrdersByIds = (ids: string[]) => {
 
 export const useSelectPendingOrdersByAccount = () => {
   const myAddress = useMyAddress()
-  return useAppSelector(state => selectPendingOrdersByAccount(state, myAddress))
+
+  return useAppSelector(state => selectPendingOrdersByAccount(state, 'createdByAccount', myAddress))
+}
+
+export const useSelectPendingOrdersBySigner = (address?: string) => {
+  return useAppSelector(state => selectPendingOrdersByAccount(state, 'signer', address))
 }
 
 export const useCreateReloadPendingOrdersByAccount = () => {

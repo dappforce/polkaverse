@@ -13,10 +13,10 @@ import { useLazyConnectionsContext } from 'src/components/lazy-connection/LazyCo
 import { createPendingOrder, deletePendingOrder } from 'src/components/utils/OffchainUtils'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { useSelectPendingOrderById } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
+import { useCreateReloadProcessingOrdersByAccount } from 'src/rtk/features/processingRegistrationOrders/processingRegistratoinOrdersHooks'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useManageDomainContext } from '../manage/ManageDomainProvider'
 import { pendingOrderAction, useGetDecimalAndSymbol } from './utils'
-import { useCreateReloadProcessingOrdersByAccount } from 'src/rtk/features/processingRegistrationOrders/processingRegistratoinOrdersHooks'
 
 type BuyByDotTxButtonProps = {
   domainName: string
@@ -29,7 +29,8 @@ function getKeyName(value: string) {
 }
 
 const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProps) => {
-  const { recipient, purchaser, setIsFetchNewDomains, setProcessingDomains } = useManageDomainContext()
+  const { recipient, purchaser, setIsFetchNewDomains, setProcessingDomains } =
+    useManageDomainContext()
   const sellerConfig = useSelectSellerConfig()
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
@@ -96,7 +97,7 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
     setIsFetchNewDomains(true)
     reloadProcessingOrders({ domains: [domainName], recipient })
     setProcessingDomains({ [domainName]: true })
-    
+
     close()
   }
 
@@ -110,15 +111,24 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
         action: deletePendingOrder,
         args: [domainName, sellerApiAuthTokenManager],
         account: purchaser,
-        dispatch
+        dispatch,
       })
     }
 
     return await pendingOrderAction({
       action: createPendingOrder,
-      args: [purchaser, domainName, sellerApiAuthTokenManager, 'DOT', recipient],
+      args: [
+        {
+          sellerApiAuthTokenManager,
+          createdByAccount: myAddress,
+          destination: 'DOT',
+          domain: domainName,
+          signer: purchaser,
+          target: recipient,
+        },
+      ],
       account: purchaser,
-      dispatch
+      dispatch,
     })
   }
 

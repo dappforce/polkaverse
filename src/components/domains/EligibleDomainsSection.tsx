@@ -7,6 +7,8 @@ import React, { useEffect } from 'react'
 import { showErrorMessage } from 'src/components/utils/Message'
 import config from 'src/config'
 import { useAppDispatch } from 'src/rtk/app/store'
+import { DomainEntity } from 'src/rtk/features/domains/domainsSlice'
+import { useSelectProcessingOrderById } from 'src/rtk/features/processingRegistrationOrders/processingRegistratoinOrdersHooks'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import {
   useCreateReloadPendingOrdersByAccount,
@@ -31,8 +33,6 @@ import { pendingOrderAction } from './dot-seller/utils'
 import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
 import { DomainDetails, getTime, ResultContainer } from './utils'
-import { DomainEntity } from 'src/rtk/features/domains/domainsSlice'
-import { useSelectProcessingOrderById } from 'src/rtk/features/processingRegistrationOrders/processingRegistratoinOrdersHooks'
 
 const log = newLogger('DD')
 
@@ -117,12 +117,19 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
 
     return await pendingOrderAction({
       action: createPendingOrder,
-      args: [purchaser, domainName, sellerApiAuthTokenManager, 'SUB', purchaser],
+      args: [
+        {
+          sellerApiAuthTokenManager,
+          createdByAccount: myAddress,
+          destination: 'SUB',
+          domain: domainName,
+          signer: purchaser,
+          target: '',
+        },
+      ],
       account: purchaser,
       dispatch,
     })
-
-
   }
 
   return (
@@ -180,7 +187,7 @@ export const DomainItem = ({ domain, action }: DomainItemProps) => {
   const processingOrder = useSelectProcessingOrderById(domain)
   const { processingDomains } = useManageDomainContext()
 
-  const { account } = pendingOrders || {}
+  const { createdByAccount: account } = pendingOrders || {}
 
   const isDomainProcessing = processingDomains[domain]
 
@@ -223,7 +230,7 @@ const DomainAction = ({ domain }: DomainProps) => {
   const pendingOrder = useSelectPendingOrderById(domain.id)
   const { dmnRegPendingOrderExpTime } = sellerConfig || {}
 
-  const { account } = pendingOrder || {}
+  const { createdByAccount: account } = pendingOrder || {}
 
   if (account && account !== myAddress) {
     return (

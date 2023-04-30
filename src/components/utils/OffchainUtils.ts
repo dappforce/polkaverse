@@ -96,28 +96,22 @@ export const registerDomainWithPromoCode = async ({
   return res?.data
 }
 
-export const createPendingOrder = async (
-  purchaser: string,
-  domain: string,
-  sellerApiAuthTokenManager: string,
-  destination: string,
+type CreatePendingProps = {
+  signer: string
+  domain: string
+  sellerApiAuthTokenManager: string
+  createdByAccount: string
+  destination: string
   target: string
-) => {
-  const res = await axios.post('/api/pending-order/create', {
-    purchaser,
-    domain,
-    sellerApiAuthTokenManager,
-    destination,
-    target
-  })
+}
+
+export const createPendingOrder = async (props: CreatePendingProps) => {
+  const res = await axios.post('/api/pending-order/create', props)
 
   return res.data
 }
 
-export const deletePendingOrder = async (
-  domain: string,
-  sellerApiAuthTokenManager: string,
-) => {
+export const deletePendingOrder = async (domain: string, sellerApiAuthTokenManager: string) => {
   const res = await axios.post('/api/pending-order/delete', {
     domain,
     sellerApiAuthTokenManager,
