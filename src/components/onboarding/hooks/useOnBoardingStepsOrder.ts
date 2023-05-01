@@ -4,6 +4,7 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import {
   getSignerToken,
   isCurrentSignerAddress,
+  isProxyAdded,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { OnBoardingDataTypes } from 'src/rtk/features/onBoarding/onBoardingSlice'
@@ -28,6 +29,8 @@ export default function useOnBoardingStepsOrder(
 
     const usedSteps: (keyof OnBoardingDataTypes)[] = []
 
+    const isCurrentAddressAddedWithProxy = isProxyAdded(myAddress)
+
     if (!(profile?.content as any)?.interests) usedSteps.push('topics')
     if (!isCompact || !isFollowSpaceModalUsed) usedSteps.push('spaces')
     if (!profile?.content?.name) usedSteps.push('profile')
@@ -39,11 +42,9 @@ export default function useOnBoardingStepsOrder(
 
     const offchainToken = getSignerToken(myAddress)
 
-    const showSignerStep = !(
-      isSignerAddress &&
-      typeof offchainToken === 'string' &&
-      offchainToken.length > 0
-    )
+    const showSignerStep =
+      !(isSignerAddress && typeof offchainToken === 'string' && offchainToken.length > 0) ||
+      !isCurrentAddressAddedWithProxy
 
     if (showSignerStep) usedSteps.push('signer')
 

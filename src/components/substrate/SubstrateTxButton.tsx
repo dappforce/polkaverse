@@ -1,6 +1,7 @@
 import { isStr } from '@subsocial/utils'
 import Button, { ButtonProps } from 'antd/lib/button'
 import React from 'react'
+import { isProxyAdded } from '../utils/OffchainSigner/ExternalStorage'
 
 import { ApiPromise, SubmittableResult } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types'
@@ -11,6 +12,7 @@ import { VoidFn } from '@polkadot/api/types'
 import { isEmptyStr, newLogger } from '@subsocial/utils'
 import { useCreateSendGaUserEvent } from 'src/ga'
 import useExternalStorage from 'src/hooks/useExternalStorage'
+import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
 import messages from 'src/messages'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
 import { AnyAccountId } from 'src/types'
@@ -23,7 +25,6 @@ import {
   getSignerRefreshToken,
   getSignerToken,
   isCurrentSignerAddress,
-  SIGNER_ADDRESS_KEY,
   SIGNER_REFRESH_TOKEN_KEY,
   SIGNER_TOKEN_KEY,
 } from '../utils/OffchainSigner/ExternalStorage'
@@ -105,11 +106,7 @@ function TxButton({
     storageKeyType: 'user',
   })
 
-  const { setData: setSignerAddress } = useExternalStorage(SIGNER_ADDRESS_KEY, {
-    parseStorageToState: data => data === '1',
-    parseStateToStorage: state => (state ? '1' : undefined),
-    storageKeyType: 'user',
-  })
+  const { setIsSignerAddress, setSignerProxyAdded } = useSignerExternalStorage()
 
   const emailSignerToken = getSignerToken(accountId as string)
   const emailRefreshToken = getSignerRefreshToken(accountId as string)
@@ -118,6 +115,7 @@ function TxButton({
   const currentUserSignerToken = isSigningWithEmail ? emailSignerToken : signerToken
   const currentUserRefreshToken = isSigningWithEmail ? emailRefreshToken : refreshToken
   const isSignerAddress = isSigningWithEmail || isCurrentSignerAddress(accountId as string)
+  const isMainProxyAdded = isProxyAdded(accountId as string)
   const isSignerTx =
     !!currentUserSignerToken &&
     !!currentUserRefreshToken &&
@@ -231,13 +229,13 @@ function TxButton({
     }
 
     let hideRememberMePopup = false
-    if ((tx === 'utility.batch' && signerToken) || tx === 'proxy.addProxy')
+    if ((tx === 'utility.batch' && signerToken) || tx === 'freeProxy.addFreeProxy')
       hideRememberMePopup = true
 
     try {
       const extrinsic = await getExtrinsic()
 
-      if (isSignerTx) {
+      if (isSignerTx && isMainProxyAdded) {
         sendSignerTx(
           api,
           extrinsic,
@@ -264,8 +262,10 @@ function TxButton({
 
         const tx = await extrinsic.signAsync(accountId, { signer })
         if (hideRememberMePopup) {
-          setSignerAddress(true)
+          setSignerProxyAdded(accountId as string)
+          setIsSignerAddress(accountId as string)
         }
+
         unsub = await tx.send(onSuccessHandler)
       }
       waitMessage.open()

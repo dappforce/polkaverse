@@ -11,6 +11,7 @@ const SECRET_KEY = 'SecretKey'
 const SALT = 'Salt'
 const CURRENT_EMAIL_ADDRESS = 'CurrentEmailAddress'
 const SIGNER_EMAIL_ADDRESS_KEY = 'SignerEmailAddress'
+const SIGNER_PROXY_ADDED = 'SignerProxyAdded'
 
 const log = newLogger('OffchainSignerExternalStorage')
 
@@ -32,7 +33,7 @@ const getTempRegisterAccount = (): string | undefined =>
   store.get(createStorageKey(TEMP_REGISTER_ACCOUNT))
 
 const isCurrentSignerAddress = (myAddress: string) =>
-  store.get(createStorageKey(SIGNER_ADDRESS_KEY, toSubsocialAddress(myAddress))) === 0
+  store.get(createStorageKey(SIGNER_ADDRESS_KEY, toSubsocialAddress(myAddress))) === 1
     ? true
     : false
 const getProxyAddress = (myAddress: string): string | undefined =>
@@ -49,10 +50,16 @@ const getSecretKeyByAddress = (myAddress: string): string | undefined =>
 const getSaltByAddress = (myAddress: string): string | undefined =>
   store.get(createStorageKeyWithSubAddress(SALT, myAddress))
 
+const isProxyAdded = (myAddress: string) =>
+  store.get(createStorageKey(SIGNER_PROXY_ADDED, toSubsocialAddress(myAddress))) === 1
+    ? true
+    : false
+
 export {
   SIGNER_ADDRESS_KEY,
   SIGNER_TOKEN_KEY,
   SIGNER_REFRESH_TOKEN_KEY,
+  SIGNER_PROXY_ADDED,
   TEMP_REGISTER_ACCOUNT,
   PROXY_ADDRESS_KEY,
   SECRET_KEY,
@@ -68,4 +75,5 @@ export {
   setCurrentEmailAddress,
   getCurrentEmailAddress,
   getSignerEmailAddress,
+  isProxyAdded,
 }
