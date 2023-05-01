@@ -1,3 +1,4 @@
+import { Keyring } from '@polkadot/api'
 import { isStr } from '@subsocial/utils'
 import Button, { ButtonProps } from 'antd/lib/button'
 import React from 'react'
@@ -18,6 +19,8 @@ import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoard
 import { AnyAccountId } from 'src/types'
 import { useSubstrate } from '.'
 import { useAuth } from '../auth/AuthContext'
+import { useMyAddress } from '../auth/MyAccountsContext'
+import useEncryptedStorage from '../auth/signIn/email/useEncryptionToStorage'
 import { getCurrentWallet } from '../auth/utils'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { controlledMessage, Message, showErrorMessage, showSuccessMessage } from '../utils/Message'
@@ -96,6 +99,7 @@ function TxButton({
     openSignInModal,
     state: {
       completedSteps: { hasTokens },
+      password,
     },
   } = useAuth()
 
@@ -107,6 +111,9 @@ function TxButton({
   })
 
   const { setIsSignerAddress, setSignerProxyAdded } = useSignerExternalStorage()
+
+  const myAddress = useMyAddress()
+  const { getEncryptedStoredAccount } = useEncryptedStorage()
 
   const emailSignerToken = getSignerToken(accountId as string)
   const emailRefreshToken = getSignerRefreshToken(accountId as string)
@@ -121,6 +128,8 @@ function TxButton({
     !!currentUserRefreshToken &&
     isSignerAddress &&
     isAccountOnboarded(accountId as string)
+
+  const isBatchTx = tx === 'utility.batch'
 
   const api = customNodeApi || subsocialApi
 
@@ -239,8 +248,8 @@ function TxButton({
         sendSignerTx(
           api,
           extrinsic,
-          currentUserSignerToken,
-          currentUserRefreshToken,
+          currentUserSignerToken!,
+          currentUserRefreshToken!,
           onSuccessHandler,
           onFailedHandler,
         )
@@ -255,12 +264,17 @@ function TxButton({
           const wallet = getWalletBySource(currentWallet)
           signer = wallet?.signer
         }
+        let tx: SubmittableExtrinsic | undefined
 
-        if (!signer) {
-          throw new Error('No signer provided')
+        if (isBatchTx) {
+          const privateKey = getEncryptedStoredAccount(myAddress!, password!)
+          const keyring = new Keyring({ type: 'sr25519' })
+          const keyringPair = keyring.addFromUri(privateKey, {}, 'sr25519')
+          tx = await extrinsic.signAsync(keyringPair)
+        } else {
+          tx = await extrinsic.signAsync(accountId, { signer })
         }
 
-        const tx = await extrinsic.signAsync(accountId, { signer })
         if (hideRememberMePopup) {
           setSignerProxyAdded(accountId as string)
           setIsSignerAddress(accountId as string)

@@ -197,13 +197,13 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
       })
 
       if (!emailVerified) {
-        // for decryption
-        setPassword(password)
-
         setCurrentStep(StepsEnum.Confirmation)
       } else {
         onSignInSuccess(accountAddress, email)
       }
+
+      // for decryption
+      setPassword(password)
     } catch (error) {
       onErrorHandler(error, setError)
     }
