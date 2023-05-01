@@ -11,7 +11,6 @@ type ContinueButtonProps = {
 
 const ContinueButton = ({ isPartial, loading, setLoading, goToNextStep }: ContinueButtonProps) => {
   const myAddress = useMyAddress()
-
   const proxyAddress = getProxyAddress(myAddress!)
 
   return (

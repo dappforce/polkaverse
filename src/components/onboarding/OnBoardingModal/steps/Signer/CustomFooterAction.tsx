@@ -1,5 +1,5 @@
+import RememberMeButton from 'src/components/utils/OffchainSigner/RememberMeButton'
 import ButtonGroup from './ButtonGroup'
-import ContinueButton from './ContinueButton'
 import { SignerProps } from './Signer'
 
 type CustomFooterActionProps = {
@@ -9,10 +9,11 @@ type CustomFooterActionProps = {
   setLoading: (loading: boolean) => void
   isPartial: boolean
   signerProps?: SignerProps
+  setShowContinueBtn?: (show: boolean) => void
 }
 
 const CustomFooterAction = (props: CustomFooterActionProps) => {
-  const { goToNextStep, saveAsDraft, loading, setLoading, isPartial, signerProps } = props
+  const { goToNextStep, saveAsDraft, loading, setShowContinueBtn, isPartial, signerProps } = props
 
   if (!signerProps) return <></>
 
@@ -35,11 +36,12 @@ const CustomFooterAction = (props: CustomFooterActionProps) => {
     if (loading) return <></>
 
     return (
-      <ContinueButton
-        goToNextStep={goToNextStep}
-        loading={false}
-        setLoading={setLoading}
-        isPartial={isPartial}
+      <RememberMeButton
+        onSuccessAuth={() => {
+          handleOnsuccess()
+          setShowContinueBtn && setShowContinueBtn(true)
+        }}
+        onFailedAuth={handleOnsuccess}
       />
     )
   }

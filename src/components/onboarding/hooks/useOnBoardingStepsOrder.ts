@@ -1,7 +1,10 @@
 import { useMemo } from 'react'
 import { useAuth } from 'src/components/auth/AuthContext'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
-import { isCurrentSignerAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
+import {
+  getSignerToken,
+  isCurrentSignerAddress,
+} from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { OnBoardingDataTypes } from 'src/rtk/features/onBoarding/onBoardingSlice'
 import { useIsFollowSpaceModalUsedContext } from '../contexts/IsFollowSpaceModalUsed'
@@ -33,6 +36,16 @@ export default function useOnBoardingStepsOrder(
       ? (additionalData?.energySnapshot ?? 0) < 20
       : transactionsCount < 20
     if (showEnergyStep) usedSteps.push('energy')
+
+    const offchainToken = getSignerToken(myAddress)
+
+    const showSignerStep = !(
+      isSignerAddress &&
+      typeof offchainToken === 'string' &&
+      offchainToken.length > 0
+    )
+
+    if (showSignerStep) usedSteps.push('signer')
 
     if (usedSteps.length > 0) usedSteps.push('confirmation')
 

@@ -2,6 +2,7 @@ import { isFunction } from '@polkadot/util'
 import Button from 'antd/lib/button'
 import React, { useEffect, useRef, useState } from 'react'
 import { TxButtonProps } from 'src/components/substrate/SubstrateTxButton'
+import { useOnBoardingModalOpenState } from 'src/rtk/features/onBoarding/onBoardingHooks'
 
 import { addressSignIn, fetchMainProxyAddress, requestProof } from './api/requests'
 import { setAuthOnRequest } from './api/utils'
@@ -29,7 +30,7 @@ interface RememberMeButtonProps extends TxButtonProps {
 function RememberMeButton({
   label,
   disabled,
-  loading,
+  loading = false,
   onClick,
   onSuccessAuth,
   onFailedAuth,
@@ -41,6 +42,7 @@ function RememberMeButton({
   const [isConfirming, , setIsConfirming] = useToggle(false)
   const { isMobile } = useResponsiveSize()
   const myAddress = useMyAddress()
+  const openState = useOnBoardingModalOpenState()
 
   const { setSignerTokensByAddress, setSignerProxyAddress } = useSignerExternalStorage()
 
@@ -150,7 +152,7 @@ function RememberMeButton({
 
     try {
       const dataMessage = await requestProof(myAddress)
-      const { jwt: proof } = dataMessage
+      const { proof } = dataMessage
 
       const signedProof = await signMessage(proof)
 
@@ -187,9 +189,14 @@ function RememberMeButton({
 
   const isDisabled = disabled || isConfirming || !captchaReady
 
+  const fullWidthPrimary = openState === 'partial' ? true : false
+
   return (
     <>
       <Component
+        block={fullWidthPrimary}
+        type={fullWidthPrimary ? 'primary' : 'default'}
+        size={fullWidthPrimary ? 'large' : 'middle'}
         {...antdProps}
         onClick={() => {
           onLoad()
