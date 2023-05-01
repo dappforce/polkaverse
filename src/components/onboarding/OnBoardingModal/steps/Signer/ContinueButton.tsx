@@ -21,8 +21,8 @@ const ContinueButton = ({ isPartial, loading, setLoading, goToNextStep }: Contin
       block
       size='large'
       className='mt-4'
-      params={[proxyAddress, 'Any', 0]}
-      tx='proxy.addProxy'
+      params={[proxyAddress, 'SocialActions', 0]}
+      tx='freeProxy.addFreeProxy'
       onSuccess={() => {
         setLoading(false)
         if (isPartial) {
