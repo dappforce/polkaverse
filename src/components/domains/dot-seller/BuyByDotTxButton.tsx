@@ -113,6 +113,7 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
         args: [domainName, sellerApiAuthTokenManager],
         account: purchaser,
         dispatch,
+        reload: false
       })
     }
 

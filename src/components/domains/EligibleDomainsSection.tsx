@@ -86,6 +86,7 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
       args: [domainName, sellerApiAuthTokenManager],
       account: purchaser,
       dispatch,
+      reload: false
     })
 
     reloadPendingOrders(purchaser)
