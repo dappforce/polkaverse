@@ -36,7 +36,7 @@ import notificationStyles from '../../../substrate/SubstrateTxButton.module.sass
 import { useAuth } from '../../AuthContext'
 import { useMyAccountsContext } from '../../MyAccountsContext'
 import styles from './SignInModalContent.module.sass'
-import useEncryptionToStorage from './useEncryptionToStorage'
+import useEncryptedStorage from './useEncryptionToStorage'
 
 const log = newLogger('MnemonicModalContent')
 
@@ -59,7 +59,7 @@ const ShowMnemonicModalContent = ({
   const { mnemonic, email, password } = state
 
   const { api } = useSubstrate()
-  const { createEncryptedAccountAndSave, getEncryptedStoredAccount } = useEncryptionToStorage()
+  const { createEncryptedAccountAndSave, getEncryptedStoredAccount } = useEncryptedStorage()
   const { isMobile } = useResponsiveSize()
   const waitNewBlock = useWaitNewBlock()
   const { resetEmailAccounts } = useMyAccountsContext()

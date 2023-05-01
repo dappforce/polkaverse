@@ -21,7 +21,7 @@ import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
 import { StepsEnum, useAuth } from '../../AuthContext'
 import { EmailInput, PasswordInput } from './SignInModalContent'
 import styles from './SignInModalContent.module.sass'
-import useEncryptionToStorage from './useEncryptionToStorage'
+import useEncryptedStorage from './useEncryptionToStorage'
 import { useFormValidation } from './useFormValidation'
 
 type FormValues = {
@@ -42,7 +42,7 @@ const signerKeyringManager = new SignerKeyringManager()
 
 const SignUpModalContent = ({ setCurrentStep }: Props) => {
   const { mnemonic } = useMnemonicGenerate()
-  const { createEncryptedAccountAndSave } = useEncryptionToStorage()
+  const { createEncryptedAccountAndSave } = useEncryptedStorage()
   const {
     state: { email },
     setPassword,

@@ -9,7 +9,7 @@ import useExternalStorage from 'src/hooks/useExternalStorage'
 
 const signerKeyringManager = new SignerKeyringManager()
 
-const useEncryptionToStorage = () => {
+const useEncryptedStorage = () => {
   const { setData: setSecretKey } = useExternalStorage(SECRET_KEY)
   const { setData: setSalt } = useExternalStorage(SALT)
 
@@ -38,4 +38,4 @@ const useEncryptionToStorage = () => {
   }
 }
 
-export default useEncryptionToStorage
+export default useEncryptedStorage
