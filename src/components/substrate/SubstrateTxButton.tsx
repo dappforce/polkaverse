@@ -119,9 +119,6 @@ function TxButton({
 
   const myEmailAddress = useMyEmailAddress()
 
-  const myAddress = useMyAddress()
-  const { getEncryptedStoredAccount } = useEncryptedStorage()
-
   const emailSignerToken = getSignerToken(accountId as string)
   const emailRefreshToken = getSignerRefreshToken(accountId as string)
   const isSigningWithEmail = isStr(emailSignerToken) && isStr(myEmailAddress)
@@ -133,8 +130,6 @@ function TxButton({
   const currentUserRefreshToken = isSigningWithEmail ? emailRefreshToken : refreshToken
 
   const isBatchTxUsingEmail = tx === 'utility.batch' && isStr(myEmailAddress)
-
-  const isBatchTx = tx === 'utility.batch'
 
   const api = customNodeApi || subsocialApi
 
@@ -285,14 +280,7 @@ function TxButton({
         }
         let tx: SubmittableExtrinsic | undefined
 
-        if (isBatchTxUsingEmail) {
-          const privateKey = getEncryptedStoredAccount(myAddress!, password!)
-          const keyring = new Keyring({ type: 'sr25519' })
-          const keyringPair = keyring.addFromUri(privateKey, {}, 'sr25519')
-          tx = await extrinsic.signAsync(keyringPair)
-        } else {
-          tx = await extrinsic.signAsync(accountId, { signer })
-        }
+        tx = await extrinsic.signAsync(accountId, { signer })
 
         if (hideRememberMePopup) {
           setSignerProxyAdded(accountId as string)
