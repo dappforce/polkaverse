@@ -3,6 +3,7 @@ import { Button, Form } from 'antd'
 import jwtDecode from 'jwt-decode'
 import { useEffect, useState } from 'react'
 import AuthCode from 'react-auth-code-input'
+import { useResponsiveSize } from 'src/components/responsive'
 import {
   confirmEmail,
   JwtPayload,
@@ -35,6 +36,7 @@ type Props = {
 const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
   const userAddress = getTempRegisterAccount()
   const subsocialAddress = toSubsocialAddress(userAddress)
+  const { isMobile } = useResponsiveSize()
 
   const [error, setError] = useState<string | null>(null)
 
@@ -122,7 +124,9 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
   return (
     <Form form={form} onValuesChange={handleValuesChange} onFinish={handleSubmit}>
-      <div className={styles.ConfirmationStepContent}>
+      <div
+        className={isMobile ? styles.ConfirmationStepContentMobile : styles.ConfirmationStepContent}
+      >
         <Form.Item
           name={fieldName('confirmationCode')}
           className={styles.CodeFormItem}
