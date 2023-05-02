@@ -8,7 +8,7 @@ type Props = {
 
 const WalletButton = ({ setCurrentStep }: Props) => {
   const handleClick = () => {
-    setCurrentStep(StepsEnum.SignIn)
+    setCurrentStep(StepsEnum.SelectAccount)
   }
 
   return (
