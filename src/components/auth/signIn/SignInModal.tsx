@@ -8,7 +8,6 @@ import clsx from 'clsx'
 import { setCurrentEmailAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import config from 'src/config'
 import { AccountSelector } from '../../profile-selector/AccountSelector'
-import { useResponsiveSize } from '../../responsive/ResponsiveContext'
 import ExternalLink from '../../spaces/helpers/ExternalLink'
 import { MutedDiv } from '../../utils/MutedText'
 import PrivacyPolicyLinks from '../../utils/PrivacyPolicyLinks'
@@ -36,7 +35,6 @@ type ModalTitleProp = {
 }
 
 const ModalTitle = ({ setCurrentStep, currentStep, withBackButton }: ModalTitleProp) => {
-  const { isMobile } = useResponsiveSize()
   const isShowBackButton = currentStep !== StepsEnum.SelectWallet
 
   const onBackButtonClick = () => {
@@ -54,7 +52,7 @@ const ModalTitle = ({ setCurrentStep, currentStep, withBackButton }: ModalTitleP
   return (
     <>
       <div className={styles.BackButton}>
-        {isShowBackButton && !isMobile && withBackButton && (
+        {isShowBackButton && withBackButton && (
           <MutedDiv className={clsx('d-flex align-items-center')}>
             <ArrowLeftOutlined className='mr-2' onClick={onBackButtonClick} />
             <span className='font-weight-bold'>Back</span>
