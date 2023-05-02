@@ -210,7 +210,9 @@ const ShowMnemonicModalContent = ({
   }
 
   return (
-    <div className={styles.ConfirmationStepContent}>
+    <div
+      className={isMobile ? styles.ConfirmationStepContentMobile : styles.ConfirmationStepContent}
+    >
       <Card className={styles.InnerCard}>
         <div className={styles.MnemonicText}>{mnemonicToBeShown}</div>
         <Divider type={'vertical'} className={styles.InnerDivider} />

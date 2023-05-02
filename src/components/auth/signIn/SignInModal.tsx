@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import LoadingTransaction from 'src/components/utils/LoadingTransaction'
+import WalletButton from '../WalletButton'
 
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import Modal from 'antd/lib/modal'
 import clsx from 'clsx'
+import { useResponsiveSize } from 'src/components/responsive'
 import { setCurrentEmailAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import config from 'src/config'
 import { AccountSelector } from '../../profile-selector/AccountSelector'
-import { useResponsiveSize } from '../../responsive/ResponsiveContext'
 import ExternalLink from '../../spaces/helpers/ExternalLink'
 import { MutedDiv } from '../../utils/MutedText'
 import PrivacyPolicyLinks from '../../utils/PrivacyPolicyLinks'
@@ -36,7 +37,6 @@ type ModalTitleProp = {
 }
 
 const ModalTitle = ({ setCurrentStep, currentStep, withBackButton }: ModalTitleProp) => {
-  const { isMobile } = useResponsiveSize()
   const isShowBackButton = currentStep !== StepsEnum.SelectWallet
 
   const onBackButtonClick = () => {
@@ -54,7 +54,7 @@ const ModalTitle = ({ setCurrentStep, currentStep, withBackButton }: ModalTitleP
   return (
     <>
       <div className={styles.BackButton}>
-        {isShowBackButton && !isMobile && withBackButton && (
+        {isShowBackButton && withBackButton && (
           <MutedDiv className={clsx('d-flex align-items-center')}>
             <ArrowLeftOutlined className='mr-2' onClick={onBackButtonClick} />
             <span className='font-weight-bold'>Back</span>
@@ -151,6 +151,7 @@ const ModalContent = ({
   onAccountChosen,
 }: GetModalContentProps) => {
   const { setEmailAddress, setAddress } = useMyAccountsContext()
+  const { isMobile } = useResponsiveSize()
 
   const onAuthSuccess = (address: string, emailAddress: string) => {
     hideSignInModal()
@@ -195,7 +196,11 @@ const ModalContent = ({
               </h2>
             </div>
 
-            <WalletList setCurrentStep={setCurrentStep} />
+            {isMobile ? (
+              <WalletButton setCurrentStep={setCurrentStep} />
+            ) : (
+              <WalletList setCurrentStep={setCurrentStep} />
+            )}
           </ModalBodyWrapper>
         </div>
       )
@@ -300,7 +305,9 @@ export const SignInModalView = ({ open, hide, onAccountChosen }: SignInModalProp
 
   const withSkipButton = currentStep === StepsEnum.ShowMnemonic
   const isAbleToGoBack =
-    currentStep !== StepsEnum.Confirmation && currentStep !== StepsEnum.ShowMnemonic
+    currentStep !== StepsEnum.Confirmation &&
+    currentStep !== StepsEnum.ShowMnemonic &&
+    currentStep !== StepsEnum.CreatingAccount
 
   return (
     <Modal
@@ -316,7 +323,8 @@ export const SignInModalView = ({ open, hide, onAccountChosen }: SignInModalProp
       }
       footer={
         currentStep !== StepsEnum.Confirmation &&
-        currentStep !== StepsEnum.ShowMnemonic && <ModalFooter />
+        currentStep !== StepsEnum.ShowMnemonic &&
+        currentStep !== StepsEnum.CreatingAccount && <ModalFooter />
       }
       className={clsx('DfSignInModal', {
         [styles.SignInModal]:

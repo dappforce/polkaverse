@@ -145,7 +145,7 @@ export default function OnBoardingContentContainer({
             block
             size='large'
             className='mt-4'
-            tx='utility.batch'
+            tx={'utility.batch'}
             onSuccess={() => {
               setLoading(false)
               if (openState === 'partial') {

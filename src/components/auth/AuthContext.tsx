@@ -1,5 +1,6 @@
 import { u128 } from '@polkadot/types'
 import { CodecMap } from '@polkadot/types/codec'
+import { isStr } from '@subsocial/utils'
 import BN from 'bn.js'
 import { useRouter } from 'next/router'
 import React, { createContext, useContext, useEffect, useState } from 'react'
@@ -102,12 +103,16 @@ const useGetCurrentStep = (isMobile: boolean) => {
   const isSignedIn = useIsSignedIn()
   const [step, setStep] = useState<number>(StepsEnum.SelectWallet)
 
+  const isAccountsAvailable = isStr(getCurrentEmailAddress()) || isStr(getCurrentWallet())
+
   useEffect(() => {
     if (!isSignedIn) {
       setStep(
-        getCurrentEmailAddress() || getCurrentWallet() || isMobile
-          ? StepsEnum.SelectAccount
-          : StepsEnum.SelectWallet,
+        isMobile
+          ? StepsEnum.SelectWallet
+          : !isAccountsAvailable
+          ? StepsEnum.SelectWallet
+          : StepsEnum.SelectAccount,
       )
     }
   }, [isSignedIn])

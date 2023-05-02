@@ -1,7 +1,10 @@
 import { useMemo } from 'react'
 import { useAuth } from 'src/components/auth/AuthContext'
-import { useMyAddress } from 'src/components/auth/MyAccountsContext'
-import { isCurrentSignerAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
+import { useMyAddress, useMyEmailAddress } from 'src/components/auth/MyAccountsContext'
+import {
+  isCurrentSignerAddress,
+  isProxyAdded,
+} from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { OnBoardingDataTypes } from 'src/rtk/features/onBoarding/onBoardingSlice'
 import { useIsFollowSpaceModalUsedContext } from '../contexts/IsFollowSpaceModalUsed'
@@ -20,6 +23,11 @@ export default function useOnBoardingStepsOrder(
   const { isFollowSpaceModalUsed } = useIsFollowSpaceModalUsedContext()
   const isSignerAddress = isCurrentSignerAddress(myAddress!)
 
+  // Hide sidebar popups for users with email
+  const myEmailAddress = useMyEmailAddress()
+  // and when accounts are already added with proxy
+  const isCurrentAddressAddedWithProxy = isProxyAdded(myAddress!)
+
   return useMemo(() => {
     if (!myAddress) return []
 
@@ -34,6 +42,10 @@ export default function useOnBoardingStepsOrder(
       : transactionsCount < 20
     if (showEnergyStep) usedSteps.push('energy')
 
+    const showSignerStep = !isCurrentAddressAddedWithProxy && !myEmailAddress
+
+    if (showSignerStep) usedSteps.push('signer')
+
     if (usedSteps.length > 0) usedSteps.push('confirmation')
 
     return usedSteps
@@ -43,6 +55,8 @@ export default function useOnBoardingStepsOrder(
     status,
     isFollowSpaceModalUsed,
     isSignerAddress,
+    isCurrentAddressAddedWithProxy,
+    myEmailAddress,
     additionalData?.energySnapshot,
   ])
 }

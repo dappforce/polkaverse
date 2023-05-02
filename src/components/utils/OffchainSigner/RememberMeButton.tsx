@@ -2,6 +2,7 @@ import { isFunction } from '@polkadot/util'
 import Button from 'antd/lib/button'
 import React, { useEffect, useRef, useState } from 'react'
 import { TxButtonProps } from 'src/components/substrate/SubstrateTxButton'
+import { useOnBoardingModalOpenState } from 'src/rtk/features/onBoarding/onBoardingHooks'
 
 import { addressSignIn, fetchMainProxyAddress, requestProof } from './api/requests'
 import { setAuthOnRequest } from './api/utils'
@@ -29,7 +30,7 @@ interface RememberMeButtonProps extends TxButtonProps {
 function RememberMeButton({
   label,
   disabled,
-  loading,
+  loading = false,
   onClick,
   onSuccessAuth,
   onFailedAuth,
@@ -41,11 +42,13 @@ function RememberMeButton({
   const [isConfirming, , setIsConfirming] = useToggle(false)
   const { isMobile } = useResponsiveSize()
   const myAddress = useMyAddress()
+  const openState = useOnBoardingModalOpenState()
 
   const { setSignerTokensByAddress, setSignerProxyAddress } = useSignerExternalStorage()
 
   const [token, setToken] = useState<string | undefined>()
   const [captchaReady, setCaptchaReady] = useState(false)
+  const [loadingBtn, setLoadingBtn] = useState(false)
   const hCaptchaRef = useRef(null)
 
   useEffect(() => {
@@ -150,7 +153,7 @@ function RememberMeButton({
 
     try {
       const dataMessage = await requestProof(myAddress)
-      const { jwt: proof } = dataMessage
+      const { proof } = dataMessage
 
       const signedProof = await signMessage(proof)
 
@@ -185,17 +188,23 @@ function RememberMeButton({
     }
   }
 
-  const isDisabled = disabled || isConfirming || !captchaReady
+  const isDisabled = disabled || isConfirming || !captchaReady || loadingBtn
+
+  const fullWidthPrimary = openState === 'partial' ? true : false
 
   return (
     <>
       <Component
+        block={fullWidthPrimary}
+        type={fullWidthPrimary ? 'primary' : 'default'}
+        size={fullWidthPrimary ? 'large' : 'middle'}
         {...antdProps}
         onClick={() => {
+          setLoadingBtn(true)
           onLoad()
         }}
         disabled={isDisabled}
-        loading={(withSpinner && isConfirming) || loading}
+        loading={(withSpinner && isConfirming) || loading || loadingBtn}
       >
         {buttonLabel}
       </Component>
@@ -205,6 +214,9 @@ function RememberMeButton({
         onVerify={setToken}
         onLoad={() => {
           setCaptchaReady(true)
+        }}
+        onClose={() => {
+          setLoadingBtn(false)
         }}
         onError={onError}
         onExpire={onExpire}
