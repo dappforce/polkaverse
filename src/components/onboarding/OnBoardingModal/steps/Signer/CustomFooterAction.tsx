@@ -1,5 +1,10 @@
+import { useState } from 'react'
 import RememberMeButton from 'src/components/utils/OffchainSigner/RememberMeButton'
+import { useAppDispatch } from 'src/rtk/app/store'
+import { useCurrentOnBoardingStep } from 'src/rtk/features/onBoarding/onBoardingHooks'
+import { resetOnBoardingData } from 'src/rtk/features/onBoarding/onBoardingSlice'
 import ButtonGroup from './ButtonGroup'
+import PartialContinueButton from './ContinueButton'
 import { SignerProps } from './Signer'
 
 type CustomFooterActionProps = {
@@ -9,11 +14,13 @@ type CustomFooterActionProps = {
   setLoading: (loading: boolean) => void
   isPartial: boolean
   signerProps?: SignerProps
-  setShowContinueBtn?: (show: boolean) => void
 }
 
 const CustomFooterAction = (props: CustomFooterActionProps) => {
-  const { goToNextStep, saveAsDraft, loading, setShowContinueBtn, isPartial, signerProps } = props
+  const [isShowContinueBtn, setShowContinueBtn] = useState(false)
+  const dispatch = useAppDispatch()
+  const currentStep = useCurrentOnBoardingStep()
+  const { goToNextStep, saveAsDraft, loading, setLoading, isPartial, signerProps } = props
 
   if (!signerProps) return <></>
 
@@ -32,21 +39,31 @@ const CustomFooterAction = (props: CustomFooterActionProps) => {
     )
   }
 
-  if (!offchainSigner) {
-    if (loading) return <></>
+  if (!offchainSigner && loading) return <></>
 
+  if (isShowContinueBtn) {
     return (
-      <RememberMeButton
-        onSuccessAuth={() => {
+      <PartialContinueButton
+        loading={loading}
+        setLoading={setLoading}
+        onSuccess={() => {
           handleOnsuccess()
-          setShowContinueBtn && setShowContinueBtn(true)
+          goToNextStep({ forceTerminateFlow: true })
+          dispatch(resetOnBoardingData(currentStep))
+          return
         }}
-        onFailedAuth={handleOnsuccess}
       />
     )
   }
 
-  return <></>
+  return (
+    <RememberMeButton
+      onSuccessAuth={() => {
+        setShowContinueBtn && setShowContinueBtn(true)
+      }}
+      onFailedAuth={handleOnsuccess}
+    />
+  )
 }
 
 export default CustomFooterAction

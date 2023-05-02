@@ -19,7 +19,7 @@ import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoard
 import { AnyAccountId } from 'src/types'
 import { useSubstrate } from '.'
 import { useAuth } from '../auth/AuthContext'
-import { useMyAddress } from '../auth/MyAccountsContext'
+import { useMyAddress, useMyEmailAddress } from '../auth/MyAccountsContext'
 import useEncryptedStorage from '../auth/signIn/email/useEncryptionToStorage'
 import { getCurrentWallet } from '../auth/utils'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
@@ -129,7 +129,9 @@ function TxButton({
     isSignerAddress &&
     isAccountOnboarded(accountId as string)
 
-  const isBatchTx = tx === 'utility.batch'
+  const myEmailAddress = useMyEmailAddress()
+
+  const isBatchTxUsingEmail = tx === 'utility.batch' && myEmailAddress
 
   const api = customNodeApi || subsocialApi
 
@@ -266,7 +268,7 @@ function TxButton({
         }
         let tx: SubmittableExtrinsic | undefined
 
-        if (isBatchTx) {
+        if (isBatchTxUsingEmail) {
           const privateKey = getEncryptedStoredAccount(myAddress!, password!)
           const keyring = new Keyring({ type: 'sr25519' })
           const keyringPair = keyring.addFromUri(privateKey, {}, 'sr25519')

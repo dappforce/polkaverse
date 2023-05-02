@@ -1,12 +1,10 @@
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import clsx from 'clsx'
-import { useState } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { subsocialUrl } from 'src/components/urls'
 import LoadingTransaction from 'src/components/utils/LoadingTransaction'
 import { MutedDiv, MutedSpan } from 'src/components/utils/MutedText'
-import { getProxyAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import PrivacyPolicyText from 'src/components/utils/PrivacyPolicyText'
 import TwitterMock from 'src/components/utils/TwitterMock'
 import TxButton from 'src/components/utils/TxButton'
@@ -52,8 +50,6 @@ export default function OnBoardingContentContainer({
   const currentStep = useCurrentOnBoardingStep()
   const dispatch = useAppDispatch()
 
-  const [isShowContinueBtn, setIsShowContinueBtn] = useState(false)
-
   const isLastStep = totalSteps - 1 <= (currentStepIndex ?? -1)
 
   const shouldSubmitTxWhenContinue = isLastStep || openState === 'partial'
@@ -70,9 +66,6 @@ export default function OnBoardingContentContainer({
   }
 
   const showContinueBtn = !loading && !success && !hideSubmitBtn && currentStep !== 'signer'
-
-  const myAddress = useMyAddress()
-  const proxyAddress = getProxyAddress(myAddress!)
 
   return (
     <>
@@ -142,59 +135,57 @@ export default function OnBoardingContentContainer({
             }}
             isPartial={openState === 'partial'}
             signerProps={signerProps}
-            setShowContinueBtn={setIsShowContinueBtn}
           />
         )}
 
-        {showContinueBtn ||
-          (isShowContinueBtn && (
-            <ContinueBtn
-              isFreeTx
-              type='primary'
-              block
-              size='large'
-              className='mt-4'
-              tx={isShowContinueBtn ? 'freeProxy.addFreeProxy' : 'utility.batch'}
-              onSuccess={() => {
-                setLoading(false)
-                if (openState === 'partial') {
-                  goToNextStep({ forceTerminateFlow: true })
-                  dispatch(resetOnBoardingData(currentStep))
-                  return
-                }
-                setSuccess(true)
-              }}
-              params={isShowContinueBtn ? [proxyAddress, 'SocialActions', 0] : getBatchParams}
-              onFailed={() => setLoading(false)}
-              loading={loadingSubmitBtn}
-              disabled={disableSubmitBtn}
-              onValidate={async () => {
-                if (onSubmitValidation) {
-                  const isValid = await onSubmitValidation()
-                  if (!isValid) return false
-                }
-                return true
-              }}
-              onClick={async () => {
-                if (customButtonOnClick) {
-                  customButtonOnClick()
-                  return
-                }
-                if (onSubmitValidation) {
-                  const isValid = await onSubmitValidation()
-                  if (!isValid) return
-                }
-                dispatch(markStepAsDraftOnBoardingModal(false))
-                if (!shouldSubmitTxWhenContinue) {
-                  goToNextStep()
-                } else {
-                  setLoading(true)
-                }
-              }}
-            >
-              {buttonText}
-            </ContinueBtn>
-          ))}
+        {showContinueBtn && (
+          <ContinueBtn
+            isFreeTx
+            type='primary'
+            block
+            size='large'
+            className='mt-4'
+            tx={'utility.batch'}
+            onSuccess={() => {
+              setLoading(false)
+              if (openState === 'partial') {
+                goToNextStep({ forceTerminateFlow: true })
+                dispatch(resetOnBoardingData(currentStep))
+                return
+              }
+              setSuccess(true)
+            }}
+            params={getBatchParams}
+            onFailed={() => setLoading(false)}
+            loading={loadingSubmitBtn}
+            disabled={disableSubmitBtn}
+            onValidate={async () => {
+              if (onSubmitValidation) {
+                const isValid = await onSubmitValidation()
+                if (!isValid) return false
+              }
+              return true
+            }}
+            onClick={async () => {
+              if (customButtonOnClick) {
+                customButtonOnClick()
+                return
+              }
+              if (onSubmitValidation) {
+                const isValid = await onSubmitValidation()
+                if (!isValid) return
+              }
+              dispatch(markStepAsDraftOnBoardingModal(false))
+              if (!shouldSubmitTxWhenContinue) {
+                goToNextStep()
+              } else {
+                setLoading(true)
+              }
+            }}
+          >
+            {buttonText}
+          </ContinueBtn>
+        )}
       </div>
     </>
   )

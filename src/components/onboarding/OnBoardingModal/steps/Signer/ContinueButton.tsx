@@ -3,13 +3,12 @@ import { getProxyAddress } from 'src/components/utils/OffchainSigner/ExternalSto
 import TxButton from 'src/components/utils/TxButton'
 
 type ContinueButtonProps = {
-  goToNextStep: (config?: { forceTerminateFlow?: boolean; isSkipped?: boolean }) => void
   loading: boolean
   setLoading: (loading: boolean) => void
-  isPartial?: boolean
+  onSuccess: () => void
 }
 
-const ContinueButton = ({ isPartial, loading, setLoading, goToNextStep }: ContinueButtonProps) => {
+const PartialContinueButton = ({ loading, setLoading, onSuccess }: ContinueButtonProps) => {
   const myAddress = useMyAddress()
   const proxyAddress = getProxyAddress(myAddress!)
 
@@ -24,10 +23,7 @@ const ContinueButton = ({ isPartial, loading, setLoading, goToNextStep }: Contin
       tx='freeProxy.addFreeProxy'
       onSuccess={() => {
         setLoading(false)
-        if (isPartial) {
-          goToNextStep({ forceTerminateFlow: true })
-          return
-        }
+        onSuccess()
       }}
       onFailed={() => setLoading(false)}
       loading={loading}
@@ -44,4 +40,4 @@ const ContinueButton = ({ isPartial, loading, setLoading, goToNextStep }: Contin
   )
 }
 
-export default ContinueButton
+export default PartialContinueButton
