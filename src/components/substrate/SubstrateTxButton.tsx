@@ -119,6 +119,9 @@ function TxButton({
 
   const myEmailAddress = useMyEmailAddress()
 
+  const myAddress = useMyAddress()
+  const { getEncryptedStoredAccount } = useEncryptedStorage()
+
   const emailSignerToken = getSignerToken(accountId as string)
   const emailRefreshToken = getSignerRefreshToken(accountId as string)
   const isSigningWithEmail = isStr(emailSignerToken) && isStr(myEmailAddress)
@@ -130,6 +133,8 @@ function TxButton({
   const currentUserRefreshToken = isSigningWithEmail ? emailRefreshToken : refreshToken
 
   const isBatchTxUsingEmail = tx === 'utility.batch' && isStr(myEmailAddress)
+
+  const isBatchTx = tx === 'utility.batch'
 
   const api = customNodeApi || subsocialApi
 
@@ -278,6 +283,7 @@ function TxButton({
           const wallet = getWalletBySource(currentWallet)
           signer = wallet?.signer
         }
+        let tx: SubmittableExtrinsic | undefined
 
         if (isBatchTxUsingEmail) {
           const privateKey = getEncryptedStoredAccount(myAddress!, password!)
