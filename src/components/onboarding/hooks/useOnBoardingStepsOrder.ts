@@ -1,8 +1,7 @@
 import { useMemo } from 'react'
 import { useAuth } from 'src/components/auth/AuthContext'
-import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import { useMyAddress, useMyEmailAddress } from 'src/components/auth/MyAccountsContext'
 import {
-  getSignerToken,
   isCurrentSignerAddress,
   isProxyAdded,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
@@ -23,6 +22,10 @@ export default function useOnBoardingStepsOrder(
   const profile = useSelectProfile(myAddress)
   const { isFollowSpaceModalUsed } = useIsFollowSpaceModalUsedContext()
   const isSignerAddress = isCurrentSignerAddress(myAddress!)
+
+  // Hide sidebar popups for users with email
+  const myEmailAddress = useMyEmailAddress()
+  // and when accounts are already added with proxy
   const isCurrentAddressAddedWithProxy = isProxyAdded(myAddress!)
 
   return useMemo(() => {
@@ -39,11 +42,7 @@ export default function useOnBoardingStepsOrder(
       : transactionsCount < 20
     if (showEnergyStep) usedSteps.push('energy')
 
-    const offchainToken = getSignerToken(myAddress)
-
-    const showSignerStep =
-      !(isSignerAddress && typeof offchainToken === 'string' && offchainToken.length > 0) ||
-      !isCurrentAddressAddedWithProxy
+    const showSignerStep = !isCurrentAddressAddedWithProxy && !myEmailAddress
 
     if (showSignerStep) usedSteps.push('signer')
 
@@ -57,6 +56,7 @@ export default function useOnBoardingStepsOrder(
     isFollowSpaceModalUsed,
     isSignerAddress,
     isCurrentAddressAddedWithProxy,
+    myEmailAddress,
     additionalData?.energySnapshot,
   ])
 }
