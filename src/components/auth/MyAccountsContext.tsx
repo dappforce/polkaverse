@@ -1,7 +1,7 @@
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { AccountInfo } from '@polkadot/types/interfaces'
 import { asAccountId } from '@subsocial/api'
-import { newLogger, nonEmptyStr } from '@subsocial/utils'
+import { isStr, newLogger, nonEmptyStr } from '@subsocial/utils'
 import React, {
   createContext,
   useCallback,
@@ -33,6 +33,7 @@ import { useAccountSelector } from '../profile-selector/AccountSelector'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { reloadSpaceIdsFollowedByAccount } from '../spaces/helpers/reloadSpaceIdsFollowedByAccount'
 import { equalAddresses } from '../substrate'
+import { getSignerToken } from '../utils/OffchainSigner/ExternalStorage'
 import { desktopWalletConnect, mobileWalletConection } from './utils'
 //
 // Types
@@ -196,6 +197,12 @@ export function useMyEmailAddress() {
 
 export function useIsUsingEmail() {
   return nonEmptyStr(useMyEmailAddress())
+}
+
+export function useIsUsingEmailOrSigner() {
+  const myAddress = useMyAddress()
+  const isUsingSigner = isStr(getSignerToken(myAddress!))
+  return useIsUsingEmail() || isUsingSigner
 }
 
 export function useMyAddress() {
