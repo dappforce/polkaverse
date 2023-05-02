@@ -115,10 +115,15 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
     resetEmailAccounts()
   }, [])
 
+  const params = { setAccounts, setStatus }
+
   useEffect(() => {
-    const props = { setAccounts, setStatus }
-    isMobile ? mobileWalletConection(props) : desktopWalletConnect(props)
+    isMobile ? mobileWalletConection(params) : desktopWalletConnect(params)
   }, [recheckId])
+
+  useEffect(() => {
+    if (isMobile) mobileWalletConection(params)
+  }, [isMobile])
 
   useEffect(() => {
     if (!recheckStatuses.includes(status)) return
