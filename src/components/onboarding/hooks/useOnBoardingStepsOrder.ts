@@ -23,13 +23,12 @@ export default function useOnBoardingStepsOrder(
   const profile = useSelectProfile(myAddress)
   const { isFollowSpaceModalUsed } = useIsFollowSpaceModalUsedContext()
   const isSignerAddress = isCurrentSignerAddress(myAddress!)
+  const isCurrentAddressAddedWithProxy = isProxyAdded(myAddress!)
 
   return useMemo(() => {
     if (!myAddress) return []
 
     const usedSteps: (keyof OnBoardingDataTypes)[] = []
-
-    const isCurrentAddressAddedWithProxy = isProxyAdded(myAddress)
 
     if (!(profile?.content as any)?.interests) usedSteps.push('topics')
     if (!isCompact || !isFollowSpaceModalUsed) usedSteps.push('spaces')
@@ -57,6 +56,7 @@ export default function useOnBoardingStepsOrder(
     status,
     isFollowSpaceModalUsed,
     isSignerAddress,
+    isCurrentAddressAddedWithProxy,
     additionalData?.energySnapshot,
   ])
 }
