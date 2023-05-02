@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import LoadingTransaction from 'src/components/utils/LoadingTransaction'
+import WalletButton from '../WalletButton'
 
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import Modal from 'antd/lib/modal'
 import clsx from 'clsx'
+import { useResponsiveSize } from 'src/components/responsive'
 import { setCurrentEmailAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import config from 'src/config'
 import { AccountSelector } from '../../profile-selector/AccountSelector'
@@ -149,6 +151,7 @@ const ModalContent = ({
   onAccountChosen,
 }: GetModalContentProps) => {
   const { setEmailAddress, setAddress } = useMyAccountsContext()
+  const { isMobile } = useResponsiveSize()
 
   const onAuthSuccess = (address: string, emailAddress: string) => {
     hideSignInModal()
@@ -193,7 +196,11 @@ const ModalContent = ({
               </h2>
             </div>
 
-            <WalletList setCurrentStep={setCurrentStep} />
+            {isMobile ? (
+              <WalletButton setCurrentStep={setCurrentStep} />
+            ) : (
+              <WalletList setCurrentStep={setCurrentStep} />
+            )}
           </ModalBodyWrapper>
         </div>
       )
