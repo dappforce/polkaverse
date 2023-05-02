@@ -48,6 +48,7 @@ function RememberMeButton({
 
   const [token, setToken] = useState<string | undefined>()
   const [captchaReady, setCaptchaReady] = useState(false)
+  const [loadingBtn, setLoadingBtn] = useState(false)
   const hCaptchaRef = useRef(null)
 
   useEffect(() => {
@@ -187,7 +188,7 @@ function RememberMeButton({
     }
   }
 
-  const isDisabled = disabled || isConfirming || !captchaReady
+  const isDisabled = disabled || isConfirming || !captchaReady || loadingBtn
 
   const fullWidthPrimary = openState === 'partial' ? true : false
 
@@ -199,10 +200,11 @@ function RememberMeButton({
         size={fullWidthPrimary ? 'large' : 'middle'}
         {...antdProps}
         onClick={() => {
+          setLoadingBtn(true)
           onLoad()
         }}
         disabled={isDisabled}
-        loading={(withSpinner && isConfirming) || loading}
+        loading={(withSpinner && isConfirming) || loading || loadingBtn}
       >
         {buttonLabel}
       </Component>
@@ -212,6 +214,9 @@ function RememberMeButton({
         onVerify={setToken}
         onLoad={() => {
           setCaptchaReady(true)
+        }}
+        onClose={() => {
+          setLoadingBtn(false)
         }}
         onError={onError}
         onExpire={onExpire}
