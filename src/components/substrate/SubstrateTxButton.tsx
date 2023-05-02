@@ -2,7 +2,9 @@ import { Keyring } from '@polkadot/api'
 import { isStr } from '@subsocial/utils'
 import Button, { ButtonProps } from 'antd/lib/button'
 import React from 'react'
+import config from 'src/config'
 import { isProxyAdded } from '../utils/OffchainSigner/ExternalStorage'
+import { sendSignerTx } from '../utils/OffchainSigner/OffchainSignerUtils'
 
 import { ApiPromise, SubmittableResult } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types'
@@ -27,15 +29,15 @@ import { controlledMessage, Message, showErrorMessage, showSuccessMessage } from
 import {
   getSignerRefreshToken,
   getSignerToken,
-  isCurrentSignerAddress,
   SIGNER_REFRESH_TOKEN_KEY,
   SIGNER_TOKEN_KEY,
 } from '../utils/OffchainSigner/ExternalStorage'
-import { isAccountOnboarded, sendSignerTx } from '../utils/OffchainSigner/OffchainSignerUtils'
 import { getWalletBySource } from '../wallets/supportedWallets'
 import styles from './SubstrateTxButton.module.sass'
 import useToggle from './useToggle'
 const log = newLogger('TxButton')
+
+const { appName } = config
 
 export type GetTxParamsFn = () => any[]
 export type GetTxParamsAsyncFn = () => Promise<any[]>
@@ -115,23 +117,19 @@ function TxButton({
   const myAddress = useMyAddress()
   const { getEncryptedStoredAccount } = useEncryptedStorage()
 
+  const myEmailAddress = useMyEmailAddress()
+
   const emailSignerToken = getSignerToken(accountId as string)
   const emailRefreshToken = getSignerRefreshToken(accountId as string)
-  const isSigningWithEmail = isStr(emailSignerToken)
+  const isSigningWithEmail = isStr(emailSignerToken) && isStr(myEmailAddress)
+  const isMainProxyAdded = isProxyAdded(accountId as string)
+  const isSigningWithSignerAccount =
+    isStr(signerToken) && !isStr(myEmailAddress) && isMainProxyAdded
 
   const currentUserSignerToken = isSigningWithEmail ? emailSignerToken : signerToken
   const currentUserRefreshToken = isSigningWithEmail ? emailRefreshToken : refreshToken
-  const isSignerAddress = isSigningWithEmail || isCurrentSignerAddress(accountId as string)
-  const isMainProxyAdded = isProxyAdded(accountId as string)
-  const isSignerTx =
-    !!currentUserSignerToken &&
-    !!currentUserRefreshToken &&
-    isSignerAddress &&
-    isAccountOnboarded(accountId as string)
 
-  const myEmailAddress = useMyEmailAddress()
-
-  const isBatchTxUsingEmail = tx === 'utility.batch' && myEmailAddress
+  const isBatchTxUsingEmail = tx === 'utility.batch' && isStr(myEmailAddress)
 
   const api = customNodeApi || subsocialApi
 
@@ -244,29 +242,42 @@ function TxButton({
       hideRememberMePopup = true
 
     try {
+      let signer: Signer | undefined
+      let tx: SubmittableExtrinsic
+
       const extrinsic = await getExtrinsic()
 
-      if (isSignerTx && isMainProxyAdded) {
-        sendSignerTx(
-          api,
-          extrinsic,
-          currentUserSignerToken!,
-          currentUserRefreshToken!,
-          onSuccessHandler,
-          onFailedHandler,
-        )
+      if (isSigningWithEmail || isSigningWithSignerAccount) {
+        if (isBatchTxUsingEmail) {
+          const privateKey = getEncryptedStoredAccount(myAddress!, password!)
+          const keyring = new Keyring({ type: 'sr25519' })
+          const keyringPair = keyring.addFromUri(privateKey, {}, 'sr25519')
+          tx = await extrinsic.signAsync(keyringPair)
+          unsub = await tx.send(onSuccessHandler)
+        } else {
+          sendSignerTx(
+            api,
+            extrinsic,
+            currentUserSignerToken!,
+            currentUserRefreshToken!,
+            onSuccessHandler,
+            onFailedHandler,
+          )
+        }
       } else {
-        let signer: Signer | undefined
-
         if (isMobile) {
-          const { web3FromAddress } = await import('@polkadot/extension-dapp')
+          const { web3Enable, web3FromAddress } = await import('@polkadot/extension-dapp')
+          const extensions = await web3Enable(appName)
+
+          if (extensions.length === 0) {
+            return
+          }
           signer = await (await web3FromAddress(accountId.toString())).signer
         } else {
           const currentWallet = getCurrentWallet()
           const wallet = getWalletBySource(currentWallet)
           signer = wallet?.signer
         }
-        let tx: SubmittableExtrinsic | undefined
 
         if (isBatchTxUsingEmail) {
           const privateKey = getEncryptedStoredAccount(myAddress!, password!)
@@ -281,7 +292,6 @@ function TxButton({
           setSignerProxyAdded(accountId as string)
           setIsSignerAddress(accountId as string)
         }
-
         unsub = await tx.send(onSuccessHandler)
       }
       waitMessage.open()
