@@ -305,7 +305,9 @@ export const SignInModalView = ({ open, hide, onAccountChosen }: SignInModalProp
 
   const withSkipButton = currentStep === StepsEnum.ShowMnemonic
   const isAbleToGoBack =
-    currentStep !== StepsEnum.Confirmation && currentStep !== StepsEnum.ShowMnemonic
+    currentStep !== StepsEnum.Confirmation &&
+    currentStep !== StepsEnum.ShowMnemonic &&
+    currentStep !== StepsEnum.CreatingAccount
 
   return (
     <Modal
@@ -321,7 +323,8 @@ export const SignInModalView = ({ open, hide, onAccountChosen }: SignInModalProp
       }
       footer={
         currentStep !== StepsEnum.Confirmation &&
-        currentStep !== StepsEnum.ShowMnemonic && <ModalFooter />
+        currentStep !== StepsEnum.ShowMnemonic &&
+        currentStep !== StepsEnum.CreatingAccount && <ModalFooter />
       }
       className={clsx('DfSignInModal', {
         [styles.SignInModal]:
