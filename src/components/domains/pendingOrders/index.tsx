@@ -13,10 +13,10 @@ import {
 import { PendingDomainEntity } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { MutedDiv } from '../../utils/MutedText'
-import RegisterDomainButton from '../dot-seller/RegisterDomainModal'
 import { useManageDomainContext, Variant } from '../manage/ManageDomainProvider'
 import { getTime } from '../utils'
 import styles from './Index.module.sass'
+import RegisterDomainButton from '../registerDomainModal/RegisterDomainModal'
 
 type PendingDomainProps = {
   pendingDomain: PendingDomainEntity

@@ -17,17 +17,7 @@ import { useManageDomainContext } from './manage/ManageDomainProvider'
 import { useCreateRemovePendingOrders } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { useCreateUpsertDomains } from 'src/rtk/features/domains/domainHooks'
 import dayjs from 'dayjs'
-import { stringToU8a, u8aToHex } from '@polkadot/util'
-import {
-  decodeAddress,
-  mnemonicToMiniSecret,
-  naclBoxPairFromSecret,
-  naclSeal,
-} from '@polkadot/util-crypto'
 import utc from 'dayjs/plugin/utc'
-import { NextApiResponse } from 'next'
-import { sellerSquidGraphQlClient } from 'src/components/domains/dot-seller/config'
-import { DocumentNode } from 'graphql'
 
 dayjs.extend(utc)
 
@@ -166,60 +156,4 @@ export const useFetchNewDomains = (domainName?: string) => {
     },
     [isFetchNewDomains, myAddress],
   )
-}
-
-type MutationRequest = {
-  sellerApiAuthTokenManager: string
-  args: any
-  res: NextApiResponse
-  sellerClientId: string
-  sellerClientTokenSigner: string
-  query: DocumentNode
-}
-
-export const SendMutationRequest = async ({ 
-  sellerApiAuthTokenManager, 
-  args, 
-  res, 
-  sellerClientId, 
-  sellerClientTokenSigner,
-  query
-}: MutationRequest) => {
-  try {
-    const nonce = new Uint8Array(24)
-    nonce[0] = 111
-    
-    const tokenMessage = dayjs.utc().valueOf().toString()
-
-    const requesterKeypair = naclBoxPairFromSecret(
-      mnemonicToMiniSecret(sellerClientTokenSigner),
-    )
-
-    const signedToken = naclSeal(
-      stringToU8a(tokenMessage),
-      requesterKeypair.secretKey,
-      decodeAddress(sellerApiAuthTokenManager),
-      nonce,
-    )
-
-    const requestHeaders = {
-      Authorization: 'Bearer ' + u8aToHex(signedToken.sealed),
-      'Client-Id': sellerClientId,
-    }
-
-    const result = await sellerSquidGraphQlClient.request(
-      query,
-      args,
-      requestHeaders
-    )
-
-    res.status(200).send({ success: true })
-    return result
-  } catch (e: any) {
-    res.status(200).send({
-      success: false,
-      errors: e.response.errors?.[0].message,
-    })
-    return undefined
-  }
 }

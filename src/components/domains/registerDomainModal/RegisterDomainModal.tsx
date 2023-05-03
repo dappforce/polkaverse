@@ -8,11 +8,10 @@ import { useSubstrate } from 'src/components/substrate'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { FormatBalance, useCreateBalance } from '../../common/balances/Balance'
 import { MutedDiv } from '../../utils/MutedText'
-import { BuyDomainSection } from '../EligibleDomainsSection'
 import { useManageDomainContext, Variant } from '../manage/ManageDomainProvider'
-import BuyByDotTxButton from './BuyByDotTxButton'
 import styles from './Index.module.sass'
-import { useGetDecimalAndSymbol } from './utils'
+import { useGetDecimalAndSymbol } from '../dot-seller/utils'
+import { BuyByDotTxButton, BuyDomainSection } from '../BuyDomainButtons'
 
 type ModalBodyProps = {
   domainName: string

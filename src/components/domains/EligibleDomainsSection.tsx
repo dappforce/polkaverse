@@ -1,40 +1,27 @@
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { isFunction } from '@polkadot/util'
-import { isEmptyArray, newLogger, parseDomain } from '@subsocial/utils'
+import { isEmptyArray, parseDomain } from '@subsocial/utils'
 import { Button, Card, Divider, Radio, RadioChangeEvent, Result, Row, Tag, Tooltip } from 'antd'
-import BN from 'bn.js'
 import React, { useEffect } from 'react'
-import { showErrorMessage } from 'src/components/utils/Message'
 import config from 'src/config'
-import { useAppDispatch } from 'src/rtk/app/store'
-import { fetchPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
 import { DomainEntity } from 'src/rtk/features/domains/domainsSlice'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import {
-  useCreateReloadPendingOrders,
   useSelectPendingOrderById,
 } from '../../rtk/features/domainPendingOrders/pendingOrdersHooks'
 import {
   useBuildDomainsWithTldByDomain,
-  useCreateReloadMyDomains,
   useFetchDomain,
   useIsReservedWord,
   useIsSupportedTld,
 } from '../../rtk/features/domains/domainHooks'
 import { useIsMyAddress, useMyAccountsContext, useMyAddress } from '../auth/MyAccountsContext'
-import { TxCallback } from '../substrate/SubstrateTxButton'
-import useSubstrate from '../substrate/useSubstrate'
 import { Loading, LocalIcon } from '../utils'
 import { MutedDiv, MutedSpan } from '../utils/MutedText'
-import { createPendingOrder, deletePendingOrder, updatePendingOrder } from '../utils/OffchainUtils'
-import TxButton from '../utils/TxButton'
-import RegisterDomainButton from './dot-seller/RegisterDomainModal'
-import { pendingOrderAction } from './dot-seller/utils'
 import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
 import { DomainDetails, getTime, ResultContainer } from './utils'
-
-const log = newLogger('DD')
+import RegisterDomainButton from './registerDomainModal/RegisterDomainModal'
 
 type DomainItemProps = {
   domain: string
@@ -44,132 +31,6 @@ type DomainItemProps = {
 type DomainProps = {
   domain: DomainEntity
   label?: string
-}
-
-const BLOCK_TIME = 12
-const SECS_IN_DAY = 60 * 60 * 24
-const BLOCKS_IN_YEAR = new BN((SECS_IN_DAY * 365) / BLOCK_TIME)
-
-type BuyDomainSectionProps = {
-  domainName: string
-  label?: string
-}
-
-export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSectionProps) => {
-  const reloadMyDomains = useCreateReloadMyDomains()
-  const { openManageModal, setProcessingDomains } = useManageDomainContext()
-  const { api, isApiReady } = useSubstrate()
-  const reloadPendingOrders = useCreateReloadPendingOrders()
-  const { purchaser } = useManageDomainContext()
-  const sellerConfig = useSelectSellerConfig()
-  const myAddress = useMyAddress()
-  const pendingOrder = useSelectPendingOrderById(domainName)
-  const dispatch = useAppDispatch()
-
-  if (!isApiReady) return null
-
-  const getTxParams = () => {
-    return [domainName, null, BLOCKS_IN_YEAR]
-  }
-
-  const onSuccess: TxCallback = async () => {
-    if (!sellerConfig) return
-
-    const { sellerApiAuthTokenManager } = sellerConfig
-
-    reloadMyDomains()
-
-    setProcessingDomains({ [domainName]: false })
-
-    await pendingOrderAction({
-      action: deletePendingOrder,
-      args: [domainName, sellerApiAuthTokenManager],
-      account: purchaser,
-      dispatch,
-      reload: false
-    })
-
-    reloadPendingOrders(purchaser)
-    openManageModal('success', domainName)
-  }
-
-  const onFailed = async (errorInfo: any) => {
-    const jsonErr = JSON.stringify(errorInfo)
-    log.error('Failed:', jsonErr)
-    
-    showErrorMessage(jsonErr)
-    setProcessingDomains({ [domainName]: false })
-  }
-
-  const onClick = async () => {
-    if (!sellerConfig || !myAddress) return
-
-    const { sellerApiAuthTokenManager } = sellerConfig
-
-    setProcessingDomains({ [domainName]: true })
-
-    if (pendingOrder) {
-      await pendingOrderAction({
-        action: deletePendingOrder,
-        args: [domainName, sellerApiAuthTokenManager],
-        account: purchaser,
-        dispatch,
-      })
-    }
-
-    const preventTx = await pendingOrderAction({
-      action: createPendingOrder,
-      args: [
-        {
-          sellerApiAuthTokenManager,
-          createdByAccount: myAddress,
-          destination: 'SUB',
-          domain: domainName,
-          signer: purchaser,
-          target: '',
-        },
-      ],
-      account: purchaser,
-      dispatch,
-    })
-
-    if(preventTx) {
-      setProcessingDomains({ [domainName]: false })
-    }
-
-    return preventTx
-  }
-
-  const onCancel = async () => {
-    if (!sellerConfig || !myAddress) return
-
-    const { sellerApiAuthTokenManager } = sellerConfig
-
-    await updatePendingOrder(domainName, true, sellerApiAuthTokenManager)
-
-    dispatch(fetchPendingOrdersByAccount({ id: myAddress, reload: true }))
-  }
-
-  return (
-    <span className='d-flex align-items-center w-100'>
-      <TxButton
-        type='primary'
-        customNodeApi={api}
-        accountId={purchaser}
-        block
-        size='middle'
-        label={label}
-        tx={'domains.registerDomain'}
-        onSuccess={onSuccess}
-        onFailed={onFailed}
-        onCancel={onCancel}
-        isFreeTx
-        onClick={() => onClick()}
-        params={getTxParams}
-        className={styles.DomainPrimaryButton}
-      />
-    </span>
-  )
 }
 
 // const ClaimFreeDomainSection = ({ domain: { id: domain } }: DomainProps) => {
