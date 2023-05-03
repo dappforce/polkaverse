@@ -89,7 +89,7 @@ const UnavailableBtn = ({ domain: { owner, id } }: DomainProps) => {
 
 const DomainAction = ({ domain }: DomainProps) => {
   const { owner } = domain
-  const { variant } = useManageDomainContext()
+  const { domainSellerKind } = useManageDomainContext()
   const sellerConfig = useSelectSellerConfig()
   const myAddress = useMyAddress()
   const pendingOrder = useSelectPendingOrderById(domain.id)
@@ -132,7 +132,7 @@ const DomainAction = ({ domain }: DomainProps) => {
   return owner ? (
     <UnavailableBtn domain={domain} />
   ) : (
-    <RegisterDomainButton domainName={domain.id} variant={variant} />
+    <RegisterDomainButton domainName={domain.id} domainSellerKind={domainSellerKind} />
   )
 }
 

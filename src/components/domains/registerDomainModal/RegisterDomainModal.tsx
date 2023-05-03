@@ -8,7 +8,7 @@ import { useSubstrate } from 'src/components/substrate'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { FormatBalance, useCreateBalance } from '../../common/balances/Balance'
 import { MutedDiv } from '../../utils/MutedText'
-import { useManageDomainContext, Variant } from '../manage/ManageDomainProvider'
+import { useManageDomainContext, DomainSellerKind } from '../manage/ManageDomainProvider'
 import styles from './Index.module.sass'
 import { useGetDecimalAndSymbol } from '../dot-seller/utils'
 import { BuyByDotTxButton, BuyDomainSection } from '../BuyDomainButtons'
@@ -16,10 +16,10 @@ import { BuyByDotTxButton, BuyDomainSection } from '../BuyDomainButtons'
 type ModalBodyProps = {
   domainName: string
   price?: string
-  variant: Variant
+  domainSellerKind: DomainSellerKind
 }
 
-const ModalBody = ({ domainName, price, variant }: ModalBodyProps) => {
+const ModalBody = ({ domainName, price, domainSellerKind }: ModalBodyProps) => {
   const { recipient, purchaser, setRecipient, setPurchaser } = useManageDomainContext()
   const sellerConfig = useSelectSellerConfig()
   const nativeBalance = useCreateBalance(purchaser)
@@ -27,7 +27,7 @@ const ModalBody = ({ domainName, price, variant }: ModalBodyProps) => {
 
   const { sellerChain } = sellerConfig || {}
 
-  const isSub = variant === 'SUB'
+  const isSub = domainSellerKind === 'SUB'
 
   const { decimal, symbol } = useGetDecimalAndSymbol(sellerChain)
 
@@ -107,11 +107,11 @@ type BuyDomainModalProps = {
   domainName: string
   open: boolean
   close: () => void
-  variant: Variant
+  domainSellerKind: DomainSellerKind
   price?: string
 }
 
-const BuyDomainModal = ({ domainName, open, close, price, variant }: BuyDomainModalProps) => {
+const BuyDomainModal = ({ domainName, open, close, price, domainSellerKind }: BuyDomainModalProps) => {
 
   const title = (
     <div className={styles.ModalTitle}>
@@ -119,7 +119,7 @@ const BuyDomainModal = ({ domainName, open, close, price, variant }: BuyDomainMo
     </div>
   )
 
-  const isByDot = variant === 'DOT'
+  const isByDot = domainSellerKind === 'DOT'
 
   const modalFooter = (
     <div className={styles.FooterButtons}>
@@ -141,7 +141,7 @@ const BuyDomainModal = ({ domainName, open, close, price, variant }: BuyDomainMo
       destroyOnClose
       className={clsx('DfSignInModal', styles.DomainModal)}
     >
-      <ModalBody domainName={domainName} price={price} variant={variant} />
+      <ModalBody domainName={domainName} price={price} domainSellerKind={domainSellerKind} />
     </Modal>
   )
 }
@@ -150,14 +150,14 @@ type BuyByDotButtonProps = {
   domainName: string
   label?: string
   withPrice?: boolean
-  variant: Variant
+  domainSellerKind: DomainSellerKind
 }
 
 const RegisterDomainButton = ({
   domainName,
   label = 'Register',
   withPrice = true,
-  variant,
+  domainSellerKind,
 }: BuyByDotButtonProps) => {
   const sellerConfig = useSelectSellerConfig()
   const { domainRegistrationPriceFixed, sellerChain } = sellerConfig || {}
@@ -169,11 +169,11 @@ const RegisterDomainButton = ({
 
   const close = () => setOpen(false)
 
-  const isSub = variant === 'SUB'
+  const isSub = domainSellerKind === 'SUB'
 
   const price = useMemo(() => {
     return isSub ? api?.consts.domains.baseDomainDeposit.toString() : domainRegistrationPriceFixed
-  }, [variant])
+  }, [domainSellerKind])
 
   const chainProps = isSub ? {} : { decimals: decimal, currency: symbol }
 
@@ -194,7 +194,7 @@ const RegisterDomainButton = ({
         domainName={domainName}
         open={open}
         close={close}
-        variant={variant || 'SUB'}
+        domainSellerKind={domainSellerKind || 'SUB'}
         price={price}
       />
     </span>

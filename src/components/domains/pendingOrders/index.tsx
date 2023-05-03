@@ -13,7 +13,7 @@ import {
 import { PendingDomainEntity } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { MutedDiv } from '../../utils/MutedText'
-import { useManageDomainContext, Variant } from '../manage/ManageDomainProvider'
+import { useManageDomainContext, DomainSellerKind } from '../manage/ManageDomainProvider'
 import { getTime } from '../utils'
 import styles from './Index.module.sass'
 import RegisterDomainButton from '../registerDomainModal/RegisterDomainModal'
@@ -55,7 +55,7 @@ const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
         domainName={id}
         label={'Continue'}
         withPrice={false}
-        variant={destination as Variant}
+        domainSellerKind={destination as DomainSellerKind}
       />
     )
 

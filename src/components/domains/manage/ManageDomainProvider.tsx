@@ -11,8 +11,8 @@ type ManageDomainProviderState = {
   openManageModal: OpenManageModalFn
   promoCode?: string
   clearPromoCode: () => void
-  variant: Variant
-  setVariant: (variant: Variant) => void
+  domainSellerKind: DomainSellerKind
+  setVariant: (domainSellerKind: DomainSellerKind) => void
   recipient: string
   setRecipient: (recipient: string) => void
   purchaser: string
@@ -23,7 +23,7 @@ type ManageDomainProviderState = {
   setProcessingDomains: (processingDomains: Record<string, boolean>) => void
 }
 
-export type Variant = 'SUB' | 'DOT'
+export type DomainSellerKind = 'SUB' | 'DOT'
 
 const ManageDomainContext = createContext<ManageDomainProviderState>({} as any)
 
@@ -33,7 +33,7 @@ export const ManageDomainProvider: React.FC<{ promoCode?: string }> = ({ childre
   const [currentStep, setStep] = useState<MenuSteps>()
   const [domain, setDomain] = useState<string>()
   const [visible, setVisible] = useState(true)
-  const [variant, setVariant] = useState<Variant>('SUB')
+  const [domainSellerKind, setVariant] = useState<DomainSellerKind>('SUB')
   const [recipient, setRecipient] = useState<string>(myAddress || '')
   const [purchaser, setPurchaser] = useState<string>(myAddress || '')
   const [isFetchNewDomains, setIsFetchNewDomains] = useState(false)
@@ -70,7 +70,7 @@ export const ManageDomainProvider: React.FC<{ promoCode?: string }> = ({ childre
   const value = {
     currentStep,
     openManageModal,
-    variant,
+    domainSellerKind,
     setVariant,
     recipient,
     setRecipient,
