@@ -14,25 +14,18 @@ import {
   selectPendingOrdersByIds,
 } from './pendingOrdersSlice'
 
+// TODO: check this case
 export const useFetchDomainPendingOrdersByIds = (domains: string[]) => {
   const ids = domains as EntityId[]
 
   useFetch(fetchPendingOrdersByIds, { ids })
 }
 
-export const useFetchDomainPendingOrdersByCreatedByAccount = () => {
+export const useFetchDomainPendingOrdersByAccount = (address?: string) => {
   const myAddress = useMyAddress()
 
-  useFetch(fetchPendingOrdersByAccount, { id: myAddress || '' })
-}
-
-export const useFetchDomainPendingOrdersBySigner = (address?: string) => (
-  useFetch(fetchPendingOrdersBySigner, { id: address || '' })
-)
-
-export const useFetchDomainPendingOrdersByAccount = (address?: string) => {
-  useFetchDomainPendingOrdersByCreatedByAccount()
-  useFetchDomainPendingOrdersBySigner(address)
+  useFetch(fetchPendingOrdersByAccount, { id: myAddress })
+  useFetch(fetchPendingOrdersBySigner, { id: address })
 }
 
 export const useSelectPendingOrderById = (id: string) => {
@@ -43,21 +36,11 @@ export const useSelectPendingOrdersByIds = (ids: string[]) => {
   return useAppSelector(state => selectPendingOrdersByIds(state, ids))
 }
 
-export const useSelectPendingOrdersByAccount = () => {
-  const myAddress = useMyAddress()
-
-  return useAppSelector(state => selectPendingOrdersByAccount(state, 'createdByAccount', myAddress))
-}
-
-export const useSelectPendingOrdersBySigner = (address?: string) => {
-  return useAppSelector(state => selectPendingOrdersByAccount(state, 'signer', address))
-}
-
 export const useSelectPendingOrders = () => {
   const myAddress = useMyAddress()
   
-  const ordersByAccount = useSelectPendingOrdersByAccount()
-  const ordersBySigner = useSelectPendingOrdersBySigner(myAddress)
+  const ordersByAccount = useAppSelector(state => selectPendingOrdersByAccount(state, 'createdByAccount', myAddress))
+  const ordersBySigner = useAppSelector(state => selectPendingOrdersByAccount(state, 'signer', myAddress))
 
   const ordersSet = new Set([...ordersByAccount, ...ordersBySigner])
 

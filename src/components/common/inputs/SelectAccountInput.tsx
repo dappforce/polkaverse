@@ -1,7 +1,7 @@
 import { Select } from 'antd'
 import { useEffect, useState } from 'react'
 import { SelectAddressPreview } from '../../profile-selector/MyAccountMenu'
-import { isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
+import { isDef, isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
 import registry from '@subsocial/api/utils/registry'
 import { GenericAccountId } from '@polkadot/types'
 import Avatar from '../../profiles/address-views/Avatar'
@@ -55,7 +55,7 @@ export const SelectAccountInput = ({
   disabled
 }: SelectAccountInputProps) => {
   const { accounts, status } = useMyAccounts()
-  const allExtensionAccounts = accounts.map(x => toSubsocialAddress(x.address) as string)
+  const allExtensionAccounts = accounts.map(x => x.address && toSubsocialAddress(x.address) as string).filter(isDef)
 
   const [ defaultOptions, setDefaultOptions ] = useState<any[]>([])
   const [ selectOptions, setSelectOptions ] = useState<any[]>(defaultOptions)

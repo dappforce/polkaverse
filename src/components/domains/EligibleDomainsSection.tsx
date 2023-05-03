@@ -96,6 +96,7 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
   const onFailed = async (errorInfo: any) => {
     const jsonErr = JSON.stringify(errorInfo)
     log.error('Failed:', jsonErr)
+    
     showErrorMessage(jsonErr)
     setProcessingDomains({ [domainName]: false })
   }
@@ -116,7 +117,7 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
       })
     }
 
-    return await pendingOrderAction({
+    const preventTx = await pendingOrderAction({
       action: createPendingOrder,
       args: [
         {
@@ -131,6 +132,12 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
       account: purchaser,
       dispatch,
     })
+
+    if(preventTx) {
+      setProcessingDomains({ [domainName]: false })
+    }
+
+    return preventTx
   }
 
   const onCancel = async () => {
@@ -261,12 +268,10 @@ const DomainAction = ({ domain }: DomainProps) => {
     )
   }
 
-  const label = signer === myAddress ? 'Continue' : undefined
-
   return owner ? (
     <UnavailableBtn domain={domain} />
   ) : (
-    <RegisterDomainButton domainName={domain.id} label={label} variant={variant} />
+    <RegisterDomainButton domainName={domain.id} variant={variant} />
   )
 }
 

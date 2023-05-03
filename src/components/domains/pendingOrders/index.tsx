@@ -11,10 +11,6 @@ import {
   useSelectPendingOrders,
 } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { PendingDomainEntity } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
-import {
-  useFetchProcessingOrdersByIds,
-  useSelectProcessingOrderById,
-} from 'src/rtk/features/processingRegistrationOrders/processingRegistratoinOrdersHooks'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { MutedDiv } from '../../utils/MutedText'
 import RegisterDomainButton from '../dot-seller/RegisterDomainModal'
@@ -29,7 +25,6 @@ type PendingDomainProps = {
 
 const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
   const sellerConfig = useSelectSellerConfig()
-  const processingOrder = useSelectProcessingOrderById(pendingDomain.id)
   const reloadPendingOrders = useCreateReloadPendingOrders()
   const myAddress = useMyAddress()
 
@@ -51,7 +46,7 @@ const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
   const isDomainProcessing = processingDomains[pendingDomain.id]
 
   const registerButton =
-    processingOrder || isDomainProcessing ? (
+    isDomainProcessing ? (
       <Tag color='gold' className={clsx(styles.PendingTag)}>
         Processing
       </Tag>
@@ -85,10 +80,6 @@ const PendingOrdersSection = () => {
   const sellerConfig = useSelectSellerConfig()
   const myAddress = useMyAddress()
   const [time, setTime] = useState<number>(dayjs().valueOf())
-
-  const pendingDomainsNames = pendingOrders?.map(order => order.id)
-
-  useFetchProcessingOrdersByIds(pendingDomainsNames, myAddress)
 
   const { dmnRegPendingOrderExpTime } = sellerConfig || {}
 

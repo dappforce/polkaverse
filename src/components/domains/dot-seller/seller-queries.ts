@@ -90,7 +90,7 @@ export const CREATE_PENDING_ORDER = gql`
     $destination: String!
     $domain: String!
     $signer: String!
-    $target: String!
+    $target: String
     $createdByAccount: String!
   ) {
     createPendingOrder(

@@ -13,7 +13,6 @@ import { useLazyConnectionsContext } from 'src/components/lazy-connection/LazyCo
 import { createPendingOrder, deletePendingOrder, updatePendingOrder } from 'src/components/utils/OffchainUtils'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { useSelectPendingOrderById } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
-import { useCreateReloadProcessingOrdersByAccount } from 'src/rtk/features/processingRegistrationOrders/processingRegistratoinOrdersHooks'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useManageDomainContext } from '../manage/ManageDomainProvider'
 import { pendingOrderAction, useGetDecimalAndSymbol } from './utils'
@@ -37,7 +36,6 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
   const myAddress = useMyAddress()
   const { getApiByNetwork } = useLazyConnectionsContext()
   const pendingOrder = useSelectPendingOrderById(domainName)
-  const reloadProcessingOrders = useCreateReloadProcessingOrdersByAccount()
 
   const { sellerChain, domainRegistrationPriceFixed } = sellerConfig || {}
 
@@ -96,7 +94,6 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
 
   const onSuccess = async () => {
     setIsFetchNewDomains(true)
-    reloadProcessingOrders({ domains: [domainName], recipient })
     setProcessingDomains({ [domainName]: true })
 
     close()
@@ -117,7 +114,7 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
       })
     }
 
-    return await pendingOrderAction({
+    const preventTx = await pendingOrderAction({
       action: createPendingOrder,
       args: [
         {
@@ -132,6 +129,12 @@ const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProp
       account: purchaser,
       dispatch,
     })
+
+    if(preventTx) {
+      setProcessingDomains({ [domainName]: false })
+    }
+
+    return preventTx
   }
 
   const onCancel = async () => {

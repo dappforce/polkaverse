@@ -5,9 +5,7 @@ import { useIsMyAddress } from 'src/components/auth/MyAccountsContext'
 import { SelectAccountInput } from 'src/components/common/inputs/SelectAccountInput'
 import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
 import { useSubstrate } from 'src/components/substrate'
-import { useSelectProcessingOrderById } from 'src/rtk/features/processingRegistrationOrders/processingRegistratoinOrdersHooks'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
-import { useSelectPendingOrderById } from '../../../rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { FormatBalance, useCreateBalance } from '../../common/balances/Balance'
 import { MutedDiv } from '../../utils/MutedText'
 import { BuyDomainSection } from '../EligibleDomainsSection'
@@ -19,20 +17,18 @@ import { useGetDecimalAndSymbol } from './utils'
 type ModalBodyProps = {
   domainName: string
   price?: string
+  variant: Variant
 }
 
-const ModalBody = ({ domainName, price }: ModalBodyProps) => {
+const ModalBody = ({ domainName, price, variant }: ModalBodyProps) => {
   const { recipient, purchaser, setRecipient, setPurchaser } = useManageDomainContext()
   const sellerConfig = useSelectSellerConfig()
-  const { variant } = useManageDomainContext()
-  const pendingOrder = useSelectPendingOrderById(domainName)
   const nativeBalance = useCreateBalance(purchaser)
   const isMyAddress = useIsMyAddress(recipient)
 
-  const { destination } = pendingOrder || {}
   const { sellerChain } = sellerConfig || {}
 
-  const isSub = destination ? destination === 'SUB' : variant === 'SUB'
+  const isSub = variant === 'SUB'
 
   const { decimal, symbol } = useGetDecimalAndSymbol(sellerChain)
 
@@ -116,11 +112,7 @@ type BuyDomainModalProps = {
   price?: string
 }
 
-const BuyDomainModal = ({ domainName, open, close, price }: BuyDomainModalProps) => {
-  const { variant } = useManageDomainContext()
-  const pendingOrder = useSelectPendingOrderById(domainName)
-
-  const { destination } = pendingOrder || {}
+const BuyDomainModal = ({ domainName, open, close, price, variant }: BuyDomainModalProps) => {
 
   const title = (
     <div className={styles.ModalTitle}>
@@ -128,7 +120,7 @@ const BuyDomainModal = ({ domainName, open, close, price }: BuyDomainModalProps)
     </div>
   )
 
-  const isByDot = destination ? destination === 'DOT' : variant === 'DOT'
+  const isByDot = variant === 'DOT'
 
   const modalFooter = (
     <div className={styles.FooterButtons}>
@@ -150,7 +142,7 @@ const BuyDomainModal = ({ domainName, open, close, price }: BuyDomainModalProps)
       destroyOnClose
       className={clsx('DfSignInModal', styles.DomainModal)}
     >
-      <ModalBody domainName={domainName} price={price} />
+      <ModalBody domainName={domainName} price={price} variant={variant} />
     </Modal>
   )
 }
@@ -159,7 +151,7 @@ type BuyByDotButtonProps = {
   domainName: string
   label?: string
   withPrice?: boolean
-  variant?: Variant
+  variant: Variant
 }
 
 const RegisterDomainButton = ({
@@ -171,22 +163,18 @@ const RegisterDomainButton = ({
   const sellerConfig = useSelectSellerConfig()
   const { domainRegistrationPriceFixed, sellerChain } = sellerConfig || {}
   const { api } = useSubstrate()
-  const processingOrder = useSelectProcessingOrderById(domainName)
   const { processingDomains } = useManageDomainContext()
-  const pendingOrder = useSelectPendingOrderById(domainName)
 
   const [open, setOpen] = useState(false)
   const { decimal, symbol } = useGetDecimalAndSymbol(sellerChain)
 
   const close = () => setOpen(false)
 
-  const { destination } = pendingOrder || {}
-
-  const isSub = destination ? destination === 'SUB' : variant === 'SUB'
+  const isSub = variant === 'SUB'
 
   const price = useMemo(() => {
     return isSub ? api?.consts.domains.baseDomainDeposit.toString() : domainRegistrationPriceFixed
-  }, [isSub])
+  }, [variant])
 
   const chainProps = isSub ? {} : { decimals: decimal, currency: symbol }
 
@@ -198,7 +186,7 @@ const RegisterDomainButton = ({
       <Button
         type={'primary'}
         block
-        disabled={isProcessingDomain || !!processingOrder}
+        disabled={isProcessingDomain}
         onClick={() => setOpen(true)}
       >
         {label}
