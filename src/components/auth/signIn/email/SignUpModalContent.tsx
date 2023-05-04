@@ -138,6 +138,7 @@ const SignUpModalContent = ({ setCurrentStep }: Props) => {
         setCurrentStep(StepsEnum.Confirmation)
       }
     } catch (error) {
+      setLoading(false)
       onErrorHandler(error, setError)
     }
   }

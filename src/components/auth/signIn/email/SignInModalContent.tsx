@@ -205,6 +205,7 @@ const SignInModalContent = ({ setCurrentStep, onSignInSuccess }: Props) => {
       // for decryption
       setPassword(password)
     } catch (error) {
+      setLoading(false)
       onErrorHandler(error, setError)
     }
   }

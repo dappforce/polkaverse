@@ -115,24 +115,24 @@ function RememberMeButton({
 
     let signer: Signer | undefined
 
-    if (isMobile) {
-      const { web3FromAddress } = await import('@polkadot/extension-dapp')
-      signer = await (await web3FromAddress(myAddress.toString())).signer
-    } else {
-      const currentWallet = getCurrentWallet()
-      const wallet = getWalletBySource(currentWallet)
-      signer = wallet?.signer
-    }
-
-    if (!signer) {
-      throw new Error('No signer provided')
-    }
-
-    if (!signer?.signRaw) {
-      throw new Error('signing failed!')
-    }
-
     try {
+      if (isMobile) {
+        const { web3FromAddress } = await import('@polkadot/extension-dapp')
+        signer = await (await web3FromAddress(myAddress.toString())).signer
+      } else {
+        const currentWallet = getCurrentWallet()
+        const wallet = getWalletBySource(currentWallet)
+        signer = wallet?.signer
+      }
+
+      if (!signer) {
+        throw new Error('No signer provided')
+      }
+
+      if (!signer?.signRaw) {
+        throw new Error('signing failed!')
+      }
+
       const { signature } = await signer.signRaw({
         address: myAddress as string,
         data: stringToHex(messageJwt),
@@ -142,6 +142,7 @@ function RememberMeButton({
       return signature
     } catch (err: any) {
       onFailedHandler(err instanceof Error ? err.message : err)
+      setLoadingBtn(false)
       return
     }
   }
@@ -184,6 +185,7 @@ function RememberMeButton({
       onSuccessAuth()
     } catch (err: any) {
       onFailedHandler(err instanceof Error ? err.message : err)
+      setLoadingBtn(false)
       return
     }
   }

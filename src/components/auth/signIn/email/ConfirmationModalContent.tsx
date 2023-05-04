@@ -39,6 +39,7 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
   const { isMobile } = useResponsiveSize()
 
   const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   if (!subsocialAddress) setError('Subsocial address is not defined')
   const accessToken = getSignerToken(subsocialAddress!)
@@ -65,6 +66,8 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
   const handleSubmit = async (values: FormValues) => {
     if (!accessToken) setError('Access token is not defined')
 
+    setLoading(true)
+
     try {
       const props = {
         code: values.confirmationCode.toString(),
@@ -88,7 +91,10 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
       setCurrentStep(StepsEnum.ShowMnemonic)
     } catch (error) {
+      setLoading(false)
       onErrorHandler(error, setError)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -159,7 +165,8 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
           type='primary'
           size='large'
           htmlType='submit'
-          disabled={!isFormValid || isError}
+          loading={loading}
+          disabled={!isFormValid || isError || loading}
           block
         >
           Confirm
