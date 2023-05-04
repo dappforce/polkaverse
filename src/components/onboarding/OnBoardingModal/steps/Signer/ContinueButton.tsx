@@ -27,7 +27,6 @@ const PartialContinueButton = ({
 
   return (
     <TxButton
-      isFreeTx
       type='primary'
       block
       size='large'
