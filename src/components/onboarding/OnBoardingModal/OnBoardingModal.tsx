@@ -98,7 +98,7 @@ export default function OnBoardingModal({
   const openState = useOnBoardingModalOpenState()
   const openCloseModal = useOpenCloseOnBoardingModal()
 
-  const onBoardingModalStepsOrder = useOnBoardingStepsOrderWithEnergySnapshot()
+  const { steps: onBoardingModalStepsOrder } = useOnBoardingStepsOrderWithEnergySnapshot()
 
   const currentStep = useCurrentOnBoardingStep()
   const currentStepIndex = useMemo(() => {

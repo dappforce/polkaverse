@@ -8,7 +8,7 @@ import OnBoardingSidebarButton from '../OnBoardingSidebarButton'
 export default function ContinueOnBoardingButton() {
   const openCloseModal = useOpenCloseOnBoardingModal()
   const allData = useAllOnBoardingData()
-  const order = useOnBoardingStepsOrder()
+  const { steps: order } = useOnBoardingStepsOrder()
 
   const onClick = () => {
     const firstSkippedStep = order.find(currentStep => allData[currentStep]?.isDraft !== false)

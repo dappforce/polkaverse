@@ -66,9 +66,10 @@ const useSignerExternalStorage = () => {
     setEmailAddress(emailAddress, subsocialAddress)
   }
 
-  const setSignerProxyAdded = (userAddress: string) => {
+  const setSignerProxyAdded = (state: 'enabled' | 'disabled', userAddress: string) => {
     const subsocialAddress = convertToSubsocialAddress(userAddress)
-    setProxyAdded(true, subsocialAddress)
+    const data = state === 'enabled' ? true : undefined
+    setProxyAdded(data, subsocialAddress)
   }
 
   const setIsSignerAddress = (userAddress: string) => {

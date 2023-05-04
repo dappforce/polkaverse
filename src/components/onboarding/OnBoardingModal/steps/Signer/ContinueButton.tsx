@@ -3,14 +3,27 @@ import { getProxyAddress } from 'src/components/utils/OffchainSigner/ExternalSto
 import TxButton from 'src/components/utils/TxButton'
 
 type ContinueButtonProps = {
+  isRemovingProxy?: boolean
   loading: boolean
   setLoading: (loading: boolean) => void
   onSuccess: () => void
+  label?: string
 }
 
-const PartialContinueButton = ({ loading, setLoading, onSuccess }: ContinueButtonProps) => {
+const PartialContinueButton = ({
+  loading,
+  setLoading,
+  onSuccess,
+  isRemovingProxy,
+  label,
+}: ContinueButtonProps) => {
   const myAddress = useMyAddress()
   const proxyAddress = getProxyAddress(myAddress!)
+
+  const txParams = isRemovingProxy ? undefined : [proxyAddress, 'SocialActions', 0]
+  const tx = isRemovingProxy ? 'proxy.removeProxies' : 'freeProxy.addFreeProxy'
+
+  const btnLabel = label || 'Continue'
 
   return (
     <TxButton
@@ -19,8 +32,8 @@ const PartialContinueButton = ({ loading, setLoading, onSuccess }: ContinueButto
       block
       size='large'
       className='mt-4'
-      params={[proxyAddress, 'SocialActions', 0]}
-      tx='freeProxy.addFreeProxy'
+      params={txParams}
+      tx={tx}
       onSuccess={() => {
         setLoading(false)
         onSuccess()
@@ -35,7 +48,7 @@ const PartialContinueButton = ({ loading, setLoading, onSuccess }: ContinueButto
         setLoading(true)
       }}
     >
-      Continue
+      {btnLabel}
     </TxButton>
   )
 }
