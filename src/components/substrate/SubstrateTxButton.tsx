@@ -3,6 +3,7 @@ import { isStr } from '@subsocial/utils'
 import Button, { ButtonProps } from 'antd/lib/button'
 import React from 'react'
 import config from 'src/config'
+import { useIsProxyAddedContext } from '../onboarding/contexts/IsProxyAdded'
 import { isProxyAdded } from '../utils/OffchainSigner/ExternalStorage'
 import { sendSignerTx } from '../utils/OffchainSigner/OffchainSignerUtils'
 
@@ -116,20 +117,26 @@ function TxButton({
 
   const myAddress = useMyAddress()
   const { getEncryptedStoredAccount } = useEncryptedStorage()
+  const { isProxyAdded: isProxyAddedState } = useIsProxyAddedContext()
 
   const myEmailAddress = useMyEmailAddress()
 
   const emailSignerToken = getSignerToken(accountId as string)
   const emailRefreshToken = getSignerRefreshToken(accountId as string)
   const isSigningWithEmail = isStr(emailSignerToken) && isStr(myEmailAddress)
-  const isMainProxyAdded = isProxyAdded(accountId as string)
+  const isCurrentAddressAddedWithProxy = isProxyAdded(myAddress!) && isProxyAddedState
   const isSigningWithSignerAccount =
-    isStr(signerToken) && !isStr(myEmailAddress) && isMainProxyAdded
+    isStr(signerToken) && !isStr(myEmailAddress) && isCurrentAddressAddedWithProxy
 
   const currentUserSignerToken = isSigningWithEmail ? emailSignerToken : signerToken
   const currentUserRefreshToken = isSigningWithEmail ? emailRefreshToken : refreshToken
 
   const isBatchTxUsingEmail = tx === 'utility.batch' && isStr(myEmailAddress)
+  const isRemovingProxyOnAccount =
+    tx === 'proxy.removeProxies' && isStr(myAddress) && isCurrentAddressAddedWithProxy
+
+  const isAddingProxyOnAccount =
+    tx === 'freeProxy.addFreeProxy' && isStr(myAddress) && !isCurrentAddressAddedWithProxy
 
   const api = customNodeApi || subsocialApi
 
@@ -232,6 +239,43 @@ function TxButton({
     doOnFailed(null)
   }
 
+  const signWithExtension = async (
+    extrinsic: SubmittableExtrinsic,
+    accountId: AnyAccountId,
+    hideRememberMePopup: boolean,
+  ) => {
+    let signer: Signer | undefined
+    let tx: SubmittableExtrinsic
+    try {
+      if (isMobile) {
+        const { web3Enable, web3FromAddress } = await import('@polkadot/extension-dapp')
+        const extensions = await web3Enable(appName)
+
+        if (extensions.length === 0) {
+          return
+        }
+        signer = await (await web3FromAddress(accountId.toString())).signer
+      } else {
+        const currentWallet = getCurrentWallet()
+        const wallet = getWalletBySource(currentWallet)
+        signer = wallet?.signer
+      }
+
+      tx = await extrinsic.signAsync(accountId, { signer })
+
+      if (hideRememberMePopup) {
+        setSignerProxyAdded('enabled', accountId as string)
+        setIsSignerAddress(accountId as string)
+      }
+      unsub = await tx.send(onSuccessHandler)
+
+      waitMessage.open()
+      sendGaEvent()
+    } catch (err: any) {
+      onFailedHandler(err instanceof Error ? err.message : err)
+    }
+  }
+
   const sendSignedTx = async () => {
     if (!accountId) {
       throw new Error('No account id provided')
@@ -242,12 +286,19 @@ function TxButton({
       hideRememberMePopup = true
 
     try {
-      let signer: Signer | undefined
       let tx: SubmittableExtrinsic
 
       const extrinsic = await getExtrinsic()
 
-      if (isSigningWithEmail || isSigningWithSignerAccount) {
+      const isRemovingProxyUsingExtension = isSigningWithSignerAccount && isRemovingProxyOnAccount
+      const isAddingProxyUsingExtension = !isSigningWithSignerAccount && isAddingProxyOnAccount
+
+      if (isRemovingProxyUsingExtension || isAddingProxyUsingExtension) {
+        signWithExtension(extrinsic, accountId, hideRememberMePopup)
+        return
+      }
+
+      if (isSigningWithEmail) {
         if (isBatchTxUsingEmail) {
           const privateKey = getEncryptedStoredAccount(myAddress!, password!)
           const keyring = new Keyring({ type: 'sr25519' })
@@ -264,32 +315,21 @@ function TxButton({
             onFailedHandler,
           )
         }
-      } else {
-        if (isMobile) {
-          const { web3Enable, web3FromAddress } = await import('@polkadot/extension-dapp')
-          const extensions = await web3Enable(appName)
-
-          if (extensions.length === 0) {
-            return
-          }
-          signer = await (await web3FromAddress(accountId.toString())).signer
-        } else {
-          const currentWallet = getCurrentWallet()
-          const wallet = getWalletBySource(currentWallet)
-          signer = wallet?.signer
-        }
-        let tx: SubmittableExtrinsic | undefined
-
-        tx = await extrinsic.signAsync(accountId, { signer })
-
-        if (hideRememberMePopup) {
-          setSignerProxyAdded(accountId as string)
-          setIsSignerAddress(accountId as string)
-        }
-        unsub = await tx.send(onSuccessHandler)
+        return
       }
-      waitMessage.open()
-      sendGaEvent()
+
+      if (isSigningWithSignerAccount) {
+        sendSignerTx(
+          api,
+          extrinsic,
+          currentUserSignerToken!,
+          currentUserRefreshToken!,
+          onSuccessHandler,
+          onFailedHandler,
+        )
+      } else {
+        signWithExtension(extrinsic, accountId, hideRememberMePopup)
+      }
     } catch (err: any) {
       onFailedHandler(err instanceof Error ? err.message : err)
     }
