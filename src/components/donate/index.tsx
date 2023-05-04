@@ -12,7 +12,7 @@ import { MutedSpan } from 'src/components/utils/MutedText'
 import Segment from 'src/components/utils/Segment'
 import { TextWithEmoji } from 'src/components/utils/TextWithEmoji'
 import { useSelectProfile } from '../../rtk/features/profiles/profilesHooks'
-import { useIsUsingEmailOrSigner } from '../auth/MyAccountsContext'
+import { useIsUsingEmail } from '../auth/MyAccountsContext'
 import { DonateCard } from './DonateModal'
 import { TipContextWrapper, useTipContext } from './DonateModalContext'
 import styles from './index.module.sass'
@@ -61,7 +61,7 @@ export const Donate = ({ recipientAddress, renderButtonElement }: DonateProps) =
   const [opened, setOpened] = useState(false)
   const [showModal, setShowModal] = useState(false)
 
-  const isUsingEmailOrSigner = useIsUsingEmailOrSigner()
+  const isUsingEmail = useIsUsingEmail()
 
   const open = () => {
     setOpened(true)
@@ -97,12 +97,7 @@ export const Donate = ({ recipientAddress, renderButtonElement }: DonateProps) =
       {renderButtonElement ? (
         renderButtonElement(open)
       ) : (
-        <Button
-          disabled={isUsingEmailOrSigner}
-          type='primary'
-          onClick={open}
-          className={clsx('mr-2')}
-        >
+        <Button disabled={isUsingEmail} type='primary' onClick={open} className={clsx('mr-2')}>
           Tip
         </Button>
       )}

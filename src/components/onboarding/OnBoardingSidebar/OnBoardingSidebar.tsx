@@ -2,7 +2,7 @@ import { PlayCircleOutlined } from '@ant-design/icons'
 import { Button, Tooltip } from 'antd'
 import clsx from 'clsx'
 import { HTMLProps, useState } from 'react'
-import { useIsUsingEmailOrSigner } from 'src/components/auth/MyAccountsContext'
+import { useIsUsingEmail } from 'src/components/auth/MyAccountsContext'
 import useAccountName from 'src/components/profiles/hooks/useAccountName'
 import config from 'src/config'
 import { useOpenCloseEnableConfirmationModal } from 'src/rtk/features/confirmationPopup/useOpenCloseEnableConfirmationModal'
@@ -93,7 +93,7 @@ export default function OnBoardingSidebar({
 
   const name = useAccountName()
   const { isOnBoardingSkipped } = useIsOnBoardingSkippedContext()
-  const isUsingEmailOrSigner = useIsUsingEmailOrSigner()
+  const isUsingEmail = useIsUsingEmail()
 
   const showEnableConfirmationBtn = steps.includes('signer') ? false : true
 
@@ -128,7 +128,7 @@ export default function OnBoardingSidebar({
           />
         )}
         <WritePostButton />
-        {!isUsingEmailOrSigner && <DotsamaDomainButton />}
+        {!isUsingEmail && <DotsamaDomainButton />}
         <Tooltip
           title={
             <div className={clsx(styles.DismissTooltip, 'p-3')}>

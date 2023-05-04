@@ -111,10 +111,7 @@ export const DefaultMenu: MenuItem[] = [
   },
 ]
 
-export const buildAuthorizedMenu = (
-  myAddress: string,
-  isUsingEmailOrSigner?: boolean,
-): MenuItem[] => {
+export const buildAuthorizedMenu = (myAddress: string, isUsingEmail?: boolean): MenuItem[] => {
   const account = { address: myAddress }
 
   return [
@@ -137,7 +134,7 @@ export const buildAuthorizedMenu = (
       name: 'Subsocial Usernames',
       page: ['/dd', '/dd'],
       icon: <GlobalOutlined />,
-      hidden: !enableDomains || isUsingEmailOrSigner,
+      hidden: !enableDomains || isUsingEmail,
     },
     Divider,
     ...DefaultMenu,
