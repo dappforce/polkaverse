@@ -5,6 +5,7 @@ import { HTMLProps, useState } from 'react'
 import { useIsUsingEmailOrSigner } from 'src/components/auth/MyAccountsContext'
 import useAccountName from 'src/components/profiles/hooks/useAccountName'
 import config from 'src/config'
+import { useOpenCloseEnableConfirmationModal } from 'src/rtk/features/confirmationPopup/useOpenCloseEnableConfirmationModal'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
 import { OnBoardingDataTypes } from 'src/rtk/features/onBoarding/onBoardingSlice'
 import { useIsOnBoardingSkippedContext } from '../contexts/IsOnBoardingSkippedContext'
@@ -49,18 +50,52 @@ export interface OnBoardingSidebarProps extends HTMLProps<HTMLDivElement> {
   hideOnBoardingSidebar: () => void
 }
 
+interface Props {
+  steps: (keyof OnBoardingDataTypes)[]
+}
+
+function StepButton({ steps }: Props) {
+  const openCloseOnBoardingModal = useOpenCloseOnBoardingModal()
+
+  return (
+    <>
+      {steps.map(step => {
+        const content = buttonTexts[step]
+        return (
+          content && (
+            <OnBoardingSidebarButton
+              key={step}
+              onClick={() => {
+                openCloseOnBoardingModal('open', {
+                  toStep: step,
+                  type: 'partial',
+                })
+              }}
+              text={content.text}
+              emoji={content.emoji}
+            />
+          )
+        )
+      })}
+    </>
+  )
+}
+
 export default function OnBoardingSidebar({
   hideOnBoardingSidebar,
   className,
   ...props
 }: OnBoardingSidebarProps) {
   const [openQuickStart, setOpenQuickStart] = useState(false)
-  const steps = useOnBoardingStepsOrder(true)
-  const openCloseOnBoardingModal = useOpenCloseOnBoardingModal()
+  const { steps } = useOnBoardingStepsOrder(true)
+
+  const openCloseEnableConfirmationModal = useOpenCloseEnableConfirmationModal()
 
   const name = useAccountName()
   const { isOnBoardingSkipped } = useIsOnBoardingSkippedContext()
   const isUsingEmailOrSigner = useIsUsingEmailOrSigner()
+
+  const showEnableConfirmationBtn = steps.includes('signer') ? false : true
 
   return (
     <>
@@ -82,19 +117,16 @@ export default function OnBoardingSidebar({
           </Button>
         </div>
         {isOnBoardingSkipped && steps.length > 0 && <ContinueOnBoardingButton />}
-        {steps.map(step => {
-          const content = buttonTexts[step]
-          return (
-            content && (
-              <OnBoardingSidebarButton
-                key={step}
-                onClick={() => openCloseOnBoardingModal('open', { toStep: step, type: 'partial' })}
-                text={content.text}
-                emoji={content.emoji}
-              />
-            )
-          )
-        })}
+        <StepButton steps={steps} />
+        {showEnableConfirmationBtn && (
+          <OnBoardingSidebarButton
+            onClick={() => {
+              openCloseEnableConfirmationModal('open')
+            }}
+            text={'Enable confirmation pop-ups'}
+            emoji={'👌'}
+          />
+        )}
         <WritePostButton />
         {!isUsingEmailOrSigner && <DotsamaDomainButton />}
         <Tooltip

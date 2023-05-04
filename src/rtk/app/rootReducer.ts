@@ -2,6 +2,7 @@ import { combineReducers } from '@reduxjs/toolkit'
 import myAccount from '../features/accounts/myAccountSlice'
 import spaceEditors from '../features/accounts/spaceEditorsSlice'
 import chainsInfo from '../features/chainsInfo/chainsInfoSlice'
+import enableConfirmation from '../features/confirmationPopup/enableConfirmationSlice'
 import contents from '../features/contents/contentsSlice'
 import domainByOwner from '../features/domains/domainsByOwnerSlice'
 import domains from '../features/domains/domainsSlice'
@@ -41,6 +42,7 @@ const rootReducer = combineReducers({
   topLevelDomains,
   chainsInfo,
   onBoarding,
+  enableConfirmation,
 })
 
 export type RootState = ReturnType<typeof rootReducer>
