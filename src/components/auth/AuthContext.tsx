@@ -15,6 +15,7 @@ import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoard
 import { resetOnBoardingData } from 'src/rtk/features/onBoarding/onBoardingSlice'
 import store from 'store'
 import useSubsocialEffect from '../api/useSubsocialEffect'
+import ConfirmationModal from '../confirmation-modal/ConfirmationModal'
 import { calculateEnergyState, EnergyState, getEnergyCoef } from '../energy/utils'
 import OnBoardingModal, {
   ON_BOARDING_MODAL_KEY,
@@ -282,6 +283,7 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
         hide={() => setShowModal(false)}
       />
       <OnBoardingModal onBackClickInFirstStep={onBackClickInFirstOnBoardingStep} />
+      <ConfirmationModal />
     </AuthContext.Provider>
   )
 }
