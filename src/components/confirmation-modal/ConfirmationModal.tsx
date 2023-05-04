@@ -10,7 +10,7 @@ import {
   useEnableConfirmationModalOpenState,
   useOpenCloseEnableConfirmationModal,
 } from 'src/rtk/features/confirmationPopup/useOpenCloseEnableConfirmationModal'
-import useOnBoardingStepsOrder from '../onboarding/hooks/useOnBoardingStepsOrder'
+import { useIsProxyAddedContext } from '../onboarding/contexts/IsProxyAdded'
 import PartialContinueButton from '../onboarding/OnBoardingModal/steps/Signer/ContinueButton'
 
 export default function ConfirmationModal() {
@@ -18,14 +18,14 @@ export default function ConfirmationModal() {
   const openCloseEnableConfirmationModal = useOpenCloseEnableConfirmationModal()
   const myAddress = useMyAddress()
   const { setSignerProxyAdded } = useSignerExternalStorage()
-  const { setForceShowSignerStep } = useOnBoardingStepsOrder(true)
+  const { setIsProxyAdded } = useIsProxyAddedContext()
 
   const [loading, setLoading] = useState(false)
 
   const handleSuccess = () => {
-    setForceShowSignerStep(true)
     openCloseEnableConfirmationModal('close')
     setSignerProxyAdded('disabled', myAddress!)
+    setIsProxyAdded(false)
   }
 
   return (
@@ -58,6 +58,7 @@ export default function ConfirmationModal() {
             setLoading={setLoading}
             onSuccess={handleSuccess}
             isRemovingProxy={true}
+            label={'Enable confirmation pop-ups'}
           />
         </div>
       </>

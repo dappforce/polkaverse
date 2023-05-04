@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useIsProxyAddedContext } from 'src/components/onboarding/contexts/IsProxyAdded'
 import RememberMeButton from 'src/components/utils/OffchainSigner/RememberMeButton'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { useCurrentOnBoardingStep } from 'src/rtk/features/onBoarding/onBoardingHooks'
@@ -21,6 +22,7 @@ const CustomFooterAction = (props: CustomFooterActionProps) => {
   const dispatch = useAppDispatch()
   const currentStep = useCurrentOnBoardingStep()
   const { goToNextStep, saveAsDraft, loading, setLoading, isPartial, signerProps } = props
+  const { setIsProxyAdded } = useIsProxyAddedContext()
 
   if (!signerProps) return <></>
 
@@ -50,6 +52,7 @@ const CustomFooterAction = (props: CustomFooterActionProps) => {
           handleOnsuccess()
           goToNextStep({ forceTerminateFlow: true })
           dispatch(resetOnBoardingData(currentStep))
+          setIsProxyAdded(true)
           return
         }}
       />
