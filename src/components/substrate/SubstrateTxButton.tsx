@@ -162,6 +162,15 @@ function TxButton({
     )
   }
 
+  const allowedPalletsForSocialActions = [
+    'posts',
+    'reactions',
+    'accountFollows',
+    'spaceFollows',
+    'spaces',
+    'profiles',
+  ]
+
   const getExtrinsic = async (): Promise<SubmittableExtrinsic> => {
     const [pallet, method] = (tx || '').split('.')
 
@@ -259,6 +268,7 @@ function TxButton({
   ) => {
     let signer: Signer | undefined
     let tx: SubmittableExtrinsic
+
     try {
       if (isMobile) {
         const { web3Enable, web3FromAddress } = await import('@polkadot/extension-dapp')
@@ -272,6 +282,10 @@ function TxButton({
         const currentWallet = getCurrentWallet()
         const wallet = getWalletBySource(currentWallet)
         signer = wallet?.signer
+      }
+
+      if (!signer) {
+        throw new Error('No signer provided')
       }
 
       tx = await extrinsic.signAsync(accountId, { signer })
@@ -298,16 +312,23 @@ function TxButton({
     if ((tx === 'utility.batch' && signerToken) || tx === 'freeProxy.addFreeProxy')
       hideRememberMePopup = true
 
+    const [pallet, _] = (tx || '').split('.')
+
+    let isSigningAllowedPallets = allowedPalletsForSocialActions.includes(pallet)
+
     try {
       let tx: SubmittableExtrinsic
-
       const extrinsic = await getExtrinsic()
 
       const isRemovingProxyUsingExtension = isSigningWithSignerAccount && isRemovingProxyOnAccount
       const isAddingProxyUsingExtension = !isSigningWithSignerAccount && isAddingProxyOnAccount
 
-      if (isRemovingProxyUsingExtension || isAddingProxyUsingExtension) {
-        signWithExtension(extrinsic, accountId, hideRememberMePopup)
+      if (
+        isRemovingProxyUsingExtension ||
+        isAddingProxyUsingExtension ||
+        !isSigningAllowedPallets
+      ) {
+        await signWithExtension(extrinsic, accountId, hideRememberMePopup)
         return
       }
 
@@ -324,10 +345,10 @@ function TxButton({
         return
       }
 
-      if (isSigningWithSignerAccount) {
+      if (isSigningWithSignerAccount && isSigningAllowedPallets) {
         sendSignerTxWithMessage(extrinsic)
       } else {
-        signWithExtension(extrinsic, accountId, hideRememberMePopup)
+        await signWithExtension(extrinsic, accountId, hideRememberMePopup)
       }
     } catch (err: any) {
       onFailedHandler(err instanceof Error ? err.message : err)
