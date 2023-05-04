@@ -63,6 +63,11 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
   const [isFormValid, setIsFormValid] = useState(false)
 
+  const handleError = (error: unknown) => {
+    setLoading(false)
+    onErrorHandler(error, setError)
+  }
+
   const handleSubmit = async (values: FormValues) => {
     if (!accessToken) setError('Access token is not defined')
 
@@ -91,8 +96,7 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
 
       setCurrentStep(StepsEnum.ShowMnemonic)
     } catch (error) {
-      setLoading(false)
-      onErrorHandler(error, setError)
+      handleError(error)
     } finally {
       setLoading(false)
     }

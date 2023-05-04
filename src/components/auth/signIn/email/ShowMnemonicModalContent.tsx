@@ -130,7 +130,7 @@ const ShowMnemonicModalContent = ({
   const doOnSuccess: TxCallback = result => {
     resetEmailAccounts()
 
-    isFunction(onSuccess) && onSuccess()
+    isFunction(onFinalised) && onFinalised()
 
     const message: Message = isFunction(successMessage) ? successMessage(result) : successMessage
 
@@ -138,7 +138,7 @@ const ShowMnemonicModalContent = ({
   }
 
   const doOnFailed: TxFailedCallback = result => {
-    isFunction(onFailed) && onFailed()
+    isFunction(onFinalised) && onFinalised()
 
     const message: Message = isFunction(failedMessage) ? failedMessage(result) : failedMessage
 
@@ -175,13 +175,7 @@ const ShowMnemonicModalContent = ({
     }
   }
 
-  const onSuccess = () => {
-    setLoading(false)
-    const userAddress = userPair?.address
-    onRegisterDone(userAddress, email!)
-  }
-
-  const onFailed = () => {
+  const onFinalised = () => {
     setLoading(false)
     const userAddress = userPair?.address
     onRegisterDone(userAddress, email!)

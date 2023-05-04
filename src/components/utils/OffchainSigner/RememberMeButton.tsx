@@ -97,14 +97,24 @@ function RememberMeButton({
     )
   }
 
-  const onFailedHandler = (err: Error) => {
+  const handleError = (err: unknown) => {
+    const message = err instanceof Error ? err.message : (err as string)
+
+    onFailedHandler(message)
+    setLoadingBtn(false)
+  }
+
+  const onFailedHandler = (err: Error | string) => {
+    setToken(undefined)
+    onFailedAuth()
+    setIsConfirming(false)
     if (err) {
-      setToken(undefined)
-      onFailedAuth()
-      setIsConfirming(false)
       const errMsg = `Signing failed: ${err.toString()}`
       log.debug(`❌ ${errMsg}`)
       showErrorMessage(errMsg)
+    } else {
+      log.debug(`❌ ${err}`)
+      showErrorMessage(err)
     }
   }
 
@@ -140,9 +150,8 @@ function RememberMeButton({
       })
 
       return signature
-    } catch (err: any) {
-      onFailedHandler(err instanceof Error ? err.message : err)
-      setLoadingBtn(false)
+    } catch (err) {
+      handleError(err)
       return
     }
   }
@@ -183,10 +192,8 @@ function RememberMeButton({
       const { address: mainProxyAddress } = await fetchMainProxyAddress(accessToken)
       setSignerProxyAddress(mainProxyAddress as string, myAddress)
       onSuccessAuth()
-    } catch (err: any) {
-      onFailedHandler(err instanceof Error ? err.message : err)
-      setLoadingBtn(false)
-      return
+    } catch (err) {
+      handleError(err)
     }
   }
 
