@@ -239,6 +239,19 @@ function TxButton({
     doOnFailed(null)
   }
 
+  const sendSignerTxWithMessage = (extrinsic: SubmittableExtrinsic) => {
+    sendSignerTx(
+      api,
+      extrinsic,
+      currentUserSignerToken!,
+      currentUserRefreshToken!,
+      onSuccessHandler,
+      onFailedHandler,
+    )
+    waitMessage.open()
+    sendGaEvent()
+  }
+
   const signWithExtension = async (
     extrinsic: SubmittableExtrinsic,
     accountId: AnyAccountId,
@@ -306,27 +319,13 @@ function TxButton({
           tx = await extrinsic.signAsync(keyringPair)
           unsub = await tx.send(onSuccessHandler)
         } else {
-          sendSignerTx(
-            api,
-            extrinsic,
-            currentUserSignerToken!,
-            currentUserRefreshToken!,
-            onSuccessHandler,
-            onFailedHandler,
-          )
+          sendSignerTxWithMessage(extrinsic)
         }
         return
       }
 
       if (isSigningWithSignerAccount) {
-        sendSignerTx(
-          api,
-          extrinsic,
-          currentUserSignerToken!,
-          currentUserRefreshToken!,
-          onSuccessHandler,
-          onFailedHandler,
-        )
+        sendSignerTxWithMessage(extrinsic)
       } else {
         signWithExtension(extrinsic, accountId, hideRememberMePopup)
       }
