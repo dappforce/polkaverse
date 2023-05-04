@@ -40,7 +40,7 @@ export default function useOnBoardingStepsOrder(
       : transactionsCount < 20
     if (showEnergyStep) usedSteps.push('energy')
 
-    const showSignerStep = !isCurrentAddressAddedWithProxy || !isProxyAddedState
+    const showSignerStep = !isCurrentAddressAddedWithProxy && !isProxyAddedState
 
     if (showSignerStep) usedSteps.push('signer')
 
