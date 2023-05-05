@@ -57,9 +57,13 @@ interface Props {
 function StepButton({ steps }: Props) {
   const openCloseOnBoardingModal = useOpenCloseOnBoardingModal()
 
+  const isUsingEmail = useIsUsingEmail()
+
+  const filteredSteps = isUsingEmail ? steps.filter(step => step !== 'signer') : steps
+
   return (
     <>
-      {steps.map(step => {
+      {filteredSteps.map(step => {
         const content = buttonTexts[step]
         return (
           content && (

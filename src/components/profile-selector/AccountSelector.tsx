@@ -321,7 +321,14 @@ export const useAccountSelector = ({
         isMounted = false
       }
     },
-    [currentAddress, dispatch, accounts.length, emailAccounts.length, includeCurrentAccount, status],
+    [
+      currentAddress,
+      dispatch,
+      accounts.length,
+      emailAccounts.length,
+      includeCurrentAccount,
+      status,
+    ],
   )
 
   return {

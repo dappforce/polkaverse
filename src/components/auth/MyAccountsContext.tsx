@@ -33,7 +33,7 @@ import { useAccountSelector } from '../profile-selector/AccountSelector'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { reloadSpaceIdsFollowedByAccount } from '../spaces/helpers/reloadSpaceIdsFollowedByAccount'
 import { equalAddresses } from '../substrate'
-import { getSignerToken } from '../utils/OffchainSigner/ExternalStorage'
+import { getSignerToken, isProxyAdded } from '../utils/OffchainSigner/ExternalStorage'
 import { desktopWalletConnect, mobileWalletConection } from './utils'
 //
 // Types
@@ -200,10 +200,6 @@ export function useMyEmailAddress() {
   return useAppSelector(state => state.myAccount.emailAddress)
 }
 
-export function useIsUsingEmail() {
-  return nonEmptyStr(useMyEmailAddress())
-}
-
 export function useIsUsingEmailOrSigner() {
   const myAddress = useMyAddress()
   const isUsingSigner = isStr(getSignerToken(myAddress!))
@@ -234,6 +230,31 @@ export function useIsOneOfMyAddresses(anotherAddress?: AnyAccountId) {
 
 export function useIsSignedIn() {
   return nonEmptyStr(useMyAddress())
+}
+
+export function useIsMainProxyAdded() {
+  const myAddress = useMyAddress()
+  if (!myAddress) return false
+  return isProxyAdded(myAddress)
+}
+
+export function useGetSignerToken() {
+  const myAddress = useMyAddress()
+  if (!myAddress) return false
+  return getSignerToken(myAddress)
+}
+
+export function useIsUsingSignerAccount() {
+  const isMainProxyAdded = useIsMainProxyAdded()
+  const signerToken = useGetSignerToken()
+  const myEmailAddress = useMyEmailAddress()
+  return isStr(signerToken) && !isStr(myEmailAddress) && isMainProxyAdded
+}
+
+export function useIsUsingEmail() {
+  const signerToken = useGetSignerToken()
+  const myEmailAddress = useMyEmailAddress()
+  return isStr(signerToken) && isStr(myEmailAddress)
 }
 
 export default MyAccountsProvider

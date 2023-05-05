@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useAuth } from 'src/components/auth/AuthContext'
-import { useMyAddress, useMyEmailAddress } from 'src/components/auth/MyAccountsContext'
+import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { isProxyAdded } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { OnBoardingDataTypes } from 'src/rtk/features/onBoarding/onBoardingSlice'
@@ -21,9 +21,7 @@ export default function useOnBoardingStepsOrder(
   const { isFollowSpaceModalUsed } = useIsFollowSpaceModalUsedContext()
   const { isProxyAdded: isProxyAddedState } = useIsProxyAddedContext()
 
-  // Hide sidebar popups for users with email
-  const myEmailAddress = useMyEmailAddress()
-  // and when accounts are already added with proxy
+  // hide sidebar button when accounts are already added with proxy
   const isCurrentAddressAddedWithProxy = isProxyAdded(myAddress!)
 
   const steps = useMemo(() => {
@@ -52,7 +50,8 @@ export default function useOnBoardingStepsOrder(
     profile,
     status,
     isFollowSpaceModalUsed,
-    myEmailAddress,
+    isCurrentAddressAddedWithProxy,
+    isProxyAddedState,
     additionalData?.energySnapshot,
   ])
 

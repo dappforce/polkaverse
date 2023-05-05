@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAuth } from 'src/components/auth/AuthContext'
-import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import { useIsUsingEmail, useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { setFiltersInUrl } from 'src/components/main/utils'
 import config from 'src/config'
 import { useBooleanExternalStorage } from 'src/hooks/useExternalStorage'
@@ -98,7 +98,12 @@ export default function OnBoardingModal({
   const openState = useOnBoardingModalOpenState()
   const openCloseModal = useOpenCloseOnBoardingModal()
 
-  const { steps: onBoardingModalStepsOrder } = useOnBoardingStepsOrderWithEnergySnapshot()
+  const { steps: stepsOrder } = useOnBoardingStepsOrderWithEnergySnapshot()
+
+  const isUsingEmail = useIsUsingEmail()
+  const onBoardingModalStepsOrder = isUsingEmail
+    ? stepsOrder.filter(key => key !== 'signer')
+    : stepsOrder
 
   const currentStep = useCurrentOnBoardingStep()
   const currentStepIndex = useMemo(() => {
