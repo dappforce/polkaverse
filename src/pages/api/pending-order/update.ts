@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const tokenMessage = dayjs.utc().valueOf().toString()
 
     const requesterKeypair = naclBoxPairFromSecret(
-      mnemonicToMiniSecret(process.env.SELLER_SOONSOCIAL_FE_CLIENT_TOKEN_SIGNER || ''),
+      mnemonicToMiniSecret(process.env.SELLER_CLIENT_TOKEN_SIGNER || ''),
     )
 
     const clientId = process.env.SELLER_CLIENT_ID as string

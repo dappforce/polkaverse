@@ -51,7 +51,7 @@ jobs:
             GH_APP_KIND=staging
             GH_CONNECTION_KIND=staging
             GH_SELLER_CLIENT_ID=${{ secrets.STAGING_GH_SELLER_CLIENT_ID }}
-            GH_SELLER_SOONSOCIAL_FE_CLIENT_TOKEN_SIGNER=${{ secrets.STAGING_GH_SELLER_TOKEN_SIGNER }}
+            GH_SELLER_TOKEN_SIGNER=${{ secrets.STAGING_GH_SELLER_TOKEN_SIGNER }}
           tags: |
             ${{ env.image }}
           cache-from: type=local,src=/tmp/.buildx-cache
