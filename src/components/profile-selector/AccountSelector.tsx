@@ -25,6 +25,8 @@ type SelectAccountItems = {
   emailAccounts?: EmailAccount[]
 }
 
+type SelectEmailItemsProps = Omit<SelectAccountItems, 'accounts'>
+
 type AccountItemProps = {
   address: string
   onClick?: (address: string, emailAddress?: string) => void
@@ -83,6 +85,35 @@ const SelectAccountItems = ({
           withShortAddress={withShortAddress}
         />
       ))}
+      {emailAccounts &&
+        emailAccounts.map(({ accountAddress, email }) => (
+          <AccountItem
+            key={accountAddress}
+            address={accountAddress}
+            emailAddress={email}
+            onClick={onAccountClick}
+            withShortAddress={withShortAddress}
+            isOnSelectAccount={true}
+          />
+        ))}
+    </div>
+  )
+}
+
+const SelectEmailItems = ({
+  withShortAddress,
+  onItemClick,
+  emailAccounts,
+}: SelectEmailItemsProps) => {
+  const { setEmailAddress, unsetEmailAddress } = useMyAccountsContext()
+
+  const onAccountClick = (address: string, emailAddress?: string) => {
+    emailAddress ? setEmailAddress(emailAddress) : unsetEmailAddress()
+    onItemClick?.(address)
+  }
+
+  return (
+    <div className='SelectAccountSection'>
       {emailAccounts &&
         emailAccounts.map(({ accountAddress, email }) => (
           <AccountItem
@@ -220,29 +251,36 @@ export const AccountSelector = ({
   overviewCurrentAccount,
   onItemClick,
 }: SelectorProps) => {
-  const { switchAccountsSet, emailAccountsSet, currentAddress, status } = useAccountSelector({
+  const { switchAccountsSet, currentAddress, status } = useAccountSelector({
     includeCurrentAccount: overviewCurrentAccount,
   })
+  const { emailAccounts } = useMyAccounts()
   const { apiState } = useSubstrate()
+  const count = switchAccountsSet.size
+
+  const extensionAddresses = [...switchAccountsSet]
 
   const ExtensionAccountPanel = () => {
-    const count = switchAccountsSet.size
-
     // const isInjectCurrentAddress = currentAddress && keyring.getAccount(currentAddress)?.meta.isInjected // FIXME: hack that hides NoAccount msg!!!
 
     // if (!injectedAccounts && apiState !== 'READY') return <Loading label='Accounts injecting...' />
 
     if (status === 'UNAUTHORIZED') return unauthExtension
 
-    if (status === 'UNAVAILABLE') return noExtension
+    if (status === 'UNAVAILABLE' && emailAccounts.length > 0)
+      return renderExtensionContent(
+        <SelectEmailItems
+          withShortAddress
+          onItemClick={onItemClick}
+          emailAccounts={emailAccounts}
+        />,
+      )
+
+    if (status === 'UNAVAILABLE' && emailAccounts.length === 0) return noExtension
 
     if (!count && currentAddress) return null
 
     if (status === 'NOACCOUNT') return renderExtensionContent(noExtensionAccounts)
-
-    const extensionAddresses = [...switchAccountsSet]
-
-    const emailAccounts = [...emailAccountsSet]
 
     return renderExtensionContent(
       <SelectAccountItems
@@ -263,7 +301,9 @@ export const AccountSelector = ({
 
   return (
     <div>
-      {status === 'OK' && withCurrentAccount && <CurrentAccount currentAddress={currentAddress} />}
+      {(status === 'OK' || emailAccounts.length > 0) && withCurrentAccount && (
+        <CurrentAccount currentAddress={currentAddress} />
+      )}
       <div>
         <ExtensionAccountPanel />
       </div>
@@ -288,7 +328,7 @@ export const useAccountSelector = ({
 
   useSubsocialEffect(
     ({ subsocial: api }) => {
-      if (status !== 'OK' || isEmptyArray(accounts)) return
+      if (status !== 'OK' || isEmptyArray(accounts) || isEmptyArray(emailAccounts)) return
 
       let isMounted = true
 
@@ -297,7 +337,7 @@ export const useAccountSelector = ({
         asAccountId(x.accountAddress)?.toString(),
       ) as string[]
 
-      if (!includeCurrentAccount) {
+      if (!includeCurrentAccount && emailAccounts.length === 0) {
         switchAccounts = switchAccounts.filter(acc => acc && acc !== currentAddress)
       }
 
