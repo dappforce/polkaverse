@@ -256,11 +256,9 @@ export const AccountSelector = ({
   })
   const { emailAccounts } = useMyAccounts()
   const { apiState } = useSubstrate()
-  const count = switchAccountsSet.size
-
-  const extensionAddresses = [...switchAccountsSet]
 
   const ExtensionAccountPanel = () => {
+    const count = switchAccountsSet.size
     // const isInjectCurrentAddress = currentAddress && keyring.getAccount(currentAddress)?.meta.isInjected // FIXME: hack that hides NoAccount msg!!!
 
     // if (!injectedAccounts && apiState !== 'READY') return <Loading label='Accounts injecting...' />
@@ -281,6 +279,8 @@ export const AccountSelector = ({
     if (!count && currentAddress) return null
 
     if (status === 'NOACCOUNT') return renderExtensionContent(noExtensionAccounts)
+
+    const extensionAddresses = [...switchAccountsSet]
 
     return renderExtensionContent(
       <SelectAccountItems
@@ -321,14 +321,13 @@ export const useAccountSelector = ({
   includeCurrentAccount,
 }: AccountSelectorProps) => {
   const [switchAccountsSet, setSwitchAccounts] = useState<Set<string>>(new Set())
-  const [emailAccountsSet, setEmailAccounts] = useState<Set<EmailAccount>>(new Set())
   const currentAddress = useMyAddress()
   const { accounts, emailAccounts, status } = useMyAccounts()
   const dispatch = useAppDispatch()
 
   useSubsocialEffect(
     ({ subsocial: api }) => {
-      if (status !== 'OK' || isEmptyArray(accounts) || isEmptyArray(emailAccounts)) return
+      if (status !== 'OK' || isEmptyArray(accounts)) return
 
       let isMounted = true
 
@@ -354,7 +353,6 @@ export const useAccountSelector = ({
 
       if (isMounted) {
         setSwitchAccounts(new Set(switchAccounts))
-        setEmailAccounts(new Set(emailAccounts))
       }
 
       return () => {
@@ -373,7 +371,6 @@ export const useAccountSelector = ({
 
   return {
     switchAccountsSet,
-    emailAccountsSet,
     currentAddress,
     status,
   }
