@@ -9,6 +9,7 @@ import clsx from 'clsx'
 import { useResponsiveSize } from 'src/components/responsive'
 import { setCurrentEmailAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import config from 'src/config'
+import { EmailAccount } from 'src/types'
 import { AccountSelector } from '../../profile-selector/AccountSelector'
 import ExternalLink from '../../spaces/helpers/ExternalLink'
 import { MutedDiv } from '../../utils/MutedText'
@@ -150,7 +151,8 @@ const ModalContent = ({
   hideSignInModal,
   onAccountChosen,
 }: GetModalContentProps) => {
-  const { setEmailAddress, setAddress } = useMyAccountsContext()
+  const { setEmailAddress, setAddress, setEmailAccounts, state } = useMyAccountsContext()
+  const { emailAccounts: accounts } = state
   const { isMobile } = useResponsiveSize()
 
   const onAuthSuccess = (address: string, emailAddress: string) => {
@@ -158,6 +160,17 @@ const ModalContent = ({
     setAddress(address)
     setEmailAddress(emailAddress)
     setCurrentEmailAddress(emailAddress)
+
+    const emailAccount = { accountAddress: address, email: emailAddress }
+    const newEmailAccounts = [...accounts, emailAccount]
+    const uniqueEmails = new Set(newEmailAccounts.map(account => account.email))
+
+    const uniqueAccounts: EmailAccount[] = Array.from(uniqueEmails).map(email => {
+      return newEmailAccounts.find(account => account.email === email)!
+    })
+
+    setEmailAccounts(uniqueAccounts)
+
     setCurrentStep(StepsEnum.SelectWallet)
     onAccountChosen?.(address)
   }
