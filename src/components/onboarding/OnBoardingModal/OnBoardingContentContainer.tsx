@@ -130,7 +130,7 @@ export default function OnBoardingContentContainer({
           </MutedDiv>
         )}
 
-        {isUsingCustomFooter && (
+        {isUsingCustomFooter && !loading && (
           <CustomFooterAction
             goToNextStep={goToNextStep}
             loading={loading}
