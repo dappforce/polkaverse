@@ -8,7 +8,7 @@ const mainConfig: SubsocialConfig = {
   kusamaUrl: 'wss://kusama-rpc.polkadot.io',
 
   offchainUrl: 'https://api.subsocial.network',
-  graphqlUrl: '',
+  graphqlUrl: 'https://squid.subsquid.io/xsocial/graphql',
 
   ipfsNodeUrl: 'https://ipfs.subsocial.network',
 
