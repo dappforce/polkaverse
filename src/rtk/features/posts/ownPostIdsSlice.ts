@@ -2,8 +2,8 @@ import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/too
 import { FetchOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { SelectOneFn } from 'src/rtk/app/hooksCommon'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { AccountId, AnySpaceId, bnsToIds, idToBn, PostId } from 'src/types'
-import { descSortBns } from 'src/utils'
+import { AccountId, AnySpaceId, idToBn, PostId } from 'src/types'
+import { descSortIds } from 'src/utils'
 
 type Entity = {
   /** `id` is an account address that owns posts. */
@@ -52,7 +52,7 @@ export const fetchPostIdsOwnedByAccount = createAsyncThunk<
 
     return {
       id: myAddress,
-      ownPostIds: bnsToIds(descSortBns(postIds)),
+      ownPostIds: descSortIds(postIds),
     }
   },
 )

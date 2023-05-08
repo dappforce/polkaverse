@@ -1,15 +1,8 @@
 import BN from 'bn.js'
 import { equalAddresses } from 'src/components/substrate'
 import config from 'src/config'
-import {
-  AccountId,
-  AnyAccountId,
-  AnySpaceId,
-  bnsToIds,
-  idsToBns,
-  SpaceId,
-  SpaceStruct,
-} from 'src/types'
+import { AccountId, AnyAccountId, AnySpaceId, SpaceId, SpaceStruct } from 'src/types'
+import { ascSortIds } from './num'
 
 const { sudoOne, lastReservedSpaceId, claimedSpaceIds, recommendedSpaceIds } = config
 
@@ -67,8 +60,8 @@ export const isUnclaimedSpace = (space: SpaceStruct) => !isClaimedSpace(space)
 export function findSpaceIdsThatCanSuggestIfSudo(
   sudoAcc: AnyAccountId,
   myAcc: AnyAccountId,
-  spaceIds: BN[],
-): BN[] {
+  spaceIds: string[],
+): string[] {
   const isSudo = equalAddresses(sudoAcc, myAcc)
   return !isSudo ? spaceIds : spaceIds.filter(id => !isPolkadotOrReservedSpace(id))
 }
@@ -86,9 +79,5 @@ export function selectSpaceIdsThatCanSuggestIfSudo({
 
   if (!myAddress) return []
 
-  return bnsToIds(
-    findSpaceIdsThatCanSuggestIfSudo(sudoOne, myAddress, idsToBns(spaceIds)).sort((a, b) =>
-      a.sub(b).toNumber(),
-    ),
-  )
+  return ascSortIds(findSpaceIdsThatCanSuggestIfSudo(sudoOne, myAddress, spaceIds))
 }

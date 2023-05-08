@@ -21,7 +21,6 @@ import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsS
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
 import {
   asCommentStruct,
-  bnsToIds,
   HasStatusCode,
   idToBn,
   PostData,
@@ -221,7 +220,7 @@ export async function loadPostOnNextReq({
 
   const replyIds = await blockchain.getReplyIdsByPostId(idToBn(postId))
 
-  const ids = bnsToIds(replyIds).concat(postId)
+  const ids = replyIds.concat(postId)
 
   await dispatch(fetchPosts({ api: subsocial, ids, reload: true, eagerLoadHandles: true }))
   const postData = selectPost(reduxStore.getState(), { id: postId })
