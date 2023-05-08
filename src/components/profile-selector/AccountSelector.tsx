@@ -105,7 +105,7 @@ const SelectEmailItems = ({
   onItemClick,
   emailAccounts,
 }: SelectEmailItemsProps) => {
-  const { setEmailAddress, unsetEmailAddress } = useMyAccountsContext()
+  const { setEmailAddress, setAddress, unsetEmailAddress } = useMyAccountsContext()
 
   const onAccountClick = (address: string, emailAddress?: string) => {
     emailAddress ? setEmailAddress(emailAddress) : unsetEmailAddress()
@@ -258,6 +258,10 @@ export const AccountSelector = ({
   const { emailAccounts } = useMyAccounts()
   const { apiState } = useSubstrate()
 
+  const excludeCurrentEmailAccounts = emailAccounts.filter(
+    account => account && account.accountAddress !== currentAddress,
+  )
+
   const ExtensionAccountPanel = () => {
     const count = switchAccountsSet.size
     // const isInjectCurrentAddress = currentAddress && keyring.getAccount(currentAddress)?.meta.isInjected // FIXME: hack that hides NoAccount msg!!!
@@ -271,7 +275,7 @@ export const AccountSelector = ({
         <SelectEmailItems
           withShortAddress
           onItemClick={onItemClick}
-          emailAccounts={emailAccounts}
+          emailAccounts={excludeCurrentEmailAccounts}
         />,
       )
 
@@ -288,7 +292,7 @@ export const AccountSelector = ({
         accounts={extensionAddresses}
         withShortAddress
         onItemClick={onItemClick}
-        emailAccounts={emailAccounts}
+        emailAccounts={excludeCurrentEmailAccounts}
       />,
     )
   }
@@ -337,7 +341,7 @@ export const useAccountSelector = ({
         asAccountId(x.accountAddress)?.toString(),
       ) as string[]
 
-      if (!includeCurrentAccount && emailAccounts.length === 0) {
+      if (!includeCurrentAccount) {
         switchAccounts = switchAccounts.filter(acc => acc && acc !== currentAddress)
       }
 
