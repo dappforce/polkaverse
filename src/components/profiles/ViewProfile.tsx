@@ -14,7 +14,7 @@ import {
 } from 'src/rtk/features/profiles/profilesSlice'
 import { AnyAccountId, DataSourceTypes, ProfileContent, ProfileData, SpaceData } from 'src/types'
 import { AccountActivity } from '../activity/AccountActivity'
-import { useIsMyAddress } from '../auth/MyAccountsContext'
+import { useIsMyAddress, useMyAccountsContext } from '../auth/MyAccountsContext'
 import { Balance } from '../common/balances'
 import { PageContent } from '../main/PageWrapper'
 import { accountUrl, newSpaceUrl } from '../urls'
@@ -84,6 +84,25 @@ const Component = (props: Props) => {
   const followersText = <Pluralize count={followers} singularText='Follower' />
   const followingText = <Pluralize count={following} singularText='Following' />
 
+  const { state } = useMyAccountsContext()
+  const { emailAccounts } = state
+
+  const myEmailAccount = emailAccounts?.find(
+    emailAccount => emailAccount.accountAddress === address,
+  )
+
+  const NameOrEmail =
+    isMyAccount && myEmailAccount ? (
+      <Name
+        address={address}
+        isOnViewProfile={true}
+        emailAddress={myEmailAccount.email}
+        className='mr-2'
+      />
+    ) : (
+      <Name owner={owner} address={address} className='mr-2' />
+    )
+
   return (
     <Section outerClassName='d-flex mb-2'>
       <div className='d-flex'>
@@ -97,7 +116,7 @@ const Component = (props: Props) => {
           <div className='ml-1 w-100'>
             <h1 className='header DfAccountTitle justify-content-between mb-2'>
               <span className='d-flex align-items-center'>
-                <Name owner={owner} address={address} className='mr-2' />
+                {NameOrEmail}
                 <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>
               </span>
             </h1>

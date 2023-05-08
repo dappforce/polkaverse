@@ -1,5 +1,11 @@
+import { useState } from 'react'
+import { useIsProxyAddedContext } from 'src/components/onboarding/contexts/IsProxyAdded'
+import RememberMeButton from 'src/components/utils/OffchainSigner/RememberMeButton'
+import { useAppDispatch } from 'src/rtk/app/store'
+import { useCurrentOnBoardingStep } from 'src/rtk/features/onBoarding/onBoardingHooks'
+import { resetOnBoardingData } from 'src/rtk/features/onBoarding/onBoardingSlice'
 import ButtonGroup from './ButtonGroup'
-import ContinueButton from './ContinueButton'
+import PartialContinueButton from './ContinueButton'
 import { SignerProps } from './Signer'
 
 type CustomFooterActionProps = {
@@ -12,7 +18,11 @@ type CustomFooterActionProps = {
 }
 
 const CustomFooterAction = (props: CustomFooterActionProps) => {
+  const [isShowContinueBtn, setShowContinueBtn] = useState(false)
+  const dispatch = useAppDispatch()
+  const currentStep = useCurrentOnBoardingStep()
   const { goToNextStep, saveAsDraft, loading, setLoading, isPartial, signerProps } = props
+  const { setIsProxyAdded } = useIsProxyAddedContext()
 
   if (!signerProps) return <></>
 
@@ -31,20 +41,32 @@ const CustomFooterAction = (props: CustomFooterActionProps) => {
     )
   }
 
-  if (!offchainSigner) {
-    if (loading) return <></>
+  if (!offchainSigner && loading) return <></>
 
+  if (isShowContinueBtn) {
     return (
-      <ContinueButton
-        goToNextStep={goToNextStep}
-        loading={false}
+      <PartialContinueButton
+        loading={loading}
         setLoading={setLoading}
-        isPartial={isPartial}
+        onSuccess={() => {
+          handleOnsuccess()
+          goToNextStep({ forceTerminateFlow: true })
+          dispatch(resetOnBoardingData(currentStep))
+          setIsProxyAdded(true)
+          return
+        }}
       />
     )
   }
 
-  return <></>
+  return (
+    <RememberMeButton
+      onSuccessAuth={() => {
+        setShowContinueBtn && setShowContinueBtn(true)
+      }}
+      onFailedAuth={handleOnsuccess}
+    />
+  )
 }
 
 export default CustomFooterAction

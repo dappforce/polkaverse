@@ -48,8 +48,10 @@ jobs:
           push: true
           build-args: |
             GH_GA_ID=fake
-            GH_APP_KIND=staging
-            GH_CONNECTION_KIND=staging
+            GH_APP_KIND=polkaverse
+            GH_HCAPTCHA_SITE_KEY=3beeddac-2dce-41cc-8e18-338118426c38
+            GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
+            GH_CONNECTION_KIND=dev
           tags: |
             ${{ env.image }}
           cache-from: type=local,src=/tmp/.buildx-cache

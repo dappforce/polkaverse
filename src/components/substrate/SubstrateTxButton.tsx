@@ -1,5 +1,11 @@
+import { Keyring } from '@polkadot/api'
+import { isStr } from '@subsocial/utils'
 import Button, { ButtonProps } from 'antd/lib/button'
 import React from 'react'
+import config from 'src/config'
+import { useIsProxyAddedContext } from '../onboarding/contexts/IsProxyAdded'
+import { isProxyAdded } from '../utils/OffchainSigner/ExternalStorage'
+import { sendSignerTx } from '../utils/OffchainSigner/OffchainSignerUtils'
 
 import { ApiPromise, SubmittableResult } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types'
@@ -10,24 +16,29 @@ import { VoidFn } from '@polkadot/api/types'
 import { isEmptyStr, newLogger } from '@subsocial/utils'
 import { useCreateSendGaUserEvent } from 'src/ga'
 import useExternalStorage from 'src/hooks/useExternalStorage'
+import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
 import messages from 'src/messages'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
 import { AnyAccountId } from 'src/types'
 import { useSubstrate } from '.'
 import { useAuth } from '../auth/AuthContext'
+import { useMyAddress, useMyEmailAddress } from '../auth/MyAccountsContext'
+import useEncryptedStorage from '../auth/signIn/email/useEncryptionToStorage'
 import { getCurrentWallet } from '../auth/utils'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { controlledMessage, Message, showErrorMessage, showSuccessMessage } from '../utils/Message'
 import {
-  isCurrentOffchainAddress,
-  OFFCHAIN_ADDRESS_KEY,
-  OFFCHAIN_TOKEN_KEY,
+  getSignerRefreshToken,
+  getSignerToken,
+  SIGNER_REFRESH_TOKEN_KEY,
+  SIGNER_TOKEN_KEY,
 } from '../utils/OffchainSigner/ExternalStorage'
-import { isAccountOnboarded, sendOffchainTx } from '../utils/OffchainSigner/OffchainSignerUtils'
 import { getWalletBySource } from '../wallets/supportedWallets'
 import styles from './SubstrateTxButton.module.sass'
 import useToggle from './useToggle'
 const log = newLogger('TxButton')
+
+const { appName } = config
 
 export type GetTxParamsFn = () => any[]
 export type GetTxParamsAsyncFn = () => Promise<any[]>
@@ -38,8 +49,8 @@ export type TxFailedCallback = (status: SubmittableResult | null) => void
 type SuccessMessageFn = (status: SubmittableResult) => Message
 type FailedMessageFn = (status: SubmittableResult | null) => Message
 
-type SuccessMessage = Message | SuccessMessageFn
-type FailedMessage = Message | FailedMessageFn
+export type SuccessMessage = Message | SuccessMessageFn
+export type FailedMessage = Message | FailedMessageFn
 
 export type BaseTxButtonProps = Omit<ButtonProps, 'onClick' | 'form'>
 
@@ -91,23 +102,41 @@ function TxButton({
     openSignInModal,
     state: {
       completedSteps: { hasTokens },
+      password,
     },
   } = useAuth()
 
-  const { data: offchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY, {
+  const { data: signerToken } = useExternalStorage(SIGNER_TOKEN_KEY, {
+    storageKeyType: 'user',
+  })
+  const { data: refreshToken } = useExternalStorage(SIGNER_REFRESH_TOKEN_KEY, {
     storageKeyType: 'user',
   })
 
-  const { setData: setOffchainAddress } = useExternalStorage(OFFCHAIN_ADDRESS_KEY, {
-    parseStorageToState: data => data === '1',
-    parseStateToStorage: state => (state ? '1' : undefined),
-    storageKeyType: 'user',
-  })
+  const { setIsSignerAddress, setSignerProxyAdded } = useSignerExternalStorage()
 
-  const isOffchainAddress = isCurrentOffchainAddress(accountId as string)
+  const myAddress = useMyAddress()
+  const { getEncryptedStoredAccount } = useEncryptedStorage()
+  const { isProxyAdded: isProxyAddedState } = useIsProxyAddedContext()
 
-  const isOffchainSignerTx =
-    !!offchainToken && isOffchainAddress && isAccountOnboarded(accountId as string)
+  const myEmailAddress = useMyEmailAddress()
+
+  const emailSignerToken = getSignerToken(accountId as string)
+  const emailRefreshToken = getSignerRefreshToken(accountId as string)
+  const isSigningWithEmail = isStr(emailSignerToken) && isStr(myEmailAddress)
+  const isCurrentAddressAddedWithProxy = isProxyAdded(myAddress!) && isProxyAddedState
+  const isSigningWithSignerAccount =
+    isStr(signerToken) && !isStr(myEmailAddress) && isCurrentAddressAddedWithProxy
+
+  const currentUserSignerToken = isSigningWithEmail ? emailSignerToken : signerToken
+  const currentUserRefreshToken = isSigningWithEmail ? emailRefreshToken : refreshToken
+
+  const isBatchTxUsingEmail = tx === 'utility.batch' && isStr(myEmailAddress)
+  const isRemovingProxyOnAccount =
+    tx === 'proxy.removeProxies' && isStr(myAddress) && isCurrentAddressAddedWithProxy
+
+  const isAddingProxyOnAccount =
+    tx === 'freeProxy.addFreeProxy' && isStr(myAddress) && !isCurrentAddressAddedWithProxy
 
   const api = customNodeApi || subsocialApi
 
@@ -132,6 +161,15 @@ function TxButton({
       </Component>
     )
   }
+
+  const allowedPalletsForSocialActions = [
+    'posts',
+    'reactions',
+    'accountFollows',
+    'spaceFollows',
+    'spaces',
+    'profiles',
+  ]
 
   const getExtrinsic = async (): Promise<SubmittableExtrinsic> => {
     const [pallet, method] = (tx || '').split('.')
@@ -174,7 +212,7 @@ function TxButton({
     const { status } = result
     if (status.isFinalized || status.isInBlock) {
       setIsSending(false)
-      await unsubscribe()
+      unsubscribe()
 
       const blockHash = status.isFinalized ? status.asFinalized : status.asInBlock
 
@@ -205,7 +243,64 @@ function TxButton({
       showErrorMessage(errMsg)
     }
 
+    waitMessage.close()
+
     doOnFailed(null)
+  }
+
+  const sendSignerTxWithMessage = (extrinsic: SubmittableExtrinsic) => {
+    sendSignerTx(
+      api,
+      extrinsic,
+      currentUserSignerToken!,
+      currentUserRefreshToken!,
+      onSuccessHandler,
+      onFailedHandler,
+    )
+    waitMessage.open()
+    sendGaEvent()
+  }
+
+  const signWithExtension = async (
+    extrinsic: SubmittableExtrinsic,
+    accountId: AnyAccountId,
+    hideRememberMePopup: boolean,
+  ) => {
+    let signer: Signer | undefined
+    let tx: SubmittableExtrinsic
+
+    try {
+      if (isMobile) {
+        const { web3Enable, web3FromAddress } = await import('@polkadot/extension-dapp')
+        const extensions = await web3Enable(appName)
+
+        if (extensions.length === 0) {
+          return
+        }
+        signer = await (await web3FromAddress(accountId.toString())).signer
+      } else {
+        const currentWallet = getCurrentWallet()
+        const wallet = getWalletBySource(currentWallet)
+        signer = wallet?.signer
+      }
+
+      if (!signer) {
+        throw new Error('No signer provided')
+      }
+
+      tx = await extrinsic.signAsync(accountId, { signer })
+
+      if (hideRememberMePopup) {
+        setSignerProxyAdded('enabled', accountId as string)
+        setIsSignerAddress(accountId as string)
+      }
+      unsub = await tx.send(onSuccessHandler)
+
+      waitMessage.open()
+      sendGaEvent()
+    } catch (err: any) {
+      onFailedHandler(err instanceof Error ? err.message : err)
+    }
   }
 
   const sendSignedTx = async () => {
@@ -214,39 +309,46 @@ function TxButton({
     }
 
     let hideRememberMePopup = false
-    if ((tx === 'utility.batch' && offchainToken) || tx === 'proxy.addProxy')
+    if ((tx === 'utility.batch' && signerToken) || tx === 'freeProxy.addFreeProxy')
       hideRememberMePopup = true
 
+    const [pallet, _] = (tx || '').split('.')
+
+    let isSigningAllowedPallets = allowedPalletsForSocialActions.includes(pallet)
+
     try {
+      let tx: SubmittableExtrinsic
       const extrinsic = await getExtrinsic()
 
-      if (isOffchainSignerTx) {
-        sendOffchainTx(api, extrinsic, offchainToken, onSuccessHandler, onFailedHandler)
-      } else {
-        let signer: Signer | undefined
+      const isRemovingProxyUsingExtension = isSigningWithSignerAccount && isRemovingProxyOnAccount
+      const isAddingProxyUsingExtension = !isSigningWithSignerAccount && isAddingProxyOnAccount
 
-        if (isMobile) {
-          const { web3FromAddress } = await import('@polkadot/extension-dapp')
-          signer = await (await web3FromAddress(accountId.toString())).signer
-        } else {
-          const currentWallet = getCurrentWallet()
-          const wallet = getWalletBySource(currentWallet)
-          signer = wallet?.signer
-        }
-
-        if (!signer) {
-          throw new Error('No signer provided')
-        }
-
-        const tx = await extrinsic.signAsync(accountId, { signer })
-        if (hideRememberMePopup) {
-          setOffchainAddress(true)
-        }
-        unsub = await tx.send(onSuccessHandler)
+      if (
+        !isSigningWithEmail &&
+        (isRemovingProxyUsingExtension || isAddingProxyUsingExtension || !isSigningAllowedPallets)
+      ) {
+        await signWithExtension(extrinsic, accountId, hideRememberMePopup)
+        return
       }
 
-      waitMessage.open()
-      sendGaEvent()
+      if (isSigningWithEmail) {
+        if (isBatchTxUsingEmail) {
+          const privateKey = getEncryptedStoredAccount(myAddress!, password!)
+          const keyring = new Keyring({ type: 'sr25519' })
+          const keyringPair = keyring.addFromUri(privateKey, {}, 'sr25519')
+          tx = await extrinsic.signAsync(keyringPair)
+          unsub = await tx.send(onSuccessHandler)
+        } else {
+          sendSignerTxWithMessage(extrinsic)
+        }
+        return
+      }
+
+      if (isSigningWithSignerAccount && isSigningAllowedPallets) {
+        sendSignerTxWithMessage(extrinsic)
+      } else {
+        await signWithExtension(extrinsic, accountId, hideRememberMePopup)
+      }
     } catch (err: any) {
       onFailedHandler(err instanceof Error ? err.message : err)
     }
@@ -264,8 +366,8 @@ function TxButton({
   }
 
   const unsubscribe = () => {
+    waitMessage.close()
     if (unsub) {
-      waitMessage.close()
       unsub()
     }
   }

@@ -1,10 +1,11 @@
 import { useMemo } from 'react'
 import { useAuth } from 'src/components/auth/AuthContext'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
-import { isCurrentOffchainAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
+import { isProxyAdded } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { OnBoardingDataTypes } from 'src/rtk/features/onBoarding/onBoardingSlice'
 import { useIsFollowSpaceModalUsedContext } from '../contexts/IsFollowSpaceModalUsed'
+import { useIsProxyAddedContext } from '../contexts/IsProxyAdded'
 
 export default function useOnBoardingStepsOrder(
   isCompact?: boolean,
@@ -18,12 +19,15 @@ export default function useOnBoardingStepsOrder(
   const myAddress = useMyAddress()
   const profile = useSelectProfile(myAddress)
   const { isFollowSpaceModalUsed } = useIsFollowSpaceModalUsedContext()
-  const isOffchainAddress = isCurrentOffchainAddress(myAddress!)
+  const { isProxyAdded: isProxyAddedState } = useIsProxyAddedContext()
 
-  return useMemo(() => {
+  // hide sidebar button when accounts are already added with proxy
+  const isCurrentAddressAddedWithProxy = isProxyAdded(myAddress!)
+
+  const steps = useMemo(() => {
     if (!myAddress) return []
 
-    const usedSteps: (keyof OnBoardingDataTypes)[] = []
+    let usedSteps: (keyof OnBoardingDataTypes)[] = []
 
     if (!(profile?.content as any)?.interests) usedSteps.push('topics')
     if (!isCompact || !isFollowSpaceModalUsed) usedSteps.push('spaces')
@@ -34,15 +38,9 @@ export default function useOnBoardingStepsOrder(
       : transactionsCount < 20
     if (showEnergyStep) usedSteps.push('energy')
 
-    // const offchainToken = getOffchainToken(myAddress)
+    const showSignerStep = !isCurrentAddressAddedWithProxy && !isProxyAddedState
 
-    // const showSignerStep = !(
-    //   isOffchainAddress &&
-    //   typeof offchainToken === 'string' &&
-    //   offchainToken.length > 0
-    // )
-
-    // if (showSignerStep) usedSteps.push('signer')
+    if (showSignerStep) usedSteps.push('signer')
 
     if (usedSteps.length > 0) usedSteps.push('confirmation')
 
@@ -52,7 +50,10 @@ export default function useOnBoardingStepsOrder(
     profile,
     status,
     isFollowSpaceModalUsed,
-    isOffchainAddress,
+    isCurrentAddressAddedWithProxy,
+    isProxyAddedState,
     additionalData?.energySnapshot,
   ])
+
+  return { steps }
 }

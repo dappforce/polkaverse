@@ -8,7 +8,7 @@ import { useSendGaUserEvent } from 'src/ga'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
 import { SpaceData } from 'src/types'
 import { useSelectProfile } from '../../../rtk/features/profiles/profilesHooks'
-import { useMyAddress } from '../../auth/MyAccountsContext'
+import { useIsUsingEmail, useMyAddress } from '../../auth/MyAccountsContext'
 import { ProfileSpaceAction } from '../../profiles/address-views/utils/index'
 import HiddenSpaceButton from '../HiddenSpaceButton'
 import { OpenEditPermissions } from '../permissions/EditPermissionsModal'
@@ -34,6 +34,8 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
   const address = useMyAddress()
   const { id: profileSpaceId } = useSelectProfile(address) || {}
 
+  const isUsingEmail = useIsUsingEmail()
+
   const showMakeAsProfileButton = isMySpace && (!profileSpaceId || profileSpaceId !== id)
 
   const sendGaEvent = useSendGaUserEvent()
@@ -50,18 +52,19 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
             </Link>
           </Menu.Item>
         )}
-        {!isMySpace && (
-          <Menu.Item key={`donate-${spaceKey}`}>
-            <Donate
-              recipientAddress={spaceOwnerId}
-              renderButtonElement={onClick => (
-                <span className='d-block' onClick={onClick}>
-                  Tip
-                </span>
-              )}
-            />
-          </Menu.Item>
-        )}
+        {!isMySpace ||
+          (!isUsingEmail && (
+            <Menu.Item key={`donate-${spaceKey}`}>
+              <Donate
+                recipientAddress={spaceOwnerId}
+                renderButtonElement={onClick => (
+                  <span className='d-block' onClick={onClick}>
+                    Tip
+                  </span>
+                )}
+              />
+            </Menu.Item>
+          ))}
         {!canCreatePost || isHidden(struct) ? null : (
           <Menu.Item key={`create-post-${spaceKey}`}>
             <Link {...createNewPostLinkProps(struct)}>
@@ -95,12 +98,16 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
             <Menu.Item key={`edit-permissions-${spaceKey}`}>
               <OpenEditPermissions space={struct} />
             </Menu.Item>
-            <Menu.Item key={`edit-editors-${spaceKey}`}>
-              <EditorsLink space={struct} />
-            </Menu.Item>
-            <Menu.Item key={`transfer-ownership-${spaceKey}`}>
-              <TransferOwnershipLink space={struct} />
-            </Menu.Item>
+            {!isUsingEmail && (
+              <>
+                <Menu.Item key={`edit-editors-${spaceKey}`}>
+                  <EditorsLink space={struct} />
+                </Menu.Item>
+                <Menu.Item key={`transfer-ownership-${spaceKey}`}>
+                  <TransferOwnershipLink space={struct} />
+                </Menu.Item>
+              </>
+            )}
           </>
         )}
         {/* {struct.createdAtBlock && <Menu.Item key={`view-on-block-${spaceKey}`}>

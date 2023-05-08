@@ -1,21 +1,79 @@
+import { newLogger, toSubsocialAddress } from '@subsocial/utils'
 import { createStorageKey } from 'src/utils/storage'
 import store from 'store'
 
-const OFFCHAIN_ADDRESS_KEY = 'df.OffchainAddress'
-const PROXY_ADDRESS_KEY = 'df.ProxyAddress'
-const OFFCHAIN_TOKEN_KEY = 'df.OffchainToken'
-const isCurrentOffchainAddress = (myAddress: string) =>
-  store.get(createStorageKey(OFFCHAIN_ADDRESS_KEY, myAddress)) === 1 ? true : false
+const SIGNER_ADDRESS_KEY = 'SignerAddress'
+const PROXY_ADDRESS_KEY = 'ProxyAddress'
+const SIGNER_TOKEN_KEY = 'SignerToken'
+const SIGNER_REFRESH_TOKEN_KEY = 'SignerRefreshToken'
+const TEMP_REGISTER_ACCOUNT = 'TempRegisterAccount'
+const SECRET_KEY = 'SecretKey'
+const SALT = 'Salt'
+const CURRENT_EMAIL_ADDRESS = 'CurrentEmailAddress'
+const SIGNER_EMAIL_ADDRESS_KEY = 'SignerEmailAddress'
+const SIGNER_PROXY_ADDED = 'SignerProxyAdded'
+
+const log = newLogger('OffchainSignerExternalStorage')
+
+export const createStorageKeyWithSubAddress = (key: string, myAddress: string) => {
+  const subsocialAddress = toSubsocialAddress(myAddress)
+  if (!subsocialAddress) log.warn('Unable to create subsocial address')
+  return createStorageKey(key, subsocialAddress!)
+}
+
+const setCurrentEmailAddress = (currentEmail: string) =>
+  store.set(CURRENT_EMAIL_ADDRESS, currentEmail)
+
+const getCurrentEmailAddress = (): string => store.get(CURRENT_EMAIL_ADDRESS)
+
+const getSignerEmailAddress = (myAddress: string): string =>
+  store.get(SIGNER_EMAIL_ADDRESS_KEY, myAddress)
+
+const getTempRegisterAccount = (): string | undefined =>
+  store.get(createStorageKey(TEMP_REGISTER_ACCOUNT))
+
+const isCurrentSignerAddress = (myAddress: string) =>
+  store.get(createStorageKey(SIGNER_ADDRESS_KEY, toSubsocialAddress(myAddress))) === 1
+    ? true
+    : false
 const getProxyAddress = (myAddress: string): string | undefined =>
-  store.get(createStorageKey(PROXY_ADDRESS_KEY, myAddress))
-const getOffchainToken = (myAddress: string): string | undefined =>
-  store.get(createStorageKey(OFFCHAIN_TOKEN_KEY, myAddress))
+  store.get(createStorageKeyWithSubAddress(PROXY_ADDRESS_KEY, myAddress))
+
+const getSignerToken = (myAddress: string): string | undefined =>
+  store.get(createStorageKeyWithSubAddress(SIGNER_TOKEN_KEY, myAddress))
+const getSignerRefreshToken = (myAddress: string): string | undefined =>
+  store.get(createStorageKeyWithSubAddress(SIGNER_REFRESH_TOKEN_KEY, myAddress))
+
+const getSecretKeyByAddress = (myAddress: string): string | undefined =>
+  store.get(createStorageKeyWithSubAddress(SECRET_KEY, myAddress))
+
+const getSaltByAddress = (myAddress: string): string | undefined =>
+  store.get(createStorageKeyWithSubAddress(SALT, myAddress))
+
+const isProxyAdded = (myAddress: string) =>
+  store.get(createStorageKey(SIGNER_PROXY_ADDED, toSubsocialAddress(myAddress))) === 1
+    ? true
+    : false
 
 export {
-  OFFCHAIN_ADDRESS_KEY,
-  OFFCHAIN_TOKEN_KEY,
+  SIGNER_ADDRESS_KEY,
+  SIGNER_TOKEN_KEY,
+  SIGNER_REFRESH_TOKEN_KEY,
+  SIGNER_PROXY_ADDED,
+  TEMP_REGISTER_ACCOUNT,
   PROXY_ADDRESS_KEY,
+  SECRET_KEY,
+  SALT,
+  SIGNER_EMAIL_ADDRESS_KEY,
   getProxyAddress,
-  getOffchainToken,
-  isCurrentOffchainAddress,
+  getSignerToken,
+  getSignerRefreshToken,
+  getTempRegisterAccount,
+  isCurrentSignerAddress,
+  getSecretKeyByAddress,
+  getSaltByAddress,
+  setCurrentEmailAddress,
+  getCurrentEmailAddress,
+  getSignerEmailAddress,
+  isProxyAdded,
 }

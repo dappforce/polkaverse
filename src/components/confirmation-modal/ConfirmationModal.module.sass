@@ -1,0 +1,59 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.DfOnBoardingModal
+  :global(.ant-modal-body)
+    min-height: 596px
+
+  :global(.ant-modal-close)
+    top: 10px
+    right: 10px
+
+  :global(.ant-modal-content)
+    max-height: clamp(400px, 80vh, 700px)
+    padding: $space_tiny 0
+    border-radius: $space_normal
+
+    :global(.ant-modal-body)
+      max-height: none
+      height: 100%
+      display: flex
+      flex-direction: column
+
+      > *
+        padding-left: $space_small
+        padding-right: $space_small
+
+.DfOnboardingOnLoadingModal
+  @extends .DfOnBoardingModal
+  :global(.ant-modal-content)
+    height: fit-content !important
+
+.Title
+  font-weight: bold
+  color: #222222
+  font-size: $font_big
+  margin-bottom: $space_mini
+  line-height: normal
+
+.ContentContainer
+  padding-top: $space_tiny
+  max-height: 480px
+  display: flex
+  justify-content: center
+  align-items: center
+
+  &.ContentContainerFull
+    flex: 1
+
+  &.ContentImage
+    display: flex
+    justify-content: center
+    align-items: center
+    margin-top: auto
+
+  :global(.on-boarding-image)
+    width: 210px
+    height: 210px
+  
+  :global(.on-boarding-confirmationless-image)
+    max-width: 180px

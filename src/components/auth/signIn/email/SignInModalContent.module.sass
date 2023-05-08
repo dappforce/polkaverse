@@ -1,0 +1,112 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.SignInModalContent
+    display: flex
+    flex-direction: column
+    justify-content: center
+    padding: 0 $space_tiny
+    gap: $space_normal
+    margin-top: $space_big
+
+.ButtonLinkDiv
+    font-size: $font_normal
+    font-weight: $font_weight_semibold
+    margin-left: $space_mini
+    padding: 0px
+
+.ButtonLinkMedium
+    font-size: $font_normal
+    font-weight: $font_weight_medium
+    &:disabled
+        color: $color_light_muted
+
+    &:disabled:hover
+        color: $color_light_muted
+
+.ConfirmationStepContent
+    @extend .SignInModalContent
+    align-items: center
+    gap: $space_big
+
+.ConfirmationStepContentMobile
+    @extend .ConfirmationStepContent
+    margin-bottom: $space_big
+
+.InnerCard
+    border-radius: 8px
+    border: 1px solid $color_border
+    :global(.ant-card-body)
+        display: flex
+        justify-content: space-between
+        align-items: center
+        padding: $space_semilarge $space_small
+
+.InnerDivider
+    height: 3rem
+    border-left: 1px solid $color_xtralight_border
+
+.MnemonicText
+    text-align: left
+    font-weight: 400
+    font-size: $font_normal
+
+.CopyIcon
+    padding: 0 6.5px
+    color: $color_light_muted
+    &:hover
+        color: $color_link_hover
+
+.BaseFormItem
+    margin-bottom: 0
+    :global(.ant-form-item-explain)
+        font-weight: $font_weight_normal
+        font-size: $font_small
+        line-height: 19px
+        color: $color_error
+
+.BaseFormItemError
+    @extend .BaseFormItem
+    border-color: $color_error
+
+.CodeFormItem
+    @extend .BaseFormItem
+    :global(.ant-form-item-explain)
+        text-align: center
+        margin-right: $space_semismall
+        margin-top: $space_tiny
+
+.InputOTPContainer
+    display: flex
+    justify-content: center
+    align-content: center
+    gap: $space_normal
+
+.InputOTP
+  width: 40px
+  height: 44px
+  padding: 0
+
+  font-size: $font_big
+  text-align: center
+  font-weight: $font_weight_medium
+  line-height: 140%
+  color: $color_dark_text
+  text-transform: uppercase
+
+  border: 1px solid $color_semilight_border
+  border-radius: 12px
+  background: #fafafa
+  background-clip: padding-box
+
+.InputOTPError
+    @extend .InputOTP
+    border: 1px solid $color_error
+
+.InputOTPContainerMobile
+    @extend .InputOTPContainer
+    gap: $space_tiny
+
+.InputOTP:focus
+  appearance: none
+  outline: 0
+  border: 1px solid $color_primary

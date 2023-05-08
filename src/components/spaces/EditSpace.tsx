@@ -1,13 +1,14 @@
 import { MailOutlined } from '@ant-design/icons'
 import { Form, Input, Select } from 'antd'
+import clsx from 'clsx'
 import capitalize from 'lodash/capitalize'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import messages from 'src/messages'
 import { WriteAccessRequired } from 'src/moderation'
 import { useCreateReloadProfile, useCreateReloadSpaceIdsForMyAccount } from 'src/rtk/app/hooks'
 import { DataSourceTypes, IpfsCid, SpaceContent, SpaceData } from 'src/types'
-import { useAmIBlocked, useMyAddress } from '../auth/MyAccountsContext'
+import { useAmIBlocked, useMyAddress, useMyEmailAddress } from '../auth/MyAccountsContext'
 import { DfForm, DfFormButtons, maxLenError, minLenError } from '../forms'
 import { PageContent } from '../main/PageWrapper'
 import { UploadAvatar } from '../uploader'
@@ -18,6 +19,7 @@ import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 import { AutoSaveId } from '../utils/DfMdEditor/types'
 import NoData from '../utils/EmptyList'
 import Section from '../utils/Section'
+import styles from './EditSpace.module.sass'
 import { newWritePermission } from './permissions/space-permissions'
 import { BuiltInRole, getWhoCanPost } from './permissions/utils'
 import { WhoCanPostSelector } from './permissions/WhoCanPostSelector'
@@ -94,6 +96,15 @@ export function InnerForm(props: FormProps) {
   const [form] = Form.useForm()
   const { ipfs } = useSubsocialApi()
   const myAddress = useMyAddress()
+  const myEmailAddress = useMyEmailAddress()
+
+  useEffect(() => {
+    if (myEmailAddress) {
+      form.setFieldsValue({ email: myEmailAddress })
+    }
+  }, [myEmailAddress])
+
+  const isEmailReady = !!myEmailAddress
 
   const [ipfsCid, setIpfsCid] = useState<IpfsCid>()
   const reloadMySpaceIds = useCreateReloadSpaceIdsForMyAccount()
@@ -278,7 +289,13 @@ export function InnerForm(props: FormProps) {
           }
           rules={[{ pattern: /\S+@\S+\.\S+/, message: 'Should be a valid email' }]}
         >
-          <Input type='email' placeholder='Email address' />
+          <Input
+            className={clsx('', isEmailReady && styles.EmailText)}
+            disabled={isEmailReady}
+            bordered={!isEmailReady}
+            type='email'
+            placeholder='Email address'
+          />
         </Form.Item>
 
         <NewSocialLinks name='links' links={links} collapsed={!links} />

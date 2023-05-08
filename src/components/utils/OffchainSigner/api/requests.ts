@@ -1,16 +1,81 @@
-import { isFunction } from '@polkadot/util'
+import { AxiosError } from 'axios'
 import { OffchainSignerEndpoint, sendHttpRequest, SendHttpRequestProps } from './utils'
 
-export const requestMessage = async (
-  myAddress: string,
-  onFailedCallback?: (err: Error) => void,
-) => {
-  if (!myAddress) {
-    throw new Error('No account id provided')
-  }
+type EmailSignUpProps = {
+  email: string
+  password: string
+  accountAddress: string
+  signedProof: string
+  proof: string
+  hcaptchaResponse: string
+}
 
+type EmailSignInProps = {
+  email: string
+  password: string
+  hcaptchaResponse: string
+}
+
+type AddressSignInProps = {
+  signedProof: string
+  proof: string
+  hcaptchaResponse: string
+}
+
+type ConfirmEmailProps = {
+  code: string
+  accessToken: string
+}
+
+type SubmitSignedCallDataProps = {
+  data: string
+  accessToken: string
+  refreshToken: string
+}
+
+export type JwtPayload = {
+  accountAddress: string
+  accountAddressVerified: boolean
+  email: string
+  emailVerified: boolean
+  iat: number
+  exp: number
+}
+interface Error {
+  message: string[]
+  statusCode: number
+}
+
+type ErrorMessageProps = {
+  error: unknown
+  showError?: boolean
+}
+
+export function onErrorHandler(
+  error: unknown,
+  callback: (errorMessage: string) => void,
+  showError?: boolean,
+) {
+  const errorMessage = getErrorMessage({ error, showError })
+  if (errorMessage) {
+    callback(errorMessage as string)
+  }
+}
+
+export function getErrorMessage({ error, showError = false }: ErrorMessageProps) {
+  const err = error as AxiosError<Error>
+  if (!err.response?.data) return err.message
+  const { message, statusCode } = err.response?.data
+
+  if ((statusCode === 400 || statusCode === 401) && typeof message === 'string' && !showError)
+    return
+
+  return err.response?.data?.message ?? err.message
+}
+
+export const requestProof = async (accountAddress: string) => {
   const data = {
-    accountAddress: myAddress,
+    accountAddress,
   }
 
   const res = await sendHttpRequest({
@@ -19,64 +84,121 @@ export const requestMessage = async (
       data,
     },
     method: 'POST',
-    onFaileReturnedValue:
-      isFunction(onFailedCallback) && onFailedCallback(new Error('Failed to generate proof')),
+    onFaileReturnedValue: undefined,
     onFailedText: 'Failed to generate proof',
   })
 
   return res
 }
 
-export const sendSignedMessage = async (
-  myAddress: string,
-  signedMessageJwt: string,
-  messageJwt: string,
-  token: string,
-  onFailedCallback: (err: Error) => void,
-) => {
-  if (!token) throw new Error('Please confirm hCaptcha!')
-
-  const data = {
-    accountAddress: myAddress as string,
-    signedMessageJwt,
-    messageJwt,
-    hcaptchaResponse: token,
-  }
-
+export const addressSignIn = async (props: AddressSignInProps) => {
   const res = await sendHttpRequest({
     params: {
-      url: OffchainSignerEndpoint.SEND_SIGNED_PROOF,
-      data,
+      url: OffchainSignerEndpoint.ADDRESS_SIGN_IN,
+      data: props,
     },
     method: 'POST',
-    onFaileReturnedValue:
-      isFunction(onFailedCallback) && onFailedCallback(new Error('Failed to send signed proof')),
-    onFailedText: 'Failed to send signed proof',
+    onFaileReturnedValue: undefined,
+    onFailedText: 'Failed to sign in with address',
   })
 
   return res
 }
 
-export const fetchProxyAddress = async (onFailedCallback?: (err: Error) => void) => {
+export const emailSignUp = async (props: EmailSignUpProps) => {
+  const res = await sendHttpRequest({
+    params: {
+      url: OffchainSignerEndpoint.SIGNUP,
+      data: props,
+    },
+    method: 'POST',
+    onFaileReturnedValue: undefined,
+    onFailedText: 'Failed to sign up with email',
+  })
+
+  return res
+}
+
+export const confirmEmail = async ({ code, ...otherProps }: ConfirmEmailProps) => {
+  const res = await sendHttpRequest({
+    params: {
+      url: OffchainSignerEndpoint.CONFIRM,
+      data: {
+        code,
+      },
+    },
+    method: 'POST',
+    onFaileReturnedValue: undefined,
+    onFailedText: 'Failed to confirm email',
+    ...otherProps,
+  })
+
+  return res
+}
+
+export const resendEmailConfirmation = async (accessToken: string) => {
+  const res = await sendHttpRequest({
+    params: {
+      url: OffchainSignerEndpoint.RESEND_CONFIRMATION,
+    },
+    accessToken,
+    method: 'POST',
+    onFaileReturnedValue: undefined,
+    onFailedText: 'Failed to resend email confirmation',
+  })
+
+  return res
+}
+
+export const emailSignIn = async (props: EmailSignInProps) => {
+  const res = await sendHttpRequest({
+    params: {
+      url: OffchainSignerEndpoint.SIGNIN,
+      data: props,
+    },
+    method: 'POST',
+    onFaileReturnedValue: undefined,
+    onFailedText: 'Failed to sign in with email',
+  })
+
+  return res
+}
+
+export const fetchMainProxyAddress = async (accessToken: string) => {
   const res = await sendHttpRequest({
     params: {
       url: OffchainSignerEndpoint.FETCH_MAIN_PROXY,
     },
+    accessToken,
     method: 'GET',
-    onFaileReturnedValue:
-      isFunction(onFailedCallback) && onFailedCallback(new Error('Failed to fetch proxy address')),
+    onFaileReturnedValue: undefined,
     onFailedText: 'Failed to fetch proxy address',
   })
 
   return res
 }
 
-type SubmitSignedCallDataProps = {
-  data: string
-  jwt: string
+export const callRefreshToken = async (refreshToken: string) => {
+  const res = await sendHttpRequest({
+    params: {
+      url: OffchainSignerEndpoint.REFRESH_TOKEN,
+      data: {
+        refreshToken,
+      },
+    },
+    method: 'POST',
+    onFaileReturnedValue: undefined,
+    onFailedText: 'Failed to refresh token',
+  })
+
+  return res
 }
 
-export const submitSignedCallData = async ({ data, jwt }: SubmitSignedCallDataProps) => {
+export const submitSignedCallData = async ({
+  data,
+  accessToken,
+  refreshToken,
+}: SubmitSignedCallDataProps) => {
   const payload: SendHttpRequestProps = {
     params: {
       url: OffchainSignerEndpoint.SIGNER_SIGN,
@@ -85,7 +207,8 @@ export const submitSignedCallData = async ({ data, jwt }: SubmitSignedCallDataPr
       },
     },
     method: 'POST',
-    accessToken: jwt,
+    accessToken,
+    refreshToken,
     onFaileReturnedValue: undefined,
     onFailedText: 'Failed submitting signed call data',
   }

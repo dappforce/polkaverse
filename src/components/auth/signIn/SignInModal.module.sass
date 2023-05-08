@@ -1,8 +1,11 @@
 @import 'src/styles/subsocial-vars.scss'
 
 .SignInModalBody
-  padding: $space_normal $space_large
+  padding: $space_normal $space_big
   position: relative
+
+  \:global .ant-input
+    height: 40px !important
 
   \:global .ant-menu-horizontal
     border-bottom: none !important
@@ -32,10 +35,14 @@
       &:hover
         background-color: #ffedf6
 
+.SignInModalBodyOnConfirm 
+  @extend .SignInModalBody
+  padding: 0 $space_big $space_huge
+
 .TitleContainer
   position: relative
   font-size: $font_normal
-  padding: 0 $space_mini
+  padding: 0 $space_tiny
 
 .BackButton
   position: absolute
@@ -111,9 +118,29 @@
   padding: $space_tiny $space_small
   margin-bottom: $space_normal
 
-.SignInModal
-  \:global .ant-modal-body
-    height: 440px !important
+.ReadMore
+  color: $color_primary
+  cursor: pointer
+  font-weight: $font_weight_bold
+  font-size: $font_normal
+  &:hover
+    color: $color_link_hover
+
+.Divider
+  padding: 0 $space_tiny
+  > h2
+   width: 100%
+   text-align: center 
+   border-bottom: 1px solid #d9d9d9
+   line-height: 0.01rem
+   margin: $space_semismall 0 $space_large
+   > span 
+      background:#fff 
+      padding: 0 $space_big
+      color: $color_light_muted
+      font-weight: $font_weight_normal
+      font-size: $font_normal
+
 
 @media (max-width: 767px)
   .SignInModalBody

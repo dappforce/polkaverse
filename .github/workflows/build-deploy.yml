@@ -68,6 +68,8 @@ jobs:
           build-args: |
             GH_GA_ID=UA-204866512-2
             GH_APP_KIND=polkaverse
+            GH_HCAPTCHA_SITE_KEY=${{ secrets.PROD_HCAPTCHA_SITE_KEY }}
+            GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network            
             GH_CONNECTION_KIND=main
 
           tags: |

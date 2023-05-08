@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
 import { HTMLProps } from 'react'
-import { useIsSignedIn, useMyAddress } from '../components/auth/MyAccountsContext'
+import { useIsSignedIn, useIsUsingEmail, useMyAddress } from '../components/auth/MyAccountsContext'
 import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMenuItems'
 import styles from './Sider.module.sass'
 
@@ -50,7 +50,10 @@ function SideMenu() {
   const myAddress = useMyAddress()
   const isLoggedIn = useIsSignedIn()
 
-  const menuItems = isLoggedIn && myAddress ? buildAuthorizedMenu(myAddress) : DefaultMenu
+  const isUsingEmail = useIsUsingEmail()
+
+  const menuItems =
+    isLoggedIn && myAddress ? buildAuthorizedMenu(myAddress, isUsingEmail) : DefaultMenu
 
   return (
     <div
