@@ -324,9 +324,8 @@ function TxButton({
       const isAddingProxyUsingExtension = !isSigningWithSignerAccount && isAddingProxyOnAccount
 
       if (
-        isRemovingProxyUsingExtension ||
-        isAddingProxyUsingExtension ||
-        !isSigningAllowedPallets
+        !isSigningWithEmail &&
+        (isRemovingProxyUsingExtension || isAddingProxyUsingExtension || !isSigningAllowedPallets)
       ) {
         await signWithExtension(extrinsic, accountId, hideRememberMePopup)
         return
