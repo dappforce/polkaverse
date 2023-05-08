@@ -75,6 +75,11 @@
         margin-right: $space_semismall
         margin-top: $space_tiny
 
+.InputOTPContainer
+    display: flex
+    justify-content: center
+    align-content: center
+    gap: $space_normal
 
 .InputOTP
   width: 40px
@@ -88,7 +93,6 @@
   color: $color_dark_text
   text-transform: uppercase
 
-  margin-right: $space_semismall
   border: 1px solid $color_semilight_border
   border-radius: 12px
   background: #fafafa
@@ -97,6 +101,10 @@
 .InputOTPError
     @extend .InputOTP
     border: 1px solid $color_error
+
+.InputOTPContainerMobile
+    @extend .InputOTPContainer
+    gap: $space_tiny
 
 .InputOTP:focus
   appearance: none

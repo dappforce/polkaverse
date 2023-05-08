@@ -1,5 +1,6 @@
 import { isStr, toSubsocialAddress } from '@subsocial/utils'
 import { Button, Form } from 'antd'
+import clsx from 'clsx'
 import jwtDecode from 'jwt-decode'
 import { useEffect, useState } from 'react'
 import AuthCode from 'react-auth-code-input'
@@ -151,10 +152,14 @@ const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
           validateStatus={isError ? 'error' : undefined}
         >
           <AuthCode
+            containerClassName={clsx(
+              styles.InputOTPContainer,
+              isMobile && styles.InputOTPContainerMobile,
+            )}
             length={CODE_DIGIT}
             allowedCharacters='numeric'
             onChange={handleChange}
-            inputClassName={isError ? styles.InputOTPError : styles.InputOTP}
+            inputClassName={clsx(styles.InputOTP, isError && styles.InputOTPError)}
           />
         </Form.Item>
 
