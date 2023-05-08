@@ -109,6 +109,7 @@ const SelectEmailItems = ({
 
   const onAccountClick = (address: string, emailAddress?: string) => {
     emailAddress ? setEmailAddress(emailAddress) : unsetEmailAddress()
+    setAddress(address)
     onItemClick?.(address)
   }
 
