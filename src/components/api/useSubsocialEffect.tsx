@@ -21,7 +21,13 @@ export default function useSubsocialEffect(
   effect: EffectCallback,
   deps: DependencyList = [],
 ): void {
-  const _deps = useMemo(() => JSON.stringify(deps), deps)
+  const _deps = useMemo(() => {
+    try {
+      return JSON.stringify(deps)
+    } catch {
+      return deps
+    }
+  }, deps)
   const apis = useSubsocialApi()
   const { api } = useSubstrate()
   const isReady = apis.isApiReady && api
