@@ -184,6 +184,8 @@ const ModalContent = ({
     setCurrentStep(StepsEnum.CreatingAccount)
   }
 
+  const dividerText = isMobile ? 'Or' : 'Or connect wallet'
+
   switch (currentStep) {
     case StepsEnum.SelectWallet: {
       return (
@@ -205,7 +207,7 @@ const ModalContent = ({
 
             <div className={styles.Divider}>
               <h2>
-                <span>Or connect wallet</span>
+                <span>{dividerText}</span>
               </h2>
             </div>
 
