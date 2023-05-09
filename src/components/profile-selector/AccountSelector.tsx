@@ -1,15 +1,16 @@
-import { Divider } from 'antd'
+import { Button, Divider } from 'antd'
 import { useState } from 'react'
 import { EmailAccount } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
+import { StepsEnum, useAuth } from '../auth/AuthContext'
 import { useMyAccounts, useMyAccountsContext, useMyAddress } from '../auth/MyAccountsContext'
+import styles from '../auth/signIn/email/SignInModalContent.module.sass'
 import { ProfilePreviewByAccountId, SelectAddressPreview } from '../profiles/address-views'
 import SubTitle from '../utils/SubTitle'
 
 import { asAccountId } from '@subsocial/api'
 import { isEmptyArray } from '@subsocial/utils'
 import config from 'src/config'
-import { isMobileDevice } from 'src/config/Size.config'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { fetchProfileSpaces } from 'src/rtk/features/profiles/profilesSlice'
@@ -139,24 +140,25 @@ const renderExtensionContent = (content: JSX.Element) => {
   )
 }
 
-const noExtension = !isMobileDevice ? (
-  <div className='text-center my-3'>
-    <div className='mb-3 mx-3'>
-      <a
-        className='DfBoldBlackLink'
-        href='https://github.com/polkadot-js/extension'
-        rel='noreferrer'
-        target='_blank'
-      >
-        Polkadot extension
-      </a>{' '}
-      was not found or disabled. Please read our{' '}
-      <a href='/docs/sign-up' rel='noreffer'>
-        Sign Up guide
-      </a>
-      .
-    </div>
-    {/* <div className='mx-5'>
+const noExtension = (onClickSignIn: () => void, onClickRegister: () => void) =>
+  !true ? (
+    <div className='text-center my-3'>
+      <div className='mb-3 mx-3'>
+        <a
+          className='DfBoldBlackLink'
+          href='https://github.com/polkadot-js/extension'
+          rel='noreferrer'
+          target='_blank'
+        >
+          Polkadot extension
+        </a>{' '}
+        was not found or disabled. Please read our{' '}
+        <a href='/docs/sign-up' rel='noreffer'>
+          Sign Up guide
+        </a>
+        .
+      </div>
+      {/* <div className='mx-5'>
         <Button block className='mb-2' type='default' href='https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd' target='_blank' >
           <Avatar size={20} src='/chrome.svg' />
           <span className='ml-2'>polkadot.js for Chrome</span>
@@ -166,43 +168,19 @@ const noExtension = !isMobileDevice ? (
           <span className='ml-2'>polkadot.js for Firefox</span>
         </Button>
       </div> */}
-  </div>
-) : (
-  <div className='p-3 text-center'>
-    {`You can read ${config.appName} content on any device, however, in order to create new posts, write comments and follow others, you will need to use a desktop.`}
-    {'This is because this web app uses the '}
-    <a target='_blank' rel='noreferrer' href='https://polkadot.js.org/extension/'>
-      Polkadot.js Extension
-    </a>
-    {
-      ' to sign your actions (transactions) as they recorded on-chain. The extension is available for the desktop versions of '
-    }
-    <a
-      target='_blank'
-      rel='noreferrer'
-      href='https://addons.mozilla.org/en-US/firefox/addon/polkadot-js-extension/'
-    >
-      Firefox
-    </a>
-    {', '}
-    <a
-      target='_blank'
-      rel='noreferrer'
-      href='https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd'
-    >
-      Chrome
-    </a>
-    {', and other '}
-    <a
-      target='_blank'
-      rel='noreferrer'
-      href='https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd'
-    >
-      Chrome-based
-    </a>
-    {' browsers.'}
-  </div>
-)
+    </div>
+  ) : (
+    <div className='p-3 text-center'>
+      {`You can continue reading ${config.appName} content without signing in, however, in order to create new posts, write comments, and follow others, you will need to`}
+      <Button className={styles.ButtonLinkDiv} type='link' onClick={() => onClickSignIn()}>
+        sign in
+      </Button>{' '}
+      {"with an email address and password. If you don't already have an account, you can"}
+      <Button className={styles.ButtonLinkDiv} type='link' onClick={() => onClickRegister()}>
+        create one.
+      </Button>
+    </div>
+  )
 
 const noExtensionAccounts = (
   <div className='m-3 text-center'>
@@ -258,6 +236,8 @@ export const AccountSelector = ({
   const { emailAccounts } = useMyAccounts()
   const { apiState } = useSubstrate()
 
+  const { setCurrentStep } = useAuth()
+
   const excludeCurrentEmailAccounts = emailAccounts.filter(
     account => account && account.accountAddress !== currentAddress,
   )
@@ -279,7 +259,15 @@ export const AccountSelector = ({
         />,
       )
 
-    if (status === 'UNAVAILABLE' && emailAccounts.length === 0) return noExtension
+    if (status === 'UNAVAILABLE' && emailAccounts.length === 0)
+      return noExtension(
+        () => {
+          setCurrentStep(StepsEnum.SignIn)
+        },
+        () => {
+          setCurrentStep(StepsEnum.SignUp)
+        },
+      )
 
     if (!count && currentAddress) return null
 
