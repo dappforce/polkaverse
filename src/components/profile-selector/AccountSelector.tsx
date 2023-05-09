@@ -88,6 +88,7 @@ const SelectAccountItems = ({
         />
       ))}
       {emailAccounts &&
+        emailAccounts.length > 0 &&
         emailAccounts.map(({ accountAddress, email }) => (
           <AccountItem
             key={accountAddress}
@@ -95,7 +96,7 @@ const SelectAccountItems = ({
             emailAddress={email}
             onClick={onAccountClick}
             withShortAddress={withShortAddress}
-            isOnSelectAccount={true}
+            // isOnSelectAccount={true}
           />
         ))}
     </div>
@@ -270,7 +271,7 @@ export const AccountSelector = ({
         },
       )
 
-    if (!count && currentAddress) return null
+    if (!count && emailAccounts.length === 0 && currentAddress) return null
 
     if (status === 'NOACCOUNT') return renderExtensionContent(noExtensionAccounts)
 
