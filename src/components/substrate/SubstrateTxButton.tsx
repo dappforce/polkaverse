@@ -1,7 +1,7 @@
 import { Keyring } from '@polkadot/api'
 import { isStr } from '@subsocial/utils'
 import Button, { ButtonProps } from 'antd/lib/button'
-import React from 'react'
+import React, { useMemo } from 'react'
 import config from 'src/config'
 import { useIsProxyAddedContext } from '../onboarding/contexts/IsProxyAdded'
 import { isProxyAdded } from '../utils/OffchainSigner/ExternalStorage'
@@ -121,10 +121,16 @@ function TxButton({
 
   const myEmailAddress = useMyEmailAddress()
 
+  const isProxySet = useMemo(() => {
+    if (isProxyAddedState) return true
+    return false
+  }, [isProxyAddedState])
+
   const emailSignerToken = getSignerToken(accountId as string)
   const emailRefreshToken = getSignerRefreshToken(accountId as string)
   const isSigningWithEmail = isStr(emailSignerToken) && isStr(myEmailAddress)
-  const isCurrentAddressAddedWithProxy = isProxyAdded(myAddress!) && isProxyAddedState
+  const isCurrentAddressAddedWithProxy =
+    (isProxyAdded(myAddress!) || isProxySet) && isProxyAddedState
   const isSigningWithSignerAccount =
     isStr(signerToken) && !isStr(myEmailAddress) && isCurrentAddressAddedWithProxy
 
@@ -134,9 +140,11 @@ function TxButton({
   const isBatchTxUsingEmail = tx === 'utility.batch' && isStr(myEmailAddress)
   const isRemovingProxyOnAccount =
     tx === 'proxy.removeProxies' && isStr(myAddress) && isCurrentAddressAddedWithProxy
-
   const isAddingProxyOnAccount =
     tx === 'freeProxy.addFreeProxy' && isStr(myAddress) && !isCurrentAddressAddedWithProxy
+
+  const isRemovingProxyUsingExtension = isSigningWithSignerAccount && isRemovingProxyOnAccount
+  const isAddingProxyUsingExtension = !isSigningWithSignerAccount && isAddingProxyOnAccount
 
   const api = customNodeApi || subsocialApi
 
@@ -170,6 +178,9 @@ function TxButton({
     'spaces',
     'profiles',
   ]
+
+  const [pallet, _] = (tx || '').split('.')
+  const isSigningAllowedPallets = allowedPalletsForSocialActions.includes(pallet)
 
   const getExtrinsic = async (): Promise<SubmittableExtrinsic> => {
     const [pallet, method] = (tx || '').split('.')
@@ -312,16 +323,9 @@ function TxButton({
     if ((tx === 'utility.batch' && signerToken) || tx === 'freeProxy.addFreeProxy')
       hideRememberMePopup = true
 
-    const [pallet, _] = (tx || '').split('.')
-
-    let isSigningAllowedPallets = allowedPalletsForSocialActions.includes(pallet)
-
     try {
       let tx: SubmittableExtrinsic
       const extrinsic = await getExtrinsic()
-
-      const isRemovingProxyUsingExtension = isSigningWithSignerAccount && isRemovingProxyOnAccount
-      const isAddingProxyUsingExtension = !isSigningWithSignerAccount && isAddingProxyOnAccount
 
       if (
         !isSigningWithEmail &&
