@@ -1,4 +1,7 @@
+import { VoidFn } from '@polkadot/api/types'
 import { useState } from 'react'
+import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
+import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { useIsProxyAddedContext } from 'src/components/onboarding/contexts/IsProxyAdded'
 import RememberMeButton from 'src/components/utils/OffchainSigner/RememberMeButton'
 import { useAppDispatch } from 'src/rtk/app/store'
@@ -23,6 +26,50 @@ const CustomFooterAction = (props: CustomFooterActionProps) => {
   const currentStep = useCurrentOnBoardingStep()
   const { goToNextStep, saveAsDraft, loading, setLoading, isPartial, signerProps } = props
   const { setIsProxyAdded } = useIsProxyAddedContext()
+
+  const myAddress = useMyAddress()
+
+  const [isProxyAddedOnChain, setIsProxyAddedOnChain] = useState(false)
+  const [isLoadingCheckProxyOnChain, setLoadingCheckProxyOnChain] = useState(false)
+
+  useSubsocialEffect(
+    ({ substrate }) => {
+      setLoadingCheckProxyOnChain(false)
+      if (!myAddress) return
+
+      let unsubFreeProxy: VoidFn | undefined
+
+      const subFreeProxy = async () => {
+        const api = await substrate.api
+
+        unsubFreeProxy = await api.query.proxy.proxies(myAddress, async proxiedEntities => {
+          const proxyAddresses = proxiedEntities.map(proxy => proxy.toHuman() as string)
+          if (proxyAddresses.length > 0) {
+            setIsProxyAddedOnChain(true)
+          } else {
+            setIsProxyAddedOnChain(false)
+          }
+        })
+
+        setLoadingCheckProxyOnChain(false)
+      }
+
+      subFreeProxy()
+
+      return () => {
+        unsubFreeProxy && unsubFreeProxy()
+      }
+    },
+    [myAddress],
+  )
+
+  const executeOnSuccess = () => {
+    handleOnsuccess()
+    goToNextStep({ forceTerminateFlow: true })
+    dispatch(resetOnBoardingData(currentStep))
+    setIsProxyAdded(true)
+    return
+  }
 
   if (!signerProps) return <></>
 
@@ -49,11 +96,7 @@ const CustomFooterAction = (props: CustomFooterActionProps) => {
         loading={loading}
         setLoading={setLoading}
         onSuccess={() => {
-          handleOnsuccess()
-          goToNextStep({ forceTerminateFlow: true })
-          dispatch(resetOnBoardingData(currentStep))
-          setIsProxyAdded(true)
-          return
+          executeOnSuccess()
         }}
       />
     )
@@ -61,8 +104,13 @@ const CustomFooterAction = (props: CustomFooterActionProps) => {
 
   return (
     <RememberMeButton
+      loading={isLoadingCheckProxyOnChain}
       onSuccessAuth={() => {
-        setShowContinueBtn && setShowContinueBtn(true)
+        if (!isProxyAddedOnChain) {
+          setShowContinueBtn && setShowContinueBtn(true)
+        } else {
+          executeOnSuccess()
+        }
       }}
       onFailedAuth={handleOnsuccess}
     />
