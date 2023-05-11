@@ -9,7 +9,7 @@ import { ProfilePreviewByAccountId, SelectAddressPreview } from '../profiles/add
 import SubTitle from '../utils/SubTitle'
 
 import { asAccountId } from '@subsocial/api'
-import { isEmptyArray } from '@subsocial/utils'
+import { isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
 import config from 'src/config'
 import { isMobileDevice } from 'src/config/Size.config'
 import { useSelectProfile } from 'src/rtk/app/hooks'
@@ -88,6 +88,7 @@ const SelectAccountItems = ({
         />
       ))}
       {emailAccounts &&
+        emailAccounts.length > 0 &&
         emailAccounts.map(({ accountAddress, email }) => (
           <AccountItem
             key={accountAddress}
@@ -95,7 +96,7 @@ const SelectAccountItems = ({
             emailAddress={email}
             onClick={onAccountClick}
             withShortAddress={withShortAddress}
-            isOnSelectAccount={true}
+            // isOnSelectAccount={true}
           />
         ))}
     </div>
@@ -239,9 +240,11 @@ export const AccountSelector = ({
 
   const { setCurrentStep } = useAuth()
 
-  const excludeCurrentEmailAccounts = emailAccounts.filter(
-    account => account && account.accountAddress !== currentAddress,
-  )
+  const excludeCurrentEmailAccounts = emailAccounts.filter(account => {
+    const walletAddress = toSubsocialAddress(account.accountAddress) ?? account.accountAddress
+    if (walletAddress !== currentAddress) return account
+    return
+  })
 
   const ExtensionAccountPanel = () => {
     const count = switchAccountsSet.size
@@ -251,7 +254,7 @@ export const AccountSelector = ({
 
     if (status === 'UNAUTHORIZED') return unauthExtension
 
-    if (status === 'UNAVAILABLE' && emailAccounts.length > 0)
+    if (status === 'UNAVAILABLE' && excludeCurrentEmailAccounts.length > 0)
       return renderExtensionContent(
         <SelectEmailItems
           withShortAddress
@@ -270,7 +273,13 @@ export const AccountSelector = ({
         },
       )
 
-    if (!count && currentAddress) return null
+    if (
+      !count &&
+      currentAddress &&
+      emailAccounts.length > 0 &&
+      excludeCurrentEmailAccounts.length === 0
+    )
+      return null
 
     if (status === 'NOACCOUNT') return renderExtensionContent(noExtensionAccounts)
 
@@ -295,9 +304,8 @@ export const AccountSelector = ({
 
   return (
     <div>
-      {(status === 'OK' || emailAccounts.length > 0) && withCurrentAccount && (
-        <CurrentAccount currentAddress={currentAddress} />
-      )}
+      {(status === 'OK' || (status === 'UNAVAILABLE' && emailAccounts.length > 0)) &&
+        withCurrentAccount && <CurrentAccount currentAddress={currentAddress} />}
       <div>
         <ExtensionAccountPanel />
       </div>
