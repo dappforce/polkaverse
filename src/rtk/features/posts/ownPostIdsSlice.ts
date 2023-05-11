@@ -3,6 +3,7 @@ import { FetchOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { SelectOneFn } from 'src/rtk/app/hooksCommon'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { AccountId, AnySpaceId, idToBn, PostId } from 'src/types'
+import { descSort } from 'src/utils'
 
 type Entity = {
   /** `id` is an account address that owns posts. */
@@ -48,10 +49,10 @@ export const fetchPostIdsOwnedByAccount = createAsyncThunk<
     const promises =
       spaceIds?.map(async spaceId => api.blockchain.postIdsBySpaceId(idToBn(spaceId))) || []
     const postIds = (await Promise.all(promises)).flat()
-
+    
     return {
       id: myAddress,
-      ownPostIds: postIds,
+      ownPostIds: descSort(postIds),
     }
   },
 )

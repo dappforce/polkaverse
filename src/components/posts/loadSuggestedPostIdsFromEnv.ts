@@ -4,6 +4,7 @@ import { getPostIdsBySpaces } from 'src/graphql/apis'
 import { GqlClient } from 'src/graphql/ApolloProvider'
 import { AnySpaceId, PostId } from 'src/types'
 import { getPageOfIds } from '../utils/getIds'
+import { descSort } from 'src/utils'
 
 let suggestedPostIds: string[] | undefined = undefined
 
@@ -24,8 +25,8 @@ export const loadSuggestedPostIds = async ({
 
     const suggestedPostIdsArray = (await Promise.all(suggestedPostIdsPromises)).flat()
 
-    suggestedPostIds = suggestedPostIdsArray
-    return suggestedPostIds
+    suggestedPostIds = suggestedPostIdsArray.flat()
+    return descSort(suggestedPostIds)
   } else if (client) {
     return getPostIdsBySpaces(client, { spaceIds: recommendedIds })
   }

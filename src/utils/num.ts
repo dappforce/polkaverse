@@ -13,3 +13,4 @@ export const tryParseInt = (maybeNum: string | number, def: number): number => {
 }
 
 export const descSortBns = (ids: BN[]) => ids.sort((a, b) => b.sub(a).toNumber())
+export const descSort = (ids: string[]) => ids.sort((a, b) => new BN(b).sub(new BN(a)).toNumber())

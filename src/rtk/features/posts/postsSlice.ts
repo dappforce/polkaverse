@@ -196,6 +196,7 @@ const getPosts = createFetchDataFn<PostState[]>([])({
   },
   squid: async ({ ids, publicOnly }: { ids: string[]; publicOnly?: boolean }, client) => {
     if (ids.length === 0) return []
+
     const posts = await getPostsData(client, {
       where: {
         id_in: ids,
