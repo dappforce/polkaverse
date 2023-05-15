@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 as builder
+FROM oap75/polkaverse-base:1.1.1 as builder
 
 ARG GH_SUBSTRATE_URL
 ARG GH_SUBSTRATE_RPC_URL
@@ -24,19 +24,10 @@ ENV SUBSTRATE_URL=${GH_SUBSTRATE_URL} \
     OFFCHAIN_SIGNER_URL=${GH_OFFCHAIN_SIGNER_URL} \
     CONNECTION_KIND=${GH_CONNECTION_KIND}
 
-
-RUN apt-get update \
-    && apt-get install -y libusb-1.0-0-dev build-essential git curl gnupg gcc-4.8 g++-4.8 \
-    && export CXX=g++-4.8
-
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
-RUN apt-get install -y nodejs
-RUN npm install yarn -g
-
 COPY package.json yarn.lock* ./
 RUN yarn install --no-optional
 
-WORKDIR /app
+WORKDIR /opt/subsocial/app
 COPY . .
 
 RUN yarn
@@ -72,8 +63,8 @@ ENV SUBSTRATE_URL=${GH_SUBSTRATE_URL} \
     OFFCHAIN_SIGNER_URL=${GH_OFFCHAIN_SIGNER_URL} \
     CONNECTION_KIND=${GH_CONNECTION_KIND}
 
-WORKDIR /app
+WORKDIR /opt/subsocial/app
 
-COPY --from=builder /app .
+COPY --from=builder /opt/subsocial/app .
 
 CMD [ "yarn", "start" ]
