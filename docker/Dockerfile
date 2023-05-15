@@ -1,4 +1,4 @@
-FROM oap75/polkaverse-base:1.1.1 as builder
+FROM dappforce/subsocial-base-polkaverse as builder
 
 ARG GH_SUBSTRATE_URL
 ARG GH_SUBSTRATE_RPC_URL
