@@ -35,9 +35,10 @@ RUN yarn
 COPY ci.env .env
 RUN yarn export-env \
     && NODE_ENV=production yarn build  \
-    && yarn export-env
+    && yarn export-env \
+    && yarn patch
 
-FROM node:16-alpine3.15
+FROM gcr.io/distroless/nodejs:16 AS runner
 
 ARG GH_SUBSTRATE_URL
 ARG GH_SUBSTRATE_RPC_URL
@@ -67,4 +68,4 @@ WORKDIR /opt/subsocial/app
 
 COPY --from=builder /opt/subsocial/app .
 
-CMD [ "yarn", "start" ]
+CMD [ "node_modules/.bin/next", "start", "-p", "3003" ]
