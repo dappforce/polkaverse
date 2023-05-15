@@ -1,0 +1,8 @@
+FROM ubuntu:18.04 as builder
+
+RUN apt-get update \
+    && apt-get install -y libusb-1.0-0-dev build-essential git curl gnupg gcc-4.8 g++-4.8 \
+    && export CXX=g++-4.8 \
+    && curl -sL https://deb.nodesource.com/setup_16.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install yarn -g
