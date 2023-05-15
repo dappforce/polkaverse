@@ -23,7 +23,7 @@ export default function TwitterMock({
     <Row justify='center'>
       <Row>
         <div className={clsx(styles.TwitterMock, 'text-left')}>
-          <img src='images/twitter-mock.png' />
+          <img src='/images/twitter-mock.png' />
           <div className='mt-3'>{children}</div>
         </div>
       </Row>
