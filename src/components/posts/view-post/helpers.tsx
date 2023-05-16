@@ -52,7 +52,7 @@ type IsUnlistedPostProps = {
 export const useIsUnlistedPost = ({ post, space }: IsUnlistedPostProps) => {
   const notMyPost = !useIsMyAddress(post?.ownerId)
   const notMySpace = !useIsMySpace(space)
-  const canNotHidePosts = !useHasUserASpacePermission({ space, permission: 'HideAnyPost' })
+  const canNotHidePosts = !useHasUserASpacePermission({ space, permission: 'UpdateAnyPost' })
 
   return (
     notMyPost && notMySpace && canNotHidePosts && (isHidden(post) || (post && isBlockedPost(post)))
