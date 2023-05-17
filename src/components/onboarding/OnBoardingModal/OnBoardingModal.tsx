@@ -101,7 +101,7 @@ export default function OnBoardingModal({
   const { steps: stepsOrder } = useOnBoardingStepsOrderWithEnergySnapshot()
 
   const isUsingEmail = useIsUsingEmail()
-  const onBoardingModalStepsOrder = isUsingEmail
+  const onBoardingModalStepsOrder = isUsingEmail || !config.enableConfirmationLessMode
     ? stepsOrder.filter(key => key !== 'signer')
     : stepsOrder
 

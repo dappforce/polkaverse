@@ -1,7 +1,7 @@
-import { nonEmptyStr } from '@subsocial/utils'
+import {isEmptyStr, nonEmptyStr} from '@subsocial/utils'
 import app from './app'
 import connections from './connections'
-import { featureOverrides as env } from './env'
+import {featureOverrides as env, hCaptchaSiteKey} from './env'
 import { CommonSubsocialFeatures, SubsocialFeatures } from './types'
 import { getOrFalse, getOrTrue } from './utils'
 
@@ -22,7 +22,10 @@ const commonFeatures: CommonSubsocialFeatures = {
   enableOnchainActivities: getOrFalse(!enableGraphQl),
   enableDomains: getOrFalse(true),
   enableSquidDataSource: isSquidGraphQLEnabled,
+  enableConfirmationLessMode: getOrFalse(!isEmptyStr(hCaptchaSiteKey)),
 }
+
+console.log('commonFeatures', commonFeatures.enableConfirmationLessMode)
 
 const features: SubsocialFeatures = {
   ...commonFeatures,

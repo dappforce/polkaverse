@@ -111,6 +111,8 @@ export type CommonSubsocialFeatures = {
   enableOnchainActivities?: boolean
   enableDomains?: boolean
   enableSquidDataSource?: boolean
+
+  enableConfirmationLessMode?: boolean
 }
 
 export type SubsocialFeatures = CommonSubsocialFeatures
