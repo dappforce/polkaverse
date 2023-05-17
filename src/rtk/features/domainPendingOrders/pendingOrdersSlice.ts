@@ -106,10 +106,11 @@ export const fetchPendingOrdersByIds = createAsyncThunk<
   const orders = result.getPendingOrdersByIds.orders as PendingDomainEntity[]
 
   const parsedOrders = orders.map(order => {
-    const { signer, createdByAccount } = order
+    const { signer, target, createdByAccount } = order
 
     return {
       ...order,
+      target: toSubsocialAddress(target) || '',
       signer: toSubsocialAddress(signer) || '',
       createdByAccount: toSubsocialAddress(createdByAccount) || '',
     }

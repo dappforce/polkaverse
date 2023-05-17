@@ -1,6 +1,6 @@
 import { Button, Modal, Space, Tag } from 'antd'
 import clsx from 'clsx'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useIsMyAddress } from 'src/components/auth/MyAccountsContext'
 import { SelectAccountInput } from 'src/components/common/inputs/SelectAccountInput'
 import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
@@ -12,6 +12,7 @@ import { useManageDomainContext, DomainSellerKind } from '../manage/ManageDomain
 import styles from './Index.module.sass'
 import { useGetDecimalAndSymbol } from '../dot-seller/utils'
 import { BuyByDotTxButton, BuyDomainSection } from '../BuyDomainButtons'
+import { useSelectPendingOrderById } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
 
 type ModalBodyProps = {
   domainName: string
@@ -24,6 +25,9 @@ const ModalBody = ({ domainName, price, domainSellerKind }: ModalBodyProps) => {
   const sellerConfig = useSelectSellerConfig()
   const nativeBalance = useCreateBalance(purchaser)
   const isMyAddress = useIsMyAddress(recipient)
+  const pendingOrder = useSelectPendingOrderById(domainName)
+
+  const { target } = pendingOrder || {}
 
   const { sellerChain } = sellerConfig || {}
 
@@ -38,6 +42,12 @@ const ModalBody = ({ domainName, price, domainSellerKind }: ModalBodyProps) => {
     network: sellerChain,
     currency: symbol,
   })
+
+  useEffect(() => {
+    if(target) {
+      setRecipient(target)
+    }
+  }, [target])
 
   const { freeBalance } = balance || {}
 

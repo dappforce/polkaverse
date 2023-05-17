@@ -55,10 +55,11 @@ export const fetchPendingOrderByAccount = async ({
   const orders = result[resultField].orders as PendingDomainEntity[]
 
   const parsedOrders = orders.map(order => {
-    const { signer, createdByAccount } = order
+    const { signer, target, createdByAccount } = order
 
     return {
       ...order,
+      target: toSubsocialAddress(target) || '',
       signer: toSubsocialAddress(signer) || '',
       createdByAccount: toSubsocialAddress(createdByAccount) || '',
     }
