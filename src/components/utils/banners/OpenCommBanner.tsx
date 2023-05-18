@@ -1,6 +1,6 @@
 import MultiBanner from './MultiBanner'
 
-const bannersKind = ['robot']
+const bannersKind = ['robot', 'polka']
 
 const BANNER_STORAGE_KEY = 'df.opencomm-banner'
 
