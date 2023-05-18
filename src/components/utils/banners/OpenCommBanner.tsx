@@ -2,7 +2,7 @@ import MultiBanner from './MultiBanner'
 
 const bannersKind = ['robot']
 
-const BANNER_STORAGE_KEY = 'df.banner'
+const BANNER_STORAGE_KEY = 'df.opencomm-banner'
 
 const href = 'https://kusama.subsquare.io/referenda/referendum/198'
 
