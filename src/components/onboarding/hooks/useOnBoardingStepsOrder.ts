@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useAuth } from 'src/components/auth/AuthContext'
-import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import { useIsUsingEmail, useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { isProxyAdded } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { OnBoardingDataTypes } from 'src/rtk/features/onBoarding/onBoardingSlice'
@@ -20,6 +20,7 @@ export default function useOnBoardingStepsOrder(
   const profile = useSelectProfile(myAddress)
   const { isFollowSpaceModalUsed } = useIsFollowSpaceModalUsedContext()
   const { isProxyAdded: isProxyAddedState } = useIsProxyAddedContext()
+  const isUsingEmail = useIsUsingEmail()
 
   // hide sidebar button when accounts are already added with proxy
   const isCurrentAddressAddedWithProxy = isProxyAdded(myAddress!)
@@ -33,9 +34,10 @@ export default function useOnBoardingStepsOrder(
     if (!isCompact || !isFollowSpaceModalUsed) usedSteps.push('spaces')
     if (!profile?.content?.name) usedSteps.push('profile')
 
-    const showEnergyStep = !isCompact
-      ? (additionalData?.energySnapshot ?? 0) < 20
-      : transactionsCount < 20
+    const showEnergyStep =
+      !isUsingEmail && !isCompact
+        ? (additionalData?.energySnapshot ?? 0) < 20
+        : transactionsCount < 20
     if (showEnergyStep) usedSteps.push('energy')
 
     const showSignerStep = !isCurrentAddressAddedWithProxy && !isProxyAddedState
