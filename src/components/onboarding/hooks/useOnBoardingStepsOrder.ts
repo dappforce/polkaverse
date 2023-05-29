@@ -34,11 +34,10 @@ export default function useOnBoardingStepsOrder(
     if (!isCompact || !isFollowSpaceModalUsed) usedSteps.push('spaces')
     if (!profile?.content?.name) usedSteps.push('profile')
 
-    const showEnergyStep =
-      !isUsingEmail && !isCompact
-        ? (additionalData?.energySnapshot ?? 0) < 20
-        : transactionsCount < 20
-    if (showEnergyStep) usedSteps.push('energy')
+    const showEnergyStep = !isCompact
+      ? (additionalData?.energySnapshot ?? 0) < 20
+      : transactionsCount < 20
+    if (showEnergyStep && !isUsingEmail) usedSteps.push('energy')
 
     const showSignerStep = !isCurrentAddressAddedWithProxy && !isProxyAddedState
 
