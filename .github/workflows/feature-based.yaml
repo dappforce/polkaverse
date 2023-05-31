@@ -22,9 +22,17 @@ jobs:
         run: |
           echo "image=dappforce/subsocial-web-app:${{ env.name }}-$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
 
+      - name: Set up Docker context for buildx
+        id: buildx-context
+        run: |
+           docker context create builders
+
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@master
+        with:
+          endpoint: builders
+          version: latest
 
       - name: Login to DockerHub
         uses: docker/login-action@master
