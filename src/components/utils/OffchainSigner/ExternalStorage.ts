@@ -60,6 +60,7 @@ const signOutFromProxy = (address: string) => {
   localStorage.removeItem(createStorageKeyWithSubAddress(SIGNER_TOKEN_KEY, address))
   localStorage.removeItem(createStorageKeyWithSubAddress(SIGNER_REFRESH_TOKEN_KEY, address))
   localStorage.removeItem(createStorageKeyWithSubAddress(SIGNER_PROXY_ADDED, address))
+  window.dispatchEvent(new Event('storage'))
 }
 
 export {
