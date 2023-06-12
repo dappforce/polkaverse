@@ -8,8 +8,8 @@ import {
   getSignerToken,
   SIGNER_REFRESH_TOKEN_KEY,
   SIGNER_TOKEN_KEY,
-  signOutFromProxy,
 } from '../ExternalStorage'
+import { signOutFromProxy } from '../utils'
 import { callRefreshToken } from './requests'
 import { OffchainSignerEndpoint } from './utils'
 
