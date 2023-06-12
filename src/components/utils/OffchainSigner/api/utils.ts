@@ -77,7 +77,7 @@ const wrappedRequest = ({ backEndUrl, method, config, data }: WrappedRequestProp
 export const sendRequest = async ({ request, onFailedText }: SendRequestProps) => {
   try {
     const res = await request()
-    if (res.status !== 200) {
+    if (!res.status.toString().startsWith('2')) {
       log.warn(onFailedText)
     }
 
