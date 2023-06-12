@@ -8,6 +8,7 @@ import {
   getSignerToken,
   SIGNER_REFRESH_TOKEN_KEY,
   SIGNER_TOKEN_KEY,
+  signOutFromProxy,
 } from '../ExternalStorage'
 import { callRefreshToken } from './requests'
 import { OffchainSignerEndpoint } from './utils'
@@ -43,6 +44,13 @@ const offchainSignerApi = () => {
       const isRefreshTokenRequest = originalRequestUrl?.includes(
         OffchainSignerEndpoint.REFRESH_TOKEN,
       )
+      if (isRefreshTokenRequest) {
+        const address = readMyAddress()
+        if (address) {
+          signOutFromProxy(address)
+        }
+        throw new Error('Your session has expired, please approve your popup removal again.')
+      }
 
       try {
         // If the error is due to an expired access token and a refresh token is available

@@ -55,6 +55,13 @@ const isProxyAdded = (myAddress: string) =>
     ? true
     : false
 
+const signOutFromProxy = (address: string) => {
+  localStorage.removeItem(createStorageKeyWithSubAddress(SIGNER_ADDRESS_KEY, address))
+  localStorage.removeItem(createStorageKeyWithSubAddress(SIGNER_TOKEN_KEY, address))
+  localStorage.removeItem(createStorageKeyWithSubAddress(SIGNER_REFRESH_TOKEN_KEY, address))
+  localStorage.removeItem(createStorageKeyWithSubAddress(SIGNER_PROXY_ADDED, address))
+}
+
 export {
   SIGNER_ADDRESS_KEY,
   SIGNER_TOKEN_KEY,
@@ -76,4 +83,5 @@ export {
   getCurrentEmailAddress,
   getSignerEmailAddress,
   isProxyAdded,
+  signOutFromProxy,
 }
