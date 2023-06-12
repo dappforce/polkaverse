@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { nonEmptyStr, toSubsocialAddress } from '@subsocial/utils'
 import { equalAddresses } from 'src/components/substrate'
+import { CURRENT_EMAIL_ADDRESS } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { isBlockedAccount } from 'src/moderation'
 import { AccountId } from 'src/types'
 import store from 'store'
@@ -94,6 +95,7 @@ const myAccountSlice = createSlice({
     signOut(state) {
       store.remove(MY_ADDRESS)
       store.remove(MY_EMAIL_ADDRESS)
+      store.remove(CURRENT_EMAIL_ADDRESS)
 
       delete state.address
       delete state.blocked
