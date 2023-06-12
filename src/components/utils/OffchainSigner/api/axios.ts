@@ -10,6 +10,7 @@ import {
   SIGNER_TOKEN_KEY,
 } from '../ExternalStorage'
 import { callRefreshToken } from './requests'
+import { OffchainSignerEndpoint } from './utils'
 
 const { offchainSignerUrl } = config
 
@@ -38,13 +39,19 @@ const offchainSignerApi = () => {
       const address = readMyAddress()
       const refreshToken = getSignerRefreshToken(address!)
 
+      const originalRequestUrl = originalRequest.baseURL || originalRequest.url
+      const isRefreshTokenRequest = originalRequestUrl?.includes(
+        OffchainSignerEndpoint.REFRESH_TOKEN,
+      )
+
       try {
         // If the error is due to an expired access token and a refresh token is available
         if (
           error.response.status === 401 &&
           originalRequest &&
           !originalRequest._retry &&
-          refreshToken
+          refreshToken &&
+          !isRefreshTokenRequest
         ) {
           originalRequest._retry = true
 
