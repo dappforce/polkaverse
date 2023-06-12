@@ -1,4 +1,6 @@
 import { newLogger, toSubsocialAddress } from '@subsocial/utils'
+import { getStoreDispatcher } from 'src/rtk/app/store'
+import { signOut } from 'src/rtk/features/accounts/myAccountSlice'
 import { createStorageKey } from 'src/utils/storage'
 import store from 'store'
 
@@ -61,6 +63,12 @@ const signOutFromProxy = (address: string) => {
   localStorage.removeItem(createStorageKeyWithSubAddress(SIGNER_REFRESH_TOKEN_KEY, address))
   localStorage.removeItem(createStorageKeyWithSubAddress(SIGNER_PROXY_ADDED, address))
   window.dispatchEvent(new Event('storage'))
+
+  const isUsingEmail = !!getCurrentEmailAddress()
+  if (isUsingEmail) {
+    const dispatch = getStoreDispatcher()
+    dispatch?.(signOut())
+  }
 }
 
 export {

@@ -19,6 +19,9 @@ export type AppStore = typeof emptyStore
 // because in most cases on the server you’ll want to have a separate store per request.
 
 let store: AppStore | undefined
+export function getStoreDispatcher() {
+  return store?.dispatch
+}
 
 export type AppDispatch = typeof emptyStore.dispatch
 
