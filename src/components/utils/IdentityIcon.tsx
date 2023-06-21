@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0-or-later.
+// Copyright (C) 2022-2023 DAPPFORCE PTE. LTD., aleksandr.siman@gmail.com.
+// Full Notice is available in the root folder.
+
 import Avatar from 'antd/lib/avatar/avatar'
 import React, { useEffect, useRef } from 'react'
 import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config'

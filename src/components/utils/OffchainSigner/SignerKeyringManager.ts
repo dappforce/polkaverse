@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0-or-later.
+// Copyright (C) 2022-2023 DAPPFORCE PTE. LTD., aleksandr.siman@gmail.com.
+// Full Notice is available in the root folder.
+
 import { Keyring } from '@polkadot/api'
 import { hexToU8a, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util'
 import { keccakAsU8a, naclDecrypt, naclEncrypt } from '@polkadot/util-crypto'

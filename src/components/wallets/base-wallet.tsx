@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0-or-later.
+// Copyright (C) 2022-2023 DAPPFORCE PTE. LTD., aleksandr.siman@gmail.com.
+// Full Notice is available in the root folder.
+
 // https://github.com/TalismanSociety/talisman-connect/blob/master/libs/wallets/src/lib/base-dotsama-wallet/index.ts
 
 import type { Signer as InjectedSigner } from '@polkadot/api/types'

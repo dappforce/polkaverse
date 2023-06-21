@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0-or-later.
+// Copyright (C) 2022-2023 DAPPFORCE PTE. LTD., aleksandr.siman@gmail.com.
+// Full Notice is available in the root folder.
+
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Col, Divider, FormInstance, Row } from 'antd'
 import { ProfilePreviewByAccountId } from 'src/components/profiles/address-views'

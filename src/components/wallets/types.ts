@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0-or-later.
+// Copyright (C) 2022-2023 DAPPFORCE PTE. LTD., aleksandr.siman@gmail.com.
+// Full Notice is available in the root folder.
+
 import type { Signer as InjectedSigner } from '@polkadot/api/types'
 
 export type SubscriptionFn = (accounts: WalletAccount[] | undefined) => void | Promise<void>

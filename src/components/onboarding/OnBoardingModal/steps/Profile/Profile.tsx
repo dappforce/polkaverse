@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0-or-later.
+// Copyright (C) 2022-2023 DAPPFORCE PTE. LTD., aleksandr.siman@gmail.com.
+// Full Notice is available in the root folder.
+
 import { Form, Input } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
 import clsx from 'clsx'

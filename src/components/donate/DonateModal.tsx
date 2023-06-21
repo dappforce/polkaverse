@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0-or-later.
+// Copyright (C) 2022-2023 DAPPFORCE PTE. LTD., aleksandr.siman@gmail.com.
+// Full Notice is available in the root folder.
+
 import { balanceWithDecimal, isDef, toSubsocialAddress } from '@subsocial/utils'
 import { Avatar, Col, Form, FormInstance, Row, Select } from 'antd'
 import BN from 'bignumber.js'

@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0-or-later.
+// Copyright (C) 2022-2023 DAPPFORCE PTE. LTD., aleksandr.siman@gmail.com.
+// Full Notice is available in the root folder.
+
 import { newLogger, notDef } from '@subsocial/utils'
 import { createPostSlug, HasTitleOrBody } from '@subsocial/utils/slugify'
 import { EntityId, HasHandle, HasId, PostStruct } from 'src/types'

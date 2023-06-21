@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0-or-later.
+// Copyright (C) 2022-2023 DAPPFORCE PTE. LTD., aleksandr.siman@gmail.com.
+// Full Notice is available in the root folder.
+
 import { ChainedCommands, Editor } from '@tiptap/react'
 import { Button, Form, Input, Modal, Tooltip } from 'antd'
 import React, { FC, useEffect, useState } from 'react'
