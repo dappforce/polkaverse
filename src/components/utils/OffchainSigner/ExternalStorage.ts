@@ -1,4 +1,4 @@
-import { newLogger, toSubsocialAddress } from '@subsocial/utils'
+import { toSubsocialAddress } from '@subsocial/utils'
 import { createStorageKey } from 'src/utils/storage'
 import store from 'store'
 
@@ -13,11 +13,8 @@ const CURRENT_EMAIL_ADDRESS = 'CurrentEmailAddress'
 const SIGNER_EMAIL_ADDRESS_KEY = 'SignerEmailAddress'
 const SIGNER_PROXY_ADDED = 'SignerProxyAdded'
 
-const log = newLogger('OffchainSignerExternalStorage')
-
 export const createStorageKeyWithSubAddress = (key: string, myAddress: string) => {
   const subsocialAddress = toSubsocialAddress(myAddress)
-  if (!subsocialAddress) log.warn('Unable to create subsocial address')
   return createStorageKey(key, subsocialAddress!)
 }
 
@@ -56,6 +53,7 @@ const isProxyAdded = (myAddress: string) =>
     : false
 
 export {
+  CURRENT_EMAIL_ADDRESS,
   SIGNER_ADDRESS_KEY,
   SIGNER_TOKEN_KEY,
   SIGNER_REFRESH_TOKEN_KEY,

@@ -23,7 +23,7 @@ import {
   TabKeys,
 } from './types'
 import { getFilterType, setFiltersInUrl, tabs } from './utils'
-import OpenCommBanner from "../utils/banners/OpenCommBanner";
+// import OpenCommBanner from "../utils/banners/OpenCommBanner";
 
 const MyFeed = dynamic(import('../activity/MyFeed'))
 // import { CrowdloanProgress } from 'src/components/crowdloan/progress/ProgressSection'
@@ -176,7 +176,7 @@ const HomePage: NextPage<Props> = props => (
       withOnBoarding
     >
       {/* <CrowdloanProgress /> */}
-      <OpenCommBanner />
+      {/* <OpenCommBanner /> */}
       <TabsHomePage {...props} />
     </PageContent>
   </>

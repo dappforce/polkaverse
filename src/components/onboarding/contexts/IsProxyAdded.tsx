@@ -16,6 +16,7 @@ export function IsProxyAddedProvider({ children }: { children: any }) {
     parseStorageToState: data => data === '1',
     parseStateToStorage: state => (state ? '1' : undefined),
     storageKeyType: 'user',
+    subscribe: true,
   })
 
   return (
