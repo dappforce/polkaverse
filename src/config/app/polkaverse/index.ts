@@ -22,7 +22,7 @@ const index: AppConfig = {
   lastReservedSpaceId: '1000',
   claimedSpaceIds: ['1', '2', '3', '4', '5'],
   recommendedSpaceIds: polkaverseSpaces,
-  suggestedTlds: [],
+  suggestedTlds: [ 'sub', 'polka' ]
 }
 
 export default index

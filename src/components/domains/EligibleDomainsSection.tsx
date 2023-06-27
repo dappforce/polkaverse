@@ -3,15 +3,14 @@ import { isEmptyArray, newLogger, parseDomain } from '@subsocial/utils'
 import { Button, Card, Result, Row, Tag } from 'antd'
 import BN from 'bn.js'
 import clsx from 'clsx'
-import React, { useState } from 'react'
+import React, {FC, useState} from 'react'
 import { showErrorMessage } from 'src/components/utils/Message'
 import config from 'src/config'
 import {
   useBuildDomainsWithTldByDomain,
   useCreateReloadMyDomains,
-  useFetchDomain,
+  useFetchDomains,
   useIsReservedWord,
-  useIsSupportedTld,
 } from '../../rtk/features/domains/domainHooks'
 import { DomainEntity } from '../../rtk/features/domains/domainsSlice'
 import { useIsMyAddress } from '../auth/MyAccountsContext'
@@ -144,7 +143,7 @@ const DomainAction = ({ domain }: DomainProps) => {
   const { promoCode } = useManageDomainContext()
 
   let Action = BuyDomainSection
-  if (promoCode && domain.id.endsWith('.sub')) {
+  if (promoCode && (domain.id.endsWith('.sub') || domain.id.endsWith('.polka'))) {
     Action = ClaimFreeDomainSection
   }
   if (owner) {
@@ -154,23 +153,23 @@ const DomainAction = ({ domain }: DomainProps) => {
   return <Action domain={domain} />
 }
 
-// type FoundDomainsProps = {
-//   structs?: DomainEntity[]
-//   Action?: FC<DomainProps>
-// }
+type FoundDomainsProps = {
+  structs?: DomainEntity[]
+  Action?: FC<DomainProps>
+}
 
-// const FoundDomains = ({ structs = [], Action }: FoundDomainsProps) => {
-//   return (
-//     <>
-//       {structs.map(d => {
-//         const action = Action ? <Action domain={d} /> : null
-//
-//         return <DomainItem key={d.id} domain={d.id} action={action} />
-//       })}
-//     </>
-//   )
-// }
-//
+const FoundDomains = ({ structs = [], Action }: FoundDomainsProps) => {
+  return (
+    <>
+      {structs.map(d => {
+        const action = Action ? <Action domain={d} /> : null
+
+        return <DomainItem key={d.id} domain={d.id} action={action} />
+      })}
+    </>
+  )
+}
+
 type FoundDomainCardProps = {
   domain: DomainDetails
   err?: string
@@ -193,20 +192,21 @@ const ReservedDomainCard = ({ domain }: Omit<DomainItemProps, 'action'>) => {
   )
 }
 
-// const SuggestedDomains = ({ domain: { id } }: DomainProps) => {
-//   const { domain, tld = config.resolvedDomain } = parseDomain(id)
-//   const domains = config.suggestedTlds?.filter(_tld => _tld !== tld).map(tld => `${domain}.${tld}`)
-//
-//   const { loading, domainsStruct = [] } = useFetchDomains(domains || [])
-//
-//   if (loading) return null
-//
-//   return (
-//     <ResultContainer title='Suggested Domains' icon={<LocalIcon path={'/icons/lamp.svg'} />}>
-//       <FoundDomains structs={domainsStruct} Action={DomainAction} />
-//     </ResultContainer>
-//   )
-// }
+const SuggestedDomains = ({ domain: { id } }: DomainProps) => {
+  const { domain } = parseDomain(id)
+  const domains = config.suggestedTlds?.map(tld => `${domain}.${tld}`)
+
+  const { loading, domainsStruct = [] } = useFetchDomains(domains || [])
+
+  if (loading) return null
+
+  return (
+    // <ResultContainer title='Suggested Domains' icon={<LocalIcon path={'/icons/lamp.svg'} />}>
+    <ResultContainer title='Result' icon={<LocalIcon path={'/icons/reward.svg'} />}>
+      <FoundDomains structs={domainsStruct} Action={DomainAction} />
+    </ResultContainer>
+  )
+}
 
 // type LoadMoreDomainsProps = {
 //   api?: SubsocialApi
@@ -266,27 +266,27 @@ const ReservedDomainCard = ({ domain }: Omit<DomainItemProps, 'action'>) => {
 //   )
 // }
 
-const ChooseDomain = ({ domain }: DomainProps) => {
-  const { domain: domainName, tld = config.resolvedDomain } = parseDomain(domain.id)
-  const { isSupported } = useIsSupportedTld(tld)
-  const id = `${domainName}.${tld}`
-  const { domainStruct } = useFetchDomain(id)
-
-  let content = null
-
-  if (!isSupported || !domainStruct) {
-    const text = '❌ Invalid Tld'
-    content = <DomainItem key={text} domain={text} action={null} />
-  } else {
-    content = <DomainItem key={id} domain={id} action={<DomainAction domain={domainStruct} />} />
-  }
-
-  return (
-    <ResultContainer title='Result' icon={<LocalIcon path={'/icons/reward.svg'} />}>
-      {content}
-    </ResultContainer>
-  )
-}
+// const ChooseDomain = ({ domain }: DomainProps) => {
+//   const { domain: domainName, tld = config.resolvedDomain } = parseDomain(domain.id)
+//   const { isSupported } = useIsSupportedTld(tld)
+//   const id = `${domainName}.${tld}`
+//   const { domainStruct } = useFetchDomain(id)
+//
+//   let content = null
+//
+//   if (!isSupported || !domainStruct) {
+//     const text = '❌ Invalid Tld'
+//     content = <DomainItem key={text} domain={text} action={null} />
+//   } else {
+//     content = <DomainItem key={id} domain={id} action={<DomainAction domain={domainStruct} />} />
+//   }
+//
+//   return (
+//     <ResultContainer title='Result' icon={<LocalIcon path={'/icons/reward.svg'} />}>
+//       {content}
+//     </ResultContainer>
+//   )
+// }
 
 export const EligibleDomainsSection = ({ domain }: FoundDomainCardProps) => {
   const domains = useBuildDomainsWithTldByDomain(domain)
@@ -300,8 +300,8 @@ export const EligibleDomainsSection = ({ domain }: FoundDomainCardProps) => {
 
   return (
     <div className='GapBig d-flex flex-column mt-4'>
-      <ChooseDomain domain={domain} />
-      {/*<SuggestedDomains domain={domain} />*/}
+      {/*<ChooseDomain domain={domain} />*/}
+      <SuggestedDomains domain={domain} />
       {/*<DomainsList domains={domains} />*/}
     </div>
   )

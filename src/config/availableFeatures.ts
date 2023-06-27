@@ -25,8 +25,6 @@ const commonFeatures: CommonSubsocialFeatures = {
   enableConfirmationLessMode: getOrFalse(!isEmptyStr(hCaptchaSiteKey)),
 }
 
-console.log('commonFeatures', commonFeatures.enableConfirmationLessMode)
-
 const features: SubsocialFeatures = {
   ...commonFeatures,
 }

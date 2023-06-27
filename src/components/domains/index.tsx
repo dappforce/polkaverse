@@ -169,7 +169,7 @@ export const DomainRegisterPage = ({ promoCode }: DomainServerProps) => {
         title='Subsocial Usernames'
         subtitle={
           <span>
-            Here you can register a .sub username. Your username will be function as a
+            Here you can register a .sub or .polka username. Your username will be function as a
             human-readable name for your account.{' '}
             <UnamesLearnMoreLink className='font-weight-bold' />
           </span>
