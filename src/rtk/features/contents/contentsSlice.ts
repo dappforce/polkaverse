@@ -1,5 +1,6 @@
+import { sanitizeUrl } from '@braintree/sanitize-url'
 import { AsyncThunk, createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
-import { isDef } from '@subsocial/utils'
+import { isDef, isObj, nonEmptyArr, nonEmptyStr } from '@subsocial/utils'
 import { createFetchOne, SelectByIdFn, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createFetchManyDataWrapper } from 'src/rtk/app/wrappers'
@@ -9,6 +10,7 @@ import {
   convertToDerivedContent,
   DerivedContent,
   HasId,
+  NamedLink,
   PostContent,
   SharedPostContent,
   SpaceContent,
@@ -88,15 +90,42 @@ const contents = createSlice({
   name: 'contents',
   initialState: contentsAdapter.getInitialState(),
   reducers: {
-    upsertContent: contentsAdapter.upsertOne,
+    upsertContent: (state, action) => {
+      const entity = sanitizeContent(action.payload)
+      contentsAdapter.upsertOne(state, entity)
+    },
   },
   extraReducers: builder => {
-    builder.addCase(fetchContents.fulfilled, contentsAdapter.upsertMany)
-    // builder.addCase(fetchContents.rejected, (state, action) => {
-    //   state.error = action.error
-    // })
+    builder.addCase(fetchContents.fulfilled, (state, action) => {
+      const entities = action.payload.map(sanitizeContent)
+      contentsAdapter.upsertMany(state, entities)
+    })
   },
 })
+
+const sanitizeContent = (content: Content<CommonContent>): Content<CommonContent> => {
+  let canonical = (content as PostContent)?.canonical
+
+  if (canonical) {
+    canonical = sanitizeUrl(canonical)
+  }
+
+  let links = (content as SpaceContent)?.links
+
+  if (nonEmptyArr(links)) {
+    links = links.map(link => {
+      if (nonEmptyStr(link)) {
+        link = sanitizeUrl(link)
+      } else if (isObj(link)) {
+        link.url = sanitizeUrl(link.url)
+      }
+
+      return link
+    }) as string[] | NamedLink[]
+  }
+
+  return { ...content, canonical, links }
+}
 
 export const { upsertContent } = contents.actions
 
