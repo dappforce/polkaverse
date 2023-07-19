@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import {
+  getActiveUsersTotalCount,
   getActivityCounts,
   getActivityCountStat,
   getAllActivities,
@@ -13,6 +14,7 @@ import {
   getReactionActivities,
   getSpaceActivities,
   getTweetActivities,
+  getUserRetentionCount,
 } from './apis'
 import { GqlClient, useDfApolloClient } from './ApolloProvider'
 
@@ -61,3 +63,7 @@ export const useGetActivityCountStat = createGqlHooks(getActivityCountStat, {
   todayCount: 0,
   totalCount: 0,
 })
+
+export const useGetActiveUsersTotalCount = createGqlHooks(getActiveUsersTotalCount, 0)
+
+export const useGetUserRetentionCount = createGqlHooks(getUserRetentionCount, 0)

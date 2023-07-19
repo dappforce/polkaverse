@@ -1,9 +1,13 @@
 import { AppstoreOutlined, MenuOutlined } from '@ant-design/icons'
-import { isEmptyArray } from '@subsocial/utils'
-import { Col, Radio, Row } from 'antd'
+import { isEmptyArray, pluralize } from '@subsocial/utils'
+import { Card, Col, Divider, Radio, Row } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
-import { useGetActivityCountStat } from 'src/graphql/hooks'
+import {
+  useGetActiveUsersTotalCount,
+  useGetActivityCountStat,
+  useGetUserRetentionCount,
+} from 'src/graphql/hooks'
 import messages from 'src/messages'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { PageContent } from '../main/PageWrapper'
@@ -126,13 +130,82 @@ export function InnerStatistics(props: FormProps) {
   )
 }
 
+const retentionOpt = [
+  { key: 'activeUsersTotalCountWithOnePost', label: 'Total Users', minPosts: 1 },
+  { key: 'activeUsersTotalCountWithThreePost', label: 'Active Users  ', minPosts: 3 },
+  { key: 'userRetentionCount', label: 'Retained users', minPosts: 2 },
+]
+
+type RetentionData = {
+  activeUsersTotalCountWithOnePost: number
+  activeUsersTotalCountWithThreePost: number
+  userRetentionCount: number
+}
+
+type RetentionStatsProps = {
+  period: string
+}
+
+const RetentionStats = ({ period }: RetentionStatsProps) => {
+  const [retentionData, setRetentionData] = useState<RetentionData | undefined>()
+  const getActiveUsersTotalCount = useGetActiveUsersTotalCount()
+  const getUserRetentionCount = useGetUserRetentionCount()
+
+  useEffect(() => {
+    const load = async () => {
+      const activeUsersTotalCountWithOnePost =
+        (await getActiveUsersTotalCount({
+          period,
+          minPostNumber: 1,
+        })) || 0
+
+      const activeUsersTotalCountWithThreePost =
+        (await getActiveUsersTotalCount({
+          period,
+          minPostNumber: 3,
+        })) || 0
+
+      const userRetentionCount =
+        (await getUserRetentionCount({
+          period,
+          minPostNumber: 1,
+          totalMinPostsNumber: 2,
+        })) || 0
+
+      setRetentionData({
+        activeUsersTotalCountWithOnePost,
+        activeUsersTotalCountWithThreePost,
+        userRetentionCount,
+      })
+    }
+
+    load()
+  }, [period])
+
+  const retentionStats = retentionOpt.map(({ key, label, minPosts = 0 }) => {
+    const value = retentionData ? retentionData[key as keyof RetentionData] : 0
+
+    return (
+      <Card key={key} className={style.DfRetentionCard}>
+        <div className={style.DfRetentionStats}>
+          <div className={style.DfRetentionStatsLabel}>{label}</div>
+          <div className={style.DfRetentionStatsValue}>{value}</div>
+          <Divider className='my-2' />
+          <div>{pluralize({ count: minPosts, singularText: 'action' })} per period</div>
+        </div>
+      </Card>
+    )
+  })
+
+  return <div className={style.RetentionWrapper}>{retentionStats}</div>
+}
+
 const AFTER_PARACHAIN_MIGRATION_DATE = new Date(2022, 8, 1)
 const MAX_DAY_DIFF = dayjs(new Date()).diff(AFTER_PARACHAIN_MIGRATION_DATE, 'days')
 
 export function Statistics(props: FormProps) {
   const address = useMyAddress()
   const getActivityCountStat = useGetActivityCountStat()
-
   const [data, setData] = useState<StatType[]>()
   const [isLoaded, setIsLoaded] = useState(false)
   const [dates, setDates] = useState<string[]>([])
@@ -166,6 +239,7 @@ export function Statistics(props: FormProps) {
       const statisticsDataArr = await Promise.all(
         eventArr.map(async eventName => {
           const event = eventName as ActivityEvent
+
           return getActivityCountStat({ event, period: constrainedPeriod })
         }),
       )
@@ -207,6 +281,8 @@ export function Statistics(props: FormProps) {
             </Col>
           )}
         </Row>
+        <RetentionStats period={period} />
+
         {isLoaded ? (
           <InnerStatistics
             statisticsData={parseData(constrainedPeriod.toString(), dates, data)}
