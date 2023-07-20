@@ -1,8 +1,12 @@
 import dayjs from 'dayjs'
 
 export type DateIntervalType = 'day' | 'month' | 'year'
-export function getDateWithOffset(offset: number, interval: DateIntervalType = 'day') {
-  const now = new Date()
+export function getDateWithOffset(
+  offset: number,
+  interval: DateIntervalType = 'day',
+  startDate?: string,
+) {
+  const now = startDate ? new Date(startDate) : new Date()
   const date = now.getDate()
   const month = now.getMonth()
   const year = now.getFullYear()

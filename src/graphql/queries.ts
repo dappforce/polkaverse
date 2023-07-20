@@ -742,3 +742,54 @@ export const GET_ADDRESS_POSTS_REACTION = gql`
     }
   }
 `
+
+// Stats
+// ------------------------------------------------------------------------------------
+
+export const GET_ACTIVE_USERS_TOTAL_COUNT = gql`
+  query GetActiveUsersTotalCount(
+    $from: String!
+    $to: String!
+    $total_min_posts_number: Float!
+    $exclude_body: [String!]
+  ) {
+    activeUsersTotalCountWithFilters(
+      from: $from
+      to: $to
+      total_min_posts_number: $total_min_posts_number
+      exclude_body: $exclude_body
+    ) {
+      retention_count
+    }
+  }
+`
+
+export const GET_USER_RETENTION_COUNT = gql`
+  query GetUserRetentionCount(
+    $full_query_range_from: String!
+    $full_query_range_to: String!
+    $first_range_from: String!
+    $first_range_to: String!
+    $last_range_from: String!
+    $last_range_to: String!
+    $total_min_posts_number: Int!
+    $first_range_min_posts_number: Int!
+    $last_range_min_posts_number: Int!
+    $exclude_body: [String!]
+  ) {
+    userRetentionCount(
+      full_query_range_from: $full_query_range_from
+      full_query_range_to: $full_query_range_to
+      first_range_from: $first_range_from
+      first_range_to: $first_range_to
+      last_range_from: $last_range_from
+      last_range_to: $last_range_to
+      total_min_posts_number: $total_min_posts_number
+      first_range_min_posts_number: $first_range_min_posts_number
+      last_range_min_posts_number: $last_range_min_posts_number
+      exclude_body: $exclude_body
+    ) {
+      retention_count
+    }
+  }
+`

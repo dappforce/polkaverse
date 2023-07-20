@@ -382,3 +382,67 @@ export async function getFollowingSpaces(
   })
   return res.data.accountById?.spacesFollowed.map(space => space.followingSpace.id)
 }
+
+type ActiveUsersTotalCount = {
+  period: string
+  minPostNumber: number
+}
+
+export async function getActiveUsersTotalCount(
+  client: GqlClient,
+  { period, minPostNumber }: ActiveUsersTotalCount,
+) {
+  const to = new Date().toISOString()
+  const from = getDateWithOffset(parseInt(period))
+
+  const res = await client.query({
+    query: q.GET_ACTIVE_USERS_TOTAL_COUNT,
+    variables: {
+      from,
+      to,
+      total_min_posts_number: minPostNumber,
+      exclude_body: ['Hi', 'Hello', 'GM', 'Hi there', 'test', 'Test', 'test message'],
+    },
+  })
+
+  return (res.data.activeUsersTotalCountWithFilters.retention_count as number) || 0
+}
+
+type UserRetentionCount = ActiveUsersTotalCount & {
+  totalMinPostsNumber: number
+}
+
+export async function getUserRetentionCount(
+  client: GqlClient,
+  { period, minPostNumber, totalMinPostsNumber }: UserRetentionCount,
+) {
+  const range = period === '7' ? parseInt(period) * 2 : parseInt(period)
+
+  const from = getDateWithOffset(range)
+  const to = new Date().toISOString()
+
+  const middleOfPriod = range / 2
+
+  const middleDate = getDateWithOffset(middleOfPriod)
+
+  const firstRangeFrom = getDateWithOffset(middleOfPriod, 'day', middleDate)
+  const firstRangeTo = middleDate
+
+  const res = await client.query({
+    query: q.GET_USER_RETENTION_COUNT,
+    variables: {
+      full_query_range_from: from,
+      full_query_range_to: to,
+      first_range_from: firstRangeFrom,
+      first_range_to: firstRangeTo,
+      last_range_from: middleDate,
+      last_range_to: to,
+      total_min_posts_number: totalMinPostsNumber,
+      first_range_min_posts_number: minPostNumber,
+      last_range_min_posts_number: minPostNumber,
+      exclude_body: ['Hi', 'Hello', 'GM', 'Hi there', 'test', 'Test', 'test message'],
+    },
+  })
+
+  return (res.data.userRetentionCount.retention_count as number) || 0
+}
