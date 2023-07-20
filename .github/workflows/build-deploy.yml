@@ -213,11 +213,11 @@ jobs:
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_STAGING }}
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_PROD }}
 
       - name: Save DigitalOcean kubeconfig with short-lived credentials
-        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.K8S_STAGING }}
-
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.K8S_PROD }}
+        
       - name: Update deploy file
         run: TAG=${{ env.name }}-$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|dappforce/subsocial-web-app:'${TAG}'|' $GITHUB_WORKSPACE/deployment/xsocial-cms/deployment.yaml
 
