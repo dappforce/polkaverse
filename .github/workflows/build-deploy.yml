@@ -213,22 +213,16 @@ jobs:
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_PROD }}
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_STAGING }}
 
       - name: Save DigitalOcean kubeconfig with short-lived credentials
-        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.K8S_PROD }}
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.K8S_STAGING }}
 
       - name: Update deploy file
         run: TAG=${{ env.name }}-$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|dappforce/subsocial-web-app:'${TAG}'|' $GITHUB_WORKSPACE/deployment/xsocial-cms/deployment.yaml
-
-      - name: Remove HPA
-        run: kubectl delete hpa -n sub-back xsocial-cms-web-app
 
       - name: Deploy to DigitalOcean Kubernetes
         run: kubectl apply -f $GITHUB_WORKSPACE/deployment/xsocial-cms/
 
       - name: Verify deployment
         run: kubectl -n sub-back rollout status deployment/xsocial-cms-web-app
-
-      - name: Recreate HPA
-        run: kubectl create -f $GITHUB_WORKSPACE/deployment/hpa/xsocial-cms-hpa.yaml
