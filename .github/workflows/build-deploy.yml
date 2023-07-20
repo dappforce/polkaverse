@@ -4,7 +4,6 @@ on:
     branches:
       - staging
       - main
-      - xsocial-cms
       - x-gazer
 
 jobs:
@@ -78,8 +77,8 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
-      - if: ${{ github.ref == 'refs/heads/xsocial-cms' }}
-        name: Build staging image
+      - if: ${{ github.ref == 'refs/heads/x-gazer' }}
+        name: Build x-gazer image
         uses: docker/build-push-action@v3
         with:
           context: .
@@ -197,11 +196,11 @@ jobs:
             cd /root/webapp
             ./update.sh
 
-  xsocial_deploy:
+  gazer_deploy:
     name: xsocial-deploy
     needs: front_build
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/xsocial-cms' }}
+    if: ${{ github.ref == 'refs/heads/x-gazer' }}
     steps:
       - name: Checkout main
         uses: actions/checkout@v3
