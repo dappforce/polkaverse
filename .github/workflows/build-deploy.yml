@@ -5,6 +5,7 @@ on:
       - staging
       - main
       - xsocial-cms
+      - x-gazer
 
 jobs:
   front_build:
