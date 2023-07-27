@@ -103,12 +103,12 @@ export function InnerStatistics(props: FormProps) {
           >
             <div onClick={() => showModal(data.activityType)}>
               <Stats
-                title={messages.statistics[data?.activityType as ActivityEvent] + ' today'}
-                total={data.todayCount}
+                title={messages.statistics[data?.activityType as ActivityEvent] + ' in the period'}
+                total={data.countByPeriod}
                 contentHeight={50}
                 footer={
                   <Row justify='space-between'>
-                    <Col>{data?.countByPeriod} total</Col>
+                    <Col>{data?.todayCount} today</Col>
                     <Col>{data?.totalCount} all time</Col>
                   </Row>
                 }
