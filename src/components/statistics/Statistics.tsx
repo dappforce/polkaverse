@@ -191,7 +191,7 @@ const RetentionStats = ({ period }: RetentionStatsProps) => {
           <div className={style.DfRetentionStatsLabel}>{label}</div>
           <div className={style.DfRetentionStatsValue}>{value}</div>
           <Divider className='my-2' />
-          <div>{pluralize({ count: minPosts, singularText: 'action' })} per period</div>
+          <div>{pluralize({ count: minPosts, singularText: 'action' })} on different days</div>
         </div>
       </Card>
     )
