@@ -22,7 +22,7 @@ import { MyDomainsCard } from './MyDomains'
 import { DomainDetails, UnamesLearnMoreLink } from './utils'
 
 const tabs = ['register', 'manage'] as const
-type TabKey = typeof tabs[number]
+type TabKey = (typeof tabs)[number]
 const getTabKey = (tab: TabKey) => tab
 
 const DomainMarketSection = ({ promoCode }: DomainServerProps) => {
@@ -160,13 +160,14 @@ export const DomainRegisterPage = ({ promoCode }: DomainServerProps) => {
         image: '/images/dotsama-domains-preview.jpg',
       }}
       rightPanel={
-        <div style={{ width: '380px' }} className='d-flex flex-column align-items-stretch'>
+        <div style={{ width: '380px' }} className='d-flex flex-column align-items-stretch mt-3'>
           {rightPanelContent}
         </div>
       }
     >
       <CardWithContent
         title='Subsocial Usernames'
+        className='mt-3'
         subtitle={
           <span>
             Here you can register a .sub or .polka username. Your username will be function as a

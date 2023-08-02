@@ -82,7 +82,7 @@ export const UnamesLearnMoreLink = ({ className, ...props }: HTMLProps<HTMLAncho
       target='_blank'
       rel='noreferrer'
     >
-      <span>Learn More</span>
+      <span style={{ whiteSpace: 'nowrap' }}>Learn More</span>
     </a>
   )
 }
