@@ -4,12 +4,15 @@ on:
   push:
     branches:
       - deploy/**
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 jobs:
   front_build:
     name: build & Push Docker image to Docker Hub
     #    runs-on: ubuntu-latest
-    runs-on: public-runners  
+    runs-on: public-runners
     steps:
       - uses: actions/checkout@v3
       - name: Extract branch name
