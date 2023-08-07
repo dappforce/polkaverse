@@ -131,9 +131,9 @@ export function InnerStatistics(props: FormProps) {
 }
 
 const retentionOpt = [
-  { key: 'activeUsersTotalCountWithOnePost', label: 'Total Users', minPosts: 1 },
-  { key: 'activeUsersTotalCountWithThreePost', label: 'Active Users  ', minPosts: 3 },
-  { key: 'userRetentionCount', label: 'Retained users', minPosts: 2 },
+  { key: 'activeUsersTotalCountWithOnePost', label: 'Total Users', minPosts: 1, periodText: 'per period' },
+  { key: 'activeUsersTotalCountWithThreePost', label: 'Active Users  ', minPosts: 3, periodText: 'per period' },
+  { key: 'userRetentionCount', label: 'Retained users', minPosts: 2, periodText: 'on different days' },
 ]
 
 type RetentionData = {
@@ -182,7 +182,7 @@ const RetentionStats = ({ period }: RetentionStatsProps) => {
     load()
   }, [period])
 
-  const retentionStats = retentionOpt.map(({ key, label, minPosts = 0 }) => {
+  const retentionStats = retentionOpt.map(({ key, label, minPosts = 0, periodText }) => {
     const value = retentionData ? retentionData[key as keyof RetentionData] : 0
 
     return (
@@ -191,7 +191,7 @@ const RetentionStats = ({ period }: RetentionStatsProps) => {
           <div className={style.DfRetentionStatsLabel}>{label}</div>
           <div className={style.DfRetentionStatsValue}>{value}</div>
           <Divider className='my-2' />
-          <div>{pluralize({ count: minPosts, singularText: 'action' })} on different days</div>
+          <div>{pluralize({ count: minPosts, singularText: 'action' })} {periodText}</div>
         </div>
       </Card>
     )
