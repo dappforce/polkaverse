@@ -1,18 +1,24 @@
-import { FC, useState } from 'react'
-import { useSelectPost } from 'src/rtk/app/hooks'
+import { FC } from 'react'
+import { useOpenCloseChatWindow, useSelectPost, useSetupGrillConfig } from 'src/rtk/app/hooks'
 import { asSharedPostStruct } from 'src/types'
 import { InnerPreviewProps } from '.'
-import { CommentSection } from '../../comments/CommentsSection'
 import { PostActionsPanel, PostCreator, SharePostContent } from './helpers'
 import { PostDropDownMenu } from './PostDropDownMenu'
 
 type ComponentType = FC<InnerPreviewProps>
 
 export const SharedPreview: ComponentType = props => {
-  const { postDetails, space, withActions, replies } = props
-  const [commentsSection, setCommentsSection] = useState(false)
+  const { postDetails, space, withActions } = props
   const sharedPostId = asSharedPostStruct(postDetails.post.struct).originalPostId
   postDetails.ext = useSelectPost(sharedPostId)
+
+  const setGrillChatVisibility = useOpenCloseChatWindow()
+  const setupGrillConfig = useSetupGrillConfig()
+
+  const openCommentSection = () => {
+    setupGrillConfig(space?.id ?? '', postDetails.id, postDetails.post.content?.title)
+    setGrillChatVisibility(true)
+  }
 
   return (
     <>
@@ -27,12 +33,9 @@ export const SharedPreview: ComponentType = props => {
         <PostActionsPanel
           postDetails={postDetails}
           space={space?.struct}
-          toogleCommentSection={() => setCommentsSection(!commentsSection)}
+          toogleCommentSection={() => openCommentSection()}
           preview
         />
-      )}
-      {commentsSection && (
-        <CommentSection post={postDetails} space={space?.struct} replies={replies} withBorder />
       )}
     </>
   )

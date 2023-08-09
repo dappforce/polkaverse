@@ -15,7 +15,7 @@ import { return404 } from 'src/components/utils/next'
 import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { getInitialPropsWithRedux, NextContextWithRedux } from 'src/rtk/app'
-import { useSelectProfile } from 'src/rtk/app/hooks'
+import { useOpenCloseChatWindow, useSelectProfile, useSetupGrillConfig } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
@@ -27,7 +27,6 @@ import {
   PostWithAllDetails,
   PostWithSomeDetails,
 } from 'src/types'
-import { CommentSection } from '../../comments/CommentsSection'
 import { DfImage } from '../../utils/DfImage'
 import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
@@ -61,10 +60,18 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const { isNotMobile } = useResponsiveSize()
   useFetchMyReactionsByPostId(id)
 
+  const setGrillChatVisibility = useOpenCloseChatWindow()
+  const setupGrillConfig = useSetupGrillConfig()
+
   const postData = useAppSelector(state => selectPost(state, { id })) || initialPostData
 
   const { post, space } = postData
   const { struct, content } = post
+
+  const openCommentSection = () => {
+    setupGrillConfig(space?.id ?? '', post.id, post.content?.title)
+    setGrillChatVisibility(true)
+  }
 
   const profile = useSelectProfile(postData.post.struct.ownerId)
   const spaceId = space?.id
@@ -176,7 +183,11 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
             )}
 
             <div className='DfRow mt-2'>
-              <PostActionsPanel postDetails={postData} space={space.struct} />
+              <PostActionsPanel
+                postDetails={postData}
+                space={space.struct}
+                toogleCommentSection={() => openCommentSection()}
+              />
             </div>
 
             <div className='pt-2'>
@@ -190,8 +201,6 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
             {!isSameProfileAndSpace && (
               <SpaceCard className='mt-4' spaceId={postData.space?.id ?? ''} />
             )}
-
-            <CommentSection post={postData} hashId={goToCommentsId} space={spaceStruct} />
           </div>
         </div>
       </Section>

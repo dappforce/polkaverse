@@ -312,7 +312,7 @@ const Action: FC<{ onClick?: () => void; title?: string }> = ({ children, onClic
 )
 
 export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
-  const { postDetails, space, preview, withBorder } = props
+  const { postDetails, space, preview, withBorder, toogleCommentSection } = props
   const {
     post: { struct },
   } = postDetails
@@ -330,7 +330,7 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
           <ReactionsAction />
         </div>
       )}
-      {preview && <ShowCommentsAction {...props} />}
+      {toogleCommentSection && <ShowCommentsAction {...props} />}
       <ShareDropdown
         postDetails={postDetails}
         space={space}

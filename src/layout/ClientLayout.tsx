@@ -1,5 +1,6 @@
 import React from 'react'
 import { NotifCounterProvider } from 'src/components/activity/NotifCounter'
+import ChatFloatingModal from 'src/components/chat/ChatFloatingModal'
 import { LazyConnectionsProvider } from 'src/components/lazy-connection/LazyConnectionContext'
 import OnBoardingContextsWrapper from 'src/components/onboarding/contexts/OnBoardingContextsWrapper'
 import { ResponsiveSizeProvider } from 'src/components/responsive'
@@ -25,6 +26,7 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
                 <AuthProvider>
                   <NotifCounterProvider>
                     <Navigation>{children}</Navigation>
+                    <ChatFloatingModal />
                   </NotifCounterProvider>
                 </AuthProvider>
               </MyAccountsProvider>
