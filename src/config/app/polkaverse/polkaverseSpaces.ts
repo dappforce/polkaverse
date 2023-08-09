@@ -59,4 +59,6 @@ export default [
   '10067',
   // Nova Wallet
   '10128',
+  // CryptoZilla
+  '11581',
 ]
