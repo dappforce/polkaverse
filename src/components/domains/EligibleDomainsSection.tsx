@@ -1,13 +1,13 @@
 import { isFunction } from '@polkadot/util'
-import { isEmptyArray, newLogger, parseDomain } from '@subsocial/utils'
+import { newLogger, parseDomain } from '@subsocial/utils'
 import { Button, Card, Result, Row, Tag } from 'antd'
 import BN from 'bn.js'
 import clsx from 'clsx'
-import React, {FC, useState} from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { showErrorMessage } from 'src/components/utils/Message'
 import config from 'src/config'
+import { SubsocialSubstrateRpc } from 'src/rpc'
 import {
-  useBuildDomainsWithTldByDomain,
   useCreateReloadMyDomains,
   useFetchDomains,
   useIsReservedWord,
@@ -24,6 +24,8 @@ import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
 import { DomainDetails, ResultContainer } from './utils'
 
+const { substrateRpcUrl } = config
+
 const log = newLogger('DD')
 
 type DomainItemProps = {
@@ -35,6 +37,24 @@ type DomainProps = {
   domain: DomainEntity
 }
 
+const subsocialRpc = new SubsocialSubstrateRpc({ rpcUrl: substrateRpcUrl })
+
+const useGetDomainPrice = (domain: string) => {
+  const [price, setPrice] = useState()
+
+  useEffect(() => {
+    const getPrice = async () => {
+      const price = await subsocialRpc.calculatePrice(domain.split('.')[0])
+
+      setPrice(price)
+    }
+
+    getPrice().catch(err => log.error('Failed to get domain price', err))
+  }, [domain])
+
+  return price
+}
+
 const BLOCK_TIME = 12
 const SECS_IN_DAY = 60 * 60 * 24
 const BLOCKS_IN_YEAR = new BN((SECS_IN_DAY * 365) / BLOCK_TIME)
@@ -43,10 +63,9 @@ const BuyDomainSection = ({ domain: { id: domain } }: DomainProps) => {
   const reloadMyDomains = useCreateReloadMyDomains()
   const { openManageModal } = useManageDomainContext()
   const { api, isApiReady } = useSubstrate()
+  const price = useGetDomainPrice(domain)
 
   if (!isApiReady) return null
-
-  const price = api?.consts.domains.baseDomainDeposit.toString()
 
   const getTxParams = () => {
     return [domain, null, BLOCKS_IN_YEAR]
@@ -289,10 +308,10 @@ const SuggestedDomains = ({ domain: { id } }: DomainProps) => {
 // }
 
 export const EligibleDomainsSection = ({ domain }: FoundDomainCardProps) => {
-  const domains = useBuildDomainsWithTldByDomain(domain)
+  // const domains = useBuildDomainsWithTldByDomain(domain)
   const { isReserved, loading: checkingWord } = useIsReservedWord(domain.id)
 
-  if (isEmptyArray(domains)) return null
+  // if (isEmptyArray(domains)) return null
 
   if (checkingWord) return <Loading label='Check domain...' />
 

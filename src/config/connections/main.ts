@@ -5,6 +5,7 @@ const mainConfig: SubsocialConfig = {
   sudoOne: '3osmnRNnrcScHsgkTJH1xyBF5kGjpbWHsGrqM31BJpy4vwn8',
 
   substrateUrl: 'wss://para.subsocial.network',
+  substrateRpcUrl: 'https://para.subsocial.network/http',
   kusamaUrl: 'wss://kusama-rpc.polkadot.io',
 
   offchainUrl: 'https://api.subsocial.network',

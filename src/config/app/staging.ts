@@ -21,6 +21,7 @@ const staging: AppConfig = {
   lastReservedSpaceId: '1000',
   claimedSpaceIds: [],
   recommendedSpaceIds: ['1001', '1002', '1003'],
+  suggestedTlds: ['sub', 'polka'],
 }
 
 export default staging
