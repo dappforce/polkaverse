@@ -50,6 +50,9 @@ export type ConnectionsSettings = {
   /** A URL of a Substrate node. Example: `'ws://localhost:9944'`. */
   substrateUrl: string
 
+  /** Rpc URL of a Substrate node. Example: `'http://localhost:9944'`. */
+  substrateRpcUrl: string
+
   /** A URL of a Kusama node. Example: `'kusama-rpc.polkadot.io'`. */
   kusamaUrl?: string
 

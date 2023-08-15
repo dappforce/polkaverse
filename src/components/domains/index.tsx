@@ -55,7 +55,7 @@ const DomainMarketSection = ({ promoCode }: DomainServerProps) => {
   const myDomainsCount = domains.length
 
   const maxPromoDomainsPerAccount =
-    api?.consts.domains.maxPromoDomainsPerAccount.toHuman() as unknown as number
+    api?.consts.domains.maxDomainsPerAccount.toHuman() as unknown as number
 
   const canRegisterAccount = myDomainsCount < maxPromoDomainsPerAccount
 
