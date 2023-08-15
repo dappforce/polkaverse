@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import React, { FC, useEffect, useState } from 'react'
 import { showErrorMessage } from 'src/components/utils/Message'
 import config from 'src/config'
-import { SubsocialSubstrateRpc } from 'src/rpc'
+import { getOrInitSubsocialRpc } from 'src/rpc/initSubsocialRpc'
 import {
   useCreateReloadMyDomains,
   useFetchDomains,
@@ -24,8 +24,6 @@ import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
 import { DomainDetails, ResultContainer } from './utils'
 
-const { substrateRpcUrl } = config
-
 const log = newLogger('DD')
 
 type DomainItemProps = {
@@ -37,14 +35,15 @@ type DomainProps = {
   domain: DomainEntity
 }
 
-const subsocialRpc = new SubsocialSubstrateRpc({ rpcUrl: substrateRpcUrl })
-
 const useGetDomainPrice = (domain: string) => {
   const [price, setPrice] = useState()
 
   useEffect(() => {
     const getPrice = async () => {
-      const price = await subsocialRpc.calculatePrice(domain.split('.')[0])
+      const subsocialRpc = getOrInitSubsocialRpc()
+
+      const { domain: domainPart } = parseDomain(domain)
+      const price = await subsocialRpc.calculatePrice(domainPart)
 
       setPrice(price)
     }
