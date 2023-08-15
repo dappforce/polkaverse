@@ -67,7 +67,7 @@ const BuyDomainSection = ({ domain: { id: domain } }: DomainProps) => {
   if (!isApiReady) return null
 
   const getTxParams = () => {
-    return [domain, null, BLOCKS_IN_YEAR]
+    return [null, domain, null, BLOCKS_IN_YEAR]
   }
 
   const onSuccess: TxCallback = async () => {
