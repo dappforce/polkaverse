@@ -60,8 +60,8 @@ const HomeTabs = (props: TabsProps) => {
     <>
       <Tabs activeKey={tabKey} onChange={setKey} className={`${className} ${style.DfTabs}`}>
         <TabPane tab='My feed' key='feed' />
-        <TabPane tab={enableGraphQl ? 'Posts' : 'Dotsama News'} key='posts' />
-        <TabPane tab={enableGraphQl ? 'Spaces' : 'Dotsama Spaces'} key='spaces' />
+        <TabPane tab={enableGraphQl ? 'Posts' : 'Polkadot News'} key='posts' />
+        <TabPane tab={enableGraphQl ? 'Spaces' : 'Polkadot Spaces'} key='spaces' />
       </Tabs>
       <Filters tabKey={tabKey} isAffix={isAffix} />
     </>

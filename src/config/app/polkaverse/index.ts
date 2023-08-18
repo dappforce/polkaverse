@@ -11,7 +11,7 @@ const index: AppConfig = {
   metaTags: {
     siteName: 'PolkaVerse',
     title: "PolkaVerse – Polkadot's Premier Social Network",
-    desc: 'The #1 decentralized social network for Polkadot and Kusama. Build and own your Web3 network and track the latest updates from the Dotsama ecosystem today!',
+    desc: 'The #1 decentralized social network for Polkadot and Kusama. Build and own your Web3 network and track the latest updates from the Polkadot ecosystem today!',
     defaultImage: '/polkaverse.png',
   },
   subnetId: undefined,
@@ -22,7 +22,7 @@ const index: AppConfig = {
   lastReservedSpaceId: '1000',
   claimedSpaceIds: ['1', '2', '3', '4', '5'],
   recommendedSpaceIds: polkaverseSpaces,
-  suggestedTlds: [ 'sub', 'polka' ]
+  suggestedTlds: ['sub', 'polka'],
 }
 
 export default index
