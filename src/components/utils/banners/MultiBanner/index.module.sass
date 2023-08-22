@@ -1,11 +1,19 @@
 @import '../../../../styles/subsocial-vars'
 
 .Banner
-  height: 8rem
+  min-height: 6rem
   box-shadow: $shadow
   margin-bottom: $space_normal
   border-radius: $border_radius_normal
-  padding: $space_small
+  overflow: hidden
+  position: relative
+
+.BannerImg
+  width: 100%
+
+.MobileBannerMargin
+  position: relative
+  top: -$space_tiny
 
 .DfCloseButton
   color: #fff
@@ -13,6 +21,13 @@
   font-size: 1.25rem
   padding-right: 0
   float: right
+  position: absolute
+  top: $space_small
+  right: $space_small
 
   &:hover
     color: $color_link_hover
+
+@media ( max-width: $max_mobile_width)
+  .Banner
+    border-radius: 0
