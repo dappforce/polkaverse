@@ -10,6 +10,7 @@ import { GetHomePageData } from 'src/graphql/__generated__/GetHomePageData'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { PostKind } from 'src/types/graphql-global-types'
 import { useIsSignedIn } from '../auth/MyAccountsContext'
+import OpenCommBanner from '../utils/banners/OpenCommBanner'
 import Section from '../utils/Section'
 import style from './HomePage.module.sass'
 import { dateFilterOpt, Filters, PostFilterView, SpaceFilterView } from './HomePageFilters'
@@ -23,7 +24,6 @@ import {
   TabKeys,
 } from './types'
 import { getFilterType, setFiltersInUrl, tabs } from './utils'
-// import OpenCommBanner from "../utils/banners/OpenCommBanner";
 
 const MyFeed = dynamic(import('../activity/MyFeed'))
 // import { CrowdloanProgress } from 'src/components/crowdloan/progress/ProgressSection'
@@ -176,7 +176,7 @@ const HomePage: NextPage<Props> = props => (
       withOnBoarding
     >
       {/* <CrowdloanProgress /> */}
-      {/* <OpenCommBanner /> */}
+      <OpenCommBanner />
       <TabsHomePage {...props} />
     </PageContent>
   </>
