@@ -11,7 +11,7 @@ export const OpenCommBanner = () => (
     uid={BANNER_STORAGE_KEY}
     kinds={bannersKind}
     href={href}
-    buildUrl={({ isMobile }) => `/images/banners/open-comm${isMobile ? '-mobile' : '-desktop'}.svg`}
+    buildUrl={({ isMobile }) => `/images/banners/open-comm${isMobile ? '-mobile' : '-desktop'}.png`}
   />
 )
 
