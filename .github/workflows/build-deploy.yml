@@ -4,6 +4,9 @@ on:
     branches:
       - staging
       - main
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 jobs:
   front_build:
@@ -41,7 +44,7 @@ jobs:
 
       - if: ${{ github.ref == 'refs/heads/staging' }}
         name: Build staging image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
@@ -59,7 +62,7 @@ jobs:
 
       - if: ${{ github.ref == 'refs/heads/main' }}
         name: Build production image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
@@ -69,7 +72,7 @@ jobs:
             GH_GA_ID=UA-204866512-2
             GH_APP_KIND=polkaverse
             GH_HCAPTCHA_SITE_KEY=${{ secrets.PROD_HCAPTCHA_SITE_KEY }}
-            GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network            
+            GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
             GH_CONNECTION_KIND=main
 
           tags: |
@@ -138,9 +141,9 @@ jobs:
       - name: Update deploy file
         run: TAG=${{ env.name }}-$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|dappforce/subsocial-web-app:'${TAG}'|' $GITHUB_WORKSPACE/deployment/base/deployment.yaml
 
-      - name: Remove HPA 
+      - name: Remove HPA
         run: kubectl delete hpa -n sub-back web-app
-        
+
       - name: Deploy to DigitalOcean Kubernetes
         run: kubectl apply -k $GITHUB_WORKSPACE/deployment/overlays/production/
 

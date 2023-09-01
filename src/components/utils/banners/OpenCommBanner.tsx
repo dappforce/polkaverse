@@ -1,19 +1,17 @@
 import MultiBanner from './MultiBanner'
 
-const bannersKind = ['robot', 'polka']
+const bannersKind = ['']
 
-const BANNER_STORAGE_KEY = 'df.opencomm-banner'
+const BANNER_STORAGE_KEY = 'df.open-comm-banner'
 
-const href = 'https://kusama.subsquare.io/referenda/referendum/198'
+const href = 'https://polkadot.polkassembly.io/referenda/119'
 
 export const OpenCommBanner = () => (
   <MultiBanner
     uid={BANNER_STORAGE_KEY}
     kinds={bannersKind}
     href={href}
-    buildUrl={({ kind, isMobile }) =>
-      `/images/banners/${kind}-opencomm${isMobile ? '-mobile' : ''}.png`
-    }
+    buildUrl={({ isMobile }) => `/images/banners/open-comm${isMobile ? '-mobile' : '-desktop'}.png`}
   />
 )
 

@@ -4,6 +4,7 @@ import { Donate } from 'src/components/donate'
 import { editSpaceUrl } from 'src/components/urls'
 import { isHidden, ViewOnIpfs } from 'src/components/utils'
 import { BasicDropDownMenuProps, DropdownMenu } from 'src/components/utils/DropDownMenu'
+import { showSuccessMessage } from 'src/components/utils/Message'
 import { useSendGaUserEvent } from 'src/ga'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
 import { SpaceData } from 'src/types'
@@ -115,6 +116,16 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
       </Menu.Item>} */}
         <Menu.Item key={`view-on-ipfs-${spaceKey}`}>
           <ViewOnIpfs contentId={struct.contentId} />
+        </Menu.Item>
+        <Menu.Item key={`copy-space-id-${spaceKey}`}>
+          <span
+            onClick={() => {
+              navigator.clipboard.writeText(id)
+              showSuccessMessage('Space Id copied to clipboard')
+            }}
+          >
+            Copy Space Id: {id}
+          </span>
         </Menu.Item>
         {/* <ViewOnDropDownMenuItems struct={struct} /> */}
       </>

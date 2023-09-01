@@ -3,6 +3,7 @@ import { SubsocialConfig } from '../types'
 
 const localConfig: SubsocialConfig = {
   substrateUrl: 'ws://localhost:8844',
+  substrateRpcUrl: 'http://localhost:8844',
   kusamaUrl: 'wss://staging.subsocial.network/kusama',
 
   offchainUrl: 'http://localhost:3001',

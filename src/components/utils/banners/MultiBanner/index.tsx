@@ -45,14 +45,8 @@ export const MultiBanner = ({ uid, kinds, buildUrl, href }: MultiBannerProps) =>
   return (
     <Link href={href}>
       <a target='_blank' rel='noreferrer'>
-        <div
-          className={styles.Banner}
-          style={{
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'left center',
-          }}
-        >
+        <div className={styles.Banner}>
+          <img src={backgroundImage} className={styles.BannerImg} alt='Banner image' />
           {closeButton}
         </div>
       </a>

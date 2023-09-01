@@ -4,12 +4,15 @@ on:
   push:
     branches:
       - deploy/**
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 jobs:
   front_build:
     name: build & Push Docker image to Docker Hub
-    #    runs-on: ubuntu-latest
-    runs-on: public-runners  
+    runs-on: ubuntu-latest
+    # runs-on: public-runners
     steps:
       - uses: actions/checkout@v3
       - name: Extract branch name
@@ -49,7 +52,7 @@ jobs:
             ${{ runner.os }}-single-buildx
 
       - name: Build docker image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
@@ -108,4 +111,4 @@ jobs:
         run: NAME=${{ env.name }} && kubectl -n sub-back rollout status deployment/web-app-${NAME}
 
       - name: CF deploy
-        run: curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE }}/dns_records"      -H "X-Auth-Email:${{ secrets.CF_MAIL }}"      -H "Authorization:Bearer ${{ secrets.CF_TOKEN }}"      -H "Content-Type:application/json"      --data '{"type":"A","name":"${{ env.name }}.subsocial.network","content":"188.166.202.107","ttl":3600,"priority":10,"proxied":true}'
+        run: curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE }}/dns_records"      -H "X-Auth-Email:${{ secrets.CF_MAIL }}"      -H "Authorization:Bearer ${{ secrets.CF_TOKEN }}"      -H "Content-Type:application/json"      --data '{"type":"A","name":"${{ env.name }}.subsocial.network","content":"174.138.105.155","ttl":3600,"priority":10,"proxied":true}'
