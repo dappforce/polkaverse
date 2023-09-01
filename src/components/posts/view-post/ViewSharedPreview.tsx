@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { useOpenCloseChatWindow, useSelectPost, useSetupGrillConfig } from 'src/rtk/app/hooks'
+import { useSelectPost } from 'src/rtk/app/hooks'
 import { asSharedPostStruct } from 'src/types'
 import { InnerPreviewProps } from '.'
 import { PostActionsPanel, PostCreator, SharePostContent } from './helpers'
@@ -12,14 +12,6 @@ export const SharedPreview: ComponentType = props => {
   const sharedPostId = asSharedPostStruct(postDetails.post.struct).originalPostId
   postDetails.ext = useSelectPost(sharedPostId)
 
-  const setGrillChatVisibility = useOpenCloseChatWindow()
-  const setupGrillConfig = useSetupGrillConfig()
-
-  const openCommentSection = () => {
-    setupGrillConfig(space?.id ?? '', postDetails.id, postDetails.post.content?.title)
-    setGrillChatVisibility(true)
-  }
-
   return (
     <>
       <div className='DfRow'>
@@ -29,14 +21,7 @@ export const SharedPreview: ComponentType = props => {
       <div className='mt-3'>
         <SharePostContent postDetails={postDetails} space={space} />
       </div>
-      {withActions && (
-        <PostActionsPanel
-          postDetails={postDetails}
-          space={space?.struct}
-          toogleCommentSection={() => openCommentSection()}
-          preview
-        />
-      )}
+      {withActions && <PostActionsPanel postDetails={postDetails} space={space?.struct} preview />}
     </>
   )
 }

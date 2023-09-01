@@ -1,41 +1,37 @@
-import grill, { GrillConfig } from '@subsocial/grill-widget'
+import { PostData } from '@subsocial/api/types'
 import { useCallback } from 'react'
-import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
-import { setChatWindowVisibility, setCurrentConfig } from '../chat/chatSlice'
-
-export function useChatWindowOpenState() {
-  return useAppSelector(state => state.chat.isChatWindowOpen)
-}
+import { useAppDispatch } from 'src/rtk/app/store'
+import { setChatConfig } from '../chat/chatSlice'
 
 export function useSetupGrillConfig() {
   const dispatch = useAppDispatch()
-  return useCallback((spaceId: string, postId: string, title?: string) => {
-    const config: GrillConfig = {
-      hub: {
-        id: spaceId,
-      },
-      channel: {
-        type: 'resource',
-        resource: {
-          toResourceId: () => postId,
-        },
-        settings: {
-          enableLoginButton: false,
-          enableInputAutofocus: true,
-        },
-        metadata: {
-          title: title ?? '',
-        },
-      },
-    }
-    grill.init(config)
-    dispatch(setCurrentConfig(config))
-  }, [])
-}
-
-export function useOpenCloseChatWindow() {
-  const dispatch = useAppDispatch()
-  return useCallback((state: boolean) => {
-    dispatch(setChatWindowVisibility(state))
+  return useCallback((post: PostData) => {
+    // const title = summarize(post.content?.title ?? post.content?.body ?? '', { limit: 50 })
+    // const config: GrillConfig = {
+    //   hub: {
+    //     id: post.struct.spaceId ?? 'x',
+    //   },
+    //   channel: {
+    //     type: 'resource',
+    //     resource: new Resource({
+    //       schema: 'social',
+    //       app: 'polkaverse',
+    //       resourceType: 'post',
+    //       resourceValue: {
+    //         id: post.struct.id,
+    //       },
+    //     }),
+    //     settings: {
+    //       enableLoginButton: true,
+    //       enableInputAutofocus: true,
+    //     },
+    //     metadata: {
+    //       title,
+    //       body: post.content?.body,
+    //       image: post.content?.image,
+    //     },
+    //   },
+    // }
+    dispatch(setChatConfig({ type: 'post', data: post }))
   }, [])
 }

@@ -2336,10 +2336,17 @@
     "@elastic/elasticsearch" "7.4.0"
     "@subsocial/utils" latest
 
-"@subsocial/grill-widget@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@subsocial/grill-widget/-/grill-widget-0.0.8.tgz#a8a584daffdac4edbb319ec59579a0bdd0004441"
-  integrity sha512-dRPBcn+LU4LLVzHmVCm3MuIVc6dRZ2vC80PAys05NBVTdak+Jz1RQbc1yozPg6ReHgzZhQhU5z+ErYsYRvF09Q==
+"@subsocial/grill-widget@^0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@subsocial/grill-widget/-/grill-widget-0.0.11.tgz#c77267b1c1344b5535fadfc5c1d7b062862f331f"
+  integrity sha512-2XOUbd467AeRtPkv2W3oYYfHGJCXAWEDMx6NpXdYs4AMOm1ZtHPjknrQ88/dcZCxDl26XcCRCSysu9n/6qPu2w==
+
+"@subsocial/resource-discussions@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@subsocial/resource-discussions/-/resource-discussions-0.0.3.tgz#18a13c8ad27b039328e8fc8ac330b7f923a271cc"
+  integrity sha512-XCrDFbypAyTibLgvEPYJkqI1uDoX+wmnyqis8Hrher6Y9QFGiG7gPnNk/Bmv5zmiEiz9HJ5k+C6IwbiS5B+KyQ==
+  dependencies:
+    graphology "^0.25.1"
 
 "@subsocial/utils@0.8.10", "@subsocial/utils@latest":
   version "0.8.10"
@@ -6283,7 +6290,7 @@ eventemitter3@^5.0.0:
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-5.0.0.tgz#084eb7f5b5388df1451e63f4c2aafd71b217ccb3"
   integrity sha512-riuVbElZZNXLeLEoprfNYoDSwTBRR44X3mnhdI1YcnENpWTCsTTVZ2zFuqQcpoyqPQIUXdiPEU0ECAq0KQRaHg==
 
-events@^3.0.0:
+events@^3.0.0, events@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
   integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
@@ -7062,6 +7069,14 @@ graphlib@^2.1.8:
   integrity sha512-jcLLfkpoVGmH7/InMC/1hIvOPSUh38oJtGhvrOFGzioE1DZ+0YW16RgmOJhHiuWTvGiJQ9Z1Ik43JvkRPRvE+A==
   dependencies:
     lodash "^4.17.15"
+
+graphology@^0.25.1:
+  version "0.25.4"
+  resolved "https://registry.yarnpkg.com/graphology/-/graphology-0.25.4.tgz#e528a64555ac1f392a9d965321ada5b2b843efe1"
+  integrity sha512-33g0Ol9nkWdD6ulw687viS8YJQBxqG5LWII6FI6nul0pq6iM2t5EKquOTFDbyTblRB3O9I+7KX4xI8u5ffekAQ==
+  dependencies:
+    events "^3.3.0"
+    obliterator "^2.0.2"
 
 graphql-tag@2.12.6, graphql-tag@^2.10.1, graphql-tag@^2.11.0, graphql-tag@^2.12.6:
   version "2.12.6"
@@ -10186,6 +10201,11 @@ object.values@^1.1.6:
     call-bind "^1.0.2"
     define-properties "^1.1.4"
     es-abstract "^1.20.4"
+
+obliterator@^2.0.2:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/obliterator/-/obliterator-2.0.4.tgz#fa650e019b2d075d745e44f1effeb13a2adbe816"
+  integrity sha512-lgHwxlxV1qIg1Eap7LgIeoBWIMFibOjbrYPIPJZcI1mmGAI2m3lNYpK12Y+GBdPQ0U1hRwSord7GIaawz962qQ==
 
 omit.js@^1.0.0:
   version "1.0.2"

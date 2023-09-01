@@ -1,30 +1,30 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { GrillConfig } from '@subsocial/grill-widget'
+import { PostData } from '@subsocial/api/types'
 
 const sliceName = 'chats'
 
-export interface chatEntity {
-  isChatWindowOpen: boolean
-  currentConfig?: GrillConfig
+type Entity = {
+  type: 'post'
+  data: PostData
+} | null
+export interface ChatEntity {
+  entity: Entity
 }
 
-const initialState: chatEntity = {
-  isChatWindowOpen: false,
+const initialState: ChatEntity = {
+  entity: null,
 }
 
 const slice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    setChatWindowVisibility: (state, action: PayloadAction<boolean>) => {
-      state.isChatWindowOpen = action.payload
-    },
-    setCurrentConfig: (state, action: PayloadAction<GrillConfig>) => {
-      state.currentConfig = action.payload
+    setChatConfig: (state, action: PayloadAction<Entity>) => {
+      state.entity = action.payload
     },
   },
 })
 
-export const { setChatWindowVisibility, setCurrentConfig } = slice.actions
+export const { setChatConfig } = slice.actions
 
 export default slice.reducer

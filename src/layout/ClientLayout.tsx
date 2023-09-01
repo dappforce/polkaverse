@@ -1,6 +1,6 @@
+import dynamic from 'next/dynamic'
 import React from 'react'
 import { NotifCounterProvider } from 'src/components/activity/NotifCounter'
-import ChatFloatingModal from 'src/components/chat/ChatFloatingModal'
 import { LazyConnectionsProvider } from 'src/components/lazy-connection/LazyConnectionContext'
 import OnBoardingContextsWrapper from 'src/components/onboarding/contexts/OnBoardingContextsWrapper'
 import { ResponsiveSizeProvider } from 'src/components/responsive'
@@ -11,6 +11,10 @@ import { MyAccountsProvider } from '../components/auth/MyAccountsContext'
 import { SubstrateProvider, SubstrateWebConsole } from '../components/substrate'
 import SidebarCollapsedProvider from '../components/utils/SideBarCollapsedContext'
 import { Navigation } from './Navigation'
+
+const ChatFloatingModal = dynamic(() => import('../components/chat/ChatFloatingModal'), {
+  ssr: false,
+})
 
 initGa(config.ga)
 

@@ -1,5 +1,4 @@
 import { FC } from 'react'
-import { useOpenCloseChatWindow, useSetupGrillConfig } from 'src/rtk/app/hooks'
 import { SpaceData } from 'src/types'
 import { InfoPostPreview, PostActionsPanel, PostNotFound } from './helpers'
 import { PreviewProps } from './PostPreview'
@@ -14,15 +13,7 @@ type ComponentType = FC<InnerPreviewProps>
 export const RegularPreview: ComponentType = props => {
   const { postDetails, space, withImage, withTags, withActions } = props
 
-  const setGrillChatVisibility = useOpenCloseChatWindow()
-  const setupGrillConfig = useSetupGrillConfig()
-
   const { isSharedPost } = postDetails.post.struct
-
-  const openCommentSection = () => {
-    setupGrillConfig(space?.id ?? '', postDetails.id, postDetails.post.content?.title)
-    setGrillChatVisibility(true)
-  }
 
   return !isSharedPost ? (
     <>
@@ -33,14 +24,7 @@ export const RegularPreview: ComponentType = props => {
         withTags={withTags}
         withMarginForCardType={!withActions}
       />
-      {withActions && (
-        <PostActionsPanel
-          postDetails={postDetails}
-          space={space?.struct}
-          toogleCommentSection={() => openCommentSection()}
-          preview
-        />
-      )}
+      {withActions && <PostActionsPanel postDetails={postDetails} space={space?.struct} preview />}
     </>
   ) : (
     <PostNotFound />

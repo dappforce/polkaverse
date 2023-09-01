@@ -3,7 +3,7 @@ import { getPostIdFromSlug } from '@subsocial/utils/slugify'
 import clsx from 'clsx'
 import { NextPage } from 'next'
 import router from 'next/router'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { PageContent } from 'src/components/main/PageWrapper'
 import AuthorCard from 'src/components/profiles/address-views/AuthorCard'
 import { useResponsiveSize } from 'src/components/responsive'
@@ -15,8 +15,9 @@ import { return404 } from 'src/components/utils/next'
 import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { getInitialPropsWithRedux, NextContextWithRedux } from 'src/rtk/app'
-import { useOpenCloseChatWindow, useSelectProfile, useSetupGrillConfig } from 'src/rtk/app/hooks'
-import { useAppSelector } from 'src/rtk/app/store'
+import { useSelectProfile } from 'src/rtk/app/hooks'
+import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
+import { setChatConfig } from 'src/rtk/features/chat/chatSlice'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
 import {
@@ -60,18 +61,16 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const { isNotMobile } = useResponsiveSize()
   useFetchMyReactionsByPostId(id)
 
-  const setGrillChatVisibility = useOpenCloseChatWindow()
-  const setupGrillConfig = useSetupGrillConfig()
-
   const postData = useAppSelector(state => selectPost(state, { id })) || initialPostData
 
   const { post, space } = postData
   const { struct, content } = post
 
-  const openCommentSection = () => {
-    setupGrillConfig(space?.id ?? '', post.id, post.content?.title)
-    setGrillChatVisibility(true)
-  }
+  const dispatch = useAppDispatch()
+  useEffect(() => {
+    if (!post) return
+    dispatch(setChatConfig({ data: post, type: 'post' }))
+  }, [])
 
   const profile = useSelectProfile(postData.post.struct.ownerId)
   const spaceId = space?.id
@@ -132,6 +131,8 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
       }}
       withOnBoarding
       withVoteBanner
+      outerClassName='mx-auto'
+      rightPanel={null}
     >
       <HiddenPostAlert post={post.struct} />
       <Section>
@@ -186,7 +187,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               <PostActionsPanel
                 postDetails={postData}
                 space={space.struct}
-                toogleCommentSection={() => openCommentSection()}
+                // toogleCommentSection={() => openCommentSection()}
               />
             </div>
 
