@@ -1,8 +1,7 @@
-import { MessageOutlined } from '@ant-design/icons'
 import { BN } from '@polkadot/util'
 import { PostId } from '@subsocial/api/types/substrate'
 import { isEmptyObj, isEmptyStr } from '@subsocial/utils'
-import { Alert, Button, Image, Tooltip } from 'antd'
+import { Alert, Image, Tooltip } from 'antd'
 import clsx from 'clsx'
 import isEmpty from 'lodash.isempty'
 import Error from 'next/error'
@@ -35,7 +34,7 @@ import { useSelectSpace } from '../../../rtk/features/spaces/spacesHooks'
 import { useIsMyAddress } from '../../auth/MyAccountsContext'
 import AuthorPreview from '../../profiles/address-views/AuthorPreview'
 import { SpaceNameAsLink } from '../../spaces/ViewSpace'
-import { formatDate, IconWithLabel, isHidden, toShortUrl, useIsVisible } from '../../utils'
+import { formatDate, isHidden, toShortUrl, useIsVisible } from '../../utils'
 import { SummarizeMd } from '../../utils/md/SummarizeMd'
 import ViewTags from '../../utils/ViewTags'
 import Embed from '../embed/Embed'
@@ -285,34 +284,8 @@ type PostActionsPanelProps = {
   withBorder?: boolean
 }
 
-const ShowCommentsAction = (props: PostActionsPanelProps) => {
-  const { postDetails, preview, toogleCommentSection } = props
-  const {
-    post: {
-      struct: { repliesCount },
-    },
-  } = postDetails
-  const title = 'Comment'
-
-  return (
-    <Action onClick={toogleCommentSection} title={title}>
-      <IconWithLabel
-        icon={<MessageOutlined />}
-        count={repliesCount || 0}
-        label={!preview ? title : undefined}
-      />
-    </Action>
-  )
-}
-
-const Action: FC<{ onClick?: () => void; title?: string }> = ({ children, onClick, title }) => (
-  <Button onClick={onClick} title={title} className='DfAction'>
-    {children}
-  </Button>
-)
-
 export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
-  const { postDetails, space, preview, withBorder, toogleCommentSection } = props
+  const { postDetails, space, preview, withBorder } = props
   const {
     post: { struct },
   } = postDetails
@@ -330,7 +303,6 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
           <ReactionsAction />
         </div>
       )}
-      {toogleCommentSection && <ShowCommentsAction {...props} />}
       <ShareDropdown
         postDetails={postDetails}
         space={space}

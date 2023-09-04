@@ -15,9 +15,8 @@ import { return404 } from 'src/components/utils/next'
 import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { getInitialPropsWithRedux, NextContextWithRedux } from 'src/rtk/app'
-import { useSelectProfile } from 'src/rtk/app/hooks'
-import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
-import { setChatConfig } from 'src/rtk/features/chat/chatSlice'
+import { useSelectProfile, useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
+import { useAppSelector } from 'src/rtk/app/store'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
 import {
@@ -66,10 +65,23 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const { post, space } = postData
   const { struct, content } = post
 
-  const dispatch = useAppDispatch()
+  const setChatConfig = useSetChatEntityConfig()
   useEffect(() => {
     if (!post) return
-    dispatch(setChatConfig({ data: post, type: 'post' }))
+    setChatConfig({ data: post, type: 'post' })
+
+    return () => {
+      setChatConfig(null)
+    }
+  }, [])
+
+  const setChatOpen = useSetChatOpen()
+  const goToCommentsId = 'comments'
+  useEffect(() => {
+    const hash = window.location.hash.substring(1)
+    if (hash === goToCommentsId) {
+      setChatOpen(true)
+    }
   }, [])
 
   const profile = useSelectProfile(postData.post.struct.ownerId)
@@ -92,8 +104,6 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   if (tweet?.id) {
     body = parseTwitterTextToMarkdown(body)
   }
-
-  const goToCommentsId = 'comments'
 
   const renderResponseTitle = (parentPost?: PostData) => {
     if (!parentPost || !parentPost.content) return null

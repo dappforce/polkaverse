@@ -1,6 +1,7 @@
 import { nonEmptyStr } from '@subsocial/utils'
 import clsx from 'clsx'
 import { useState } from 'react'
+import { useSetChatOpen } from 'src/rtk/app/hooks'
 import { idToBn, PostStruct } from 'src/types'
 import { MutedSpan } from '../utils/MutedText'
 import { Pluralize } from '../utils/Plularize'
@@ -14,16 +15,16 @@ type StatsProps = {
 export const StatsPanel = (props: StatsProps) => {
   const { post, goToCommentsId } = props
 
-  const [commentsSection, setCommentsSection] = useState(false)
+  const setChatOpen = useSetChatOpen()
   const [postVotersOpen, setPostVotersOpen] = useState(false)
 
   const { upvotesCount, downvotesCount, repliesCount, sharesCount, id } = post
   const reactionsCount = upvotesCount + downvotesCount
   const showReactionsModal = () => reactionsCount && setPostVotersOpen(true)
 
-  const toggleCommentsSection = goToCommentsId
-    ? undefined
-    : () => setCommentsSection(!commentsSection)
+  const toggleCommentsSection = () => {
+    setChatOpen(true)
+  }
   const comments = <Pluralize count={repliesCount || 0} singularText='Comment' />
 
   return (
@@ -36,7 +37,7 @@ export const StatsPanel = (props: StatsProps) => {
         </MutedSpan>
         <MutedSpan>
           {nonEmptyStr(goToCommentsId) ? (
-            <a className='DfMutedLink' href={'#' + goToCommentsId}>
+            <a className='DfMutedLink' onClick={toggleCommentsSection} href={'#' + goToCommentsId}>
               {comments}
             </a>
           ) : (

@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { HiChevronDown } from 'react-icons/hi2'
 import { useSendEvent } from 'src/providers/AnalyticContext'
+import { useChatOpenState } from 'src/rtk/app/hooks'
+import { useAppSelector } from 'src/rtk/app/store'
+import { ChatEntity } from 'src/rtk/features/chat/chatSlice'
 import { useResponsiveSize } from '../responsive'
 import styles from './ChatFloatingModal.module.sass'
 import ChatIframe from './ChatIframe'
@@ -11,16 +14,19 @@ import ChatIframe from './ChatIframe'
 export default function ChatFloatingModal() {
   const { isLargeDesktop } = useResponsiveSize()
   const sendEvent = useSendEvent()
+  const [isOpen, setIsOpen] = useChatOpenState()
+  const entity = useAppSelector(state => state.chat.entity)
 
   const [unreadCount, setUnreadCount] = useState(0)
-  const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
-    const unreadCountFromStorage = parseInt(localStorage.getItem('unreadCount') ?? '')
+    if (!entity) return
+
+    const unreadCountFromStorage = getUnreadCount(entity)
     if (unreadCountFromStorage && !isNaN(unreadCountFromStorage)) {
       setUnreadCount(unreadCountFromStorage)
     }
-  }, [])
+  }, [entity])
 
   const hasOpened = useRef(false)
   const toggleChat = () => {
@@ -30,11 +36,11 @@ export default function ChatFloatingModal() {
     } else {
       event = 'open_grill_iframe'
       setUnreadCount(0)
-      localStorage.setItem('unreadCount', '0')
+      if (entity) saveUnreadCount(entity, 0)
     }
     sendEvent(event)
 
-    setIsOpen(prev => !prev)
+    setIsOpen(!isOpen)
     hasOpened.current = true
   }
 
@@ -43,11 +49,13 @@ export default function ChatFloatingModal() {
   }
 
   const onUnreadCountChange = (count: number) => {
-    if (count > 0) {
+    if (count > 0 && entity) {
       setUnreadCount(count)
-      localStorage.setItem('unreadCount', count.toString())
+      saveUnreadCount(entity, count)
     }
   }
+
+  if (!entity) return null
 
   return (
     <>
@@ -77,4 +85,13 @@ export default function ChatFloatingModal() {
       )}
     </>
   )
+}
+
+type Entity = NonNullable<ChatEntity['entity']>
+function getUnreadCount(entity: Entity) {
+  return parseInt(localStorage.getItem(`unreadCount:${entity.type}:${entity.data.id}`) ?? '') ?? 0
+}
+
+function saveUnreadCount(entity: Entity, count: number) {
+  localStorage.setItem(`unreadCount:${entity.type}:${entity.data.id}`, count.toString() ?? '0')
 }
