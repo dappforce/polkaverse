@@ -5,8 +5,8 @@ on:
     branches:
       - deploy/**
 concurrency:
-    group: ${{ github.workflow }}-${{ github.ref }}
-    cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   front_build:
@@ -28,7 +28,7 @@ jobs:
       - name: Set up Docker context for buildx
         id: buildx-context
         run: |
-           docker context create builders
+          docker context create builders
 
       - name: Set up Docker Buildx
         id: buildx
@@ -62,6 +62,7 @@ jobs:
             GH_GA_ID=fake
             GH_APP_KIND=polkaverse
             GH_HCAPTCHA_SITE_KEY=3beeddac-2dce-41cc-8e18-338118426c38
+            GH_AMP_ID=a4dc29d356f19fd9788f24b493b462bf
             GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
             GH_CONNECTION_KIND=dev
           tags: |

@@ -81,6 +81,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
+    "@amplitude/analytics-browser": "^2.2.3",
     "@ant-design/icons": "^4.2.1",
     "@antv/g2plot": "^2.3.10",
     "@apollo/client": "^3.7.10",

@@ -3,15 +3,14 @@ import clsx from 'clsx'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { HiChevronDown } from 'react-icons/hi2'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useResponsiveSize } from '../responsive'
 import styles from './ChatFloatingModal.module.sass'
 import ChatIframe from './ChatIframe'
-// import { useResponsiveSize } from '../responsive'
-// import { useSendEvent } from '../providers/AnalyticContext'
 
 export default function ChatFloatingModal() {
   const { isLargeDesktop } = useResponsiveSize()
-  // const sendEvent = useSendEvent()
+  const sendEvent = useSendEvent()
 
   const [unreadCount, setUnreadCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
@@ -25,15 +24,15 @@ export default function ChatFloatingModal() {
 
   const hasOpened = useRef(false)
   const toggleChat = () => {
-    // let event
+    let event
     if (isOpen) {
-      // event = 'close_grill_iframe'
+      event = 'close_grill_iframe'
     } else {
-      // event = 'open_grill_iframe'
+      event = 'open_grill_iframe'
       setUnreadCount(0)
       localStorage.setItem('unreadCount', '0')
     }
-    // sendEvent(event)
+    sendEvent(event)
 
     setIsOpen(prev => !prev)
     hasOpened.current = true

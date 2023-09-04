@@ -33,6 +33,7 @@ import config from 'src/config'
 import '@subsocial/definitions/interfaces/types-lookup'
 import '@subsocial/definitions/interfaces/augment-types'
 import '@subsocial/definitions/interfaces/augment-api'
+import AnalyticProvider from 'src/providers/AnalyticContext'
 
 dayjs.extend(relativeTime)
 dayjs.extend(localizedFormat)
@@ -70,13 +71,15 @@ function MyApp(props) {
       />
       <Provider store={store}>
         {/* <AdBlockModal /> */}
-        <DfApolloProvider initialApolloState={pageProps.initialApolloState}>
-          <ThemeProvider defaultTheme={config.themeName}>
-            <MainPage>
-              <Component {...pageProps} />
-            </MainPage>
-          </ThemeProvider>
-        </DfApolloProvider>
+        <AnalyticProvider>
+          <DfApolloProvider initialApolloState={pageProps.initialApolloState}>
+            <ThemeProvider defaultTheme={config.themeName}>
+              <MainPage>
+                <Component {...pageProps} />
+              </MainPage>
+            </ThemeProvider>
+          </DfApolloProvider>
+        </AnalyticProvider>
       </Provider>
     </>
   )
