@@ -63,6 +63,8 @@ function generateGrillConfig(entity: ChatEntity['entity']): GrillConfig | null {
       hub: {
         id: COMMENTS_HUB_ID,
       },
+      theme: 'light',
+      rootFontSize: '1rem',
       channel: {
         type: 'resource',
         resource: new Resource({
