@@ -5,8 +5,8 @@ import { editSpaceUrl } from 'src/components/urls'
 import { isHidden, ViewOnIpfs } from 'src/components/utils'
 import { BasicDropDownMenuProps, DropdownMenu } from 'src/components/utils/DropDownMenu'
 import { showSuccessMessage } from 'src/components/utils/Message'
-import { useSendGaUserEvent } from 'src/ga'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { SpaceData } from 'src/types'
 import { useSelectProfile } from '../../../rtk/features/profiles/profilesHooks'
 import { useIsUsingEmail, useMyAddress } from '../../auth/MyAccountsContext'
@@ -39,10 +39,10 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
 
   const showMakeAsProfileButton = isMySpace && (!profileSpaceId || profileSpaceId !== id)
 
-  const sendGaEvent = useSendGaUserEvent()
+  const sendEvent = useSendEvent()
 
   const buildMenuItems = () => {
-    sendGaEvent('Open space dropdown menu')
+    sendEvent('Open space dropdown menu')
 
     return (
       <>

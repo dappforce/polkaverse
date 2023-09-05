@@ -7,7 +7,7 @@ import { editPostUrl } from 'src/components/urls'
 import { ViewOnIpfs } from 'src/components/utils'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { DropdownMenu } from 'src/components/utils/DropDownMenu'
-import { useSendGaUserEvent } from 'src/ga'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { idToBn, PostData, SpaceStruct } from 'src/types'
 import { ReactionModal } from '.'
 import { useIsMyAddress, useMyAddress } from '../../auth/MyAccountsContext'
@@ -26,7 +26,7 @@ const InnerPostDropDownMenu: FC<DropdownProps> = props => {
   const myAddress = useMyAddress()
   const { struct } = post
   const postId = struct.id
-  const sendGaEvent = useSendGaUserEvent()
+  const sendEvent = useSendEvent()
 
   const { canEditPost, canHidePost, canMovePost } = useCheckCanEditAndHideSpacePermission(props)
 
@@ -36,7 +36,7 @@ const InnerPostDropDownMenu: FC<DropdownProps> = props => {
   }
 
   const buildMenuItems = useCallback(() => {
-    sendGaEvent('Open post dropdown menu')
+    sendEvent('Open post dropdown menu')
 
     return (
       <>

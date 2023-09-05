@@ -1,5 +1,4 @@
 export * from './category'
-export * from './events'
 import ReactGA from 'react-ga'
 import { isServerSide } from 'src/components/utils'
 import { openCookiesNotification } from '../components/cookies'

@@ -14,10 +14,10 @@ import { isFunction } from '@polkadot/util'
 import type { Signer } from '@polkadot/api/types'
 import { VoidFn } from '@polkadot/api/types'
 import { isEmptyStr, newLogger } from '@subsocial/utils'
-import { useCreateSendGaUserEvent } from 'src/ga'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
 import messages from 'src/messages'
+import { useBuildSendEvent } from 'src/providers/AnalyticContext'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
 import { AnyAccountId } from 'src/types'
 import { useSubstrate } from '.'
@@ -148,7 +148,7 @@ function TxButton({
 
   const api = customNodeApi || subsocialApi
 
-  const sendGaEvent = useCreateSendGaUserEvent(`Create tx: ${tx}`)
+  const sendTxEvent = useBuildSendEvent('Create tx')
 
   const waitMessage = controlledMessage({
     message: messages.waitingForTx,
@@ -269,7 +269,7 @@ function TxButton({
       onFailedHandler,
     )
     waitMessage.open()
-    sendGaEvent()
+    sendTxEvent({ tx })
   }
 
   const signWithExtension = async (
@@ -308,7 +308,7 @@ function TxButton({
       unsub = await tx.send(onSuccessHandler)
 
       waitMessage.open()
-      sendGaEvent()
+      sendTxEvent({ tx })
     } catch (err: any) {
       onFailedHandler(err instanceof Error ? err.message : err)
     }
