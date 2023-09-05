@@ -10,11 +10,13 @@ type Entity = {
 export interface ChatEntity {
   isOpen: boolean
   entity: Entity
+  totalMessageCount: number
 }
 
 const initialState: ChatEntity = {
   isOpen: false,
   entity: null,
+  totalMessageCount: 0,
 }
 
 const slice = createSlice({
@@ -26,10 +28,14 @@ const slice = createSlice({
     },
     setChatConfig: (state, action: PayloadAction<Entity>) => {
       state.entity = action.payload
+      state.totalMessageCount = 0
+    },
+    setTotalMessageCount: (state, action: PayloadAction<number>) => {
+      state.totalMessageCount = action.payload
     },
   },
 })
 
-export const { setChatConfig, setChatOpen } = slice.actions
+export const { setChatConfig, setChatOpen, setTotalMessageCount } = slice.actions
 
 export default slice.reducer

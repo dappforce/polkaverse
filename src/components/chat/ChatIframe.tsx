@@ -1,10 +1,11 @@
-import grill, { GrillConfig } from '@subsocial/grill-widget'
+import grill, { GrillConfig, GrillEventListener } from '@subsocial/grill-widget'
 import { Resource } from '@subsocial/resource-discussions'
 import { summarize } from '@subsocial/utils'
 import clsx from 'clsx'
 import { ComponentProps, useEffect } from 'react'
 import useWrapInRef from 'src/hooks/useWrapInRef'
 import { useSendEvent } from 'src/providers/AnalyticContext'
+import { useSetChatTotalMessageCount } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
 import { ChatEntity } from 'src/rtk/features/chat/chatSlice'
 
@@ -18,6 +19,7 @@ export default function ChatIframe({ onUnreadCountChange, ...props }: ChatIframe
   const entity = useAppSelector(state => state.chat.entity)
   const sendEvent = useSendEvent()
   const sendEventRef = useWrapInRef(sendEvent)
+  const setChatTotalMessageCount = useSetChatTotalMessageCount()
 
   useEffect(() => {
     if (!entity) return
@@ -33,10 +35,11 @@ export default function ChatIframe({ onUnreadCountChange, ...props }: ChatIframe
       return iframe
     }
 
-    const listener = onUnreadCountChange
-      ? (count: number) => {
-          console.log('unread count', count)
-          onUnreadCountChange(count)
+    const listener: GrillEventListener | undefined = onUnreadCountChange
+      ? (name, value) => {
+          const parsedValue = parseInt(value) ?? 0
+          if (name === 'unread') onUnreadCountChange(parsedValue)
+          else if (name === 'totalMessage') setChatTotalMessageCount(parsedValue)
         }
       : undefined
     if (listener) {

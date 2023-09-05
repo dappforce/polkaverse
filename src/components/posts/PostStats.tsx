@@ -2,6 +2,7 @@ import { nonEmptyStr } from '@subsocial/utils'
 import clsx from 'clsx'
 import { useState } from 'react'
 import { useSetChatOpen } from 'src/rtk/app/hooks'
+import { useAppSelector } from 'src/rtk/app/store'
 import { idToBn, PostStruct } from 'src/types'
 import { MutedSpan } from '../utils/MutedText'
 import { Pluralize } from '../utils/Plularize'
@@ -18,14 +19,15 @@ export const StatsPanel = (props: StatsProps) => {
   const setChatOpen = useSetChatOpen()
   const [postVotersOpen, setPostVotersOpen] = useState(false)
 
-  const { upvotesCount, downvotesCount, repliesCount, sharesCount, id } = post
+  const totalMessageCount = useAppSelector(state => state.chat.totalMessageCount)
+  const { upvotesCount, downvotesCount, sharesCount, id } = post
   const reactionsCount = upvotesCount + downvotesCount
   const showReactionsModal = () => reactionsCount && setPostVotersOpen(true)
 
   const toggleCommentsSection = () => {
     setChatOpen(true)
   }
-  const comments = <Pluralize count={repliesCount || 0} singularText='Comment' />
+  const comments = <Pluralize count={totalMessageCount || 0} singularText='Comment' />
 
   return (
     <>

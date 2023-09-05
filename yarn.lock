@@ -2395,10 +2395,10 @@
     "@elastic/elasticsearch" "7.4.0"
     "@subsocial/utils" latest
 
-"@subsocial/grill-widget@^0.0.11":
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/@subsocial/grill-widget/-/grill-widget-0.0.11.tgz#c77267b1c1344b5535fadfc5c1d7b062862f331f"
-  integrity sha512-2XOUbd467AeRtPkv2W3oYYfHGJCXAWEDMx6NpXdYs4AMOm1ZtHPjknrQ88/dcZCxDl26XcCRCSysu9n/6qPu2w==
+"@subsocial/grill-widget@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@subsocial/grill-widget/-/grill-widget-0.0.12.tgz#57384850a3adb5342a5505a3f0d67c258d7e3b0e"
+  integrity sha512-Xed+wN/NEZ+mQlKA1olVVcBviVIQOTyqaCYcl9pGsg8yDdIBsKVjqJUKty1vvBL7gY0A+1osdwBgX2xUsbHOBA==
 
 "@subsocial/resource-discussions@^0.0.3":
   version "0.0.3"
