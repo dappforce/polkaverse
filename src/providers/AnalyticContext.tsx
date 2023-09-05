@@ -76,7 +76,7 @@ export function AnalyticProvider(props: React.PropsWithChildren<{}>) {
         const eventProps = {
           event_type: name,
           device_id: state.deviceId,
-          ...properties,
+          event_properties: properties,
         }
         if (!state.amp) {
           setQueuedEvents(prev => [...prev, eventProps])

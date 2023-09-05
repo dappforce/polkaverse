@@ -148,7 +148,7 @@ function TxButton({
 
   const api = customNodeApi || subsocialApi
 
-  const sendTxEvent = useBuildSendEvent('Create tx')
+  const sendTxEvent = useBuildSendEvent('create_tx')
 
   const waitMessage = controlledMessage({
     message: messages.waitingForTx,

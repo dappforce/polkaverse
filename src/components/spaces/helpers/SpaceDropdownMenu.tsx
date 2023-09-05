@@ -42,7 +42,7 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
   const sendEvent = useSendEvent()
 
   const buildMenuItems = () => {
-    sendEvent('Open space dropdown menu')
+    sendEvent('open_space_dropdown_menu')
 
     return (
       <>

@@ -36,7 +36,7 @@ const InnerPostDropDownMenu: FC<DropdownProps> = props => {
   }
 
   const buildMenuItems = useCallback(() => {
-    sendEvent('Open post dropdown menu')
+    sendEvent('open_post_dropdown_menu')
 
     return (
       <>

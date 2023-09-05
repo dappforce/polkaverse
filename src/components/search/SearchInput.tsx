@@ -97,7 +97,7 @@ const SearchInput = () => {
       },
     }
 
-    sendEvent('Search', { value })
+    sendEvent('search', { value })
     return nonEmptyStr(value) && router.replace(queryPath, queryPath)
   }
 
