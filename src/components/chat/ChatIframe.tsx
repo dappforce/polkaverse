@@ -35,13 +35,11 @@ export default function ChatIframe({ onUnreadCountChange, ...props }: ChatIframe
       return iframe
     }
 
-    const listener: GrillEventListener | undefined = onUnreadCountChange
-      ? (name, value) => {
-          const parsedValue = parseInt(value) ?? 0
-          if (name === 'unread') onUnreadCountChange(parsedValue)
-          else if (name === 'totalMessage') setChatTotalMessageCount(parsedValue)
-        }
-      : undefined
+    const listener: GrillEventListener | undefined = (name, value) => {
+      const parsedValue = parseInt(value) ?? 0
+      if (name === 'unread') onUnreadCountChange?.(parsedValue)
+      else if (name === 'totalMessage') setChatTotalMessageCount(parsedValue)
+    }
     if (listener) {
       grill.addUnreadCountListener(listener)
     }
