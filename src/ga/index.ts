@@ -1,7 +1,6 @@
 export * from './category'
 import ReactGA from 'react-ga'
 import { isServerSide } from 'src/components/utils'
-import { openCookiesNotification } from '../components/cookies'
 
 export type GaProps = {
   id: string
@@ -18,5 +17,4 @@ export const initGa = (props?: GaProps) => {
 
   const { id, options } = props
   ReactGA.initialize(id, options)
-  openCookiesNotification()
 }
