@@ -3,6 +3,7 @@ import { Resource } from '@subsocial/resource-discussions'
 import { summarize } from '@subsocial/utils'
 import clsx from 'clsx'
 import { ComponentProps, useEffect } from 'react'
+import config from 'src/config'
 import useWrapInRef from 'src/hooks/useWrapInRef'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useSetChatTotalMessageCount } from 'src/rtk/app/hooks'
@@ -12,8 +13,6 @@ import { ChatEntity } from 'src/rtk/features/chat/chatSlice'
 export type ChatIframeProps = ComponentProps<'div'> & {
   onUnreadCountChange?: (count: number) => void
 }
-
-const COMMENTS_HUB_ID = '1032'
 
 export default function ChatIframe({ onUnreadCountChange, ...props }: ChatIframeProps) {
   const entity = useAppSelector(state => state.chat.entity)
@@ -62,7 +61,7 @@ function generateGrillConfig(entity: ChatEntity['entity']): GrillConfig | null {
     const body = summarize(post.content?.body ?? '', { limit: 50 })
     return {
       hub: {
-        id: COMMENTS_HUB_ID,
+        id: config.commentsHubId,
       },
       theme: 'light',
       rootFontSize: '1rem',
