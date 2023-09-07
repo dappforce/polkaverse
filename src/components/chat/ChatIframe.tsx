@@ -1,6 +1,6 @@
 import grill, { GrillConfig, GrillEventListener } from '@subsocial/grill-widget'
 import { Resource } from '@subsocial/resource-discussions'
-import { summarize } from '@subsocial/utils'
+import { summarizeMd } from '@subsocial/utils'
 import clsx from 'clsx'
 import { ComponentProps, useEffect } from 'react'
 import config from 'src/config'
@@ -57,8 +57,10 @@ function generateGrillConfig(entity: ChatEntity['entity']): GrillConfig | null {
   if (!entity) return null
   if (entity.type === 'post') {
     const post = entity.data
-    const title = summarize(post.content?.title ?? post.content?.body ?? '', { limit: 50 })
-    const body = summarize(post.content?.body ?? '', { limit: 50 })
+    const title = summarizeMd(post.content?.title || post.content?.body || '', {
+      limit: 50,
+    }).summary
+    const body = summarizeMd(post.content?.body ?? '', { limit: 50 }).summary
     return {
       hub: {
         id: config.commentsHubId,
