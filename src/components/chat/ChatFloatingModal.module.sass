@@ -3,7 +3,7 @@
 .ChatFloatingWrapper
   z-index: 10
   position: fixed
-  bottom: $space_huge
+  bottom: $space_normal
   right: $space_normal
 
   .ChatUnreadCount
@@ -19,6 +19,8 @@
 
   .ChatFloatingButton
     padding: $space_small $space_normal
+    // To offset optical illusion from the grill icon
+    padding-left: $space_small
     border-radius: 32px
     font-size: 1rem
     color: white !important
