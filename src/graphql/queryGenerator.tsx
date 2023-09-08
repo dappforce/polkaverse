@@ -11,7 +11,9 @@ export interface GetActivityCountStat {
   today: ActivityCount
   [key: string]: ActivityCount
 }
-export function getActivityCountStatQuery(period: number, events: EventName[]) {
+export function getActivityCountStatQuery(period: number, events: EventName[], postId?: string) {
+  const postQuery = postId ? `post: {isComment_eq: true, rootPost: {id_eq: "${postId}"}}` : ''
+
   let perDayQueryString = ''
   Array.from({ length: period + 1 }).forEach(async (_, index) => {
     const offset = period - index
@@ -20,6 +22,7 @@ export function getActivityCountStatQuery(period: number, events: EventName[]) {
         event_in: [${events}],
         date_gte: "${getDateWithOffset(offset)}",
         date_lt: "${getDateWithOffset(offset - 1)}",
+        ${postQuery}
       }, orderBy: id_ASC) {
         totalCount
       }
@@ -29,18 +32,20 @@ export function getActivityCountStatQuery(period: number, events: EventName[]) {
 
   return gql`
     query GetActivityCountStat {
-      total:activitiesConnection (where: { event_in: [${events}] }, orderBy: id_ASC) {
+      total:activitiesConnection (where: { event_in: [${events}], ${postQuery} }, orderBy: id_ASC) {
         totalCount
       }
       period:activitiesConnection (where: {
         event_in: [${events}],
-        date_gte: "${getDateWithOffset(period)}"
+        date_gte: "${getDateWithOffset(period)}",
+        ${postQuery}
       }, orderBy: id_ASC) {
         totalCount
       }
       today:activitiesConnection (where: {
         event_in: [${events}],
-        date_gte: "${getDateWithOffset(0)}"
+        date_gte: "${getDateWithOffset(0)}",
+        ${postQuery}
       }, orderBy: id_ASC) {
         totalCount
       }

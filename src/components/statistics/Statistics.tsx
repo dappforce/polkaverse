@@ -1,5 +1,5 @@
 import { AppstoreOutlined, MenuOutlined } from '@ant-design/icons'
-import { isEmptyArray, pluralize } from '@subsocial/utils'
+import { isDef, isEmptyArray, pluralize } from '@subsocial/utils'
 import { Card, Col, Divider, Radio, Row } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
@@ -19,6 +19,7 @@ import GraphModal from './ChartModal'
 import style from './Statistics.module.sass'
 
 export type ActivityEvent =
+  | 'PolkadotMessages'
   | 'SpaceCreated'
   | 'SpaceFollowed'
   | 'PostCreated'
@@ -28,6 +29,7 @@ export type ActivityEvent =
   | 'AccountFollowed'
 
 export const eventArr = [
+  'PolkadotMessages',
   'SpaceCreated',
   'SpaceFollowed',
   'PostCreated',
@@ -36,6 +38,10 @@ export const eventArr = [
   'PostReactionCreated,CommentReactionCreated',
   'AccountFollowed',
 ]
+
+const customEventArr: any = {
+  PolkadotMessages: { event: 'CommentCreated,CommentReplyCreated', postId: '754' },
+}
 
 export const periodOpt = [
   { label: 'Last 7 days', value: '7' },
@@ -131,9 +137,24 @@ export function InnerStatistics(props: FormProps) {
 }
 
 const retentionOpt = [
-  { key: 'activeUsersTotalCountWithOnePost', label: 'Total Users', minPosts: 1, periodText: 'per period' },
-  { key: 'activeUsersTotalCountWithThreePost', label: 'Active Users  ', minPosts: 3, periodText: 'per period' },
-  { key: 'userRetentionCount', label: 'Retained users', minPosts: 2, periodText: 'on different days' },
+  {
+    key: 'activeUsersTotalCountWithOnePost',
+    label: 'Total Users',
+    minPosts: 1,
+    periodText: 'per period',
+  },
+  {
+    key: 'activeUsersTotalCountWithThreePost',
+    label: 'Active Users  ',
+    minPosts: 3,
+    periodText: 'per period',
+  },
+  {
+    key: 'userRetentionCount',
+    label: 'Retained users',
+    minPosts: 2,
+    periodText: 'on different days',
+  },
 ]
 
 type RetentionData = {
@@ -191,7 +212,9 @@ const RetentionStats = ({ period }: RetentionStatsProps) => {
           <div className={style.DfRetentionStatsLabel}>{label}</div>
           <div className={style.DfRetentionStatsValue}>{value}</div>
           <Divider className='my-2' />
-          <div>{pluralize({ count: minPosts, singularText: 'action' })} {periodText}</div>
+          <div>
+            {pluralize({ count: minPosts, singularText: 'action' })} {periodText}
+          </div>
         </div>
       </Card>
     )
@@ -240,12 +263,18 @@ export function Statistics(props: FormProps) {
         eventArr.map(async eventName => {
           const event = eventName as ActivityEvent
 
-          return getActivityCountStat({ event, period: constrainedPeriod })
+          const { event: customEvent, postId } = customEventArr[event] || {}
+
+          return getActivityCountStat({
+            event: customEvent || event,
+            period: constrainedPeriod,
+            postId,
+          })
         }),
       )
 
       if (isMounted) {
-        setData(statisticsDataArr)
+        setData(statisticsDataArr.filter(isDef))
         setIsLoaded(true)
       }
     }
@@ -309,11 +338,12 @@ const getDatesBetweenDates = (startDate: Date, endDate: Date) => {
 }
 
 const parseData = (period: string, dates: string[], statData: StatType[] | undefined) => {
-  const statisticsDataArr: StatisticsDataType[] = []
   if (!statData) return []
 
-  for (const data of statData) {
-    const { countByPeriod, totalCount, activityType, statisticsData, todayCount } = data
+  const statisticsDataArr: StatisticsDataType[] = statData.map((data, i) => {
+    const { countByPeriod, totalCount, statisticsData, todayCount } = data
+
+    const activityType = eventArr[i] as ActivityEvent
     const graphData: GraphDataType[] = []
 
     for (const item of dates.slice(dates.length - Number(period) - 1, dates.length)) {
@@ -325,14 +355,14 @@ const parseData = (period: string, dates: string[], statData: StatType[] | undef
       })
     }
 
-    statisticsDataArr.push({
+    return {
       activityType,
       graphData,
       countByPeriod,
       totalCount,
       todayCount,
-    })
-  }
+    }
+  })
 
   return statisticsDataArr
 }
