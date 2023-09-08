@@ -17,7 +17,6 @@ export default function ChatFloatingModal() {
   const sendEvent = useSendEvent()
   const [isOpen, setIsOpen] = useChatOpenState()
   const entity = useAppSelector(state => state.chat.entity)
-  const totalMessageCount = useAppSelector(state => state.chat.totalMessageCount)
 
   const [unreadCount, setUnreadCount] = useState(0)
 
@@ -82,7 +81,7 @@ export default function ChatFloatingModal() {
         <div className={styles.ChatFloatingWrapper}>
           <Button className={styles.ChatFloatingButton} onClick={toggleChat}>
             <img src='/images/grillchat.svg' alt='GrillChat' />
-            <span>Comments {totalMessageCount ? `(${totalMessageCount})` : ''}</span>
+            <span>Comments</span>
           </Button>
           {!!unreadCount && <span className={styles.ChatUnreadCount}>{unreadCount}</span>}
         </div>,

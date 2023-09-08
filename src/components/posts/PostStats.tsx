@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useSetChatOpen } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
 import { idToBn, PostStruct } from 'src/types'
+import { useResponsiveSize } from '../responsive'
 import { MutedSpan } from '../utils/MutedText'
 import { Pluralize } from '../utils/Plularize'
 import { ActiveVoters, PostVoters } from '../voting/ListVoters'
@@ -15,6 +16,7 @@ type StatsProps = {
 
 export const StatsPanel = (props: StatsProps) => {
   const { post, goToCommentsId } = props
+  const { isLargeDesktop } = useResponsiveSize()
 
   const setChatOpen = useSetChatOpen()
   const [postVotersOpen, setPostVotersOpen] = useState(false)
@@ -38,7 +40,7 @@ export const StatsPanel = (props: StatsProps) => {
           </span>
         </MutedSpan>
         <MutedSpan>
-          {nonEmptyStr(goToCommentsId) ? (
+          {!isLargeDesktop && nonEmptyStr(goToCommentsId) ? (
             <a className='DfMutedLink' onClick={toggleCommentsSection} href={'#' + goToCommentsId}>
               {comments}
             </a>
