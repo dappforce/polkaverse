@@ -317,11 +317,11 @@ export async function getAddressPostsReaction(
 
 export async function getActivityCountStat(
   client: GqlClient,
-  { event, period }: { period: number; event: ActivityEvent },
+  { event, period, postId }: { period: number; event: ActivityEvent; postId?: string },
 ): Promise<StatType> {
   const eventFilters = event.split(',') as EventName[]
   const res = await client.query<GetActivityCountStat>({
-    query: getActivityCountStatQuery(period, eventFilters),
+    query: getActivityCountStatQuery(period, eventFilters, postId),
   })
   const statisticsData = Array.from({ length: period + 1 }).reduce<StatType['statisticsData']>(
     (acc, _, index) => {

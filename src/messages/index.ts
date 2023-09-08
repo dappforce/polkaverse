@@ -65,6 +65,7 @@ export default {
     CommenReplyReactionDeleted: 'deleted reaction to a comment on',
   },
   statistics: {
+    PolkadotMessages: 'Messages in Polkadot chat',
     AccountFollowed: 'Accounts followed',
     SpaceFollowed: 'Spaces followed',
     SpaceCreated: 'Spaces created',
