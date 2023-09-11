@@ -13,7 +13,7 @@ jobs:
     name: build & Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Extract branch name
         shell: bash
         run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
@@ -93,7 +93,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/staging' }}
     steps:
       - name: Checkout main
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Extract branch name
         shell: bash
@@ -123,7 +123,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout main
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Extract branch name
         shell: bash
@@ -164,7 +164,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout main
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Extract branch name
         shell: bash
