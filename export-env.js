@@ -29,6 +29,7 @@ const varsToExport = [
   'MAINTENANCE_TEXT',
 
   'GA_ID',
+  'AMP_ID',
 
   'HCAPTCHA_SITE_KEY',
 

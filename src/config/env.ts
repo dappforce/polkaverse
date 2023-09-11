@@ -15,6 +15,7 @@ export const enableMaintenancePage = getEnvAsBool('ENABLE_MAINTENANCE_PAGE')
 export const maintenanceMsg = getEnv('MAINTENANCE_TEXT')
 
 export const gaId = getEnv('GA_ID') || ''
+export const ampId = getEnv('AMP_ID') || ''
 
 export const hCaptchaSiteKey = getEnv('HCAPTCHA_SITE_KEY') || ''
 

@@ -1,3 +1,4 @@
+export * from '../features/chat/chatHooks'
 export * from '../features/posts/postsHooks'
 export * from '../features/profiles/profilesHooks'
 export * from '../features/replies/repliesHooks'

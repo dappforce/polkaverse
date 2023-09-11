@@ -1,7 +1,10 @@
 import { nonEmptyStr } from '@subsocial/utils'
 import clsx from 'clsx'
 import { useState } from 'react'
+import { useSetChatOpen } from 'src/rtk/app/hooks'
+import { useAppSelector } from 'src/rtk/app/store'
 import { idToBn, PostStruct } from 'src/types'
+import { useResponsiveSize } from '../responsive'
 import { MutedSpan } from '../utils/MutedText'
 import { Pluralize } from '../utils/Plularize'
 import { ActiveVoters, PostVoters } from '../voting/ListVoters'
@@ -13,18 +16,20 @@ type StatsProps = {
 
 export const StatsPanel = (props: StatsProps) => {
   const { post, goToCommentsId } = props
+  const { isLargeDesktop } = useResponsiveSize()
 
-  const [commentsSection, setCommentsSection] = useState(false)
+  const setChatOpen = useSetChatOpen()
   const [postVotersOpen, setPostVotersOpen] = useState(false)
 
-  const { upvotesCount, downvotesCount, repliesCount, sharesCount, id } = post
+  const totalMessageCount = useAppSelector(state => state.chat.totalMessageCount)
+  const { upvotesCount, downvotesCount, sharesCount, id } = post
   const reactionsCount = upvotesCount + downvotesCount
   const showReactionsModal = () => reactionsCount && setPostVotersOpen(true)
 
-  const toggleCommentsSection = goToCommentsId
-    ? undefined
-    : () => setCommentsSection(!commentsSection)
-  const comments = <Pluralize count={repliesCount || 0} singularText='Comment' />
+  const toggleCommentsSection = () => {
+    setChatOpen(true)
+  }
+  const comments = <Pluralize count={totalMessageCount || 0} singularText='Comment' />
 
   return (
     <>
@@ -35,8 +40,8 @@ export const StatsPanel = (props: StatsProps) => {
           </span>
         </MutedSpan>
         <MutedSpan>
-          {nonEmptyStr(goToCommentsId) ? (
-            <a className='DfMutedLink' href={'#' + goToCommentsId}>
+          {!isLargeDesktop && nonEmptyStr(goToCommentsId) ? (
+            <a className='DfMutedLink' onClick={toggleCommentsSection} href={'#' + goToCommentsId}>
               {comments}
             </a>
           ) : (

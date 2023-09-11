@@ -12,4 +12,6 @@ export default {
   // SEO-related settings:
   seoSitemapLastmod: '2020-11-21',
   seoSitemapPageSize: 100,
+
+  commentsHubId: '1032',
 }

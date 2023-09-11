@@ -3,7 +3,7 @@ import { getPostIdFromSlug } from '@subsocial/utils/slugify'
 import clsx from 'clsx'
 import { NextPage } from 'next'
 import router from 'next/router'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { PageContent } from 'src/components/main/PageWrapper'
 import AuthorCard from 'src/components/profiles/address-views/AuthorCard'
 import { useResponsiveSize } from 'src/components/responsive'
@@ -15,7 +15,7 @@ import { return404 } from 'src/components/utils/next'
 import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { getInitialPropsWithRedux, NextContextWithRedux } from 'src/rtk/app'
-import { useSelectProfile } from 'src/rtk/app/hooks'
+import { useSelectProfile, useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
@@ -27,7 +27,6 @@ import {
   PostWithAllDetails,
   PostWithSomeDetails,
 } from 'src/types'
-import { CommentSection } from '../../comments/CommentsSection'
 import { DfImage } from '../../utils/DfImage'
 import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
@@ -66,6 +65,25 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const { post, space } = postData
   const { struct, content } = post
 
+  const setChatConfig = useSetChatEntityConfig()
+  useEffect(() => {
+    if (!post) return
+    setChatConfig({ data: post, type: 'post' })
+
+    return () => {
+      setChatConfig(null)
+    }
+  }, [])
+
+  const setChatOpen = useSetChatOpen()
+  const goToCommentsId = 'comments'
+  useEffect(() => {
+    const hash = window.location.hash.substring(1)
+    if (hash === goToCommentsId) {
+      setChatOpen(true)
+    }
+  }, [])
+
   const profile = useSelectProfile(postData.post.struct.ownerId)
   const spaceId = space?.id
   const isSameProfileAndSpace = profile?.id === spaceId
@@ -86,8 +104,6 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   if (tweet?.id) {
     body = parseTwitterTextToMarkdown(body)
   }
-
-  const goToCommentsId = 'comments'
 
   const renderResponseTitle = (parentPost?: PostData) => {
     if (!parentPost || !parentPost.content) return null
@@ -125,6 +141,8 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
       }}
       withOnBoarding
       withVoteBanner
+      outerClassName='mx-auto'
+      rightPanel={null}
     >
       <HiddenPostAlert post={post.struct} />
       <Section>
@@ -176,7 +194,11 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
             )}
 
             <div className='DfRow mt-2'>
-              <PostActionsPanel postDetails={postData} space={space.struct} />
+              <PostActionsPanel
+                postDetails={postData}
+                space={space.struct}
+                // toogleCommentSection={() => openCommentSection()}
+              />
             </div>
 
             <div className='pt-2'>
@@ -190,8 +212,6 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
             {!isSameProfileAndSpace && (
               <SpaceCard className='mt-4' spaceId={postData.space?.id ?? ''} />
             )}
-
-            <CommentSection post={postData} hashId={goToCommentsId} space={spaceStruct} />
           </div>
         </div>
       </Section>

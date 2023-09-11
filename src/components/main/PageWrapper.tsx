@@ -151,7 +151,7 @@ export const PageContent: FC<Props> = ({
             {/* {isPanels && <div className='DfRightPanel DfPanel'>{rightPanel}</div>} */}
           </section>
           {rightPanel}
-          {!rightPanel && withOnBoarding && showOnBoardingSidebar && myAddress && (
+          {rightPanel === undefined && withOnBoarding && showOnBoardingSidebar && myAddress && (
             <div style={{ width: ONBOARDING_SIDEBAR_WIDTH }}>
               <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} />
             </div>

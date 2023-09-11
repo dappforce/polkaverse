@@ -61,7 +61,7 @@
     "cypress": "^10.11.0",
     "cypress-network-idle": "^1.10.2",
     "cypress-wait-until": "^1.7.2",
-    "eslint": "^8.28.0",
+    "eslint": "^8.46.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-prefer-object-spread": "^1.2.1",
@@ -81,6 +81,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
+    "@amplitude/analytics-browser": "^2.2.3",
     "@ant-design/icons": "^4.2.1",
     "@antv/g2plot": "^2.3.10",
     "@apollo/client": "^3.7.10",
@@ -93,6 +94,8 @@
     "@subsocial/api": "0.8.10",
     "@subsocial/definitions": "0.8.10",
     "@subsocial/elasticsearch": "0.8.10",
+    "@subsocial/grill-widget": "^0.0.12",
+    "@subsocial/resource-discussions": "^0.0.3",
     "@subsocial/utils": "0.8.10",
     "@tiptap/extension-highlight": "^2.0.0-beta.33",
     "@tiptap/extension-image": "^2.0.0-beta.27",
