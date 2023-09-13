@@ -7,12 +7,21 @@ $font_large: 1.25rem;
 $font_big: 1.5rem;
 $font_huge: 2rem;
 
+/*-------------Font Weight-----------*/
+
+$font_weight_normal: 400;
+$font_weight_medium: 500;
+$font_weight_semibold: 600;
+$font_weight_bold: 700;
+
 /*----------Space Size-------------*/
 
 $space_mini: 0.25rem;
 $space_tiny: 0.5rem;
+$space_semismall: 0.625rem;
 $space_small: 0.75rem;
 $space_normal: 1rem;
+$space_semilarge: 1.125rem;
 $space_large: 1.25rem;
 $space_big: 1.5rem;
 $space_huge: 2rem;
@@ -22,6 +31,9 @@ $space_huge: 2rem;
 $color_page_bg: #f8fafc;
 $color_font_normal: #222222;
 $color_muted: #8c8c8c;
+$color_light_muted: #888888;
+$color_semilight_border: #d6d6d6;
+$color_xtralight_border: #dddddd;
 $color_border: #d9d9d9;
 $color_link: #bd018b;
 $color_primary: #eb2f96;
@@ -36,9 +48,12 @@ $color_gold: #faad14;
 $color_pink_bg: #fff0f6;
 $color_green: #4bb543;
 $color_blue: #0099f4;
+$color_chip_text: #1890ff;
+$color_chip_border: #91d5ff;
+$color_chip_bg: #e6f7ff;
 $color_shadow: #eeecec;
 $color_shadow_accent: #e2e8f0;
-$color_error: #ff4d4f;
+$color_error: #e13d39;
 $color_background: #f8fafc;
 $color_info: #e6f7ff;
 $color_info_border: #91d5ff;
@@ -50,6 +65,8 @@ $color_twitter_bg: #e9f6fe;
 $color_twitter_border: #c2e3fd;
 $color_twitter_text: #448ef7;
 $color_twitter_link: #316cf4;
+$color_dark_text: #222222;
+$color_black_text: #000000;
 
 /*------------- Line Height --------*/
 $line-height-normal: 1.5;

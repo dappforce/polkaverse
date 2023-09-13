@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAuth } from 'src/components/auth/AuthContext'
-import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import { useIsUsingEmail, useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { setFiltersInUrl } from 'src/components/main/utils'
 import config from 'src/config'
 import { useBooleanExternalStorage } from 'src/hooks/useExternalStorage'
@@ -98,7 +98,13 @@ export default function OnBoardingModal({
   const openState = useOnBoardingModalOpenState()
   const openCloseModal = useOpenCloseOnBoardingModal()
 
-  const onBoardingModalStepsOrder = useOnBoardingStepsOrderWithEnergySnapshot()
+  const { steps: stepsOrder } = useOnBoardingStepsOrderWithEnergySnapshot()
+
+  const isUsingEmail = useIsUsingEmail()
+  const onBoardingModalStepsOrder =
+    isUsingEmail || !config.enableConfirmationLessMode
+      ? stepsOrder.filter(key => key !== 'signer')
+      : stepsOrder
 
   const currentStep = useCurrentOnBoardingStep()
   const currentStepIndex = useMemo(() => {
@@ -184,7 +190,7 @@ export default function OnBoardingModal({
         footer={null}
         className={clsx(
           styles.DfOnBoardingModal,
-          'DfOnBoardingModal',
+          loading && styles.DfOnboardingOnLoadingModal,
           currentStep === 'signer' && openState === 'partial' && styles.DfOnboardingSignerModal,
           openState === 'full-on-boarding' && !success && styles.DfOnBoardingModalFull,
         )}

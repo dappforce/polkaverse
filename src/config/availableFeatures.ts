@@ -6,8 +6,10 @@ import { CommonSubsocialFeatures, SubsocialFeatures } from './types'
 import { getOrFalse, getOrTrue } from './utils'
 
 const enableGraphQl = getOrTrue(env.enableGraphQl) && nonEmptyStr(connections.graphqlUrl)
+const isSquidGraphQLEnabled = getOrTrue(env.enableSquidDataSource) && enableGraphQl
+
 const commonFeatures: CommonSubsocialFeatures = {
-  enableSearch: getOrTrue(env.enableSearch),
+  enableSearch: isSquidGraphQLEnabled && getOrTrue(env.enableSearch),
   enableFeed: getOrTrue(env.enableFeed),
   enableNotifications: getOrTrue(env.enableNotifications),
   enableActivity: getOrTrue(env.enableActivity),
@@ -19,7 +21,9 @@ const commonFeatures: CommonSubsocialFeatures = {
   enableContributionPage: getOrTrue(env.enableContributionPage),
   enableOnchainActivities: getOrFalse(!enableGraphQl),
   enableDomains: getOrFalse(true),
-  enableSquidDataSource: getOrTrue(env.enableSquidDataSource) && enableGraphQl,
+  enableSquidDataSource: isSquidGraphQLEnabled,
+  // enableConfirmationLessMode: getOrFalse(!isEmptyStr(hCaptchaSiteKey)),
+  enableConfirmationLessMode: false,
 }
 
 const features: SubsocialFeatures = {

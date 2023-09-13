@@ -2,8 +2,8 @@ import { FC } from 'react'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { useFetchMyPermissionsBySpaceId } from 'src/rtk/features/permissions/mySpacePermissionsHooks'
 import { fetchPosts, selectPosts } from 'src/rtk/features/posts/postsSlice'
-import { bnsToIds, DataSourceTypes, HasStatusCode, idToBn, SpaceContent } from 'src/types'
-import { isPolkaProject, isUnclaimedSpace } from 'src/utils'
+import { DataSourceTypes, HasStatusCode, idToBn, SpaceContent } from 'src/types'
+import { descSort, isPolkaProject, isUnclaimedSpace } from 'src/utils'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { PageContent } from '../main/PageWrapper'
 import { spaceUrl } from '../urls'
@@ -83,11 +83,11 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
   const spaceId = idToBn(data.id)
 
   // We need to reverse post ids to display posts in a descending order on a space page.
-  const postIds = (await subsocial.blockchain.postIdsBySpaceId(spaceId)).sort((a, b) =>
-    b.sub(a).toNumber(),
-  )
+  const postIds = await subsocial.blockchain.postIdsBySpaceId(spaceId)
 
-  const pageIds = bnsToIds(getPageOfIds(postIds, query))
+  const sortedPostIds = descSort(postIds)
+
+  const pageIds = getPageOfIds(sortedPostIds, query)
 
   await dispatch(
     fetchPosts({
@@ -103,7 +103,7 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
   return {
     spaceData: data,
     posts,
-    postIds: bnsToIds(postIds),
+    postIds: sortedPostIds,
   }
 })
 

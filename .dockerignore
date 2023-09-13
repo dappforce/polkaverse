@@ -4,3 +4,6 @@ node_modules/
 .storybook/
 .vscode/
 **/stories/
+docker/
+deployment/
+.github/

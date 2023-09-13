@@ -1,12 +1,16 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import { parseDomain } from '@subsocial/utils'
 import clsx from 'clsx'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
 import { FC, HTMLProps } from 'react'
 import {
   CardWithTitle as InnerCardWithTitle,
   CardWithTitleProps,
 } from 'src/components/utils/cards/WithTitle'
 import config from 'src/config'
+import { useCreateRemovePendingOrders } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
+import { useCreateUpsertDomains } from 'src/rtk/features/domains/domainHooks'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { slugifyHandle } from '../urls/helpers'
@@ -14,10 +18,6 @@ import { useAddClassNameToRootElement } from '../utils'
 import { controlledMessage } from '../utils/Message'
 import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
-import { useCreateRemovePendingOrders } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
-import { useCreateUpsertDomains } from 'src/rtk/features/domains/domainHooks'
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
 
 dayjs.extend(utc)
 
@@ -51,7 +51,7 @@ export const CardWithTitle: FC<CardWithTitleProps> = props => (
 )
 
 export const getTime = (miliseconds?: number) => {
-  if(!miliseconds) return '-'
+  if (!miliseconds) return '-'
 
   return miliseconds / 60 / 1000
 }
@@ -99,11 +99,11 @@ export const UnamesLearnMoreLink = ({ className, ...props }: HTMLProps<HTMLAncho
     <a
       {...props}
       className={clsx(className)}
-      href='https://docs.subsocial.network/docs/tutorials/dotsama-domains'
+      href='https://docs.subsocial.network/docs/tutorials/usernames'
       target='_blank'
       rel='noreferrer'
     >
-      <span>Learn More</span>
+      <span style={{ whiteSpace: 'nowrap' }}>Learn More</span>
     </a>
   )
 }
@@ -117,7 +117,8 @@ const waitMessage = controlledMessage({
 
 export const useFetchNewDomains = (domainName?: string) => {
   const myAddress = useMyAddress()
-  const { setIsFetchNewDomains, isFetchNewDomains, openManageModal, setProcessingDomains } = useManageDomainContext()
+  const { setIsFetchNewDomains, isFetchNewDomains, openManageModal, setProcessingDomains } =
+    useManageDomainContext()
   const upsertDomains = useCreateUpsertDomains()
   const removePendingOrder = useCreateRemovePendingOrders()
 

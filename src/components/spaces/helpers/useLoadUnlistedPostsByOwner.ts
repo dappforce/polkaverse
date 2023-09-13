@@ -14,7 +14,7 @@ const log = newLogger('useLoadUnlistedPostsByAddress')
 
 export function useLoadUnlistedPostsByAddress({ space, postIds }: Props) {
   const isMySpaces = useIsMyAddress(space.ownerId)
-  const canHidePost = useHasUserASpacePermission({ permission: 'HideAnyPost', space })
+  const canHidePost = useHasUserASpacePermission({ permission: 'UpdateAnyPost', space })
   const [myHiddenPosts, setMyHiddenPosts] = useState<PostWithSomeDetails[]>()
 
   useSubsocialEffect(

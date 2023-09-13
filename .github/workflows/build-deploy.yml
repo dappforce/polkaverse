@@ -4,13 +4,16 @@ on:
     branches:
       - staging
       - main
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   front_build:
     name: build & Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Extract branch name
         shell: bash
         run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
@@ -41,7 +44,7 @@ jobs:
 
       - if: ${{ github.ref == 'refs/heads/staging' }}
         name: Build staging image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
@@ -59,7 +62,7 @@ jobs:
 
       - if: ${{ github.ref == 'refs/heads/main' }}
         name: Build production image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
@@ -68,7 +71,10 @@ jobs:
           build-args: |
             GH_GA_ID=UA-204866512-2
             GH_APP_KIND=polkaverse
-            GH_CONNECTION_KIND=staging
+            GH_HCAPTCHA_SITE_KEY=${{ secrets.PROD_HCAPTCHA_SITE_KEY }}
+            GH_AMP_ID=2eeca0e8a0163c89e3f023c971e426a6
+            GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
+            GH_CONNECTION_KIND=main
 
           tags: |
             ${{ env.image }}
@@ -88,7 +94,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/staging' }}
     steps:
       - name: Checkout main
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Extract branch name
         shell: bash
@@ -118,7 +124,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout main
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Extract branch name
         shell: bash
@@ -136,9 +142,9 @@ jobs:
       - name: Update deploy file
         run: TAG=${{ env.name }}-$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|dappforce/subsocial-web-app:'${TAG}'|' $GITHUB_WORKSPACE/deployment/base/deployment.yaml
 
-      - name: Remove HPA 
+      - name: Remove HPA
         run: kubectl delete hpa -n sub-back web-app
-        
+
       - name: Deploy to DigitalOcean Kubernetes
         run: kubectl apply -k $GITHUB_WORKSPACE/deployment/overlays/production/
 
@@ -151,7 +157,6 @@ jobs:
       - name: Recreate HPA
         run: kubectl create -f $GITHUB_WORKSPACE/deployment/hpa/hpa.yaml
 
-
   front-bk-prod-deploy:
     name: bk-prod-deploy
     needs: front_build
@@ -159,7 +164,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout main
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Extract branch name
         shell: bash

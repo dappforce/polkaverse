@@ -1,24 +1,39 @@
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { AccountInfo } from '@polkadot/types/interfaces'
 import { asAccountId } from '@subsocial/api'
-import { newLogger, nonEmptyStr } from '@subsocial/utils'
-import React, { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react'
+import { isStr, newLogger, nonEmptyStr } from '@subsocial/utils'
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react'
 import { useDispatch } from 'react-redux'
+import useEmailAccount from 'src/hooks/useEmailAccount'
 import {
   useCreateReloadAccountIdsByFollower,
   useCreateReloadSpaceIdsRelatedToAccount,
 } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
-import { setMyAddress, signOut } from 'src/rtk/features/accounts/myAccountSlice'
+import {
+  setMyAddress,
+  setMyEmailAddress,
+  signOut,
+  unsetMyEmailAddress,
+} from 'src/rtk/features/accounts/myAccountSlice'
 import { fetchChainsInfo } from 'src/rtk/features/chainsInfo/chainsInfoSlice'
 import { fetchProfileSpace } from 'src/rtk/features/profiles/profilesSlice'
 import { fetchEntityOfSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
-import { AnyAccountId } from 'src/types'
+import { AnyAccountId, EmailAccount } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { useAccountSelector } from '../profile-selector/AccountSelector'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { reloadSpaceIdsFollowedByAccount } from '../spaces/helpers/reloadSpaceIdsFollowedByAccount'
 import { equalAddresses } from '../substrate'
+import { getSignerToken, isProxyAdded } from '../utils/OffchainSigner/ExternalStorage'
 import { desktopWalletConnect, mobileWalletConection } from './utils'
 //
 // Types
@@ -34,6 +49,7 @@ const recheckStatuses = ['UNAVAILABLE', 'UNAUTHORIZED']
 
 type StateProps = {
   accounts: InjectedAccountWithMeta[]
+  emailAccounts: EmailAccount[]
   status: Status
 }
 
@@ -44,18 +60,27 @@ function functionStub(): any {
 }
 
 export type MyAccountsContextProps = {
+  setEmailAddress: (emailAddress: string) => void
+  unsetEmailAddress: () => void
   setAddress: (address: string) => void
   signOut: () => void
   state: StateProps
   setAccounts: (account: InjectedAccountWithMeta[]) => void
+  setEmailAccounts: (emailAccounts: EmailAccount[]) => void
+  resetEmailAccounts: () => void
 }
 
 const contextStub: MyAccountsContextProps = {
+  setEmailAddress: functionStub,
+  unsetEmailAddress: functionStub,
   setAddress: functionStub,
   signOut: functionStub,
   setAccounts: functionStub,
+  setEmailAccounts: functionStub,
+  resetEmailAccounts: functionStub,
   state: {
     accounts: [],
+    emailAccounts: [],
     status: 'LOADING',
   },
 }
@@ -73,15 +98,32 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
   const reloadSpaceIdsRelatedToAccount = useCreateReloadSpaceIdsRelatedToAccount()
   const address = useMyAddress()
   const { isMobile } = useResponsiveSize()
+  const { getAllEmailAccounts } = useEmailAccount()
   const [recheckId, recheck] = useReducer(x => (x + 1) % 16384, 0)
 
   const [status, setStatus] = useState<Status>('LOADING')
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([])
 
+  const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([])
+
+  const resetEmailAccounts = useCallback(() => {
+    const emailAccounts = getAllEmailAccounts()
+    setEmailAccounts(emailAccounts)
+  }, [setEmailAccounts])
+
   useEffect(() => {
-    const props = { setAccounts, setStatus }
-    isMobile ? mobileWalletConection(props) : desktopWalletConnect(props)
+    resetEmailAccounts()
+  }, [])
+
+  const params = { setAccounts, setStatus }
+
+  useEffect(() => {
+    isMobile ? mobileWalletConection(params) : desktopWalletConnect(params)
   }, [recheckId])
+
+  useEffect(() => {
+    if (isMobile) mobileWalletConection(params)
+  }, [isMobile])
 
   useEffect(() => {
     if (!recheckStatuses.includes(status)) return
@@ -125,13 +167,20 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
     [address],
   )
 
-  const state = useMemo(() => ({ accounts, status }), [accounts, status])
+  const state = useMemo(
+    () => ({ accounts, status, emailAccounts }),
+    [accounts, status, emailAccounts],
+  )
 
   const value: MyAccountsContextProps = useMemo(() => {
     return {
+      setEmailAddress: (emailAddress: string) => dispatch(setMyEmailAddress(emailAddress)),
+      unsetEmailAddress: () => dispatch(unsetMyEmailAddress()),
       setAddress: (address: string) => dispatch(setMyAddress(address)),
       signOut: () => dispatch(signOut()),
       setAccounts,
+      setEmailAccounts,
+      resetEmailAccounts,
       state,
     }
   }, [state])
@@ -145,6 +194,16 @@ export function useMyAccountsContext() {
 
 export function useMyAccounts() {
   return useContext(MyAccountsContext).state
+}
+
+export function useMyEmailAddress() {
+  return useAppSelector(state => state.myAccount.emailAddress)
+}
+
+export function useIsUsingEmailOrSigner() {
+  const myAddress = useMyAddress()
+  const isUsingSigner = isStr(getSignerToken(myAddress!))
+  return useIsUsingEmail() || isUsingSigner
 }
 
 export function useMyAddress() {
@@ -171,6 +230,31 @@ export function useIsOneOfMyAddresses(anotherAddress?: AnyAccountId) {
 
 export function useIsSignedIn() {
   return nonEmptyStr(useMyAddress())
+}
+
+export function useIsMainProxyAdded() {
+  const myAddress = useMyAddress()
+  if (!myAddress) return false
+  return isProxyAdded(myAddress)
+}
+
+export function useGetSignerToken() {
+  const myAddress = useMyAddress()
+  if (!myAddress) return false
+  return getSignerToken(myAddress)
+}
+
+export function useIsUsingSignerAccount() {
+  const isMainProxyAdded = useIsMainProxyAdded()
+  const signerToken = useGetSignerToken()
+  const myEmailAddress = useMyEmailAddress()
+  return isStr(signerToken) && !isStr(myEmailAddress) && isMainProxyAdded
+}
+
+export function useIsUsingEmail() {
+  const signerToken = useGetSignerToken()
+  const myEmailAddress = useMyEmailAddress()
+  return isStr(signerToken) && isStr(myEmailAddress)
 }
 
 export default MyAccountsProvider

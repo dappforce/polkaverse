@@ -1,4 +1,4 @@
-import { asAccountId, SubsocialApi } from '@subsocial/api'
+import { asAccountId } from '@subsocial/api'
 import { nonEmptyArr, nonEmptyStr } from '@subsocial/utils'
 import { Tabs } from 'antd'
 import { useRouter } from 'next/router'
@@ -7,17 +7,17 @@ import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import { SearchResultsType } from 'src/components/utils/OffchainUtils'
 import { Segment } from 'src/components/utils/Segment'
 import { searchResults } from 'src/graphql/apis'
+import { useDfApolloClient } from 'src/graphql/ApolloProvider'
 import { GetSearchResults_searchQuery_hits } from 'src/graphql/__generated__/GetSearchResults'
 import messages from 'src/messages'
 import { isBlockedAccount } from 'src/moderation'
 import { useAppDispatch } from 'src/rtk/app/store'
-import { createFetchDataFn } from 'src/rtk/app/wrappers'
 import { fetchPosts } from 'src/rtk/features/posts/postsSlice'
 import { fetchProfileSpaces } from 'src/rtk/features/profiles/profilesSlice'
 import { fetchSpaces } from 'src/rtk/features/spaces/spacesSlice'
 import { AccountId, DataSourceTypes, ElasticIndex, PostId, SpaceId } from 'src/types'
 import { ElasticSearchIndexType } from 'src/types/graphql-global-types'
-import { DataListItemProps, InnerLoadMoreFn } from '../lists'
+import { DataListItemProps } from '../lists'
 import { DataListOptProps } from '../lists/DataList'
 import { InfiniteListByData } from '../lists/InfiniteList'
 import { PageContent } from '../main/PageWrapper'
@@ -26,6 +26,11 @@ import { ProfilePreviewByAccountId } from '../profiles/address-views'
 import { AddressProps } from '../profiles/address-views/utils/types'
 import { PublicSpacePreviewById } from '../spaces/SpacePreview'
 import { Loading } from '../utils'
+
+export type InnerLoadMoreFn<T = GetSearchResults_searchQuery_hits> = (
+  page: number,
+  size: number,
+) => Promise<T[]>
 
 const { TabPane } = Tabs
 
@@ -73,6 +78,20 @@ type InnerSearchResultListProps<T> = DataListOptProps &
     loadingLabel?: string
   }
 
+type GetSearcHitsProps = {
+  tab: ElasticSearchIndexType[]
+  tags: string[]
+  query: string
+  spaceId: string
+  offset: number
+  limit: number
+}
+
+type LoadMoreValuesProps = {
+  page: number
+  size: number
+}
+
 const isQueryAnAccountAddress = (query?: string | string[]) => {
   if (!query || !nonEmptyStr(query)) return undefined
 
@@ -88,52 +107,31 @@ const InnerSearchResultList = <T extends SearchResultsType>(
   const router = useRouter()
   const dispatch = useAppDispatch()
   const { subsocial: api, isApiReady } = useSubsocialApi()
+  const client = useDfApolloClient()
 
   const getReqParam = (param: ReqParam) => {
     return router.query[param]
   }
 
-  const getSearchHits = createFetchDataFn<GetSearchResults_searchQuery_hits[]>([])({
-    // Need to define this since it can't be undefined
-    chain: async ({ api }: { api: SubsocialApi }) => {
-      return []
-    },
-    squid: async (
-      {
-        tab,
-        tags,
-        query,
-        spaceId,
-        offset,
-        limit,
-      }: {
-        tab: ElasticSearchIndexType[]
-        tags: string[]
-        query: string
-        spaceId: string
-        offset: number
-        limit: number
-      },
-      client,
-    ) => {
-      const hits = await searchResults(client, {
-        indexes: tab,
-        spaceId,
-        q: query,
-        tags,
-        offset,
-        limit,
-      })
+  const getSearchHits = async ({ tab, spaceId, query, tags, offset, limit }: GetSearcHitsProps) => {
+    const hits = await searchResults(client!, {
+      indexes: tab,
+      spaceId,
+      q: query,
+      tags,
+      offset,
+      limit,
+    })
 
-      const filteredHits: GetSearchResults_searchQuery_hits[] = hits.filter(
-        hit => hit !== null,
-      ) as GetSearchResults_searchQuery_hits[]
+    const filteredHits: GetSearchResults_searchQuery_hits[] = hits.filter(
+      hit => hit !== null,
+    ) as GetSearchResults_searchQuery_hits[]
 
-      return filteredHits
-    },
-  })
+    return filteredHits
+  }
 
-  const querySearch: InnerLoadMoreFn<SearchResultsType> = async (page, size) => {
+  const querySearch = async (loadMoreValues: LoadMoreValuesProps) => {
+    const { page, size } = loadMoreValues
     const tab = getReqParam('tab')
     const query = getReqParam('q') as string
     const tags = getReqParam('tags') as string[]
@@ -147,25 +145,20 @@ const InnerSearchResultList = <T extends SearchResultsType>(
     if (Array.isArray(validTab)) usedTab = validTab
     else usedTab = [validTab]
 
-    const hits = await getSearchHits(DataSourceTypes.SQUID, {
-      chain: {
-        api,
-      },
-      squid: {
-        tab: usedTab,
-        spaceId,
-        query,
-        tags,
-        offset,
-        limit: size,
-      },
+    const hits = await getSearchHits({
+      tab: usedTab,
+      spaceId,
+      query,
+      tags,
+      offset,
+      limit: size,
     })
 
     const ownerIds: AccountId[] = []
     const spaceIds: SpaceId[] = []
     const postIds: PostId[] = []
 
-    hits.forEach(({ _index, _id }) => {
+    hits!.forEach(({ _index, _id }) => {
       switch (_index) {
         case ElasticIndex.spaces: {
           spaceIds.push(_id)
@@ -187,8 +180,15 @@ const InnerSearchResultList = <T extends SearchResultsType>(
       dispatch(fetchProfileSpaces({ ids: ownerIds, api, dataSource: DataSourceTypes.SQUID })),
       dispatch(fetchPosts({ ids: postIds, api, dataSource: DataSourceTypes.SQUID })),
     ])
+
     return hits || []
   }
+
+  const loadMore: InnerLoadMoreFn = (page, size) =>
+    querySearch({
+      size,
+      page,
+    })
 
   const accountQuery = isQueryAnAccountAddress(getReqParam('q'))
 
@@ -204,7 +204,7 @@ const InnerSearchResultList = <T extends SearchResultsType>(
               </div>
             ) : null
           }
-          loadMore={querySearch as InnerLoadMoreFn<any>}
+          loadMore={loadMore as InnerLoadMoreFn<any>}
           customNoData={accountQuery ? <></> : undefined}
         />
       ) : (

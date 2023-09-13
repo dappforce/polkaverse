@@ -1,12 +1,15 @@
-import { Divider } from 'antd'
+import { Button, Divider } from 'antd'
 import { useState } from 'react'
+import { EmailAccount } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
+import { StepsEnum, useAuth } from '../auth/AuthContext'
 import { useMyAccounts, useMyAccountsContext, useMyAddress } from '../auth/MyAccountsContext'
+import styles from '../auth/signIn/email/SignInModalContent.module.sass'
 import { ProfilePreviewByAccountId, SelectAddressPreview } from '../profiles/address-views'
 import SubTitle from '../utils/SubTitle'
 
 import { asAccountId } from '@subsocial/api'
-import { isEmptyArray } from '@subsocial/utils'
+import { isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
 import config from 'src/config'
 import { isMobileDevice } from 'src/config/Size.config'
 import { useSelectProfile } from 'src/rtk/app/hooks'
@@ -21,23 +24,41 @@ type SelectAccountItems = {
   accounts: string[]
   withShortAddress?: boolean
   onItemClick?: (address: string) => void
+  emailAccounts?: EmailAccount[]
 }
+
+type SelectEmailItemsProps = Omit<SelectAccountItems, 'accounts'>
 
 type AccountItemProps = {
   address: string
-  onClick?: (address: string) => void
+  onClick?: (address: string, emailAddress?: string) => void
   withShortAddress?: boolean
+  emailAddress?: string
+  isOnSelectAccount?: boolean
 }
-const AccountItem = ({ address, onClick, withShortAddress }: AccountItemProps) => {
+
+const AccountItem = ({
+  address,
+  onClick,
+  withShortAddress,
+  emailAddress,
+  isOnSelectAccount,
+}: AccountItemProps) => {
   const profile = useSelectProfile(address)
 
   return (
     <div
       className='SelectAccountItem'
       style={{ cursor: 'pointer', height: 'auto' }}
-      onClick={() => onClick && onClick(address)}
+      onClick={() => onClick && onClick(address, emailAddress)}
     >
-      <SelectAddressPreview address={address} owner={profile} withShortAddress={withShortAddress} />
+      <SelectAddressPreview
+        address={address}
+        owner={profile}
+        withShortAddress={withShortAddress}
+        emailAddress={emailAddress}
+        isOnSelectAccount={isOnSelectAccount}
+      />
     </div>
   )
 }
@@ -46,10 +67,12 @@ const SelectAccountItems = ({
   accounts: addresses,
   withShortAddress,
   onItemClick,
+  emailAccounts,
 }: SelectAccountItems) => {
-  const { setAddress } = useMyAccountsContext()
+  const { setAddress, setEmailAddress, unsetEmailAddress } = useMyAccountsContext()
 
-  const onAccountClick = (address: string) => {
+  const onAccountClick = (address: string, emailAddress?: string) => {
+    emailAddress ? setEmailAddress(emailAddress) : unsetEmailAddress()
     setAddress(address)
     onItemClick?.(address)
   }
@@ -64,6 +87,48 @@ const SelectAccountItems = ({
           withShortAddress={withShortAddress}
         />
       ))}
+      {emailAccounts &&
+        emailAccounts.length > 0 &&
+        emailAccounts.map(({ accountAddress, email }) => (
+          <AccountItem
+            key={accountAddress}
+            address={accountAddress}
+            emailAddress={email}
+            onClick={onAccountClick}
+            withShortAddress={withShortAddress}
+            // isOnSelectAccount={true}
+          />
+        ))}
+    </div>
+  )
+}
+
+const SelectEmailItems = ({
+  withShortAddress,
+  onItemClick,
+  emailAccounts,
+}: SelectEmailItemsProps) => {
+  const { setEmailAddress, setAddress, unsetEmailAddress } = useMyAccountsContext()
+
+  const onAccountClick = (address: string, emailAddress?: string) => {
+    emailAddress ? setEmailAddress(emailAddress) : unsetEmailAddress()
+    setAddress(address)
+    onItemClick?.(address)
+  }
+
+  return (
+    <div className='SelectAccountSection'>
+      {emailAccounts &&
+        emailAccounts.map(({ accountAddress, email }) => (
+          <AccountItem
+            key={accountAddress}
+            address={accountAddress}
+            emailAddress={email}
+            onClick={onAccountClick}
+            withShortAddress={withShortAddress}
+            isOnSelectAccount={true}
+          />
+        ))}
     </div>
   )
 }
@@ -71,30 +136,31 @@ const SelectAccountItems = ({
 const renderExtensionContent = (content: JSX.Element) => {
   return (
     <>
-      <SubTitle title={'Extension accounts:'} />
+      <SubTitle title={'Accounts:'} />
       {content}
     </>
   )
 }
 
-const noExtension = !isMobileDevice ? (
-  <div className='text-center my-3'>
-    <div className='mb-3 mx-3'>
-      <a
-        className='DfBoldBlackLink'
-        href='https://github.com/polkadot-js/extension'
-        rel='noreferrer'
-        target='_blank'
-      >
-        Polkadot extension
-      </a>{' '}
-      was not found or disabled. Please read our{' '}
-      <a href='/docs/sign-up' rel='noreffer'>
-        Sign Up guide
-      </a>
-      .
-    </div>
-    {/* <div className='mx-5'>
+const noExtension = (onClickSignIn: () => void, onClickRegister: () => void) =>
+  !isMobileDevice ? (
+    <div className='text-center my-3'>
+      <div className='mb-3 mx-3'>
+        <a
+          className='DfBoldBlackLink'
+          href='https://github.com/polkadot-js/extension'
+          rel='noreferrer'
+          target='_blank'
+        >
+          Polkadot extension
+        </a>{' '}
+        was not found or disabled. Please read our{' '}
+        <a href='/docs/sign-up' rel='noreffer'>
+          Sign Up guide
+        </a>
+        .
+      </div>
+      {/* <div className='mx-5'>
         <Button block className='mb-2' type='default' href='https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd' target='_blank' >
           <Avatar size={20} src='/chrome.svg' />
           <span className='ml-2'>polkadot.js for Chrome</span>
@@ -104,43 +170,19 @@ const noExtension = !isMobileDevice ? (
           <span className='ml-2'>polkadot.js for Firefox</span>
         </Button>
       </div> */}
-  </div>
-) : (
-  <div className='p-3 text-center'>
-    {`You can read ${config.appName} content on any device, however, in order to create new posts, write comments and follow others, you will need to use a desktop.`}
-    {'This is because this web app uses the '}
-    <a target='_blank' rel='noreferrer' href='https://polkadot.js.org/extension/'>
-      Polkadot.js Extension
-    </a>
-    {
-      ' to sign your actions (transactions) as they recorded on-chain. The extension is available for the desktop versions of '
-    }
-    <a
-      target='_blank'
-      rel='noreferrer'
-      href='https://addons.mozilla.org/en-US/firefox/addon/polkadot-js-extension/'
-    >
-      Firefox
-    </a>
-    {', '}
-    <a
-      target='_blank'
-      rel='noreferrer'
-      href='https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd'
-    >
-      Chrome
-    </a>
-    {', and other '}
-    <a
-      target='_blank'
-      rel='noreferrer'
-      href='https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd'
-    >
-      Chrome-based
-    </a>
-    {' browsers.'}
-  </div>
-)
+    </div>
+  ) : (
+    <div className='p-3 text-center'>
+      {`You can continue reading ${config.appName} content without signing in, however, in order to create new posts, write comments, and follow others, you will need to`}
+      <Button className={styles.ButtonLinkDiv} type='link' onClick={() => onClickSignIn()}>
+        sign in
+      </Button>{' '}
+      {"with an email address and password. If you don't already have an account, you can"}
+      <Button className={styles.ButtonLinkDiv} type='link' onClick={() => onClickRegister()}>
+        create one.
+      </Button>
+    </div>
+  )
 
 const noExtensionAccounts = (
   <div className='m-3 text-center'>
@@ -165,7 +207,7 @@ const CurrentAccount = ({ currentAddress }: CurrentAccountProps) => {
 
   return (
     <>
-      <div className='p-3 pb-0'>
+      <div className='p-3 pt-4 pb-0'>
         <ProfilePreviewByAccountId
           address={currentAddress}
           size={60}
@@ -193,20 +235,51 @@ export const AccountSelector = ({
   const { switchAccountsSet, currentAddress, status } = useAccountSelector({
     includeCurrentAccount: overviewCurrentAccount,
   })
+  const { emailAccounts } = useMyAccounts()
   const { apiState } = useSubstrate()
+
+  const { setCurrentStep } = useAuth()
+
+  const excludeCurrentEmailAccounts = emailAccounts.filter(account => {
+    const walletAddress = toSubsocialAddress(account.accountAddress) ?? account.accountAddress
+    if (walletAddress !== currentAddress) return account
+    return
+  })
 
   const ExtensionAccountPanel = () => {
     const count = switchAccountsSet.size
-
     // const isInjectCurrentAddress = currentAddress && keyring.getAccount(currentAddress)?.meta.isInjected // FIXME: hack that hides NoAccount msg!!!
 
     // if (!injectedAccounts && apiState !== 'READY') return <Loading label='Accounts injecting...' />
 
     if (status === 'UNAUTHORIZED') return unauthExtension
 
-    if (status === 'UNAVAILABLE') return noExtension
+    if (status === 'UNAVAILABLE' && excludeCurrentEmailAccounts.length > 0)
+      return renderExtensionContent(
+        <SelectEmailItems
+          withShortAddress
+          onItemClick={onItemClick}
+          emailAccounts={excludeCurrentEmailAccounts}
+        />,
+      )
 
-    if (!count && currentAddress) return null
+    if (status === 'UNAVAILABLE' && emailAccounts.length === 0)
+      return noExtension(
+        () => {
+          setCurrentStep(StepsEnum.SignIn)
+        },
+        () => {
+          setCurrentStep(StepsEnum.SignUp)
+        },
+      )
+
+    if (
+      !count &&
+      currentAddress &&
+      emailAccounts.length > 0 &&
+      excludeCurrentEmailAccounts.length === 0
+    )
+      return null
 
     if (status === 'NOACCOUNT') return renderExtensionContent(noExtensionAccounts)
 
@@ -217,6 +290,7 @@ export const AccountSelector = ({
         accounts={extensionAddresses}
         withShortAddress
         onItemClick={onItemClick}
+        emailAccounts={excludeCurrentEmailAccounts}
       />,
     )
   }
@@ -230,7 +304,8 @@ export const AccountSelector = ({
 
   return (
     <div>
-      {status === 'OK' && withCurrentAccount && <CurrentAccount currentAddress={currentAddress} />}
+      {(status === 'OK' || (status === 'UNAVAILABLE' && emailAccounts.length > 0)) &&
+        withCurrentAccount && <CurrentAccount currentAddress={currentAddress} />}
       <div>
         <ExtensionAccountPanel />
       </div>
@@ -249,7 +324,7 @@ export const useAccountSelector = ({
 }: AccountSelectorProps) => {
   const [switchAccountsSet, setSwitchAccounts] = useState<Set<string>>(new Set())
   const currentAddress = useMyAddress()
-  const { accounts, status } = useMyAccounts()
+  const { accounts, emailAccounts, status } = useMyAccounts()
   const dispatch = useAppDispatch()
 
   useSubsocialEffect(
@@ -259,6 +334,9 @@ export const useAccountSelector = ({
       let isMounted = true
 
       let switchAccounts = accounts.map(x => asAccountId(x.address)?.toString()) as string[]
+      let switchEmailAddresses = emailAccounts.map(x =>
+        asAccountId(x.accountAddress)?.toString(),
+      ) as string[]
 
       if (!includeCurrentAccount) {
         switchAccounts = switchAccounts.filter(acc => acc && acc !== currentAddress)
@@ -267,17 +345,30 @@ export const useAccountSelector = ({
       if (withProfiles) {
         isMounted &&
           dispatch(
-            fetchProfileSpaces({ api, ids: switchAccounts, dataSource: DataSourceTypes.SQUID }),
+            fetchProfileSpaces({
+              api,
+              ids: [...switchAccounts, ...switchEmailAddresses],
+              dataSource: DataSourceTypes.SQUID,
+            }),
           )
       }
 
-      isMounted && setSwitchAccounts(new Set(switchAccounts))
+      if (isMounted) {
+        setSwitchAccounts(new Set(switchAccounts))
+      }
 
       return () => {
         isMounted = false
       }
     },
-    [currentAddress, dispatch, accounts.length, includeCurrentAccount],
+    [
+      currentAddress,
+      dispatch,
+      accounts.length,
+      emailAccounts.length,
+      includeCurrentAccount,
+      status,
+    ],
   )
 
   return {

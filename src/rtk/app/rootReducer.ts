@@ -2,7 +2,10 @@ import { combineReducers } from '@reduxjs/toolkit'
 import myAccount from '../features/accounts/myAccountSlice'
 import spaceEditors from '../features/accounts/spaceEditorsSlice'
 import chainsInfo from '../features/chainsInfo/chainsInfoSlice'
+import chat from '../features/chat/chatSlice'
+import enableConfirmation from '../features/confirmationPopup/enableConfirmationSlice'
 import contents from '../features/contents/contentsSlice'
+import ordersById from '../features/domainPendingOrders/pendingOrdersSlice'
 import domainByOwner from '../features/domains/domainsByOwnerSlice'
 import domains from '../features/domains/domainsSlice'
 import topLevelDomains from '../features/domains/topLevelDomains'
@@ -15,12 +18,11 @@ import followedAccountIds from '../features/profiles/followedAccountIdsSlice'
 import profileSpaces from '../features/profiles/profilesSlice'
 import myPostReactions from '../features/reactions/myPostReactionsSlice'
 import replyIds from '../features/replies/repliesSlice'
+import sellerConfig from '../features/sellerConfig/sellerConfigSlice'
 import followedSpaceIds from '../features/spaceIds/followedSpaceIdsSlice'
 import ownSpaceIds from '../features/spaceIds/ownSpaceIdsSlice'
 import spaceIdsWithRolesByAccount from '../features/spaceIds/spaceIdsWithRolesByAccountSlice'
 import spaces from '../features/spaces/spacesSlice'
-import ordersById from '../features/domainPendingOrders/pendingOrdersSlice'
-import sellerConfig from '../features/sellerConfig/sellerConfigSlice'
 
 const rootReducer = combineReducers({
   contents,
@@ -45,6 +47,8 @@ const rootReducer = combineReducers({
   onBoarding,
   ordersById,
   sellerConfig,
+  enableConfirmation,
+  chat,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

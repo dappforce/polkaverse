@@ -29,7 +29,7 @@ const offchainPostFilterOpt = enableGraphQl
   : []
 
 export const postFilterOpt = [
-  { label: 'Dotsama News', value: 'suggested' },
+  { label: 'Polkadot News', value: 'suggested' },
   ...offchainPostFilterOpt,
 ]
 
@@ -50,7 +50,7 @@ const offchainSpaceFilterOpt = enableGraphQl
   : []
 
 export const spaceFilterOpt = [
-  { label: 'Dotsama Spaces', value: 'suggested' },
+  { label: 'Polkadot Spaces', value: 'suggested' },
   ...offchainSpaceFilterOpt,
 ]
 

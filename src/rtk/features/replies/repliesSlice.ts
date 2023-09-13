@@ -1,5 +1,5 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
-import { bnsToIds, isEmptyArray } from '@subsocial/utils'
+import { idToBn, isEmptyArray } from '@subsocial/utils'
 import {
   CommonFetchProps,
   createSelectUnknownIds,
@@ -8,7 +8,7 @@ import {
   ThunkApiConfig,
 } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { AccountId, idToBn, PostId, PostWithSomeDetails } from 'src/types'
+import { AccountId, PostId, PostWithSomeDetails } from 'src/types'
 import { fetchPosts } from '../posts/postsSlice'
 
 export type ReplyIdsByPostId = {
@@ -87,9 +87,7 @@ export const fetchPostReplyIds = createAsyncThunk<
     }
   }
 
-  const replyBnIds = await api.blockchain.getReplyIdsByPostId(idToBn(parentId))
-
-  const replyIds = bnsToIds(replyBnIds)
+  const replyIds = await api.blockchain.getReplyIdsByPostId(idToBn(parentId))
 
   await dispatch(
     fetchPosts({ api, withReactionByAccount: myAddress, ids: replyIds, withSpace: false }),

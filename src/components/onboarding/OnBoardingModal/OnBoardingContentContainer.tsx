@@ -72,13 +72,18 @@ export default function OnBoardingContentContainer({
       {openState === 'full-on-boarding' && !success && (
         <div className={clsx('d-flex justify-content-between mb-3')}>
           <MutedDiv className={clsx('d-flex align-items-center')}>
-            <ArrowLeftOutlined
-              className='mr-2'
-              onClick={!loading ? () => onBackClick() : undefined}
-            />
-            <span className='font-weight-bold'>
-              Step {currentStepIndex + firstStepOffset}/{totalSteps - 1 + firstStepOffset}
-            </span>
+            {!loading && (
+              <>
+                <ArrowLeftOutlined
+                  className='mr-2'
+                  onClick={!loading ? () => onBackClick() : undefined}
+                />
+
+                <span className='font-weight-bold'>
+                  Step {currentStepIndex + firstStepOffset}/{totalSteps - 1 + firstStepOffset}
+                </span>
+              </>
+            )}
           </MutedDiv>
           <Button
             type='link'
@@ -125,7 +130,7 @@ export default function OnBoardingContentContainer({
           </MutedDiv>
         )}
 
-        {isUsingCustomFooter && (
+        {isUsingCustomFooter && !loading && (
           <CustomFooterAction
             goToNextStep={goToNextStep}
             loading={loading}
@@ -145,7 +150,7 @@ export default function OnBoardingContentContainer({
             block
             size='large'
             className='mt-4'
-            tx='utility.batch'
+            tx={'utility.batch'}
             onSuccess={() => {
               setLoading(false)
               if (openState === 'partial') {

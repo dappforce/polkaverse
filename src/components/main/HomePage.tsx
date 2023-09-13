@@ -10,6 +10,7 @@ import { GetHomePageData } from 'src/graphql/__generated__/GetHomePageData'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { PostKind } from 'src/types/graphql-global-types'
 import { useIsSignedIn } from '../auth/MyAccountsContext'
+import OpenCommBanner from '../utils/banners/OpenCommBanner'
 import Section from '../utils/Section'
 import style from './HomePage.module.sass'
 import { dateFilterOpt, Filters, PostFilterView, SpaceFilterView } from './HomePageFilters'
@@ -59,8 +60,8 @@ const HomeTabs = (props: TabsProps) => {
     <>
       <Tabs activeKey={tabKey} onChange={setKey} className={`${className} ${style.DfTabs}`}>
         <TabPane tab='My feed' key='feed' />
-        <TabPane tab={enableGraphQl ? 'Posts' : 'Dotsama News'} key='posts' />
-        <TabPane tab={enableGraphQl ? 'Spaces' : 'Dotsama Spaces'} key='spaces' />
+        <TabPane tab={enableGraphQl ? 'Posts' : 'Polkadot News'} key='posts' />
+        <TabPane tab={enableGraphQl ? 'Spaces' : 'Polkadot Spaces'} key='spaces' />
       </Tabs>
       <Filters tabKey={tabKey} isAffix={isAffix} />
     </>
@@ -175,6 +176,7 @@ const HomePage: NextPage<Props> = props => (
       withOnBoarding
     >
       {/* <CrowdloanProgress /> */}
+      <OpenCommBanner />
       <TabsHomePage {...props} />
     </PageContent>
   </>

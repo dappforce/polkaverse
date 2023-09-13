@@ -1,16 +1,13 @@
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { isFunction } from '@polkadot/util'
-import { isEmptyArray, parseDomain } from '@subsocial/utils'
+import { parseDomain } from '@subsocial/utils'
 import { Button, Card, Divider, Radio, RadioChangeEvent, Result, Row, Tag, Tooltip } from 'antd'
 import React, { useEffect } from 'react'
 import config from 'src/config'
 import { DomainEntity } from 'src/rtk/features/domains/domainsSlice'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
+import { useSelectPendingOrderById } from '../../rtk/features/domainPendingOrders/pendingOrdersHooks'
 import {
-  useSelectPendingOrderById,
-} from '../../rtk/features/domainPendingOrders/pendingOrdersHooks'
-import {
-  useBuildDomainsWithTldByDomain,
   useFetchDomain,
   useIsReservedWord,
   useIsSupportedTld,
@@ -20,8 +17,8 @@ import { Loading, LocalIcon } from '../utils'
 import { MutedDiv, MutedSpan } from '../utils/MutedText'
 import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
-import { DomainDetails, getTime, ResultContainer } from './utils'
 import RegisterDomainButton from './registerDomainModal/RegisterDomainModal'
+import { DomainDetails, getTime, ResultContainer } from './utils'
 
 type DomainItemProps = {
   domain: string
@@ -146,13 +143,12 @@ const DomainAction = ({ domain }: DomainProps) => {
 //     <>
 //       {structs.map(d => {
 //         const action = Action ? <Action domain={d} /> : null
-//
+
 //         return <DomainItem key={d.id} domain={d.id} action={action} />
 //       })}
 //     </>
 //   )
 // }
-//
 
 type FoundDomainCardProps = {
   domain: DomainDetails
@@ -177,15 +173,16 @@ const ReservedDomainCard = ({ domain }: Omit<DomainItemProps, 'action'>) => {
 }
 
 // const SuggestedDomains = ({ domain: { id } }: DomainProps) => {
-//   const { domain, tld = config.resolvedDomain } = parseDomain(id)
-//   const domains = config.suggestedTlds?.filter(_tld => _tld !== tld).map(tld => `${domain}.${tld}`)
-//
+//   const { domain } = parseDomain(id)
+//   const domains = config.suggestedTlds?.map(tld => `${domain}.${tld}`)
+
 //   const { loading, domainsStruct = [] } = useFetchDomains(domains || [])
-//
+
 //   if (loading) return null
-//
+
 //   return (
-//     <ResultContainer title='Suggested Domains' icon={<LocalIcon path={'/icons/lamp.svg'} />}>
+//     // <ResultContainer title='Suggested Domains' icon={<LocalIcon path={'/icons/lamp.svg'} />}>
+//     <ResultContainer title='Result' icon={<LocalIcon path={'/icons/reward.svg'} />}>
 //       <FoundDomains structs={domainsStruct} Action={DomainAction} />
 //     </ResultContainer>
 //   )
@@ -307,10 +304,10 @@ const ChooseDomain = ({ domain }: DomainProps) => {
 }
 
 export const EligibleDomainsSection = ({ domain }: FoundDomainCardProps) => {
-  const domains = useBuildDomainsWithTldByDomain(domain)
+  // const domains = useBuildDomainsWithTldByDomain(domain)
   const { isReserved, loading: checkingWord } = useIsReservedWord(domain.id)
 
-  if (isEmptyArray(domains)) return null
+  // if (isEmptyArray(domains)) return null
 
   if (checkingWord) return <Loading label='Check domain...' />
 
@@ -319,7 +316,7 @@ export const EligibleDomainsSection = ({ domain }: FoundDomainCardProps) => {
   return (
     <div className='GapBig d-flex flex-column mt-4'>
       <ChooseDomain domain={domain} />
-      {/*<SuggestedDomains domain={domain} />*/}
+      {/* <SuggestedDomains domain={domain} /> */}
       {/*<DomainsList domains={domains} />*/}
     </div>
   )

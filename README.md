@@ -30,7 +30,7 @@ yarn
 Dev mode supports hot reloads – this is very helpful when developing UI because you can see changes in your browser without restarting the app. But it takes some time (in seconds) to compile the updated parts of the app, after you made changes to the source code.
 
 ```sh
-yarn dev
+yar dev
 ```
 
 ### Option B: Run in a PROD mode

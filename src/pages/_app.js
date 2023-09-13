@@ -33,6 +33,7 @@ import config from 'src/config'
 import '@subsocial/definitions/interfaces/types-lookup'
 import '@subsocial/definitions/interfaces/augment-types'
 import '@subsocial/definitions/interfaces/augment-api'
+import AnalyticProvider from 'src/providers/AnalyticContext'
 
 dayjs.extend(relativeTime)
 dayjs.extend(localizedFormat)
@@ -62,16 +63,23 @@ function MyApp(props) {
           rel='stylesheet'
         />
       </Head>
-      <NextNProgress color='#eb2f96' />
+      <NextNProgress
+        color='#eb2f96'
+        options={{
+          showSpinner: false,
+        }}
+      />
       <Provider store={store}>
         {/* <AdBlockModal /> */}
-        <DfApolloProvider initialApolloState={pageProps.initialApolloState}>
-          <ThemeProvider defaultTheme={config.themeName}>
-            <MainPage>
-              <Component {...pageProps} />
-            </MainPage>
-          </ThemeProvider>
-        </DfApolloProvider>
+        <AnalyticProvider>
+          <DfApolloProvider initialApolloState={pageProps.initialApolloState}>
+            <ThemeProvider defaultTheme={config.themeName}>
+              <MainPage>
+                <Component {...pageProps} />
+              </MainPage>
+            </ThemeProvider>
+          </DfApolloProvider>
+        </AnalyticProvider>
       </Provider>
     </>
   )

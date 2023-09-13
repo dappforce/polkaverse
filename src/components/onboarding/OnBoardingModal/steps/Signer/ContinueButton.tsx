@@ -3,32 +3,39 @@ import { getProxyAddress } from 'src/components/utils/OffchainSigner/ExternalSto
 import TxButton from 'src/components/utils/TxButton'
 
 type ContinueButtonProps = {
-  goToNextStep: (config?: { forceTerminateFlow?: boolean; isSkipped?: boolean }) => void
+  isRemovingProxy?: boolean
   loading: boolean
   setLoading: (loading: boolean) => void
-  isPartial?: boolean
+  onSuccess: () => void
+  label?: string
 }
 
-const ContinueButton = ({ isPartial, loading, setLoading, goToNextStep }: ContinueButtonProps) => {
+const PartialContinueButton = ({
+  loading,
+  setLoading,
+  onSuccess,
+  isRemovingProxy,
+  label,
+}: ContinueButtonProps) => {
   const myAddress = useMyAddress()
-
   const proxyAddress = getProxyAddress(myAddress!)
+
+  const txParams = isRemovingProxy ? undefined : [proxyAddress, 'SocialActions', 0]
+  const tx = isRemovingProxy ? 'proxy.removeProxies' : 'freeProxy.addFreeProxy'
+
+  const btnLabel = label || 'Continue'
 
   return (
     <TxButton
-      isFreeTx
       type='primary'
       block
       size='large'
       className='mt-4'
-      params={[proxyAddress, 'Any', 0]}
-      tx='proxy.addProxy'
+      params={txParams}
+      tx={tx}
       onSuccess={() => {
         setLoading(false)
-        if (isPartial) {
-          goToNextStep({ forceTerminateFlow: true })
-          return
-        }
+        onSuccess()
       }}
       onFailed={() => setLoading(false)}
       loading={loading}
@@ -40,9 +47,9 @@ const ContinueButton = ({ isPartial, loading, setLoading, goToNextStep }: Contin
         setLoading(true)
       }}
     >
-      Continue
+      {btnLabel}
     </TxButton>
   )
 }
 
-export default ContinueButton
+export default PartialContinueButton

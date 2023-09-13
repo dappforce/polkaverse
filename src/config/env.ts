@@ -9,9 +9,12 @@ export const isDevMode = !isProdMode
 
 export const appKind = (process.env['NEXT_PUBLIC_APP_KIND'] || 'polkaverse') as unknown as AppKind
 
-export const connectionKind = (process.env['NEXT_PUBLIC_CONNECTION_KIND'] || 'main') as unknown as ConnectionKind
+export const connectionKind = (process.env['NEXT_PUBLIC_CONNECTION_KIND'] ||
+  'main') as unknown as ConnectionKind
 
-export const enableMaintenancePage = process.env['NEXT_PUBLIC_ENABLE_MAINTENANCE_PAGE'] as boolean | undefined
+export const enableMaintenancePage = process.env['NEXT_PUBLIC_ENABLE_MAINTENANCE_PAGE'] as
+  | boolean
+  | undefined
 export const maintenanceMsg = process.env['NEXT_PUBLIC_MAINTENANCE_TEXT']
 
 export const gaId = process.env['NEXT_PUBLIC_GA_ID'] || ''
@@ -21,6 +24,8 @@ export const hCaptchaSiteKey = process.env['NEXT_PUBLIC_HCAPTCHA_SITE_KEY'] || '
 export const appOverrides: Partial<AppConfig> = {
   appBaseUrl: process.env['NEXT_PUBLIC_APP_BASE_URL'],
 }
+
+export const ampId = process.env['AMP_ID'] || ''
 
 /**
  * Enable or disable the available features of this web app by overriding them in the .env file.
@@ -34,8 +39,12 @@ export const featureOverrides: SubsocialFeatures = {
   enableEmailSettings: process.env['NEXT_PUBLIC_ENABLE_EMAIL_SETTINGS'] as boolean | undefined,
   enableFaucet: process.env['NEXT_PUBLIC_ENABLE_FAUCET'] as boolean | undefined,
   enableGraphQl: process.env['NEXT_PUBLIC_ENABLE_GRAPHQL'] as boolean | undefined,
-  enableContributionPage: process.env['NEXT_PUBLIC_ENABLE_CONTRIBUTION_PAGE'] as boolean | undefined,
-  enableOnchainActivities: process.env['NEXT_PUBLIC_ENABLE_ONCHAIN_ACTIVITIES'] as boolean | undefined,
+  enableContributionPage: process.env['NEXT_PUBLIC_ENABLE_CONTRIBUTION_PAGE'] as
+    | boolean
+    | undefined,
+  enableOnchainActivities: process.env['NEXT_PUBLIC_ENABLE_ONCHAIN_ACTIVITIES'] as
+    | boolean
+    | undefined,
   enableSquidDataSource: process.env['NEXT_PUBLIC_ENABLE_SQUID_DATA_SOURCE'] as boolean | undefined,
 }
 

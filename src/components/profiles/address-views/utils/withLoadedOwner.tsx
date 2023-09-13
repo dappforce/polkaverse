@@ -1,5 +1,5 @@
 import React from 'react'
-import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import { useMyAddress, useMyEmailAddress } from 'src/components/auth/MyAccountsContext'
 import { useFetchProfileSpace, useSelectProfile } from 'src/rtk/app/hooks'
 import { DataSourceTypes } from 'src/types'
 import { Loading } from '../../../utils'
@@ -19,7 +19,9 @@ export function withProfileByAccountId<P = Props>(Component: React.ComponentType
     const { address } = props as unknown as Props
     const profile = useSelectProfile(address.toString())
 
-    return <Component {...props} owner={profile} />
+    const emailAddress = useMyEmailAddress()
+
+    return <Component {...props} owner={profile} emailAddress={emailAddress} />
   })
 }
 

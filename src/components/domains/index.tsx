@@ -4,11 +4,11 @@ import clsx from 'clsx'
 import router from 'next/router'
 import { useEffect, useState } from 'react'
 import { DomainServerProps } from 'src/pages/dd'
+import { useFetchDomainPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { useMyDomains } from 'src/rtk/features/domains/domainHooks'
+import { useFetchSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { PageContent } from '../main/PageWrapper'
-import { useFetchDomainPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
-import { useFetchSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import useSubstrate from '../substrate/useSubstrate'
 import { Loading } from '../utils'
@@ -24,7 +24,7 @@ import PendingOrdersSection from './pendingOrders'
 import { DomainDetails, UnamesLearnMoreLink, useFetchNewDomains } from './utils'
 
 const tabs = ['register', 'manage'] as const
-type TabKey = typeof tabs[number]
+type TabKey = (typeof tabs)[number]
 const getTabKey = (tab: TabKey) => tab
 
 const DomainMarketSection = ({ promoCode }: DomainServerProps) => {
@@ -37,7 +37,7 @@ const DomainMarketSection = ({ promoCode }: DomainServerProps) => {
   const onSearchDomain = async (domain?: string) => {
     if (!domain) return
     const data = await subsocial.findDomain(domain)
-    
+
     setDomain({
       id: domain,
       ...data,
@@ -59,7 +59,7 @@ const DomainMarketSection = ({ promoCode }: DomainServerProps) => {
   const myDomainsCount = domains.length
 
   const maxPromoDomainsPerAccount =
-    api?.consts.domains.maxPromoDomainsPerAccount.toHuman() as unknown as number
+    api?.consts.domains.maxDomainsPerAccount.toHuman() as unknown as number
 
   const canRegisterAccount = myDomainsCount < maxPromoDomainsPerAccount
 
@@ -149,7 +149,7 @@ export const DomainRegisterPage = ({ promoCode }: DomainServerProps) => {
 
   useFetchDomainPendingOrdersByAccount(myAddress)
   useFetchSellerConfig()
-  
+
   const isMobile = useIsMobileWidthOrDevice()
 
   const rightPanelContent = (

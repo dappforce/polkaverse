@@ -1,5 +1,5 @@
 ---
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   creationTimestamp: null
@@ -18,7 +18,7 @@ spec:
         name: memory
         target:
           type: Utilization
-          averageUtilization: 90          
+          averageUtilization: 90
     - type: Resource
       resource:
         name: cpu

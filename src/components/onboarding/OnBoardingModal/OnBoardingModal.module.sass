@@ -10,7 +10,7 @@
     right: 10px
 
   :global(.ant-modal-content)
-    max-height: 700px
+    max-height: clamp(400px, 80vh, 700px)
     padding: $space_tiny 0
     border-radius: $space_normal
 
@@ -23,6 +23,11 @@
       > *
         padding-left: $space_small
         padding-right: $space_small
+
+.DfOnboardingOnLoadingModal
+  @extends .DfOnBoardingModal
+  :global(.ant-modal-content)
+    height: fit-content !important
 
 .DfOnboardingSignerModal
   @extends .DfOnBoardingModal

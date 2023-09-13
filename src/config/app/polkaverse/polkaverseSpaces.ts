@@ -5,14 +5,10 @@ export default [
   '1354',
   // The Kusamarian
   '4809',
-  // WagMedia Weekly News
-  '6111',
   // Substrate Newsletters
   '10647',
   // Zeitgeist
   '4306',
-  // RMRK
-  '2425',
   // Bifrost
   '1013',
   // Ajuna Network
@@ -21,7 +17,7 @@ export default [
   '7248',
   // Astar Network
   '10802',
-  // Aster Network dApp Staking updates
+  // Astar Network dApp Staking updates
   '11132',
   // Astar | Portuguese
   '6917',
@@ -33,8 +29,6 @@ export default [
   '7272',
   // Web3 Chinese
   '10900',
-  // Tagalog Dotsma
-  '10140',
   // Polkadot Hungary
   '11025',
   // Polkadot Romania
@@ -43,20 +37,10 @@ export default [
   '10652',
   // Blinkin.dot
   '5066',
-  // SORA
-  '1162',
   // DotLeap
   '1040',
-  // Everything Blockchain
-  '4473',
-  // Everything Blockchain - Video
-  '4917',
   // Pnin's "KSM/DOT Ecosystem: Thoughts, NFTs, Rumors, News and Events"
   '5892',
-  // Parachain Boy - John Rhodel (Filipino/Portuguese guy)
-  '8730',
-  // Polkadot & Kusama Brazil
-  '10067',
-  // Nova Wallet
-  '10128',
+  // CryptoZilla
+  '11581',
 ]

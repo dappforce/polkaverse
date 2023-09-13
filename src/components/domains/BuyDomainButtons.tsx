@@ -1,29 +1,39 @@
 import { randomAsNumber } from '@polkadot/util-crypto'
 import {
+  newLogger,
+  parseDomain,
   SocialRemark,
   SocialRemarkDestChainsNameId,
   SocialRemarkMessageVersion,
   SubSclSource,
-  newLogger,
 } from '@subsocial/utils'
 import BN from 'bignumber.js'
+import { useEffect, useState } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
 import LazyTxButton from 'src/components/donate/LazyTxButton'
 import { useLazyConnectionsContext } from 'src/components/lazy-connection/LazyConnectionContext'
-import { createPendingOrder, deletePendingOrder, updatePendingOrder } from 'src/components/utils/OffchainUtils'
-import { useAppDispatch } from 'src/rtk/app/store'
-import { useCreateReloadPendingOrders, useSelectPendingOrderById } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
-import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
-import { fetchPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
-import { pendingOrderAction, useGetDecimalAndSymbol } from './dot-seller/utils'
-import { useManageDomainContext } from './manage/ManageDomainProvider'
+import {
+  createPendingOrder,
+  deletePendingOrder,
+  updatePendingOrder,
+} from 'src/components/utils/OffchainUtils'
 import TxButton from 'src/components/utils/TxButton'
+import { getOrInitSubsocialRpc } from 'src/rpc/initSubsocialRpc'
+import { useAppDispatch } from 'src/rtk/app/store'
+import {
+  useCreateReloadPendingOrders,
+  useSelectPendingOrderById,
+} from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
+import { fetchPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
 import { useCreateReloadMyDomains } from 'src/rtk/features/domains/domainHooks'
+import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useSubstrate } from '../substrate'
 import { TxCallback } from '../substrate/SubstrateTxButton'
 import { showErrorMessage } from '../utils/Message'
+import { pendingOrderAction, useGetDecimalAndSymbol } from './dot-seller/utils'
 import styles from './index.module.sass'
+import { useManageDomainContext } from './manage/ManageDomainProvider'
 
 const log = newLogger('DD')
 
@@ -31,6 +41,25 @@ type BuyByDotTxButtonProps = {
   domainName: string
   className?: string
   close: () => void
+}
+
+export const useGetDomainPrice = (domain: string) => {
+  const [price, setPrice] = useState()
+
+  useEffect(() => {
+    const getPrice = async () => {
+      const subsocialRpc = getOrInitSubsocialRpc()
+
+      const { domain: domainPart } = parseDomain(domain)
+      const price = await subsocialRpc.calculatePrice(domainPart)
+
+      setPrice(price)
+    }
+
+    getPrice().catch(err => log.error('Failed to get domain price', err))
+  }, [domain])
+
+  return price
 }
 
 function getKeyName(value: string) {
@@ -119,7 +148,7 @@ export const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxBut
         args: [domainName, sellerApiAuthTokenManager],
         account: purchaser,
         dispatch,
-        reload: false
+        reload: false,
       })
     }
 
@@ -139,7 +168,7 @@ export const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxBut
       dispatch,
     })
 
-    if(preventTx) {
+    if (preventTx) {
       setProcessingDomains({ [domainName]: false })
     }
 
@@ -220,7 +249,7 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
       args: [domainName, sellerApiAuthTokenManager],
       account: purchaser,
       dispatch,
-      reload: false
+      reload: false,
     })
 
     reloadPendingOrders(purchaser)
@@ -230,7 +259,7 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
   const onFailed = async (errorInfo: any) => {
     const jsonErr = JSON.stringify(errorInfo)
     log.error('Failed:', jsonErr)
-    
+
     showErrorMessage(jsonErr)
     setProcessingDomains({ [domainName]: false })
   }
@@ -267,7 +296,7 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
       dispatch,
     })
 
-    if(preventTx) {
+    if (preventTx) {
       setProcessingDomains({ [domainName]: false })
     }
 

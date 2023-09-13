@@ -26,7 +26,7 @@ export type FetchDataWorkers<ReturnType> = {
 }
 export const createFetchDataFn =
   <Return>(defaultReturn: Return) =>
-  <Workers extends FetchDataWorkers<Return>>(workers: Workers) => {
+  <Workers extends FetchDataWorkers<Awaited<Return>>>(workers: Workers) => {
     return (
       dataSource: DataSourceTypes,
       params: { [key in DataSourceTypes]: GetFirstArgumentOfAnyFunction<Workers[key]> },

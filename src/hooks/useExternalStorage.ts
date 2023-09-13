@@ -20,6 +20,7 @@ type UseExternalStorageConfig<T> = {
   parseStorageToState?: (data: string) => T
   parseStateToStorage?: (data: T) => string | undefined
   storageKeyType?: 'guest' | 'user' | 'both'
+  subscribe?: boolean
 }
 
 export default function useExternalStorage<T = string>(
@@ -43,14 +44,27 @@ export default function useExternalStorage<T = string>(
   }, [key, address, storageKeyType])
 
   const [data, _setData] = useState<T>()
-  useEffect(() => {
+
+  const syncData = useCallback(() => {
     if (!storageKey) return
     const storageData = getStorageData(storageKey)
     _setData(parseStorageToState(storageData))
+  }, [storageKey])
+
+  useEffect(() => {
+    syncData()
   }, [storageKey, storageKeyType])
 
+  useEffect(() => {
+    if (!config?.subscribe) return
+
+    window.addEventListener('storage', () => {
+      syncData()
+    })
+  }, [config?.subscribe, syncData])
+
   const setData = useCallback(
-    (newData: T | undefined) => {
+    (newData: T | undefined, tempAddress?: string) => {
       _setData(newData)
       if (!storageKey) return
       if (newData === undefined) {
@@ -58,7 +72,13 @@ export default function useExternalStorage<T = string>(
       } else {
         const newStorageData = parseStateToStorage(newData)
         if (newStorageData === undefined) removeStorageData(storageKey)
-        else setStorageData(storageKey, newStorageData)
+        else {
+          if (tempAddress) {
+            setStorageData(createStorageKey(key, tempAddress), newStorageData)
+            return
+          }
+          setStorageData(storageKey, newStorageData)
+        }
       }
     },
     [key, address],

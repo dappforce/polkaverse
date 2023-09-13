@@ -1,5 +1,6 @@
 import { u128 } from '@polkadot/types'
 import { CodecMap } from '@polkadot/types/codec'
+import { isStr } from '@subsocial/utils'
 import BN from 'bn.js'
 import { useRouter } from 'next/router'
 import React, { createContext, useContext, useEffect, useState } from 'react'
@@ -14,12 +15,14 @@ import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoard
 import { resetOnBoardingData } from 'src/rtk/features/onBoarding/onBoardingSlice'
 import store from 'store'
 import useSubsocialEffect from '../api/useSubsocialEffect'
+import ConfirmationModal from '../confirmation-modal/ConfirmationModal'
 import { calculateEnergyState, EnergyState, getEnergyCoef } from '../energy/utils'
 import OnBoardingModal, {
   ON_BOARDING_MODAL_KEY,
 } from '../onboarding/OnBoardingModal/OnBoardingModal'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { useSubstrate } from '../substrate'
+import { getCurrentEmailAddress } from '../utils/OffchainSigner/ExternalStorage'
 import SignInModal from './signIn/SignInModal'
 import { getCurrentWallet } from './utils'
 
@@ -35,6 +38,9 @@ export type AuthState = {
   currentStep: number
   completedSteps: CompletedSteps
   canReserveHandle: boolean
+  mnemonic: string | null
+  password: string | null
+  email: string | null
 }
 
 function functionStub() {
@@ -51,6 +57,9 @@ export type AuthContextProps = {
   withBackButton?: boolean
   hideSignInModal: () => void
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>
+  setMnemonic: React.Dispatch<React.SetStateAction<string | null>>
+  setPassword: React.Dispatch<React.SetStateAction<string | null>>
+  setEmail: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 const energyStub: EnergyState = { status: 'normal', transactionsCount: 0, coefficient: 1 }
@@ -58,6 +67,9 @@ const energyStub: EnergyState = { status: 'normal', transactionsCount: 0, coeffi
 const contextStub: AuthContextProps = {
   state: {
     currentStep: 0,
+    mnemonic: null,
+    password: null,
+    email: null,
     completedSteps: {
       isSignedIn: false,
       hasTokens: false,
@@ -71,21 +83,38 @@ const contextStub: AuthContextProps = {
   openSignInModal: functionStub,
   hideSignInModal: functionStub,
   setCurrentStep: functionStub,
+  setMnemonic: functionStub,
+  setPassword: functionStub,
+  setEmail: functionStub,
 }
 
 export enum StepsEnum {
   Disabled = -1,
   SelectWallet,
   SelectAccount,
+  SignIn,
+  SignUp,
+  Confirmation,
+  ShowMnemonic,
+  SignInDone,
+  CreatingAccount,
 }
 
 const useGetCurrentStep = (isMobile: boolean) => {
   const isSignedIn = useIsSignedIn()
   const [step, setStep] = useState<number>(StepsEnum.SelectWallet)
 
+  const isAccountsAvailable = isStr(getCurrentEmailAddress()) || isStr(getCurrentWallet())
+
   useEffect(() => {
     if (!isSignedIn) {
-      setStep(getCurrentWallet() || isMobile ? StepsEnum.SelectAccount : StepsEnum.SelectWallet)
+      setStep(
+        isMobile
+          ? StepsEnum.SelectWallet
+          : !isAccountsAvailable
+          ? StepsEnum.SelectWallet
+          : StepsEnum.SelectAccount,
+      )
     }
   }, [isSignedIn])
 
@@ -111,6 +140,10 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
 
   const [hasTokens, setTokens] = useState(false)
   const step = useGetCurrentStep(isMobile)
+
+  const [mnemonic, setMnemonic] = useState<string | null>(null)
+  const [password, setPassword] = useState<string | null>(null)
+  const [email, setEmail] = useState<string | null>(null)
 
   const [currentStep, setCurrentStep] = useState(step)
 
@@ -201,6 +234,9 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
 
   const contextValue: AuthContextProps = {
     state: {
+      mnemonic,
+      password,
+      email,
       currentStep,
       completedSteps: {
         isSignedIn,
@@ -220,6 +256,9 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
       setShowModal(false)
     },
     setCurrentStep,
+    setMnemonic,
+    setPassword,
+    setEmail,
   }
 
   const onAccountChosen = (address: string) => {
@@ -244,6 +283,7 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
         hide={() => setShowModal(false)}
       />
       <OnBoardingModal onBackClickInFirstStep={onBackClickInFirstOnBoardingStep} />
+      <ConfirmationModal />
     </AuthContext.Provider>
   )
 }

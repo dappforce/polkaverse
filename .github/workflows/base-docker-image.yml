@@ -1,0 +1,33 @@
+name: build and deploy base image for web app
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'docker/**'
+
+jobs:
+  base_front_build:
+    name: build & Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@master
+
+      - name: Login to DockerHub
+        uses: docker/login-action@master
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build base image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: docker/BaseDockerfile
+          push: true
+          tags: |
+            dappforce/subsocial-base-polkaverse

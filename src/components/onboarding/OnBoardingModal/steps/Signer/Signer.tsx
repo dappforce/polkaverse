@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import {
-  isCurrentOffchainAddress,
-  OFFCHAIN_TOKEN_KEY,
+  isCurrentSignerAddress,
+  SIGNER_TOKEN_KEY,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { useSaveOnBoardingData } from 'src/rtk/features/onBoarding/onBoardingHooks'
@@ -22,19 +22,19 @@ export default function Signer(props: OnBoardingContentProps) {
   const [loadingProxy, setLoadingProxy] = useState(false)
   const [offchainSigner, setOffchainSigner] = useState(false)
 
-  const { data: offchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY, {
+  const { data: signerToken } = useExternalStorage(SIGNER_TOKEN_KEY, {
     storageKeyType: 'user',
   })
 
   const myAddress = useMyAddress()
 
-  const isOffchainAddress = isCurrentOffchainAddress(myAddress!)
+  const isSignerAddress = isCurrentSignerAddress(myAddress!)
 
   useEffect(() => {
-    if (isOffchainAddress && typeof offchainToken === 'string' && offchainToken.length > 0) {
+    if (isSignerAddress && typeof signerToken === 'string' && signerToken.length > 0) {
       setOffchainSigner(true)
     }
-  }, [isOffchainAddress])
+  }, [isSignerAddress])
 
   const handleOnsuccess = () => {
     setOffchainSigner(true)

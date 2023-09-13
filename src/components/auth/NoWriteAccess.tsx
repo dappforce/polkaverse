@@ -10,7 +10,7 @@ export const NoWriteAccess = () => (
           {
             'Your account has been restricted from creating new spaces, posts, and comments, on this particular website due to a violation in our '
           }
-          <Link href='/legal/terms'>Terms of Use</Link>
+          <Link href='https://subsocial.network/legal/terms'>Terms of Use</Link>
           {'.'}
         </p>
         <p>

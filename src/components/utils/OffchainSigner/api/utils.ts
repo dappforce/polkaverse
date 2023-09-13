@@ -1,17 +1,21 @@
 import { newLogger } from '@subsocial/utils'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import config from 'src/config'
+import offchainSignerApi from './axios'
 const { offchainSignerUrl } = config
 
 const log = newLogger('OffchainSignerRequests')
 
 export const OffchainSignerEndpoint = {
-  SIGNUP: 'auth/signup',
-  SIGNIN: 'auth/signin',
+  GENERATE_PROOF: 'auth/generate-address-verification-proof',
+  ADDRESS_SIGN_IN: 'auth/address-sign-in',
+  REFRESH_TOKEN: 'auth/refresh-token',
+  REVOKE_TOKEN: 'auth/revoke-token',
+  SIGNUP: 'auth/email-sign-up',
+  SIGNIN: 'auth/email-sign-in',
   CONFIRM: 'auth/confirm-email',
+  RESEND_CONFIRMATION: 'auth/resend-email-confirmation',
   SIGNER_SIGN: 'signer/sign',
-  GENERATE_PROOF: 'auth/generateAuthByAddressProof',
-  SEND_SIGNED_PROOF: 'auth/authByAddress',
   FETCH_MAIN_PROXY: 'signer/main-proxy-address',
 } as const
 
@@ -20,7 +24,7 @@ export const getBackendUrl = (paramsUrl: string) => {
 }
 
 export type OffchainSignerEndpoint =
-  typeof OffchainSignerEndpoint[keyof typeof OffchainSignerEndpoint]
+  (typeof OffchainSignerEndpoint)[keyof typeof OffchainSignerEndpoint]
 
 export type Method = 'GET' | 'POST'
 
@@ -30,7 +34,9 @@ export const setAuthOnRequest = (accessToken: string) => {
       async (config: AxiosRequestConfig) => {
         config.headers = config.headers ?? {}
 
-        config.headers.Authorization = accessToken
+        config.headers = {
+          Authorization: accessToken,
+        }
 
         return config
       },
@@ -45,25 +51,39 @@ export const setAuthOnRequest = (accessToken: string) => {
 
 type SendRequestProps = {
   request: () => Promise<AxiosResponse<any, any>>
-  onFaileReturnedValue: any
   onFailedText: string
+  onFaileReturnedValue?: any
 }
 
-export const sendRequest = async ({
-  request,
-  onFaileReturnedValue,
-  onFailedText,
-}: SendRequestProps) => {
+type WrappedRequestProps = {
+  backEndUrl: string
+  method: Method
+  config: any
+  data?: any
+  accessToken?: string
+  refreshToken?: string
+}
+
+const wrappedRequest = ({ backEndUrl, method, config, data }: WrappedRequestProps) => {
+  const requestConfig: AxiosRequestConfig<any> = {
+    baseURL: backEndUrl,
+    method,
+    data: data ?? undefined,
+    ...config,
+  }
+  return offchainSignerApi().request(requestConfig)
+}
+
+export const sendRequest = async ({ request, onFailedText }: SendRequestProps) => {
   try {
     const res = await request()
-    if (res.status !== 200) {
-      console.warn(onFailedText)
+    if (!res.status.toString().startsWith('2')) {
+      log.warn(onFailedText)
     }
 
     return res.data
   } catch (err) {
-    console.error(onFailedText, err)
-    return onFaileReturnedValue
+    return Promise.reject(err)
   }
 }
 
@@ -79,25 +99,55 @@ export type SendHttpRequestProps = {
   onFailedText: string
   method: Method
   accessToken?: string
+  refreshToken?: string
 }
 
 export const sendHttpRequest = ({
   params: { url, data, config },
   method,
+  accessToken,
   ...props
 }: SendHttpRequestProps) => {
-  if (props.accessToken) setAuthOnRequest(props.accessToken)
+  const newConfig = {
+    ...config,
+    headers: {
+      Authorization: accessToken!,
+    },
+  }
+  if (url === OffchainSignerEndpoint.REFRESH_TOKEN) {
+    return sendRequest({
+      request: () =>
+        wrappedRequest({
+          backEndUrl: getBackendUrl(url),
+          data,
+          method,
+          config: newConfig,
+        }),
+      ...props,
+    })
+  }
 
   switch (method) {
     case 'GET': {
       return sendRequest({
-        request: () => axios.get(getBackendUrl(url), config),
+        request: () =>
+          wrappedRequest({
+            backEndUrl: getBackendUrl(url),
+            method,
+            config: newConfig,
+          }),
         ...props,
       })
     }
     case 'POST': {
       return sendRequest({
-        request: () => axios.post(getBackendUrl(url), data, config),
+        request: () =>
+          wrappedRequest({
+            backEndUrl: getBackendUrl(url),
+            method,
+            config: newConfig,
+            data,
+          }),
         ...props,
       })
     }

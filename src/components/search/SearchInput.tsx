@@ -4,7 +4,7 @@ import BN from 'bn.js'
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { useSendGaUserEvent } from 'src/ga'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { SpaceWithSomeDetails } from 'src/types'
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import useSubsocialEffect from '../api/useSubsocialEffect'
@@ -52,7 +52,7 @@ const SearchInput = () => {
   const [withSpaceFilter, setWithSpaceFilter] = useState<boolean>(true)
   const [spaceId, setSpaceId] = useState<string>()
   const isSearchPage = router.pathname.includes('search')
-  const sendGaEvent = useSendGaUserEvent()
+  const sendEvent = useSendEvent()
 
   const spaceIdOrHandle = router.query?.spaceId as string | undefined
 
@@ -97,7 +97,7 @@ const SearchInput = () => {
       },
     }
 
-    sendGaEvent(`Search for ${value}`)
+    sendEvent('search', { value })
     return nonEmptyStr(value) && router.replace(queryPath, queryPath)
   }
 

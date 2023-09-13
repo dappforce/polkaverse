@@ -2,8 +2,9 @@ import { isFunction } from '@polkadot/util'
 import Button from 'antd/lib/button'
 import React, { useEffect, useRef, useState } from 'react'
 import { TxButtonProps } from 'src/components/substrate/SubstrateTxButton'
+import { useOnBoardingModalOpenState } from 'src/rtk/features/onBoarding/onBoardingHooks'
 
-import { fetchProxyAddress, requestMessage, sendSignedMessage } from './api/requests'
+import { addressSignIn, fetchMainProxyAddress, requestProof } from './api/requests'
 import { setAuthOnRequest } from './api/utils'
 
 import HCaptcha from '@hcaptcha/react-hcaptcha'
@@ -17,9 +18,8 @@ import { useSubstrate } from 'src/components/substrate'
 import useToggle from 'src/components/substrate/useToggle'
 import { getWalletBySource } from 'src/components/wallets/supportedWallets'
 import { hCaptchaSiteKey } from 'src/config/env'
-import useExternalStorage from 'src/hooks/useExternalStorage'
+import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
 import { showErrorMessage } from '../Message'
-import { OFFCHAIN_TOKEN_KEY, PROXY_ADDRESS_KEY } from './ExternalStorage'
 const log = newLogger('RememberMeButton')
 
 interface RememberMeButtonProps extends TxButtonProps {
@@ -30,7 +30,7 @@ interface RememberMeButtonProps extends TxButtonProps {
 function RememberMeButton({
   label,
   disabled,
-  loading,
+  loading = false,
   onClick,
   onSuccessAuth,
   onFailedAuth,
@@ -42,16 +42,13 @@ function RememberMeButton({
   const [isConfirming, , setIsConfirming] = useToggle(false)
   const { isMobile } = useResponsiveSize()
   const myAddress = useMyAddress()
+  const openState = useOnBoardingModalOpenState()
 
-  const { setData: setOffchainToken } = useExternalStorage(OFFCHAIN_TOKEN_KEY, {
-    storageKeyType: 'user',
-  })
-  const { setData: setProxyAddress } = useExternalStorage(PROXY_ADDRESS_KEY, {
-    storageKeyType: 'user',
-  })
+  const { setSignerTokensByAddress, setSignerProxyAddress } = useSignerExternalStorage()
 
   const [token, setToken] = useState<string | undefined>()
   const [captchaReady, setCaptchaReady] = useState(false)
+  const [loadingBtn, setLoadingBtn] = useState(false)
   const hCaptchaRef = useRef(null)
 
   useEffect(() => {
@@ -61,11 +58,11 @@ function RememberMeButton({
   }, [token])
 
   const onExpire = () => {
-    console.warn('hCaptcha Token Expired')
+    log.warn('hCaptcha Token Expired')
   }
 
   const onError = (err: any) => {
-    console.warn(`hCaptcha Error: ${err}`)
+    log.warn(`hCaptcha Error: ${err}`)
   }
 
   const onLoad = () => {
@@ -100,14 +97,24 @@ function RememberMeButton({
     )
   }
 
-  const onFailedHandler = (err: Error) => {
+  const handleError = (err: unknown) => {
+    const message = err instanceof Error ? err.message : (err as string)
+
+    onFailedHandler(message)
+    setLoadingBtn(false)
+  }
+
+  const onFailedHandler = (err: Error | string) => {
+    setToken(undefined)
+    onFailedAuth()
+    setIsConfirming(false)
     if (err) {
-      setToken(undefined)
-      onFailedAuth()
-      setIsConfirming(false)
       const errMsg = `Signing failed: ${err.toString()}`
       log.debug(`❌ ${errMsg}`)
       showErrorMessage(errMsg)
+    } else {
+      log.debug(`❌ ${err}`)
+      showErrorMessage(err)
     }
   }
 
@@ -118,24 +125,24 @@ function RememberMeButton({
 
     let signer: Signer | undefined
 
-    if (isMobile) {
-      const { web3FromAddress } = await import('@polkadot/extension-dapp')
-      signer = await (await web3FromAddress(myAddress.toString())).signer
-    } else {
-      const currentWallet = getCurrentWallet()
-      const wallet = getWalletBySource(currentWallet)
-      signer = wallet?.signer
-    }
-
-    if (!signer) {
-      throw new Error('No signer provided')
-    }
-
-    if (!signer?.signRaw) {
-      throw new Error('signing failed!')
-    }
-
     try {
+      if (isMobile) {
+        const { web3FromAddress } = await import('@polkadot/extension-dapp')
+        signer = await (await web3FromAddress(myAddress.toString())).signer
+      } else {
+        const currentWallet = getCurrentWallet()
+        const wallet = getWalletBySource(currentWallet)
+        signer = wallet?.signer
+      }
+
+      if (!signer) {
+        throw new Error('No signer provided')
+      }
+
+      if (!signer?.signRaw) {
+        throw new Error('signing failed!')
+      }
+
       const { signature } = await signer.signRaw({
         address: myAddress as string,
         data: stringToHex(messageJwt),
@@ -143,60 +150,70 @@ function RememberMeButton({
       })
 
       return signature
-    } catch (err: any) {
-      onFailedHandler(err instanceof Error ? err.message : err)
+    } catch (err) {
+      handleError(err)
       return
     }
   }
 
-  const finaliseOffchainSigner = async (token: string) => {
+  const finaliseOffchainSigner = async (hcaptchaResponse: string) => {
     if (!myAddress) {
       throw new Error('No account id provided')
     }
 
     try {
-      const dataMessage = await requestMessage(myAddress, onFailedHandler)
-      const { jwt: messageJwt } = dataMessage
+      const dataMessage = await requestProof(myAddress)
+      const { proof } = dataMessage
 
-      const signedMessageJwt = await signMessage(messageJwt)
+      const signedProof = await signMessage(proof)
 
-      if (!signedMessageJwt) {
-        console.warn('Error when retrieving signed message')
+      if (!signedProof) {
+        log.warn('Error when generating signed')
         return
       }
 
-      const dataSignature = await sendSignedMessage(
-        myAddress,
-        signedMessageJwt,
-        messageJwt,
-        token,
-        onFailedHandler,
-      )
-      const { accessToken } = dataSignature
+      const props = {
+        proof,
+        signedProof,
+        hcaptchaResponse,
+      }
 
-      setOffchainToken(accessToken)
+      const dataSignature = await addressSignIn(props)
+      const { accessToken, refreshToken } = dataSignature
+
       setAuthOnRequest(accessToken)
 
-      const { address } = await fetchProxyAddress(onFailedHandler)
-      setProxyAddress(address)
+      setSignerTokensByAddress({
+        userAddress: myAddress,
+        token: accessToken,
+        refreshToken,
+      })
+
+      const { address: mainProxyAddress } = await fetchMainProxyAddress(accessToken)
+      setSignerProxyAddress(mainProxyAddress as string, myAddress)
       onSuccessAuth()
-    } catch (err: any) {
-      onFailedHandler(err instanceof Error ? err.message : err)
-      return
+    } catch (err) {
+      handleError(err)
     }
   }
 
-  const isDisabled = disabled || isConfirming || !captchaReady
+  const isDisabled = disabled || isConfirming || !captchaReady || loadingBtn
+
+  const fullWidthPrimary = openState === 'partial' ? true : false
 
   return (
     <>
       <Component
+        block={fullWidthPrimary}
+        type={fullWidthPrimary ? 'primary' : 'default'}
+        size={fullWidthPrimary ? 'large' : 'middle'}
         {...antdProps}
         onClick={() => {
+          setLoadingBtn(true)
           onLoad()
         }}
         disabled={isDisabled}
-        loading={(withSpinner && isConfirming) || loading}
+        loading={(withSpinner && isConfirming) || loading || loadingBtn}
       >
         {buttonLabel}
       </Component>
@@ -206,6 +223,9 @@ function RememberMeButton({
         onVerify={setToken}
         onLoad={() => {
           setCaptchaReady(true)
+        }}
+        onClose={() => {
+          setLoadingBtn(false)
         }}
         onError={onError}
         onExpire={onExpire}

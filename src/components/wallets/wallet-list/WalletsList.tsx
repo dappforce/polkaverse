@@ -7,7 +7,7 @@ import config from 'src/config'
 import { useMyAccountsContext } from '../../auth/MyAccountsContext'
 import { setAccountsToState } from '../../auth/utils'
 import { ButtonLink } from '../../utils/CustomLinks'
-import { AvatarOrSkeleton, getInstallUrl } from '../../utils/index'
+import { AvatarOrSkeleton, detectBrowser, getInstallUrl } from '../../utils/index'
 import { showWarnMessage } from '../../utils/Message'
 import { supportedWallets } from '../supportedWallets/index'
 import { Wallet } from '../types'
@@ -24,6 +24,8 @@ type GetWalletPorps = {
 const WalletList = ({ setCurrentStep }: GetWalletPorps) => {
   const { setAccounts } = useMyAccountsContext()
   const [unsubscribe, setUnsubscribe] = useState<() => unknown>()
+
+  const browser = detectBrowser()
 
   useEffect(() => {
     return () => {
@@ -73,7 +75,7 @@ const WalletList = ({ setCurrentStep }: GetWalletPorps) => {
           />
           <div className='font-weight-bold'>{title}</div>
         </div>
-        {!installed && (
+        {!installed && browser !== 'Unknown' && (
           <Tooltip
             title={`Install ${title} or refresh the browser if ${title} is already installed`}
           >
