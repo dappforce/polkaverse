@@ -39,9 +39,7 @@ COPY . .
 RUN yarn
 
 COPY ci.env .env
-RUN yarn export-env \
-    && NODE_ENV=production yarn build  \
-    && yarn export-env \
+RUN NODE_ENV=production yarn build  \
     && yarn patch
 
 FROM gcr.io/distroless/nodejs:16 AS runner
