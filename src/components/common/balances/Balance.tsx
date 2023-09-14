@@ -4,14 +4,14 @@ import { newLogger } from '@subsocial/utils'
 import BN from 'bn.js'
 import clsx from 'clsx'
 import React, { useEffect, useState } from 'react'
+import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
 import { useLazyConnection } from 'src/components/lazy-connection/LazyConnectionContext'
 import { BareProps } from 'src/components/utils/types'
+import { useGetDecimalAndSymbol } from 'src/components/utils/useGetDecimalsAndSymbol'
 import { NodeNames } from 'src/config/types'
 import { AnyAccountId } from 'src/types'
 import { useKusamaContext } from '../../kusama/KusamaContext'
 import useSubstrate from '../../substrate/useSubstrate'
-import { useGetDecimalAndSymbol } from 'src/components/domains/dot-seller/utils'
-import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
 
 const log = newLogger('useCreateBallance')
 
@@ -164,18 +164,36 @@ export const FormatKsmBalance = ({ value, decimals, currency, ...props }: Format
   )
 }
 
-type BalanceProps = {
+type CommonBalanceProps = {
   address: AnyAccountId
   label?: React.ReactNode
+}
+
+type NativeBalanceProps = CommonBalanceProps
+
+export const NativeBalance = ({ address, label }: NativeBalanceProps) => {
+  const balance = useCreateBalance(address)
+
+  if (!balance) return null
+
+  const balanceView = <FormatBalance value={balance} />
+
+  return (
+    <span>
+      {label}
+      {balanceView}
+    </span>
+  )
+}
+
+type BalanceByNetworkProps = CommonBalanceProps & {
   network?: string
 }
 
-export const Balance = ({ address, label, network }: BalanceProps) => {
-  const balance = useCreateBalance(address)
-
+export const BalanceByNetwork = ({ address, label, network }: BalanceByNetworkProps) => {
   const { decimal, symbol } = useGetDecimalAndSymbol(network)
 
-  const otherNetworkBalance = useBalancesByNetwork({
+  const balance = useBalancesByNetwork({
     account: address.toString(),
     network: network,
     currency: symbol,
@@ -183,13 +201,9 @@ export const Balance = ({ address, label, network }: BalanceProps) => {
 
   if (!balance) return null
 
-  let balanceView = <FormatBalance value={balance} />
-
-  if(network) {
-    if(!otherNetworkBalance) return null
-
-    balanceView = <FormatBalance value={otherNetworkBalance.freeBalance} decimals={decimal} currency={symbol} />
-  }
+  const balanceView = (
+    <FormatBalance value={balance.freeBalance} decimals={decimal} currency={symbol} />
+  )
 
   return (
     <span>

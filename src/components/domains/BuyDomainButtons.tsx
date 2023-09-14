@@ -31,9 +31,11 @@ import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfi
 import { useSubstrate } from '../substrate'
 import { TxCallback } from '../substrate/SubstrateTxButton'
 import { showErrorMessage } from '../utils/Message'
-import { pendingOrderAction, useGetDecimalAndSymbol } from './dot-seller/utils'
+import { useGetDecimalAndSymbol } from '../utils/useGetDecimalsAndSymbol'
+import { pendingOrderAction } from './dot-seller/utils'
 import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
+import { BLOCKS_IN_YEAR } from './utils'
 
 const log = newLogger('DD')
 
@@ -61,10 +63,6 @@ export const useGetDomainPrice = (domain: string) => {
   }, [domain])
 
   return price
-}
-
-function getKeyName(value: string) {
-  return Object.entries(SocialRemarkDestChainsNameId).find(([key]) => key === value)?.[1]
 }
 
 export const BuyByDotTxButton = ({
@@ -113,7 +111,8 @@ export const BuyByDotTxButton = ({
 
     SocialRemark.setConfig({ protNames: [remarkProtName] })
 
-    const destination = getKeyName(domainHostChain)
+    const destination =
+      SocialRemarkDestChainsNameId[domainHostChain as keyof typeof SocialRemarkDestChainsNameId]
 
     if (!destination) return []
 
@@ -215,10 +214,6 @@ export const BuyByDotTxButton = ({
     />
   )
 }
-
-const BLOCK_TIME = 12
-const SECS_IN_DAY = 60 * 60 * 24
-const BLOCKS_IN_YEAR = new BN((SECS_IN_DAY * 365) / BLOCK_TIME)
 
 type BuyDomainSectionProps = {
   domainName: string

@@ -24,6 +24,10 @@ import { DomainSellerKind, useManageDomainContext } from './manage/ManageDomainP
 
 dayjs.extend(utc)
 
+const BLOCK_TIME = 12
+const SECS_IN_DAY = 60 * 60 * 24
+export const BLOCKS_IN_YEAR = new BN((SECS_IN_DAY * 365) / BLOCK_TIME)
+
 const { resolvedDomain } = config
 
 type ResultContainerProps = Omit<HTMLProps<HTMLDivElement>, 'title'> & {

@@ -8,6 +8,7 @@ const localConfig: SubsocialConfig = {
 
   offchainUrl: 'http://localhost:3001',
   graphqlUrl: 'https://staging.subsocial.network/hydra/graphql',
+  sellerSquid: 'https://squid.subsquid.io/x-seller-squid-rococo-soon/graphql',
 
   ipfsNodeUrl: 'http://127.0.0.1:8080',
   dagHttpMethod: 'post',

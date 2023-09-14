@@ -13,15 +13,17 @@ import {
 import { PendingDomainEntity } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { MutedDiv } from '../../utils/MutedText'
-import { useManageDomainContext, DomainSellerKind } from '../manage/ManageDomainProvider'
+import { DomainSellerKind, useManageDomainContext } from '../manage/ManageDomainProvider'
+import RegisterDomainButton from '../registerDomainModal/RegisterDomainModal'
 import { getTime } from '../utils'
 import styles from './Index.module.sass'
-import RegisterDomainButton from '../registerDomainModal/RegisterDomainModal'
 
 type PendingDomainProps = {
   pendingDomain: PendingDomainEntity
   time: number
 }
+
+const RELOAD_ORDERS_DELAY = 12000
 
 const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
   const sellerConfig = useSelectSellerConfig()
@@ -36,7 +38,7 @@ const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
   const expiresAt = useMemo(() => {
     const expiresAtValue = dayjs(timestamp).valueOf() + (dmnRegPendingOrderExpTime || 0)
 
-    if (time >= expiresAtValue + 12000) {
+    if (time >= expiresAtValue + RELOAD_ORDERS_DELAY) {
       reloadPendingOrders(myAddress)
     }
 
@@ -45,19 +47,18 @@ const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
 
   const isDomainProcessing = processingDomains[pendingDomain.id]
 
-  const registerButton =
-    isDomainProcessing ? (
-      <Tag color='gold' className={clsx(styles.PendingTag)}>
-        Processing
-      </Tag>
-    ) : (
-      <RegisterDomainButton
-        domainName={id}
-        label={'Continue'}
-        withPrice={false}
-        domainSellerKind={destination as DomainSellerKind}
-      />
-    )
+  const registerButton = isDomainProcessing ? (
+    <Tag color='gold' className={clsx(styles.PendingTag)}>
+      Processing
+    </Tag>
+  ) : (
+    <RegisterDomainButton
+      domainName={id}
+      label={'Continue'}
+      withPrice={false}
+      domainSellerKind={destination as DomainSellerKind}
+    />
+  )
 
   return (
     <div className='d-flex align-items-center justify-content-between'>

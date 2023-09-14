@@ -8,15 +8,19 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit'
 import registry from '@subsocial/api/utils/registry'
-import { isDef, toSubsocialAddress } from '@subsocial/utils'
-import { sellerSquidGraphQlClient } from 'src/components/domains/dot-seller/config'
-import { PENDING_ORDERS_BY_ACCOUNT, PENDING_ORDERS_BY_IDS, PENDING_ORDERS_BY_SIGNER } from 'src/components/domains/dot-seller/seller-queries'
+import { isDef } from '@subsocial/utils'
+import {
+  PENDING_ORDERS_BY_ACCOUNT,
+  PENDING_ORDERS_BY_IDS,
+  PENDING_ORDERS_BY_SIGNER,
+} from 'src/components/domains/dot-seller/seller-queries'
 import { ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import {
   FetchOneWithoutApi,
   fetchPendingOrderByAccount,
   FetchResult,
+  getOrders,
   OrdersCommonFetchProps,
   upsertAndRemoveEntities,
 } from './utils'
@@ -101,30 +105,12 @@ export const fetchPendingOrdersByIds = createAsyncThunk<
     }
   }
 
-  const result: any = await sellerSquidGraphQlClient.request(PENDING_ORDERS_BY_IDS, { ids })
-
-  const orders = result.getPendingOrdersByIds.orders as PendingDomainEntity[]
-
-  const parsedOrders = orders.map(order => {
-    const { signer, target, createdByAccount } = order
-
-    return {
-      ...order,
-      target: toSubsocialAddress(target) || '',
-      signer: toSubsocialAddress(signer) || '',
-      createdByAccount: toSubsocialAddress(createdByAccount) || '',
-    }
+  return getOrders({
+    query: PENDING_ORDERS_BY_IDS,
+    params: { ids },
+    knownDomainsPendingOrders,
+    resultField: 'getPendingOrdersByIds',
   })
-
-  const parsedOrdersIds = parsedOrders.map(order => order.id)
-  const knownOrdersIds = knownDomainsPendingOrders.map(order => order.id)
-
-  const idsToRemove: string[] = knownOrdersIds.filter(knownId => !parsedOrdersIds.includes(knownId))
-
-  return {
-    idsToRemove,
-    orders: parsedOrders,
-  }
 })
 
 export const fetchPendingOrdersBySigner = createAsyncThunk<

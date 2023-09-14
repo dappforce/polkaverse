@@ -3,7 +3,7 @@ import { Popover } from 'antd'
 import BN from 'bn.js'
 import React from 'react'
 import { ProfileData } from 'src/types'
-import { Balance } from '../../common/balances/Balance'
+import { BalanceByNetwork } from '../../common/balances/Balance'
 import AuthorSpaceAvatar from './AuthorSpaceAvatar'
 import Name from './Name'
 import { ProfilePreviewPopup } from './ProfilePreview'
@@ -21,7 +21,8 @@ export const InfoDetails: React.FC<InfoProps> = ({ details, balance, address, ne
   return (
     <>
       <div className='Df--AddressComponents-details'>
-        {balance || (address && <Balance address={address.toString()} network={network} />)}
+        {balance ||
+          (address && <BalanceByNetwork address={address.toString()} network={network} />)}
         {details && <div>{details}</div>}
       </div>
     </>

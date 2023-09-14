@@ -1,5 +1,8 @@
 import { GraphQLClient } from 'graphql-request'
+import config from 'src/config'
 
-export const xSellerSquid = 'https://squid.subsquid.io/x-seller-squid-rococo-soon/graphql'
+const { sellerSquid } = config
 
-export const sellerSquidGraphQlClient = new GraphQLClient(xSellerSquid)
+export const sellerSquidGraphQlClient = new GraphQLClient(sellerSquid)
+
+export const NONCE = 111

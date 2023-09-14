@@ -75,6 +75,8 @@ jobs:
             GH_AMP_ID=2eeca0e8a0163c89e3f023c971e426a6
             GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
             GH_CONNECTION_KIND=main
+            GH_SELLER_CLIENT_ID=${{ secrets.SELLER_CLIENT_ID }}
+            GH_SELLER_TOKEN_SIGNER=${{ secrets.SELLER_TOKEN_SIGNER }}
 
           tags: |
             ${{ env.image }}

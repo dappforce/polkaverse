@@ -1,25 +1,16 @@
-import { EntityId } from '@reduxjs/toolkit'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { useActions } from 'src/rtk/app/helpers'
 import { useFetch } from 'src/rtk/app/hooksCommon'
 import { useAppSelector } from 'src/rtk/app/store'
 import {
-  RemovePendingOrderProps,
   fetchPendingOrdersByAccount,
-  fetchPendingOrdersByIds,
   fetchPendingOrdersBySigner,
   removePendingOrder,
+  RemovePendingOrderProps,
   selectPendingOrdersByAccount,
   selectPendingOrdersById,
   selectPendingOrdersByIds,
 } from './pendingOrdersSlice'
-
-// TODO: check this case
-export const useFetchDomainPendingOrdersByIds = (domains: string[]) => {
-  const ids = domains as EntityId[]
-
-  useFetch(fetchPendingOrdersByIds, { ids })
-}
 
 export const useFetchDomainPendingOrdersByAccount = (address?: string) => {
   const myAddress = useMyAddress()
@@ -38,19 +29,22 @@ export const useSelectPendingOrdersByIds = (ids: string[]) => {
 
 export const useSelectPendingOrders = () => {
   const myAddress = useMyAddress()
-  
-  const ordersByAccount = useAppSelector(state => selectPendingOrdersByAccount(state, 'createdByAccount', myAddress))
-  const ordersBySigner = useAppSelector(state => selectPendingOrdersByAccount(state, 'signer', myAddress))
+
+  const ordersByAccount = useAppSelector(state =>
+    selectPendingOrdersByAccount(state, 'createdByAccount', myAddress),
+  )
+  const ordersBySigner = useAppSelector(state =>
+    selectPendingOrdersByAccount(state, 'signer', myAddress),
+  )
 
   const ordersSet = new Set([...ordersByAccount, ...ordersBySigner])
 
   return Array.from(ordersSet)
 }
 
-
 export const useCreateReloadPendingOrders = () => {
   return useActions<string | undefined>(({ dispatch, args }) => {
-    if(args) {
+    if (args) {
       dispatch(fetchPendingOrdersByAccount({ id: args, reload: true }))
       dispatch(fetchPendingOrdersBySigner({ id: args, reload: true }))
     }

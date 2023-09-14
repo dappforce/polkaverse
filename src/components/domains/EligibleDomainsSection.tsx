@@ -22,39 +22,12 @@ type DomainItemProps = {
   action: React.ReactNode
 }
 
-type DomainProps = {
+export type DomainProps = {
   domain: DomainEntity
   label?: string
   withDivider?: boolean
   rightElement?: React.ReactNode
 }
-
-// const ClaimFreeDomainSection = ({ domain: { id: domain } }: DomainProps) => {
-//   const [openConfirmation, setOpenConfirmation] = useState(false)
-//   const { promoCode } = useManageDomainContext()
-//   return (
-//     <div className='d-flex align-items-center'>
-//       <ClaimFreeDomainModal
-//         onCancel={() => setOpenConfirmation(false)}
-//         visible={openConfirmation}
-//         domain={domain}
-//         promoCode={promoCode}
-//       />
-//       <span className='font-weight-bold mr-2'>Free</span>
-//       <Button
-//         type='primary'
-//         size='middle'
-//         className={clsx(styles.DomainPrimaryButton)}
-//         onClick={() => setOpenConfirmation(true)}
-//       >
-//         <span style={{ position: 'relative', top: '-1px' }} className='mr-1'>
-//           🎁
-//         </span>
-//         Claim
-//       </Button>
-//     </div>
-//   )
-// }
 
 export const DomainItem = ({ domain, action }: DomainItemProps) => {
   const actionComponent = isFunction(action) ? action() : action

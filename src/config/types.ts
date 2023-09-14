@@ -76,6 +76,8 @@ export type ConnectionsSettings = {
 
   /** A URL of Subsocial Offchain signer backend. Example: http://localhost:3002. **/
   offchainSignerUrl?: string
+
+  sellerSquid: string
 }
 
 export type AppConfig = {

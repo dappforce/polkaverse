@@ -1,9 +1,13 @@
-import { RootState } from 'src/rtk/app/rootReducer'
-import { PendingDomainEntity, ordersAdapter, selectPendingOrdersByAccount } from './pendingOrdersSlice'
-import { isDef, isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
-import { sellerSquidGraphQlClient } from 'src/components/domains/dot-seller/config'
 import { EntityId } from '@reduxjs/toolkit'
+import { isDef, isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
 import { DocumentNode } from 'graphql'
+import { sellerSquidGraphQlClient } from 'src/components/domains/dot-seller/config'
+import { RootState } from 'src/rtk/app/rootReducer'
+import {
+  ordersAdapter,
+  PendingDomainEntity,
+  selectPendingOrdersByAccount,
+} from './pendingOrdersSlice'
 
 export type MaybeEntity = PendingDomainEntity | undefined
 
@@ -18,6 +22,45 @@ export type OrdersCommonFetchProps = {
 
 export type FetchOneWithoutApi = OrdersCommonFetchProps & {
   id?: EntityId
+}
+
+type GetOrdersProps = {
+  query: DocumentNode
+  params: any
+  resultField: string
+  knownDomainsPendingOrders: PendingDomainEntity[]
+}
+
+export const getOrders = async ({
+  query,
+  params,
+  knownDomainsPendingOrders,
+  resultField,
+}: GetOrdersProps) => {
+  const result: any = await sellerSquidGraphQlClient.request(query, params)
+
+  const orders = result[resultField].orders as PendingDomainEntity[]
+
+  const parsedOrders = orders.map(order => {
+    const { signer, target, createdByAccount } = order
+
+    return {
+      ...order,
+      target: toSubsocialAddress(target) || '',
+      signer: toSubsocialAddress(signer) || '',
+      createdByAccount: toSubsocialAddress(createdByAccount) || '',
+    }
+  })
+
+  const parsedOrdersIds = parsedOrders.map(order => order.id)
+  const knownOrdersIds = knownDomainsPendingOrders.map(order => order.id)
+
+  const idsToRemove: string[] = knownOrdersIds.filter(knownId => !parsedOrdersIds.includes(knownId))
+
+  return {
+    idsToRemove,
+    orders: parsedOrders,
+  }
 }
 
 type FetchOrdersByAccountProps = FetchOneWithoutApi & {
@@ -48,32 +91,14 @@ export const fetchPendingOrderByAccount = async ({
     }
   }
 
-  const result: any = await sellerSquidGraphQlClient.request(query, {
-    [`${selectField}`]: account,
+  return getOrders({
+    query,
+    params: {
+      [`${selectField}`]: account,
+    },
+    knownDomainsPendingOrders,
+    resultField,
   })
-
-  const orders = result[resultField].orders as PendingDomainEntity[]
-
-  const parsedOrders = orders.map(order => {
-    const { signer, target, createdByAccount } = order
-
-    return {
-      ...order,
-      target: toSubsocialAddress(target) || '',
-      signer: toSubsocialAddress(signer) || '',
-      createdByAccount: toSubsocialAddress(createdByAccount) || '',
-    }
-  })
-
-  const parsedOrdersIds = parsedOrders.map(order => order.id)
-  const knownOrdersIds = knownDomainsPendingOrders.map(order => order.id)
-
-  const idsToRemove: string[] = knownOrdersIds.filter(knownId => !parsedOrdersIds.includes(knownId))
-
-  return {
-    idsToRemove,
-    orders: parsedOrders,
-  }
 }
 
 type UpsertAndRemoveEntitiesProps = {

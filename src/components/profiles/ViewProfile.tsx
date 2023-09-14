@@ -15,7 +15,7 @@ import {
 import { AnyAccountId, DataSourceTypes, ProfileContent, ProfileData, SpaceData } from 'src/types'
 import { AccountActivity } from '../activity/AccountActivity'
 import { useIsMyAddress, useMyAccountsContext } from '../auth/MyAccountsContext'
-import { Balance } from '../common/balances'
+import { NativeBalance } from '../common/balances'
 import { PageContent } from '../main/PageWrapper'
 import { accountUrl, newSpaceUrl } from '../urls'
 import { DfMd } from '../utils/DfMd'
@@ -127,7 +127,7 @@ const Component = (props: Props) => {
               </CopyAddress>
             </MutedDiv>
             <MutedDiv>
-              <Balance address={address} label='Balance: ' />
+              <NativeBalance address={address} label='Balance: ' />
             </MutedDiv>
             {/* <MutedDiv>{`Reputation: ${reputation}`}</MutedDiv> */}
             <div className='about'>{about && <DfMd className='mt-3' source={about} />}</div>

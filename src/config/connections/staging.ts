@@ -8,6 +8,7 @@ const stagingConfig: SubsocialConfig = {
   offchainUrl: 'https://staging-api.subsocial.network',
   offchainSignerUrl: 'https://staging-signer.subsocial.network',
   graphqlUrl: 'https://squid.subsquid.io/soonsocial/graphql',
+  sellerSquid: 'https://squid.subsquid.io/x-seller-squid-rococo-soon/graphql',
 
   ipfsNodeUrl: 'https://staging-ipfs.subsocial.network',
   dagHttpMethod: 'get',
