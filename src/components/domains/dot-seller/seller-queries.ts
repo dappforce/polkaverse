@@ -55,6 +55,7 @@ export const SELLER_CONFIG = gql`
       domainHostChain
       domainHostChainPrefix
       domainRegistrationPriceFixed
+      domainRegistrationPriceFactor
       remarkProtName
       remarkProtVersion
       sellerApiAuthTokenManager

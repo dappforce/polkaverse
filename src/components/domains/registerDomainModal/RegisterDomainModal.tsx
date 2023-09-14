@@ -1,18 +1,18 @@
 import { Button, Modal, Space, Tag } from 'antd'
+import BN from 'bignumber.js'
 import clsx from 'clsx'
 import { useEffect, useMemo, useState } from 'react'
 import { useIsMyAddress } from 'src/components/auth/MyAccountsContext'
 import { SelectAccountInput } from 'src/components/common/inputs/SelectAccountInput'
 import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
-import { useSubstrate } from 'src/components/substrate'
+import { useSelectPendingOrderById } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { FormatBalance, useCreateBalance } from '../../common/balances/Balance'
 import { MutedDiv } from '../../utils/MutedText'
-import { useManageDomainContext, DomainSellerKind } from '../manage/ManageDomainProvider'
-import styles from './Index.module.sass'
-import { useGetDecimalAndSymbol } from '../dot-seller/utils'
 import { BuyByDotTxButton, BuyDomainSection } from '../BuyDomainButtons'
-import { useSelectPendingOrderById } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
+import { useGetDecimalAndSymbol } from '../dot-seller/utils'
+import { DomainSellerKind, useManageDomainContext } from '../manage/ManageDomainProvider'
+import styles from './Index.module.sass'
 
 type ModalBodyProps = {
   domainName: string
@@ -44,7 +44,7 @@ const ModalBody = ({ domainName, price, domainSellerKind }: ModalBodyProps) => {
   })
 
   useEffect(() => {
-    if(target) {
+    if (target) {
       setRecipient(target)
     }
   }, [target])
@@ -75,28 +75,26 @@ const ModalBody = ({ domainName, price, domainSellerKind }: ModalBodyProps) => {
           network={isSub ? undefined : sellerChain}
         />
       </Space>
-      {!isSub && (
-        <Space direction='vertical' size={8} className={'w-100'}>
-          <div className={clsx(styles.Recipient, 'd-flex align-items-center')}>
-            <div>Recipient </div>
-            {isMyAddress && (
-              <Tag color='green' className='ml-2'>
-                Your account
-              </Tag>
-            )}
-          </div>
-          <SelectAccountInput
-            className={`${styles.Select} w-100`}
-            setValue={setRecipient}
-            value={recipient}
-            withAvatar={false}
-            network={isSub ? undefined : sellerChain}
-          />
-          <MutedDiv className={styles.RecipientFieldDesc}>
-            Choose the recipient to whom the domain will be registered
-          </MutedDiv>
-        </Space>
-      )}
+      <Space direction='vertical' size={8} className={'w-100'}>
+        <div className={clsx(styles.Recipient, 'd-flex align-items-center')}>
+          <div>Recipient </div>
+          {isMyAddress && (
+            <Tag color='green' className='ml-2'>
+              Your account
+            </Tag>
+          )}
+        </div>
+        <SelectAccountInput
+          className={`${styles.Select} w-100`}
+          setValue={setRecipient}
+          value={recipient}
+          withAvatar={false}
+          network={isSub ? undefined : sellerChain}
+        />
+        <MutedDiv className={styles.RecipientFieldDesc}>
+          Choose the recipient to whom the domain will be registered
+        </MutedDiv>
+      </Space>
       <Space direction='vertical' size={16} className={clsx(styles.DomainInfo, 'w-100')}>
         <div className='d-flex align-items-center justify-content-between'>
           <MutedDiv>Domain name:</MutedDiv>
@@ -121,8 +119,13 @@ type BuyDomainModalProps = {
   price?: string
 }
 
-const BuyDomainModal = ({ domainName, open, close, price, domainSellerKind }: BuyDomainModalProps) => {
-
+const BuyDomainModal = ({
+  domainName,
+  open,
+  close,
+  price,
+  domainSellerKind,
+}: BuyDomainModalProps) => {
   const title = (
     <div className={styles.ModalTitle}>
       <h2>Register new domain</h2>
@@ -134,7 +137,7 @@ const BuyDomainModal = ({ domainName, open, close, price, domainSellerKind }: Bu
   const modalFooter = (
     <div className={styles.FooterButtons}>
       {isByDot ? (
-        <BuyByDotTxButton domainName={domainName} className={'ml-0'} close={close} />
+        <BuyByDotTxButton domainName={domainName} className={'ml-0'} close={close} price={price} />
       ) : (
         <BuyDomainSection domainName={domainName} />
       )}
@@ -161,6 +164,7 @@ type BuyByDotButtonProps = {
   label?: string
   withPrice?: boolean
   domainSellerKind: DomainSellerKind
+  domainPrice?: string
 }
 
 const RegisterDomainButton = ({
@@ -168,10 +172,10 @@ const RegisterDomainButton = ({
   label = 'Register',
   withPrice = true,
   domainSellerKind,
+  domainPrice,
 }: BuyByDotButtonProps) => {
   const sellerConfig = useSelectSellerConfig()
-  const { domainRegistrationPriceFixed, sellerChain } = sellerConfig || {}
-  const { api } = useSubstrate()
+  const { domainRegistrationPriceFactor, sellerChain } = sellerConfig || {}
   const { processingDomains } = useManageDomainContext()
 
   const [open, setOpen] = useState(false)
@@ -182,8 +186,14 @@ const RegisterDomainButton = ({
   const isSub = domainSellerKind === 'SUB'
 
   const price = useMemo(() => {
-    return isSub ? api?.consts.domains.baseDomainDeposit.toString() : domainRegistrationPriceFixed
-  }, [domainSellerKind])
+    if (isSub) {
+      return domainPrice
+    } else {
+      if (!domainRegistrationPriceFactor || !domainPrice) return '0'
+
+      return new BN(domainPrice).multipliedBy(new BN(domainRegistrationPriceFactor)).toString()
+    }
+  }, [isSub, domainPrice, domainRegistrationPriceFactor])
 
   const chainProps = isSub ? {} : { decimals: decimal, currency: symbol }
 
@@ -192,12 +202,7 @@ const RegisterDomainButton = ({
   return (
     <span className={styles.RegisterButton}>
       {withPrice && <div>{price ? <FormatBalance value={price} {...chainProps} /> : <>-</>}</div>}
-      <Button
-        type={'primary'}
-        block
-        disabled={isProcessingDomain}
-        onClick={() => setOpen(true)}
-      >
+      <Button type={'primary'} block disabled={isProcessingDomain} onClick={() => setOpen(true)}>
         {label}
       </Button>
       <BuyDomainModal

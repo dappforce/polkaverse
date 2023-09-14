@@ -11,6 +11,7 @@ export type SellerConfigEntity = {
   domainHostChain: string
   domainHostChainPrefix: string
   domainRegistrationPriceFixed: string
+  domainRegistrationPriceFactor: string
   remarkProtName: string
   remarkProtVersion: string
   sellerApiAuthTokenManager: string
@@ -37,11 +38,7 @@ export const selectSellerConfig = (state: RootState): SellerConfigEntity | undef
   return selectors.selectById(state, sellerConfigId)
 }
 
-export const fetchSellerConfig = createAsyncThunk<
-  MaybeEntity,
-  CommonFetchProps,
-  ThunkApiConfig
->(
+export const fetchSellerConfig = createAsyncThunk<MaybeEntity, CommonFetchProps, ThunkApiConfig>(
   `${sliceName}/fetchOne`,
   async ({ reload }, { getState }): Promise<MaybeEntity> => {
     const knownDomainsPendingOrders = selectSellerConfig(getState())
@@ -54,7 +51,7 @@ export const fetchSellerConfig = createAsyncThunk<
 
     return {
       id: sellerConfigId,
-      ...result.sellerConfigInfo
+      ...result.sellerConfigInfo,
     }
   },
 )
@@ -66,10 +63,9 @@ const slice = createSlice({
     // upsertOwnDomains: adapter.upsertOne,
   },
   extraReducers: builder => {
-    builder
-      .addCase(fetchSellerConfig.fulfilled, (state, { payload }) => {
-        if (payload) adapter.upsertOne(state, payload)
-      })
+    builder.addCase(fetchSellerConfig.fulfilled, (state, { payload }) => {
+      if (payload) adapter.upsertOne(state, payload)
+    })
   },
 })
 

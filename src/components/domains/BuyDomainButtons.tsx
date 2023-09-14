@@ -40,6 +40,7 @@ const log = newLogger('DD')
 type BuyByDotTxButtonProps = {
   domainName: string
   className?: string
+  price?: string
   close: () => void
 }
 
@@ -66,7 +67,12 @@ function getKeyName(value: string) {
   return Object.entries(SocialRemarkDestChainsNameId).find(([key]) => key === value)?.[1]
 }
 
-export const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxButtonProps) => {
+export const BuyByDotTxButton = ({
+  domainName,
+  className,
+  close,
+  price,
+}: BuyByDotTxButtonProps) => {
   const { recipient, purchaser, setIsFetchNewDomains, setProcessingDomains } =
     useManageDomainContext()
   const sellerConfig = useSelectSellerConfig()
@@ -88,14 +94,13 @@ export const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxBut
   const { freeBalance } = balance || {}
 
   const getParams = async () => {
-    if (!purchaser || !sellerConfig) return []
+    if (!purchaser || !sellerConfig || !price) return []
 
     const {
       remarkProtName,
       sellerTreasuryAccount,
       remarkProtVersion,
       domainHostChain,
-      domainRegistrationPriceFixed,
       sellerToken: { name: tokenName },
       sellerChain,
     } = sellerConfig
@@ -104,7 +109,7 @@ export const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxBut
 
     if (!api) return []
 
-    const transferTx = api.tx.balances.transfer(sellerTreasuryAccount, domainRegistrationPriceFixed)
+    const transferTx = api.tx.balances.transfer(sellerTreasuryAccount, price)
 
     SocialRemark.setConfig({ protNames: [remarkProtName] })
 
@@ -185,6 +190,13 @@ export const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxBut
     dispatch(fetchPendingOrdersByAccount({ id: myAddress, reload: true }))
   }
 
+  const disableButton =
+    !recipient ||
+    !freeBalance ||
+    !domainRegistrationPriceFixed ||
+    new BN(freeBalance).lt(domainRegistrationPriceFixed) ||
+    !price
+
   return (
     <LazyTxButton
       block
@@ -192,12 +204,7 @@ export const BuyByDotTxButton = ({ domainName, className, close }: BuyByDotTxBut
       size='middle'
       network={sellerChain || ''}
       accountId={purchaser}
-      disabled={
-        !recipient ||
-        !freeBalance ||
-        !domainRegistrationPriceFixed ||
-        new BN(freeBalance).lt(domainRegistrationPriceFixed)
-      }
+      disabled={disableButton}
       tx={'utility.batchAll'}
       params={getParams}
       onSuccess={onSuccess}
@@ -220,7 +227,7 @@ type BuyDomainSectionProps = {
 
 export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSectionProps) => {
   const reloadMyDomains = useCreateReloadMyDomains()
-  const { openManageModal, setProcessingDomains } = useManageDomainContext()
+  const { openManageModal, setProcessingDomains, recipient } = useManageDomainContext()
   const { api, isApiReady } = useSubstrate()
   const reloadPendingOrders = useCreateReloadPendingOrders()
   const { purchaser } = useManageDomainContext()
@@ -232,7 +239,7 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
   if (!isApiReady) return null
 
   const getTxParams = () => {
-    return [domainName, null, BLOCKS_IN_YEAR.toString()]
+    return [recipient, domainName, null, BLOCKS_IN_YEAR.toString()]
   }
 
   const onSuccess: TxCallback = async () => {

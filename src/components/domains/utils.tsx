@@ -1,9 +1,11 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import { parseDomain } from '@subsocial/utils'
+import { Divider } from 'antd'
+import BN from 'bignumber.js'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { FC, HTMLProps } from 'react'
+import { FC, HTMLProps, useMemo } from 'react'
 import {
   CardWithTitle as InnerCardWithTitle,
   CardWithTitleProps,
@@ -11,13 +13,14 @@ import {
 import config from 'src/config'
 import { useCreateRemovePendingOrders } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { useCreateUpsertDomains } from 'src/rtk/features/domains/domainHooks'
+import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { slugifyHandle } from '../urls/helpers'
 import { useAddClassNameToRootElement } from '../utils'
 import { controlledMessage } from '../utils/Message'
 import styles from './index.module.sass'
-import { useManageDomainContext } from './manage/ManageDomainProvider'
+import { DomainSellerKind, useManageDomainContext } from './manage/ManageDomainProvider'
 
 dayjs.extend(utc)
 
@@ -26,6 +29,8 @@ const { resolvedDomain } = config
 type ResultContainerProps = Omit<HTMLProps<HTMLDivElement>, 'title'> & {
   title: React.ReactNode
   icon: JSX.Element
+  rightElement?: React.ReactNode
+  withDivider?: boolean
 }
 
 export const ResultContainer = ({
@@ -33,14 +38,20 @@ export const ResultContainer = ({
   className,
   icon,
   children,
+  rightElement,
+  withDivider,
   ...props
 }: ResultContainerProps) => {
   return (
     <div className={clsx('d-flex flex-column', className)}>
-      <h2 {...props} className={clsx('d-flex align-items-center ColorCurrentColor')}>
-        {icon && <div className='mr-2 d-flex'>{icon}</div>}
-        {title}
-      </h2>
+      <div className='d-flex align-items-center justify-content-between w-100'>
+        <h2 {...props} className={clsx('d-flex align-items-center mb-0 ColorCurrentColor')}>
+          {icon && <div className='mr-2 d-flex'>{icon}</div>}
+          {title}
+        </h2>
+        {rightElement}
+      </div>
+      {withDivider && <Divider className='w-100 m-0 mt-3 mb-3' />}
       <div className='d-flex flex-column GapNormal'>{children}</div>
     </div>
   )
@@ -157,4 +168,22 @@ export const useFetchNewDomains = (domainName?: string) => {
     },
     [isFetchNewDomains, myAddress],
   )
+}
+
+export const useGetPrice = (domainPrice: string, domainSellerKind: DomainSellerKind) => {
+  const sellerConfig = useSelectSellerConfig()
+  const { domainRegistrationPriceFactor } = sellerConfig || {}
+
+  const isSub = domainSellerKind === 'SUB'
+
+  const price = useMemo(() => {
+    if (isSub) {
+      return domainPrice
+    } else {
+      if (!domainRegistrationPriceFactor || !domainPrice) return '0'
+      return new BN(domainPrice).multipliedBy(new BN(domainRegistrationPriceFactor)).toString()
+    }
+  }, [isSub, domainPrice, domainRegistrationPriceFactor])
+
+  return price
 }
