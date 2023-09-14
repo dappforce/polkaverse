@@ -1,7 +1,6 @@
 import { Button, Modal, Space, Tag } from 'antd'
-import BN from 'bignumber.js'
 import clsx from 'clsx'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useIsMyAddress } from 'src/components/auth/MyAccountsContext'
 import { SelectAccountInput } from 'src/components/common/inputs/SelectAccountInput'
 import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
@@ -12,6 +11,7 @@ import { FormatBalance, useCreateBalance } from '../../common/balances/Balance'
 import { MutedDiv } from '../../utils/MutedText'
 import { BuyByDotTxButton, BuyDomainSection } from '../BuyDomainButtons'
 import { DomainSellerKind, useManageDomainContext } from '../manage/ManageDomainProvider'
+import { useGetPrice } from '../utils'
 import styles from './Index.module.sass'
 
 type ModalBodyProps = {
@@ -175,8 +175,9 @@ const RegisterDomainButton = ({
   domainPrice,
 }: BuyByDotButtonProps) => {
   const sellerConfig = useSelectSellerConfig()
-  const { domainRegistrationPriceFactor, sellerChain } = sellerConfig || {}
+  const { sellerChain } = sellerConfig || {}
   const { processingDomains } = useManageDomainContext()
+  const price = useGetPrice(domainSellerKind, domainPrice)
 
   const [open, setOpen] = useState(false)
   const { decimal, symbol } = useGetDecimalAndSymbol(sellerChain)
@@ -184,16 +185,6 @@ const RegisterDomainButton = ({
   const close = () => setOpen(false)
 
   const isSub = domainSellerKind === 'SUB'
-
-  const price = useMemo(() => {
-    if (isSub) {
-      return domainPrice
-    } else {
-      if (!domainRegistrationPriceFactor || !domainPrice) return '0'
-
-      return new BN(domainPrice).multipliedBy(new BN(domainRegistrationPriceFactor)).toString()
-    }
-  }, [isSub, domainPrice, domainRegistrationPriceFactor])
 
   const chainProps = isSub ? {} : { decimals: decimal, currency: symbol }
 

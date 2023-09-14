@@ -5,12 +5,13 @@ import BN from 'bignumber.js'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { FC, HTMLProps, useMemo } from 'react'
+import { FC, HTMLProps, useEffect, useMemo, useState } from 'react'
 import {
   CardWithTitle as InnerCardWithTitle,
   CardWithTitleProps,
 } from 'src/components/utils/cards/WithTitle'
 import config from 'src/config'
+import { getOrInitSubsocialRpc } from 'src/rpc/initSubsocialRpc'
 import { useCreateRemovePendingOrders } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { useCreateUpsertDomains } from 'src/rtk/features/domains/domainHooks'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
@@ -19,6 +20,7 @@ import { useMyAddress } from '../auth/MyAccountsContext'
 import { slugifyHandle } from '../urls/helpers'
 import { useAddClassNameToRootElement } from '../utils'
 import { controlledMessage } from '../utils/Message'
+import { log } from './BuyDomainButtons'
 import styles from './index.module.sass'
 import { DomainSellerKind, useManageDomainContext } from './manage/ManageDomainProvider'
 
@@ -174,17 +176,38 @@ export const useFetchNewDomains = (domainName?: string) => {
   )
 }
 
-export const useGetPrice = (domainPrice: string, domainSellerKind: DomainSellerKind) => {
+export const useGetDomainPrice = (domain: string) => {
+  const [price, setPrice] = useState()
+
+  useEffect(() => {
+    const getPrice = async () => {
+      const subsocialRpc = getOrInitSubsocialRpc()
+
+      const { domain: domainPart } = parseDomain(domain)
+      const price = await subsocialRpc.calculatePrice(domainPart)
+
+      setPrice(price)
+    }
+
+    getPrice().catch(err => log.error('Failed to get domain price', err))
+  }, [domain])
+
+  return price
+}
+
+export const useGetPrice = (domainSellerKind: DomainSellerKind, domainPrice?: string) => {
   const sellerConfig = useSelectSellerConfig()
   const { domainRegistrationPriceFactor } = sellerConfig || {}
 
   const isSub = domainSellerKind === 'SUB'
 
   const price = useMemo(() => {
+    if (!domainPrice) return '0'
+
     if (isSub) {
       return domainPrice
     } else {
-      if (!domainRegistrationPriceFactor || !domainPrice) return '0'
+      if (!domainRegistrationPriceFactor) return '0'
       return new BN(domainPrice).multipliedBy(new BN(domainRegistrationPriceFactor)).toString()
     }
   }, [isSub, domainPrice, domainRegistrationPriceFactor])

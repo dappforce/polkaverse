@@ -15,7 +15,7 @@ import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfi
 import { MutedDiv } from '../../utils/MutedText'
 import { DomainSellerKind, useManageDomainContext } from '../manage/ManageDomainProvider'
 import RegisterDomainButton from '../registerDomainModal/RegisterDomainModal'
-import { getTime } from '../utils'
+import { getTime, useGetDomainPrice } from '../utils'
 import styles from './Index.module.sass'
 
 type PendingDomainProps = {
@@ -29,6 +29,7 @@ const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
   const sellerConfig = useSelectSellerConfig()
   const reloadPendingOrders = useCreateReloadPendingOrders()
   const myAddress = useMyAddress()
+  const domainPrice = useGetDomainPrice(pendingDomain.id)
 
   const { processingDomains } = useManageDomainContext()
 
@@ -57,6 +58,7 @@ const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
       label={'Continue'}
       withPrice={false}
       domainSellerKind={destination as DomainSellerKind}
+      domainPrice={domainPrice}
     />
   )
 

@@ -11,11 +11,10 @@ import { useFetchDomains, useIsReservedWord } from '../../rtk/features/domains/d
 import { useIsMyAddress, useMyAccountsContext, useMyAddress } from '../auth/MyAccountsContext'
 import { Loading, LocalIcon } from '../utils'
 import { MutedDiv, MutedSpan } from '../utils/MutedText'
-import { useGetDomainPrice } from './BuyDomainButtons'
 import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
 import RegisterDomainButton from './registerDomainModal/RegisterDomainModal'
-import { DomainDetails, getTime, ResultContainer } from './utils'
+import { DomainDetails, getTime, ResultContainer, useGetDomainPrice } from './utils'
 
 type DomainItemProps = {
   domain: string

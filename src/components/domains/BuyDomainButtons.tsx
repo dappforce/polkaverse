@@ -1,14 +1,12 @@
 import { randomAsNumber } from '@polkadot/util-crypto'
 import {
   newLogger,
-  parseDomain,
   SocialRemark,
   SocialRemarkDestChainsNameId,
   SocialRemarkMessageVersion,
   SubSclSource,
 } from '@subsocial/utils'
 import BN from 'bignumber.js'
-import { useEffect, useState } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
 import LazyTxButton from 'src/components/donate/LazyTxButton'
@@ -19,7 +17,6 @@ import {
   updatePendingOrder,
 } from 'src/components/utils/OffchainUtils'
 import TxButton from 'src/components/utils/TxButton'
-import { getOrInitSubsocialRpc } from 'src/rpc/initSubsocialRpc'
 import { useAppDispatch } from 'src/rtk/app/store'
 import {
   useCreateReloadPendingOrders,
@@ -37,32 +34,13 @@ import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
 import { BLOCKS_IN_YEAR } from './utils'
 
-const log = newLogger('DD')
+export const log = newLogger('DD')
 
 type BuyByDotTxButtonProps = {
   domainName: string
   className?: string
   price?: string
   close: () => void
-}
-
-export const useGetDomainPrice = (domain: string) => {
-  const [price, setPrice] = useState()
-
-  useEffect(() => {
-    const getPrice = async () => {
-      const subsocialRpc = getOrInitSubsocialRpc()
-
-      const { domain: domainPart } = parseDomain(domain)
-      const price = await subsocialRpc.calculatePrice(domainPart)
-
-      setPrice(price)
-    }
-
-    getPrice().catch(err => log.error('Failed to get domain price', err))
-  }, [domain])
-
-  return price
 }
 
 export const BuyByDotTxButton = ({
