@@ -48,6 +48,8 @@ export const pendingOrdersWrapper = async ({
       nonce,
     )
 
+    console.log(clientId, process.env.SELLER_CLIENT_TOKEN_SIGNER)
+
     const requestHeaders = {
       Authorization: 'Bearer ' + u8aToHex(signedToken.sealed),
       'Client-Id': clientId,
@@ -60,7 +62,7 @@ export const pendingOrdersWrapper = async ({
   } catch (e: any) {
     res.status(200).send({
       success: false,
-      errors: e.response.errors?.[0].message,
+      errors: e.response?.errors?.[0].message,
     })
     return undefined
   }
