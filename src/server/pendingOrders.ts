@@ -30,6 +30,8 @@ export const pendingOrdersWrapper = async ({
   if (req.method !== 'POST') return res.status(404).end()
 
   try {
+    console.log(process.env.SELLER_CLIENT_ID as string, process.env.SELLER_CLIENT_TOKEN_SIGNER)
+
     const nonce = new Uint8Array(24)
     nonce[0] = NONCE
 
@@ -47,8 +49,6 @@ export const pendingOrdersWrapper = async ({
       decodeAddress(sellerApiAuthTokenManager),
       nonce,
     )
-
-    console.log(clientId, process.env.SELLER_CLIENT_TOKEN_SIGNER)
 
     const requestHeaders = {
       Authorization: 'Bearer ' + u8aToHex(signedToken.sealed),
