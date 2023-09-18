@@ -44,7 +44,7 @@ jobs:
 
       - if: ${{ github.ref == 'refs/heads/staging' }}
         name: Build staging image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
@@ -62,7 +62,7 @@ jobs:
 
       - if: ${{ github.ref == 'refs/heads/main' }}
         name: Build production image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
