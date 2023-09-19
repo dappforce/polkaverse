@@ -30,7 +30,7 @@ const getMarkdownModeFromLocalStore = () =>
 
 const AFFIX_OFFSET = 85
 const TITLE_MIN_LEN = 3
-const TITLE_MAX_LEN = 100
+const TITLE_MAX_LEN = 500
 
 const { TabPane } = Tabs
 
