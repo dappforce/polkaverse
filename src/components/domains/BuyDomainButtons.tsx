@@ -240,7 +240,7 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
     const jsonErr = JSON.stringify(errorInfo)
     log.error('Failed:', jsonErr)
 
-    showErrorMessage(jsonErr)
+    errorInfo && showErrorMessage(jsonErr)
     setProcessingDomains({ [domainName]: false })
   }
 
