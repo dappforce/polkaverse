@@ -17,8 +17,8 @@ type ManageDomainProviderState = {
   setRecipient: (recipient: string) => void
   purchaser: string
   setPurchaser: (recipient: string) => void
-  isFetchNewDomains: boolean
-  setIsFetchNewDomains: (isFetchNewDomains: boolean) => void
+  domainToFetch?: string
+  setDomainToFetch: (domainToFetch?: string) => void
   processingDomains: Record<string, boolean>
   setProcessingDomains: (processingDomains: Record<string, boolean>) => void
 }
@@ -36,15 +36,15 @@ export const ManageDomainProvider: React.FC<{ promoCode?: string }> = ({ childre
   const [domainSellerKind, setVariant] = useState<DomainSellerKind>('SUB')
   const [recipient, setRecipient] = useState<string>(myAddress || '')
   const [purchaser, setPurchaser] = useState<string>(myAddress || '')
-  const [isFetchNewDomains, setIsFetchNewDomains] = useState(false)
+  const [domainToFetch, setDomainToFetch] = useState<string>()
   const [processingDomains, setProcessingDomains] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
-    if(!myAddress) return
+    if (!myAddress) return
 
     setRecipient(myAddress)
     setPurchaser(myAddress)
-  }, [ myAddress])
+  }, [myAddress])
 
   const router = useRouter()
   const [activePromoCode, setActivePromoCode] = useState(promoCode)
@@ -78,8 +78,8 @@ export const ManageDomainProvider: React.FC<{ promoCode?: string }> = ({ childre
     clearPromoCode,
     purchaser,
     setPurchaser,
-    isFetchNewDomains,
-    setIsFetchNewDomains,
+    domainToFetch,
+    setDomainToFetch,
     processingDomains,
     setProcessingDomains: (newData: Record<string, boolean>) =>
       setProcessingDomains({ ...processingDomains, ...newData }),

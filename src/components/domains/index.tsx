@@ -32,7 +32,7 @@ const DomainMarketSection = ({ promoCode }: DomainServerProps) => {
   const myAddress = useMyAddress()
   const { domains } = useMyDomains()
   const { api, isApiReady, subsocial } = useSubstrate()
-  useFetchNewDomains(domain?.id)
+  useFetchNewDomains()
 
   const onSearchDomain = async (domain?: string) => {
     if (!domain) return

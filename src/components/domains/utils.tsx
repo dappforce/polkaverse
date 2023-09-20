@@ -132,17 +132,16 @@ const waitMessage = controlledMessage({
   icon: <LoadingOutlined />,
 })
 
-export const useFetchNewDomains = (domainName?: string) => {
+export const useFetchNewDomains = () => {
   const myAddress = useMyAddress()
-  const { setIsFetchNewDomains, isFetchNewDomains, openManageModal, setProcessingDomains } =
+  const { setDomainToFetch, domainToFetch, openManageModal, setProcessingDomains } =
     useManageDomainContext()
   const upsertDomains = useCreateUpsertDomains()
   const removePendingOrder = useCreateRemovePendingOrders()
 
   useSubsocialEffect(
     ({ substrate }) => {
-      setIsFetchNewDomains(false)
-      if (!myAddress || !isFetchNewDomains || !domainName) return
+      if (!myAddress || !domainToFetch || !domainToFetch) return
 
       let unsub: any
 
@@ -150,20 +149,21 @@ export const useFetchNewDomains = (domainName?: string) => {
         const api = await (await substrate.api).isReady
         waitMessage.open()
 
-        unsub = await api.query.domains.registeredDomains(domainName, data => {
+        unsub = await api.query.domains.registeredDomains(domainToFetch, data => {
           const domain = data.unwrapOr(undefined)
 
           if (domain) {
             const domainEntity = {
-              id: domainName,
+              id: domainToFetch,
               ...(domain as unknown as DomainStruct),
             }
 
-            upsertDomains({ domain: domainEntity, address: myAddress, domainName })
-            removePendingOrder({ domainName })
-            setProcessingDomains({ [domainName]: false })
+            setDomainToFetch(undefined)
+            upsertDomains({ domain: domainEntity, address: myAddress, domainName: domainToFetch })
+            removePendingOrder({ domainName: domainToFetch })
+            setProcessingDomains({ [domainToFetch]: false })
             waitMessage.close()
-            openManageModal('success', domainName)
+            openManageModal('success', domainToFetch)
           }
         })
       }
@@ -172,7 +172,7 @@ export const useFetchNewDomains = (domainName?: string) => {
 
       return () => unsub && unsub()
     },
-    [isFetchNewDomains, myAddress],
+    [domainToFetch, myAddress],
   )
 }
 

@@ -51,8 +51,7 @@ export const BuyByDotTxButton = ({
   close,
   price,
 }: BuyByDotTxButtonProps) => {
-  const { recipient, purchaser, setIsFetchNewDomains, setProcessingDomains } =
-    useManageDomainContext()
+  const { recipient, purchaser, setDomainToFetch, setProcessingDomains } = useManageDomainContext()
   const sellerConfig = useSelectSellerConfig()
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
@@ -115,7 +114,7 @@ export const BuyByDotTxButton = ({
   }
 
   const onSuccess = async () => {
-    setIsFetchNewDomains(true)
+    setDomainToFetch(domainName)
     setProcessingDomains({ [domainName]: true })
 
     close()
