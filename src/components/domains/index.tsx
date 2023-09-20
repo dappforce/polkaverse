@@ -45,6 +45,7 @@ const DomainMarketSection = ({ promoCode }: DomainServerProps) => {
   }
 
   const [activeTab, setActiveTab] = useState(getTabKey('register'))
+
   useEffect(() => {
     const hash = window.location.hash.substring(1)
     if ((tabs as unknown as string[]).includes(hash)) setActiveTab(hash as TabKey)
