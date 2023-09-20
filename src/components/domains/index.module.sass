@@ -43,7 +43,6 @@ $font_size: 1.1rem
 .DomainPrimaryButton
   padding: 0 $space_normal
   font-size: $font_normal
-  margin-left: $space_tiny
 
 .DomainResults
   border-radius: $border_size
@@ -177,3 +176,12 @@ $font_size: 1.1rem
 
 .PendingTag
   background-color: transparent !important
+
+.TxButtonSection
+  width: 100%
+  display: flex
+  flex-direction: column
+  gap: $space_normal
+
+  \:global .ant-alert-warning
+    border-radius: 10px !important

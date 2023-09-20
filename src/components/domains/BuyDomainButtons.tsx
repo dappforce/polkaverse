@@ -25,10 +25,12 @@ import {
 import { fetchPendingOrdersByAccount } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
 import { useCreateReloadMyDomains } from 'src/rtk/features/domains/domainHooks'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
+import { useCreateBalance } from '../common/balances'
 import { useSubstrate } from '../substrate'
 import { TxCallback } from '../substrate/SubstrateTxButton'
 import { showErrorMessage } from '../utils/Message'
 import { useGetDecimalAndSymbol } from '../utils/useGetDecimalsAndSymbol'
+import WarningPanel from '../utils/WarningPanel'
 import { pendingOrderAction } from './dot-seller/utils'
 import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
@@ -57,7 +59,7 @@ export const BuyByDotTxButton = ({
   const { getApiByNetwork } = useLazyConnectionsContext()
   const pendingOrder = useSelectPendingOrderById(domainName)
 
-  const { sellerChain, domainRegistrationPriceFixed } = sellerConfig || {}
+  const { sellerChain } = sellerConfig || {}
 
   const { symbol } = useGetDecimalAndSymbol(sellerChain)
 
@@ -167,38 +169,43 @@ export const BuyByDotTxButton = ({
     dispatch(fetchPendingOrdersByAccount({ id: myAddress, reload: true }))
   }
 
-  const disableButton =
-    !recipient ||
-    !freeBalance ||
-    !domainRegistrationPriceFixed ||
-    new BN(freeBalance).lt(domainRegistrationPriceFixed) ||
-    !price
+  const notEnoughTokens = freeBalance && price ? new BN(freeBalance).lt(price) : false
+
+  const disableButton = !recipient || !freeBalance || !price || notEnoughTokens
 
   return (
-    <LazyTxButton
-      block
-      type='primary'
-      size='middle'
-      network={sellerChain || ''}
-      accountId={purchaser}
-      disabled={disableButton}
-      tx={'utility.batchAll'}
-      params={getParams}
-      onSuccess={onSuccess}
-      onCancel={onCancel}
-      onClick={() => onClick()}
-      label={'Register'}
-      className={className}
-    />
+    <div className={styles.TxButtonSection}>
+      {notEnoughTokens && <WarningPanel desc={'You do not have enough tokens to buy a domain'} />}
+      <LazyTxButton
+        block
+        type='primary'
+        size='middle'
+        network={sellerChain || ''}
+        accountId={purchaser}
+        disabled={disableButton}
+        tx={'utility.batchAll'}
+        params={getParams}
+        onSuccess={onSuccess}
+        onCancel={onCancel}
+        onClick={() => onClick()}
+        label={'Register'}
+        className={className}
+      />
+    </div>
   )
 }
 
 type BuyDomainSectionProps = {
   domainName: string
   label?: string
+  price?: string
 }
 
-export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSectionProps) => {
+export const BuyDomainSection = ({
+  domainName,
+  label = 'Register',
+  price,
+}: BuyDomainSectionProps) => {
   const reloadMyDomains = useCreateReloadMyDomains()
   const { openManageModal, setProcessingDomains, recipient } = useManageDomainContext()
   const { api, isApiReady } = useSubstrate()
@@ -208,6 +215,7 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
   const myAddress = useMyAddress()
   const pendingOrder = useSelectPendingOrderById(domainName)
   const dispatch = useAppDispatch()
+  const nativeBalance = useCreateBalance(purchaser)
 
   if (!isApiReady) return null
 
@@ -293,14 +301,21 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
     dispatch(fetchPendingOrdersByAccount({ id: myAddress, reload: true }))
   }
 
+  const notEnoughTokens =
+    nativeBalance && price ? new BN(nativeBalance.toString()).lt(price) : false
+
+  const disableButton = !recipient || !nativeBalance || !price || notEnoughTokens
+
   return (
-    <span className='d-flex align-items-center w-100'>
+    <div className={styles.TxButtonSection}>
+      {notEnoughTokens && <WarningPanel desc={'You do not have enough tokens to buy a domain'} />}
       <TxButton
         type='primary'
         customNodeApi={api}
         accountId={purchaser}
         block
         size='middle'
+        disabled={disableButton}
         label={label}
         tx={'domains.registerDomain'}
         onSuccess={onSuccess}
@@ -311,6 +326,6 @@ export const BuyDomainSection = ({ domainName, label = 'Register' }: BuyDomainSe
         params={getTxParams}
         className={styles.DomainPrimaryButton}
       />
-    </span>
+    </div>
   )
 }

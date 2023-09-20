@@ -139,7 +139,7 @@ const BuyDomainModal = ({
       {isByDot ? (
         <BuyByDotTxButton domainName={domainName} className={'ml-0'} close={close} price={price} />
       ) : (
-        <BuyDomainSection domainName={domainName} />
+        <BuyDomainSection domainName={domainName} price={price} />
       )}
     </div>
   )
