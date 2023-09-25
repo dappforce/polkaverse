@@ -43,4 +43,6 @@ export default [
   '5892',
   // CryptoZilla
   '11581',
+  // Polkadot Insider
+  '11157',
 ]
