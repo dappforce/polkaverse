@@ -84,7 +84,7 @@ export const Banner = (props: BannerProps) => {
   )
 
   return (
-    <Link href={targetLink} as={targetLink}>
+    <Link href={targetLink} as={targetLink} legacyBehavior>
       {isMobile ? (
         <section className={styles.DfBanner} style={styleObj}>
           {closeButton}

@@ -13,7 +13,7 @@ type ButtonLinkProps = LinkProps & ButtonProps
 
 export const ButtonLink = ({ as, href, target, children, ...buttonProps }: ButtonLinkProps) => (
   <Button {...buttonProps}>
-    <Link href={href} as={as}>
+    <Link href={href} as={as} legacyBehavior>
       <a target={target}>{children}</a>
     </Link>
   </Button>
@@ -25,7 +25,7 @@ type IconLinksProps = LinkProps & {
 }
 
 export const IconLink = ({ title, icon, ...linkProps }: IconLinksProps) => (
-  <Link {...linkProps}>
+  <Link {...linkProps} legacyBehavior>
     <a className='DfHoverIcon'>
       <Tooltip title={title}>{icon}</Tooltip>
     </a>

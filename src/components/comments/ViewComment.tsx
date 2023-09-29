@@ -84,7 +84,7 @@ export const InnerViewComment: FC<Props> = props => {
 
     return (
       <>
-        <Link href={commentLink}>
+        <Link href={commentLink} legacyBehavior>
           <a
             onClick={event => {
               event.preventDefault()
@@ -119,7 +119,7 @@ export const InnerViewComment: FC<Props> = props => {
         }
         details={
           <span>
-            <Link href='/[spaceId]/[slug]' as={commentLink}>
+            <Link href='/[spaceId]/[slug]' as={commentLink} legacyBehavior}>
               <a className='DfGreyLink' title={formatDate(createdAtTime)}>
                 {dayjs(createdAtTime).fromNow()}
               </a>

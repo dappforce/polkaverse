@@ -44,7 +44,7 @@ const InnerMenu = () => {
           onClick={toggle}
           className={clsx('DfBurgerIcon mx-3', isMobile && 'mr-2')}
         />
-        <Link href='/' as='/'>
+        <Link href='/' as='/' legacyBehavior>
           <a className='DfBrand'>
             <img className='d-block' src={isMobile ? mobileAppLogo : appLogo} alt={appName} />
           </a>

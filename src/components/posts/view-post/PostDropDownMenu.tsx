@@ -47,7 +47,7 @@ const InnerPostDropDownMenu: FC<DropdownProps> = props => {
                 {'Edit comment'}
               </a>
             ) : (
-              <Link {...editPostProps}>
+              <Link {...editPostProps} legacyBehavior>
                 <a className='item'>{'Edit post'}</a>
               </Link>
             )}

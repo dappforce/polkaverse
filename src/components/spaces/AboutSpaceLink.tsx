@@ -13,7 +13,7 @@ export const AboutSpaceLink = ({ space, title, hint, className }: Props) => {
   if (!space.id || !title) return null
 
   return (
-    <Link href='/[spaceId]/about' as={aboutSpaceUrl(space)}>
+    <Link href='/[spaceId]/about' as={aboutSpaceUrl(space)} legacyBehavior>
       <a className={className} title={hint}>
         {title}
       </a>

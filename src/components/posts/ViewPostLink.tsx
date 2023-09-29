@@ -15,7 +15,7 @@ export const ViewPostLink = React.memo(({ space, post, title, hint, className }:
   if (!post.struct.id || !title) return null
 
   return (
-    <Link href='/[spaceId]/[slug]' as={postUrl(space, post)}>
+    <Link href='/[spaceId]/[slug]' as={postUrl(space, post)} legacyBehavior>
       <a className={className} title={hint}>
         {title}
       </a>

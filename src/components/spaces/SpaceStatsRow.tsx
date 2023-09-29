@@ -21,7 +21,7 @@ export const SpaceStatsRow = ({ space }: Props) => {
 
   return (
     <div className={`${useIsMySpace(space) && 'MySpace DfStatItem'}`}>
-      <Link href='/[spaceId]' as={spaceUrl(space)}>
+      <Link href='/[spaceId]' as={spaceUrl(space)} legacyBehavior>
         <a className={statLinkCss}>
           <Pluralize count={postsCount || 0} singularText='Post' />
         </a>

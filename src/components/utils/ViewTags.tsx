@@ -14,7 +14,7 @@ const ViewTag = React.memo(({ tag }: ViewTagProps) => {
 
   return isEmptyStr(tag) ? null : (
     <Tag key={tag} className='mt-2'>
-      <Link href={searchLink} as={searchLink}>
+      <Link href={searchLink} as={searchLink} legacyBehavior>
         <a className='DfGreyLink'>
           <TagOutlined />
           {tag}

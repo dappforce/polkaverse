@@ -43,7 +43,7 @@ export const MultiBanner = ({ uid, kinds, buildUrl, href }: MultiBannerProps) =>
   const closeButton = <CloseOutlined className={styles.DfCloseButton} onClick={closeBanner} />
 
   return (
-    <Link href={href}>
+    <Link href={href} legacyBehavior>
       <a target='_blank' rel='noreferrer'>
         <div className={styles.Banner}>
           <img src={backgroundImage} className={styles.BannerImg} alt='Banner image' />

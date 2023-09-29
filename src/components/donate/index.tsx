@@ -118,14 +118,12 @@ export const DonationSection = ({ recipientAddress }: DonateProps) => {
     >
       <Row justify='center' className={styles.DonationContainer}>
         <Row justify='center'>
-          <Link passHref href={`/accounts/${recipientAddress}`}>
-            <a>
-              <BaseAvatar
-                identityValue={recipientAddress}
-                avatar={profileData?.content?.image}
-                size={64}
-              />
-            </a>
+          <Link passHref href={`/accounts/${recipientAddress}`} legacyBehavior>
+            <BaseAvatar
+              identityValue={recipientAddress}
+              avatar={profileData?.content?.image}
+              size={64}
+            />
           </Link>
         </Row>
         <Row justify='center' className='my-2'>

@@ -118,7 +118,7 @@ export const ActionMenu = () => {
 
         {hasDomains && (
           <Menu.Item key='domains' icon={MyDomainsIcon}>
-            <Link href='/dd' as='/dd'>
+            <Link href='/dd' as='/dd' legacyBehavior>
               <a onClick={close}>My Domains</a>
             </Link>
           </Menu.Item>

@@ -10,7 +10,10 @@ import { AuthProvider } from '../components/auth/AuthContext'
 import { MyAccountsProvider } from '../components/auth/MyAccountsContext'
 import { SubstrateProvider, SubstrateWebConsole } from '../components/substrate'
 import SidebarCollapsedProvider from '../components/utils/SideBarCollapsedContext'
-import { Navigation } from './Navigation'
+
+const Navigation = dynamic(() => import('./Navigation'), {
+  ssr: false,
+})
 
 const ChatFloatingModal = dynamic(() => import('../components/chat/ChatFloatingModal'), {
   ssr: false,

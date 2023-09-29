@@ -1,14 +1,13 @@
 // organize-imports-ignore
 import '../utils/wdyr'
 
-// TODO remove global import of all AntD CSS, use modular LESS loading instead.
-// See .babelrc options: https://github.com/ant-design/babel-plugin-import#usage
-import 'src/styles/antd.css'
-
 import 'src/styles/bootstrap-utilities-4.3.1.css'
 import 'src/styles/components.scss'
 import 'src/styles/github-md.css'
 import 'easymde/dist/easymde.min.css'
+
+import { ConfigProvider } from 'antd'
+import theme from '../styles/themeConfig'
 
 // Subsocial custom styles:
 import 'src/styles/subsocial.scss'
@@ -63,24 +62,26 @@ function MyApp(props) {
           rel='stylesheet'
         />
       </Head>
-      <NextNProgress
-        color='#eb2f96'
-        options={{
-          showSpinner: false,
-        }}
-      />
-      <Provider store={store}>
-        {/* <AdBlockModal /> */}
-        <AnalyticProvider>
-          <DfApolloProvider initialApolloState={pageProps.initialApolloState}>
-            <ThemeProvider defaultTheme={config.themeName}>
-              <MainPage>
-                <Component {...pageProps} />
-              </MainPage>
-            </ThemeProvider>
-          </DfApolloProvider>
-        </AnalyticProvider>
-      </Provider>
+      <ConfigProvider theme={theme}>
+        <NextNProgress
+          color='#eb2f96'
+          options={{
+            showSpinner: false,
+          }}
+        />
+        <Provider store={store}>
+          {/* <AdBlockModal /> */}
+          <AnalyticProvider>
+            <DfApolloProvider initialApolloState={pageProps.initialApolloState}>
+              <ThemeProvider defaultTheme={config.themeName}>
+                <MainPage>
+                  <Component {...pageProps} />
+                </MainPage>
+              </ThemeProvider>
+            </DfApolloProvider>
+          </AnalyticProvider>
+        </Provider>
+      </ConfigProvider>
     </>
   )
 }

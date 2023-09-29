@@ -29,7 +29,7 @@ export default function EnergyDiscordInstruction({
         <span>
           2. Paste the text into the energy-bot channel in our
           <strong>
-            <Link passHref href={getSubsocialDiscordLink()}>
+            <Link passHref href={getSubsocialDiscordLink()} legacyBehavior>
               <a target='_blank' onClick={onDiscordLinkClick}>
                 {' '}
                 Discord

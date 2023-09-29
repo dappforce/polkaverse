@@ -16,12 +16,12 @@ export default function PrivacyPolicyText({
     <span className={clsx('m-0', className)} {...props}>
       {textGenerator({
         terms: (
-          <Link href='https://subsocial.network/legal/terms' passHref>
+          <Link href='https://subsocial.network/legal/terms' passHref legacyBehavior>
             <a target='_blank'>Terms of Use</a>
           </Link>
         ),
         privacy: (
-          <Link href='https://subsocial.network/legal/privacy' passHref>
+          <Link href='https://subsocial.network/legal/privacy' passHref legacyBehavior>
             <a target='_blank'>Privacy Policy</a>
           </Link>
         ),

@@ -36,7 +36,7 @@ export const LinkSpacePreviewById = React.memo(
     if (!space) return null
 
     return (
-      <Link {...createNewPostLinkProps(space.struct)}>
+      <Link {...createNewPostLinkProps(space.struct)} legacyBehavior>
         <ViewSpace onClick={closeModal} spaceData={space} miniPreview withFollowButton={false} />
       </Link>
     )

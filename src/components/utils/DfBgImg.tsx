@@ -63,7 +63,7 @@ type DfBgImageLinkProps = BgImgProps & LinkProps
 
 export const DfBgImageLink = React.memo(({ href, as, ...props }: DfBgImageLinkProps) => (
   <div>
-    <Link href={href} as={as}>
+    <Link href={href} as={as} legacyBehavior>
       <a>
         <DfBgImg {...props} />
       </a>

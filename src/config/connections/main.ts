@@ -17,7 +17,7 @@ const mainConfig: SubsocialConfig = {
   dagHttpMethod: 'post',
   useOffchainForIpfs: false,
 
-  subIdApiUrl: 'https://sub.id/api/v1',
+  subIdApiUrl: 'https://main-test-subid.subsocial.network/api/v1',
   subsocialParaId: 2100,
 
   nodes: {

@@ -82,7 +82,7 @@ type NotificationsProps = {
 }
 
 const Bell = ({ unreadCount }: NotificationsProps) => (
-  <Link href={notificationItem.page[0]} as={notificationItem.page[1]}>
+  <Link href={notificationItem.page[0]} as={notificationItem.page[1]} legacyBehavior>
     <a className={clsx('DfNotificationsCounter d-block', unreadCount > 9 && 'mr-1')}>
       {notificationItem.icon}
     </a>

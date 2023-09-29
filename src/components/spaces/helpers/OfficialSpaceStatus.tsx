@@ -36,7 +36,7 @@ const unclaimedSpaceProps: InnerIconProps = {
 const claimSpaceUrl = '/spaces/claim'
 
 const claimSpaceLink = (
-  <Link href={claimSpaceUrl} as={claimSpaceUrl}>
+  <Link href={claimSpaceUrl} as={claimSpaceUrl} legacyBehavior>
     <Tag color='gold' className='DfClaimSpaceTag'>
       Claim space
     </Tag>

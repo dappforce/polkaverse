@@ -17,7 +17,7 @@ export const SpacedSectionTitle = ({ space, subtitle }: Props) => {
     <>
       {!isStorybook && space && name && (
         <>
-          <Link href='/[spaceId]' as={spaceUrl(space.struct)}>
+          <Link href='/[spaceId]' as={spaceUrl(space.struct)} legacyBehavior>
             <a>{name}</a>
           </Link>
           <span style={{ margin: '0 .75rem' }}>/</span>

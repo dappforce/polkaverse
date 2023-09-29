@@ -93,3 +93,5 @@ export const Navigation = (props: Props): JSX.Element => {
     </Layout>
   )
 }
+
+export default Navigation

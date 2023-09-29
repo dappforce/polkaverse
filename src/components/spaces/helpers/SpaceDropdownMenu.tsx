@@ -48,7 +48,7 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
       <>
         {isMySpace && (
           <Menu.Item key={`edit-space-${spaceKey}`}>
-            <Link href={'/[spaceId]/edit'} as={editSpaceUrl(struct)}>
+            <Link href={'/[spaceId]/edit'} as={editSpaceUrl(struct)} legacyBehavior>
               <a className='item'>Edit space</a>
             </Link>
           </Menu.Item>
@@ -68,7 +68,7 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
           ))}
         {!canCreatePost || isHidden(struct) ? null : (
           <Menu.Item key={`create-post-${spaceKey}`}>
-            <Link {...createNewPostLinkProps(struct)}>
+            <Link {...createNewPostLinkProps(struct)} legacyBehavior>
               <a className='item'>Write post</a>
             </Link>
           </Menu.Item>

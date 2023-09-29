@@ -83,7 +83,7 @@ export function PaginatedList<T extends any>(props: PaginatedListProps<T>) {
         switch (type) {
           case 'page':
             return (
-              <Link {...getLinksParams(page)}>
+              <Link {...getLinksParams(page)} legacyBehavior>
                 <a>{page}</a>
               </Link>
             )

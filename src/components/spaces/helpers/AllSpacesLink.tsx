@@ -7,7 +7,7 @@ type Props = BareProps & {
 }
 
 export const AllSpacesLink = ({ title = 'See all', ...otherProps }: Props) => (
-  <Link href='/spaces' as='/spaces'>
+  <Link href='/spaces' as='/spaces' legacyBehavior>
     <a className='DfGreyLink text-uppercase' style={{ fontSize: '1rem' }} {...otherProps}>
       {title}
     </a>

@@ -34,13 +34,13 @@ export const CreateOrEditProfileSpace = ({ address, onClick, ...props }: Profile
   const profileSpace = useSelectProfile(address.toString())
 
   const actionButton = profileSpace ? (
-    <Link href={editSpaceUrl(profileSpace.struct, true)}>
+    <Link href={editSpaceUrl(profileSpace.struct, true)} legacyBehavior>
       <a className='item' onClick={onClick} {...props}>
         Edit profile
       </a>
     </Link>
   ) : (
-    <Link href={newSpaceUrl(true)}>
+    <Link href={newSpaceUrl(true)} legacyBehavior>
       <a className='item' onClick={onClick} {...props}>
         Create profile
       </a>
@@ -104,7 +104,7 @@ export const ResetProfileButton = () => {
 
 export const SettingsLink = ({ address, title = 'Settings', onClick, ...props }: ProfileLink) =>
   useIsMyAddress(address) ? (
-    <Link href='/settings/email' as='/settings/email'>
+    <Link href='/settings/email' as='/settings/email' legacyBehavior>
       <a onClick={onClick} {...props}>
         {title}
       </a>

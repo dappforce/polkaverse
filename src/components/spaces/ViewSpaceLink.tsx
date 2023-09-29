@@ -23,7 +23,7 @@ export const ViewSpaceLink = React.memo(
           e.preventDefault()
         }}
       >
-        <Link href='/[spaceId]' as={spaceUrl(space)}>
+        <Link href='/[spaceId]' as={spaceUrl(space)} legacyBehavior>
           <a className={'DfBlackLink ' + className} title={hint}>
             {title}
           </a>

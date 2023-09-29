@@ -32,7 +32,7 @@ export default function TwitterPost({
   return (
     <div {...props} className={clsx(styles.TwitterPost, props.className)}>
       <div className={styles.TwitterPostHeader}>
-        <Link passHref href={originalTweetUrl}>
+        <Link passHref href={originalTweetUrl} legacyBehavior>
           <a
             target='_blank'
             rel='noreferrer noopener'
@@ -42,7 +42,7 @@ export default function TwitterPost({
             <span className='CursorPointer'>{content.tweet.username || 'Saved Tweet'}</span>
           </a>
         </Link>
-        <Link href='https://post4ever.app/' passHref>
+        <Link href='https://post4ever.app/' passHref legacyBehavior>
           <a className='d-flex align-items-center' target='_blank' rel='noreferrer noopener'>
             <span className='mr-2'>Saved from Twitter</span>
             <BsQuestionCircle className='position-relative' style={{ top: 1 }} />

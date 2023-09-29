@@ -35,7 +35,7 @@ const renderPageLink = (item: PageLink) => {
       key={item.page[1] || item.page[0]}
       onClick={() => !openInNewTab && goToPage(item.page)}
     >
-      <Link href={item.page[0]} as={item.page[1]} passHref>
+      <Link href={item.page[0]} as={item.page[1]} passHref legacyBehavior>
         <a {...anchorProps}>
           {icon}
           <span className='MenuItemName'>{item.name}</span>
