@@ -1,15 +1,15 @@
-import { Select } from 'antd'
-import { useEffect, useState } from 'react'
-import { SelectAddressPreview } from '../../profile-selector/MyAccountMenu'
-import { isDef, isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
-import registry from '@subsocial/api/utils/registry'
 import { GenericAccountId } from '@polkadot/types'
-import Avatar from '../../profiles/address-views/Avatar'
-import styles from './inputs.module.sass'
-import { useSelectProfile } from 'src/rtk/app/hooks'
+import registry from '@subsocial/api/utils/registry'
+import { isDef, isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
+import { Select } from 'antd'
+import clsx from 'clsx'
+import { useEffect, useState } from 'react'
 import { useMyAccounts } from 'src/components/auth/MyAccountsContext'
 import { equalAddresses } from 'src/components/substrate'
-import clsx from 'clsx'
+import { useSelectProfile } from 'src/rtk/app/hooks'
+import { SelectAddressPreview } from '../../profile-selector/MyAccountMenu'
+import Avatar from '../../profiles/address-views/Avatar'
+import styles from './inputs.module.sass'
 
 export const isValidAccount = (address?: string) => {
   try {
@@ -52,27 +52,26 @@ export const SelectAccountInput = ({
   className,
   withAvatar = true,
   network,
-  disabled
+  disabled,
 }: SelectAccountInputProps) => {
   const { accounts, status } = useMyAccounts()
-  const allExtensionAccounts = accounts.map(x => x.address && toSubsocialAddress(x.address) as string).filter(isDef)
+  const allExtensionAccounts = accounts
+    .map(x => x.address && (toSubsocialAddress(x.address) as string))
+    .filter(isDef)
 
-  const [ defaultOptions, setDefaultOptions ] = useState<any[]>([])
-  const [ selectOptions, setSelectOptions ] = useState<any[]>(defaultOptions)
+  const [defaultOptions, setDefaultOptions] = useState<any[]>([])
+  const [selectOptions, setSelectOptions] = useState<any[]>(defaultOptions)
   const profile = useSelectProfile(value)
 
   useEffect(() => {
-    const options =
-    status === 'OK'
-        ? filterSelectOptions(allExtensionAccounts, value, network)
-        : []
+    const options = status === 'OK' ? filterSelectOptions(allExtensionAccounts, value, network) : []
 
     if (!defaultOptions || isEmptyArray(defaultOptions)) {
       setDefaultOptions(options)
     }
 
     setSelectOptions(options)
-  }, [ value, status ])
+  }, [value, status])
 
   const onSelectChange = (value: string) => {
     setValue(value)
@@ -106,9 +105,7 @@ export const SelectAccountInput = ({
   }
 
   const onSelectHandler = (searchValue: any) => {
-    const filterOptions = defaultOptions.filter(
-      (x: any) => !x.value.includes(searchValue)
-    )
+    const filterOptions = defaultOptions.filter((x: any) => !x.value.includes(searchValue))
 
     if (filterOptions) {
       setSelectOptions(filterOptions as any[])
@@ -121,9 +118,11 @@ export const SelectAccountInput = ({
 
   const avatar = (
     <div className='mr-2'>
-      {value 
-        ? <Avatar address={value} avatar={profile?.content?.image} size={50} /> 
-        : <div className={`${styles.Circle} mr-2`}></div>}
+      {value ? (
+        <Avatar address={value} avatar={profile?.content?.image} size={50} />
+      ) : (
+        <div className={`${styles.Circle} mr-2`}></div>
+      )}
     </div>
   )
 

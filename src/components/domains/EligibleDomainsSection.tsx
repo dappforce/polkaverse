@@ -4,6 +4,7 @@ import { parseDomain } from '@subsocial/utils'
 import { Button, Card, Radio, RadioChangeEvent, Result, Row, Tag, Tooltip } from 'antd'
 import React, { FC, useEffect } from 'react'
 import config from 'src/config'
+import { useChainInfo } from 'src/rtk/features/chainsInfo/chainsInfoHooks'
 import { DomainEntity } from 'src/rtk/features/domains/domainsSlice'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useSelectPendingOrderById } from '../../rtk/features/domainPendingOrders/pendingOrdersHooks'
@@ -57,9 +58,10 @@ const UnavailableBtn = ({ domain: { owner, id } }: DomainProps) => {
 
 type DomainActionProps = DomainProps & {
   domainPrice?: string
+  loadingPrice: boolean
 }
 
-const DomainAction = ({ domain, domainPrice }: DomainActionProps) => {
+const DomainAction = ({ domain, domainPrice, loadingPrice }: DomainActionProps) => {
   const { owner } = domain
   const { domainSellerKind } = useManageDomainContext()
   const sellerConfig = useSelectSellerConfig()
@@ -108,6 +110,7 @@ const DomainAction = ({ domain, domainPrice }: DomainActionProps) => {
       domainName={domain.id}
       domainSellerKind={domainSellerKind}
       domainPrice={domainPrice}
+      loadingPrice={loadingPrice}
     />
   )
 }
@@ -116,13 +119,16 @@ type FoundDomainsProps = {
   structs?: DomainEntity[]
   Action?: FC<DomainActionProps>
   domainPrice?: string
+  loadingPrice: boolean
 }
 
-const FoundDomains = ({ structs = [], Action, domainPrice }: FoundDomainsProps) => {
+const FoundDomains = ({ structs = [], Action, domainPrice, loadingPrice }: FoundDomainsProps) => {
   return (
     <>
       {structs.map(d => {
-        const action = Action ? <Action domain={d} domainPrice={domainPrice} /> : null
+        const action = Action ? (
+          <Action domain={d} domainPrice={domainPrice} loadingPrice={loadingPrice} />
+        ) : null
 
         return <DomainItem key={d.id} domain={d.id} action={action} />
       })}
@@ -155,7 +161,7 @@ const ReservedDomainCard = ({ domain }: Omit<DomainItemProps, 'action'>) => {
 const SuggestedDomains = ({ domain: { id }, rightElement, withDivider }: DomainProps) => {
   const { domain } = parseDomain(id)
   const domains = config.suggestedTlds?.map(tld => `${domain}.${tld}`)
-  const domainPrice = useGetDomainPrice(id)
+  const { price: domainPrice, loading: loadingPrice } = useGetDomainPrice(id)
 
   const { loading, domainsStruct = [] } = useFetchDomains(domains || [])
 
@@ -169,7 +175,12 @@ const SuggestedDomains = ({ domain: { id }, rightElement, withDivider }: DomainP
       withDivider={withDivider}
       icon={<LocalIcon path={'/icons/reward.svg'} />}
     >
-      <FoundDomains structs={domainsStruct} Action={DomainAction} domainPrice={domainPrice} />
+      <FoundDomains
+        structs={domainsStruct}
+        Action={DomainAction}
+        domainPrice={domainPrice}
+        loadingPrice={loadingPrice}
+      />
     </ResultContainer>
   )
 }
@@ -233,8 +244,8 @@ const SuggestedDomains = ({ domain: { id }, rightElement, withDivider }: DomainP
 // }
 
 const variantOpt = [
-  { value: 'SUB', label: 'SUB' },
-  { value: 'DOT', label: 'DOT' },
+  { value: 'SUB', label: 'SUB', chain: 'subsocial' },
+  { value: 'DOT', label: 'DOT', chain: 'polkadot' },
 ]
 
 // const ChooseDomain = ({ domain, rightElement }: DomainProps) => {
@@ -274,6 +285,7 @@ export const EligibleDomainsSection = ({ domain }: FoundDomainCardProps) => {
   // const domains = useBuildDomainsWithTldByDomain(domain)
   const { isReserved, loading: checkingWord } = useIsReservedWord(domain.id)
   const { setVariant } = useManageDomainContext()
+  const chainsInfo = useChainInfo()
 
   // if (isEmptyArray(domains)) return null
 
@@ -298,11 +310,15 @@ export const EligibleDomainsSection = ({ domain }: FoundDomainCardProps) => {
           defaultValue={'SUB'}
           className={styles.BuyWithRadio}
         >
-          {variantOpt.map(({ value, label }, i) => (
-            <Radio.Button key={i} value={value}>
-              {label}
-            </Radio.Button>
-          ))}
+          {variantOpt.map(({ value, label, chain }, i) => {
+            const disable = chain !== 'subsocial' && !chainsInfo[chain]?.tokenSymbols
+
+            return (
+              <Radio.Button key={i} value={value} disabled={disable}>
+                {label}
+              </Radio.Button>
+            )
+          })}
         </Radio.Group>
       </div>
     </>

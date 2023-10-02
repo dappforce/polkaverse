@@ -178,21 +178,32 @@ export const useFetchNewDomains = () => {
 
 export const useGetDomainPrice = (domain: string) => {
   const [price, setPrice] = useState()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const getPrice = async () => {
-      const subsocialRpc = getOrInitSubsocialRpc()
+      setLoading(true)
+      try {
+        const subsocialRpc = getOrInitSubsocialRpc()
 
-      const { domain: domainPart } = parseDomain(domain)
-      const price = await subsocialRpc.calculatePrice(domainPart)
+        const { domain: domainPart } = parseDomain(domain)
+        const price = await subsocialRpc.calculatePrice(domainPart)
 
-      setPrice(price)
+        if (price) {
+          setPrice(price)
+        }
+        setLoading(false)
+      } catch (err) {
+        log.error('Failed to get domain price', err)
+        setLoading(false)
+        setPrice(undefined)
+      }
     }
 
     getPrice().catch(err => log.error('Failed to get domain price', err))
   }, [domain])
 
-  return price
+  return { loading, price }
 }
 
 export const useGetPrice = (domainSellerKind: DomainSellerKind, domainPrice?: string) => {

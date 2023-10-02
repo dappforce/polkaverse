@@ -1,4 +1,4 @@
-import { Button, Modal, Space, Tag } from 'antd'
+import { Button, Modal, Skeleton, Space, Tag } from 'antd'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { useIsMyAddress } from 'src/components/auth/MyAccountsContext'
@@ -165,6 +165,7 @@ type BuyByDotButtonProps = {
   withPrice?: boolean
   domainSellerKind: DomainSellerKind
   domainPrice?: string
+  loadingPrice: boolean
 }
 
 const RegisterDomainButton = ({
@@ -173,6 +174,7 @@ const RegisterDomainButton = ({
   withPrice = true,
   domainSellerKind,
   domainPrice,
+  loadingPrice,
 }: BuyByDotButtonProps) => {
   const sellerConfig = useSelectSellerConfig()
   const { sellerChain } = sellerConfig || {}
@@ -188,12 +190,28 @@ const RegisterDomainButton = ({
 
   const chainProps = isSub ? {} : { decimals: decimal, currency: symbol }
 
-  const isProcessingDomain = processingDomains[domainName]
+  const disableRegisterButton = processingDomains[domainName] || loadingPrice || price === '0'
+
+  const priceValue = withPrice && (
+    <div>{price ? <FormatBalance value={price} {...chainProps} /> : <>-</>}</div>
+  )
 
   return (
     <span className={styles.RegisterButton}>
-      {withPrice && <div>{price ? <FormatBalance value={price} {...chainProps} /> : <>-</>}</div>}
-      <Button type={'primary'} block disabled={isProcessingDomain} onClick={() => setOpen(true)}>
+      <div>
+        {loadingPrice ? (
+          <Skeleton
+            className={styles.PriceSkeleton}
+            round
+            title={false}
+            paragraph={{ rows: 1 }}
+            active
+          />
+        ) : (
+          priceValue
+        )}
+      </div>
+      <Button type={'primary'} block disabled={disableRegisterButton} onClick={() => setOpen(true)}>
         {label}
       </Button>
       <BuyDomainModal

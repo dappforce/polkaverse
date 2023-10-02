@@ -29,7 +29,7 @@ const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
   const sellerConfig = useSelectSellerConfig()
   const reloadPendingOrders = useCreateReloadPendingOrders()
   const myAddress = useMyAddress()
-  const domainPrice = useGetDomainPrice(pendingDomain.id)
+  const { price: domainPrice, loading: loadingPrice } = useGetDomainPrice(pendingDomain.id)
 
   const { processingDomains } = useManageDomainContext()
 
@@ -59,6 +59,7 @@ const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
       withPrice={false}
       domainSellerKind={destination as DomainSellerKind}
       domainPrice={domainPrice}
+      loadingPrice={loadingPrice}
     />
   )
 

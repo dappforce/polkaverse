@@ -1,5 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons'
-import { isEmptyStr, nonEmptyStr } from '@subsocial/utils'
+import { isEmptyStr, nonEmptyStr, parseDomain } from '@subsocial/utils'
 import { Button, Form, Input } from 'antd'
 import { useRouter } from 'next/router'
 import { useEffect, useRef } from 'react'
@@ -37,6 +37,8 @@ export const InputDomain = ({ onChange }: DomainInputProps) => {
     onChange && onChange(domain)
   }
 
+  const inputDefaultValue = domain ? parseDomain(domain as string).domain : ''
+
   return (
     <section>
       <Input.Group compact size='large' className={styles.DomainInput}>
@@ -45,8 +47,15 @@ export const InputDomain = ({ onChange }: DomainInputProps) => {
           ref={refInput}
           onPressEnter={onSearchHandler}
           size='large'
+          defaultValue={inputDefaultValue}
         />
-        <Button type='primary' ghost={!!domain} style={{ flexBasis: '15%' }} size='large' onClick={onSearchHandler}>
+        <Button
+          type='primary'
+          ghost={!!domain}
+          style={{ flexBasis: '15%' }}
+          size='large'
+          onClick={onSearchHandler}
+        >
           {isMobile ? <SearchOutlined /> : 'Search'}
         </Button>
       </Input.Group>

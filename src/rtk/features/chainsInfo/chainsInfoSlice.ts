@@ -15,6 +15,7 @@ export type ChainInfo = {
   icon: string
   name: string
   node: string
+  wsNode?: string
   paraId: string
   relayChain?: RelayChain
   connected?: boolean

@@ -8,7 +8,6 @@ $element_height: 40px
   \:global .ant-select-selector
     border-radius: $border_radius_large !important
 
-
 .DomainModal
   \:global .ant-modal-footer
     padding-top: 0 !important
@@ -26,6 +25,16 @@ $element_height: 40px
 
   button
     height: $element_height
+
+.PriceSkeleton
+  width: 60px !important
+
+  \:global .ant-skeleton-content
+    ul
+      margin-bottom: 0
+
+    li
+      width: 100% !important
 
 .ModalTitle
   h2
