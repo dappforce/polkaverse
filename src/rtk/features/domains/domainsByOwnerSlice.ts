@@ -1,4 +1,4 @@
-import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { FetchOneArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { SelectOneFn } from 'src/rtk/app/hooksCommon'
 import { RootState } from 'src/rtk/app/rootReducer'
@@ -49,6 +49,7 @@ export const fetchDomainsByOwner = createAsyncThunk<
   const myAddress = id as AccountId
   const knownDomains = selectDomainsByOwner(getState(), myAddress)
   const isKnownOwner = typeof knownDomains !== 'undefined'
+  
   if (!reload && isKnownOwner) {
     return undefined
   }
@@ -61,11 +62,28 @@ export const fetchDomainsByOwner = createAsyncThunk<
   }
 })
 
+type UpsertOwnDomainsProps = {
+  newDomain: string
+  address: string
+}
+
 const slice = createSlice({
   name: sliceName,
   initialState: adapter.getInitialState(),
   reducers: {
-    // upsertOwnDomains: adapter.upsertOne,
+    upsertOwnDomains: (
+      state,
+      action: PayloadAction<UpsertOwnDomainsProps>
+    ) => {
+      const { newDomain, address } = action.payload
+      const domainsByAccount = state.entities[address]?.domains || []
+
+      adapter.upsertOne(state, {
+        id: address,
+        domains: [ ...domainsByAccount, newDomain ]
+      })
+
+    },
   },
   extraReducers: builder => {
     builder.addCase(fetchDomainsByOwner.fulfilled, (state, { payload }) => {
@@ -75,7 +93,7 @@ const slice = createSlice({
 })
 
 export const {
-  // upsertOwnDomains,
+  upsertOwnDomains,
 } = slice.actions
 
 export default slice.reducer

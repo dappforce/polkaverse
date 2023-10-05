@@ -5,6 +5,7 @@ import chainsInfo from '../features/chainsInfo/chainsInfoSlice'
 import chat from '../features/chat/chatSlice'
 import enableConfirmation from '../features/confirmationPopup/enableConfirmationSlice'
 import contents from '../features/contents/contentsSlice'
+import ordersById from '../features/domainPendingOrders/pendingOrdersSlice'
 import domainByOwner from '../features/domains/domainsByOwnerSlice'
 import domains from '../features/domains/domainsSlice'
 import topLevelDomains from '../features/domains/topLevelDomains'
@@ -17,6 +18,7 @@ import followedAccountIds from '../features/profiles/followedAccountIdsSlice'
 import profileSpaces from '../features/profiles/profilesSlice'
 import myPostReactions from '../features/reactions/myPostReactionsSlice'
 import replyIds from '../features/replies/repliesSlice'
+import sellerConfig from '../features/sellerConfig/sellerConfigSlice'
 import followedSpaceIds from '../features/spaceIds/followedSpaceIdsSlice'
 import ownSpaceIds from '../features/spaceIds/ownSpaceIdsSlice'
 import spaceIdsWithRolesByAccount from '../features/spaceIds/spaceIdsWithRolesByAccountSlice'
@@ -43,6 +45,8 @@ const rootReducer = combineReducers({
   topLevelDomains,
   chainsInfo,
   onBoarding,
+  ordersById,
+  sellerConfig,
   enableConfirmation,
   chat,
 })

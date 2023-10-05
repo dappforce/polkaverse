@@ -1,14 +1,14 @@
 ---
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     reviewers:
-      - "oap75"
-      - "olehmell"
+      - 'oap75'
+      - 'olehmell'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     commit-message:
-      prefix: "dependabot"
+      prefix: 'dependabot'
     pull-request-branch-name:
-      separator: "/"
+      separator: '/'

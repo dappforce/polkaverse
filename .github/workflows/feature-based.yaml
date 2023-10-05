@@ -64,7 +64,9 @@ jobs:
             GH_HCAPTCHA_SITE_KEY=3beeddac-2dce-41cc-8e18-338118426c38
             GH_AMP_ID=71bf5a46800fedba5e9a01243b988164
             GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
-            GH_CONNECTION_KIND=dev
+            GH_CONNECTION_KIND=main
+            GH_SELLER_CLIENT_ID=${{ secrets.SELLER_CLIENT_ID }}
+            GH_SELLER_TOKEN_SIGNER=${{ secrets.SELLER_TOKEN_SIGNER }}
           tags: |
             ${{ env.image }}
           cache-from: type=local,src=/tmp/.buildx-cache

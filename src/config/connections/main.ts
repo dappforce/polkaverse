@@ -11,6 +11,7 @@ const mainConfig: SubsocialConfig = {
   offchainUrl: 'https://api.subsocial.network',
   offchainSignerUrl: 'https://signer.subsocial.network',
   graphqlUrl: 'https://squid.subsquid.io/subsocial/graphql',
+  sellerSquid: 'https://squid.subsquid.io/x-seller-dot-sub/graphql',
 
   ipfsNodeUrl: 'https://ipfs.subsocial.network',
 

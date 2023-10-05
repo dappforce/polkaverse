@@ -1,132 +1,32 @@
+import { InfoCircleOutlined } from '@ant-design/icons'
 import { isFunction } from '@polkadot/util'
-import { newLogger, parseDomain } from '@subsocial/utils'
-import { Button, Card, Result, Row, Tag } from 'antd'
-import BN from 'bn.js'
-import clsx from 'clsx'
-import React, { FC, useEffect, useState } from 'react'
-import { showErrorMessage } from 'src/components/utils/Message'
+import { parseDomain } from '@subsocial/utils'
+import { Button, Card, Radio, RadioChangeEvent, Result, Row, Tag, Tooltip } from 'antd'
+import React, { FC, useEffect } from 'react'
 import config from 'src/config'
-import { getOrInitSubsocialRpc } from 'src/rpc/initSubsocialRpc'
-import {
-  useCreateReloadMyDomains,
-  useFetchDomains,
-  useIsReservedWord,
-} from '../../rtk/features/domains/domainHooks'
-import { DomainEntity } from '../../rtk/features/domains/domainsSlice'
-import { useIsMyAddress } from '../auth/MyAccountsContext'
-import { FormatBalance } from '../common/balances'
-import { TxCallback } from '../substrate/SubstrateTxButton'
-import useSubstrate from '../substrate/useSubstrate'
+import { useChainInfo } from 'src/rtk/features/chainsInfo/chainsInfoHooks'
+import { DomainEntity } from 'src/rtk/features/domains/domainsSlice'
+import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
+import { useSelectPendingOrderById } from '../../rtk/features/domainPendingOrders/pendingOrdersHooks'
+import { useFetchDomains, useIsReservedWord } from '../../rtk/features/domains/domainHooks'
+import { useIsMyAddress, useMyAccountsContext, useMyAddress } from '../auth/MyAccountsContext'
 import { Loading, LocalIcon } from '../utils'
-import TxButton from '../utils/TxButton'
-import ClaimFreeDomainModal from './ClaimFreeDomainModal'
+import { MutedDiv, MutedSpan } from '../utils/MutedText'
 import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
-import { DomainDetails, ResultContainer } from './utils'
-
-const log = newLogger('DD')
+import RegisterDomainButton from './registerDomainModal/RegisterDomainModal'
+import { DomainDetails, getTime, ResultContainer, useGetDomainPrice } from './utils'
 
 type DomainItemProps = {
   domain: string
   action: React.ReactNode
 }
 
-type DomainProps = {
+export type DomainProps = {
   domain: DomainEntity
-}
-
-const useGetDomainPrice = (domain: string) => {
-  const [price, setPrice] = useState()
-
-  useEffect(() => {
-    const getPrice = async () => {
-      const subsocialRpc = getOrInitSubsocialRpc()
-
-      const { domain: domainPart } = parseDomain(domain)
-      const price = await subsocialRpc.calculatePrice(domainPart)
-
-      setPrice(price)
-    }
-
-    getPrice().catch(err => log.error('Failed to get domain price', err))
-  }, [domain])
-
-  return price
-}
-
-const BLOCK_TIME = 12
-const SECS_IN_DAY = 60 * 60 * 24
-const BLOCKS_IN_YEAR = new BN((SECS_IN_DAY * 365) / BLOCK_TIME)
-
-const BuyDomainSection = ({ domain: { id: domain } }: DomainProps) => {
-  const reloadMyDomains = useCreateReloadMyDomains()
-  const { openManageModal } = useManageDomainContext()
-  const { api, isApiReady } = useSubstrate()
-  const price = useGetDomainPrice(domain)
-
-  if (!isApiReady) return null
-
-  const getTxParams = () => {
-    return [null, domain, null, BLOCKS_IN_YEAR]
-  }
-
-  const onSuccess: TxCallback = async () => {
-    await reloadMyDomains()
-    openManageModal('success', domain)
-  }
-
-  const onFailed = async (errorInfo: any) => {
-    const jsonErr = JSON.stringify(errorInfo)
-    log.error('Failed:', jsonErr)
-    showErrorMessage(jsonErr)
-  }
-
-  return (
-    <span className='d-flex align-items-center'>
-      {price && <FormatBalance className='mr-2' value={price} isShort />}
-      <TxButton
-        type='primary'
-        customNodeApi={api}
-        block
-        size='middle'
-        label={'Register'}
-        tx={'domains.registerDomain'}
-        onSuccess={onSuccess}
-        onFailed={onFailed}
-        // onClick={onSuccess} // ! for debug
-        isFreeTx
-        params={getTxParams}
-        className={styles.DomainPrimaryButton}
-      />
-    </span>
-  )
-}
-
-const ClaimFreeDomainSection = ({ domain: { id: domain } }: DomainProps) => {
-  const [openConfirmation, setOpenConfirmation] = useState(false)
-  const { promoCode } = useManageDomainContext()
-  return (
-    <div className='d-flex align-items-center'>
-      <ClaimFreeDomainModal
-        onCancel={() => setOpenConfirmation(false)}
-        visible={openConfirmation}
-        domain={domain}
-        promoCode={promoCode}
-      />
-      <span className='font-weight-bold mr-2'>Free</span>
-      <Button
-        type='primary'
-        size='middle'
-        className={clsx(styles.DomainPrimaryButton)}
-        onClick={() => setOpenConfirmation(true)}
-      >
-        <span style={{ position: 'relative', top: '-1px' }} className='mr-1'>
-          🎁
-        </span>
-        Claim
-      </Button>
-    </div>
-  )
+  label?: string
+  withDivider?: boolean
+  rightElement?: React.ReactNode
 }
 
 export const DomainItem = ({ domain, action }: DomainItemProps) => {
@@ -156,31 +56,79 @@ const UnavailableBtn = ({ domain: { owner, id } }: DomainProps) => {
   )
 }
 
-const DomainAction = ({ domain }: DomainProps) => {
+type DomainActionProps = DomainProps & {
+  domainPrice?: string
+  loadingPrice: boolean
+}
+
+const DomainAction = ({ domain, domainPrice, loadingPrice }: DomainActionProps) => {
   const { owner } = domain
-  const { promoCode } = useManageDomainContext()
+  const { domainSellerKind } = useManageDomainContext()
+  const sellerConfig = useSelectSellerConfig()
+  const myAddress = useMyAddress()
+  const pendingOrder = useSelectPendingOrderById(domain.id)
+  const { setAddress } = useMyAccountsContext()
+  const { dmnRegPendingOrderExpTime } = sellerConfig || {}
 
-  let Action = BuyDomainSection
-  if (promoCode && (domain.id.endsWith('.sub') || domain.id.endsWith('.polka'))) {
-    Action = ClaimFreeDomainSection
-  }
-  if (owner) {
-    Action = UnavailableBtn
+  const { createdByAccount: account, signer } = pendingOrder || {}
+
+  if (account && signer && account !== myAddress && signer !== myAddress) {
+    return (
+      <Tooltip
+        title={`Someone else currently has this domain reserved.
+    If they do not buy it within ${getTime(dmnRegPendingOrderExpTime)} minutes, it will
+    become available again.`}
+      >
+        <Button disabled={true}>Reserved</Button>
+      </Tooltip>
+    )
   }
 
-  return <Action domain={domain} />
+  if (account && signer && account === myAddress && signer !== myAddress) {
+    const onClick = () => {
+      setAddress(signer)
+    }
+
+    return (
+      <div>
+        <Tooltip title={'You are not a purchaser. Switch to the purchaser account'}>
+          <MutedSpan>
+            <InfoCircleOutlined />
+          </MutedSpan>
+        </Tooltip>
+        <Button type='primary' onClick={onClick} className='ml-2'>
+          Switch account
+        </Button>
+      </div>
+    )
+  }
+
+  return owner ? (
+    <UnavailableBtn domain={domain} />
+  ) : (
+    <RegisterDomainButton
+      domainName={domain.id}
+      domainSellerKind={domainSellerKind}
+      domainPrice={domainPrice}
+      loadingPrice={loadingPrice}
+    />
+  )
 }
 
 type FoundDomainsProps = {
   structs?: DomainEntity[]
-  Action?: FC<DomainProps>
+  Action?: FC<DomainActionProps>
+  domainPrice?: string
+  loadingPrice: boolean
 }
 
-const FoundDomains = ({ structs = [], Action }: FoundDomainsProps) => {
+const FoundDomains = ({ structs = [], Action, domainPrice, loadingPrice }: FoundDomainsProps) => {
   return (
     <>
       {structs.map(d => {
-        const action = Action ? <Action domain={d} /> : null
+        const action = Action ? (
+          <Action domain={d} domainPrice={domainPrice} loadingPrice={loadingPrice} />
+        ) : null
 
         return <DomainItem key={d.id} domain={d.id} action={action} />
       })}
@@ -210,9 +158,10 @@ const ReservedDomainCard = ({ domain }: Omit<DomainItemProps, 'action'>) => {
   )
 }
 
-const SuggestedDomains = ({ domain: { id } }: DomainProps) => {
+const SuggestedDomains = ({ domain: { id }, rightElement, withDivider }: DomainProps) => {
   const { domain } = parseDomain(id)
   const domains = config.suggestedTlds?.map(tld => `${domain}.${tld}`)
+  const { price: domainPrice, loading: loadingPrice } = useGetDomainPrice(id)
 
   const { loading, domainsStruct = [] } = useFetchDomains(domains || [])
 
@@ -220,8 +169,18 @@ const SuggestedDomains = ({ domain: { id } }: DomainProps) => {
 
   return (
     // <ResultContainer title='Suggested Domains' icon={<LocalIcon path={'/icons/lamp.svg'} />}>
-    <ResultContainer title='Result' icon={<LocalIcon path={'/icons/reward.svg'} />}>
-      <FoundDomains structs={domainsStruct} Action={DomainAction} />
+    <ResultContainer
+      title='Result'
+      rightElement={rightElement}
+      withDivider={withDivider}
+      icon={<LocalIcon path={'/icons/reward.svg'} />}
+    >
+      <FoundDomains
+        structs={domainsStruct}
+        Action={DomainAction}
+        domainPrice={domainPrice}
+        loadingPrice={loadingPrice}
+      />
     </ResultContainer>
   )
 }
@@ -236,13 +195,13 @@ const SuggestedDomains = ({ domain: { id } }: DomainProps) => {
 
 // const loadMoreDomains = async (props: LoadMoreDomainsProps) => {
 //   const { api, dispatch, page, size, ids = [] } = props
-//
+
 //   if (!api) return []
-//
+
 //   const domains = await getPageOfIds(ids, { page, size })
-//
+
 //   await dispatch(fetchDomains({ api, ids: domains }))
-//
+
 //   return domains
 // }
 
@@ -252,16 +211,16 @@ const SuggestedDomains = ({ domain: { id } }: DomainProps) => {
 
 // const DomainCardByDomain = ({ domain }: Omit<DomainItemProps, 'action'>) => {
 //   const domainStruct = useAppSelector(state => selectDomain(state, domain))
-//
+
 //   if (!domainStruct) return null
-//
+
 //   return <DomainItem key={domain} domain={domain} action={<DomainAction domain={domainStruct} />} />
 // }
 
 // const DomainsList = ({ domains }: DomainsListProps) => {
 //   const dispatch = useDispatch()
 //   const { isApiReady, subsocial } = useSubstrate()
-//
+
 //   const List = useCallback(
 //     () => (
 //       <InfiniteListByData
@@ -276,7 +235,7 @@ const SuggestedDomains = ({ domain: { id } }: DomainProps) => {
 //     ),
 //     [isApiReady],
 //   )
-//
+
 //   return (
 //     <ResultContainer title='Available Domains' icon={<LocalIcon path={'/icons/success.svg'} />}>
 //       <List />
@@ -284,23 +243,39 @@ const SuggestedDomains = ({ domain: { id } }: DomainProps) => {
 //   )
 // }
 
-// const ChooseDomain = ({ domain }: DomainProps) => {
+const variantOpt = [
+  { value: 'SUB', label: 'SUB', chain: 'subsocial' },
+  { value: 'DOT', label: 'DOT', chain: 'polkadot' },
+]
+
+// const ChooseDomain = ({ domain, rightElement }: DomainProps) => {
 //   const { domain: domainName, tld = config.resolvedDomain } = parseDomain(domain.id)
 //   const { isSupported } = useIsSupportedTld(tld)
 //   const id = `${domainName}.${tld}`
 //   const { domainStruct } = useFetchDomain(id)
-//
+
 //   let content = null
-//
+
 //   if (!isSupported || !domainStruct) {
 //     const text = '❌ Invalid Tld'
 //     content = <DomainItem key={text} domain={text} action={null} />
 //   } else {
 //     content = <DomainItem key={id} domain={id} action={<DomainAction domain={domainStruct} />} />
 //   }
-//
+
+//   const title = (
+//     <div className='d-flex align-items-center justify-content-between w-100'>
+//       <div>Result: </div>
+//     </div>
+//   )
+
 //   return (
-//     <ResultContainer title='Result' icon={<LocalIcon path={'/icons/reward.svg'} />}>
+//     <ResultContainer
+//       title={title}
+//       rightElement={rightElement}
+//       icon={<LocalIcon path={'/icons/reward.svg'} />}
+//     >
+//       <Divider className='w-100 m-0 mt-1' />
 //       {content}
 //     </ResultContainer>
 //   )
@@ -309,18 +284,51 @@ const SuggestedDomains = ({ domain: { id } }: DomainProps) => {
 export const EligibleDomainsSection = ({ domain }: FoundDomainCardProps) => {
   // const domains = useBuildDomainsWithTldByDomain(domain)
   const { isReserved, loading: checkingWord } = useIsReservedWord(domain.id)
+  const { setVariant } = useManageDomainContext()
+  const chainsInfo = useChainInfo()
 
   // if (isEmptyArray(domains)) return null
+
+  useEffect(() => {
+    setVariant('SUB')
+  }, [domain.id])
 
   if (checkingWord) return <Loading label='Check domain...' />
 
   if (isReserved) return <ReservedDomainCard domain={domain.id} />
 
+  const onVariantChange = (e: RadioChangeEvent) => {
+    setVariant(e.target.value)
+  }
+
+  const rightElement = (
+    <>
+      <div className='d-flex aling-items-center'>
+        <MutedDiv className='mr-2 FontNormal lh-lg font-weight-normal'>Buy with</MutedDiv>
+        <Radio.Group
+          onChange={onVariantChange}
+          defaultValue={'SUB'}
+          className={styles.BuyWithRadio}
+        >
+          {variantOpt.map(({ value, label, chain }, i) => {
+            const disable = chain !== 'subsocial' && !chainsInfo[chain]?.tokenSymbols
+
+            return (
+              <Radio.Button key={i} value={value} disabled={disable}>
+                {label}
+              </Radio.Button>
+            )
+          })}
+        </Radio.Group>
+      </div>
+    </>
+  )
+
   return (
     <div className='GapBig d-flex flex-column mt-4'>
-      {/*<ChooseDomain domain={domain} />*/}
-      <SuggestedDomains domain={domain} />
-      {/*<DomainsList domains={domains} />*/}
+      {/* <ChooseDomain domain={domain} /> */}
+      <SuggestedDomains domain={domain} rightElement={rightElement} withDivider />
+      {/* <DomainsList domains={domains} /> */}
     </div>
   )
 }

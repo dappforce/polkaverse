@@ -3,8 +3,8 @@ import config from 'src/config'
 import { getPostIdsBySpaces } from 'src/graphql/apis'
 import { GqlClient } from 'src/graphql/ApolloProvider'
 import { AnySpaceId, PostId } from 'src/types'
-import { getPageOfIds } from '../utils/getIds'
 import { descSort } from 'src/utils'
+import { getPageOfIds } from '../utils/getIds'
 
 let suggestedPostIds: string[] | undefined = undefined
 

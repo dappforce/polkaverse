@@ -40,7 +40,8 @@ export const LazyConnectionsProvider = React.memo((props: React.PropsWithChildre
       if (api) return api
 
       waitMessage.open(`Connecting to ${network || 'the network'}...`)
-      const node = nodeByNetwork[network] || chainsInfo[network]?.node
+      const node =
+        nodeByNetwork[network] || chainsInfo[network]?.wsNode || chainsInfo[network]?.node
 
       const provider = new WsProvider(node)
       api = new ApiPromise({ provider } as any)

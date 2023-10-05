@@ -1,79 +1,57 @@
 import { newLogger } from '@subsocial/utils'
 import { AppConfig, AppKind, ConnectionKind, ConnectionsSettings, SubsocialFeatures } from './types'
-export const nodeEnv = getEnv('NODE_ENV')
+export const nodeEnv = process.env['NEXT_PUBLIC_NODE_ENV']
 
-newLogger.setDefaultLevel(getEnv('LOG_INFO') as any)
+newLogger.setDefaultLevel(process.env['NEXT_PUBLIC_LOG_INFO'] as any)
 
 export const isProdMode = nodeEnv === 'production'
 export const isDevMode = !isProdMode
 
-export const appKind = (getEnv('APP_KIND') || 'polkaverse') as unknown as AppKind
+export const appKind = (process.env['NEXT_PUBLIC_APP_KIND'] || 'polkaverse') as unknown as AppKind
 
-export const connectionKind = (getEnv('CONNECTION_KIND') || 'main') as unknown as ConnectionKind
+export const connectionKind = (process.env['NEXT_PUBLIC_CONNECTION_KIND'] ||
+  'main') as unknown as ConnectionKind
 
-export const enableMaintenancePage = getEnvAsBool('ENABLE_MAINTENANCE_PAGE')
-export const maintenanceMsg = getEnv('MAINTENANCE_TEXT')
+export const enableMaintenancePage = process.env['NEXT_PUBLIC_ENABLE_MAINTENANCE_PAGE'] as
+  | boolean
+  | undefined
+export const maintenanceMsg = process.env['NEXT_PUBLIC_MAINTENANCE_TEXT']
 
-export const gaId = getEnv('GA_ID') || ''
-export const ampId = getEnv('AMP_ID') || ''
+export const gaId = process.env['NEXT_PUBLIC_GA_ID'] || ''
 
-export const hCaptchaSiteKey = getEnv('HCAPTCHA_SITE_KEY') || ''
+export const hCaptchaSiteKey = process.env['NEXT_PUBLIC_HCAPTCHA_SITE_KEY'] || ''
 
 export const appOverrides: Partial<AppConfig> = {
-  appBaseUrl: getEnv('APP_BASE_URL'),
+  appBaseUrl: process.env['NEXT_PUBLIC_APP_BASE_URL'],
 }
+
+export const ampId = process.env['AMP_ID'] || ''
 
 /**
  * Enable or disable the available features of this web app by overriding them in the .env file.
  */
 export const featureOverrides: SubsocialFeatures = {
-  enableSearch: getEnvAsBool('ENABLE_SEARCH'),
-  enableFeed: getEnvAsBool('ENABLE_FEED'),
-  enableNotifications: getEnvAsBool('ENABLE_NOTIFICATIONS'),
-  enableActivity: getEnvAsBool('ENABLE_ACTIVITY'),
-  enableSessionKey: getEnvAsBool('ENABLE_SESSION_KEY'),
-  enableEmailSettings: getEnvAsBool('ENABLE_EMAIL_SETTINGS'),
-  enableFaucet: getEnvAsBool('ENABLE_FAUCET'),
-  enableGraphQl: getEnvAsBool('ENABLE_GRAPHQL'),
-  enableContributionPage: getEnvAsBool('ENABLE_CONTRIBUTION_PAGE'),
-  enableOnchainActivities: getEnvAsBool('ENABLE_ONCHAIN_ACTIVITIES'),
-  enableSquidDataSource: getEnvAsBool('ENABLE_SQUID_DATA_SOURCE'),
+  enableSearch: process.env['NEXT_PUBLIC_ENABLE_SEARCH'] as boolean | undefined,
+  enableFeed: process.env['NEXT_PUBLIC_ENABLE_FEED'] as boolean | undefined,
+  enableNotifications: process.env['NEXT_PUBLIC_ENABLE_NOTIFICATIONS'] as boolean | undefined,
+  enableActivity: process.env['NEXT_PUBLIC_ENABLE_ACTIVITY'] as boolean | undefined,
+  enableSessionKey: process.env['NEXT_PUBLIC_ENABLE_SESSION_KEY'] as boolean | undefined,
+  enableEmailSettings: process.env['NEXT_PUBLIC_ENABLE_EMAIL_SETTINGS'] as boolean | undefined,
+  enableFaucet: process.env['NEXT_PUBLIC_ENABLE_FAUCET'] as boolean | undefined,
+  enableGraphQl: process.env['NEXT_PUBLIC_ENABLE_GRAPHQL'] as boolean | undefined,
+  enableContributionPage: process.env['NEXT_PUBLIC_ENABLE_CONTRIBUTION_PAGE'] as
+    | boolean
+    | undefined,
+  enableOnchainActivities: process.env['NEXT_PUBLIC_ENABLE_ONCHAIN_ACTIVITIES'] as
+    | boolean
+    | undefined,
+  enableSquidDataSource: process.env['NEXT_PUBLIC_ENABLE_SQUID_DATA_SOURCE'] as boolean | undefined,
 }
 
 export const connectionsOverrides: Partial<ConnectionsSettings> = {
-  substrateUrl: getEnv('SUBSTRATE_URL'),
-  offchainUrl: getEnv('OFFCHAIN_URL'),
-  graphqlUrl: getEnv('GRAPHQL_URL'),
-  ipfsNodeUrl: getEnv('IPFS_NODE_URL'),
-  offchainSignerUrl: getEnv('OFFCHAIN_SIGNER_URL'),
+  substrateUrl: process.env['NEXT_PUBLIC_SUBSTRATE_URL'],
+  offchainUrl: process.env['NEXT_PUBLIC_OFFCHAIN_URL'],
+  graphqlUrl: process.env['NEXT_PUBLIC_GRAPHQL_URL'],
+  ipfsNodeUrl: process.env['NEXT_PUBLIC_IPFS_NODE_URL'],
+  offchainSignerUrl: process.env['NEXT_PUBLIC_OFFCHAIN_SIGNER_URL'],
 }
-
-function getEnv(varName: string): string | undefined {
-  const { env } = process
-  return env[varName]
-}
-
-function getEnvAsBool(varName: string): boolean | undefined {
-  const val = getEnv(varName)?.toString()?.toLowerCase()
-  if (val === 'true') return true
-  if (val === 'false') return false
-  return undefined
-}
-
-// function getEnvAsArray (varName: string): string[] {
-//   return getEnv(varName)?.split(',').map(id => id.trim()) || []
-// }
-
-// function getEnvAsNumber (varName: string) {
-//   const value = getEnv(varName)
-//   return value ? parseInt(value) : undefined
-// }
-
-// function getEnvAsDate (varName: string) {
-//   const dateStr = getEnv(varName)
-//   try {
-//     return dateStr ? dayjs(dateStr) : undefined
-//   } catch (err) {
-//     return undefined
-//   }
-// }

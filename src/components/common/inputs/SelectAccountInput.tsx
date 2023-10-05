@@ -1,8 +1,8 @@
 import { GenericAccountId } from '@polkadot/types'
-import { isAddress } from '@polkadot/util-crypto'
 import registry from '@subsocial/api/utils/registry'
-import { isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
+import { isDef, isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
 import { Select } from 'antd'
+import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { useMyAccounts } from 'src/components/auth/MyAccountsContext'
 import { equalAddresses } from 'src/components/substrate'
@@ -11,13 +11,28 @@ import { SelectAddressPreview } from '../../profile-selector/MyAccountMenu'
 import Avatar from '../../profiles/address-views/Avatar'
 import styles from './inputs.module.sass'
 
+export const isValidAccount = (address?: string) => {
+  try {
+    if (address) {
+      return !!new GenericAccountId(registry, address)
+    }
+
+    return false
+  } catch {}
+
+  return false
+}
+
 type SelectAccountInputProps = {
   className?: string
   setValue: (value: string) => void
   value?: string
+  withAvatar?: boolean
+  network?: string
+  disabled?: boolean
 }
 
-const filterSelectOptions = (adresses: string[], value?: string) => {
+const filterSelectOptions = (adresses: string[], value?: string, network?: string) => {
   return adresses
     .filter(x => {
       return !equalAddresses(x, value)
@@ -25,25 +40,36 @@ const filterSelectOptions = (adresses: string[], value?: string) => {
     .map((address, index) => {
       return {
         key: address + index,
-        label: <SelectAddressPreview address={address} withShortAddress={true} />,
+        label: <SelectAddressPreview address={address} withShortAddress={true} network={network} />,
         value: address,
       }
     })
 }
 
-export const SelectAccountInput = ({ setValue, value, className }: SelectAccountInputProps) => {
+export const SelectAccountInput = ({
+  setValue,
+  value,
+  className,
+  withAvatar = true,
+  network,
+  disabled,
+}: SelectAccountInputProps) => {
   const { accounts, status } = useMyAccounts()
-  const allExtensionAccounts = accounts.map(x => toSubsocialAddress(x.address) as string)
+  const allExtensionAccounts = accounts
+    .map(x => x.address && (toSubsocialAddress(x.address) as string))
+    .filter(isDef)
 
   const [defaultOptions, setDefaultOptions] = useState<any[]>([])
   const [selectOptions, setSelectOptions] = useState<any[]>(defaultOptions)
   const profile = useSelectProfile(value)
 
   useEffect(() => {
-    if (!value) return
+    const options = status === 'OK' ? filterSelectOptions(allExtensionAccounts, value, network) : []
 
-    const options = status === 'OK' ? filterSelectOptions(allExtensionAccounts, value) : []
-    setDefaultOptions(options)
+    if (!defaultOptions || isEmptyArray(defaultOptions)) {
+      setDefaultOptions(options)
+    }
+
     setSelectOptions(options)
   }, [value, status])
 
@@ -54,7 +80,7 @@ export const SelectAccountInput = ({ setValue, value, className }: SelectAccount
   const onSearchHandler = (searchValue: any) => {
     const options = []
 
-    if (isAddress(searchValue)) {
+    if (isValidAccount(searchValue)) {
       options.push({
         key: 'key-' + searchValue,
         label: (
@@ -62,6 +88,7 @@ export const SelectAccountInput = ({ setValue, value, className }: SelectAccount
             address={new GenericAccountId(registry, searchValue)}
             withoutBalances
             withShortAddress={true}
+            network={network}
           />
         ),
         value: searchValue,
@@ -78,30 +105,46 @@ export const SelectAccountInput = ({ setValue, value, className }: SelectAccount
   }
 
   const onSelectHandler = (searchValue: any) => {
-    const filterOptions = selectOptions.filter((x: any) => !x.value.includes(searchValue))
+    const filterOptions = defaultOptions.filter((x: any) => !x.value.includes(searchValue))
+
     if (filterOptions) {
       setSelectOptions(filterOptions as any[])
     }
   }
 
-  return (
-    <div className='d-flex align-items-center'>
+  const onClear = () => {
+    setSelectOptions(defaultOptions)
+  }
+
+  const avatar = (
+    <div className='mr-2'>
       {value ? (
         <Avatar address={value} avatar={profile?.content?.image} size={50} />
       ) : (
         <div className={`${styles.Circle} mr-2`}></div>
       )}
+    </div>
+  )
+
+  return (
+    <div className='d-flex align-items-center'>
+      {withAvatar && avatar}
+
       <Select
+        disabled={disabled}
         showSearch
         allowClear
-        value={value}
         size='large'
-        className={`${className} ml-2`}
+        optionLabelProp='value'
+        defaultActiveFirstOption
+        className={clsx(className, styles.Select)}
+        value={value}
         options={selectOptions}
         onSearch={onSearchHandler}
         onSelect={onSelectHandler}
         onChange={onSelectChange}
-        placeholder='Substate-based address'
+        onClear={onClear}
+        placeholder={'Substate-based address'}
       />
     </div>
   )

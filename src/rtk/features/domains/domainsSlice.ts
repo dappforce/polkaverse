@@ -1,4 +1,8 @@
-import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSlice,
+} from '@reduxjs/toolkit'
 import { isDef } from '@subsocial/utils'
 import { createSelectUnknownIds, FetchManyArgs, ThunkApiConfig } from 'src/rtk/app/helpers'
 import { SelectOneFn } from 'src/rtk/app/hooksCommon'
@@ -70,7 +74,7 @@ const slice = createSlice({
   name: sliceName,
   initialState: adapter.getInitialState(),
   reducers: {
-    // upsertOwnDomains: adapter.upsertOne,
+    upsertDomain: adapter.upsertOne
   },
   extraReducers: builder => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -80,7 +84,7 @@ const slice = createSlice({
 })
 
 export const {
-  // upsertOwnDomains,
+  upsertDomain,
 } = slice.actions
 
 export default slice.reducer

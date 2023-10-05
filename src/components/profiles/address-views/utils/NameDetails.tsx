@@ -3,7 +3,7 @@ import { toShortAddress } from 'src/components/utils'
 import MyEntityLabel from 'src/components/utils/MyEntityLabel'
 import { ProfileData } from 'src/types'
 import { CopyAddress } from '.'
-import { Balance } from '../../../common/balances/Balance'
+import { NativeBalance } from '../../../common/balances/Balance'
 import { InfoPanel } from '../InfoSection'
 import Name from '../Name'
 import { AddressProps } from './types'
@@ -12,6 +12,7 @@ type Props = AddressProps & {
   withFollowButton?: boolean
   withLabel?: boolean
   withDetails?: boolean
+  network?: string
   emailAddress?: string
 }
 
@@ -29,7 +30,7 @@ export const NameDetails = ({
       ? [
           {
             label: 'Balance',
-            value: <Balance address={address} />,
+            value: <NativeBalance address={address} />,
           },
           // {
           //   label: 'Reputation',

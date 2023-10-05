@@ -203,15 +203,17 @@ const ModalContent = ({
               </>
             }
           >
-            {config.enableConfirmationLessMode ? <>
+            {config.enableConfirmationLessMode ? (
+              <>
                 <SignInEmailButton setCurrentStep={setCurrentStep} />
 
-              <div className={styles.Divider}>
-                <h2>
-                  <span>{dividerText}</span>
-                </h2>
-              </div>
-              </> : null}
+                <div className={styles.Divider}>
+                  <h2>
+                    <span>{dividerText}</span>
+                  </h2>
+                </div>
+              </>
+            ) : null}
 
             {isMobile ? (
               <WalletButton setCurrentStep={setCurrentStep} />

@@ -48,7 +48,8 @@ export type TxButtonProps = BaseTxButtonProps & {
   title?: string
   unsigned?: boolean
   onValidate?: () => boolean | Promise<boolean>
-  onClick?: () => void
+  onClick?: () => Promise<boolean | undefined> | void
+  onCancel?: () => void
   onSuccess?: TxCallback
   onFailed?: TxFailedCallback
   successMessage?: SuccessMessage
@@ -56,6 +57,27 @@ export type TxButtonProps = BaseTxButtonProps & {
   withSpinner?: boolean
   component?: React.FunctionComponent
   customNodeApi?: ApiPromise
+}
+
+export const getExtrinsicByApi = async (
+  api: ApiPromise,
+  tx?: string,
+  params?: any[] | GetTxParamsFn | GetTxParamsAsyncFn,
+): Promise<SubmittableExtrinsic> => {
+  const [pallet, method] = (tx || '').split('.')
+
+  if (!api.tx[pallet]) {
+    throw new Error(`Unable to find api.tx.${pallet}`)
+  } else if (!api.tx[pallet][method]) {
+    throw new Error(`Unable to find api.tx.${pallet}.${method}`)
+  }
+
+  let resultParams = (params || []) as any[]
+  if (isFunction(params)) {
+    resultParams = await params()
+  }
+
+  return api.tx[pallet][method](...resultParams)
 }
 
 function LazyTxButton({
@@ -69,6 +91,7 @@ function LazyTxButton({
   onValidate,
   onClick,
   onSuccess,
+  onCancel,
   onFailed,
   successMessage,
   failedMessage,
@@ -100,20 +123,7 @@ function LazyTxButton({
       throw `Connection for ${network} not found`
     }
 
-    const [pallet, method] = (tx || '').split('.')
-
-    if (!api.tx[pallet]) {
-      throw new Error(`Unable to find api.tx.${pallet}`)
-    } else if (!api.tx[pallet][method]) {
-      throw new Error(`Unable to find api.tx.${pallet}.${method}`)
-    }
-
-    let resultParams = (params || []) as any[]
-    if (isFunction(params)) {
-      resultParams = await params()
-    }
-
-    return api.tx[pallet][method](...resultParams)
+    return getExtrinsicByApi(api, tx, params)
   }
 
   const doOnSuccess: TxCallback = result => {
@@ -168,6 +178,11 @@ function LazyTxButton({
     if (err) {
       const errMsg = `Tx failed: ${err.toString()}`
       log.debug(`❌ ${errMsg}`)
+
+      if(errMsg.includes('Cancelled')) {
+        onCancel?.()
+      }
+      
       showErrorMessage(errMsg)
     }
 
@@ -230,7 +245,9 @@ function LazyTxButton({
       return
     }
 
-    isFunction(onClick) && onClick()
+    const preventTransaction = await onClick?.()
+
+    if (preventTransaction === true && preventTransaction !== undefined) return
 
     const txType = unsigned ? 'unsigned' : 'signed'
     log.debug(`Sending ${txType} tx...`)

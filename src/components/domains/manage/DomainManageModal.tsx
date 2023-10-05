@@ -17,7 +17,7 @@ import { useMyAddress } from '../../auth/MyAccountsContext'
 import useSubstrate from '../../substrate/useSubstrate'
 import { Loading } from '../../utils'
 import { ButtonLink } from '../../utils/CustomLinks'
-import { MutedDiv } from '../../utils/MutedText'
+import { MutedDiv } from '../../utils/MutedText';
 import SelectSpacePreview from '../../utils/SelectSpacePreview'
 import TxButton from '../../utils/TxButton'
 import styles from '../index.module.sass'
@@ -74,7 +74,7 @@ const ManageDomainMenu: FC<ManageDomainStepProps> = ({ domainStruct }) => {
   return (
     <>
       <Row justify='center'>
-        <div className={clsx('SubsocialGradient', styles.ModalDomainTitle)}>{domainStruct.id}</div>
+        <div className={clsx('SubsocialGradient', styles.MenuModalDomainTitle)}>{domainStruct.id}</div>
       </Row>
       {/*<DomainExpireAt domainStruct={domainStruct} />*/}
       <div className='mt-3 mb-2'>You can use your domain as:</div>
@@ -101,7 +101,7 @@ const ChooseStep = ({ title, action }: ChooseStepProps) => {
 
 const ActionButton = ({ children, ...props }: ButtonProps) => {
   return (
-    <Button size='large' type='primary' className='mr-2' {...props}>
+    <Button size='large' type='primary' className='mr-3' {...props}>
       {children}
     </Button>
   )
@@ -326,12 +326,12 @@ const Success: FC<ManageDomainStepProps> = ({ domainStruct }) => {
           text='Your domain is registered!'
           className={clsx(styles.ModalTitle)}
         />
+        <MutedDiv className={styles.ModalSubtitle}>Your profile is ready to use, and you can edit it at any time.</MutedDiv>
       </Row>
       <Row justify='center'>
         <div className={clsx('SubsocialGradient', styles.ModalDomainTitle)}>{domain}</div>
       </Row>
-      {/*<DomainExpireAt domainStruct={domainStruct} />*/}
-      <Row justify='center' className='mt-3'>
+      <Row justify='center' className={styles.ActionButtons}>
         <ActionButton type='default' onClick={() => openManageModal('menu')}>
           What is next?
         </ActionButton>
@@ -378,10 +378,10 @@ export const ManageDomainModal = ({ domain, close, visible }: ManageDomainModalP
 
   return (
     <Modal
-      className={styles.Modal}
+      className={clsx(styles.Modal, 'DfSignInModal')}
       closable={false}
       title={null}
-      width={640}
+      width={currentStep === 'success' ? 520: 620}
       onCancel={close}
       visible={visible}
       footer={null}

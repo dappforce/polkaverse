@@ -49,7 +49,7 @@ export const fetchPostIdsOwnedByAccount = createAsyncThunk<
     const promises =
       spaceIds?.map(async spaceId => api.blockchain.postIdsBySpaceId(idToBn(spaceId))) || []
     const postIds = (await Promise.all(promises)).flat()
-    
+
     return {
       id: myAddress,
       ownPostIds: descSort(postIds),

@@ -10,16 +10,25 @@
 .Select
   overflow: hidden
 
-  \:global .ant-select-selector
+  .ant-select-selection-item
+    align-self: center
+    font-weight: bold
+    font-size: $font_normal
+    height: 100% !important
 
+  \:global .ant-select-selector
     .ant-select-selection-search
       overflow: hidden
 
     .ant-select-selection-item
+      height: 100% !important
       align-self: center
-      font-weight: bold
       font-size: $font_normal
 
     .ant-select-selection-placeholder
       align-self: center
       font-size: $font_normal
+
+.AddressPreview
+  text-overflow: ellipsis
+  overflow: hidden

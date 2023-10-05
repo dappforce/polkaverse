@@ -59,7 +59,10 @@ function StepButton({ steps }: Props) {
 
   const isUsingEmail = useIsUsingEmail()
 
-  const filteredSteps = isUsingEmail || !config.enableConfirmationLessMode ? steps.filter(step => step !== 'signer') : steps
+  const filteredSteps =
+    isUsingEmail || !config.enableConfirmationLessMode
+      ? steps.filter(step => step !== 'signer')
+      : steps
 
   return (
     <>

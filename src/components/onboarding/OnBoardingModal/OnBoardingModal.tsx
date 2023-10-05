@@ -101,9 +101,10 @@ export default function OnBoardingModal({
   const { steps: stepsOrder } = useOnBoardingStepsOrderWithEnergySnapshot()
 
   const isUsingEmail = useIsUsingEmail()
-  const onBoardingModalStepsOrder = isUsingEmail || !config.enableConfirmationLessMode
-    ? stepsOrder.filter(key => key !== 'signer')
-    : stepsOrder
+  const onBoardingModalStepsOrder =
+    isUsingEmail || !config.enableConfirmationLessMode
+      ? stepsOrder.filter(key => key !== 'signer')
+      : stepsOrder
 
   const currentStep = useCurrentOnBoardingStep()
   const currentStepIndex = useMemo(() => {
