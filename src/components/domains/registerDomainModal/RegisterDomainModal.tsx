@@ -1,7 +1,7 @@
 import { Button, Modal, Skeleton, Space, Tag } from 'antd'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
-import { useIsMyAddress } from 'src/components/auth/MyAccountsContext'
+import { useIsMyAddress, useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { SelectAccountInput } from 'src/components/common/inputs/SelectAccountInput'
 import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
 import { useGetDecimalAndSymbol } from 'src/components/utils/useGetDecimalsAndSymbol'
@@ -177,6 +177,7 @@ const RegisterDomainButton = ({
   loadingPrice,
 }: BuyByDotButtonProps) => {
   const sellerConfig = useSelectSellerConfig()
+  const myAddress = useMyAddress()
   const { sellerChain } = sellerConfig || {}
   const { processingDomains } = useManageDomainContext()
   const price = useGetPrice(domainSellerKind, domainPrice)
@@ -190,7 +191,8 @@ const RegisterDomainButton = ({
 
   const chainProps = isSub ? {} : { decimals: decimal, currency: symbol }
 
-  const disableRegisterButton = processingDomains[domainName] || loadingPrice || price === '0'
+  const disableRegisterButton =
+    processingDomains[domainName] || loadingPrice || price === '0' || !myAddress
 
   const priceValue = withPrice && (
     <div>{price ? <FormatBalance value={price} {...chainProps} /> : <>-</>}</div>
