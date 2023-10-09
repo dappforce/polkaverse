@@ -8,7 +8,7 @@ import { pendingOrdersWrapper } from 'src/server/pendingOrders'
 dayjs.extend(utc)
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { sellerApiAuthTokenManager, domain, interrupted } = req.body
+  const { sellerApiAuthTokenManager, domain, interrupted, txStarted } = req.body
 
   await pendingOrdersWrapper({
     req,
@@ -20,6 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         {
           id: domain,
           interrupted,
+          txStarted,
         },
         requestHeaders,
       ),

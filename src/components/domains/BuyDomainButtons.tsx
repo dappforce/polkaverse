@@ -153,6 +153,13 @@ export const BuyByDotTxButton = ({
 
     if (preventTx) {
       setProcessingDomains({ [domainName]: false })
+    } else {
+      await updatePendingOrder({
+        domain: domainName,
+        interrupted: false,
+        txStarted: true,
+        sellerApiAuthTokenManager,
+      })
     }
 
     return preventTx
@@ -163,7 +170,12 @@ export const BuyByDotTxButton = ({
 
     const { sellerApiAuthTokenManager } = sellerConfig
 
-    await updatePendingOrder(domainName, true, sellerApiAuthTokenManager)
+    await updatePendingOrder({
+      domain: domainName,
+      interrupted: true,
+      txStarted: false,
+      sellerApiAuthTokenManager,
+    })
 
     dispatch(fetchPendingOrdersByAccount({ id: myAddress, reload: true }))
   }
@@ -285,6 +297,13 @@ export const BuyDomainSection = ({
 
     if (preventTx) {
       setProcessingDomains({ [domainName]: false })
+    } else {
+      await updatePendingOrder({
+        domain: domainName,
+        interrupted: false,
+        txStarted: true,
+        sellerApiAuthTokenManager,
+      })
     }
 
     return preventTx
@@ -295,7 +314,12 @@ export const BuyDomainSection = ({
 
     const { sellerApiAuthTokenManager } = sellerConfig
 
-    await updatePendingOrder(domainName, true, sellerApiAuthTokenManager)
+    await updatePendingOrder({
+      domain: domainName,
+      interrupted: true,
+      txStarted: false,
+      sellerApiAuthTokenManager,
+    })
 
     dispatch(fetchPendingOrdersByAccount({ id: myAddress, reload: true }))
   }

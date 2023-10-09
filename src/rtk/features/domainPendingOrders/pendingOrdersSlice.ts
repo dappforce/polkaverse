@@ -34,6 +34,7 @@ export type PendingDomainEntity = {
   createdByAccount: string
   destination: string
   purchaseInterrupted: boolean
+  purchaseTxStarted: boolean
   signer: string
   target: string
   timestamp: string

@@ -179,8 +179,17 @@ const RegisterDomainButton = ({
   const sellerConfig = useSelectSellerConfig()
   const myAddress = useMyAddress()
   const { sellerChain } = sellerConfig || {}
-  const { processingDomains } = useManageDomainContext()
+  const { processingDomains, setDomainToFetch, domainToFetch } = useManageDomainContext()
   const price = useGetPrice(domainSellerKind, domainPrice)
+  const pendingOrder = useSelectPendingOrderById(domainName)
+
+  const { purchaseTxStarted, purchaseInterrupted } = pendingOrder || {}
+
+  useEffect(() => {
+    if (purchaseTxStarted && !domainToFetch && !purchaseInterrupted) {
+      setDomainToFetch(domainName)
+    }
+  }, [purchaseTxStarted, domainToFetch])
 
   const [open, setOpen] = useState(false)
   const { decimal, symbol } = useGetDecimalAndSymbol(sellerChain)
@@ -192,7 +201,11 @@ const RegisterDomainButton = ({
   const chainProps = isSub ? {} : { decimals: decimal, currency: symbol }
 
   const disableRegisterButton =
-    processingDomains[domainName] || loadingPrice || price === '0' || !myAddress
+    processingDomains[domainName] ||
+    loadingPrice ||
+    price === '0' ||
+    !myAddress ||
+    purchaseTxStarted
 
   const priceValue = withPrice && (
     <div>{price ? <FormatBalance value={price} {...chainProps} /> : <>-</>}</div>

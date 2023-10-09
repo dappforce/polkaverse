@@ -141,7 +141,7 @@ export const useFetchNewDomains = () => {
 
   useSubsocialEffect(
     ({ substrate }) => {
-      if (!myAddress || !domainToFetch || !domainToFetch) return
+      if (!myAddress || !domainToFetch) return
 
       let unsub: any
 
