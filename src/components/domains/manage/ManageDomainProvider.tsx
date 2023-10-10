@@ -19,8 +19,8 @@ type ManageDomainProviderState = {
   setPurchaser: (recipient: string) => void
   domainToFetch?: string
   setDomainToFetch: (domainToFetch?: string) => void
-  processingDomains: Record<string, boolean>
-  setProcessingDomains: (processingDomains: Record<string, boolean>) => void
+  processingDomain: boolean
+  setProcessingDomain: (processingDomain: boolean) => void
 }
 
 export type DomainSellerKind = 'SUB' | 'DOT'
@@ -37,7 +37,7 @@ export const ManageDomainProvider: React.FC<{ promoCode?: string }> = ({ childre
   const [recipient, setRecipient] = useState<string>(myAddress || '')
   const [purchaser, setPurchaser] = useState<string>(myAddress || '')
   const [domainToFetch, setDomainToFetch] = useState<string>()
-  const [processingDomains, setProcessingDomains] = useState<Record<string, boolean>>({})
+  const [processingDomain, setProcessingDomain] = useState<boolean>(false)
 
   useEffect(() => {
     if (!myAddress) return
@@ -80,9 +80,8 @@ export const ManageDomainProvider: React.FC<{ promoCode?: string }> = ({ childre
     setPurchaser,
     domainToFetch,
     setDomainToFetch,
-    processingDomains,
-    setProcessingDomains: (newData: Record<string, boolean>) =>
-      setProcessingDomains({ ...processingDomains, ...newData }),
+    processingDomain,
+    setProcessingDomain: (processingDomain: boolean) => setProcessingDomain(processingDomain),
   }
 
   return (

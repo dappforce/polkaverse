@@ -5,7 +5,10 @@ import { useIsMyAddress, useMyAddress } from 'src/components/auth/MyAccountsCont
 import { SelectAccountInput } from 'src/components/common/inputs/SelectAccountInput'
 import { useBalancesByNetwork } from 'src/components/donate/AmountInput'
 import { useGetDecimalAndSymbol } from 'src/components/utils/useGetDecimalsAndSymbol'
-import { useSelectPendingOrderById } from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
+import {
+  useSelectPendingOrderById,
+  useSelectPendingOrders,
+} from 'src/rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { FormatBalance, useCreateBalance } from '../../common/balances/Balance'
 import { MutedDiv } from '../../utils/MutedText'
@@ -179,17 +182,20 @@ const RegisterDomainButton = ({
   const sellerConfig = useSelectSellerConfig()
   const myAddress = useMyAddress()
   const { sellerChain } = sellerConfig || {}
-  const { processingDomains, setDomainToFetch } = useManageDomainContext()
+  const { processingDomain, setDomainToFetch } = useManageDomainContext()
   const price = useGetPrice(domainSellerKind, domainPrice)
-  const pendingOrder = useSelectPendingOrderById(domainName)
+  const pendingOrders = useSelectPendingOrders()
 
-  const { purchaseTxStarted, purchaseInterrupted } = pendingOrder || {}
+  const isSomePurchaseTxStarted = pendingOrders.some(({ purchaseTxStarted }) => !!purchaseTxStarted)
+  const isSomePurchaseInerrupted = pendingOrders.some(
+    ({ purchaseInterrupted }) => !!purchaseInterrupted,
+  )
 
   useEffect(() => {
-    if (purchaseTxStarted && !purchaseInterrupted) {
+    if (isSomePurchaseTxStarted && !isSomePurchaseInerrupted) {
       setDomainToFetch(domainName)
     }
-  }, [purchaseTxStarted])
+  }, [isSomePurchaseTxStarted])
 
   const [open, setOpen] = useState(false)
   const { decimal, symbol } = useGetDecimalAndSymbol(sellerChain)
@@ -201,11 +207,7 @@ const RegisterDomainButton = ({
   const chainProps = isSub ? {} : { decimals: decimal, currency: symbol }
 
   const disableRegisterButton =
-    processingDomains[domainName] ||
-    loadingPrice ||
-    price === '0' ||
-    !myAddress ||
-    purchaseTxStarted
+    processingDomain || loadingPrice || price === '0' || !myAddress || isSomePurchaseTxStarted
 
   const priceValue = withPrice && (
     <div>{price ? <FormatBalance value={price} {...chainProps} /> : <>-</>}</div>

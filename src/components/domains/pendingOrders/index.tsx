@@ -1,7 +1,6 @@
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { isEmptyArray, SubDate } from '@subsocial/utils'
-import { Space, Tag, Tooltip } from 'antd'
-import clsx from 'clsx'
+import { Space, Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
@@ -13,7 +12,7 @@ import {
 import { PendingDomainEntity } from 'src/rtk/features/domainPendingOrders/pendingOrdersSlice'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { MutedDiv } from '../../utils/MutedText'
-import { DomainSellerKind, useManageDomainContext } from '../manage/ManageDomainProvider'
+import { DomainSellerKind } from '../manage/ManageDomainProvider'
 import RegisterDomainButton from '../registerDomainModal/RegisterDomainModal'
 import { getTime, useGetDomainPrice } from '../utils'
 import styles from './Index.module.sass'
@@ -31,8 +30,6 @@ const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
   const myAddress = useMyAddress()
   const { price: domainPrice, loading: loadingPrice } = useGetDomainPrice(pendingDomain.id)
 
-  const { processingDomains } = useManageDomainContext()
-
   const { id, timestamp, destination, purchaseInterrupted, signer } = pendingDomain
   const { dmnRegPendingOrderExpTime } = sellerConfig || {}
 
@@ -46,13 +43,7 @@ const PendingDomain = ({ pendingDomain, time }: PendingDomainProps) => {
     return SubDate.formatDate(expiresAtValue)
   }, [time])
 
-  const isDomainProcessing = processingDomains[pendingDomain.id]
-
-  const registerButton = isDomainProcessing ? (
-    <Tag color='gold' className={clsx(styles.PendingTag)}>
-      Processing
-    </Tag>
-  ) : (
+  const registerButton = (
     <RegisterDomainButton
       domainName={id}
       label={'Continue'}

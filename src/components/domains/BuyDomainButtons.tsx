@@ -51,7 +51,7 @@ export const BuyByDotTxButton = ({
   close,
   price,
 }: BuyByDotTxButtonProps) => {
-  const { recipient, purchaser, setDomainToFetch, setProcessingDomains } = useManageDomainContext()
+  const { recipient, purchaser, setDomainToFetch, setProcessingDomain } = useManageDomainContext()
   const sellerConfig = useSelectSellerConfig()
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
@@ -115,7 +115,7 @@ export const BuyByDotTxButton = ({
 
   const onSuccess = async () => {
     setDomainToFetch(domainName)
-    setProcessingDomains({ [domainName]: true })
+    setProcessingDomain(true)
 
     close()
   }
@@ -152,7 +152,7 @@ export const BuyByDotTxButton = ({
     })
 
     if (preventTx) {
-      setProcessingDomains({ [domainName]: false })
+      setProcessingDomain(false)
     } else {
       await updatePendingOrder({
         domain: domainName,
@@ -218,7 +218,7 @@ export const BuyDomainSection = ({
   price,
 }: BuyDomainSectionProps) => {
   const reloadMyDomains = useCreateReloadMyDomains()
-  const { openManageModal, setProcessingDomains, recipient } = useManageDomainContext()
+  const { openManageModal, setProcessingDomain, recipient } = useManageDomainContext()
   const { api, isApiReady } = useSubstrate()
   const reloadPendingOrders = useCreateReloadPendingOrders()
   const { purchaser } = useManageDomainContext()
@@ -241,7 +241,7 @@ export const BuyDomainSection = ({
 
     reloadMyDomains()
 
-    setProcessingDomains({ [domainName]: false })
+    setProcessingDomain(false)
 
     await pendingOrderAction({
       action: deletePendingOrder,
@@ -260,7 +260,7 @@ export const BuyDomainSection = ({
     log.error('Failed:', jsonErr)
 
     errorInfo && showErrorMessage(jsonErr)
-    setProcessingDomains({ [domainName]: false })
+    setProcessingDomain(false)
   }
 
   const onClick = async () => {
@@ -268,7 +268,7 @@ export const BuyDomainSection = ({
 
     const { sellerApiAuthTokenManager } = sellerConfig
 
-    setProcessingDomains({ [domainName]: true })
+    setProcessingDomain(true)
 
     if (pendingOrder) {
       await pendingOrderAction({
@@ -296,7 +296,7 @@ export const BuyDomainSection = ({
     })
 
     if (preventTx) {
-      setProcessingDomains({ [domainName]: false })
+      setProcessingDomain(false)
     } else {
       await updatePendingOrder({
         domain: domainName,
