@@ -159,9 +159,9 @@ export const useFetchNewDomains = () => {
             }
 
             setDomainToFetch(undefined)
-            upsertDomains({ domain: domainEntity, address: myAddress, domainName: domainToFetch })
             removePendingOrder({ domainName: domainToFetch })
             setProcessingDomains({ [domainToFetch]: false })
+            upsertDomains({ domain: domainEntity, address: myAddress, domainName: domainToFetch })
             waitMessage.close()
             openManageModal('success', domainToFetch)
           }

@@ -179,17 +179,17 @@ const RegisterDomainButton = ({
   const sellerConfig = useSelectSellerConfig()
   const myAddress = useMyAddress()
   const { sellerChain } = sellerConfig || {}
-  const { processingDomains, setDomainToFetch, domainToFetch } = useManageDomainContext()
+  const { processingDomains, setDomainToFetch } = useManageDomainContext()
   const price = useGetPrice(domainSellerKind, domainPrice)
   const pendingOrder = useSelectPendingOrderById(domainName)
 
   const { purchaseTxStarted, purchaseInterrupted } = pendingOrder || {}
 
   useEffect(() => {
-    if (purchaseTxStarted && !domainToFetch && !purchaseInterrupted) {
+    if (purchaseTxStarted && !purchaseInterrupted) {
       setDomainToFetch(domainName)
     }
-  }, [purchaseTxStarted, domainToFetch])
+  }, [purchaseTxStarted])
 
   const [open, setOpen] = useState(false)
   const { decimal, symbol } = useGetDecimalAndSymbol(sellerChain)
