@@ -7,6 +7,7 @@ export const PENDING_ORDERS_BY_IDS = gql`
         id
         createdByAccount
         purchaseInterrupted
+        purchaseTxStarted
         signer
         target
         timestamp
@@ -23,6 +24,7 @@ export const PENDING_ORDERS_BY_SIGNER = gql`
         id
         createdByAccount
         purchaseInterrupted
+        purchaseTxStarted
         signer
         target
         timestamp
@@ -39,6 +41,7 @@ export const PENDING_ORDERS_BY_ACCOUNT = gql`
         id
         createdByAccount
         purchaseInterrupted
+        purchaseTxStarted
         signer
         target
         timestamp
@@ -111,7 +114,11 @@ export const DELETE_PENDING_ORDER = gql`
 `
 
 export const UPDATE_PENDING_ORDER = gql`
-  mutation updatePendingOrderPurchaseStatusById($id: String!, $interrupted: Boolean!) {
-    updatePendingOrderPurchaseStatusById(id: $id, interrupted: $interrupted)
+  mutation updatePendingOrderPurchaseStatus(
+    $id: String!
+    $interrupted: Boolean
+    $txStarted: Boolean
+  ) {
+    updatePendingOrderPurchaseStatus(id: $id, interrupted: $interrupted, txStarted: $txStarted)
   }
 `

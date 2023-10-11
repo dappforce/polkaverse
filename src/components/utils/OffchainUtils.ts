@@ -120,11 +120,24 @@ export const deletePendingOrder = async (domain: string, sellerApiAuthTokenManag
   return res.data
 }
 
-export const updatePendingOrder = async (domain: string, interrupted: boolean, sellerApiAuthTokenManager: string) => {
+type UpdatePendingOrderProps = {
+  domain: string
+  interrupted?: boolean
+  txStarted?: boolean
+  sellerApiAuthTokenManager: string
+}
+
+export const updatePendingOrder = async ({
+  domain,
+  interrupted,
+  txStarted,
+  sellerApiAuthTokenManager,
+}: UpdatePendingOrderProps) => {
   const res = await axios.post('/api/pending-order/update', {
     domain,
     sellerApiAuthTokenManager,
-    interrupted
+    interrupted,
+    txStarted,
   })
 
   return res.data

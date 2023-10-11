@@ -134,14 +134,14 @@ const waitMessage = controlledMessage({
 
 export const useFetchNewDomains = () => {
   const myAddress = useMyAddress()
-  const { setDomainToFetch, domainToFetch, openManageModal, setProcessingDomains } =
+  const { setDomainToFetch, domainToFetch, openManageModal, setProcessingDomain } =
     useManageDomainContext()
   const upsertDomains = useCreateUpsertDomains()
   const removePendingOrder = useCreateRemovePendingOrders()
 
   useSubsocialEffect(
     ({ substrate }) => {
-      if (!myAddress || !domainToFetch || !domainToFetch) return
+      if (!myAddress || !domainToFetch) return
 
       let unsub: any
 
@@ -159,9 +159,9 @@ export const useFetchNewDomains = () => {
             }
 
             setDomainToFetch(undefined)
-            upsertDomains({ domain: domainEntity, address: myAddress, domainName: domainToFetch })
             removePendingOrder({ domainName: domainToFetch })
-            setProcessingDomains({ [domainToFetch]: false })
+            setProcessingDomain(false)
+            upsertDomains({ domain: domainEntity, address: myAddress, domainName: domainToFetch })
             waitMessage.close()
             openManageModal('success', domainToFetch)
           }
