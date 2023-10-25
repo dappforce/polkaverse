@@ -4,7 +4,7 @@ import { getSpaceId } from 'src/components/substrate'
 import { return404 } from 'src/components/utils/next'
 import { NextContextWithRedux } from 'src/rtk/app'
 import { fetchSpace, selectSpace } from 'src/rtk/features/spaces/spacesSlice'
-import { HasStatusCode, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
+import { DataSourceTypes, HasStatusCode, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
 
 export async function loadSpaceOnNextReq(
   props: NextContextWithRedux,
@@ -23,7 +23,15 @@ export async function loadSpaceOnNextReq(
     }
 
     const idStr = id.toString()
-    await dispatch(fetchSpace({ api: subsocial, id: idStr, reload: true, eagerLoadHandles: true }))
+    await dispatch(
+      fetchSpace({
+        api: subsocial,
+        id: idStr,
+        reload: true,
+        eagerLoadHandles: true,
+        dataSource: DataSourceTypes.SQUID,
+      }),
+    )
     const spaceData = selectSpace(reduxStore.getState(), { id: idStr })
 
     if (!spaceData) {
