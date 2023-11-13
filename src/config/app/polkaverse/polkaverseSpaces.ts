@@ -45,4 +45,11 @@ export default [
   '11581',
   // Polkadot Insider
   '11157',
+  // Creator Staking
+  '11414',
+  '4777',
+  '6953',
+  '10132',
+  '7366',
+  '11566',
 ]
