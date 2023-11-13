@@ -53,19 +53,18 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
             </Link>
           </Menu.Item>
         )}
-        {!isMySpace ||
-          (!isUsingEmail && (
-            <Menu.Item key={`donate-${spaceKey}`}>
-              <Donate
-                recipientAddress={spaceOwnerId}
-                renderButtonElement={onClick => (
-                  <span className='d-block' onClick={onClick}>
-                    Tip
-                  </span>
-                )}
-              />
-            </Menu.Item>
-          ))}
+        {!isMySpace && (
+          <Menu.Item key={`donate-${spaceKey}`}>
+            <Donate
+              recipientAddress={spaceOwnerId}
+              renderButtonElement={onClick => (
+                <span className='d-block' onClick={onClick}>
+                  Tip
+                </span>
+              )}
+            />
+          </Menu.Item>
+        )}
         {!canCreatePost || isHidden(struct) ? null : (
           <Menu.Item key={`create-post-${spaceKey}`}>
             <Link {...createNewPostLinkProps(struct)}>

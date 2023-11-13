@@ -10,7 +10,7 @@ type PreviewProps = {
 }
 
 export const SpacePreview = ({ space }: PreviewProps) => (
-  <ViewSpace spaceData={space} withFollowButton preview withTipButton={false} />
+  <ViewSpace spaceData={space} withFollowButton preview withStakeButton />
 )
 
 type PublicSpacePreviewByIdProps = {

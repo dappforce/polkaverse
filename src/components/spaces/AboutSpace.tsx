@@ -5,12 +5,11 @@ import config from 'src/config'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { SpaceContent } from 'src/types'
 import { PageContent } from '../main/PageWrapper'
-import { ProfilePreviewByAccountId } from '../profiles/address-views'
+import AuthorCard from '../profiles/address-views/AuthorCard'
 import { InfoPanel } from '../profiles/address-views/InfoSection'
 import { aboutSpaceUrl } from '../urls'
 import { DfMd } from '../utils/DfMd'
 import Section from '../utils/Section'
-import Segment from '../utils/Segment'
 import ViewTags from '../utils/ViewTags'
 import { SpaceNotFountPage, useIsUnlistedSpace } from './helpers'
 import { loadSpaceOnNextReq } from './helpers/loadSpaceOnNextReq'
@@ -24,7 +23,6 @@ type Props = ViewSpaceProps
 
 export const InnerAboutSpacePage: NextPage<Props> = ({ spaceData }) => {
   const { struct: space } = spaceData!
-  const { ownerId: spaceOwnerAddress } = space
 
   const [content] = useState(spaceData?.content || ({} as SpaceContent))
   const { name, about, image, tags, links = [], email } = content
@@ -68,9 +66,7 @@ export const InnerAboutSpacePage: NextPage<Props> = ({ spaceData }) => {
         <ContactInfo />
 
         <Section title={`Owner of ${name} on ${appName}`} className='mb-4'>
-          <Segment>
-            <ProfilePreviewByAccountId address={spaceOwnerAddress} />
-          </Segment>
+          <AuthorCard address={space.ownerId} withTipButton />
         </Section>
 
         <Section title={`Follow ${name} on ${appName}`}>

@@ -1,12 +1,13 @@
 import { EditOutlined } from '@ant-design/icons'
 import { isEmptyStr, newLogger, nonEmptyStr } from '@subsocial/utils'
+import clsx from 'clsx'
 import dynamic from 'next/dynamic'
 import React, { MouseEvent, useCallback, useState } from 'react'
-import { Donate } from 'src/components/donate'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import { SpaceContent, SpaceId, SpaceWithSomeDetails } from 'src/types'
+import config from '../../config'
 import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks'
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
@@ -58,6 +59,14 @@ export const SpaceNameAsLink = React.memo(({ space, ...props }: SpaceNameAsLinkP
   return <ViewSpaceLink space={space.struct} title={spaceName} {...props} />
 })
 
+export const StakeButton = ({ spaceId }: { spaceId: SpaceId }) => {
+  return config.creatorIds?.includes(spaceId) ? (
+    <ButtonLink type='primary' href={'https://sub.id/creators'} className={clsx('mr-2')}>
+      Stake
+    </ButtonLink>
+  ) : null
+}
+
 export const InnerViewSpace = (props: Props) => {
   const {
     spaceData: initialSpaceData,
@@ -69,7 +78,7 @@ export const InnerViewSpace = (props: Props) => {
     withFollowButton = true,
     withStats = true,
     withTags = true,
-    withTipButton = true,
+    withStakeButton = true,
     showFullAbout = false,
     dropdownPreview = false,
 
@@ -187,7 +196,7 @@ export const InnerViewSpace = (props: Props) => {
                     <EditOutlined /> Edit
                   </ButtonLink>
                 ) : (
-                  withTipButton && <Donate recipientAddress={space.ownerId} />
+                  withStakeButton && <StakeButton spaceId={space.id} />
                 ))}
 
               {withFollowButton && <FollowSpaceButton space={space} />}
