@@ -10,7 +10,7 @@ import { GetHomePageData } from 'src/graphql/__generated__/GetHomePageData'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { PostKind } from 'src/types/graphql-global-types'
 import { useIsSignedIn } from '../auth/MyAccountsContext'
-// import OpenCommBanner from '../utils/banners/OpenCommBanner'
+import CreatorStakingBanner from '../utils/banners/CreatorStakingBanner'
 import Section from '../utils/Section'
 import style from './HomePage.module.sass'
 import { dateFilterOpt, Filters, PostFilterView, SpaceFilterView } from './HomePageFilters'
@@ -176,7 +176,7 @@ const HomePage: NextPage<Props> = props => (
       withOnBoarding
     >
       {/* <CrowdloanProgress /> */}
-      {/* <OpenCommBanner /> */}
+      <CreatorStakingBanner />
       <TabsHomePage {...props} />
     </PageContent>
   </>
