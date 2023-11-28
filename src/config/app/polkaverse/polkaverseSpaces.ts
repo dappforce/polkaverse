@@ -47,9 +47,16 @@ export default [
   '11157',
   // Creator Staking
   '11414',
+  // Alice und Bob
   '4777',
+  // Goku
   '6953',
+  // Dotcast
   '10132',
+  // LV
   '7366',
+  // Alpha Airdrop
   '11566',
+  // Astar Korea
+  '11991',
 ]
