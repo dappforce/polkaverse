@@ -6,15 +6,13 @@ const BANNER_STORAGE_KEY = 'df.creators-staking'
 
 const href = 'https://sub.id/creators'
 
-export const StakingBanner = () => (
+export const GetSub = () => (
   <MultiBanner
     uid={BANNER_STORAGE_KEY}
     kinds={bannersKind}
     href={href}
-    buildUrl={({ isMobile }) =>
-      `/images/banners/creator-staking${isMobile ? '-mobile' : '-desktop'}.png`
-    }
+    buildUrl={({ isMobile }) => `/images/banners/sub${isMobile ? '-mobile' : '-desktop'}.png`}
   />
 )
 
-export default StakingBanner
+export default GetSub
