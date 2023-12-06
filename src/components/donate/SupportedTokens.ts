@@ -1,5 +1,6 @@
 export const networkByCurrency: Record<string, string> = {
   DOT: 'polkadot',
+  SUB: 'subsocial',
   KSM: 'kusama',
   ACA: 'acala',
   ASTR: 'astar',
