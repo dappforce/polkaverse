@@ -60,7 +60,7 @@ const steps: {
   energy: {
     content: Energy,
     title: '⚡ Energy',
-    subtitle: <>Energy allows you to use {config.appName}. You can create energy here by burning SUB. <a href={HOW_TO_GET_SUB_URL} target='_blank' rel='noreferrer' /></>,
+    subtitle: <>Energy allows you to use {config.appName}. You can create energy here by burning SUB. <a href={HOW_TO_GET_SUB_URL} target='_blank' rel='noreferrer' >How do I get SUB?</a></>,
   },
   signer: {
     content: Signer,
