@@ -33,7 +33,7 @@ import Spaces from './steps/Spaces'
 import Topics from './steps/Topics'
 import { OnBoardingContentProps, OnBoardingModalProps } from './types'
 
-const HOW_TO_GET_SUB_URL = 'https://docs.subsocial.network/docs/tutorials/get-sub'
+const HOW_TO_GET_SUB_URL = 'https://docs.subsocial.network/docs/tutorials/GetSUB/get-sub'
 
 const steps: {
   [key in keyof OnBoardingDataTypes]: {
