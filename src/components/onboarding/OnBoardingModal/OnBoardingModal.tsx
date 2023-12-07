@@ -33,6 +33,8 @@ import Spaces from './steps/Spaces'
 import Topics from './steps/Topics'
 import { OnBoardingContentProps, OnBoardingModalProps } from './types'
 
+const HOW_TO_GET_SUB_URL = 'https://docs.subsocial.network/docs/tutorials/get-sub'
+
 const steps: {
   [key in keyof OnBoardingDataTypes]: {
     title: string | JSX.Element
@@ -58,7 +60,7 @@ const steps: {
   energy: {
     content: Energy,
     title: '⚡ Energy',
-    subtitle: `Energy allows you to use ${config.appName}. You can create energy here by burning SUB or get a small amount of energy for free (only for new users), allowing you to start posting without getting tokens.`,
+    subtitle: <>Energy allows you to use {config.appName}. You can create energy here by burning SUB. <a href={HOW_TO_GET_SUB_URL} target='_blank' rel='noreferrer' /></>,
   },
   signer: {
     content: Signer,

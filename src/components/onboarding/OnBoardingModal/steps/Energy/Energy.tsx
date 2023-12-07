@@ -1,7 +1,7 @@
 import { Tabs } from 'antd'
 import { useState } from 'react'
 import { useAuth } from 'src/components/auth/AuthContext'
-import EnergyDiscordInstruction from 'src/components/energy/EnergyDiscordInstruction'
+// import EnergyDiscordInstruction from 'src/components/energy/EnergyDiscordInstruction'
 import EnergyForm from 'src/components/energy/EnergyForm'
 import {
   useOnBoardingData,
@@ -19,15 +19,14 @@ const getTabKey = (key: Tabs) => key
 
 export default function Energy({ ...props }: OnBoardingContentProps) {
   const {
-    balance,
     energy: { status },
   } = useAuth()
   const openState = useOnBoardingModalOpenState()
   const [selectedTab, setSelectedTab] = useState<Tabs>(
-    !balance.isZero() ? 'burn-sub' : 'free-energy',
+    'burn-sub' // !balance.isZero() ? 'burn-sub' : 'free-energy',
   )
   const [isDisabled, setIsDisabled] = useState(false)
-  const [isDiscordLinkClicked, setIsDiscordLinkClicked] = useState(false)
+  // const [isDiscordLinkClicked, setIsDiscordLinkClicked] = useState(false)
 
   const inputtedSubAmt = useOnBoardingData('energy')
   const saveInputtedSubAmt = useSaveOnBoardingData('energy')
@@ -45,7 +44,7 @@ export default function Energy({ ...props }: OnBoardingContentProps) {
     <OnBoardingContentContainer
       {...props}
       disableSubmitBtn={disableSubmitBtn}
-      loadingSubmitBtn={isDiscordLinkClicked && disableSubmitBtn}
+      // loadingSubmitBtn={isDiscordLinkClicked && disableSubmitBtn}
       hideSubmitBtn={withoutSubmitButton}
     >
       <div className={styles.Energy}>
@@ -68,13 +67,13 @@ export default function Energy({ ...props }: OnBoardingContentProps) {
               }}
             />
           </TabPane>
-          <TabPane tab='Get Free Energy' key={getTabKey('free-energy')}>
-            <EnergyDiscordInstruction
-              withWaitStep
-              className='FontNormal'
-              onDiscordLinkClick={() => setIsDiscordLinkClicked(true)}
-            />
-          </TabPane>
+          {/*<TabPane tab='Get Free Energy' key={getTabKey('free-energy')}>*/}
+          {/*  <EnergyDiscordInstruction*/}
+          {/*    withWaitStep*/}
+          {/*    className='FontNormal'*/}
+          {/*    onDiscordLinkClick={() => setIsDiscordLinkClicked(true)}*/}
+          {/*  />*/}
+          {/*</TabPane>*/}
         </Tabs>
       </div>
     </OnBoardingContentContainer>
