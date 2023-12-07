@@ -160,7 +160,7 @@ export const DonateCard = ({ recipientAddress }: DonateProps) => {
         <Col span={isMobile ? 24 : 10}>
           <Form.Item
             name={fieldName('currency')}
-            label={'Currency'}
+            label={'Token'}
             required
             className={clsx(!isMobile && 'mr-3')}
           >
