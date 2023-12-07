@@ -12,17 +12,17 @@ import OnBoardingContentContainer from '../../OnBoardingContentContainer'
 import { OnBoardingContentProps } from '../../types'
 import styles from './Energy.module.sass'
 
-const { TabPane } = Tabs
+// const { TabPane } = Tabs
 
 type Tabs = 'burn-sub' | 'free-energy'
-const getTabKey = (key: Tabs) => key
+// const getTabKey = (key: Tabs) => key
 
 export default function Energy({ ...props }: OnBoardingContentProps) {
   const {
     energy: { status },
   } = useAuth()
   const openState = useOnBoardingModalOpenState()
-  const [selectedTab, setSelectedTab] = useState<Tabs>(
+  const [selectedTab] = useState<Tabs>(
     'burn-sub' // !balance.isZero() ? 'burn-sub' : 'free-energy',
   )
   const [isDisabled, setIsDisabled] = useState(false)
@@ -48,25 +48,23 @@ export default function Energy({ ...props }: OnBoardingContentProps) {
       hideSubmitBtn={withoutSubmitButton}
     >
       <div className={styles.Energy}>
-        <Tabs
-          className={styles.EnergyTab}
-          centered
-          activeKey={selectedTab}
-          onChange={tab => setSelectedTab(tab as Tabs)}
-        >
-          <TabPane tab='Create Energy' key={getTabKey('burn-sub')}>
-            <EnergyForm
-              bordered={false}
-              className={styles.EnergyForm}
-              forSelfOnly
-              subscribeValues={{
-                setIsDisabled,
-                setAmount: amount => saveInputtedSubAmt(amount ?? 0),
-                amount: inputtedSubAmt,
-                noButton: true,
-              }}
-            />
-          </TabPane>
+        {/*<Tabs*/}
+        {/*  className={styles.EnergyTab}*/}
+        {/*  centered*/}
+        {/*  activeKey={selectedTab}*/}
+        {/*  onChange={tab => setSelectedTab(tab as Tabs)}*/}
+        {/*>*/}
+          <EnergyForm
+            bordered={false}
+            className={styles.EnergyForm}
+            forSelfOnly
+            subscribeValues={{
+              setIsDisabled,
+              setAmount: amount => saveInputtedSubAmt(amount ?? 0),
+              amount: inputtedSubAmt,
+              noButton: true,
+            }}
+          />
           {/*<TabPane tab='Get Free Energy' key={getTabKey('free-energy')}>*/}
           {/*  <EnergyDiscordInstruction*/}
           {/*    withWaitStep*/}
@@ -74,7 +72,7 @@ export default function Energy({ ...props }: OnBoardingContentProps) {
           {/*    onDiscordLinkClick={() => setIsDiscordLinkClicked(true)}*/}
           {/*  />*/}
           {/*</TabPane>*/}
-        </Tabs>
+        {/*</Tabs>*/}
       </div>
     </OnBoardingContentContainer>
   )
