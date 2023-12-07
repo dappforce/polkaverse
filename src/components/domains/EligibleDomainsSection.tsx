@@ -1,17 +1,16 @@
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { isFunction } from '@polkadot/util'
 import { parseDomain } from '@subsocial/utils'
-import { Button, Card, Radio, RadioChangeEvent, Result, Row, Tag, Tooltip } from 'antd'
+import { Button, Card, Result, Row, Tag, Tooltip } from 'antd'
 import React, { FC, useEffect } from 'react'
 import config from 'src/config'
-import { useChainInfo } from 'src/rtk/features/chainsInfo/chainsInfoHooks'
 import { DomainEntity } from 'src/rtk/features/domains/domainsSlice'
 import { useSelectSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useSelectPendingOrderById } from '../../rtk/features/domainPendingOrders/pendingOrdersHooks'
 import { useFetchDomains, useIsReservedWord } from '../../rtk/features/domains/domainHooks'
 import { useIsMyAddress, useMyAccountsContext, useMyAddress } from '../auth/MyAccountsContext'
 import { Loading, LocalIcon } from '../utils'
-import { MutedDiv, MutedSpan } from '../utils/MutedText'
+import { MutedSpan } from '../utils/MutedText'
 import styles from './index.module.sass'
 import { useManageDomainContext } from './manage/ManageDomainProvider'
 import RegisterDomainButton from './registerDomainModal/RegisterDomainModal'
@@ -243,10 +242,10 @@ const SuggestedDomains = ({ domain: { id }, rightElement, withDivider }: DomainP
 //   )
 // }
 
-const variantOpt = [
-  { value: 'SUB', label: 'SUB', chain: 'subsocial' },
-  { value: 'DOT', label: 'DOT', chain: 'polkadot' },
-]
+// const variantOpt = [
+//   { value: 'SUB', label: 'SUB', chain: 'subsocial' },
+//   { value: 'DOT', label: 'DOT', chain: 'polkadot' },
+// ]
 
 // const ChooseDomain = ({ domain, rightElement }: DomainProps) => {
 //   const { domain: domainName, tld = config.resolvedDomain } = parseDomain(domain.id)
@@ -285,7 +284,7 @@ export const EligibleDomainsSection = ({ domain }: FoundDomainCardProps) => {
   // const domains = useBuildDomainsWithTldByDomain(domain)
   const { isReserved, loading: checkingWord } = useIsReservedWord(domain.id)
   const { setVariant } = useManageDomainContext()
-  const chainsInfo = useChainInfo()
+  // const chainsInfo = useChainInfo()
 
   // if (isEmptyArray(domains)) return null
 
@@ -297,37 +296,37 @@ export const EligibleDomainsSection = ({ domain }: FoundDomainCardProps) => {
 
   if (isReserved) return <ReservedDomainCard domain={domain.id} />
 
-  const onVariantChange = (e: RadioChangeEvent) => {
-    setVariant(e.target.value)
-  }
+  // const onVariantChange = (e: RadioChangeEvent) => {
+  //   setVariant(e.target.value)
+  // }
 
-  const rightElement = (
-    <>
-      <div className='d-flex aling-items-center'>
-        <MutedDiv className='mr-2 FontNormal lh-lg font-weight-normal'>Buy with</MutedDiv>
-        <Radio.Group
-          onChange={onVariantChange}
-          defaultValue={'SUB'}
-          className={styles.BuyWithRadio}
-        >
-          {variantOpt.map(({ value, label, chain }, i) => {
-            const disable = chain !== 'subsocial' && !chainsInfo[chain]?.tokenSymbols
-
-            return (
-              <Radio.Button key={i} value={value} disabled={disable}>
-                {label}
-              </Radio.Button>
-            )
-          })}
-        </Radio.Group>
-      </div>
-    </>
-  )
+  // const rightElement = (
+  //   <>
+  //     <div className='d-flex aling-items-center'>
+  //       <MutedDiv className='mr-2 FontNormal lh-lg font-weight-normal'>Buy with</MutedDiv>
+  //       <Radio.Group
+  //         onChange={onVariantChange}
+  //         defaultValue={'SUB'}
+  //         className={styles.BuyWithRadio}
+  //       >
+  //         {variantOpt.map(({ value, label, chain }, i) => {
+  //           const disable = chain !== 'subsocial' && !chainsInfo[chain]?.tokenSymbols
+  //
+  //           return (
+  //             <Radio.Button key={i} value={value} disabled={disable}>
+  //               {label}
+  //             </Radio.Button>
+  //           )
+  //         })}
+  //       </Radio.Group>
+  //     </div>
+  //   </>
+  // )
 
   return (
     <div className='GapBig d-flex flex-column mt-4'>
       {/* <ChooseDomain domain={domain} /> */}
-      <SuggestedDomains domain={domain} rightElement={rightElement} withDivider />
+      <SuggestedDomains domain={domain} withDivider />
       {/* <DomainsList domains={domains} /> */}
     </div>
   )
