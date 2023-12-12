@@ -183,35 +183,38 @@ export const PostCreator: FC<PostCreatorProps> = ({
 export type PostImageProps = {
   content: PostContentType | undefined
   className?: string
+  withPreview?: boolean
 }
 
-export const PostImage = React.memo(({ content, className }: PostImageProps) => {
-  const image = content?.image
-  const [shouldImageBeCropped, setShouldImageBeCropped] = useState(true)
+export const PostImage = React.memo(
+  ({ content, className, withPreview = true }: PostImageProps) => {
+    const image = content?.image
+    const [shouldImageBeCropped, setShouldImageBeCropped] = useState(true)
 
-  if (!image || isEmptyStr(image)) return null
+    if (!image || isEmptyStr(image)) return null
 
-  const onImgLoad = (e: any) => {
-    const img = e.target as HTMLImageElement
-    const { naturalHeight, naturalWidth } = img
-    const isTallerThan16By9 = naturalWidth / naturalHeight < 16 / 9
-    setShouldImageBeCropped(isTallerThan16By9)
-  }
+    const onImgLoad = (e: any) => {
+      const img = e.target as HTMLImageElement
+      const { naturalHeight, naturalWidth } = img
+      const isTallerThan16By9 = naturalWidth / naturalHeight < 16 / 9
+      setShouldImageBeCropped(isTallerThan16By9)
+    }
 
-  const wrapperClassName = clsx(className, {
-    DfPostImagePreviewWrapperCropped: shouldImageBeCropped,
-    DfPostImagePreviewWrapper: true,
-  })
-  return (
-    <Image
-      src={resolveIpfsUrl(image)}
-      className='DfPostImagePreview'
-      preview={{ mask: null }}
-      wrapperClassName={wrapperClassName}
-      onLoad={onImgLoad}
-    />
-  )
-})
+    const wrapperClassName = clsx(className, {
+      DfPostImagePreviewWrapperCropped: shouldImageBeCropped,
+      DfPostImagePreviewWrapper: true,
+    })
+    return (
+      <Image
+        src={resolveIpfsUrl(image)}
+        className='DfPostImagePreview'
+        preview={withPreview ? { mask: null } : false}
+        wrapperClassName={wrapperClassName}
+        onLoad={onImgLoad}
+      />
+    )
+  },
+)
 
 type PostSummaryProps = {
   space?: SpaceStruct
@@ -256,12 +259,12 @@ const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
 
   return (
     <div className='DfContent'>
-      {withImage && <PostImage content={post.content} />}
       <ViewPostLink
         post={post}
         space={space}
         title={
           <div>
+            {withImage && <PostImage content={post.content} withPreview={false} />}
             <PostName post={postDetails} withLink />
             <PostSummary space={space} post={post} />
           </div>
