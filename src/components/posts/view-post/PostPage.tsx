@@ -31,7 +31,7 @@ import { DfImage } from '../../utils/DfImage'
 import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
 import ViewTags from '../../utils/ViewTags'
-import Embed from '../embed/Embed'
+import Embed, { getEmbedLinkType, getYoutubeVideoId } from '../embed/Embed'
 import { StatsPanel } from '../PostStats'
 import ViewPostLink from '../ViewPostLink'
 import {
@@ -129,6 +129,14 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
     metaTitle = summarizeMd(body, { limit: MAX_META_TITLE_LEN }).summary
   }
 
+  let usedImage = image
+  if (!usedImage && link) {
+    const embedType = getEmbedLinkType(link)
+    if (embedType === 'youtube' || embedType === 'youtu.be') {
+      usedImage = `https://img.youtube.com/vi/${getYoutubeVideoId(link)}/hqdefault.jpg`
+    }
+  }
+
   return (
     <PageContent
       meta={{
@@ -175,7 +183,11 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               />
             ) : (
               <div className='DfPostContent'>
-                {titleMsg && <h1 className={clsx('DfPostName', !body && 'mb-0')}>{titleMsg}</h1>}
+                {titleMsg && (
+                  <h1 className={clsx('DfPostName', !body && !image && !link && 'mb-0')}>
+                    {titleMsg}
+                  </h1>
+                )}
                 {struct.isSharedPost ? (
                   <SharePostContent postDetails={postData} space={space} />
                 ) : (

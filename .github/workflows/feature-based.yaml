@@ -64,7 +64,7 @@ jobs:
             GH_HCAPTCHA_SITE_KEY=3beeddac-2dce-41cc-8e18-338118426c38
             GH_AMP_ID=71bf5a46800fedba5e9a01243b988164
             GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
-            GH_CONNECTION_KIND=staging
+            GH_CONNECTION_KIND=dev
             GH_SELLER_CLIENT_ID=5DYm3Wk4aa1BbfhH1ajmY6MNEELXoicmKRnP4tzHYjSKnD9K
             GH_SELLER_TOKEN_SIGNER=retire strong pole intact cool music high path salt praise stadium spatial
           tags: |
