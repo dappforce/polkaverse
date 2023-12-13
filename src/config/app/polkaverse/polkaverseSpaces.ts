@@ -23,8 +23,6 @@ export default [
   '7218',
   // Web3 Chinese
   '10900',
-  // Polkadot Romania
-  '7171',
   // Dotsama Bulgaria
   '10652',
   // CryptoZilla
