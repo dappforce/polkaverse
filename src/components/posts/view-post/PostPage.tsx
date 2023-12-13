@@ -142,7 +142,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
       meta={{
         title: metaTitle || defaultMetaTitle,
         desc: content.summary,
-        image,
+        image: usedImage,
         tags,
         canonical: postUrl(spaceStruct, postData.post),
         externalCanonical: content.canonical,
