@@ -175,7 +175,11 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               />
             ) : (
               <div className='DfPostContent'>
-                {titleMsg && <h1 className={clsx('DfPostName', !body && 'mb-0')}>{titleMsg}</h1>}
+                {titleMsg && (
+                  <h1 className={clsx('DfPostName', !body && !image && !link && 'mb-0')}>
+                    {titleMsg}
+                  </h1>
+                )}
                 {struct.isSharedPost ? (
                   <SharePostContent postDetails={postData} space={space} />
                 ) : (
