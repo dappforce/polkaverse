@@ -31,7 +31,7 @@ import { DfImage } from '../../utils/DfImage'
 import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
 import ViewTags from '../../utils/ViewTags'
-import Embed from '../embed/Embed'
+import Embed, { getEmbedLinkType, getYoutubeVideoId } from '../embed/Embed'
 import { StatsPanel } from '../PostStats'
 import ViewPostLink from '../ViewPostLink'
 import {
@@ -127,6 +127,14 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const defaultMetaTitle = config.metaTags.title
   if (!metaTitle && typeof body === 'string') {
     metaTitle = summarizeMd(body, { limit: MAX_META_TITLE_LEN }).summary
+  }
+
+  let usedImage = image
+  if (!usedImage && link) {
+    const embedType = getEmbedLinkType(link)
+    if (embedType === 'youtube' || embedType === 'youtu.be') {
+      usedImage = `https://img.youtube.com/vi/${getYoutubeVideoId(link)}/hqdefault.jpg`
+    }
   }
 
   return (

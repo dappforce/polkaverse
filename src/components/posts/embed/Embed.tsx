@@ -30,8 +30,12 @@ const getEmbedUrl = (url: string, embed: string | undefined) => {
   return urls[embed]
 }
 
+export function getEmbedLinkType(link: string) {
+  return allowEmbedList.find(embed => link.includes(embed))
+}
+
 const Embed = ({ link, className }: EmbedProps) => {
-  const embed = allowEmbedList.find(embed => link.includes(embed))
+  const embed = getEmbedLinkType(link)
   const src = getEmbedUrl(link, embed)
 
   if (!src) return null
@@ -57,7 +61,7 @@ const Embed = ({ link, className }: EmbedProps) => {
   )
 }
 
-function getYoutubeVideoId(youtubeLink: string) {
+export function getYoutubeVideoId(youtubeLink: string) {
   const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
   const match = youtubeLink.match(regExp)
   if (match && match[2].length == 11) {
