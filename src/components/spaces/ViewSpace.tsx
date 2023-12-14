@@ -6,14 +6,14 @@ import React, { MouseEvent, useCallback, useState } from 'react'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
-import { SpaceContent, SpaceId, SpaceWithSomeDetails } from 'src/types'
+import { SpaceContent, SpaceId, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
 import config from '../../config'
 import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks'
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
 import { useIsMobileWidthOrDevice } from '../responsive'
-import { editSpaceUrl } from '../urls'
+import { editSpaceUrl, spaceUrl } from '../urls'
 import { DfMd } from '../utils/DfMd'
 import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels'
 import { SummarizeMd } from '../utils/md'
@@ -59,9 +59,14 @@ export const SpaceNameAsLink = React.memo(({ space, ...props }: SpaceNameAsLinkP
   return <ViewSpaceLink space={space.struct} title={spaceName} {...props} />
 })
 
-export const StakeButton = ({ spaceId }: { spaceId: SpaceId }) => {
-  return config.creatorIds?.includes(spaceId) ? (
-    <ButtonLink type='primary' href={'https://sub.id/creators'} className={clsx('mr-2')}>
+export const StakeButton = ({ spaceStruct }: { spaceStruct: SpaceStruct }) => {
+  return config.creatorIds?.includes(spaceStruct.id) ? (
+    <ButtonLink
+      type='primary'
+      target='_blank'
+      href={`https://sub.id/creators/${spaceUrl(spaceStruct)}`}
+      className={clsx('mr-2')}
+    >
       Stake
     </ButtonLink>
   ) : null
@@ -196,7 +201,7 @@ export const InnerViewSpace = (props: Props) => {
                     <EditOutlined /> Edit
                   </ButtonLink>
                 ) : (
-                  withStakeButton && <StakeButton spaceId={space.id} />
+                  withStakeButton && <StakeButton spaceStruct={space} />
                 ))}
 
               {withFollowButton && <FollowSpaceButton space={space} />}
