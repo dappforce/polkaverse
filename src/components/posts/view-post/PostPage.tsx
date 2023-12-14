@@ -133,7 +133,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   if (!usedImage && link) {
     const embedType = getEmbedLinkType(link)
     if (embedType === 'youtube' || embedType === 'youtu.be') {
-      usedImage = `https://img.youtube.com/vi/${getYoutubeVideoId(link)}/hqdefault.jpg`
+      usedImage = `https://i3.ytimg.com/vi/${getYoutubeVideoId(link)}/maxresdefault.jpg`
     }
   }
 
