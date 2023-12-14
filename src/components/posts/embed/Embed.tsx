@@ -81,7 +81,7 @@ function YoutubeEmbed({ src }: { src: string }) {
       adNetwork={true}
       params=''
       playlist={false}
-      poster='hqdefault'
+      poster='maxresdefault'
       title='YouTube Embed'
       noCookie={true}
       wrapperClass={clsx(styles.YoutubeEmbedWrapper)}
