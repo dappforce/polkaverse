@@ -4,7 +4,7 @@ const bannersKind = ['']
 
 const BANNER_STORAGE_KEY = 'df.creators-staking'
 
-const href = 'https://sub.id/creators'
+const href = 'https://subsocial.network/get-sub'
 
 export const GetSub = () => (
   <MultiBanner
