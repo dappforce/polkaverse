@@ -16,13 +16,30 @@ const componentMap: {
   youtube: YoutubeEmbed,
 }
 
+const YOUTUBE_REGEX = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+export function getYoutubeVideoId(youtubeLink: string) {
+  const match = youtubeLink.match(YOUTUBE_REGEX)
+  if (match && match[2].length == 11) {
+    return match[2]
+  } else {
+    return undefined
+  }
+}
+
+const VIMEO_REGEX = /^.*(vimeo\.com\/)((channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/
+export function getVimeoVideoId(vimeoLink: string) {
+  const parseUrl = vimeoLink.match(VIMEO_REGEX)
+  if (!parseUrl) return undefined
+  return parseUrl[5]
+}
+
 const getEmbedUrl = (url: string, embed: string | undefined) => {
   if (!embed) return
 
   const urls: Record<string, string> = {
-    vimeo: `https://player.vimeo.com/video/${url.split('/').pop()}`,
-    youtube: `https://www.youtube.com/embed/${url.split('=').pop()}`,
-    'youtu.be': `https://www.youtube.com/embed/${url.split('/').pop()}`,
+    vimeo: `https://player.vimeo.com/video/${getVimeoVideoId(url)}`,
+    youtube: `https://www.youtube.com/embed/${getYoutubeVideoId(url)}`,
+    'youtu.be': `https://www.youtube.com/embed/${getYoutubeVideoId(url)}`,
     soundcloud: `https://w.soundcloud.com/player/
       ?url=${url}&amp;auto_play=false&amp;hide_related=true&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true`,
   }
@@ -61,15 +78,6 @@ const Embed = ({ link, className }: EmbedProps) => {
   )
 }
 
-export function getYoutubeVideoId(youtubeLink: string) {
-  const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
-  const match = youtubeLink.match(regExp)
-  if (match && match[2].length == 11) {
-    return match[2]
-  } else {
-    return undefined
-  }
-}
 function YoutubeEmbed({ src }: { src: string }) {
   const youtubeId = useMemo(() => getYoutubeVideoId(src), [src])
 
