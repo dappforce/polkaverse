@@ -16,9 +16,9 @@ const componentMap: {
   youtube: YoutubeEmbed,
 }
 
+const YOUTUBE_REGEX = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
 export function getYoutubeVideoId(youtubeLink: string) {
-  const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
-  const match = youtubeLink.match(regExp)
+  const match = youtubeLink.match(YOUTUBE_REGEX)
   if (match && match[2].length == 11) {
     return match[2]
   } else {
@@ -26,9 +26,9 @@ export function getYoutubeVideoId(youtubeLink: string) {
   }
 }
 
+const VIMEO_REGEX = /^.*(vimeo\.com\/)((channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/
 export function getVimeoVideoId(vimeoLink: string) {
-  const regExp = /^.*(vimeo\.com\/)((channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/
-  const parseUrl = regExp.exec(vimeoLink)
+  const parseUrl = vimeoLink.match(VIMEO_REGEX)
   if (!parseUrl) return undefined
   return parseUrl[5]
 }
