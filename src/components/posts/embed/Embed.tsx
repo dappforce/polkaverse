@@ -25,11 +25,19 @@ export function getYoutubeVideoId(youtubeLink: string) {
     return undefined
   }
 }
+
+export function getVimeoVideoId(vimeoLink: string) {
+  const regExp = /^.*(vimeo\.com\/)((channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/
+  const parseUrl = regExp.exec(vimeoLink)
+  if (!parseUrl) return undefined
+  return parseUrl[5]
+}
+
 const getEmbedUrl = (url: string, embed: string | undefined) => {
   if (!embed) return
 
   const urls: Record<string, string> = {
-    vimeo: `https://player.vimeo.com/video/${url.split('/').pop()}`,
+    vimeo: `https://player.vimeo.com/video/${getVimeoVideoId(url)}`,
     youtube: `https://www.youtube.com/embed/${getYoutubeVideoId(url)}`,
     'youtu.be': `https://www.youtube.com/embed/${getYoutubeVideoId(url)}`,
     soundcloud: `https://w.soundcloud.com/player/
