@@ -99,7 +99,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const spaceStruct = space.struct
   const spaceData = space
 
-  const { title, image, tags, link, tweet } = content
+  let { title, image, tags, link, tweet } = content
   let body = content.body
   if (tweet?.id) {
     body = parseTwitterTextToMarkdown(body)
@@ -130,6 +130,8 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   }
 
   let usedImage = image
+  link = 'https://www.youtube.com/watch?v=SA3lHi5LpeI&x=1'
+  console.log('yt link', link)
   if (!usedImage && link) {
     const embedType = getEmbedLinkType(link)
     if (embedType === 'youtube' || embedType === 'youtu.be') {
