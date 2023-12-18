@@ -69,7 +69,7 @@ jobs:
           file: docker/Dockerfile
           push: true
           build-args: |
-            GH_GA_ID=UA-204866512-2
+            GH_GA_ID=G-TP1XEFNHQD
             GH_APP_KIND=polkaverse
             GH_HCAPTCHA_SITE_KEY=${{ secrets.PROD_HCAPTCHA_SITE_KEY }}
             GH_AMP_ID=2eeca0e8a0163c89e3f023c971e426a6
