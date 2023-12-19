@@ -104,7 +104,7 @@ export const useCreateBalance = (address?: AnyAccountId) => {
 
     const sub = async () => {
       unsub = await api.derive.balances.all(address, data => {
-        const balance = data.freeBalance
+        const balance = data.availableBalance
         isMounted && setBalance(balance)
       })
     }
