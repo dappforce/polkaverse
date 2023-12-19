@@ -7,8 +7,8 @@ import React, { FC } from 'react'
 import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import CreatorDashboardSidebar from '../creators/CreatorDashboardSidebar'
 import { useShowOnBoardingSidebarContext } from '../onboarding/contexts/ShowOnBoardingSidebarContext'
-import OnBoardingSidebar from '../onboarding/OnBoardingSidebar'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { fullUrl } from '../urls/helpers'
 import Section from '../utils/Section'
@@ -110,7 +110,10 @@ export const PageContent: FC<Props> = ({
   withOnBoarding,
   children,
 }) => {
-  const { showOnBoardingSidebar, setShowOnBoardingSidebar } = useShowOnBoardingSidebarContext()
+  const {
+    showOnBoardingSidebar,
+    // setShowOnBoardingSidebar
+  } = useShowOnBoardingSidebarContext()
   const myAddress = useMyAddress()
 
   const isMobile = useIsMobileWidthOrDevice()
@@ -152,8 +155,9 @@ export const PageContent: FC<Props> = ({
           </section>
           {rightPanel}
           {rightPanel === undefined && withOnBoarding && showOnBoardingSidebar && myAddress && (
-            <div style={{ width: ONBOARDING_SIDEBAR_WIDTH }}>
-              <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} />
+            <div style={{ width: ONBOARDING_SIDEBAR_WIDTH, flexShrink: 0.2 }}>
+              <CreatorDashboardSidebar />
+              {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}
             </div>
           )}
         </div>

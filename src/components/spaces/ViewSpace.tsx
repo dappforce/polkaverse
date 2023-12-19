@@ -11,6 +11,7 @@ import config from '../../config'
 import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks'
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import StakeSubBanner from '../creators/StakeSubBanner'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { editSpaceUrl } from '../urls'
@@ -22,7 +23,6 @@ import MyEntityLabel from '../utils/MyEntityLabel'
 import Section from '../utils/Section'
 import { BareProps } from '../utils/types'
 import ViewTags from '../utils/ViewTags'
-import StakeSubBanner from './creators/StakeSubBanner'
 import {
   HiddenSpaceAlert,
   OfficialSpaceStatus,

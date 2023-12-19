@@ -128,6 +128,16 @@ a {
   font-size: $font_big;
 }
 
+.ColorPrimary {
+  color: $color_primary;
+}
+.ColorMuted {
+  color: $color_muted;
+}
+.ColorWhite {
+  color: white;
+}
+
 .GapMini {
   gap: $space_mini;
 }
@@ -197,6 +207,16 @@ a {
 }
 .RoundedHuge {
   border-radius: $border_radius_huge;
+}
+
+.FontWeightMedium {
+  font-weight: $font_weight_medium;
+}
+.FontWeightSemibold {
+  font-weight: $font_weight_semibold;
+}
+.FontWeightBold {
+  font-weight: $font_weight_bold;
 }
 
 .DfImagePreview {
