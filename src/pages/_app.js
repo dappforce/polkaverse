@@ -34,6 +34,7 @@ import '@subsocial/definitions/interfaces/types-lookup'
 import '@subsocial/definitions/interfaces/augment-types'
 import '@subsocial/definitions/interfaces/augment-api'
 import AnalyticProvider from 'src/providers/AnalyticContext'
+import { GoogleAnalytics } from 'nextjs-google-analytics'
 
 dayjs.extend(relativeTime)
 dayjs.extend(localizedFormat)
@@ -71,6 +72,7 @@ function MyApp(props) {
       />
       <Provider store={store}>
         {/* <AdBlockModal /> */}
+        <GoogleAnalytics trackPageViews gaMeasurementId={config.ga.id} />
         <AnalyticProvider>
           <DfApolloProvider initialApolloState={pageProps.initialApolloState}>
             <ThemeProvider defaultTheme={config.themeName}>
