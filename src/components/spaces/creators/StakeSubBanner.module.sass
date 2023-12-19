@@ -1,0 +1,42 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.StakeSubBanner
+  position: relative
+  display: flex
+  border: 1px solid #6366F1
+  background: #EDF4FF
+  border-radius: $border_radius_huge
+  padding: $space_large
+  justify-content: space-between
+
+  .Content
+    position: relative
+    z-index: 1
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+
+    .Title
+      font-size: $font_large
+      font-weight: $font_weight_medium
+
+    .Subtitle
+      font-size: $font_small
+      opacity: 0.8
+
+    .Button
+      border: 1px solid $color_primary
+      font-weight: $font_weight_medium
+      padding-left: $space_huge
+      padding-right: $space_huge
+
+  .Image
+    position: absolute
+    right: $space_normal
+    top: 0
+    height: 100%
+
+    :global(.ant-image), :global(.ant-image-img)
+      // width: 100%
+      height: 100%
+      object-fit: contain

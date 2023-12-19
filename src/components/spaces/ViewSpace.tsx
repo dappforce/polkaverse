@@ -22,6 +22,7 @@ import MyEntityLabel from '../utils/MyEntityLabel'
 import Section from '../utils/Section'
 import { BareProps } from '../utils/types'
 import ViewTags from '../utils/ViewTags'
+import StakeSubBanner from './creators/StakeSubBanner'
 import {
   HiddenSpaceAlert,
   OfficialSpaceStatus,
@@ -276,6 +277,9 @@ export const InnerViewSpace = (props: Props) => {
       <PendingSpaceOwnershipPanel space={space} />
       <HiddenSpaceAlert space={space} />
       <Section className='pt-2'>{renderPreview()}</Section>
+      <Section className='mt-4'>
+        <StakeSubBanner />
+      </Section>
       <Section className='DfContentPage mt-4'>
         <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
       </Section>
