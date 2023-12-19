@@ -5,7 +5,6 @@ import { LazyConnectionsProvider } from 'src/components/lazy-connection/LazyConn
 import OnBoardingContextsWrapper from 'src/components/onboarding/contexts/OnBoardingContextsWrapper'
 import { ResponsiveSizeProvider } from 'src/components/responsive'
 import config from 'src/config'
-import { initGa } from 'src/ga'
 import { AuthProvider } from '../components/auth/AuthContext'
 import { MyAccountsProvider } from '../components/auth/MyAccountsContext'
 import { SubstrateProvider, SubstrateWebConsole } from '../components/substrate'
@@ -15,8 +14,6 @@ import { Navigation } from './Navigation'
 const ChatFloatingModal = dynamic(() => import('../components/chat/ChatFloatingModal'), {
   ssr: false,
 })
-
-initGa(config.ga)
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   return (
