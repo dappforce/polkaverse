@@ -18,13 +18,7 @@ export default function StakeSubCard({ ...props }: StakeSubCardProps) {
           src='/images/creators/subsocial-tokens.png'
           className={clsx(styles.Image, 'mb-3')}
         />
-        <Button
-          href='https://sub.id/creators'
-          target='_blank'
-          type='primary'
-          block
-          className={styles.Button}
-        >
+        <Button href='https://sub.id/creators' target='_blank' type='primary' block>
           Stake
         </Button>
       </div>

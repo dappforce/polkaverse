@@ -21,7 +21,7 @@ export default function CreatorInfoCard({ ...props }: CreatorInfoCardProps) {
         Father of SpaceX and Tesla. Recently adopted Twitter and other interesting stuff... Show
         more
       </span>
-      <Button type='primary' ghost className='FontWeightMedium'>
+      <Button type='primary' ghost>
         Follow
       </Button>
     </Segment>

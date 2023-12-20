@@ -17,7 +17,7 @@ export default function GetMoreSubCard({ ...props }: GetMoreSubCardProps) {
         <div className='d-flex flex-column GapSmall'>
           <Button
             className={clsx(
-              'd-flex align-items-center GapTiny justify-content-center FontWeightMedium',
+              'd-flex align-items-center GapTiny justify-content-center',
               styles.Button,
             )}
             block
@@ -27,7 +27,7 @@ export default function GetMoreSubCard({ ...props }: GetMoreSubCardProps) {
           <Button
             type='ghost'
             className={clsx(
-              'd-flex align-items-center GapTiny justify-content-center FontWeightMedium',
+              'd-flex align-items-center GapTiny justify-content-center',
               styles.Button,
               styles.OutlineButton,
             )}

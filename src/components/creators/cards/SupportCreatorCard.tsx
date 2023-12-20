@@ -17,7 +17,7 @@ export default function SupportCreatorsCard({ ...props }: SupportCreatorsCardPro
           Generate rewards for both you and this creator by staking towards them
         </span>
         <DfImage src='/images/creators/subsocial-tokens-pink.png' className={clsx(styles.Image)} />
-        <Button className='FontWeightMedium'>Stake</Button>
+        <Button>Stake</Button>
       </div>
 
       <div className={styles.Gradient1} />
