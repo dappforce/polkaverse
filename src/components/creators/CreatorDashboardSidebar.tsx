@@ -7,6 +7,7 @@ import { SlQuestion } from 'react-icons/sl'
 import { DfImage } from '../utils/DfImage'
 import Segment from '../utils/Segment'
 import styles from './CreatorDashboardSidebar.module.sass'
+import StakeSubBanner from './StakeSubBanner'
 
 export type CreatorDashboardSidebarProps = ComponentProps<'div'>
 
@@ -72,6 +73,7 @@ export default function CreatorDashboardSidebar({ ...props }: CreatorDashboardSi
         <div className={styles.Gradient1} />
         <div className={styles.Gradient2} />
       </Segment>
+      <StakeSubBanner />
     </div>
   )
 }
