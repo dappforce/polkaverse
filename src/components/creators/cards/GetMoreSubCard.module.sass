@@ -1,0 +1,54 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.GetMoreSub
+  background: #A81580
+  border-radius: $border_radius_big
+  color: white
+  overflow: clip
+  position: relative
+
+  .Content
+    z-index: 1
+    position: relative
+
+    .Title
+      font-size: $font_large
+      font-weight: $font_weight_semibold
+      line-height: normal
+
+    .Image
+      overflow: visible !important
+      *
+        width: 100%
+        position: relative
+        top: -$space_large
+        margin-bottom: -$space_huge
+
+    .OutlineButton
+      color: white
+      border-color: white
+
+      &:hover, &:focus-within
+        color: #e3cadd
+        border-color: #e3cadd
+
+  .Gradient
+    width: 500px
+    height: 500px
+    position: absolute
+    background: #EF35C6
+    top: 0
+    left: 50%
+    filter: blur(310px)
+    border-radius: 100%
+
+  .Gradient2
+    width: 500px
+    height: 500px
+    position: absolute
+    background: rgba(249, 121, 221, 0.69)
+    top: 50%
+    left: 0%
+    filter: blur(100px)
+    border-radius: 100%
+
