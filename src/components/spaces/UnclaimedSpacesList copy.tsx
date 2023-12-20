@@ -51,7 +51,7 @@ const UnclaimedSpacesListPage = () => {
         title,
         desc: 'Only unclaimed spaces of polka',
       }}
-      withOnBoarding
+      withSidebar
     >
       <UnclaimedSpacesList />
     </PageContent>

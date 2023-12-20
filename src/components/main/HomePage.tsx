@@ -170,11 +170,7 @@ const TabsHomePage = (props: Props) => {
 
 const HomePage: NextPage<Props> = props => (
   <>
-    <PageContent
-      meta={{ title: metaTags.title, desc: metaTags.desc }}
-      className='m-0'
-      withOnBoarding
-    >
+    <PageContent meta={{ title: metaTags.title, desc: metaTags.desc }} className='m-0' withSidebar>
       {/* <CrowdloanProgress /> */}
       <GetSubBanner />
       <TabsHomePage {...props} />

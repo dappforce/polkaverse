@@ -53,7 +53,7 @@ export const InnerAboutSpacePage: NextPage<Props> = ({ spaceData }) => {
   }
 
   return (
-    <PageContent meta={meta} withOnBoarding>
+    <PageContent meta={meta} withSidebar>
       <Section level={1} title={title} className='DfContentPage'>
         {nonEmptyStr(about) && (
           <div className='DfBookPage'>

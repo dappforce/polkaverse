@@ -173,7 +173,7 @@ export const OwnedSpacesPage = () => {
         title: 'Account spaces',
         desc: `Subsocial spaces owned by ${address}`,
       }}
-      withOnBoarding
+      withSidebar
     >
       <OwnedSpacesList address={address as string} withTabs withTitle />
     </PageContent>
@@ -211,7 +211,7 @@ export const FollowingSpacesPage = () => {
         title: `Subscriptions of ${address}`,
         desc: `Spaces that ${address} follows on Subsocial`,
       }}
-      withOnBoarding
+      withSidebar
     >
       <FollowingSpacesList address={address as string} withTitle />
     </PageContent>

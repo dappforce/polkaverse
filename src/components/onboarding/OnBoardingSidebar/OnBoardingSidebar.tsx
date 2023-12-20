@@ -8,10 +8,8 @@ import config from 'src/config'
 import { useOpenCloseEnableConfirmationModal } from 'src/rtk/features/confirmationPopup/useOpenCloseEnableConfirmationModal'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
 import { OnBoardingDataTypes } from 'src/rtk/features/onBoarding/onBoardingSlice'
-import { useIsOnBoardingSkippedContext } from '../contexts/IsOnBoardingSkippedContext'
 import useOnBoardingStepsOrder from '../hooks/useOnBoardingStepsOrder'
 import OnBoardingQuickStartModal from '../OnBoardingQuickStartModal'
-import ContinueOnBoardingButton from './buttons/ContinueOnBoardingButton'
 import DotsamaDomainButton from './buttons/DotsamaDomainButton'
 import WritePostButton from './buttons/WritePostButton'
 import styles from './OnBoardingSidebar.module.sass'
@@ -99,7 +97,7 @@ export default function OnBoardingSidebar({
   const openCloseEnableConfirmationModal = useOpenCloseEnableConfirmationModal()
 
   const name = useAccountName()
-  const { isOnBoardingSkipped } = useIsOnBoardingSkippedContext()
+  // const { isOnBoardingSkipped } = useIsOnBoardingSkippedContext()
   const isUsingEmail = useIsUsingEmail()
 
   const showEnableConfirmationBtn = steps.includes('signer') ? false : true
@@ -123,7 +121,7 @@ export default function OnBoardingSidebar({
             Start a quick tour
           </Button>
         </div>
-        {isOnBoardingSkipped && steps.length > 0 && <ContinueOnBoardingButton />}
+        {/* {isOnBoardingSkipped && steps.length > 0 && <ContinueOnBoardingButton />} */}
         <StepButton steps={steps} />
         {showEnableConfirmationBtn && (
           <OnBoardingSidebarButton

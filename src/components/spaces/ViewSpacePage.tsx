@@ -48,7 +48,7 @@ const InnerViewSpacePage: FC<Props> = props => {
           image,
           canonical: spaceUrl(spaceData.struct),
         }}
-        withOnBoarding
+        withSidebar
         withVoteBanner
       >
         {showBanner && (

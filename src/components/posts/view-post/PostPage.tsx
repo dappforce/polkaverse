@@ -147,7 +147,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
         canonical: postUrl(spaceStruct, postData.post),
         externalCanonical: content.canonical,
       }}
-      withOnBoarding
+      withSidebar
       withVoteBanner
       outerClassName='mx-auto'
       rightPanel={null}

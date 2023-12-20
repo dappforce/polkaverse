@@ -6,9 +6,7 @@ import Head from 'next/head'
 import React, { FC } from 'react'
 import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
-import { useMyAddress } from '../auth/MyAccountsContext'
 import CreatorDashboardSidebar from '../creators/CreatorDashboardSidebar'
-import { useShowOnBoardingSidebarContext } from '../onboarding/contexts/ShowOnBoardingSidebarContext'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { fullUrl } from '../urls/helpers'
 import Section from '../utils/Section'
@@ -94,7 +92,7 @@ type Props = {
   title?: React.ReactNode
   className?: string
   outerClassName?: string
-  withOnBoarding?: boolean
+  withSidebar?: boolean
   withVoteBanner?: boolean
 }
 
@@ -107,14 +105,14 @@ export const PageContent: FC<Props> = ({
   title,
   className,
   outerClassName,
-  withOnBoarding,
+  withSidebar,
   children,
 }) => {
-  const {
-    showOnBoardingSidebar,
-    // setShowOnBoardingSidebar
-  } = useShowOnBoardingSidebarContext()
-  const myAddress = useMyAddress()
+  // const {
+  //   showOnBoardingSidebar,
+  //   // setShowOnBoardingSidebar
+  // } = useShowOnBoardingSidebarContext()
+  // const myAddress = useMyAddress()
 
   const isMobile = useIsMobileWidthOrDevice()
   // const isPanels = leftPanel || rightPanel
@@ -154,7 +152,7 @@ export const PageContent: FC<Props> = ({
             {/* {isPanels && <div className='DfRightPanel DfPanel'>{rightPanel}</div>} */}
           </section>
           {rightPanel}
-          {rightPanel === undefined && withOnBoarding && showOnBoardingSidebar && myAddress && (
+          {rightPanel === undefined && withSidebar && (
             <div style={{ width: ONBOARDING_SIDEBAR_WIDTH, flexShrink: 0.2 }}>
               <CreatorDashboardSidebar />
               {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}

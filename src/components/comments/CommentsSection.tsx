@@ -74,7 +74,7 @@ export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, s
   }
 
   return (
-    <PageContent meta={meta} className='DfContentPage DfEntirePost' withOnBoarding>
+    <PageContent meta={meta} className='DfContentPage DfEntirePost' withSidebar>
       {renderResponseTitle()}
       <ViewComment space={space} comment={comment} withShowReplies />
     </PageContent>
