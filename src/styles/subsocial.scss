@@ -1111,7 +1111,7 @@ hr {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  gap: $space_big;
+  gap: $space_normal;
 }
 
 @media (min-width: 767px) {
@@ -1120,6 +1120,8 @@ hr {
     max-width: $max_width_content;
     width: $max_width_content;
     padding-bottom: 0;
+    position: relative;
+    z-index: 0;
 
     .DfSectionOuter {
       width: 100%;
