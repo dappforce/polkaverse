@@ -72,7 +72,7 @@ function PostPageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name:
   const myAddress = useMyAddress()
   const { data, loading } = useFetchStakeData(myAddress ?? '', space.id)
 
-  if (config.creatorIds?.includes(space.id)) {
+  if (!config.creatorIds?.includes(space.id)) {
     return (
       <>
         <CreatePostCard variant='posts' />
