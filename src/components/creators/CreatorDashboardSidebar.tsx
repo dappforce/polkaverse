@@ -21,11 +21,14 @@ export default function CreatorDashboardSidebar({
   dashboardType,
   ...props
 }: CreatorDashboardSidebarProps) {
+  if (dashboardType.name === 'home-page') {
+    return <HomePageSidebar {...dashboardType} />
+  }
+
   return (
     <div {...props} className={clsx('d-flex flex-column GapNormal', props.className)}>
       {dashboardType && (
         <>
-          <CreatePostCard />
           <CreatorInfoCard />
           <MyStakeCard />
           <GetMoreSubCard />
@@ -35,4 +38,8 @@ export default function CreatorDashboardSidebar({
       )}
     </div>
   )
+}
+
+function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { name: 'home-page' }>) {
+  return <CreatePostCard variant={variant} />
 }
