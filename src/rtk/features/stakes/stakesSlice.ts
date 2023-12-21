@@ -28,6 +28,7 @@ const selectors = adapter.getSelectors<RootState>(state => state.stakes)
 
 export const selectStakeForCreator = selectors.selectById
 
+const currentlyFetchingMap = new Map<string, Promise<StakeData>>()
 export const fetchStakeData = createAsyncThunk<
   StakeData,
   {
@@ -39,15 +40,25 @@ export const fetchStakeData = createAsyncThunk<
 >(
   `${sliceName}/fetchOne`,
   async ({ address, creatorSpaceId, reload }, { getState }): Promise<StakeData> => {
+    const id = getStakeId({ address, creatorSpaceId })
     if (!reload) {
-      const fetchedData = selectStakeForCreator(getState(), getStakeId({ address, creatorSpaceId }))
+      const fetchedData = selectStakeForCreator(getState(), id)
       if (fetchedData) return fetchedData
     }
+    const alreadyFetchedPromise = currentlyFetchingMap.get(id)
+    if (alreadyFetchedPromise) return alreadyFetchedPromise
 
-    const data = await getStakeAmount({ address, spaceId: creatorSpaceId })
-    let stakeAmount = { stakeAmount: '0', isZero: true }
-    if (data) stakeAmount = data
-    return { address, creatorSpaceId, ...stakeAmount }
+    async function fetchData() {
+      const data = await getStakeAmount({ address, spaceId: creatorSpaceId })
+      let stakeAmount = { stakeAmount: '0', isZero: true }
+      if (data) stakeAmount = data
+      return { address, creatorSpaceId, ...stakeAmount }
+    }
+    const promise = fetchData()
+    currentlyFetchingMap.set(id, promise)
+    await promise
+    currentlyFetchingMap.delete(id)
+    return promise
   },
 )
 
