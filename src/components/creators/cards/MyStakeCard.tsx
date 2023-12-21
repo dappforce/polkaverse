@@ -36,7 +36,9 @@ export default function MyStakeCard({ creatorSpaceId }: MyStakeCardProps) {
           {loading ? (
             <Skeleton round paragraph={false} className={styles.Skeleton} />
           ) : (
-            <FormatBalance value={data?.stakeAmount} isShort decimals={10} currency='SUB' />
+            <span className='FontWeightMedium'>
+              <FormatBalance value={data?.stakeAmount} isShort decimals={10} currency='SUB' />
+            </span>
           )}
         </div>
         <Button
