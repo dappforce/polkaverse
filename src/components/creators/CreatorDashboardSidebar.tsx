@@ -57,7 +57,7 @@ function SpacePageSidebar({
   const myAddress = useMyAddress()
   const { data } = useFetchStakeData(myAddress ?? '', spaceId)
 
-  return !data?.isZero ? (
+  return data?.isZero === false ? (
     <>
       <MyStakeCard creatorSpaceId={spaceId} />
       <GetMoreSubCard />
@@ -76,7 +76,7 @@ function PostPageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name:
   return (
     <>
       <CreatorInfoCard space={space} />
-      {data?.isZero ? <StakeSubCard /> : <GetMoreSubCard />}
+      {!data ? null : !data.isZero ? <GetMoreSubCard /> : <StakeSubCard />}
     </>
   )
 }

@@ -43,7 +43,7 @@ export default function CreatorInfoCard({ space }: CreatorInfoCardProps) {
       </div>
       <CollapsibleParagraph className='FontSmall mb-3' text={space.content?.about ?? ''} />
       <div className='GapSmall d-flex flex-column'>
-        {!data?.isZero && (
+        {data?.isZero === false && (
           <Button target='_blank' type='primary' href={`https://sub.id/creators/${space.id}`}>
             Stake
           </Button>
