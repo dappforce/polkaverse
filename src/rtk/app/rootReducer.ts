@@ -23,6 +23,7 @@ import followedSpaceIds from '../features/spaceIds/followedSpaceIdsSlice'
 import ownSpaceIds from '../features/spaceIds/ownSpaceIdsSlice'
 import spaceIdsWithRolesByAccount from '../features/spaceIds/spaceIdsWithRolesByAccountSlice'
 import spaces from '../features/spaces/spacesSlice'
+import stakes from '../features/stakes/stakesSlice'
 
 const rootReducer = combineReducers({
   contents,
@@ -49,6 +50,7 @@ const rootReducer = combineReducers({
   sellerConfig,
   enableConfirmation,
   chat,
+  stakes,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

@@ -48,13 +48,14 @@ function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { nam
   )
 }
 
-function SpacePageSidebar({}: // spaceId,
-Extract<CreatorDashboardSidebarType, { name: 'space-page' }>) {
+function SpacePageSidebar({
+  spaceId,
+}: Extract<CreatorDashboardSidebarType, { name: 'space-page' }>) {
   const isStaked = true
 
   return isStaked ? (
     <>
-      <MyStakeCard />
+      <MyStakeCard creatorSpaceId={spaceId} />
       <GetMoreSubCard />
     </>
   ) : (

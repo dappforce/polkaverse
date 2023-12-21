@@ -59,6 +59,22 @@ export const getChainsInfo = async () => {
   return res?.data
 }
 
+export const getStakeAmount = async ({
+  address,
+  spaceId,
+}: {
+  spaceId: string
+  address: string
+}) => {
+  const res = await axiosRequest(
+    `${subIdApiUrl}/staking/creator/backer/info?account=${address}&ids=${spaceId}`,
+  )
+  const newestStakeInfo = (res?.data?.[spaceId]?.[0] as { staked: string; era: number }) || {}
+  const stakeAmount = BigInt(newestStakeInfo.staked)
+
+  return { stakeAmount: stakeAmount.toString(), isZero: stakeAmount <= 0 }
+}
+
 type BalanceByNetworkProps = {
   account: AccountId
   network: string

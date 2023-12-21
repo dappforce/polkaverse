@@ -1,18 +1,25 @@
-import { Button } from 'antd'
+import { Button, Skeleton } from 'antd'
 import clsx from 'clsx'
 import Link from 'next/link'
-import { ComponentProps } from 'react'
 import { BsBoxArrowUpRight } from 'react-icons/bs'
 import { SlQuestion } from 'react-icons/sl'
+import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import { FormatBalance } from 'src/components/common/balances'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
+import { useFetchStakeData } from 'src/rtk/features/stakes/stakesHooks'
 import styles from './MyStakeCard.module.sass'
 
-export type MyStakeCardProps = ComponentProps<'div'>
+export type MyStakeCardProps = {
+  creatorSpaceId: string
+}
 
-export default function MyStakeCard({ ...props }: MyStakeCardProps) {
+export default function MyStakeCard({ creatorSpaceId }: MyStakeCardProps) {
+  const myAddress = useMyAddress()
+  const { data, loading } = useFetchStakeData(myAddress ?? '', creatorSpaceId)
+
   return (
-    <Segment {...props} className={clsx(props.className, styles.CreatorStakingCard)}>
+    <Segment className={clsx(styles.CreatorStakingCard)}>
       <div className={styles.TopSection}>
         <p className={clsx(styles.Title, 'mb-0')}>Creator Staking</p>
         <Link href='https://docs.subsocial.network/docs/basics/creator-staking' passHref>
@@ -26,7 +33,11 @@ export default function MyStakeCard({ ...props }: MyStakeCardProps) {
             <span>My Stake</span>
             <SlQuestion className={clsx('FontTiny', styles.HelpIcon)} />
           </div>
-          <span>800K SUB</span>
+          {loading ? (
+            <Skeleton round paragraph={false} className={styles.Skeleton} />
+          ) : (
+            <FormatBalance value={data?.stakeAmount} isShort decimals={10} currency='SUB' />
+          )}
         </div>
         <Button
           className={clsx(

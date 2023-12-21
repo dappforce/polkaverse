@@ -1,6 +1,6 @@
 import { AsyncThunkAction } from '@reduxjs/toolkit'
 import { isEmptyArray, newLogger } from '@subsocial/utils'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { shallowEqual } from 'react-redux'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
 import {
@@ -40,6 +40,48 @@ export type FetchManyFn<Args, Struct> = FetchFn<FetchManyArgs<Args>, Struct[]>
 export type FetchOneFn<Args, Struct> = FetchFn<FetchOneArgs<Args>, Struct>
 
 const log = newLogger('useFetchEntities')
+
+export function useFetchWithoutApi<Args, Struct>(
+  fetch: FetchFn<Args, Struct>,
+  args: Args,
+  config?: { enabled?: boolean },
+): CommonResult {
+  const { enabled } = config || {}
+
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<Error>()
+  const dispatch = useAppDispatch()
+
+  const isEnabled = !!enabled
+  useEffect(() => {
+    if (!isEnabled) return
+
+    let isMounted = true
+    setError(undefined)
+
+    dispatch(fetch(args))
+      .catch(err => {
+        if (isMounted) {
+          setError(err)
+          log.error(error)
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false)
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [dispatch, args, isEnabled])
+
+  return {
+    loading,
+    error,
+  }
+}
 
 export function useFetch<Args, Struct>(
   fetch: FetchFn<Args, Struct>,
