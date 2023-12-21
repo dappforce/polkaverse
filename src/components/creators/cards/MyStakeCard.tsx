@@ -51,6 +51,7 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
           ghost
           block
           href={`https://sub.id/creators/${getSpaceHandleOrId(space.struct)}`}
+          target='_blank'
         >
           Manage my stake
           <BsBoxArrowUpRight />
