@@ -8,12 +8,10 @@ import { useChatOpenState } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
 import { ChatEntity } from 'src/rtk/features/chat/chatSlice'
 import { disablePageScroll, enablePageScroll } from 'src/utils/window'
-import { useResponsiveSize } from '../responsive'
 import styles from './ChatFloatingModal.module.sass'
 import ChatIframe from './ChatIframe'
 
 export default function ChatFloatingModal() {
-  const { isLargeDesktop } = useResponsiveSize()
   const sendEvent = useSendEvent()
   const [isOpen, setIsOpen] = useChatOpenState()
   const entity = useAppSelector(state => state.chat.entity)
@@ -46,10 +44,6 @@ export default function ChatFloatingModal() {
 
     setIsOpen(!isOpen)
     hasOpened.current = true
-  }
-
-  if (isLargeDesktop) {
-    return null
   }
 
   const onUnreadCountChange = (count: number) => {
