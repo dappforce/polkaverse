@@ -10,6 +10,7 @@ import { GetHomePageData } from 'src/graphql/__generated__/GetHomePageData'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { PostKind } from 'src/types/graphql-global-types'
 import { useIsSignedIn } from '../auth/MyAccountsContext'
+import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar'
 import GetSubBanner from '../utils/banners/GetSubBanner'
 import Section from '../utils/Section'
 import style from './HomePage.module.sass'
@@ -80,7 +81,12 @@ const AffixTabs = (props: AffixTabsProps) => {
 
 const ToTopIcon = <UpOutlined />
 
-const TabsHomePage = (props: Props) => {
+const TabsHomePage = ({
+  setCurrentTabVariant,
+  ...props
+}: Props & {
+  setCurrentTabVariant: (variant: CreatorDashboardHomeVariant) => void
+}) => {
   const isSignedIn = useIsSignedIn()
   const router = useRouter()
   let prevScrollpos = 0
@@ -109,6 +115,12 @@ const TabsHomePage = (props: Props) => {
   const tab = tabs[tabIndex] as TabKeys
   const type = getFilterType(tab, typeFromUrl)
   const date = dateFilterOpt[dateFilterIndex].value as DateFilterType
+
+  useEffect(() => {
+    let variant: CreatorDashboardHomeVariant = 'posts'
+    if (tab === 'spaces') variant = 'spaces'
+    setCurrentTabVariant(variant)
+  }, [setCurrentTabVariant, tab])
 
   const onChangeKey = (key: string) => {
     const typeValue = getFilterType(key, type)
@@ -168,15 +180,26 @@ const TabsHomePage = (props: Props) => {
   )
 }
 
-const HomePage: NextPage<Props> = props => (
-  <>
-    <PageContent meta={{ title: metaTags.title, desc: metaTags.desc }} className='m-0' withSidebar>
-      {/* <CrowdloanProgress /> */}
-      <GetSubBanner />
-      <TabsHomePage {...props} />
-    </PageContent>
-  </>
-)
+const HomePage: NextPage<Props> = props => {
+  const [currentTabVariant, setCurrentTabVariant] = useState<CreatorDashboardHomeVariant>('posts')
+
+  return (
+    <>
+      <PageContent
+        meta={{ title: metaTags.title, desc: metaTags.desc }}
+        className='m-0'
+        withSidebar
+        creatorDashboardSidebarProps={{
+          dashboardType: { name: 'home', variant: currentTabVariant },
+        }}
+      >
+        {/* <CrowdloanProgress /> */}
+        <GetSubBanner />
+        <TabsHomePage {...props} setCurrentTabVariant={setCurrentTabVariant} />
+      </PageContent>
+    </>
+  )
+}
 
 getInitialPropsWithRedux(HomePage, async ({ apolloClient }) => {
   const apolloRes = await apolloClient?.query<GetHomePageData>({

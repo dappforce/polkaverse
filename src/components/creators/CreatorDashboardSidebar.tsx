@@ -7,17 +7,31 @@ import MyStakeCard from './cards/MyStakeCard'
 import StakeSubCard from './cards/StakeSubCard'
 import SupportCreatorsCard from './cards/SupportCreatorCard'
 
-export type CreatorDashboardSidebarProps = ComponentProps<'div'>
+export type CreatorDashboardHomeVariant = 'posts' | 'spaces'
+export type CreatorDashboardSidebarType =
+  | { name: 'home'; variant: CreatorDashboardHomeVariant }
+  | { name: 'space'; spaceId: string }
 
-export default function CreatorDashboardSidebar({ ...props }: CreatorDashboardSidebarProps) {
+export type CreatorDashboardSidebarProps = ComponentProps<'div'> & {
+  dashboardType: CreatorDashboardSidebarType
+}
+
+export default function CreatorDashboardSidebar({
+  dashboardType,
+  ...props
+}: CreatorDashboardSidebarProps) {
   return (
     <div {...props} className={clsx('d-flex flex-column GapNormal', props.className)}>
-      <CreatePostCard />
-      <CreatorInfoCard />
-      <MyStakeCard />
-      <GetMoreSubCard />
-      <StakeSubCard />
-      <SupportCreatorsCard />
+      {dashboardType && (
+        <>
+          <CreatePostCard />
+          <CreatorInfoCard />
+          <MyStakeCard />
+          <GetMoreSubCard />
+          <StakeSubCard />
+          <SupportCreatorsCard />
+        </>
+      )}
     </div>
   )
 }
