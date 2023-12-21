@@ -1,3 +1,4 @@
+import { SpaceData } from '@subsocial/api/types'
 import clsx from 'clsx'
 import { ComponentProps } from 'react'
 import { useFetchStakeData } from 'src/rtk/features/stakes/stakesHooks'
@@ -13,7 +14,7 @@ export type CreatorDashboardHomeVariant = 'posts' | 'spaces'
 export type CreatorDashboardSidebarType =
   | { name: 'home-page'; variant: CreatorDashboardHomeVariant }
   | { name: 'space-page'; spaceId: string }
-  | { name: 'post-page'; authorAddress: string }
+  | { name: 'post-page'; space: SpaceData }
 
 export type CreatorDashboardSidebarProps = ComponentProps<'div'> & {
   dashboardType: CreatorDashboardSidebarType
@@ -68,11 +69,10 @@ function SpacePageSidebar({
   )
 }
 
-function PostPageSidebar({}: // authorAddress,
-Extract<CreatorDashboardSidebarType, { name: 'post-page' }>) {
+function PostPageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name: 'post-page' }>) {
   return (
     <>
-      <CreatorInfoCard />
+      <CreatorInfoCard space={space} />
       <StakeSubCard />
     </>
   )

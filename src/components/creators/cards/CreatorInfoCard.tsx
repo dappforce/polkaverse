@@ -1,29 +1,55 @@
+import { SpaceData } from '@subsocial/api/types'
 import { Button } from 'antd'
 import clsx from 'clsx'
-import { ComponentProps } from 'react'
-import { DfImage } from 'src/components/utils/DfImage'
+import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import { SpaceFollowersModal } from 'src/components/profiles/AccountsListModal'
+import { OfficialSpaceStatus, SpaceAvatar } from 'src/components/spaces/helpers'
+import CollapsibleParagraph from 'src/components/utils/CollapsibleParagraph/CollapsibleParagraph'
+import FollowSpaceButton from 'src/components/utils/FollowSpaceButton'
+import { Pluralize } from 'src/components/utils/Plularize'
 import Segment from 'src/components/utils/Segment'
+import { useFetchStakeData } from 'src/rtk/features/stakes/stakesHooks'
 import styles from './CreatorInfoCard.module.sass'
 
-export type CreatorInfoCardProps = ComponentProps<'div'>
+export type CreatorInfoCardProps = {
+  space: SpaceData
+}
 
-export default function CreatorInfoCard({ ...props }: CreatorInfoCardProps) {
+export default function CreatorInfoCard({ space }: CreatorInfoCardProps) {
+  const myAddress = useMyAddress()
+  const { data } = useFetchStakeData(myAddress ?? '', space.id)
+
   return (
-    <Segment {...props} className={clsx(styles.CreatorInfoCard, props.className)}>
+    <Segment className={clsx(styles.CreatorInfoCard)}>
       <div className={styles.TitleContainer}>
-        <DfImage src='/images/creators/registered-creators.jpeg' className={styles.Image} />
+        <SpaceAvatar noMargin space={space?.struct} size={50} avatar={space?.content?.image} />
         <div className='d-flex flex-column'>
-          <span className={styles.Title}>Creators Info</span>
-          <span className='FontSmall ColorMuted'>8.3K Followers</span>
+          <span className={styles.Title}>
+            <span>{space.content?.name ?? 'Untitled'}</span>
+            <OfficialSpaceStatus withoutContainer space={space.struct} />
+          </span>
+          <SpaceFollowersModal
+            address={space.id}
+            pluralizeTitle='Follower'
+            renderOpenButton={(open, count) =>
+              !!count && (
+                <div onClick={open} className='FontSmall ColorMuted' style={{ cursor: 'pointer' }}>
+                  <Pluralize count={count} singularText='Follower' />
+                </div>
+              )
+            }
+          />
         </div>
       </div>
-      <span className='FontSmall mb-3'>
-        Father of SpaceX and Tesla. Recently adopted Twitter and other interesting stuff... Show
-        more
-      </span>
-      <Button type='primary' ghost>
-        Follow
-      </Button>
+      <CollapsibleParagraph className='FontSmall mb-3' text={space.content?.about ?? ''} />
+      <div className='GapSmall d-flex flex-column'>
+        {!data?.isZero && (
+          <Button target='_blank' type='primary' href={`https://sub.id/creators/${space.id}`}>
+            Stake
+          </Button>
+        )}
+        <FollowSpaceButton space={space.struct} />
+      </div>
     </Segment>
   )
 }

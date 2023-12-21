@@ -67,8 +67,11 @@ export const getStakeAmount = async ({
   address: string
 }) => {
   const res = await axiosRequest(
-    `${subIdApiUrl}/staking/creator/backer/info?account=${address}&ids=${spaceId}`,
+    `http://localhost:3001/api/v1/staking/creator/backer/info?account=${address}&ids=${spaceId}`,
   )
+  // const res = await axiosRequest(
+  //   `${subIdApiUrl}/staking/creator/backer/info?account=${address}&ids=${spaceId}`,
+  // )
   const newestStakeInfo = (res?.data?.[spaceId]?.[0] as { staked: string; era: number }) || {}
   const stakeAmount = BigInt(newestStakeInfo.staked)
 
