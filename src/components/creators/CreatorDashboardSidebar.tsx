@@ -21,25 +21,55 @@ export default function CreatorDashboardSidebar({
   dashboardType,
   ...props
 }: CreatorDashboardSidebarProps) {
+  if (!dashboardType) return null
+
+  let content: JSX.Element | null = null
   if (dashboardType.name === 'home-page') {
-    return <HomePageSidebar {...dashboardType} />
+    content = <HomePageSidebar {...dashboardType} />
+  } else if (dashboardType.name === 'space-page') {
+    content = <SpacePageSidebar {...dashboardType} />
+  } else if (dashboardType.name === 'post-page') {
+    content = <PostPageSidebar {...dashboardType} />
   }
 
   return (
     <div {...props} className={clsx('d-flex flex-column GapNormal', props.className)}>
-      {dashboardType && (
-        <>
-          <CreatorInfoCard />
-          <MyStakeCard />
-          <GetMoreSubCard />
-          <StakeSubCard />
-          <SupportCreatorsCard />
-        </>
-      )}
+      {content}
     </div>
   )
 }
 
 function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { name: 'home-page' }>) {
-  return <CreatePostCard variant={variant} />
+  return (
+    <>
+      <CreatePostCard variant={variant} />
+      <SupportCreatorsCard />
+    </>
+  )
+}
+
+function SpacePageSidebar({}: // spaceId,
+Extract<CreatorDashboardSidebarType, { name: 'space-page' }>) {
+  const isStaked = true
+
+  return isStaked ? (
+    <>
+      <MyStakeCard />
+      <GetMoreSubCard />
+    </>
+  ) : (
+    <>
+      <StakeSubCard />
+    </>
+  )
+}
+
+function PostPageSidebar({}: // authorAddress,
+Extract<CreatorDashboardSidebarType, { name: 'post-page' }>) {
+  return (
+    <>
+      <CreatorInfoCard />
+      <StakeSubCard />
+    </>
+  )
 }
