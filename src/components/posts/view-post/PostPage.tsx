@@ -151,6 +151,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
       withVoteBanner
       outerClassName='mx-auto'
       rightPanel={null}
+      creatorDashboardSidebarType={{ name: 'post-page', authorAddress: struct.ownerId }}
     >
       <HiddenPostAlert post={post.struct} />
       <Section>

@@ -9,8 +9,9 @@ import SupportCreatorsCard from './cards/SupportCreatorCard'
 
 export type CreatorDashboardHomeVariant = 'posts' | 'spaces'
 export type CreatorDashboardSidebarType =
-  | { name: 'home'; variant: CreatorDashboardHomeVariant }
-  | { name: 'space'; spaceId: string }
+  | { name: 'home-page'; variant: CreatorDashboardHomeVariant }
+  | { name: 'space-page'; spaceId: string }
+  | { name: 'post-page'; authorAddress: string }
 
 export type CreatorDashboardSidebarProps = ComponentProps<'div'> & {
   dashboardType: CreatorDashboardSidebarType

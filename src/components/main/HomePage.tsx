@@ -189,8 +189,9 @@ const HomePage: NextPage<Props> = props => {
         meta={{ title: metaTags.title, desc: metaTags.desc }}
         className='m-0'
         withSidebar
-        creatorDashboardSidebarProps={{
-          dashboardType: { name: 'home', variant: currentTabVariant },
+        creatorDashboardSidebarType={{
+          name: 'home-page',
+          variant: currentTabVariant,
         }}
       >
         {/* <CrowdloanProgress /> */}

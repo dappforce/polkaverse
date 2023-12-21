@@ -7,7 +7,7 @@ import React, { FC } from 'react'
 import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
 import CreatorDashboardSidebar, {
-  CreatorDashboardSidebarProps,
+  CreatorDashboardSidebarType,
 } from '../creators/CreatorDashboardSidebar'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { fullUrl } from '../urls/helpers'
@@ -96,7 +96,7 @@ type Props = {
   outerClassName?: string
   withSidebar?: boolean
   withVoteBanner?: boolean
-  creatorDashboardSidebarProps?: CreatorDashboardSidebarProps
+  creatorDashboardSidebarType?: CreatorDashboardSidebarType
 }
 
 const ONBOARDING_SIDEBAR_WIDTH = 300
@@ -108,9 +108,9 @@ export const PageContent: FC<Props> = ({
   title,
   className,
   outerClassName,
-  withSidebar,
+  // withSidebar,
   children,
-  creatorDashboardSidebarProps,
+  creatorDashboardSidebarType,
 }) => {
   // const {
   //   showOnBoardingSidebar,
@@ -156,9 +156,9 @@ export const PageContent: FC<Props> = ({
             {/* {isPanels && <div className='DfRightPanel DfPanel'>{rightPanel}</div>} */}
           </section>
           {rightPanel}
-          {rightPanel === undefined && withSidebar && creatorDashboardSidebarProps && (
+          {rightPanel === undefined && creatorDashboardSidebarType && (
             <div style={{ width: ONBOARDING_SIDEBAR_WIDTH, flexShrink: 0.2 }}>
-              <CreatorDashboardSidebar {...creatorDashboardSidebarProps} />
+              <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
               {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}
             </div>
           )}
