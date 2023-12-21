@@ -70,10 +70,13 @@ function SpacePageSidebar({
 }
 
 function PostPageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name: 'post-page' }>) {
+  const myAddress = useMyAddress()
+  const { data } = useFetchStakeData(myAddress ?? '', space.id)
+
   return (
     <>
       <CreatorInfoCard space={space} />
-      <StakeSubCard />
+      {data?.isZero ? <StakeSubCard /> : <GetMoreSubCard />}
     </>
   )
 }
