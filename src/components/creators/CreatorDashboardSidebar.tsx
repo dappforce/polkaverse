@@ -1,6 +1,7 @@
 import { SpaceData } from '@subsocial/api/types'
 import clsx from 'clsx'
 import { ComponentProps } from 'react'
+import config from 'src/config'
 import { useFetchStakeData } from 'src/rtk/features/stakes/stakesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import CreatePostCard from './cards/CreatePostCard'
@@ -13,7 +14,7 @@ import SupportCreatorsCard from './cards/SupportCreatorCard'
 export type CreatorDashboardHomeVariant = 'posts' | 'spaces'
 export type CreatorDashboardSidebarType =
   | { name: 'home-page'; variant: CreatorDashboardHomeVariant }
-  | { name: 'space-page'; spaceId: string }
+  | { name: 'space-page'; space: SpaceData }
   | { name: 'post-page'; space: SpaceData }
 
 export type CreatorDashboardSidebarProps = ComponentProps<'div'> & {
@@ -51,20 +52,18 @@ function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { nam
   )
 }
 
-function SpacePageSidebar({
-  spaceId,
-}: Extract<CreatorDashboardSidebarType, { name: 'space-page' }>) {
+function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name: 'space-page' }>) {
   const myAddress = useMyAddress()
-  const { data } = useFetchStakeData(myAddress ?? '', spaceId)
+  const { data } = useFetchStakeData(myAddress ?? '', space.id)
 
   return data?.isZero === false ? (
     <>
-      <MyStakeCard creatorSpaceId={spaceId} />
+      <MyStakeCard space={space} />
       <GetMoreSubCard />
     </>
   ) : (
     <>
-      <StakeSubCard />
+      <StakeSubCard space={space} />
     </>
   )
 }
@@ -73,10 +72,23 @@ function PostPageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name:
   const myAddress = useMyAddress()
   const { data, loading } = useFetchStakeData(myAddress ?? '', space.id)
 
+  if (config.creatorIds?.includes(space.id)) {
+    return (
+      <>
+        <CreatePostCard variant='posts' />
+        <GetMoreSubCard />
+      </>
+    )
+  }
+
   return (
     <>
       <CreatorInfoCard space={space} />
-      {loading ? null : data?.isZero === false ? <GetMoreSubCard /> : <StakeSubCard />}
+      {loading ? null : data?.isZero === false ? (
+        <GetMoreSubCard />
+      ) : (
+        <StakeSubCard space={space} />
+      )}
     </>
   )
 }

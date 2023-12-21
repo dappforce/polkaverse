@@ -1,3 +1,4 @@
+import { SpaceData } from '@subsocial/api/types'
 import { Button, Skeleton } from 'antd'
 import clsx from 'clsx'
 import Link from 'next/link'
@@ -8,15 +9,16 @@ import { FormatBalance } from 'src/components/common/balances'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
 import { useFetchStakeData } from 'src/rtk/features/stakes/stakesHooks'
+import { getSpaceHandleOrId } from 'src/utils/spaces'
 import styles from './MyStakeCard.module.sass'
 
 export type MyStakeCardProps = {
-  creatorSpaceId: string
+  space: SpaceData
 }
 
-export default function MyStakeCard({ creatorSpaceId }: MyStakeCardProps) {
+export default function MyStakeCard({ space }: MyStakeCardProps) {
   const myAddress = useMyAddress()
-  const { data, loading } = useFetchStakeData(myAddress ?? '', creatorSpaceId)
+  const { data, loading } = useFetchStakeData(myAddress ?? '', space.id)
 
   return (
     <Segment className={clsx(styles.CreatorStakingCard)}>
@@ -48,6 +50,7 @@ export default function MyStakeCard({ creatorSpaceId }: MyStakeCardProps) {
           type='primary'
           ghost
           block
+          href={`https://sub.id/creators/${getSpaceHandleOrId(space.struct)}`}
         >
           Manage my stake
           <BsBoxArrowUpRight />
