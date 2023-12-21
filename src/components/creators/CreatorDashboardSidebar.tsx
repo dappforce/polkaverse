@@ -1,5 +1,7 @@
 import clsx from 'clsx'
 import { ComponentProps } from 'react'
+import { useFetchStakeData } from 'src/rtk/features/stakes/stakesHooks'
+import { useMyAddress } from '../auth/MyAccountsContext'
 import CreatePostCard from './cards/CreatePostCard'
 import CreatorInfoCard from './cards/CreatorInfoCard'
 import GetMoreSubCard from './cards/GetMoreSubCard'
@@ -51,9 +53,10 @@ function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { nam
 function SpacePageSidebar({
   spaceId,
 }: Extract<CreatorDashboardSidebarType, { name: 'space-page' }>) {
-  const isStaked = true
+  const myAddress = useMyAddress()
+  const { data } = useFetchStakeData(myAddress ?? '', spaceId)
 
-  return isStaked ? (
+  return !data?.isZero ? (
     <>
       <MyStakeCard creatorSpaceId={spaceId} />
       <GetMoreSubCard />
