@@ -59,6 +59,14 @@ export const getChainsInfo = async () => {
   return res?.data
 }
 
+export const getTotalStake = async ({ address }: { address: string }) => {
+  const res = await axiosRequest(`${subIdApiUrl}/staking/creator/backer/ledger?account=${address}`)
+  const totalStake = (res?.data?.totalLocked as string) || ''
+  const stakeAmount = BigInt(totalStake)
+
+  return { amount: stakeAmount.toString(), isZero: stakeAmount <= 0 }
+}
+
 export const getStakeAmount = async ({
   address,
   spaceId,

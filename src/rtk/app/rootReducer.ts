@@ -24,6 +24,7 @@ import ownSpaceIds from '../features/spaceIds/ownSpaceIdsSlice'
 import spaceIdsWithRolesByAccount from '../features/spaceIds/spaceIdsWithRolesByAccountSlice'
 import spaces from '../features/spaces/spacesSlice'
 import stakes from '../features/stakes/stakesSlice'
+import totalStake from '../features/stakes/totalStakeSlice'
 
 const rootReducer = combineReducers({
   contents,
@@ -51,6 +52,7 @@ const rootReducer = combineReducers({
   enableConfirmation,
   chat,
   stakes,
+  totalStake,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

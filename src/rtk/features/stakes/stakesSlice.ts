@@ -3,8 +3,6 @@ import { getStakeAmount } from 'src/components/utils/OffchainUtils'
 import { ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 
-export type RelayChain = 'polkadot' | 'kusama'
-
 export type StakeData = {
   address: string
   creatorSpaceId: string
