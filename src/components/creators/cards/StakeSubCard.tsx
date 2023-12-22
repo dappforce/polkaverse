@@ -2,7 +2,7 @@ import { SpaceData } from '@subsocial/api/types'
 import { Button } from 'antd'
 import clsx from 'clsx'
 import { DfImage } from 'src/components/utils/DfImage'
-import { getSpaceHandleOrId } from 'src/utils/spaces'
+import { getSubIdCreatorsLink } from 'src/utils/links'
 import styles from './StakeSubCard.module.sass'
 
 export type StakeSubCardProps = {
@@ -21,12 +21,7 @@ export default function StakeSubCard({ space }: StakeSubCardProps) {
           src='/images/creators/subsocial-tokens.png'
           className={clsx(styles.Image, 'mb-3')}
         />
-        <Button
-          href={`https://sub.id/creators/${getSpaceHandleOrId(space.struct)}`}
-          target='_blank'
-          type='primary'
-          block
-        >
+        <Button href={getSubIdCreatorsLink(space)} target='_blank' type='primary' block>
           Stake
         </Button>
       </div>
