@@ -11,6 +11,7 @@ import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { PostKind } from 'src/types/graphql-global-types'
 import { useIsSignedIn } from '../auth/MyAccountsContext'
 import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar'
+import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
 import GetSubBanner from '../utils/banners/GetSubBanner'
 import Section from '../utils/Section'
 import style from './HomePage.module.sass'
@@ -161,7 +162,7 @@ const TabsHomePage = ({
     } else if (tab === 'spaces') {
       return <SpaceFilterView filter={{ type: type as SpaceFilterType, date }} {...props} />
     } else {
-      return <SpaceFilterView filter={{ type: type as SpaceFilterType, date }} {...props} />
+      return <CreatorsSpaces />
     }
   }, [tab, type, date])
 

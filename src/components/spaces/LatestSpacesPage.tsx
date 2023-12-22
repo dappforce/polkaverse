@@ -15,7 +15,7 @@ import { isSuggested, loadSpacesByQuery } from '../main/utils'
 import { getPageOfIds } from '../utils/getIds'
 import { PublicSpacePreviewById } from './SpacePreview'
 
-const { recommendedSpaceIds } = config
+const { recommendedSpaceIds, creatorIds } = config
 
 type Props = {
   initialSpaceIds?: SpaceId[]
@@ -27,19 +27,26 @@ type Props = {
 const loadMoreSpacesFn = async (loadMoreValues: LoadMoreValues<SpaceFilterType>) => {
   const { client, size, page, myAddress, subsocial, dispatch, filter } = loadMoreValues
 
-  if (filter.type === undefined) return []
+  if (filter === undefined) return []
 
   let spaceIds: string[] = []
 
-  if (!isSuggested(filter.type) && client) {
+  if (filter.type !== 'suggested' && filter.type !== 'creators' && client) {
     const offset = (page - 1) * size
-    const data = await loadSpacesByQuery({ client, offset, filter })
+    const data = await loadSpacesByQuery({
+      client,
+      offset,
+      filter: { type: filter.type, date: filter.date },
+    })
 
     const { spaces } = data as GetLatestSpaceIds
     spaceIds = spaces.map(value => value.id)
   } else {
-    spaceIds = getPageOfIds(recommendedSpaceIds, { page, size })
+    if (filter.type === 'creators') spaceIds = getPageOfIds(creatorIds ?? [], { page, size })
+    else spaceIds = getPageOfIds(recommendedSpaceIds, { page, size })
   }
+
+  console.log(spaceIds, filter)
 
   await Promise.all([
     dispatch(fetchMyPermissionsBySpaceIds({ api: subsocial, ids: spaceIds, myAddress })),
@@ -56,8 +63,8 @@ const InfiniteListOfSpaces = (props: Props) => {
   const { subsocial } = useSubsocialApi()
   const myAddress = useMyAddress()
 
-  const loadMore: InnerLoadMoreFn = (page, size) =>
-    loadMoreSpacesFn({
+  const loadMore: InnerLoadMoreFn = (page, size) => {
+    return loadMoreSpacesFn({
       client,
       size,
       page,
@@ -69,6 +76,7 @@ const InfiniteListOfSpaces = (props: Props) => {
         date: dateFilter,
       },
     })
+  }
 
   const List = useCallback(
     () => (
@@ -98,6 +106,10 @@ const LatestSpacesPage: FC<Props> = ({ totalSpaceCount, ...props }) => {
 
 export const SuggestedSpaces = () => (
   <InfiniteListOfSpaces totalSpaceCount={recommendedSpaceIds.length} filter='suggested' />
+)
+
+export const CreatorsSpaces = () => (
+  <InfiniteListOfSpaces totalSpaceCount={creatorIds?.length ?? 0} filter='creators' />
 )
 
 export default LatestSpacesPage

@@ -103,6 +103,8 @@ export const Filters = (props: Props) => {
 
   const needDateFilter = !!type && type !== 'latest' && type !== 'suggested'
 
+  if (!needDateFilter && !filterByKey[tabKey]?.length) return null
+
   return (
     <div className={`DfFilters ${!isAffix ? 'mt-3' : ''}`}>
       <Row className={style.DfGridParams}>
