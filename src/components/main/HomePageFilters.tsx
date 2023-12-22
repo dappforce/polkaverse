@@ -29,7 +29,7 @@ const offchainPostFilterOpt = enableGraphQl
   : []
 
 export const postFilterOpt = [
-  { label: 'Polkadot News', value: 'suggested' },
+  { label: 'Recommended', value: 'suggested' },
   ...offchainPostFilterOpt,
 ]
 
