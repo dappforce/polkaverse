@@ -9,6 +9,7 @@ import FollowSpaceButton from 'src/components/utils/FollowSpaceButton'
 import { Pluralize } from 'src/components/utils/Plularize'
 import Segment from 'src/components/utils/Segment'
 import { useFetchStakeData } from 'src/rtk/features/stakes/stakesHooks'
+import { getSubIdCreatorsLink } from 'src/utils/links'
 import styles from './CreatorInfoCard.module.sass'
 
 export type CreatorInfoCardProps = {
@@ -44,7 +45,7 @@ export default function CreatorInfoCard({ space }: CreatorInfoCardProps) {
       <CollapsibleParagraph className='FontSmall mb-3' text={space.content?.about ?? ''} />
       <div className='GapSmall d-flex flex-column'>
         {data?.isZero === false && (
-          <Button target='_blank' type='primary' href={`https://sub.id/creators/${space.id}`}>
+          <Button target='_blank' type='primary' href={getSubIdCreatorsLink(space)}>
             Stake
           </Button>
         )}

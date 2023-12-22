@@ -9,7 +9,7 @@ import { FormatBalance } from 'src/components/common/balances'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
 import { useFetchStakeData } from 'src/rtk/features/stakes/stakesHooks'
-import { getSpaceHandleOrId } from 'src/utils/spaces'
+import { getSubIdCreatorsLink } from 'src/utils/links'
 import styles from './MyStakeCard.module.sass'
 
 export type MyStakeCardProps = {
@@ -50,7 +50,7 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
           type='primary'
           ghost
           block
-          href={`https://sub.id/creators/${getSpaceHandleOrId(space.struct)}`}
+          href={getSubIdCreatorsLink(space)}
           target='_blank'
         >
           Manage my stake

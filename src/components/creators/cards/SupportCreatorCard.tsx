@@ -1,14 +1,12 @@
 import { Button } from 'antd'
 import clsx from 'clsx'
-import { ComponentProps } from 'react'
 import { DfImage } from 'src/components/utils/DfImage'
+import { getSubIdCreatorsLink } from 'src/utils/links'
 import styles from './SupportCreatorsCard.module.sass'
 
-export type SupportCreatorsCardProps = ComponentProps<'div'>
-
-export default function SupportCreatorsCard({ ...props }: SupportCreatorsCardProps) {
+export default function SupportCreatorsCard() {
   return (
-    <div {...props} className={clsx(props.className, styles.SupportCreatorsCard)}>
+    <div className={clsx(styles.SupportCreatorsCard)}>
       <div className={styles.Content}>
         <span className={clsx('FontWeightSemibold FontLarge mb-2', styles.Title)}>
           Support creators and earn SUB
@@ -17,7 +15,7 @@ export default function SupportCreatorsCard({ ...props }: SupportCreatorsCardPro
           Generate rewards for both you and this creator by staking towards them
         </span>
         <DfImage src='/images/creators/subsocial-tokens-pink.png' className={clsx(styles.Image)} />
-        <Button>Stake</Button>
+        <Button href={getSubIdCreatorsLink()}>Stake</Button>
       </div>
 
       <div className={styles.Gradient1} />
