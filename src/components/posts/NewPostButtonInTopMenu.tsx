@@ -26,6 +26,31 @@ const CreateSpaceAdaptiveButton = (props: BareProps & CreateSpaceButtonProps) =>
 
 const CreatePostIcon = <PlusOutlined />
 
+export function CreatePostButtonAndModal({
+  children,
+}: {
+  children: (onClick: () => void) => React.ReactNode
+}) {
+  const [visible, setVisible] = useState(false)
+  const { asPath } = useRouter()
+
+  useEffect(() => {
+    setVisible(false)
+  }, [asPath])
+
+  /** Go to new post form or show the space selector modal. */
+  const onNewPostClick = () => {
+    setVisible(true)
+  }
+
+  return (
+    <>
+      {children(onNewPostClick)}
+      {visible && <PostEditorModal visible={visible} onCancel={() => setVisible(false)} />}
+    </>
+  )
+}
+
 const NewPostButtonAndModal = () => {
   const { isMobile } = useResponsiveSize()
   const [visible, setVisible] = useState(false)

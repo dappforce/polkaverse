@@ -1,7 +1,12 @@
 import { Button } from 'antd'
 import clsx from 'clsx'
+import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import { CreatePostButtonAndModal } from 'src/components/posts/NewPostButtonInTopMenu'
+import { CreateSpaceButton } from 'src/components/spaces/helpers'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
+import { useSelectSpaceIdsWhereAccountCanPost } from 'src/rtk/app/hooks'
+import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
 import { CreatorDashboardHomeVariant } from '../CreatorDashboardSidebar'
 import styles from './CreatePostCard.module.sass'
 
@@ -10,6 +15,13 @@ export type CreatePostCardProps = {
 }
 
 export default function CreatePostCard({ variant }: CreatePostCardProps) {
+  const myAddress = useMyAddress()
+
+  const ids = useSelectSpaceIdsWhereAccountCanPost(myAddress)
+  const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: ids })
+
+  const anySpace = spaceIds[0]
+
   return (
     <Segment className={clsx(styles.CreatePostCard)}>
       <div className={styles.TitleContainer}>
@@ -30,9 +42,22 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
         By creating new posts and liking new content of others, stakers of SUB can increase their
         staking rewards by 50% or more.
       </span>
-      <Button type='primary' className='mt-3'>
-        Create Post
-      </Button>
+      {anySpace ? (
+        <CreatePostButtonAndModal>
+          {onClick => (
+            <Button onClick={onClick} type='primary' className='mt-3'>
+              Create post
+            </Button>
+          )}
+        </CreatePostButtonAndModal>
+      ) : (
+        <>
+          <span className='FontSmall ColorMuted mt-2'>Create a profile to get started.</span>
+          <CreateSpaceButton className='mt-2' type='primary' ghost={false}>
+            Create profile
+          </CreateSpaceButton>
+        </>
+      )}
     </Segment>
   )
 }
