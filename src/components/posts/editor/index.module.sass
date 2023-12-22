@@ -165,3 +165,46 @@
   .HeaderSafeArea 
     margin-top: 0
     margin-bottom: 64px
+
+.ModalEditor
+  :global(.ant-modal-content)
+    background: transparent
+    box-shadow: none
+
+  .Content
+    background: white
+    border-radius: $border_radius_normal
+    padding: $space_normal
+    box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)
+
+  .InfoPanel
+    background: #EEF2FF
+    padding: $space_normal
+    border-radius: $border_radius_large
+    margin-top: $space_normal
+    display: flex
+    align-items: center
+    gap: $space_normal
+
+    p
+      margin: 0
+      margin-top: $space_mini
+      font-size: $font_small
+      opacity: 0.8
+
+    .InfoPanelContent
+      display: flex
+      flex-direction: column
+
+      .Title
+        display: flex
+        align-items: center
+        gap: $space_tiny
+
+        svg
+          color: #60A5FA
+          position: relative
+          top: 1px
+
+        span
+          font-weight: bold

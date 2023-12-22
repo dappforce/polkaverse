@@ -1,12 +1,13 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import { IpfsContent } from '@subsocial/api/substrate/wrappers'
 import { newLogger } from '@subsocial/utils'
-import { Col, Form, Modal, ModalProps, Row } from 'antd'
+import { Button, Col, Form, Modal, ModalProps, Row } from 'antd'
 import { LabeledValue } from 'antd/lib/select'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
+import { AiFillInfoCircle } from 'react-icons/ai'
 import { BiImage } from 'react-icons/bi'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { htmlToMd } from 'src/components/editor/tiptap'
@@ -183,8 +184,31 @@ export interface PostEditorModalProps extends Omit<ModalProps, 'onCancel'> {
 }
 export const PostEditorModal = (props: PostEditorModalProps) => {
   return (
-    <Modal closable={false} footer={null} {...props}>
-      <PostEditorModalBody closeModal={() => props.onCancel && props.onCancel()} />
+    <Modal
+      className={styles.ModalEditor}
+      closable={false}
+      footer={null}
+      bodyStyle={{ padding: 0, background: 'transparent', overflow: 'visible' }}
+      {...props}
+    >
+      <div className={styles.Content}>
+        <PostEditorModalBody closeModal={() => props.onCancel && props.onCancel()} />
+      </div>
+      <div className={styles.InfoPanel}>
+        <div className={styles.InfoPanelContent}>
+          <div className={styles.Title}>
+            <AiFillInfoCircle />
+            <span>Post to Earn</span>
+          </div>
+          <p>
+            You can earn SUB tokens when others like your content. To do this, you need to start
+            staking SUB first.
+          </p>
+        </div>
+        <Button shape='round' size='large' type='primary'>
+          Stake SUB
+        </Button>
+      </div>
     </Modal>
   )
 }
