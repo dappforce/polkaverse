@@ -1,4 +1,4 @@
-import { PlusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import { PlusCircleOutlined } from '@ant-design/icons'
 import { ButtonProps } from 'antd/lib/button'
 import { newSpaceUrl } from 'src/components/urls'
 import { ButtonLink, IconLink } from 'src/components/utils/CustomLinks'
@@ -19,11 +19,7 @@ export const CreateSpaceButton = ({
 
   return (
     <ButtonLink href={getNewSpacePath(asProfile)} {...props}>
-      {children || (
-        <span>
-          <PlusOutlined /> {getTitle(asProfile)}
-        </span>
-      )}
+      {children || <span>{getTitle(asProfile)}</span>}
     </ButtonLink>
   )
 }

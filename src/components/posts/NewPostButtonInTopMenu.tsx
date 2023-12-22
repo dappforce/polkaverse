@@ -1,4 +1,4 @@
-import { PlusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import { PlusCircleOutlined } from '@ant-design/icons'
 import { Button, Tooltip } from 'antd'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -23,8 +23,6 @@ const CreateSpaceAdaptiveButton = (props: BareProps & CreateSpaceButtonProps) =>
 
   return isMobile ? <CreateSpaceIcon {...props} /> : <CreateSpaceButton ghost={true} {...props} />
 }
-
-const CreatePostIcon = <PlusOutlined />
 
 export function CreatePostButtonAndModal({
   children,
@@ -72,9 +70,7 @@ const NewPostButtonAndModal = () => {
           <PlusCircleOutlined className='DfHoverIcon' onClick={onNewPostClick} />
         </Tooltip>
       ) : (
-        <Button icon={CreatePostIcon} onClick={onNewPostClick}>
-          New post
-        </Button>
+        <Button onClick={onNewPostClick}>New post</Button>
       )}
       {visible && <PostEditorModal visible={visible} onCancel={() => setVisible(false)} />}
     </>
