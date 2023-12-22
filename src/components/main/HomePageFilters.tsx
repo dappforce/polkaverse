@@ -65,6 +65,7 @@ export const filterByKey = {
   posts: postFilterOpt,
   comments: commentFilterOpt,
   spaces: spaceFilterOpt,
+  creators: [],
 }
 
 type OnChangeFn = (value: any) => void
@@ -100,7 +101,7 @@ export const Filters = (props: Props) => {
   const onDateChange: any = (value: DateFilterType = 'week') =>
     setFiltersInUrl(router, tabKey, { type: type as EntityFilter, date: value })
 
-  const needDateFilter = type !== 'latest' && type !== 'suggested'
+  const needDateFilter = !!type && type !== 'latest' && type !== 'suggested'
 
   return (
     <div className={`DfFilters ${!isAffix ? 'mt-3' : ''}`}>

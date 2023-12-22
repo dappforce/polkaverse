@@ -78,7 +78,7 @@ const getSpacesByFilter: GetEntityFilter<SpaceFilterType> = {
   },
 }
 
-export const tabs = ['feed', 'posts', 'comments', 'spaces']
+export const tabs = ['feed', 'posts', 'comments', 'spaces', 'creators']
 
 type GetEntityFilter<Type extends EntityFilter> = Record<Type, Record<DateFilterType, DocumentNode>>
 
@@ -119,6 +119,7 @@ export const loadPostsByQuery = createLoadEntitiesByQuery(getPostsByFilter)
 
 export const getFilterType = (key: string, type: string | undefined): EntityFilter | undefined => {
   if (key === 'feed') return
+  if (filterByKey[key as TabsWithoutFeed].length === 0) return undefined
 
   const typeIndex = filterByKey[key as TabsWithoutFeed].findIndex(
     typeFromObj => typeFromObj.value === type,
@@ -141,7 +142,8 @@ export const setTabInUrl = (router: NextRouter, tab: string, queries?: Record<st
   }
 
   const queryStr = Object.entries(query)
-    .map(([key, value]) => `${key}=${value}`)
+    .map(([key, value]) => !!value && `${key}=${value}`)
+    .filter(Boolean)
     .join('&')
   const asPath = `${router.asPath.split('?')[0]}?${queryStr}`
 

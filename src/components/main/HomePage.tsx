@@ -61,7 +61,8 @@ const HomeTabs = (props: TabsProps) => {
     <>
       <Tabs activeKey={tabKey} onChange={setKey} className={`${className} ${style.DfTabs}`}>
         <TabPane tab='My feed' key='feed' />
-        <TabPane tab={enableGraphQl ? 'Posts' : 'Polkadot News'} key='posts' />
+        <TabPane tab={enableGraphQl ? 'Active Staking' : 'Polkadot News'} key='posts' />
+        <TabPane tab='Creators' key='creators' />
         <TabPane tab={enableGraphQl ? 'Spaces' : 'Polkadot Spaces'} key='spaces' />
       </Tabs>
       <Filters tabKey={tabKey} isAffix={isAffix} />
@@ -118,7 +119,7 @@ const TabsHomePage = ({
 
   useEffect(() => {
     let variant: CreatorDashboardHomeVariant = 'posts'
-    if (tab === 'spaces') variant = 'spaces'
+    if (tab === 'spaces' || tab === 'creators') variant = 'spaces'
     setCurrentTabVariant(variant)
   }, [setCurrentTabVariant, tab])
 
@@ -157,6 +158,8 @@ const TabsHomePage = ({
           {...props}
         />
       )
+    } else if (tab === 'spaces') {
+      return <SpaceFilterView filter={{ type: type as SpaceFilterType, date }} {...props} />
     } else {
       return <SpaceFilterView filter={{ type: type as SpaceFilterType, date }} {...props} />
     }
