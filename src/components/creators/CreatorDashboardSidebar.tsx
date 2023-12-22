@@ -56,6 +56,10 @@ function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name
   const myAddress = useMyAddress()
   const { data } = useFetchStakeData(myAddress ?? '', space.id)
 
+  if (!config.creatorIds?.includes(space.id)) {
+    return <SupportCreatorsCard />
+  }
+
   return data?.isZero === false ? (
     <>
       <MyStakeCard space={space} />
