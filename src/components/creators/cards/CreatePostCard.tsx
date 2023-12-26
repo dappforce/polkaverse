@@ -22,10 +22,13 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
 
   const anySpace = spaceIds[0]
 
+  let imagePath = '/images/creators/active-staking.jpeg'
+  if (variant === 'spaces') imagePath = '/images/creators/registered-creators.jpeg'
+
   return (
     <Segment className={clsx(styles.CreatePostCard)}>
       <div className={styles.TitleContainer}>
-        <DfImage src='/images/creators/registered-creators.jpeg' className={styles.Image} />
+        <DfImage src={imagePath} className={styles.Image} />
         <span className={styles.Title}>
           {variant === 'posts' ? (
             <span>All posts in Active Staking</span>
