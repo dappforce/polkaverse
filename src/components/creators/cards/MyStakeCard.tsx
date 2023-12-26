@@ -28,7 +28,9 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
         <div className={styles.TopSection}>
           <p className={clsx(styles.Title, 'mb-0')}>Creator Staking</p>
           <Link href='https://docs.subsocial.network/docs/basics/creator-staking' passHref>
-            <a className={styles.Link}>How does it work?</a>
+            <a target='_blank' className={styles.Link}>
+              How does it work?
+            </a>
           </Link>
           <DfImage src='/images/databases.svg' className={styles.Image} />
         </div>
