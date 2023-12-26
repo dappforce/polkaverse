@@ -8,7 +8,7 @@ import CollapsibleParagraph from 'src/components/utils/CollapsibleParagraph/Coll
 import FollowSpaceButton from 'src/components/utils/FollowSpaceButton'
 import { Pluralize } from 'src/components/utils/Plularize'
 import Segment from 'src/components/utils/Segment'
-import { useFetchStakeData } from 'src/rtk/features/stakes/stakesHooks'
+import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import styles from './CreatorInfoCard.module.sass'
 

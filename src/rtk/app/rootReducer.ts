@@ -5,6 +5,8 @@ import chainsInfo from '../features/chainsInfo/chainsInfoSlice'
 import chat from '../features/chat/chatSlice'
 import enableConfirmation from '../features/confirmationPopup/enableConfirmationSlice'
 import contents from '../features/contents/contentsSlice'
+import stakes from '../features/creators/stakesSlice'
+import totalStake from '../features/creators/totalStakeSlice'
 import ordersById from '../features/domainPendingOrders/pendingOrdersSlice'
 import domainByOwner from '../features/domains/domainsByOwnerSlice'
 import domains from '../features/domains/domainsSlice'
@@ -23,8 +25,6 @@ import followedSpaceIds from '../features/spaceIds/followedSpaceIdsSlice'
 import ownSpaceIds from '../features/spaceIds/ownSpaceIdsSlice'
 import spaceIdsWithRolesByAccount from '../features/spaceIds/spaceIdsWithRolesByAccountSlice'
 import spaces from '../features/spaces/spacesSlice'
-import stakes from '../features/stakes/stakesSlice'
-import totalStake from '../features/stakes/totalStakeSlice'
 
 const rootReducer = combineReducers({
   contents,
