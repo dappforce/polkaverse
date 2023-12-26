@@ -23,7 +23,7 @@ export default function CreatorInfoCard({ space }: CreatorInfoCardProps) {
   return (
     <Segment className={clsx(styles.CreatorInfoCard)}>
       <div className={styles.TitleContainer}>
-        <SpaceAvatar noMargin space={space?.struct} size={50} avatar={space?.content?.image} />
+        <SpaceAvatar noMargin space={space?.struct} size={44} avatar={space?.content?.image} />
         <div className='d-flex flex-column'>
           <span className={styles.Title}>
             <span>{space.content?.name ?? 'Untitled'}</span>
