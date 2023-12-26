@@ -48,7 +48,7 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
       ) : (
         <>
           <span className='FontSmall ColorMuted mt-2'>Create a profile to get started.</span>
-          <CreateSpaceButton className='mt-2' type='primary' ghost={false}>
+          <CreateSpaceButton className='mt-3' type='primary' ghost={false}>
             Create profile
           </CreateSpaceButton>
         </>
