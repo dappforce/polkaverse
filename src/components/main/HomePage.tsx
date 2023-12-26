@@ -12,7 +12,6 @@ import { PostKind } from 'src/types/graphql-global-types'
 import { useIsSignedIn } from '../auth/MyAccountsContext'
 import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar'
 import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
-import GetSubBanner from '../utils/banners/GetSubBanner'
 import Section from '../utils/Section'
 import style from './HomePage.module.sass'
 import { dateFilterOpt, Filters, PostFilterView, SpaceFilterView } from './HomePageFilters'
@@ -199,7 +198,7 @@ const HomePage: NextPage<Props> = props => {
         }}
       >
         {/* <CrowdloanProgress /> */}
-        <GetSubBanner />
+        {/* <GetSubBanner /> */}
         <TabsHomePage {...props} setCurrentTabVariant={setCurrentTabVariant} />
       </PageContent>
     </>
