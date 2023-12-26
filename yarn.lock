@@ -2395,15 +2395,15 @@
     "@elastic/elasticsearch" "7.4.0"
     "@subsocial/utils" latest
 
-"@subsocial/grill-widget@^0.0.12":
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/@subsocial/grill-widget/-/grill-widget-0.0.12.tgz#57384850a3adb5342a5505a3f0d67c258d7e3b0e"
-  integrity sha512-Xed+wN/NEZ+mQlKA1olVVcBviVIQOTyqaCYcl9pGsg8yDdIBsKVjqJUKty1vvBL7gY0A+1osdwBgX2xUsbHOBA==
+"@subsocial/grill-widget@^0.0.13":
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/@subsocial/grill-widget/-/grill-widget-0.0.13.tgz#b3001beb2c5eef140f36befff00a581892f7547f"
+  integrity sha512-16t1zgWC0nFP/iqhlYEVkRL+kzSqBfjTS2xhCPMNTzb51MjpVpGgZLTd77Jq3NU/iqnplyH690iKGzQIixHFkw==
 
-"@subsocial/resource-discussions@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@subsocial/resource-discussions/-/resource-discussions-0.0.3.tgz#18a13c8ad27b039328e8fc8ac330b7f923a271cc"
-  integrity sha512-XCrDFbypAyTibLgvEPYJkqI1uDoX+wmnyqis8Hrher6Y9QFGiG7gPnNk/Bmv5zmiEiz9HJ5k+C6IwbiS5B+KyQ==
+"@subsocial/resource-discussions@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@subsocial/resource-discussions/-/resource-discussions-0.0.4.tgz#4afeb53dde4accc0c70e80fc245b1416c74afdf2"
+  integrity sha512-GAuC6SFfyrSpCdIuwLlA/hOouNgcj+6j+kZiDPz/cxLcNPdB4gqGVNnqKaL/rNE3MLNetpgI+gmatTomGRKeiA==
   dependencies:
     graphology "^0.25.1"
 

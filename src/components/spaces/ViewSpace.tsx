@@ -2,10 +2,11 @@ import { EditOutlined } from '@ant-design/icons'
 import { isEmptyStr, newLogger, nonEmptyStr } from '@subsocial/utils'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
-import React, { MouseEvent, useCallback, useState } from 'react'
+import React, { MouseEvent, useCallback, useEffect, useState } from 'react'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
+import { useSetChatEntityConfig } from 'src/rtk/app/hooks'
 import { useFetchStakeData } from 'src/rtk/features/stakes/stakesHooks'
 import { SpaceContent, SpaceData, SpaceId, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
 import config from '../../config'
@@ -87,7 +88,6 @@ export const InnerViewSpace = (props: Props) => {
     withFollowButton = true,
     withStats = true,
     withTags = true,
-    withStakeButton = true,
     showFullAbout = false,
     dropdownPreview = false,
 
@@ -118,6 +118,16 @@ export const InnerViewSpace = (props: Props) => {
       />
     )
   }, [spaceData, imageSize])
+
+  const setChatConfig = useSetChatEntityConfig()
+  useEffect(() => {
+    if (!spaceData) return
+    setChatConfig({ data: spaceData, type: 'space' })
+
+    return () => {
+      setChatConfig(null)
+    }
+  }, [spaceData])
 
   // We do not return 404 page here, because this component could be used to render a space in list.
   if (!spaceData) return null
@@ -195,18 +205,15 @@ export const InnerViewSpace = (props: Props) => {
                 className='mx-2'
                 spaceData={spaceData}
               />
-              {!isMobile &&
-                (isMy ? (
-                  <ButtonLink
-                    href={'/[spaceId]/edit'}
-                    as={editSpaceUrl(space)}
-                    className='mr-2 bg-transparent'
-                  >
-                    <EditOutlined /> Edit
-                  </ButtonLink>
-                ) : (
-                  withStakeButton && <StakeButton spaceStruct={space} />
-                ))}
+              {!isMobile && isMy && (
+                <ButtonLink
+                  href={'/[spaceId]/edit'}
+                  as={editSpaceUrl(space)}
+                  className='mr-2 bg-transparent'
+                >
+                  <EditOutlined /> Edit
+                </ButtonLink>
+              )}
 
               {withFollowButton && <FollowSpaceButton space={space} />}
             </span>

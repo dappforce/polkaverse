@@ -10,7 +10,6 @@ export type ViewSpaceOptsProps = {
   withFollowButton?: boolean
   withTags?: boolean
   withStats?: boolean
-  withStakeButton?: boolean
   showFullAbout?: boolean
   imageSize?: number
 }

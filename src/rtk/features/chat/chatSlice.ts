@@ -1,12 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { PostData } from '@subsocial/api/types'
+import { PostData, SpaceData } from '@subsocial/api/types'
 
 const sliceName = 'chats'
 
-type Entity = {
-  type: 'post'
-  data: PostData
-} | null
+type Entity =
+  | {
+      type: 'post'
+      data: PostData
+    }
+  | {
+      type: 'space'
+      data: SpaceData
+    }
+  | null
 export interface ChatEntity {
   isOpen: boolean
   entity: Entity

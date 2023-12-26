@@ -40,55 +40,108 @@ export default function ChatIframe({ onUnreadCountChange, ...props }: ChatIframe
       else if (name === 'totalMessage') setChatTotalMessageCount(parsedValue)
     }
     if (listener) {
-      grill.addUnreadCountListener(listener)
+      grill.addMessageListener(listener)
     }
 
+    console.log(config)
     grill.init(config)
 
     return () => {
-      if (listener) grill.removeUnreadCountListener(listener)
+      if (listener) grill.removeMessageListener(listener)
     }
   }, [entity, sendEventRef])
 
   return <div {...props} id='grill' className={clsx(props.className)} />
 }
 
+type CommonSettings = {
+  settings: NonNullable<GrillConfig['channel']>['settings']
+  root: Partial<GrillConfig>
+}
+
 function generateGrillConfig(entity: ChatEntity['entity']): GrillConfig | null {
   if (!entity) return null
-  if (entity.type === 'post') {
-    const post = entity.data
-    const title = summarizeMd(post.content?.title || post.content?.body || '', {
-      limit: 50,
-    }).summary
-    const body = summarizeMd(post.content?.body ?? '', { limit: 50 }).summary
-    return {
-      hub: {
-        id: config.commentsHubId,
-      },
+  const commonSettings: CommonSettings = {
+    root: {
       theme: 'light',
       rootFontSize: '1rem',
-      channel: {
-        type: 'resource',
-        resource: new Resource({
-          schema: 'social',
-          app: 'polkaverse',
-          resourceType: 'post',
-          resourceValue: {
-            id: post.struct.id,
-          },
-        }),
-        settings: {
-          enableLoginButton: true,
-          enableInputAutofocus: true,
-        },
-        metadata: {
-          title,
-          body,
-          image: post.content?.image,
-        },
-      },
-    }
+    },
+    settings: {
+      enableLoginButton: true,
+      enableInputAutofocus: true,
+    },
+  }
+  if (entity.type === 'post') {
+    return generatePostGrillConfig(entity, commonSettings)
+  } else if (entity.type === 'space') {
+    return generateSpaceGrillConfig(entity, commonSettings)
   }
 
   return null
+}
+
+const creatorsHubId = '1218'
+function generateSpaceGrillConfig(
+  entity: Extract<ChatEntity['entity'], { type: 'space' }>,
+  commonSettings: CommonSettings,
+): GrillConfig {
+  const space = entity.data
+  const { content } = space
+  const metadata = {
+    title: content?.name ?? '',
+    body: content?.about ?? '',
+    image: content?.image ?? '',
+  }
+
+  return {
+    ...commonSettings.root,
+    hub: { id: creatorsHubId },
+    channel: {
+      ...commonSettings.settings,
+      type: 'resource',
+      resource: new Resource({
+        schema: 'chain',
+        chainType: 'substrate',
+        chainName: 'subsocial',
+        resourceType: 'creator',
+        resourceValue: {
+          id: space.id,
+        },
+      }),
+      metadata,
+    },
+  }
+}
+
+function generatePostGrillConfig(
+  entity: Extract<ChatEntity['entity'], { type: 'post' }>,
+  commonSettings: CommonSettings,
+): GrillConfig {
+  const post = entity.data
+  const title = summarizeMd(post.content?.title || post.content?.body || '', {
+    limit: 50,
+  }).summary
+  const body = summarizeMd(post.content?.body ?? '', { limit: 50 }).summary
+
+  return {
+    ...commonSettings.root,
+    hub: { id: config.commentsHubId },
+    channel: {
+      ...commonSettings.settings,
+      type: 'resource',
+      resource: new Resource({
+        schema: 'social',
+        app: 'polkaverse',
+        resourceType: 'post',
+        resourceValue: {
+          id: post.struct.id,
+        },
+      }),
+      metadata: {
+        title,
+        body,
+        image: post.content?.image,
+      },
+    },
+  }
 }
