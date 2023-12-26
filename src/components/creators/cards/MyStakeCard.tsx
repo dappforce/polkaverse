@@ -6,6 +6,7 @@ import { BsBoxArrowUpRight } from 'react-icons/bs'
 import { SlQuestion } from 'react-icons/sl'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { FormatBalance } from 'src/components/common/balances'
+import { useResponsiveSize } from 'src/components/responsive'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
 import { useFetchStakeData } from 'src/rtk/features/stakes/stakesHooks'
@@ -19,18 +20,26 @@ export type MyStakeCardProps = {
 export default function MyStakeCard({ space }: MyStakeCardProps) {
   const myAddress = useMyAddress()
   const { data, loading } = useFetchStakeData(myAddress ?? '', space.id)
+  const { isMobile } = useResponsiveSize()
 
   return (
     <Segment className={clsx(styles.CreatorStakingCard)}>
-      <div className={styles.TopSection}>
-        <p className={clsx(styles.Title, 'mb-0')}>Creator Staking</p>
-        <Link href='https://docs.subsocial.network/docs/basics/creator-staking' passHref>
-          <a className={styles.Link}>How does it work?</a>
-        </Link>
-        <DfImage src='/images/databases.svg' className={styles.Image} />
-      </div>
-      <div className={styles.BottomSection}>
-        <div className={styles.MyStake}>
+      {!isMobile && (
+        <div className={styles.TopSection}>
+          <p className={clsx(styles.Title, 'mb-0')}>Creator Staking</p>
+          <Link href='https://docs.subsocial.network/docs/basics/creator-staking' passHref>
+            <a className={styles.Link}>How does it work?</a>
+          </Link>
+          <DfImage src='/images/databases.svg' className={styles.Image} />
+        </div>
+      )}
+      <div
+        className={clsx(
+          styles.BottomSection,
+          isMobile && 'flex-row d-flex justify-content-between GapNormal align-items-center',
+        )}
+      >
+        <div className={clsx(styles.MyStake, isMobile && 'flex-column')}>
           <div className='FontSmall ColorMuted d-flex align-items-center GapMini'>
             <span>My Stake</span>
             <SlQuestion className={clsx('FontTiny', styles.HelpIcon)} />
@@ -45,15 +54,16 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
         </div>
         <Button
           className={clsx(
-            'd-flex align-items-center GapTiny justify-content-center mt-3 FontWeightMedium',
+            'd-flex align-items-center GapTiny justify-content-center FontWeightMedium',
+            !isMobile && 'mt-3',
           )}
           type='primary'
           ghost
-          block
+          block={!isMobile}
           href={getSubIdCreatorsLink(space)}
           target='_blank'
         >
-          Manage my stake
+          Manage{isMobile ? '' : ' my stake'}
           <BsBoxArrowUpRight />
         </Button>
       </div>
