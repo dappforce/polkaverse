@@ -11,6 +11,7 @@ import config from '../../config'
 import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks'
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import StakeSubCard from '../creators/cards/StakeSubCard'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { editSpaceUrl } from '../urls'
@@ -271,11 +272,18 @@ export const InnerViewSpace = (props: Props) => {
     )
   }
 
+  const isCreatorSpace = config.creatorIds?.includes(spaceData.id)
+
   return (
     <Section className='mt-3'>
       <PendingSpaceOwnershipPanel space={space} />
       <HiddenSpaceAlert space={space} />
       <Section className='pt-2'>{renderPreview()}</Section>
+      {isCreatorSpace && isMobile && (
+        <div className='mt-4'>
+          <StakeSubCard space={spaceData} />
+        </div>
+      )}
       <Section className='DfContentPage mt-4'>
         <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
       </Section>
