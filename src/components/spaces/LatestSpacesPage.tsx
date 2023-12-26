@@ -1,3 +1,4 @@
+import shuffle from 'lodash.shuffle'
 import { FC, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
@@ -24,6 +25,7 @@ type Props = {
   dateFilter?: DateFilterType
 }
 
+const shuffledCreatorIds = shuffle(creatorIds ?? [])
 const loadMoreSpacesFn = async (loadMoreValues: LoadMoreValues<SpaceFilterType>) => {
   const { client, size, page, myAddress, subsocial, dispatch, filter } = loadMoreValues
 
@@ -42,11 +44,10 @@ const loadMoreSpacesFn = async (loadMoreValues: LoadMoreValues<SpaceFilterType>)
     const { spaces } = data as GetLatestSpaceIds
     spaceIds = spaces.map(value => value.id)
   } else {
-    if (filter.type === 'creators') spaceIds = getPageOfIds(creatorIds ?? [], { page, size })
-    else spaceIds = getPageOfIds(recommendedSpaceIds, { page, size })
+    if (filter.type === 'creators') {
+      spaceIds = getPageOfIds(shuffledCreatorIds, { page, size })
+    } else spaceIds = getPageOfIds(recommendedSpaceIds, { page, size })
   }
-
-  console.log(spaceIds, filter)
 
   await Promise.all([
     dispatch(fetchMyPermissionsBySpaceIds({ api: subsocial, ids: spaceIds, myAddress })),
