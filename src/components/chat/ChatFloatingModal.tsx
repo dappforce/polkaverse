@@ -29,7 +29,7 @@ export default function ChatFloatingModal() {
   }, [entity])
 
   useEffect(() => {
-    if (!isOpen) disablePageScroll()
+    if (isOpen) disablePageScroll()
     else enablePageScroll()
 
     if (entity && isOpen) {
@@ -62,15 +62,17 @@ export default function ChatFloatingModal() {
   return (
     <>
       {createPortal(
-        <div className={clsx(styles.ChatContainer, !isOpen && styles.ChatContainerHidden)}>
-          <div className={clsx(styles.ChatOverlay)} onClick={() => setIsOpen(false)} />
-          <div className={clsx(styles.ChatContent)}>
-            <div className={clsx(styles.ChatControl)}>
-              <Button onClick={toggleChat}>
-                <HiChevronDown />
-              </Button>
+        <div className={clsx(styles['Position--right'])}>
+          <div className={clsx(styles.ChatContainer, !isOpen && styles.ChatContainerHidden)}>
+            <div className={clsx(styles.ChatOverlay)} onClick={() => setIsOpen(false)} />
+            <div className={clsx(styles.ChatContent)}>
+              <div className={clsx(styles.ChatControl)}>
+                <Button onClick={toggleChat}>
+                  <HiChevronDown />
+                </Button>
+              </div>
+              <ChatIframe onUnreadCountChange={onUnreadCountChange} className={styles.ChatIframe} />
             </div>
-            <ChatIframe onUnreadCountChange={onUnreadCountChange} className={styles.ChatIframe} />
           </div>
         </div>,
         document.body,

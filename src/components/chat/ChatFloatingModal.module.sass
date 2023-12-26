@@ -110,3 +110,55 @@
       opacity: 0
       transform: translateY(100%)
 
+
+.Position--right
+  .ChatContainer
+    align-items: flex-end
+
+    .ChatContent
+      max-width: 570px
+      width: 100%
+      position: relative
+      height: 100vh
+      height: 100dvh
+
+      .ChatControl
+        padding: 0
+        position: absolute
+        left: -40px
+        top: 12px
+        transform: rotate(-90deg)
+
+    &.ChatContainerHidden
+      .ChatContent
+        transform: translateX(100%)
+
+.Position--bottom
+  .ChatContainer
+    &.ChatContainerHidden
+      .ChatContent
+        transform: translateY(100%)
+
+@media ( max-width: $max_mobile_width )
+  .Position--right
+    .ChatContainer
+      align-items: center
+
+      .ChatContent
+        max-width: none
+        width: 100%
+        position: relative
+        height: 90vh
+        height: 90dvh
+
+        .ChatControl
+          padding: $space-tiny
+          top: 0
+          left: 0
+          position: relative
+          transform: rotate(0deg)
+
+      &.ChatContainerHidden
+        .ChatContent
+          transform: translateY(100%)
+

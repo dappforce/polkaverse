@@ -2,13 +2,15 @@ import grill, { GrillConfig, GrillEventListener } from '@subsocial/grill-widget'
 import { Resource } from '@subsocial/resource-discussions'
 import { summarizeMd } from '@subsocial/utils'
 import clsx from 'clsx'
-import { ComponentProps, useEffect } from 'react'
+import { ComponentProps, useEffect, useState } from 'react'
 import config from 'src/config'
 import useWrapInRef from 'src/hooks/useWrapInRef'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useSetChatTotalMessageCount } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
 import { ChatEntity } from 'src/rtk/features/chat/chatSlice'
+import { getCurrentWallet } from '../auth/utils'
+import styles from './ChatIframe.module.sass'
 
 export type ChatIframeProps = ComponentProps<'div'> & {
   onUnreadCountChange?: (count: number) => void
@@ -18,6 +20,7 @@ export default function ChatIframe({ onUnreadCountChange, ...props }: ChatIframe
   const entity = useAppSelector(state => state.chat.entity)
   const sendEvent = useSendEvent()
   const sendEventRef = useWrapInRef(sendEvent)
+  const [isLoading, setIsLoading] = useState(false)
   const setChatTotalMessageCount = useSetChatTotalMessageCount()
 
   useEffect(() => {
@@ -25,6 +28,10 @@ export default function ChatIframe({ onUnreadCountChange, ...props }: ChatIframe
     const config = generateGrillConfig(entity)
     if (!config) return
     config.onWidgetCreated = iframe => {
+      const currentWallet = getCurrentWallet()
+      if (currentWallet) {
+        iframe.src = `${iframe.src}&wallet=${currentWallet}`
+      }
       iframe.onerror = () => {
         sendEventRef.current('chat_widget_error')
       }
@@ -38,20 +45,36 @@ export default function ChatIframe({ onUnreadCountChange, ...props }: ChatIframe
       const parsedValue = parseInt(value) ?? 0
       if (name === 'unread') onUnreadCountChange?.(parsedValue)
       else if (name === 'totalMessage') setChatTotalMessageCount(parsedValue)
+      else if (name === 'isUpdatingConfig') {
+        if (value === 'true') {
+          setIsLoading(true)
+        } else if (value === 'false') {
+          setIsLoading(false)
+        }
+      }
     }
     if (listener) {
       grill.addMessageListener(listener)
     }
 
-    console.log(config)
-    grill.init(config)
+    if (document.contains(grill.instances?.['grill']?.iframe)) {
+      grill.setConfig(config)
+    } else {
+      grill.init(config)
+    }
 
     return () => {
       if (listener) grill.removeMessageListener(listener)
     }
   }, [entity, sendEventRef])
 
-  return <div {...props} id='grill' className={clsx(props.className)} />
+  return (
+    <div
+      {...props}
+      id='grill'
+      className={clsx(props.className, styles.ChatIframe, isLoading && styles.ChatIframeLoading)}
+    />
+  )
 }
 
 type CommonSettings = {
