@@ -120,6 +120,10 @@ a {
   font-size: $font_normal !important;
 }
 
+.FontSemilarge {
+  font-size: $font_semilarge;
+}
+
 .FontLarge {
   font-size: $font_large;
 }
@@ -900,17 +904,15 @@ hr {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: $space_big;
+
+  > * {
+    padding: 0;
+    height: auto;
+  }
 
   &.DfActionBorder {
     border-top: 1px solid rgba(34, 36, 38, 0.15);
-  }
-
-  .DfReactionsAction {
-    button:first-of-type {
-      // margin-left: -$space_normal;
-      margin-right: $space_normal;
-    }
   }
 }
 
@@ -939,7 +941,7 @@ hr {
 }
 
 .DfSegment.DfPostPreview {
-  padding-bottom: 0;
+  padding-bottom: $space_normal;
 
   .DfInfo {
     width: -webkit-fill-available;
@@ -958,11 +960,6 @@ hr {
       @extend .DfNoBoxShadow;
       border: 1px solid $color_light_border;
     }
-  }
-
-  .DfActionsPanel {
-    padding: 0.25rem 0;
-    justify-content: space-evenly;
   }
 }
 

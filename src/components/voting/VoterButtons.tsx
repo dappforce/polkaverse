@@ -1,7 +1,9 @@
-import { DislikeOutlined, DislikeTwoTone, LikeOutlined, LikeTwoTone } from '@ant-design/icons'
+import { DislikeOutlined, DislikeTwoTone } from '@ant-design/icons'
 import { ButtonProps } from 'antd/lib/button'
+import clsx from 'clsx'
 import dynamic from 'next/dynamic'
 import React, { CSSProperties } from 'react'
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
 import { useCreateReloadPost, useCreateUpsertPost } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
 import { useCreateUpsertMyReaction } from 'src/rtk/features/reactions/myPostReactionsHooks'
@@ -76,8 +78,7 @@ const VoterButton = React.memo(
     }
 
     const isActive = oldKind === newKind
-
-    const color = isUpvote ? '#00a500' : '#ff0000'
+    const color = isUpvote ? '#eb2f96' : '#ff0000'
 
     const changeReactionTx = isActive
       ? 'reactions.deletePostReaction'
@@ -99,14 +100,15 @@ const VoterButton = React.memo(
     }
 
     let icon: JSX.Element
-    const label = preview || isMobile ? undefined : newKind
+    const labelText = isUpvote ? 'Like' : 'Dislike'
+    const label = preview || isMobile ? undefined : labelText
     if (isUpvote) {
       // offsets is based on icon, use em to recalculate based on icon's font-size.
       const upvoteButtonStyle: CSSProperties = { position: 'relative', top: '0.07em' }
       icon = isActive ? (
-        <LikeTwoTone style={label && upvoteButtonStyle} twoToneColor={color} />
+        <AiFillHeart className='FontSemilarge ColorPrimary' style={upvoteButtonStyle} />
       ) : (
-        <LikeOutlined style={label && upvoteButtonStyle} />
+        <AiOutlineHeart className='FontSemilarge' style={upvoteButtonStyle} />
       )
     } else {
       const downvoteButtonStyle: CSSProperties = { position: 'relative', top: '0.21em' }
@@ -119,7 +121,7 @@ const VoterButton = React.memo(
 
     return (
       <TxButton
-        className={`DfVoterButton ${className}`}
+        className={clsx('DfVoterButton ColorMuted', className)}
         style={{
           color: isActive ? color : '',
           ...style,
@@ -141,7 +143,7 @@ const VoterButton = React.memo(
           upsertMyReaction(oldReaction)
           upsertPost(post)
         }}
-        title={preview ? newKind : undefined}
+        title={preview ? label : undefined}
         disabled={disabled}
         withSpinner={false}
       >
@@ -159,7 +161,7 @@ const InnerVoterButtons = (props: InnerVoterButtonsProps) => {
   return (
     <>
       <VoterButton reactionEnum={ReactionEnum.Upvote} {...props} />
-      <VoterButton reactionEnum={ReactionEnum.Downvote} {...props} />
+      {/* <VoterButton reactionEnum={ReactionEnum.Downvote} {...props} /> */}
     </>
   )
 }
