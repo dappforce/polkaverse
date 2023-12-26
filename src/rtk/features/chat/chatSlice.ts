@@ -17,12 +17,14 @@ export interface ChatEntity {
   isOpen: boolean
   entity: Entity
   totalMessageCount: number
+  withFloatingButton?: boolean
 }
 
 const initialState: ChatEntity = {
   isOpen: false,
   entity: null,
   totalMessageCount: 0,
+  withFloatingButton: false,
 }
 
 const slice = createSlice({
@@ -32,8 +34,12 @@ const slice = createSlice({
     setChatOpen: (state, action: PayloadAction<boolean>) => {
       state.isOpen = action.payload
     },
-    setChatConfig: (state, action: PayloadAction<Entity>) => {
-      state.entity = action.payload
+    setChatConfig: (
+      state,
+      action: PayloadAction<{ entity: Entity; withFloatingButton: boolean } | null>,
+    ) => {
+      state.entity = action?.payload?.entity ?? null
+      state.withFloatingButton = action?.payload?.withFloatingButton
       state.totalMessageCount = 0
     },
     setTotalMessageCount: (state, action: PayloadAction<number>) => {

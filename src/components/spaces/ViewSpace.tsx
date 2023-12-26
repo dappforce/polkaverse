@@ -1,12 +1,13 @@
 import { EditOutlined } from '@ant-design/icons'
 import { isEmptyStr, newLogger, nonEmptyStr } from '@subsocial/utils'
+import { Button } from 'antd'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
 import React, { MouseEvent, useCallback, useEffect, useState } from 'react'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
-import { useSetChatEntityConfig } from 'src/rtk/app/hooks'
+import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
 import { useFetchStakeData } from 'src/rtk/features/stakes/stakesHooks'
 import { SpaceContent, SpaceData, SpaceId, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
 import config from '../../config'
@@ -120,9 +121,10 @@ export const InnerViewSpace = (props: Props) => {
   }, [spaceData, imageSize])
 
   const setChatConfig = useSetChatEntityConfig()
+  const setChatOpen = useSetChatOpen()
   useEffect(() => {
     if (!spaceData) return
-    setChatConfig({ data: spaceData, type: 'space' })
+    setChatConfig({ entity: { data: spaceData, type: 'space' }, withFloatingButton: false })
 
     return () => {
       setChatConfig(null)
@@ -192,6 +194,10 @@ export const InnerViewSpace = (props: Props) => {
     e.stopPropagation()
     setCollapseAbout(prev => !prev)
   }
+  const toggleCreatorChat = () => {
+    setChatOpen(true)
+  }
+
   const renderPreview = () => (
     <div className={primaryClass}>
       <div className='DfSpaceBody'>
@@ -199,23 +205,25 @@ export const InnerViewSpace = (props: Props) => {
         <div className='ml-2 w-100'>
           <div className='d-flex justify-content-between align-items-center'>
             {title}
-            <span className='d-flex align-items-center'>
-              <SpaceDropdownMenu
-                spaceOwnerId={space.ownerId}
-                className='mx-2'
-                spaceData={spaceData}
-              />
+            <span className='d-flex align-items-center GapTiny ml-2'>
+              <SpaceDropdownMenu spaceOwnerId={space.ownerId} spaceData={spaceData} />
               {!isMobile && isMy && (
                 <ButtonLink
                   href={'/[spaceId]/edit'}
                   as={editSpaceUrl(space)}
-                  className='mr-2 bg-transparent'
+                  className='bg-transparent'
                 >
                   <EditOutlined /> Edit
                 </ButtonLink>
               )}
 
-              {withFollowButton && <FollowSpaceButton space={space} />}
+              {isCreatorSpace && (
+                <Button type='primary' ghost onClick={toggleCreatorChat}>
+                  Creator Chat
+                </Button>
+              )}
+
+              {withFollowButton && <FollowSpaceButton ghost={false} space={space} />}
             </span>
           </div>
 

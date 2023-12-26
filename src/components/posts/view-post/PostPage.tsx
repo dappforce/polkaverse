@@ -68,7 +68,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const setChatConfig = useSetChatEntityConfig()
   useEffect(() => {
     if (!post) return
-    setChatConfig({ data: post, type: 'post' })
+    setChatConfig({ entity: { data: post, type: 'post' }, withFloatingButton: true })
 
     return () => {
       setChatConfig(null)
