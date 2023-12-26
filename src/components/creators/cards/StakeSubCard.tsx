@@ -1,6 +1,7 @@
 import { SpaceData } from '@subsocial/api/types'
 import { Button } from 'antd'
 import clsx from 'clsx'
+import { useResponsiveSize } from 'src/components/responsive'
 import { DfImage } from 'src/components/utils/DfImage'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import styles from './StakeSubCard.module.sass'
@@ -10,6 +11,7 @@ export type StakeSubCardProps = {
 }
 
 export default function StakeSubCard({ space }: StakeSubCardProps) {
+  const { isSmallMobile } = useResponsiveSize()
   return (
     <div className={clsx(styles.StakeSubCard)}>
       <div className={styles.Content}>
@@ -22,7 +24,12 @@ export default function StakeSubCard({ space }: StakeSubCardProps) {
           src='/images/creators/subsocial-tokens.png'
           className={clsx(styles.Image, 'mb-3')}
         />
-        <Button href={getSubIdCreatorsLink(space)} target='_blank' type='primary' block>
+        <Button
+          href={getSubIdCreatorsLink(space)}
+          target='_blank'
+          type='primary'
+          block={isSmallMobile}
+        >
           Stake
         </Button>
       </div>

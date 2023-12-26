@@ -69,7 +69,7 @@ export const getTotalStake = async ({ address }: { address: string }) => {
   const totalStake = (res?.data?.totalLocked as string) || ''
   const stakeAmount = BigInt(totalStake)
 
-  return { amount: stakeAmount.toString(), isZero: stakeAmount <= 0 }
+  return { amount: stakeAmount.toString(), hasStaked: stakeAmount > 0 }
 }
 
 export const getStakeAmount = async ({
@@ -88,7 +88,7 @@ export const getStakeAmount = async ({
   const newestStakeInfo = (res?.data?.[spaceId]?.[0] as { staked: string; era: number }) || {}
   const stakeAmount = BigInt(newestStakeInfo.staked)
 
-  return { stakeAmount: stakeAmount.toString(), isZero: stakeAmount <= 0 }
+  return { stakeAmount: stakeAmount.toString(), hasStaked: stakeAmount > 0 }
 }
 
 type BalanceByNetworkProps = {

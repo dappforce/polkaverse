@@ -60,7 +60,7 @@ function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name
     return <SupportCreatorsCard />
   }
 
-  return data?.isZero === false ? (
+  return data?.hasStaked ? (
     <>
       <MyStakeCard space={space} />
       <GetMoreSubCard />
@@ -88,11 +88,7 @@ function PostPageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name:
   return (
     <>
       <CreatorInfoCard space={space} />
-      {loading ? null : data?.isZero === false ? (
-        <GetMoreSubCard />
-      ) : (
-        <StakeSubCard space={space} />
-      )}
+      {loading ? null : data?.hasStaked ? <GetMoreSubCard /> : <StakeSubCard space={space} />}
     </>
   )
 }

@@ -6,11 +6,13 @@ import React, { MouseEvent, useCallback, useState } from 'react'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
-import { SpaceContent, SpaceId, SpaceWithSomeDetails } from 'src/types'
+import { useFetchStakeData } from 'src/rtk/features/stakes/stakesHooks'
+import { SpaceContent, SpaceData, SpaceId, SpaceWithSomeDetails } from 'src/types'
 import config from '../../config'
 import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks'
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import MyStakeCard from '../creators/cards/MyStakeCard'
 import StakeSubCard from '../creators/cards/StakeSubCard'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
 import { useIsMobileWidthOrDevice } from '../responsive'
@@ -279,16 +281,23 @@ export const InnerViewSpace = (props: Props) => {
       <PendingSpaceOwnershipPanel space={space} />
       <HiddenSpaceAlert space={space} />
       <Section className='pt-2'>{renderPreview()}</Section>
-      {isCreatorSpace && isMobile && (
-        <div className='mt-4'>
-          <StakeSubCard space={spaceData} />
-        </div>
-      )}
+      {isCreatorSpace && isMobile && <MobileCreatorCard spaceData={spaceData} />}
       <Section className='DfContentPage mt-4'>
         <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
       </Section>
       <MakeAsProfileModal isMySpace={isMy} />
     </Section>
+  )
+}
+
+function MobileCreatorCard({ spaceData }: { spaceData: SpaceData }) {
+  const myAddress = useMyAddress()
+  const { data } = useFetchStakeData(myAddress ?? '', spaceData.id)
+
+  return (
+    <div className='mt-4'>
+      {data?.hasStaked ? <MyStakeCard space={spaceData} /> : <StakeSubCard space={spaceData} />}
+    </div>
   )
 }
 

@@ -6,7 +6,7 @@ import { RootState } from 'src/rtk/app/rootReducer'
 export type TotalStake = {
   address: string
   amount: string
-  isZero?: boolean
+  hasStaked?: boolean
 }
 
 const sliceName = 'totalStakes'
@@ -37,7 +37,7 @@ export const fetchTotalStake = createAsyncThunk<
 
   async function fetchData() {
     const data = await getTotalStake({ address })
-    let stakeAmount = { amount: '0', isZero: true }
+    let stakeAmount = { amount: '0', hasStaked: false }
     if (data) stakeAmount = data
     return { address, ...stakeAmount }
   }

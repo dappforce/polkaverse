@@ -37,9 +37,18 @@
 @media screen and (max-width: 767px)
   .StakeSubCard
     .Content
+      display: block
+
       .Image
-        width: 150px
-        align-self: center
+        display: none
+
+      .ImageMobile
+        display: block
+        float: right
+        width: 140px
+        position: relative
+        margin-top: -10px
+        margin-right: -10px
 
 @media screen and (max-width: 455px)
   .StakeSubCard
@@ -55,10 +64,7 @@
       .ImageMobile
         display: block
         float: right
-        width: 125px
+        width: 115px
         position: relative
-        margin-top: -20px
-        margin-right: -20px
-  
-      .StakeButton
-        background: white !important
+        margin-top: -10px
+        margin-right: -10px

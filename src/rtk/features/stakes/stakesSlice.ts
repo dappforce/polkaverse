@@ -7,7 +7,7 @@ export type StakeData = {
   address: string
   creatorSpaceId: string
   stakeAmount: string
-  isZero: boolean
+  hasStaked: boolean
 }
 
 const sliceName = 'stakes'
@@ -48,7 +48,7 @@ export const fetchStakeData = createAsyncThunk<
 
     async function fetchData() {
       const data = await getStakeAmount({ address, spaceId: creatorSpaceId })
-      let stakeAmount = { stakeAmount: '0', isZero: true }
+      let stakeAmount = { stakeAmount: '0', hasStaked: false }
       if (data) stakeAmount = data
       return { address, creatorSpaceId, ...stakeAmount }
     }
