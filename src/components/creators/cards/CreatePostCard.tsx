@@ -30,15 +30,7 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
       <div className={styles.TitleContainer}>
         <DfImage src={imagePath} className={styles.Image} />
         <span className={styles.Title}>
-          {variant === 'posts' ? (
-            <span>All posts in Active Staking</span>
-          ) : (
-            <span>
-              Featured
-              <br />
-              Creators
-            </span>
-          )}
+          {variant === 'posts' ? <span>Active Staking</span> : <span>Featured Creators</span>}
         </span>
       </div>
       <span className='FontSmall'>
