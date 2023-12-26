@@ -58,7 +58,7 @@ export default function SpaceCard({ spaceId, ...props }: SpaceCardProps) {
       subtitle={<DfMd className='ColorCurrentColor' source={spaceData?.content?.about} />}
       buttons={
         spaceData && [
-          <StakeButton key={'stake'} spaceId={spaceData.id} />,
+          <StakeButton key={'stake'} spaceStruct={spaceData.struct} />,
           isMySpace ? (
             <ButtonLink
               href={'/[spaceId]/edit'}
