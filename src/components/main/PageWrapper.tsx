@@ -100,6 +100,8 @@ type Props = {
 }
 
 const SIDEBAR_WIDTH = 300
+// offset for making box shadow of content still visible while having the scrollbar
+const BOX_SHADOW_OFFSET = 24
 
 export const PageContent: FC<Props> = ({
   /* leftPanel, */ meta,
@@ -159,11 +161,16 @@ export const PageContent: FC<Props> = ({
           {rightPanel === undefined && creatorDashboardSidebarType && (
             <div
               style={{
-                width: SIDEBAR_WIDTH,
+                width: SIDEBAR_WIDTH + BOX_SHADOW_OFFSET * 2,
                 flexShrink: 0.2,
                 position: 'sticky',
-                top: '76px',
+                top: 76 - BOX_SHADOW_OFFSET,
+                overflowY: 'auto',
+                maxHeight: `calc(100vh - ${76 - BOX_SHADOW_OFFSET}px)`,
+                margin: -BOX_SHADOW_OFFSET,
+                padding: BOX_SHADOW_OFFSET,
               }}
+              className='HideScrollbar'
             >
               <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
               {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}
