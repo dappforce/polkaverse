@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import { ComponentProps } from 'react'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
+import { getActiveStakingLinks } from 'src/utils/links'
 import styles from './GetMoreSubCard.module.sass'
 
 export type GetMoreSubCardProps = ComponentProps<'div'>
@@ -21,6 +22,8 @@ export default function GetMoreSubCard({ ...props }: GetMoreSubCardProps) {
               styles.Button,
             )}
             block
+            href={getActiveStakingLinks().learnMore}
+            target='_blank'
           >
             How does it work?
           </Button>
@@ -31,6 +34,8 @@ export default function GetMoreSubCard({ ...props }: GetMoreSubCardProps) {
               styles.Button,
               styles.OutlineButton,
             )}
+            href={getActiveStakingLinks().discuss}
+            target='_blank'
             block
           >
             Discuss this feature
