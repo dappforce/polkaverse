@@ -99,7 +99,7 @@ type Props = {
   creatorDashboardSidebarType?: CreatorDashboardSidebarType
 }
 
-const ONBOARDING_SIDEBAR_WIDTH = 300
+const SIDEBAR_WIDTH = 300
 
 export const PageContent: FC<Props> = ({
   /* leftPanel, */ meta,
@@ -157,7 +157,14 @@ export const PageContent: FC<Props> = ({
           </section>
           {rightPanel}
           {rightPanel === undefined && creatorDashboardSidebarType && (
-            <div style={{ width: ONBOARDING_SIDEBAR_WIDTH, flexShrink: 0.2 }}>
+            <div
+              style={{
+                width: SIDEBAR_WIDTH,
+                flexShrink: 0.2,
+                position: 'sticky',
+                top: '76px',
+              }}
+            >
               <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
               {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}
             </div>
