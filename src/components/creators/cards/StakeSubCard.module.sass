@@ -9,8 +9,7 @@
   justify-content: space-between
 
   .Content
-    display: flex
-    flex-direction: column
+    display: block
     width: 100%
 
     .Title
@@ -18,53 +17,31 @@
       font-weight: $font_weight_medium
       line-height: normal
 
+      @media screen and (max-width: 455px)
+        &
+          font-size: $font_semilarge
+
     .Subtitle
       font-size: $font_small
       opacity: 0.8
 
-    .ImageMobile
-      display: none
-
     .Image
-      display: flex
-      justify-content: center
+      display: block
+      float: right
+      width: 115px
+      position: relative
+      margin-top: -10px
+      margin-right: -10px
 
       :global(.ant-image), :global(.ant-image-img)
         // width: 100%
         height: 100%
         object-fit: contain
 
-@media screen and (max-width: 767px)
-  .StakeSubCard
-    .Content
-      display: block
+      @media screen and (max-width: 767px)
+        &
+          width: 140px
 
-      .Image
-        display: none
-
-      .ImageMobile
-        display: block
-        float: right
-        width: 140px
-        position: relative
-        margin-top: -10px
-        margin-right: -10px
-
-@media screen and (max-width: 455px)
-  .StakeSubCard
-    .Content
-      display: block
-
-      .Title
-        font-size: $font_semilarge
-
-      .Image
-        display: none
-
-      .ImageMobile
-        display: block
-        float: right
-        width: 115px
-        position: relative
-        margin-top: -10px
-        margin-right: -10px
+      @media screen and (max-width: 455px)
+        &
+          width: 115px
