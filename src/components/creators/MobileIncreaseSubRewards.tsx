@@ -19,7 +19,9 @@ export default function MobileIncreaseSubRewards(props: MobileIncreaseSubRewards
     <div {...props} className={clsx(props.className, styles.MobileIncreaseSubRewards)}>
       <span className={styles.Title}>Increase SUB rewards</span>
       <Link href='https://polkaverse.com' passHref>
-        <a className={styles.Link}>Learn more</a>
+        <a target='_blank' className={styles.Link}>
+          Learn more
+        </a>
       </Link>
       <div className={styles.Gradient} />
     </div>
