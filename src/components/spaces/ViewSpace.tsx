@@ -217,7 +217,7 @@ export const InnerViewSpace = (props: Props) => {
                 </ButtonLink>
               )}
 
-              {isCreatorSpace && (
+              {!isMobile && isCreatorSpace && (
                 <Button type='primary' ghost onClick={toggleCreatorChat}>
                   Creator Chat
                 </Button>
