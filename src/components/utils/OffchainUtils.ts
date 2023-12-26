@@ -60,12 +60,7 @@ export const getChainsInfo = async () => {
 }
 
 export const getTotalStake = async ({ address }: { address: string }) => {
-  const res = await axiosRequest(
-    `http://localhost:3001/api/v1/staking/creator/backer/ledger?account=${address}`,
-  )
-  // const res = await axiosRequest(
-  //   `${subIdApiUrl}/staking/creator/backer/ledger?account=${address}`,
-  // )
+  const res = await axiosRequest(`${subIdApiUrl}/staking/creator/backer/ledger?account=${address}`)
   const totalStake = (res?.data?.totalLocked as string) || ''
   const stakeAmount = BigInt(totalStake)
 
@@ -80,11 +75,8 @@ export const getStakeAmount = async ({
   address: string
 }) => {
   const res = await axiosRequest(
-    `http://localhost:3001/api/v1/staking/creator/backer/info?account=${address}&ids=${spaceId}`,
+    `${subIdApiUrl}/staking/creator/backer/info?account=${address}&ids=${spaceId}`,
   )
-  // const res = await axiosRequest(
-  //   `${subIdApiUrl}/staking/creator/backer/info?account=${address}&ids=${spaceId}`,
-  // )
   const newestStakeInfo = (res?.data?.[spaceId]?.[0] as { staked: string; era: number }) || {}
   const stakeAmount = BigInt(newestStakeInfo.staked)
 
