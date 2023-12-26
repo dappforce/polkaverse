@@ -14,6 +14,7 @@ import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import MyStakeCard from '../creators/cards/MyStakeCard'
 import StakeSubCard from '../creators/cards/StakeSubCard'
+import MobileIncreaseSubRewards from '../creators/MobileIncreaseSubRewards'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { editSpaceUrl } from '../urls'
@@ -275,13 +276,17 @@ export const InnerViewSpace = (props: Props) => {
   }
 
   const isCreatorSpace = config.creatorIds?.includes(spaceData.id)
+  const showCreatorCards = isCreatorSpace && isMobile
 
   return (
     <Section className='mt-3'>
+      {showCreatorCards && (
+        <MobileIncreaseSubRewards space={spaceData} style={{ margin: '-28px -16px 0' }} />
+      )}
       <PendingSpaceOwnershipPanel space={space} />
       <HiddenSpaceAlert space={space} />
       <Section className='pt-2'>{renderPreview()}</Section>
-      {isCreatorSpace && isMobile && <MobileCreatorCard spaceData={spaceData} />}
+      {showCreatorCards && <MobileCreatorCard spaceData={spaceData} />}
       <Section className='DfContentPage mt-4'>
         <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
       </Section>

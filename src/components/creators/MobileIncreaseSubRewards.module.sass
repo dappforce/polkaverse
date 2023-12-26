@@ -1,0 +1,26 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.MobileIncreaseSubRewards
+  display: flex
+  position: relative
+  align-items: center
+  justify-content: space-between
+  gap: $space_normal
+  background: #FFEDF5
+  border-radius: 0px 0px $border_radius_huge $border_radius_huge
+  padding: $space_normal
+  overflow: hidden
+
+  .Title, .Link
+    font-weight: $font_weight_semibold
+
+  .Gradient
+    position: absolute
+    background: rgba(132, 78, 247, 0.18)
+    top: 50%
+    transform: translateY(-50%)
+    filter: blur(130px)
+    left: 75%
+    border-radius: 50%
+    width: 400px
+    height: 400px
