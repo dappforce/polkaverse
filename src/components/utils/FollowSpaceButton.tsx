@@ -62,8 +62,6 @@ export function InnerFollowSpaceButton(props: InnerFollowSpaceButtonProps) {
 
   const label = isFollower ? 'Unfollow' : 'Follow'
 
-  console.log(otherProps)
-
   return (
     <TxButton
       type={isFollower ? 'default' : 'primary'}

@@ -26,36 +26,39 @@ export const fetchTotalStake = createAsyncThunk<
     reload?: boolean
   },
   ThunkApiConfig
->(`${sliceName}/fetchOne`, async ({ address, reload }, { getState }): Promise<TotalStake> => {
-  const id = address
-  if (!reload) {
-    const fetchedData = selectTotalStake(getState(), id)
-    if (fetchedData) return fetchedData
-  }
-  const alreadyFetchedPromise = currentlyFetchingMap.get(id)
-  if (alreadyFetchedPromise) return alreadyFetchedPromise
+>(
+  `${sliceName}/fetchOne`,
+  async ({ address, reload }, { getState, dispatch }): Promise<TotalStake> => {
+    const id = address
+    if (!reload) {
+      const fetchedData = selectTotalStake(getState(), id)
+      if (fetchedData) return fetchedData
+    }
+    const alreadyFetchedPromise = currentlyFetchingMap.get(id)
+    if (alreadyFetchedPromise) return alreadyFetchedPromise
 
-  async function fetchData() {
-    const data = await getTotalStake({ address })
-    let stakeAmount = { amount: '0', hasStaked: false }
-    if (data) stakeAmount = data
-    return { address, ...stakeAmount }
-  }
-  const promise = fetchData()
-  currentlyFetchingMap.set(id, promise)
-  await promise
-  currentlyFetchingMap.delete(id)
-  return promise
-})
+    async function fetchData() {
+      const data = await getTotalStake({ address })
+      let stakeAmount = { amount: '0', hasStaked: false }
+      if (data) stakeAmount = data
+      const finalData = { address, ...stakeAmount }
+
+      await dispatch(slice.actions.setTotalStake(finalData))
+      return finalData
+    }
+    const promise = fetchData()
+    currentlyFetchingMap.set(id, promise)
+    await promise
+    currentlyFetchingMap.delete(id)
+    return promise
+  },
+)
 
 const slice = createSlice({
   name: sliceName,
   initialState: adapter.getInitialState(),
-  reducers: {},
-  extraReducers: builder => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    builder.addCase(fetchTotalStake.fulfilled, adapter.upsertOne)
+  reducers: {
+    setTotalStake: adapter.upsertOne,
   },
 })
 

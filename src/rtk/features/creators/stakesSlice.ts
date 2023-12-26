@@ -37,7 +37,7 @@ export const fetchStakeData = createAsyncThunk<
   ThunkApiConfig
 >(
   `${sliceName}/fetchOne`,
-  async ({ address, creatorSpaceId, reload }, { getState }): Promise<StakeData> => {
+  async ({ address, creatorSpaceId, reload }, { getState, dispatch }): Promise<StakeData> => {
     const id = getStakeId({ address, creatorSpaceId })
     if (!reload) {
       const fetchedData = selectStakeForCreator(getState(), id)
@@ -50,7 +50,10 @@ export const fetchStakeData = createAsyncThunk<
       const data = await getStakeAmount({ address, spaceId: creatorSpaceId })
       let stakeAmount = { stakeAmount: '0', hasStaked: false }
       if (data) stakeAmount = data
-      return { address, creatorSpaceId, ...stakeAmount }
+      const finalData = { address, creatorSpaceId, ...stakeAmount }
+
+      await dispatch(slice.actions.setStakeData(finalData))
+      return finalData
     }
     const promise = fetchData()
     currentlyFetchingMap.set(id, promise)
@@ -63,11 +66,8 @@ export const fetchStakeData = createAsyncThunk<
 const slice = createSlice({
   name: sliceName,
   initialState: adapter.getInitialState(),
-  reducers: {},
-  extraReducers: builder => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    builder.addCase(fetchStakeData.fulfilled, adapter.upsertOne)
+  reducers: {
+    setStakeData: adapter.upsertOne,
   },
 })
 

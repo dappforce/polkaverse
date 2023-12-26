@@ -100,7 +100,6 @@ export type AppConfig = {
   claimedSpaceIds: SpaceId[]
   recommendedSpaceIds: SpaceId[]
   suggestedTlds?: string[]
-  creatorIds?: string[]
 }
 
 export type CommonSubsocialFeatures = {

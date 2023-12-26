@@ -1,7 +1,7 @@
 import { SpaceData } from '@subsocial/api/types'
 import clsx from 'clsx'
 import { ComponentProps } from 'react'
-import config from 'src/config'
+import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import CreatePostCard from './cards/CreatePostCard'
@@ -55,8 +55,9 @@ function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { nam
 function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name: 'space-page' }>) {
   const myAddress = useMyAddress()
   const { data } = useFetchStakeData(myAddress ?? '', space.id)
+  const isCreator = useIsCreatorSpace(space.id)
 
-  if (!config.creatorIds?.includes(space.id)) {
+  if (!isCreator) {
     return <SupportCreatorsCard />
   }
 
@@ -75,8 +76,9 @@ function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name
 function PostPageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name: 'post-page' }>) {
   const myAddress = useMyAddress()
   const { data, loading } = useFetchStakeData(myAddress ?? '', space.id)
+  const isCreator = useIsCreatorSpace(space.id)
 
-  if (!config.creatorIds?.includes(space.id)) {
+  if (!isCreator) {
     return (
       <>
         <CreatePostCard variant='posts' />

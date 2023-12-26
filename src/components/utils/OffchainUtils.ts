@@ -61,8 +61,8 @@ export const getChainsInfo = async () => {
 
 export const getCreatorList = async () => {
   const res = await axiosRequest(`${subIdApiUrl}/staking/creator/list`)
-  const creators = (res?.data as { spaceId: string }[]) || []
-  return creators.map(({ spaceId }) => spaceId)
+  const creators = (res?.data as { spaceId: string; status: 'Active' | '' }[]) || []
+  return creators.filter(({ status }) => status === 'Active').map(({ spaceId }) => ({ spaceId }))
 }
 
 export const getTotalStake = async ({ address }: { address: string }) => {

@@ -23,22 +23,6 @@ const index: AppConfig = {
   claimedSpaceIds: ['1', '2', '3', '4', '5'],
   recommendedSpaceIds: polkaverseSpaces,
   suggestedTlds: ['sub', 'polka'],
-  creatorIds: [
-    '10124',
-    '11581',
-    '7366',
-    '6953',
-    '1573',
-    '11157',
-    '6283',
-    // '11414' // inactive
-    '11566',
-    '4777',
-    '1238',
-    '11844',
-    '4809',
-    '10132',
-  ],
 }
 
 export default index

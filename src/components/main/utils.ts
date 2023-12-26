@@ -51,7 +51,7 @@ const getPostsByFilter: GetEntityFilter<PostFilterType> = {
   },
 }
 
-const getSpacesByFilter: GetEntityFilter<Exclude<SpaceFilterType, 'creators' | 'suggested'>> = {
+const getSpacesByFilter: GetEntityFilter<Exclude<SpaceFilterType, 'suggested'>> = {
   latest: {
     day: q.GET_LATEST_SPACE_IDS,
     week: q.GET_LATEST_SPACE_IDS,

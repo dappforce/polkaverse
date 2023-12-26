@@ -5,6 +5,7 @@ import chainsInfo from '../features/chainsInfo/chainsInfoSlice'
 import chat from '../features/chat/chatSlice'
 import enableConfirmation from '../features/confirmationPopup/enableConfirmationSlice'
 import contents from '../features/contents/contentsSlice'
+import creatorsList from '../features/creators/creatorsListSlice'
 import stakes from '../features/creators/stakesSlice'
 import totalStake from '../features/creators/totalStakeSlice'
 import ordersById from '../features/domainPendingOrders/pendingOrdersSlice'
@@ -53,6 +54,7 @@ const rootReducer = combineReducers({
   chat,
   stakes,
   totalStake,
+  creatorsList,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

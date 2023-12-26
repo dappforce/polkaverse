@@ -5,6 +5,9 @@ import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import config from 'src/config'
 import { useDfApolloClient } from 'src/graphql/ApolloProvider'
 import { GetLatestSpaceIds } from 'src/graphql/__generated__/GetLatestSpaceIds'
+import { useAppDispatch } from 'src/rtk/app/store'
+import { useFetchCreators } from 'src/rtk/features/creators/creatorsListHooks'
+import { fetchCreators } from 'src/rtk/features/creators/creatorsListSlice'
 import { fetchMyPermissionsBySpaceIds } from 'src/rtk/features/permissions/mySpacePermissionsSlice'
 import { DataSourceTypes, SpaceId } from 'src/types'
 import { fetchSpaces } from '../../rtk/features/spaces/spacesSlice'
@@ -16,38 +19,48 @@ import { isSuggested, loadSpacesByQuery } from '../main/utils'
 import { getPageOfIds } from '../utils/getIds'
 import { PublicSpacePreviewById } from './SpacePreview'
 
-const { recommendedSpaceIds, creatorIds } = config
+const { recommendedSpaceIds } = config
 
 type Props = {
+  spaceIds?: SpaceId[]
   initialSpaceIds?: SpaceId[]
+  customFetcher?: (config: LoadMoreValues<SpaceFilterType>) => Promise<string[]>
   totalSpaceCount: number
   filter: SpaceFilterType
   dateFilter?: DateFilterType
 }
 
-const shuffledCreatorIds = shuffle(creatorIds ?? [])
-const loadMoreSpacesFn = async (loadMoreValues: LoadMoreValues<SpaceFilterType>) => {
-  const { client, size, page, myAddress, subsocial, dispatch, filter } = loadMoreValues
+const loadMoreSpacesFn = async (
+  loadMoreValues: LoadMoreValues<SpaceFilterType> & {
+    customFetcher?: (config: LoadMoreValues<SpaceFilterType>) => Promise<string[]>
+  },
+) => {
+  const { client, size, page, myAddress, subsocial, dispatch, filter, customFetcher } =
+    loadMoreValues
 
   if (filter === undefined) return []
 
   let spaceIds: string[] = []
 
-  if (filter.type !== 'suggested' && filter.type !== 'creators' && client) {
-    const offset = (page - 1) * size
-    const data = await loadSpacesByQuery({
-      client,
-      offset,
-      filter: { type: filter.type, date: filter.date },
-    })
-
-    const { spaces } = data as GetLatestSpaceIds
-    spaceIds = spaces.map(value => value.id)
+  if (customFetcher) {
+    spaceIds = await customFetcher(loadMoreValues)
   } else {
-    if (filter.type === 'creators') {
-      spaceIds = getPageOfIds(shuffledCreatorIds, { page, size })
-    } else spaceIds = getPageOfIds(recommendedSpaceIds, { page, size })
+    if (filter.type !== 'suggested' && client) {
+      const offset = (page - 1) * size
+      const data = await loadSpacesByQuery({
+        client,
+        offset,
+        filter: { type: filter.type, date: filter.date },
+      })
+
+      const { spaces } = data as GetLatestSpaceIds
+      spaceIds = spaces.map(value => value.id)
+    } else {
+      spaceIds = getPageOfIds(recommendedSpaceIds, { page, size })
+    }
   }
+
+  console.log(spaceIds)
 
   await Promise.all([
     dispatch(fetchMyPermissionsBySpaceIds({ api: subsocial, ids: spaceIds, myAddress })),
@@ -58,7 +71,7 @@ const loadMoreSpacesFn = async (loadMoreValues: LoadMoreValues<SpaceFilterType>)
 }
 
 const InfiniteListOfSpaces = (props: Props) => {
-  const { totalSpaceCount, initialSpaceIds, filter, dateFilter } = props
+  const { totalSpaceCount, initialSpaceIds, filter, dateFilter, customFetcher } = props
   const client = useDfApolloClient()
   const dispatch = useDispatch()
   const { subsocial } = useSubsocialApi()
@@ -76,6 +89,7 @@ const InfiniteListOfSpaces = (props: Props) => {
         type: filter,
         date: dateFilter,
       },
+      customFetcher,
     })
   }
 
@@ -109,8 +123,27 @@ export const SuggestedSpaces = () => (
   <InfiniteListOfSpaces totalSpaceCount={recommendedSpaceIds.length} filter='suggested' />
 )
 
-export const CreatorsSpaces = () => (
-  <InfiniteListOfSpaces totalSpaceCount={creatorIds?.length ?? 0} filter='creators' />
-)
+let shuffledCreators: string[] | null = null
+export const CreatorsSpaces = () => {
+  const { data: creators } = useFetchCreators()
+
+  const dispatch = useAppDispatch()
+  const loadCreators = async () => {
+    if (shuffledCreators) return shuffledCreators
+
+    const res = await dispatch(fetchCreators({}))
+    const spaceIds = (res.payload as { spaceId: string }[]).map(({ spaceId }) => spaceId)
+    shuffledCreators = shuffle(spaceIds)
+    return shuffledCreators
+  }
+  return (
+    <InfiniteListOfSpaces
+      totalSpaceCount={creators.length ?? 0}
+      customFetcher={loadCreators}
+      // filter is not used if customFetcher is provided, but this is needed to make the type works properly
+      filter='suggested'
+    />
+  )
+}
 
 export default LatestSpacesPage

@@ -8,9 +8,9 @@ import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
+import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
 import { SpaceContent, SpaceData, SpaceId, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
-import config from '../../config'
 import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks'
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
@@ -66,7 +66,8 @@ export const SpaceNameAsLink = React.memo(({ space, ...props }: SpaceNameAsLinkP
 })
 
 export const StakeButton = ({ spaceStruct }: { spaceStruct: SpaceStruct }) => {
-  return config.creatorIds?.includes(spaceStruct.id) ? (
+  const isCreator = useIsCreatorSpace(spaceStruct.id)
+  return isCreator ? (
     <ButtonLink
       type='primary'
       target='_blank'
@@ -130,6 +131,8 @@ export const InnerViewSpace = (props: Props) => {
       setChatConfig(null)
     }
   }, [spaceData])
+
+  const isCreatorSpace = useIsCreatorSpace(spaceData?.id)
 
   // We do not return 404 page here, because this component could be used to render a space in list.
   if (!spaceData) return null
@@ -295,7 +298,6 @@ export const InnerViewSpace = (props: Props) => {
     )
   }
 
-  const isCreatorSpace = config.creatorIds?.includes(spaceData.id)
   const showCreatorCards = isCreatorSpace && isMobile
 
   return (

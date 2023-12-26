@@ -5,11 +5,11 @@ import { editSpaceUrl } from 'src/components/urls'
 import { isHidden, ViewOnIpfs } from 'src/components/utils'
 import { BasicDropDownMenuProps, DropdownMenu } from 'src/components/utils/DropDownMenu'
 import { showSuccessMessage } from 'src/components/utils/Message'
-import config from 'src/config'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useSetChatOpen } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
+import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { SpaceData } from 'src/types'
 import { useSelectProfile } from '../../../rtk/features/profiles/profilesHooks'
 import { useIsUsingEmail, useMyAddress } from '../../auth/MyAccountsContext'
@@ -43,7 +43,7 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
   const showMakeAsProfileButton = isMySpace && (!profileSpaceId || profileSpaceId !== id)
 
   const sendEvent = useSendEvent()
-  const isCreatorSpace = config.creatorIds?.includes(struct.id)
+  const isCreatorSpace = useIsCreatorSpace(struct.id)
   const hasChatSetup = useAppSelector(state => !!state.chat.entity)
   const setChatOpen = useSetChatOpen()
 
