@@ -34,7 +34,7 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
             <span>All posts in Active Staking</span>
           ) : (
             <span>
-              Registered
+              Featured
               <br />
               Creators
             </span>
@@ -43,7 +43,7 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
       </div>
       <span className='FontSmall'>
         By creating new posts and liking new content of others, stakers of SUB can increase their
-        staking rewards by 50% or more.
+        staking rewards by 50% to 200%.
       </span>
       {anySpace ? (
         <CreatePostButtonAndModal>
