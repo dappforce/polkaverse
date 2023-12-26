@@ -8,13 +8,13 @@ export default function SupportCreatorsCard() {
   return (
     <div className={clsx(styles.SupportCreatorsCard)}>
       <div className={styles.Content}>
-        <span className={clsx('FontWeightSemibold FontLarge mb-2', styles.Title)}>
-          Support creators and earn SUB
-        </span>
-        <span className={clsx(styles.Subtitle)}>
-          Generate rewards for both you and this creator by staking towards them
-        </span>
         <DfImage src='/images/creators/subsocial-tokens-pink.png' className={clsx(styles.Image)} />
+        <p className={clsx('FontWeightSemibold FontLarge mb-2', styles.Title)}>
+          Support creators and earn SUB
+        </p>
+        <p className={clsx(styles.Subtitle, 'mb-2')}>
+          Generate rewards for both you and this creator by staking towards them
+        </p>
         <Button href={getSubIdCreatorsLink()} target='_blank'>
           Stake
         </Button>

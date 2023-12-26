@@ -9,7 +9,7 @@ import CreatorInfoCard from './cards/CreatorInfoCard'
 import GetMoreSubCard from './cards/GetMoreSubCard'
 import MyStakeCard from './cards/MyStakeCard'
 import StakeSubCard from './cards/StakeSubCard'
-import SupportCreatorsCard from './cards/SupportCreatorCard'
+import SupportCreatorsCard from './cards/SupportCreatorsCard'
 
 export type CreatorDashboardHomeVariant = 'posts' | 'spaces'
 export type CreatorDashboardSidebarType =
