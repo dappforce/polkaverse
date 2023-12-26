@@ -137,6 +137,8 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
     }
   }
 
+  const isSpaceAlreadyRenderedInSidebar = isNotMobile
+
   return (
     <PageContent
       meta={{
@@ -220,7 +222,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
                 withTipButton
               />
             </div>
-            {!isSameProfileAndSpace && (
+            {!isSameProfileAndSpace && !isSpaceAlreadyRenderedInSidebar && (
               <SpaceCard className='mt-4' spaceId={postData.space?.id ?? ''} />
             )}
           </div>
