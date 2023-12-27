@@ -24,6 +24,7 @@ import TxButton from 'src/components/utils/TxButton'
 import { useFetchSpaces, useSelectSpaceIdsWhereAccountCanPost } from 'src/rtk/app/hooks'
 import { AnyId, DataSourceTypes, IpfsCid, PostContent } from 'src/types'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
+import { getSubIdCreatorsLink } from 'src/utils/links'
 import { RegularPostExt } from '.'
 import { fieldName, FormValues } from './Fileds'
 import styles from './index.module.sass'
@@ -205,7 +206,7 @@ export const PostEditorModal = (props: PostEditorModalProps) => {
             staking SUB first.
           </p>
         </div>
-        <Button shape='round' size='large' type='primary'>
+        <Button shape='round' type='primary' href={getSubIdCreatorsLink()} target='_blank'>
           Stake SUB
         </Button>
       </div>
