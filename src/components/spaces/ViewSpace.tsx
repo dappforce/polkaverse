@@ -66,8 +66,8 @@ export const SpaceNameAsLink = React.memo(({ space, ...props }: SpaceNameAsLinkP
 })
 
 export const StakeButton = ({ spaceStruct }: { spaceStruct: SpaceStruct }) => {
-  const isCreator = useIsCreatorSpace(spaceStruct.id)
-  return isCreator ? (
+  const { isCreatorSpace } = useIsCreatorSpace(spaceStruct.id)
+  return isCreatorSpace ? (
     <ButtonLink
       type='primary'
       target='_blank'
@@ -132,7 +132,7 @@ export const InnerViewSpace = (props: Props) => {
     }
   }, [spaceData])
 
-  const isCreatorSpace = useIsCreatorSpace(spaceData?.id)
+  const { isCreatorSpace } = useIsCreatorSpace(spaceData?.id)
 
   // We do not return 404 page here, because this component could be used to render a space in list.
   if (!spaceData) return null

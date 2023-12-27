@@ -1,13 +1,10 @@
 import { Button } from 'antd'
 import clsx from 'clsx'
-import { useResponsiveSize } from 'src/components/responsive'
 import { DfImage } from 'src/components/utils/DfImage'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import styles from './SupportCreatorsCard.module.sass'
 
 export default function SupportCreatorsCard() {
-  const { isSmallMobile, isNotMobile } = useResponsiveSize()
-
   return (
     <div className={clsx(styles.SupportCreatorsCard)}>
       <div className={styles.Content}>
@@ -18,7 +15,7 @@ export default function SupportCreatorsCard() {
         <p className={clsx(styles.Subtitle, 'mb-3')}>
           Generate rewards for both you and this creator by staking towards them
         </p>
-        <Button href={getSubIdCreatorsLink()} block={isSmallMobile || isNotMobile} target='_blank'>
+        <Button href={getSubIdCreatorsLink()} block target='_blank'>
           Stake
         </Button>
       </div>

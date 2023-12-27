@@ -43,7 +43,7 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
   const showMakeAsProfileButton = isMySpace && (!profileSpaceId || profileSpaceId !== id)
 
   const sendEvent = useSendEvent()
-  const isCreatorSpace = useIsCreatorSpace(struct.id)
+  const { isCreatorSpace } = useIsCreatorSpace(struct.id)
   const hasChatSetup = useAppSelector(state => !!state.chat.entity)
   const setChatOpen = useSetChatOpen()
 

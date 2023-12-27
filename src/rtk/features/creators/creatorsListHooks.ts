@@ -15,6 +15,6 @@ export function useFetchCreators(config?: { enabled?: boolean }) {
 }
 
 export function useIsCreatorSpace(spaceId?: string) {
-  const { data } = useFetchCreators({ enabled: !!spaceId })
-  return data.map(({ spaceId }) => spaceId).includes(spaceId ?? '')
+  const { data, loading } = useFetchCreators({ enabled: !!spaceId })
+  return { isCreatorSpace: data.map(({ spaceId }) => spaceId).includes(spaceId ?? ''), loading }
 }

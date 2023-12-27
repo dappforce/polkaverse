@@ -55,9 +55,13 @@ function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { nam
 function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name: 'space-page' }>) {
   const myAddress = useMyAddress()
   const { data } = useFetchStakeData(myAddress ?? '', space.id)
-  const isCreator = useIsCreatorSpace(space.id)
+  const { isCreatorSpace, loading } = useIsCreatorSpace(space.id)
 
-  if (!isCreator) {
+  if (loading) {
+    return null
+  }
+
+  if (!isCreatorSpace) {
     return <SupportCreatorsCard />
   }
 
@@ -76,9 +80,13 @@ function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name
 function PostPageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name: 'post-page' }>) {
   const myAddress = useMyAddress()
   const { data, loading } = useFetchStakeData(myAddress ?? '', space.id)
-  const isCreator = useIsCreatorSpace(space.id)
+  const { isCreatorSpace, loading: loadingCreator } = useIsCreatorSpace(space.id)
 
-  if (!isCreator) {
+  if (loadingCreator) {
+    return null
+  }
+
+  if (!isCreatorSpace) {
     return (
       <>
         <CreatePostCard variant='posts' />
