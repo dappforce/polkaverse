@@ -5,6 +5,7 @@ import { Button, Col, Form, Modal, ModalProps, Row } from 'antd'
 import { LabeledValue } from 'antd/lib/select'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import { AiFillInfoCircle } from 'react-icons/ai'
@@ -22,9 +23,10 @@ import { ButtonLink } from 'src/components/utils/CustomLinks'
 import SelectSpacePreview from 'src/components/utils/SelectSpacePreview'
 import TxButton from 'src/components/utils/TxButton'
 import { useFetchSpaces, useSelectSpaceIdsWhereAccountCanPost } from 'src/rtk/app/hooks'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { AnyId, DataSourceTypes, IpfsCid, PostContent } from 'src/types'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
-import { getSubIdCreatorsLink } from 'src/utils/links'
+import { getActiveStakingLinks, getSubIdCreatorsLink } from 'src/utils/links'
 import { RegularPostExt } from '.'
 import { fieldName, FormValues } from './Fileds'
 import styles from './index.module.sass'
@@ -184,6 +186,10 @@ export interface PostEditorModalProps extends Omit<ModalProps, 'onCancel'> {
   onCancel?: () => void
 }
 export const PostEditorModal = (props: PostEditorModalProps) => {
+  const myAddress = useMyAddress()
+  const { data } = useFetchTotalStake(myAddress ?? '')
+  const hasStaked = data?.hasStaked
+
   return (
     <Modal
       className={styles.ModalEditor}
@@ -201,14 +207,28 @@ export const PostEditorModal = (props: PostEditorModalProps) => {
             <AiFillInfoCircle />
             <span>Post to Earn</span>
           </div>
-          <p>
-            You can earn SUB tokens when others like your content. To do this, you need to start
-            staking SUB first.
-          </p>
+          {hasStaked ? (
+            <p>
+              You can receive extra SUB when others like your posts. Feel free to share your post to
+              accumulate more rewards.{' '}
+              <Link href={getActiveStakingLinks().learnMore}>
+                <a className='FontWeightMedium' target='_blank'>
+                  How does it work?
+                </a>
+              </Link>
+            </p>
+          ) : (
+            <p>
+              You can receive extra SUB when others like your posts. However, you need to first
+              stake some SUB to become eligible.
+            </p>
+          )}
         </div>
-        <Button shape='round' type='primary' href={getSubIdCreatorsLink()} target='_blank'>
-          Stake SUB
-        </Button>
+        {!hasStaked && (
+          <Button shape='round' type='primary' href={getSubIdCreatorsLink()} target='_blank'>
+            Stake SUB
+          </Button>
+        )}
       </div>
     </Modal>
   )
