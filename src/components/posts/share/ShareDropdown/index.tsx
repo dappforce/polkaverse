@@ -112,7 +112,9 @@ const ShareMenu = (props: ShareMenuProps) => {
   )
 }
 
-const ShareIcon = <AiOutlineShareAlt className='FontSemilarge' />
+const ShareIcon = (
+  <AiOutlineShareAlt className='FontSemilarge' style={{ position: 'relative', top: '0.07em' }} />
+)
 
 export const ShareDropdown = (props: ShareMenuProps) => {
   const { preview, title = 'Share', className, postDetails } = props

@@ -210,6 +210,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               <PostActionsPanel
                 postDetails={postData}
                 space={space.struct}
+                preview
                 // toogleCommentSection={() => openCommentSection()}
               />
             </div>
