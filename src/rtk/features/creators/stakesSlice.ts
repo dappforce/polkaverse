@@ -48,8 +48,7 @@ export const fetchStakeData = createAsyncThunk<
 
     async function fetchData() {
       const data = await getStakeAmount({ address, spaceId: creatorSpaceId })
-      let stakeAmount = { stakeAmount: '0', hasStaked: false }
-      if (data) stakeAmount = data
+      const stakeAmount = data ? data : { stakeAmount: '0', hasStaked: false }
       const finalData = { address, creatorSpaceId, ...stakeAmount }
 
       await dispatch(slice.actions.setStakeData(finalData))
