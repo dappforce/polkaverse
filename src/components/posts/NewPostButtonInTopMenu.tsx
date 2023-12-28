@@ -2,7 +2,7 @@ import { PlusCircleOutlined } from '@ant-design/icons'
 import { Button, Tooltip } from 'antd'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { useSelectSpaceIdsWhereAccountCanPost } from 'src/rtk/app/hooks'
+import { useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus } from 'src/rtk/app/hooks'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { useResponsiveSize } from '../responsive'
@@ -80,9 +80,13 @@ const NewPostButtonAndModal = () => {
 export function NewPostButtonInTopMenu() {
   const myAddress = useMyAddress()
 
-  const ids = useSelectSpaceIdsWhereAccountCanPost(myAddress)
-  const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: ids })
+  const { isLoading, spaceIds: ids } =
+    useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus(myAddress)
+  if (isLoading) {
+    return null
+  }
 
+  const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: ids })
   const anySpace = spaceIds[0]
   if (!anySpace) return <CreateSpaceAdaptiveButton asProfile />
 
