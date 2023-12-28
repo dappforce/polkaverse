@@ -1,6 +1,6 @@
 import { AsyncThunkAction } from '@reduxjs/toolkit'
 import { isEmptyArray, newLogger } from '@subsocial/utils'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { shallowEqual } from 'react-redux'
 import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
 import {
@@ -52,6 +52,10 @@ export function useFetchWithoutApi<Args, Struct>(
   const [error, setError] = useState<Error>()
   const dispatch = useAppDispatch()
 
+  const jsonArgs = useMemo(() => {
+    return JSON.stringify(args)
+  }, [args])
+
   const isEnabled = !!enabled
   useEffect(() => {
     if (!isEnabled) return
@@ -75,7 +79,7 @@ export function useFetchWithoutApi<Args, Struct>(
     return () => {
       isMounted = false
     }
-  }, [dispatch, args, isEnabled])
+  }, [dispatch, jsonArgs, isEnabled])
 
   return {
     loading,

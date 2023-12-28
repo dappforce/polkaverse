@@ -2,11 +2,12 @@ import { useFetchWithoutApi } from 'src/rtk/app/hooksCommon'
 import { useAppSelector } from 'src/rtk/app/store'
 import { fetchCreators, selectCreators } from './creatorsListSlice'
 
+const emptyArgs = {}
 export function useFetchCreators(config?: { enabled?: boolean }) {
   const { enabled } = config || {}
   const data = useAppSelector(state => selectCreators(state))
 
-  const props = useFetchWithoutApi(fetchCreators, {}, { enabled })
+  const props = useFetchWithoutApi(fetchCreators, emptyArgs, { enabled })
 
   return {
     ...props,
