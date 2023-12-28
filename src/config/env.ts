@@ -33,6 +33,8 @@ export const datahubQueueConfig = {
   token: process.env['DATAHUB_QUEUE_TOKEN'],
 }
 
+export const datahubQueryUrl = process.env['NEXT_PUBLIC_DATAHUB_QUERY_URL']
+
 /**
  * Enable or disable the available features of this web app by overriding them in the .env file.
  */

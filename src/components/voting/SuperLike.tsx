@@ -3,19 +3,21 @@ import { Button, ButtonProps } from 'antd'
 import clsx from 'clsx'
 import { CSSProperties } from 'react'
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
+import { useSuperLikeCount } from 'src/rtk/features/activeStaking/superLikeCountsHooks'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
 import { useAuth } from '../auth/AuthContext'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { IconWithLabel } from '../utils'
-import { createSuperLike } from '../utils/datahub-queue/super-likes'
+import { createSuperLike } from '../utils/datahub/super-likes'
 
 export type SuperLikeProps = ButtonProps & {
   post: PostStruct
 }
 
 export default function SuperLike({ post, ...props }: SuperLikeProps) {
+  const count = useSuperLikeCount(post.id)
   const isActive = true
-  const count = 21
+
   const openOnBoardingModal = useOpenCloseOnBoardingModal()
   const myAddress = useMyAddress()
 

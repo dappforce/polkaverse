@@ -5,7 +5,25 @@ import {
   SocialEventDataType,
   socialEventProtVersion,
 } from '@subsocial/data-hub-sdk'
+import { GraphQLClient, RequestOptions, Variables } from 'graphql-request'
+import { datahubQueryUrl } from 'src/config/env'
 
+// QUERIES
+export function datahubQueryRequest<T, V extends Variables = Variables>(
+  config: RequestOptions<V, T>,
+) {
+  if (!datahubQueryUrl) throw new Error('Datahub (Query) config is not set')
+
+  const TIMEOUT = 10 * 1000 // 10 seconds
+  const client = new GraphQLClient(datahubQueryUrl, {
+    timeout: TIMEOUT,
+    ...config,
+  })
+
+  return client.request({ url: datahubQueryUrl, ...config })
+}
+
+// MUTATIONS
 export type DatahubParams<T> = {
   address: string
 
