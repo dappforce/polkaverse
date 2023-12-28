@@ -1,7 +1,7 @@
-import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { getTotalStake } from 'src/components/utils/OffchainUtils'
-import { ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
+import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 
 export type TotalStake = {
   address: string
@@ -18,41 +18,19 @@ const selectors = adapter.getSelectors<RootState>(state => state.totalStake)
 
 export const selectTotalStake = selectors.selectById
 
-const currentlyFetchingMap = new Map<string, Promise<TotalStake>>()
-export const fetchTotalStake = createAsyncThunk<
-  TotalStake,
-  {
-    address: string
-    reload?: boolean
-  },
-  ThunkApiConfig
->(
-  `${sliceName}/fetchOne`,
-  async ({ address, reload }, { getState, dispatch }): Promise<TotalStake> => {
-    const id = address
-    if (!reload) {
-      const fetchedData = selectTotalStake(getState(), id)
-      if (fetchedData) return fetchedData
-    }
-    const alreadyFetchedPromise = currentlyFetchingMap.get(id)
-    if (alreadyFetchedPromise) return alreadyFetchedPromise
+export const fetchTotalStake = createSimpleFetchWrapper<{ address: string }, TotalStake>({
+  sliceName,
+  fetchData: async function ({ address }: { address: string }) {
+    const data = await getTotalStake({ address })
+    let stakeAmount = { amount: '0', hasStaked: false }
+    if (data) stakeAmount = data
+    const finalData = { address, ...stakeAmount }
 
-    async function fetchData() {
-      const data = await getTotalStake({ address })
-      let stakeAmount = { amount: '0', hasStaked: false }
-      if (data) stakeAmount = data
-      const finalData = { address, ...stakeAmount }
-
-      await dispatch(slice.actions.setTotalStake(finalData))
-      return finalData
-    }
-    const promise = fetchData()
-    currentlyFetchingMap.set(id, promise)
-    await promise
-    currentlyFetchingMap.delete(id)
-    return promise
+    return finalData
   },
-)
+  getCachedData: (state, { address }) => selectTotalStake(state, address),
+  saveToCacheAction: data => slice.actions.setTotalStake(data),
+})
 
 const slice = createSlice({
   name: sliceName,

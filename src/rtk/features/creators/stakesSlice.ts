@@ -1,7 +1,7 @@
-import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { getStakeAmount } from 'src/components/utils/OffchainUtils'
-import { ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
+import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 
 export type StakeData = {
   address: string
@@ -26,42 +26,23 @@ const selectors = adapter.getSelectors<RootState>(state => state.stakes)
 
 export const selectStakeForCreator = selectors.selectById
 
-const currentlyFetchingMap = new Map<string, Promise<StakeData>>()
-export const fetchStakeData = createAsyncThunk<
-  StakeData,
-  {
-    address: string
-    creatorSpaceId: string
-    reload?: boolean
-  },
-  ThunkApiConfig
->(
-  `${sliceName}/fetchOne`,
-  async ({ address, creatorSpaceId, reload }, { getState, dispatch }): Promise<StakeData> => {
-    const id = getStakeId({ address, creatorSpaceId })
-    if (!reload) {
-      const fetchedData = selectStakeForCreator(getState(), id)
-      if (fetchedData) return fetchedData
-    }
-    const alreadyFetchedPromise = currentlyFetchingMap.get(id)
-    if (alreadyFetchedPromise) return alreadyFetchedPromise
+export const fetchStakeData = createSimpleFetchWrapper<
+  { address: string; creatorSpaceId: string },
+  StakeData
+>({
+  fetchData: async function ({ address, creatorSpaceId }) {
+    const data = await getStakeAmount({ address, spaceId: creatorSpaceId })
+    let stakeAmount = { stakeAmount: '0', hasStaked: false }
+    if (data) stakeAmount = data
+    const finalData = { address, creatorSpaceId, ...stakeAmount }
 
-    async function fetchData() {
-      const data = await getStakeAmount({ address, spaceId: creatorSpaceId })
-      let stakeAmount = { stakeAmount: '0', hasStaked: false }
-      if (data) stakeAmount = data
-      const finalData = { address, creatorSpaceId, ...stakeAmount }
-
-      await dispatch(slice.actions.setStakeData(finalData))
-      return finalData
-    }
-    const promise = fetchData()
-    currentlyFetchingMap.set(id, promise)
-    await promise
-    currentlyFetchingMap.delete(id)
-    return promise
+    return finalData
   },
-)
+  saveToCacheAction: data => slice.actions.setStakeData(data),
+  getCachedData: (state, { address, creatorSpaceId }) =>
+    selectStakeForCreator(state, getStakeId({ address, creatorSpaceId })),
+  sliceName,
+})
 
 const slice = createSlice({
   name: sliceName,
