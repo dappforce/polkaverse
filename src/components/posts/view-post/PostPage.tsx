@@ -116,15 +116,20 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const titleMsg = struct.isComment ? renderResponseTitle(rootPostData?.post) : title
   let metaTitle = title
   const defaultMetaTitle = config.metaTags.title
+
+  // should forceTitle only when its using the space/owner name, to not include double Polkaverse name
+  let forceTitle = false
   if (!metaTitle) {
     const owner = initialPostData.owner
-    const ownerName = owner?.content?.name
-    const ownerHandle = owner?.struct.handle
-    const spaceName = initialPostData.space?.content?.name
+    const ownerName = owner?.content?.name.trim()
+    const ownerHandle = owner?.struct.handle?.trim()
+    const spaceName = initialPostData.space?.content?.name?.trim()
     if (ownerName) {
       metaTitle = `${ownerName} ` + (ownerHandle ? `@${ownerHandle} ` : '') + 'on Polkaverse'
+      forceTitle = true
     } else if (spaceName) {
       metaTitle = `${spaceName} on Polkaverse`
+      forceTitle = true
     }
   }
 
@@ -142,6 +147,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
     <PageContent
       meta={{
         title: metaTitle || defaultMetaTitle,
+        forceTitle,
         desc: content.summary,
         image: usedImage,
         tags,
