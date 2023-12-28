@@ -1,4 +1,4 @@
-import { parseTwitterTextToMarkdown, summarize, summarizeMd } from '@subsocial/utils'
+import { parseTwitterTextToMarkdown, summarize } from '@subsocial/utils'
 import { getPostIdFromSlug } from '@subsocial/utils/slugify'
 import clsx from 'clsx'
 import { NextPage } from 'next'
@@ -19,14 +19,7 @@ import { useSelectProfile, useSetChatEntityConfig, useSetChatOpen } from 'src/rt
 import { useAppSelector } from 'src/rtk/app/store'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
-import {
-  asCommentStruct,
-  HasStatusCode,
-  idToBn,
-  PostData,
-  PostWithAllDetails,
-  PostWithSomeDetails,
-} from 'src/types'
+import { asCommentStruct, HasStatusCode, idToBn, PostData, PostWithSomeDetails } from 'src/types'
 import { DfImage } from '../../utils/DfImage'
 import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
@@ -47,12 +40,10 @@ import { PostDropDownMenu } from './PostDropDownMenu'
 import TwitterPost from './TwitterPost'
 
 export type PostDetailsProps = {
-  postData: PostWithAllDetails
+  postData: PostWithSomeDetails
   rootPostData?: PostWithSomeDetails
   statusCode?: number
 }
-
-const MAX_META_TITLE_LEN = 100
 
 const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const { postData: initialPostData, rootPostData } = props
@@ -125,8 +116,16 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const titleMsg = struct.isComment ? renderResponseTitle(rootPostData?.post) : title
   let metaTitle = title
   const defaultMetaTitle = config.metaTags.title
-  if (!metaTitle && typeof body === 'string') {
-    metaTitle = summarizeMd(body, { limit: MAX_META_TITLE_LEN }).summary
+  if (!metaTitle) {
+    const owner = initialPostData.owner
+    const ownerName = owner?.content?.name
+    const ownerHandle = owner?.struct.handle
+    const spaceName = initialPostData.space?.content?.name
+    if (ownerName) {
+      metaTitle = `${ownerName} ` + (ownerHandle ? `@${ownerHandle} ` : '') + 'on Polkaverse'
+    } else if (spaceName) {
+      metaTitle = `${spaceName} on Polkaverse`
+    }
   }
 
   let usedImage = image
@@ -311,7 +310,7 @@ getInitialPropsWithRedux(PostPage, async props => {
   }
 
   return {
-    postData: data as PostWithAllDetails,
+    postData: data,
     rootPostData,
   }
 })
