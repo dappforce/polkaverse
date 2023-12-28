@@ -9,7 +9,7 @@ import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
 import { useSelectSpaceIdsWhereAccountCanPost } from 'src/rtk/app/hooks'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
-import { getActiveStakingLinks } from 'src/utils/links'
+import { activeStakingLinks } from 'src/utils/links'
 import { CreatorDashboardHomeVariant } from '../CreatorDashboardSidebar'
 import styles from './CreatePostCard.module.sass'
 
@@ -39,7 +39,7 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
       <span className='FontSmall'>
         By creating new posts and liking new content of others, stakers of SUB can increase their
         staking rewards by 50% to 200%.{' '}
-        <Link href={getActiveStakingLinks().learnMore}>
+        <Link href={activeStakingLinks.learnMore}>
           <a target='_blank'>
             Learn more{' '}
             <HiArrowUpRight className='d-inline position-relative' style={{ top: '2px' }} />

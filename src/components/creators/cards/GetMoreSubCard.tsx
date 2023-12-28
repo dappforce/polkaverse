@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { ComponentProps } from 'react'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
-import { getActiveStakingLinks } from 'src/utils/links'
+import { activeStakingLinks } from 'src/utils/links'
 import styles from './GetMoreSubCard.module.sass'
 
 export type GetMoreSubCardProps = ComponentProps<'div'>
@@ -22,7 +22,7 @@ export default function GetMoreSubCard({ ...props }: GetMoreSubCardProps) {
               styles.Button,
             )}
             block
-            href={getActiveStakingLinks().learnMore}
+            href={activeStakingLinks.learnMore}
             target='_blank'
           >
             How does it work?
@@ -34,7 +34,7 @@ export default function GetMoreSubCard({ ...props }: GetMoreSubCardProps) {
               styles.Button,
               styles.OutlineButton,
             )}
-            href={getActiveStakingLinks().discuss}
+            href={activeStakingLinks.discuss}
             target='_blank'
             block
           >

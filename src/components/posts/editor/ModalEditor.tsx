@@ -26,7 +26,7 @@ import { useFetchSpaces, useSelectSpaceIdsWhereAccountCanPost } from 'src/rtk/ap
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { AnyId, DataSourceTypes, IpfsCid, PostContent } from 'src/types'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
-import { getActiveStakingLinks, getSubIdCreatorsLink } from 'src/utils/links'
+import { activeStakingLinks, getSubIdCreatorsLink } from 'src/utils/links'
 import { RegularPostExt } from '.'
 import { fieldName, FormValues } from './Fileds'
 import styles from './index.module.sass'
@@ -211,7 +211,7 @@ export const PostEditorModal = (props: PostEditorModalProps) => {
             <p>
               You can receive extra SUB when others like your posts. Feel free to share your post to
               accumulate more rewards.{' '}
-              <Link href={getActiveStakingLinks().learnMore}>
+              <Link href={activeStakingLinks.learnMore}>
                 <a className='FontWeightMedium' target='_blank'>
                   How does it work?
                 </a>

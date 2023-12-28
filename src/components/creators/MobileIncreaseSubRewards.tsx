@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import Link from 'next/link'
 import { ComponentProps } from 'react'
 import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
-import { getActiveStakingLinks } from 'src/utils/links'
+import { activeStakingLinks } from 'src/utils/links'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import styles from './MobileIncreaseSubRewards.module.sass'
 
@@ -19,7 +19,7 @@ export default function MobileIncreaseSubRewards(props: MobileIncreaseSubRewards
   return (
     <div {...props} className={clsx(props.className, styles.MobileIncreaseSubRewards)}>
       <span className={styles.Title}>Increase SUB rewards</span>
-      <Link href={getActiveStakingLinks().learnMore} passHref>
+      <Link href={activeStakingLinks.learnMore} passHref>
         <a target='_blank' className={styles.Link}>
           Learn more
         </a>
