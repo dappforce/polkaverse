@@ -24,7 +24,7 @@ export const RegularPreview: ComponentType = props => {
         withTags={withTags}
         withMarginForCardType={!withActions}
       />
-      {withActions && <PostActionsPanel postDetails={postDetails} space={space?.struct} preview />}
+      {withActions && <PostActionsPanel postDetails={postDetails} space={space?.struct} />}
     </>
   ) : (
     <PostNotFound />

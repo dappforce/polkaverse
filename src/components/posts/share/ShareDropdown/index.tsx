@@ -28,7 +28,6 @@ import SharePostLink from '../SharePostLink'
 type ShareMenuProps = {
   postDetails: PostWithSomeDetails
   space?: SpaceStruct
-  preview?: boolean
   title?: string
   className?: string
   onClick?: FVoid
@@ -117,7 +116,7 @@ const ShareIcon = (
 )
 
 export const ShareDropdown = (props: ShareMenuProps) => {
-  const { preview, title = 'Share', className, postDetails } = props
+  const { title = 'Share', className, postDetails } = props
   const {
     post: {
       struct: { sharesCount },
@@ -134,12 +133,8 @@ export const ShareDropdown = (props: ShareMenuProps) => {
       placement='bottomCenter'
       overlay={<ShareMenu onClick={hide} {...props} />}
     >
-      <Button className={clsx(className, 'ColorMuted')} title={preview ? title : undefined}>
-        <IconWithLabel
-          icon={ShareIcon}
-          count={sharesCount || 0}
-          label={!preview ? title : undefined}
-        />
+      <Button className={clsx(className, 'ColorMuted')} title={title}>
+        <IconWithLabel icon={ShareIcon} count={sharesCount || 0} />
       </Button>
     </Dropdown>
   )

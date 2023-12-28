@@ -21,7 +21,7 @@ export const SharedPreview: ComponentType = props => {
       <div className='mt-3'>
         <SharePostContent postDetails={postDetails} space={space} />
       </div>
-      {withActions && <PostActionsPanel postDetails={postDetails} space={space?.struct} preview />}
+      {withActions && <PostActionsPanel postDetails={postDetails} space={space?.struct} />}
     </>
   )
 }

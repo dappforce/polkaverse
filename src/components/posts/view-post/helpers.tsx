@@ -283,35 +283,21 @@ type PostActionsPanelProps = {
   postDetails: PostWithSomeDetails
   space?: SpaceStruct
   toogleCommentSection?: () => void
-  preview?: boolean
   withBorder?: boolean
 }
 
 export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
-  const { postDetails, space, preview, withBorder } = props
+  const { postDetails, space, withBorder } = props
   const {
     post: { struct },
   } = postDetails
 
-  const ReactionsAction = () => (
-    <VoterButtons post={struct} className='DfAction' preview={preview} />
-  )
+  const ReactionsAction = () => <VoterButtons post={struct} className='DfAction' />
 
   return (
     <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'}`}>
-      {preview ? (
-        <ReactionsAction />
-      ) : (
-        <div className='d-flex DfReactionsAction'>
-          <ReactionsAction />
-        </div>
-      )}
-      <ShareDropdown
-        postDetails={postDetails}
-        space={space}
-        className='DfAction'
-        preview={preview}
-      />
+      <ReactionsAction />
+      <ShareDropdown postDetails={postDetails} space={space} className='DfAction' />
     </div>
   )
 }

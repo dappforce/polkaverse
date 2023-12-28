@@ -17,7 +17,6 @@ import {
   ReactionType,
 } from 'src/types'
 import { useMyAddress } from '../auth/MyAccountsContext'
-import { useResponsiveSize } from '../responsive'
 import { getNewIdsFromEvent } from '../substrate'
 import { IconWithLabel } from '../utils'
 import { BareProps } from '../utils/types'
@@ -27,7 +26,6 @@ const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
 
 type VoterProps = BareProps & {
   post: PostStruct
-  preview?: boolean
 }
 
 type VoterButtonProps = VoterProps &
@@ -35,7 +33,6 @@ type VoterButtonProps = VoterProps &
     reactionEnum: ReactionEnum
     reaction?: ReactionStruct
     onSuccess?: () => void
-    preview?: boolean
   }
 
 const VoterButton = React.memo(
@@ -46,11 +43,9 @@ const VoterButton = React.memo(
     className,
     style,
     onSuccess,
-    preview,
     disabled,
   }: VoterButtonProps) => {
     const { id: postId, upvotesCount, downvotesCount } = post
-    const { isMobile } = useResponsiveSize()
 
     const upsertMyReaction = useCreateUpsertMyReaction()
     const upsertPost = useCreateUpsertPost()
@@ -101,7 +96,6 @@ const VoterButton = React.memo(
 
     let icon: JSX.Element
     const labelText = isUpvote ? 'Like' : 'Dislike'
-    const label = preview || isMobile ? undefined : labelText
     if (isUpvote) {
       // offsets is based on icon, use em to recalculate based on icon's font-size.
       const upvoteButtonStyle: CSSProperties = { position: 'relative', top: '0.07em' }
@@ -113,9 +107,9 @@ const VoterButton = React.memo(
     } else {
       const downvoteButtonStyle: CSSProperties = { position: 'relative', top: '0.21em' }
       icon = isActive ? (
-        <DislikeTwoTone style={label && downvoteButtonStyle} twoToneColor={color} />
+        <DislikeTwoTone style={downvoteButtonStyle} twoToneColor={color} />
       ) : (
-        <DislikeOutlined style={label && downvoteButtonStyle} />
+        <DislikeOutlined style={downvoteButtonStyle} />
       )
     }
 
@@ -143,11 +137,11 @@ const VoterButton = React.memo(
           upsertMyReaction(oldReaction)
           upsertPost(post)
         }}
-        title={preview ? label : undefined}
+        title={labelText}
         disabled={disabled}
         withSpinner={false}
       >
-        <IconWithLabel icon={icon} count={count} label={label} />
+        <IconWithLabel icon={icon} count={count} />
       </TxButton>
     )
   },
