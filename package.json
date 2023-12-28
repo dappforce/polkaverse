@@ -156,6 +156,7 @@
     "react-tooltip": "^4.2.19",
     "sanitize-html": "^2.10.0",
     "sass": "^1.26.10",
+    "sort-keys-recursive": "^2.1.10",
     "store": "^2.0.12",
     "strip-markdown": "^4.0.0",
     "url-loader": "^4.1.1",
