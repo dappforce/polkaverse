@@ -32,8 +32,7 @@ export const fetchStakeData = createSimpleFetchWrapper<
 >({
   fetchData: async function ({ address, creatorSpaceId }) {
     const data = await getStakeAmount({ address, spaceId: creatorSpaceId })
-    let stakeAmount = { stakeAmount: '0', hasStaked: false }
-    if (data) stakeAmount = data
+    const stakeAmount = data || { stakeAmount: '0', hasStaked: false }
     const finalData = { address, creatorSpaceId, ...stakeAmount }
 
     return finalData
