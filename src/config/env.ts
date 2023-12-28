@@ -27,6 +27,12 @@ export const appOverrides: Partial<AppConfig> = {
 
 export const ampId = process.env['AMP_ID'] || ''
 
+export const serverMnemonic = process.env['SERVER_MNEMONIC']
+export const datahubQueueConfig = {
+  url: process.env['DATAHUB_QUEUE_URL'],
+  token: process.env['DATAHUB_QUEUE_TOKEN'],
+}
+
 /**
  * Enable or disable the available features of this web app by overriding them in the .env file.
  */

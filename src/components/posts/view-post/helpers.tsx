@@ -14,7 +14,7 @@ import NoData from 'src/components/utils/EmptyList'
 import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels'
 import Segment from 'src/components/utils/Segment'
 import { ActiveVoters, PostVoters } from 'src/components/voting/ListVoters'
-import { VoterButtons } from 'src/components/voting/VoterButtons'
+import SuperLike from 'src/components/voting/SuperLike'
 import { maintenanceMsg } from 'src/config/env'
 import { resolveIpfsUrl } from 'src/ipfs'
 import messages from 'src/messages'
@@ -293,7 +293,7 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
     post: { struct },
   } = postDetails
 
-  const ReactionsAction = () => <VoterButtons post={struct} className='DfAction' />
+  const ReactionsAction = () => <SuperLike post={struct} className='DfAction' />
 
   return (
     <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'} ${className ?? ''}`}>
