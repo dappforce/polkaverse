@@ -206,7 +206,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               </div>
             )}
 
-            <div className='DfRow mt-2'>
+            <div className='DfRow mt-2 pl-3'>
               <PostActionsPanel
                 postDetails={postData}
                 space={space.struct}

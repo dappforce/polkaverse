@@ -284,10 +284,11 @@ type PostActionsPanelProps = {
   space?: SpaceStruct
   toogleCommentSection?: () => void
   withBorder?: boolean
+  className?: string
 }
 
 export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
-  const { postDetails, space, withBorder } = props
+  const { postDetails, space, withBorder, className } = props
   const {
     post: { struct },
   } = postDetails
@@ -295,7 +296,7 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
   const ReactionsAction = () => <VoterButtons post={struct} className='DfAction' />
 
   return (
-    <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'}`}>
+    <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'} ${className ?? ''}`}>
       <ReactionsAction />
       <ShareDropdown postDetails={postDetails} space={space} className='DfAction' />
     </div>
