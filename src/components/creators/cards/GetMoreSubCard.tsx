@@ -34,7 +34,7 @@ export default function GetMoreSubCard({ ...props }: GetMoreSubCardProps) {
               styles.Button,
               styles.OutlineButton,
             )}
-            href={activeStakingLinks.discuss}
+            href={activeStakingLinks.discuss()}
             target='_blank'
             block
           >
