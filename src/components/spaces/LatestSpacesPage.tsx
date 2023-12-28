@@ -60,8 +60,6 @@ const loadMoreSpacesFn = async (
     }
   }
 
-  console.log(spaceIds)
-
   await Promise.all([
     dispatch(fetchMyPermissionsBySpaceIds({ api: subsocial, ids: spaceIds, myAddress })),
     dispatch(fetchSpaces({ api: subsocial, ids: spaceIds, dataSource: DataSourceTypes.SQUID })),
