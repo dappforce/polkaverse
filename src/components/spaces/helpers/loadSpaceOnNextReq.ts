@@ -29,7 +29,7 @@ export async function loadSpaceOnNextReq(
         id: idStr,
         reload: true,
         eagerLoadHandles: true,
-        dataSource: DataSourceTypes.SQUID,
+        dataSource: DataSourceTypes.CHAIN,
       }),
     )
     const spaceData = selectSpace(reduxStore.getState(), { id: idStr })
