@@ -193,11 +193,13 @@ export function createSimpleFetchWrapper<Args, ReturnValue>({
   getCachedData,
   fetchData,
   saveToCacheAction,
+  shouldFetchCondition,
 }: {
   sliceName: string
   getCachedData: (state: RootState, args: Args) => ReturnValue | undefined
   saveToCacheAction: (data: ReturnValue) => any
   fetchData: (args: Args) => Promise<ReturnValue>
+  shouldFetchCondition?: (cachedData: ReturnValue | undefined) => boolean
 }) {
   const currentlyFetchingMap = new Map<string, Promise<ReturnValue>>()
   return createAsyncThunk<ReturnValue, Args & { reload?: boolean }, ThunkApiConfig>(
@@ -207,7 +209,7 @@ export function createSimpleFetchWrapper<Args, ReturnValue>({
       const id = JSON.stringify(sortKeysRecursive(args))
       if (!reload) {
         const fetchedData = getCachedData(getState(), allArgs)
-        if (fetchedData) return fetchedData
+        if (fetchedData && !shouldFetchCondition?.(fetchedData)) return fetchedData
       }
       const alreadyFetchedPromise = currentlyFetchingMap.get(id)
       if (alreadyFetchedPromise) return alreadyFetchedPromise

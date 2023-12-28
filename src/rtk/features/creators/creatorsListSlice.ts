@@ -21,6 +21,7 @@ export const fetchCreators = createSimpleFetchWrapper<{}, Creator[]>({
   },
   saveToCacheAction: data => slice.actions.setCreators(data),
   getCachedData: state => selectCreators(state),
+  shouldFetchCondition: cachedData => !cachedData?.length,
 })
 
 const slice = createSlice({
