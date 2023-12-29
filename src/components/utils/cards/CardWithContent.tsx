@@ -56,7 +56,7 @@ export default function CardWithContent({
               <div className='d-flex align-items-center'>{actionsContent}</div>
             )}
           </div>
-          {subtitle && <MutedSpan>{subtitle}</MutedSpan>}
+          {subtitle && <MutedSpan className='FontSmall'>{subtitle}</MutedSpan>}
           {children}
           {isMobile && moveActionsToBottomInMobile && (
             <div className={clsx('mt-3', actions ? '' : styles.ButtonsContainer)}>

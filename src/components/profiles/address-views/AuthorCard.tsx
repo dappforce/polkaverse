@@ -63,7 +63,7 @@ export default function AuthorCard({
           </span>
         </div>
       }
-      subtitle={<DfMd source={profile?.content?.about} className='ColorCurrentColor' />}
+      subtitle={<DfMd source={profile?.content?.about} className='ColorCurrentColor FontSmall' />}
       buttons={[
         withTipButton && !isMyAddress && (
           <Donate key='donate' recipientAddress={address.toString()} />

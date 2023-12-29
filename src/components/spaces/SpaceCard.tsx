@@ -55,7 +55,7 @@ export default function SpaceCard({ spaceId, ...props }: SpaceCardProps) {
           'Unnamed Space'
         )
       }
-      subtitle={<DfMd className='ColorCurrentColor' source={spaceData?.content?.about} />}
+      subtitle={<DfMd className='ColorCurrentColor FontSmall' source={spaceData?.content?.about} />}
       buttons={
         spaceData && [
           <StakeButton key={'stake'} spaceStruct={spaceData.struct} />,

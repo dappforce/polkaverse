@@ -231,15 +231,12 @@ export const InnerViewSpace = (props: Props) => {
           </div>
 
           {nonEmptyStr(about) && (
-            <div className='description mt-3 d-block'>
+            <div className='description mt-2 d-block FontSmall'>
               {showFullAbout || !collapseAbout ? (
                 <>
-                  <DfMd source={content.about} />
+                  <DfMd source={content.about} className='FontSmall' />
                   {!showFullAbout && (
-                    <div
-                      className='DfBlackLink font-weight-semibold mt-1 FontNormal'
-                      onClick={onToggleShow}
-                    >
+                    <div className='DfBlackLink font-weight-semibold mt-1' onClick={onToggleShow}>
                       Show Less
                     </div>
                   )}
@@ -247,12 +244,16 @@ export const InnerViewSpace = (props: Props) => {
               ) : (
                 <ViewSpaceLink
                   space={space}
-                  className='description mt-3 d-block'
+                  className='description mt-2 d-block'
                   title={
                     <SummarizeMd
                       content={content}
+                      className='FontSmall'
                       more={
-                        <span className='DfBlackLink font-weight-semibold' onClick={onToggleShow}>
+                        <span
+                          className='DfBlackLink font-weight-semibold FontSmall'
+                          onClick={onToggleShow}
+                        >
                           Show More
                         </span>
                       }
