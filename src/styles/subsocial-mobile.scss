@@ -28,9 +28,6 @@
   .ant-tabs-content-holder {
     padding: 0 $space_normal;
   }
-  .DfHomeTab > .ant-tabs-nav {
-    margin-bottom: $space_normal;
-  }
 }
 
 .infinite-scroll-component {
@@ -242,9 +239,6 @@
     &h2 {
       margin-top: 0;
       font-size: $font_large;
-    }
-    &.DfSegment {
-      padding-bottom: 0 !important;
     }
   }
 

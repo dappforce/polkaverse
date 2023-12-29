@@ -534,6 +534,9 @@ a {
   // margin: $space_small 0;
   /* white-space: pre-wrap; */
 }
+.-mt-2 {
+  margin-top: -$space_small !important;
+}
 
 .DfBookPage {
   @extend .DfBoxShadow;
@@ -2167,4 +2170,10 @@ hr {
 
 .ant-form-item-explain {
   margin-top: 4px;
+}
+
+@media screen and (max-width: 768px) {
+  .sm-hidden {
+    display: none !important;
+  }
 }

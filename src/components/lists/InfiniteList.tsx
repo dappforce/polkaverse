@@ -1,4 +1,5 @@
 import { isEmptyArray, nonEmptyArr } from '@subsocial/utils'
+import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -52,7 +53,7 @@ export const InfiniteListByPage = <T extends any>(props: InfiniteListByPageProps
 }
 
 export const InfinitePageList = <T extends any>(props: InfiniteListByPageProps<T>) => {
-  return <InfiniteListByPage {...props} className='DfInfinitePageList' />
+  return <InfiniteListByPage {...props} className={clsx('DfInfinitePageList', props.className)} />
 }
 
 const canHaveMoreData = <T extends any>(currentPageItems?: T[]) => {
