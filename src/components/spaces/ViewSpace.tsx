@@ -124,7 +124,7 @@ export const InnerViewSpace = (props: Props) => {
   const setChatConfig = useSetChatEntityConfig()
   const setChatOpen = useSetChatOpen()
 
-  const { isCreatorSpace } = useIsCreatorSpace(spaceData?.id)
+  const { isCreatorSpace, loading } = useIsCreatorSpace(spaceData?.id)
 
   // We do not return 404 page here, because this component could be used to render a space in list.
   if (!spaceData) return null
@@ -292,7 +292,7 @@ export const InnerViewSpace = (props: Props) => {
     )
   }
 
-  const showCreatorCards = isCreatorSpace && isMobile
+  const showCreatorCards = isCreatorSpace && isMobile && !loading
 
   return (
     <Section className='mt-3'>
