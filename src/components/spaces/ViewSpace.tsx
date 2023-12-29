@@ -3,7 +3,7 @@ import { isEmptyStr, newLogger, nonEmptyStr } from '@subsocial/utils'
 import { Button } from 'antd'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
-import React, { MouseEvent, useCallback, useEffect, useState } from 'react'
+import React, { MouseEvent, useCallback, useState } from 'react'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
@@ -123,14 +123,6 @@ export const InnerViewSpace = (props: Props) => {
 
   const setChatConfig = useSetChatEntityConfig()
   const setChatOpen = useSetChatOpen()
-  useEffect(() => {
-    if (!spaceData) return
-    setChatConfig({ entity: { data: spaceData, type: 'space' }, withFloatingButton: false })
-
-    return () => {
-      setChatConfig(null)
-    }
-  }, [spaceData])
 
   const { isCreatorSpace } = useIsCreatorSpace(spaceData?.id)
 
@@ -198,6 +190,7 @@ export const InnerViewSpace = (props: Props) => {
     setCollapseAbout(prev => !prev)
   }
   const toggleCreatorChat = () => {
+    setChatConfig({ entity: { data: spaceData, type: 'space' }, withFloatingButton: false })
     setChatOpen(true)
   }
 
