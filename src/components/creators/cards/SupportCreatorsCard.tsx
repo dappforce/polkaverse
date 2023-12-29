@@ -10,13 +10,15 @@ export default function SupportCreatorsCard() {
       <div className={styles.Content}>
         <DfImage src='/images/creators/subsocial-tokens.png' className={clsx(styles.Image)} />
         <p className={clsx('FontWeightSemibold FontLarge mb-2', styles.Title)}>
-          Support creators and earn SUB
+          Support creators
+          <br />
+          and earn SUB
         </p>
         <p className={clsx(styles.Subtitle, 'mb-3')}>
           Generate rewards for both you and this creator by staking towards them
         </p>
         <Button href={getSubIdCreatorsLink()} block target='_blank'>
-          Stake
+          Stake SUB
         </Button>
       </div>
 
