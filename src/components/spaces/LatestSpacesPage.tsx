@@ -141,7 +141,6 @@ export const CreatorsSpaces = () => {
     <InfiniteListOfSpaces
       totalSpaceCount={creators.length ?? 0}
       customFetcher={loadCreators}
-      className='-mt-2'
       // filter is not used if customFetcher is provided, but this is needed to make the type works properly
       filter='suggested'
     />
