@@ -8,6 +8,7 @@ import CreatePostCard from './cards/CreatePostCard'
 import CreatorInfoCard from './cards/CreatorInfoCard'
 import GetMoreSubCard from './cards/GetMoreSubCard'
 import MyStakeCard from './cards/MyStakeCard'
+import StakerRewardDashboard from './cards/StakerRewardDashboard'
 import StakeSubCard from './cards/StakeSubCard'
 import SupportCreatorsCard from './cards/SupportCreatorsCard'
 
@@ -68,7 +69,7 @@ function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name
   return data?.hasStaked ? (
     <>
       <MyStakeCard space={space} />
-      <GetMoreSubCard />
+      <StakerRewardDashboard />
     </>
   ) : (
     <>
