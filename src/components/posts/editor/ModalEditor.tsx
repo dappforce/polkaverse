@@ -1,14 +1,12 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import { IpfsContent } from '@subsocial/api/substrate/wrappers'
 import { newLogger } from '@subsocial/utils'
-import { Button, Col, Form, Modal, ModalProps, Row } from 'antd'
+import { Col, Form, Modal, ModalProps, Row } from 'antd'
 import { LabeledValue } from 'antd/lib/select'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
-import { AiFillInfoCircle } from 'react-icons/ai'
 import { BiImage } from 'react-icons/bi'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { htmlToMd } from 'src/components/editor/tiptap'
@@ -23,10 +21,8 @@ import { ButtonLink } from 'src/components/utils/CustomLinks'
 import SelectSpacePreview from 'src/components/utils/SelectSpacePreview'
 import TxButton from 'src/components/utils/TxButton'
 import { useFetchSpaces, useSelectSpaceIdsWhereAccountCanPost } from 'src/rtk/app/hooks'
-import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { AnyId, DataSourceTypes, IpfsCid, PostContent } from 'src/types'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
-import { activeStakingLinks, getSubIdCreatorsLink } from 'src/utils/links'
 import { RegularPostExt } from '.'
 import { fieldName, FormValues } from './Fileds'
 import styles from './index.module.sass'
@@ -186,9 +182,9 @@ export interface PostEditorModalProps extends Omit<ModalProps, 'onCancel'> {
   onCancel?: () => void
 }
 export const PostEditorModal = (props: PostEditorModalProps) => {
-  const myAddress = useMyAddress()
-  const { data } = useFetchTotalStake(myAddress ?? '')
-  const hasStaked = data?.hasStaked
+  // const myAddress = useMyAddress()
+  // const { data } = useFetchTotalStake(myAddress ?? '')
+  // const hasStaked = data?.hasStaked
 
   return (
     <Modal
@@ -201,7 +197,7 @@ export const PostEditorModal = (props: PostEditorModalProps) => {
       <div className={styles.Content}>
         <PostEditorModalBody closeModal={() => props.onCancel && props.onCancel()} />
       </div>
-      <div className={styles.InfoPanel}>
+      {/* <div className={styles.InfoPanel}>
         <div className={styles.InfoPanelContent}>
           <div className={styles.Title}>
             <AiFillInfoCircle />
@@ -229,7 +225,7 @@ export const PostEditorModal = (props: PostEditorModalProps) => {
             Stake SUB
           </Button>
         )}
-      </div>
+      </div> */}
     </Modal>
   )
 }

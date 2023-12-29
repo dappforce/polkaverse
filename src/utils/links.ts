@@ -8,8 +8,7 @@ export const getSubIdCreatorsLink = (space?: SpaceData) =>
   `https://sub.id/creators/${space ? getSpaceHandleOrId(space.struct) : ''}`
 
 export const activeStakingLinks = {
-  learnMore:
-    'https://polkaverse.com/@subsocial/boost-staking-rewards-by-up-to-3x-in-the-active-staking-40404',
+  learnMore: 'https://subsocial.network/active-staking-details',
   discuss: () => {
     const currentWallet = getCurrentWallet()
     const link = 'https://grill.chat/creators/stakers-20132'

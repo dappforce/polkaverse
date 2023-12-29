@@ -26,7 +26,7 @@ export default function StakeSubCard({ space }: StakeSubCardProps) {
           type='primary'
           block={isSmallMobile || isNotMobile}
         >
-          Stake
+          Stake SUB
         </Button>
       </div>
     </div>
