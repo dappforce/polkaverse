@@ -28,6 +28,7 @@ type Props = {
   totalSpaceCount: number
   filter: SpaceFilterType
   dateFilter?: DateFilterType
+  className?: string
 }
 
 const loadMoreSpacesFn = async (
@@ -69,7 +70,7 @@ const loadMoreSpacesFn = async (
 }
 
 const InfiniteListOfSpaces = (props: Props) => {
-  const { totalSpaceCount, initialSpaceIds, filter, dateFilter, customFetcher } = props
+  const { totalSpaceCount, initialSpaceIds, filter, dateFilter, customFetcher, className } = props
   const client = useDfApolloClient()
   const dispatch = useDispatch()
   const { subsocial } = useSubsocialApi()
@@ -94,6 +95,7 @@ const InfiniteListOfSpaces = (props: Props) => {
   const List = useCallback(
     () => (
       <InfinitePageList
+        className={className}
         loadingLabel='Loading more spaces...'
         dataSource={initialSpaceIds}
         loadMore={loadMore}
@@ -134,10 +136,12 @@ export const CreatorsSpaces = () => {
     shuffledCreators = shuffle(spaceIds)
     return shuffledCreators
   }
+
   return (
     <InfiniteListOfSpaces
       totalSpaceCount={creators.length ?? 0}
       customFetcher={loadCreators}
+      className='-mt-2'
       // filter is not used if customFetcher is provided, but this is needed to make the type works properly
       filter='suggested'
     />

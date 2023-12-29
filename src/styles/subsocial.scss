@@ -534,6 +534,9 @@ a {
   // margin: $space_small 0;
   /* white-space: pre-wrap; */
 }
+.-mt-2 {
+  margin-top: -$space_small !important;
+}
 
 .DfBookPage {
   @extend .DfBoxShadow;
