@@ -13,6 +13,7 @@ import { PostKind } from 'src/types/graphql-global-types'
 import { useIsSignedIn, useMyAddress } from '../auth/MyAccountsContext'
 import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar'
 import MobileIncreaseSubRewards from '../creators/MobileIncreaseSubRewards'
+import { useIsMobileWidthOrDevice } from '../responsive'
 import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
 import Section from '../utils/Section'
 import style from './HomePage.module.sass'
@@ -169,13 +170,16 @@ const TabsHomePage = ({
 
   const myAddress = useMyAddress()
   const { data } = useFetchTotalStake(myAddress ?? '')
+  const isMobile = useIsMobileWidthOrDevice()
 
   return (
     <>
-      <MobileIncreaseSubRewards
-        style={{ margin: '-12px -16px 0' }}
-        isActiveStakingBanner={!data?.hasStaked}
-      />
+      {isMobile && (
+        <MobileIncreaseSubRewards
+          style={{ margin: '-12px -16px 0' }}
+          isActiveStakingBanner={!data?.hasStaked}
+        />
+      )}
       <span>
         <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />
       </span>
