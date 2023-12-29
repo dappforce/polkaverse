@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PostData, SpaceData } from '@subsocial/api/types'
+import sortKeysRecursive from 'sort-keys-recursive'
 
 const sliceName = 'chats'
 
@@ -38,8 +39,17 @@ const slice = createSlice({
       state,
       action: PayloadAction<{ entity: Entity; withFloatingButton: boolean } | null>,
     ) => {
-      state.entity = action?.payload?.entity ?? null
-      state.withFloatingButton = action?.payload?.withFloatingButton
+      // state and payload are both not plain obj (state is proxy), so we need to convert them to plain obj first before using it to sortKeysRecursive
+      const plainObjEntity = JSON.parse(JSON.stringify(state.entity || {}))
+      const plainObjPayload = JSON.parse(JSON.stringify(action?.payload?.entity || {}))
+      if (
+        JSON.stringify(sortKeysRecursive(plainObjEntity)) !==
+        JSON.stringify(sortKeysRecursive(plainObjPayload))
+      ) {
+        state.entity = action?.payload?.entity ?? null
+      }
+      if (action.payload?.withFloatingButton !== undefined)
+        state.withFloatingButton = action?.payload?.withFloatingButton
       state.totalMessageCount = 0
     },
     setTotalMessageCount: (state, action: PayloadAction<number>) => {

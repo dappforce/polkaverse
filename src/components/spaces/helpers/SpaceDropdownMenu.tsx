@@ -1,13 +1,14 @@
 import { Menu } from 'antd'
 import Link from 'next/link'
 import { Donate } from 'src/components/donate'
+import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { editSpaceUrl } from 'src/components/urls'
 import { isHidden, ViewOnIpfs } from 'src/components/utils'
 import { BasicDropDownMenuProps, DropdownMenu } from 'src/components/utils/DropDownMenu'
 import { showSuccessMessage } from 'src/components/utils/Message'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
 import { useSendEvent } from 'src/providers/AnalyticContext'
-import { useSetChatOpen } from 'src/rtk/app/hooks'
+import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
 import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { SpaceData } from 'src/types'
@@ -37,6 +38,8 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
   const isMySpace = useIsMySpace(struct)
   const address = useMyAddress()
   const { id: profileSpaceId } = useSelectProfile(address) || {}
+  const isMobile = useIsMobileWidthOrDevice()
+  const setChatConfig = useSetChatEntityConfig()
 
   const isUsingEmail = useIsUsingEmail()
 
@@ -52,8 +55,17 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
 
     return (
       <>
-        {isCreatorSpace && hasChatSetup && (
-          <Menu.Item key={`edit-space-${spaceKey}`} onClick={() => setChatOpen(true)}>
+        {isCreatorSpace && hasChatSetup && isMobile && (
+          <Menu.Item
+            key={`edit-space-${spaceKey}`}
+            onClick={() => {
+              setChatConfig({
+                entity: { data: props.spaceData, type: 'space' },
+                withFloatingButton: false,
+              })
+              setChatOpen(true)
+            }}
+          >
             <span className='item'>Creator chat</span>
           </Menu.Item>
         )}
