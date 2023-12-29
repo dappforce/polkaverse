@@ -122,13 +122,12 @@ export const PageContent: FC<Props> = ({
   // const myAddress = useMyAddress()
 
   const isMobile = useIsMobileWidthOrDevice()
-  const shouldRenderMobileLayout = isMobile || isServerSide()
   // const isPanels = leftPanel || rightPanel
   return (
     <>
       <HeadMeta {...meta} />
 
-      {shouldRenderMobileLayout ? (
+      {isMobile ? (
         <section className={className}>
           {children}
           {/* {showOnBoarding && <Affix offsetBottom={5}><OnBoardingMobileCard /></Affix>} */}
@@ -160,7 +159,7 @@ export const PageContent: FC<Props> = ({
             {/* {isPanels && <div className='DfRightPanel DfPanel'>{rightPanel}</div>} */}
           </section>
           {rightPanel}
-          {rightPanel === undefined && creatorDashboardSidebarType && (
+          {rightPanel === undefined && creatorDashboardSidebarType && !isServerSide() && (
             <div
               style={{
                 width: SIDEBAR_WIDTH + BOX_SHADOW_OFFSET * 2,
