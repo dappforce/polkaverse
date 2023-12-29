@@ -1,0 +1,52 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.StakeSubCard
+  display: flex
+  border: 1px solid #6366F1
+  background: #EDF4FF
+  border-radius: $border_radius_big
+  padding: $space_normal
+  justify-content: space-between
+  overflow: hidden
+
+  .Content
+    display: block
+    width: 100%
+
+    .Title
+      font-size: $font_large
+      font-weight: $font_weight_medium
+      line-height: normal
+
+      @media screen and (max-width: 455px)
+        &
+          font-size: $font_semilarge
+
+    .Subtitle
+      font-size: $font_small
+      opacity: 0.8
+
+    .Image
+      display: block
+      float: right
+      width: 115px
+      position: relative
+      margin-top: -25px
+      margin-right: -56px
+
+      :global(.ant-image), :global(.ant-image-img)
+        // width: 100%
+        height: 100%
+        object-fit: contain
+
+      @media screen and (max-width: 767px)
+        &
+          width: 140px
+          margin-top: -10px
+          margin-right: -10px
+
+      @media screen and (max-width: 455px)
+        &
+          width: 115px
+          margin-top: -10px
+          margin-right: -10px

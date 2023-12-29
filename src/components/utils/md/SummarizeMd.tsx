@@ -12,10 +12,18 @@ type Props = {
   content?: SummarizedContent
   limit?: number
   more?: JSX.Element
+  omitDefaultClassName?: boolean
 } & Omit<HTMLProps<HTMLDivElement>, 'content'>
 
 export const SummarizeMd = React.memo((props: Props) => {
-  const { content, limit: initialLimit, more, className, ...otherProps } = props
+  const {
+    content,
+    limit: initialLimit,
+    more,
+    className,
+    omitDefaultClassName,
+    ...otherProps
+  } = props
   const { summary: initialSummary = '', isShowMore: initialIsShowMore = false } = content || {}
   const isMobile = useIsMobileWidthOrDevice()
 
@@ -29,7 +37,7 @@ export const SummarizeMd = React.memo((props: Props) => {
   if (isEmptyStr(summary)) return null
 
   return (
-    <div className={clsx('DfSummary', className)} {...otherProps}>
+    <div className={clsx(!omitDefaultClassName && 'DfSummary', className)} {...otherProps}>
       {summary}
       {isShowMore && (
         <span className='DfSeeMore' onClick={e => e.stopPropagation()}>

@@ -29,7 +29,7 @@ export type SpaceDateFilterProps = SpaceFilterProps & {
   filter: SpaceFilterType
 }
 
-export type TabsWithoutFeed = 'posts' | 'spaces' | 'comments'
+export type TabsWithoutFeed = 'posts' | 'spaces' | 'comments' | 'creators'
 
 export type TabKeys = TabsWithoutFeed | 'feed'
 

@@ -59,6 +59,36 @@ export const getChainsInfo = async () => {
   return res?.data
 }
 
+export const getCreatorList = async () => {
+  const res = await axiosRequest(`${subIdApiUrl}/staking/creator/list`)
+  const creators = (res?.data as { spaceId: string; status: 'Active' | '' }[]) || []
+  return creators.filter(({ status }) => status === 'Active').map(({ spaceId }) => ({ spaceId }))
+}
+
+export const getTotalStake = async ({ address }: { address: string }) => {
+  const res = await axiosRequest(`${subIdApiUrl}/staking/creator/backer/ledger?account=${address}`)
+  const totalStake = (res?.data?.totalLocked as string) || ''
+  const stakeAmount = BigInt(totalStake)
+
+  return { amount: stakeAmount.toString(), hasStaked: stakeAmount > 0 }
+}
+
+export const getStakeAmount = async ({
+  address,
+  spaceId,
+}: {
+  spaceId: string
+  address: string
+}) => {
+  const res = await axiosRequest(
+    `${subIdApiUrl}/staking/creator/backer/info?account=${address}&ids=${spaceId}`,
+  )
+  const newestStakeInfo = (res?.data?.[spaceId]?.[0] as { staked: string; era: number }) || {}
+  const stakeAmount = BigInt(newestStakeInfo.staked)
+
+  return { stakeAmount: stakeAmount.toString(), hasStaked: stakeAmount > 0 }
+}
+
 type BalanceByNetworkProps = {
   account: AccountId
   network: string

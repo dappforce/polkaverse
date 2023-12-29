@@ -10,7 +10,8 @@ import { GetHomePageData } from 'src/graphql/__generated__/GetHomePageData'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { PostKind } from 'src/types/graphql-global-types'
 import { useIsSignedIn } from '../auth/MyAccountsContext'
-import GetSubBanner from '../utils/banners/GetSubBanner'
+import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar'
+import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
 import Section from '../utils/Section'
 import style from './HomePage.module.sass'
 import { dateFilterOpt, Filters, PostFilterView, SpaceFilterView } from './HomePageFilters'
@@ -60,7 +61,8 @@ const HomeTabs = (props: TabsProps) => {
     <>
       <Tabs activeKey={tabKey} onChange={setKey} className={`${className} ${style.DfTabs}`}>
         <TabPane tab='My feed' key='feed' />
-        <TabPane tab={enableGraphQl ? 'Posts' : 'Polkadot News'} key='posts' />
+        <TabPane tab='Active Staking' key='posts' />
+        <TabPane tab='Creators' key='creators' />
         <TabPane tab={enableGraphQl ? 'Spaces' : 'Polkadot Spaces'} key='spaces' />
       </Tabs>
       <Filters tabKey={tabKey} isAffix={isAffix} />
@@ -80,7 +82,12 @@ const AffixTabs = (props: AffixTabsProps) => {
 
 const ToTopIcon = <UpOutlined />
 
-const TabsHomePage = (props: Props) => {
+const TabsHomePage = ({
+  setCurrentTabVariant,
+  ...props
+}: Props & {
+  setCurrentTabVariant: (variant: CreatorDashboardHomeVariant) => void
+}) => {
   const isSignedIn = useIsSignedIn()
   const router = useRouter()
   let prevScrollpos = 0
@@ -109,6 +116,12 @@ const TabsHomePage = (props: Props) => {
   const tab = tabs[tabIndex] as TabKeys
   const type = getFilterType(tab, typeFromUrl)
   const date = dateFilterOpt[dateFilterIndex].value as DateFilterType
+
+  useEffect(() => {
+    let variant: CreatorDashboardHomeVariant = 'posts'
+    if (tab === 'spaces' || tab === 'creators') variant = 'spaces'
+    setCurrentTabVariant(variant)
+  }, [setCurrentTabVariant, tab])
 
   const onChangeKey = (key: string) => {
     const typeValue = getFilterType(key, type)
@@ -145,8 +158,10 @@ const TabsHomePage = (props: Props) => {
           {...props}
         />
       )
-    } else {
+    } else if (tab === 'spaces') {
       return <SpaceFilterView filter={{ type: type as SpaceFilterType, date }} {...props} />
+    } else {
+      return <CreatorsSpaces />
     }
   }, [tab, type, date])
 
@@ -168,19 +183,27 @@ const TabsHomePage = (props: Props) => {
   )
 }
 
-const HomePage: NextPage<Props> = props => (
-  <>
-    <PageContent
-      meta={{ title: metaTags.title, desc: metaTags.desc }}
-      className='m-0'
-      withOnBoarding
-    >
-      {/* <CrowdloanProgress /> */}
-      <GetSubBanner />
-      <TabsHomePage {...props} />
-    </PageContent>
-  </>
-)
+const HomePage: NextPage<Props> = props => {
+  const [currentTabVariant, setCurrentTabVariant] = useState<CreatorDashboardHomeVariant>('posts')
+
+  return (
+    <>
+      <PageContent
+        meta={{ title: metaTags.title, desc: metaTags.desc }}
+        className='m-0'
+        withSidebar
+        creatorDashboardSidebarType={{
+          name: 'home-page',
+          variant: currentTabVariant,
+        }}
+      >
+        {/* <CrowdloanProgress /> */}
+        {/* <GetSubBanner /> */}
+        <TabsHomePage {...props} setCurrentTabVariant={setCurrentTabVariant} />
+      </PageContent>
+    </>
+  )
+}
 
 getInitialPropsWithRedux(HomePage, async ({ apolloClient }) => {
   const apolloRes = await apolloClient?.query<GetHomePageData>({

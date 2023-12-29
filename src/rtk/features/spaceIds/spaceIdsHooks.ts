@@ -73,3 +73,17 @@ export const useSelectSpaceIdsWhereAccountCanPost = (address?: AccountId) =>
 
     return [...new Set([...ownSpaceIds, ...spaceIdsWithRolesByAccount])]
   }, shallowEqual)
+
+export const useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus = (address?: AccountId) =>
+  useAppSelector(state => {
+    if (!address) return { isLoading: false, spaceIds: [] }
+
+    const ownSpaceIds = selectEntityOfSpaceIdsByOwner(state, { id: address })
+    const isLoading = !ownSpaceIds
+    const spaceIdsWithRolesByAccount = selectSpaceIdsWithRolesByAccount(state, address) || []
+
+    return {
+      isLoading,
+      spaceIds: [...new Set([...(ownSpaceIds?.ownSpaceIds ?? []), ...spaceIdsWithRolesByAccount])],
+    }
+  }, shallowEqual)

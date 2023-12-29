@@ -6,9 +6,9 @@ import Head from 'next/head'
 import React, { FC } from 'react'
 import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
-import { useMyAddress } from '../auth/MyAccountsContext'
-import { useShowOnBoardingSidebarContext } from '../onboarding/contexts/ShowOnBoardingSidebarContext'
-import OnBoardingSidebar from '../onboarding/OnBoardingSidebar'
+import CreatorDashboardSidebar, {
+  CreatorDashboardSidebarType,
+} from '../creators/CreatorDashboardSidebar'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { fullUrl } from '../urls/helpers'
 import Section from '../utils/Section'
@@ -94,11 +94,14 @@ type Props = {
   title?: React.ReactNode
   className?: string
   outerClassName?: string
-  withOnBoarding?: boolean
+  withSidebar?: boolean
   withVoteBanner?: boolean
+  creatorDashboardSidebarType?: CreatorDashboardSidebarType
 }
 
-const ONBOARDING_SIDEBAR_WIDTH = 300
+const SIDEBAR_WIDTH = 300
+// offset for making box shadow of content still visible while having the scrollbar
+const BOX_SHADOW_OFFSET = 24
 
 export const PageContent: FC<Props> = ({
   /* leftPanel, */ meta,
@@ -107,11 +110,15 @@ export const PageContent: FC<Props> = ({
   title,
   className,
   outerClassName,
-  withOnBoarding,
+  // withSidebar,
   children,
+  creatorDashboardSidebarType,
 }) => {
-  const { showOnBoardingSidebar, setShowOnBoardingSidebar } = useShowOnBoardingSidebarContext()
-  const myAddress = useMyAddress()
+  // const {
+  //   showOnBoardingSidebar,
+  //   // setShowOnBoardingSidebar
+  // } = useShowOnBoardingSidebarContext()
+  // const myAddress = useMyAddress()
 
   const isMobile = useIsMobileWidthOrDevice()
   // const isPanels = leftPanel || rightPanel
@@ -151,9 +158,22 @@ export const PageContent: FC<Props> = ({
             {/* {isPanels && <div className='DfRightPanel DfPanel'>{rightPanel}</div>} */}
           </section>
           {rightPanel}
-          {rightPanel === undefined && withOnBoarding && showOnBoardingSidebar && myAddress && (
-            <div style={{ width: ONBOARDING_SIDEBAR_WIDTH }}>
-              <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} />
+          {rightPanel === undefined && creatorDashboardSidebarType && (
+            <div
+              style={{
+                width: SIDEBAR_WIDTH + BOX_SHADOW_OFFSET * 2,
+                flexShrink: 0.2,
+                position: 'sticky',
+                top: 76 - BOX_SHADOW_OFFSET,
+                overflowY: 'auto',
+                maxHeight: `calc(100vh - ${76 - BOX_SHADOW_OFFSET}px)`,
+                margin: -BOX_SHADOW_OFFSET,
+                padding: BOX_SHADOW_OFFSET,
+              }}
+              className='HideScrollbar'
+            >
+              <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
+              {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}
             </div>
           )}
         </div>

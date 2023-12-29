@@ -1,16 +1,22 @@
 import { EditOutlined } from '@ant-design/icons'
 import { isEmptyStr, newLogger, nonEmptyStr } from '@subsocial/utils'
+import { Button } from 'antd'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
-import React, { MouseEvent, useCallback, useState } from 'react'
+import React, { MouseEvent, useCallback, useEffect, useState } from 'react'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
-import { SpaceContent, SpaceId, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
-import config from '../../config'
+import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
+import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
+import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
+import { SpaceContent, SpaceData, SpaceId, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
 import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks'
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import MyStakeCard from '../creators/cards/MyStakeCard'
+import StakeSubCard from '../creators/cards/StakeSubCard'
+import MobileIncreaseSubRewards from '../creators/MobileIncreaseSubRewards'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { editSpaceUrl, spaceUrl } from '../urls'
@@ -60,7 +66,8 @@ export const SpaceNameAsLink = React.memo(({ space, ...props }: SpaceNameAsLinkP
 })
 
 export const StakeButton = ({ spaceStruct }: { spaceStruct: SpaceStruct }) => {
-  return config.creatorIds?.includes(spaceStruct.id) ? (
+  const { isCreatorSpace } = useIsCreatorSpace(spaceStruct.id)
+  return isCreatorSpace ? (
     <ButtonLink
       type='primary'
       target='_blank'
@@ -83,7 +90,6 @@ export const InnerViewSpace = (props: Props) => {
     withFollowButton = true,
     withStats = true,
     withTags = true,
-    withStakeButton = true,
     showFullAbout = false,
     dropdownPreview = false,
 
@@ -114,6 +120,19 @@ export const InnerViewSpace = (props: Props) => {
       />
     )
   }, [spaceData, imageSize])
+
+  const setChatConfig = useSetChatEntityConfig()
+  const setChatOpen = useSetChatOpen()
+  useEffect(() => {
+    if (!spaceData) return
+    setChatConfig({ entity: { data: spaceData, type: 'space' }, withFloatingButton: false })
+
+    return () => {
+      setChatConfig(null)
+    }
+  }, [spaceData])
+
+  const { isCreatorSpace } = useIsCreatorSpace(spaceData?.id)
 
   // We do not return 404 page here, because this component could be used to render a space in list.
   if (!spaceData) return null
@@ -178,6 +197,10 @@ export const InnerViewSpace = (props: Props) => {
     e.stopPropagation()
     setCollapseAbout(prev => !prev)
   }
+  const toggleCreatorChat = () => {
+    setChatOpen(true)
+  }
+
   const renderPreview = () => (
     <div className={primaryClass}>
       <div className='DfSpaceBody'>
@@ -185,26 +208,25 @@ export const InnerViewSpace = (props: Props) => {
         <div className='ml-2 w-100'>
           <div className='d-flex justify-content-between align-items-center'>
             {title}
-            <span className='d-flex align-items-center'>
-              <SpaceDropdownMenu
-                spaceOwnerId={space.ownerId}
-                className='mx-2'
-                spaceData={spaceData}
-              />
-              {!isMobile &&
-                (isMy ? (
-                  <ButtonLink
-                    href={'/[spaceId]/edit'}
-                    as={editSpaceUrl(space)}
-                    className='mr-2 bg-transparent'
-                  >
-                    <EditOutlined /> Edit
-                  </ButtonLink>
-                ) : (
-                  withStakeButton && <StakeButton spaceStruct={space} />
-                ))}
+            <span className='d-flex align-items-center GapTiny ml-2'>
+              <SpaceDropdownMenu spaceOwnerId={space.ownerId} spaceData={spaceData} />
+              {!isMobile && isMy && (
+                <ButtonLink
+                  href={'/[spaceId]/edit'}
+                  as={editSpaceUrl(space)}
+                  className='bg-transparent'
+                >
+                  <EditOutlined /> Edit
+                </ButtonLink>
+              )}
 
-              {withFollowButton && <FollowSpaceButton space={space} />}
+              {!isMobile && isCreatorSpace && (
+                <Button type='primary' ghost onClick={toggleCreatorChat}>
+                  Creator Chat
+                </Button>
+              )}
+
+              {withFollowButton && <FollowSpaceButton ghost={false} space={space} />}
             </span>
           </div>
 
@@ -276,16 +298,33 @@ export const InnerViewSpace = (props: Props) => {
     )
   }
 
+  const showCreatorCards = isCreatorSpace && isMobile
+
   return (
     <Section className='mt-3'>
+      {showCreatorCards && (
+        <MobileIncreaseSubRewards space={spaceData} style={{ margin: '-28px -16px 0' }} />
+      )}
       <PendingSpaceOwnershipPanel space={space} />
       <HiddenSpaceAlert space={space} />
       <Section className='pt-2'>{renderPreview()}</Section>
+      {showCreatorCards && <MobileCreatorCard spaceData={spaceData} />}
       <Section className='DfContentPage mt-4'>
         <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
       </Section>
       <MakeAsProfileModal isMySpace={isMy} />
     </Section>
+  )
+}
+
+function MobileCreatorCard({ spaceData }: { spaceData: SpaceData }) {
+  const myAddress = useMyAddress()
+  const { data } = useFetchStakeData(myAddress ?? '', spaceData.id)
+
+  return (
+    <div className='mt-4'>
+      {data?.hasStaked ? <MyStakeCard space={spaceData} /> : <StakeSubCard space={spaceData} />}
+    </div>
   )
 }
 

@@ -1,8 +1,8 @@
-import { PlusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import { PlusCircleOutlined } from '@ant-design/icons'
 import { Button, Tooltip } from 'antd'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { useSelectSpaceIdsWhereAccountCanPost } from 'src/rtk/app/hooks'
+import { useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus } from 'src/rtk/app/hooks'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { useResponsiveSize } from '../responsive'
@@ -24,7 +24,30 @@ const CreateSpaceAdaptiveButton = (props: BareProps & CreateSpaceButtonProps) =>
   return isMobile ? <CreateSpaceIcon {...props} /> : <CreateSpaceButton ghost={true} {...props} />
 }
 
-const CreatePostIcon = <PlusOutlined />
+export function CreatePostButtonAndModal({
+  children,
+}: {
+  children: (onClick: () => void) => React.ReactNode
+}) {
+  const [visible, setVisible] = useState(false)
+  const { asPath } = useRouter()
+
+  useEffect(() => {
+    setVisible(false)
+  }, [asPath])
+
+  /** Go to new post form or show the space selector modal. */
+  const onNewPostClick = () => {
+    setVisible(true)
+  }
+
+  return (
+    <>
+      {children(onNewPostClick)}
+      {visible && <PostEditorModal visible={visible} onCancel={() => setVisible(false)} />}
+    </>
+  )
+}
 
 const NewPostButtonAndModal = () => {
   const { isMobile } = useResponsiveSize()
@@ -47,9 +70,7 @@ const NewPostButtonAndModal = () => {
           <PlusCircleOutlined className='DfHoverIcon' onClick={onNewPostClick} />
         </Tooltip>
       ) : (
-        <Button icon={CreatePostIcon} onClick={onNewPostClick}>
-          New post
-        </Button>
+        <Button onClick={onNewPostClick}>New post</Button>
       )}
       {visible && <PostEditorModal visible={visible} onCancel={() => setVisible(false)} />}
     </>
@@ -59,9 +80,13 @@ const NewPostButtonAndModal = () => {
 export function NewPostButtonInTopMenu() {
   const myAddress = useMyAddress()
 
-  const ids = useSelectSpaceIdsWhereAccountCanPost(myAddress)
-  const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: ids })
+  const { isLoading, spaceIds: ids } =
+    useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus(myAddress)
+  if (isLoading) {
+    return null
+  }
 
+  const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: ids })
   const anySpace = spaceIds[0]
   if (!anySpace) return <CreateSpaceAdaptiveButton asProfile />
 

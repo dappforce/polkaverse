@@ -47,7 +47,7 @@ const UnclaimedSpacesListPage: FC<Props> = props => {
         desc: 'Only unclaimed spaces of Polkadot projects',
       }}
       title={title}
-      withOnBoarding
+      withSidebar
     >
       <div className={styles.ClaimMessage}>
         <p>

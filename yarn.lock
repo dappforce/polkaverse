@@ -2395,15 +2395,15 @@
     "@elastic/elasticsearch" "7.4.0"
     "@subsocial/utils" latest
 
-"@subsocial/grill-widget@^0.0.12":
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/@subsocial/grill-widget/-/grill-widget-0.0.12.tgz#57384850a3adb5342a5505a3f0d67c258d7e3b0e"
-  integrity sha512-Xed+wN/NEZ+mQlKA1olVVcBviVIQOTyqaCYcl9pGsg8yDdIBsKVjqJUKty1vvBL7gY0A+1osdwBgX2xUsbHOBA==
+"@subsocial/grill-widget@^0.0.13":
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/@subsocial/grill-widget/-/grill-widget-0.0.13.tgz#b3001beb2c5eef140f36befff00a581892f7547f"
+  integrity sha512-16t1zgWC0nFP/iqhlYEVkRL+kzSqBfjTS2xhCPMNTzb51MjpVpGgZLTd77Jq3NU/iqnplyH690iKGzQIixHFkw==
 
-"@subsocial/resource-discussions@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@subsocial/resource-discussions/-/resource-discussions-0.0.3.tgz#18a13c8ad27b039328e8fc8ac330b7f923a271cc"
-  integrity sha512-XCrDFbypAyTibLgvEPYJkqI1uDoX+wmnyqis8Hrher6Y9QFGiG7gPnNk/Bmv5zmiEiz9HJ5k+C6IwbiS5B+KyQ==
+"@subsocial/resource-discussions@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@subsocial/resource-discussions/-/resource-discussions-0.0.4.tgz#4afeb53dde4accc0c70e80fc245b1416c74afdf2"
+  integrity sha512-GAuC6SFfyrSpCdIuwLlA/hOouNgcj+6j+kZiDPz/cxLcNPdB4gqGVNnqKaL/rNE3MLNetpgI+gmatTomGRKeiA==
   dependencies:
     graphology "^0.25.1"
 
@@ -2859,6 +2859,13 @@
   version "4.6.7"
   resolved "https://registry.yarnpkg.com/@types/lodash.partition/-/lodash.partition-4.6.7.tgz#7c4bcfa30e2cd945466401855eb5593a848fadff"
   integrity sha512-tRAQtiQkNfMLPInsv+o/3vXR/YUj8YaqzFh/bdlTdVYvuydU817+dX/dM7N7sQWMQ2PgF4ziHILuvlvW4aHnnw==
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash.shuffle@^4.2.9":
+  version "4.2.9"
+  resolved "https://registry.yarnpkg.com/@types/lodash.shuffle/-/lodash.shuffle-4.2.9.tgz#4af1b1c98dd8be8c0c6387e6a62caa476d0594a9"
+  integrity sha512-4siLZ4/vQH4T7Bm4254sG4n6hh9k7vd/bqfDVoeIwSha4Itu3MuoTxPX2I2Tue2JN94y7Y2I27QzwHZLdMlrBg==
   dependencies:
     "@types/lodash" "*"
 
@@ -8923,7 +8930,7 @@ kind-of@^5.0.0:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-5.1.0.tgz#729c91e2d857b7a419a1f9aa65685c4c33f5845d"
   integrity sha512-NGEErnH6F2vUuXDh+OlbcKW7/wOcfdRHaZ7VWtqCztfHri/++YKmP51OdWeGPuqCOba6kk2OTe5d02VmTB80Pw==
 
-kind-of@^6.0.0, kind-of@^6.0.2:
+kind-of@^6.0.0, kind-of@^6.0.2, kind-of@~6.0.2:
   version "6.0.3"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
@@ -9198,6 +9205,11 @@ lodash.pickby@4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/lodash.pickby/-/lodash.pickby-4.6.0.tgz#7dea21d8c18d7703a27c704c15d3b84a67e33aff"
   integrity sha512-AZV+GsS/6ckvPOVQPXSiFFacKvKB4kOQu6ynt9wz0F3LO4R9Ij4K1ddYsIytDpSgLz88JHd9P+oaLeej5/Sl7Q==
+
+lodash.shuffle@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/lodash.shuffle/-/lodash.shuffle-4.2.0.tgz#145b5053cf875f6f5c2a33f48b6e9948c6ec7b4b"
+  integrity sha512-V/rTAABKLFjoecTZjKSv+A1ZomG8hZg8hlgeG6wwQVD9AGv+10zqqSf6mFq2tVA703Zd5R0YhSuSlXA+E/Ei+Q==
 
 lodash.sortby@^4.7.0:
   version "4.7.0"
@@ -12639,6 +12651,21 @@ snapdragon@^0.8.1:
     source-map "^0.5.6"
     source-map-resolve "^0.5.0"
     use "^3.1.0"
+
+sort-keys-recursive@^2.1.10:
+  version "2.1.10"
+  resolved "https://registry.yarnpkg.com/sort-keys-recursive/-/sort-keys-recursive-2.1.10.tgz#df5e22d3f3ff0427fdc4a088f16c37c1839456b8"
+  integrity sha512-yRLJbEER/PjU7hSRwXvP+NyXiORufu8rbSbp+3wFRuJZXoi/AhuKczbjuipqn7Le0SsTXK4VUeri2+Ni6WS8Hg==
+  dependencies:
+    kind-of "~6.0.2"
+    sort-keys "~4.2.0"
+
+sort-keys@~4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/sort-keys/-/sort-keys-4.2.0.tgz#6b7638cee42c506fff8c1cecde7376d21315be18"
+  integrity sha512-aUYIEU/UviqPgc8mHR6IW1EGxkAXpeRETYcrzg8cLAvUPZcpAlleSXHV2mY7G12GphSH6Gzv+4MMVSSkbdteHg==
+  dependencies:
+    is-plain-obj "^2.0.0"
 
 "source-map-js@>=0.6.2 <2.0.0", source-map-js@^1.0.2:
   version "1.0.2"

@@ -1,7 +1,9 @@
-import { DislikeOutlined, DislikeTwoTone, LikeOutlined, LikeTwoTone } from '@ant-design/icons'
+import { DislikeOutlined, DislikeTwoTone } from '@ant-design/icons'
 import { ButtonProps } from 'antd/lib/button'
+import clsx from 'clsx'
 import dynamic from 'next/dynamic'
 import React, { CSSProperties } from 'react'
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
 import { useCreateReloadPost, useCreateUpsertPost } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
 import { useCreateUpsertMyReaction } from 'src/rtk/features/reactions/myPostReactionsHooks'
@@ -15,7 +17,6 @@ import {
   ReactionType,
 } from 'src/types'
 import { useMyAddress } from '../auth/MyAccountsContext'
-import { useResponsiveSize } from '../responsive'
 import { getNewIdsFromEvent } from '../substrate'
 import { IconWithLabel } from '../utils'
 import { BareProps } from '../utils/types'
@@ -25,7 +26,6 @@ const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
 
 type VoterProps = BareProps & {
   post: PostStruct
-  preview?: boolean
 }
 
 type VoterButtonProps = VoterProps &
@@ -33,7 +33,6 @@ type VoterButtonProps = VoterProps &
     reactionEnum: ReactionEnum
     reaction?: ReactionStruct
     onSuccess?: () => void
-    preview?: boolean
   }
 
 const VoterButton = React.memo(
@@ -44,11 +43,9 @@ const VoterButton = React.memo(
     className,
     style,
     onSuccess,
-    preview,
     disabled,
   }: VoterButtonProps) => {
     const { id: postId, upvotesCount, downvotesCount } = post
-    const { isMobile } = useResponsiveSize()
 
     const upsertMyReaction = useCreateUpsertMyReaction()
     const upsertPost = useCreateUpsertPost()
@@ -76,8 +73,7 @@ const VoterButton = React.memo(
     }
 
     const isActive = oldKind === newKind
-
-    const color = isUpvote ? '#00a500' : '#ff0000'
+    const color = isUpvote ? '#eb2f96' : '#ff0000'
 
     const changeReactionTx = isActive
       ? 'reactions.deletePostReaction'
@@ -99,27 +95,27 @@ const VoterButton = React.memo(
     }
 
     let icon: JSX.Element
-    const label = preview || isMobile ? undefined : newKind
+    const labelText = isUpvote ? 'Like' : 'Dislike'
     if (isUpvote) {
       // offsets is based on icon, use em to recalculate based on icon's font-size.
       const upvoteButtonStyle: CSSProperties = { position: 'relative', top: '0.07em' }
       icon = isActive ? (
-        <LikeTwoTone style={label && upvoteButtonStyle} twoToneColor={color} />
+        <AiFillHeart className='FontSemilarge ColorPrimary' style={upvoteButtonStyle} />
       ) : (
-        <LikeOutlined style={label && upvoteButtonStyle} />
+        <AiOutlineHeart className='FontSemilarge' style={upvoteButtonStyle} />
       )
     } else {
       const downvoteButtonStyle: CSSProperties = { position: 'relative', top: '0.21em' }
       icon = isActive ? (
-        <DislikeTwoTone style={label && downvoteButtonStyle} twoToneColor={color} />
+        <DislikeTwoTone style={downvoteButtonStyle} twoToneColor={color} />
       ) : (
-        <DislikeOutlined style={label && downvoteButtonStyle} />
+        <DislikeOutlined style={downvoteButtonStyle} />
       )
     }
 
     return (
       <TxButton
-        className={`DfVoterButton ${className}`}
+        className={clsx('DfVoterButton ColorMuted', className)}
         style={{
           color: isActive ? color : '',
           ...style,
@@ -141,11 +137,11 @@ const VoterButton = React.memo(
           upsertMyReaction(oldReaction)
           upsertPost(post)
         }}
-        title={preview ? newKind : undefined}
+        title={labelText}
         disabled={disabled}
         withSpinner={false}
       >
-        <IconWithLabel icon={icon} count={count} label={label} />
+        <IconWithLabel icon={icon} count={count} />
       </TxButton>
     )
   },
@@ -159,7 +155,7 @@ const InnerVoterButtons = (props: InnerVoterButtonsProps) => {
   return (
     <>
       <VoterButton reactionEnum={ReactionEnum.Upvote} {...props} />
-      <VoterButton reactionEnum={ReactionEnum.Downvote} {...props} />
+      {/* <VoterButton reactionEnum={ReactionEnum.Downvote} {...props} /> */}
     </>
   )
 }

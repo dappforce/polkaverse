@@ -198,7 +198,7 @@ const ProfilePage: NextPage<Props> = props => {
         image,
         canonical: accountUrl({ address }),
       }}
-      withOnBoarding
+      withSidebar
     >
       <Component {...props} />
       {!shouldHideContent && <AccountActivity address={address.toString()} />}

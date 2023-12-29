@@ -1,0 +1,49 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.CreatorStakingCard
+  display: flex
+  flex-direction: column
+  padding: 0
+  border-radius: $border_radius_big
+
+  .TopSection
+    padding: $space_normal
+    border-bottom: 1px solid #E2E8F0
+    position: relative
+    overflow: hidden
+
+    .Title
+      font-size: $font_large
+      font-weight: $font_weight_semibold
+    
+    .Link
+      font-size: $font_small
+
+    .Image
+      position: absolute
+      top: -$space_mini
+      right: -$space_mini
+      height: 100%
+
+      *
+        height: 100%
+        object-fit: contain
+
+  .BottomSection
+    padding: $space_normal
+
+    .MyStake
+      display: flex
+      justify-content: space-between
+
+      .HelpIcon
+        position: relative
+        top: 1px
+
+.Skeleton
+  display: flex
+  align-items: center
+  width: 100px
+  *
+    margin: 0 !important
+    display: block

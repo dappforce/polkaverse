@@ -1,4 +1,4 @@
-import { parseTwitterTextToMarkdown, summarize, summarizeMd } from '@subsocial/utils'
+import { parseTwitterTextToMarkdown, summarize } from '@subsocial/utils'
 import { getPostIdFromSlug } from '@subsocial/utils/slugify'
 import clsx from 'clsx'
 import { NextPage } from 'next'
@@ -19,14 +19,7 @@ import { useSelectProfile, useSetChatEntityConfig, useSetChatOpen } from 'src/rt
 import { useAppSelector } from 'src/rtk/app/store'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
-import {
-  asCommentStruct,
-  HasStatusCode,
-  idToBn,
-  PostData,
-  PostWithAllDetails,
-  PostWithSomeDetails,
-} from 'src/types'
+import { asCommentStruct, HasStatusCode, idToBn, PostData, PostWithSomeDetails } from 'src/types'
 import { DfImage } from '../../utils/DfImage'
 import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
@@ -47,12 +40,10 @@ import { PostDropDownMenu } from './PostDropDownMenu'
 import TwitterPost from './TwitterPost'
 
 export type PostDetailsProps = {
-  postData: PostWithAllDetails
+  postData: PostWithSomeDetails
   rootPostData?: PostWithSomeDetails
   statusCode?: number
 }
-
-const MAX_META_TITLE_LEN = 100
 
 const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const { postData: initialPostData, rootPostData } = props
@@ -68,7 +59,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const setChatConfig = useSetChatEntityConfig()
   useEffect(() => {
     if (!post) return
-    setChatConfig({ data: post, type: 'post' })
+    setChatConfig({ entity: { data: post, type: 'post' }, withFloatingButton: true })
 
     return () => {
       setChatConfig(null)
@@ -125,8 +116,21 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const titleMsg = struct.isComment ? renderResponseTitle(rootPostData?.post) : title
   let metaTitle = title
   const defaultMetaTitle = config.metaTags.title
-  if (!metaTitle && typeof body === 'string') {
-    metaTitle = summarizeMd(body, { limit: MAX_META_TITLE_LEN }).summary
+
+  // should forceTitle only when its using the space/owner name, to not include double Polkaverse name
+  let forceTitle = false
+  if (!metaTitle) {
+    const owner = initialPostData.owner
+    const ownerName = owner?.content?.name.trim()
+    const ownerHandle = owner?.struct.handle?.trim()
+    const spaceName = initialPostData.space?.content?.name?.trim()
+    if (ownerName) {
+      metaTitle = `${ownerName} ` + (ownerHandle ? `@${ownerHandle} ` : '') + 'on Polkaverse'
+      forceTitle = true
+    } else if (spaceName) {
+      metaTitle = `${spaceName} on Polkaverse`
+      forceTitle = true
+    }
   }
 
   let usedImage = image
@@ -137,20 +141,22 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
     }
   }
 
+  const isSpaceAlreadyRenderedInSidebar = isNotMobile
+
   return (
     <PageContent
       meta={{
         title: metaTitle || defaultMetaTitle,
+        forceTitle,
         desc: content.summary,
         image: usedImage,
         tags,
         canonical: postUrl(spaceStruct, postData.post),
         externalCanonical: content.canonical,
       }}
-      withOnBoarding
+      withSidebar
       withVoteBanner
-      outerClassName='mx-auto'
-      rightPanel={null}
+      creatorDashboardSidebarType={{ name: 'post-page', space }}
     >
       <HiddenPostAlert post={post.struct} />
       <Section>
@@ -205,7 +211,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               </div>
             )}
 
-            <div className='DfRow mt-2'>
+            <div className='DfRow mt-2 pl-3'>
               <PostActionsPanel
                 postDetails={postData}
                 space={space.struct}
@@ -221,7 +227,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
                 withTipButton
               />
             </div>
-            {!isSameProfileAndSpace && (
+            {!isSameProfileAndSpace && !isSpaceAlreadyRenderedInSidebar && (
               <SpaceCard className='mt-4' spaceId={postData.space?.id ?? ''} />
             )}
           </div>
@@ -310,7 +316,7 @@ getInitialPropsWithRedux(PostPage, async props => {
   }
 
   return {
-    postData: data as PostWithAllDetails,
+    postData: data,
     rootPostData,
   }
 })

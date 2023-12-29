@@ -7,6 +7,9 @@ import { BasicDropDownMenuProps, DropdownMenu } from 'src/components/utils/DropD
 import { showSuccessMessage } from 'src/components/utils/Message'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
 import { useSendEvent } from 'src/providers/AnalyticContext'
+import { useSetChatOpen } from 'src/rtk/app/hooks'
+import { useAppSelector } from 'src/rtk/app/store'
+import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { SpaceData } from 'src/types'
 import { useSelectProfile } from '../../../rtk/features/profiles/profilesHooks'
 import { useIsUsingEmail, useMyAddress } from '../../auth/MyAccountsContext'
@@ -40,12 +43,20 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
   const showMakeAsProfileButton = isMySpace && (!profileSpaceId || profileSpaceId !== id)
 
   const sendEvent = useSendEvent()
+  const { isCreatorSpace } = useIsCreatorSpace(struct.id)
+  const hasChatSetup = useAppSelector(state => !!state.chat.entity)
+  const setChatOpen = useSetChatOpen()
 
   const buildMenuItems = () => {
     sendEvent('open_space_dropdown_menu')
 
     return (
       <>
+        {isCreatorSpace && hasChatSetup && (
+          <Menu.Item key={`edit-space-${spaceKey}`} onClick={() => setChatOpen(true)}>
+            <span className='item'>Creator chat</span>
+          </Menu.Item>
+        )}
         {isMySpace && (
           <Menu.Item key={`edit-space-${spaceKey}`}>
             <Link href={'/[spaceId]/edit'} as={editSpaceUrl(struct)}>

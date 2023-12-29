@@ -1,6 +1,7 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import { AsyncThunkPayloadCreator, Dictionary, EntityId } from '@reduxjs/toolkit'
+import { AsyncThunkPayloadCreator, createAsyncThunk, Dictionary, EntityId } from '@reduxjs/toolkit'
 import { isDef } from '@subsocial/utils'
+import sortKeysRecursive from 'sort-keys-recursive'
 import { getApolloClient } from 'src/graphql/client'
 import { DataSourceTypes } from 'src/types'
 import {
@@ -185,4 +186,42 @@ export function generatePrefetchDataFn<CurrentData, OriginalData extends Current
     })
     return allPrefetchedData
   }
+}
+
+export function createSimpleFetchWrapper<Args, ReturnValue>({
+  sliceName,
+  getCachedData,
+  fetchData,
+  saveToCacheAction,
+  shouldFetchCondition,
+}: {
+  sliceName: string
+  getCachedData: (state: RootState, args: Args) => ReturnValue | undefined
+  saveToCacheAction: (data: ReturnValue) => any
+  fetchData: (args: Args) => Promise<ReturnValue>
+  shouldFetchCondition?: (cachedData: ReturnValue | undefined) => boolean
+}) {
+  const currentlyFetchingMap = new Map<string, Promise<ReturnValue>>()
+  return createAsyncThunk<ReturnValue, Args & { reload?: boolean }, ThunkApiConfig>(
+    `${sliceName}/fetchOne`,
+    async (allArgs, { getState, dispatch }): Promise<ReturnValue> => {
+      const { reload, ...args } = allArgs
+      const id = JSON.stringify(sortKeysRecursive(args))
+      if (!reload) {
+        const fetchedData = getCachedData(getState(), allArgs)
+        if (fetchedData && !shouldFetchCondition?.(fetchedData)) return fetchedData
+      }
+      const alreadyFetchedPromise = currentlyFetchingMap.get(id)
+      if (alreadyFetchedPromise) return alreadyFetchedPromise
+
+      const promise = fetchData(allArgs)
+      currentlyFetchingMap.set(id, promise)
+      const res = await promise
+
+      currentlyFetchingMap.delete(id)
+      await dispatch(saveToCacheAction(res))
+
+      return promise
+    },
+  )
 }

@@ -5,11 +5,12 @@ import {
   LinkedinOutlined,
   LinkOutlined,
   RedditOutlined,
-  ShareAltOutlined,
   TwitterOutlined,
 } from '@ant-design/icons'
 import { Button, Dropdown, Menu } from 'antd'
+import clsx from 'clsx'
 import { useState } from 'react'
+import { AiOutlineShareAlt } from 'react-icons/ai'
 import {
   copyUrl,
   facebookShareUrl,
@@ -27,7 +28,6 @@ import SharePostLink from '../SharePostLink'
 type ShareMenuProps = {
   postDetails: PostWithSomeDetails
   space?: SpaceStruct
-  preview?: boolean
   title?: string
   className?: string
   onClick?: FVoid
@@ -111,10 +111,12 @@ const ShareMenu = (props: ShareMenuProps) => {
   )
 }
 
-const ShareIcon = <ShareAltOutlined />
+const ShareIcon = (
+  <AiOutlineShareAlt className='FontSemilarge' style={{ position: 'relative', top: '0.07em' }} />
+)
 
 export const ShareDropdown = (props: ShareMenuProps) => {
-  const { preview, title = 'Share', className, postDetails } = props
+  const { title = 'Share', className, postDetails } = props
   const {
     post: {
       struct: { sharesCount },
@@ -131,12 +133,8 @@ export const ShareDropdown = (props: ShareMenuProps) => {
       placement='bottomCenter'
       overlay={<ShareMenu onClick={hide} {...props} />}
     >
-      <Button className={className} title={preview ? title : undefined}>
-        <IconWithLabel
-          icon={ShareIcon}
-          count={sharesCount || 0}
-          label={!preview ? title : undefined}
-        />
+      <Button className={clsx(className, 'ColorMuted')} title={title}>
+        <IconWithLabel icon={ShareIcon} count={sharesCount || 0} />
       </Button>
     </Dropdown>
   )
