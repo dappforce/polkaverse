@@ -170,7 +170,7 @@ export const PageContent: FC<Props> = ({
                 margin: -BOX_SHADOW_OFFSET,
                 padding: BOX_SHADOW_OFFSET,
               }}
-              className='HideScrollbar sm:hidden'
+              className='HideScrollbar sm-hidden'
             >
               <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
               {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}
