@@ -11,6 +11,7 @@ import CreatorDashboardSidebar, {
 } from '../creators/CreatorDashboardSidebar'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { fullUrl } from '../urls/helpers'
+import { isServerSide } from '../utils'
 import Section from '../utils/Section'
 
 const { metaTags, canonicalUrl, appBaseUrl } = config
@@ -121,12 +122,13 @@ export const PageContent: FC<Props> = ({
   // const myAddress = useMyAddress()
 
   const isMobile = useIsMobileWidthOrDevice()
+  const shouldRenderMobileLayout = isMobile || isServerSide()
   // const isPanels = leftPanel || rightPanel
   return (
     <>
       <HeadMeta {...meta} />
 
-      {isMobile ? (
+      {shouldRenderMobileLayout ? (
         <section className={className}>
           {children}
           {/* {showOnBoarding && <Affix offsetBottom={5}><OnBoardingMobileCard /></Affix>} */}
