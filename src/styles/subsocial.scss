@@ -2171,3 +2171,9 @@ hr {
 .ant-form-item-explain {
   margin-top: 4px;
 }
+
+@media screen and (max-width: 768px) {
+  .sm:hidden {
+    display: none !important;
+  }
+}
