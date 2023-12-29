@@ -11,7 +11,6 @@ import CreatorDashboardSidebar, {
 } from '../creators/CreatorDashboardSidebar'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { fullUrl } from '../urls/helpers'
-import { isServerSide } from '../utils'
 import Section from '../utils/Section'
 
 const { metaTags, canonicalUrl, appBaseUrl } = config
@@ -159,7 +158,7 @@ export const PageContent: FC<Props> = ({
             {/* {isPanels && <div className='DfRightPanel DfPanel'>{rightPanel}</div>} */}
           </section>
           {rightPanel}
-          {rightPanel === undefined && creatorDashboardSidebarType && !isServerSide() && (
+          {rightPanel === undefined && creatorDashboardSidebarType && (
             <div
               style={{
                 width: SIDEBAR_WIDTH + BOX_SHADOW_OFFSET * 2,
@@ -171,7 +170,7 @@ export const PageContent: FC<Props> = ({
                 margin: -BOX_SHADOW_OFFSET,
                 padding: BOX_SHADOW_OFFSET,
               }}
-              className='HideScrollbar'
+              className='HideScrollbar sm:hidden'
             >
               <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
               {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}
