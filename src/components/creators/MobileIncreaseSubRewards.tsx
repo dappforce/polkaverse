@@ -20,7 +20,14 @@ export default function MobileIncreaseSubRewards(props: MobileIncreaseSubRewards
   if (!data?.hasStaked && space?.id) return null
 
   return (
-    <div {...props} className={clsx(props.className, styles.MobileIncreaseSubRewards)}>
+    <div
+      {...props}
+      className={clsx(
+        props.className,
+        styles.MobileIncreaseSubRewards,
+        isActiveStakingBanner && styles.ActiveStakingBanner,
+      )}
+    >
       <span className={styles.Title}>
         {isActiveStakingBanner ? 'Active Staking' : 'Increase SUB rewards'}
       </span>
