@@ -86,7 +86,7 @@ export const SpaceFilterView = ({ filter: { type, date }, ...props }: SpaceFilte
 const onChangeWrap = (onChange: OnChangeFn) => (e: RadioChangeEvent) => onChange(e.target.value)
 
 export const Filters = (props: Props) => {
-  const { tabKey } = props
+  const { tabKey, isAffix } = props
   const { isMobile } = useResponsiveSize()
 
   const router = useRouter()
@@ -106,7 +106,7 @@ export const Filters = (props: Props) => {
   if (!needDateFilter && !filterByKey[tabKey]?.length) return null
 
   return (
-    <div className='DfFilters'>
+    <div className={`DfFilters ${!isAffix ? 'mt-3' : ''}`}>
       <Row className={style.DfGridParams}>
         {!isMobile ? (
           <Col className={needDateFilter ? style.DfCol : 'ant-col-24'}>
