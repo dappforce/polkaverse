@@ -169,12 +169,12 @@ const TabsHomePage = ({
   }, [tab, type, date])
 
   const myAddress = useMyAddress()
-  const { data } = useFetchTotalStake(myAddress ?? '')
+  const { data, loading } = useFetchTotalStake(myAddress ?? '')
   const isMobile = useIsMobileWidthOrDevice()
 
   return (
     <>
-      {isMobile && (
+      {isMobile && !loading && (
         <MobileIncreaseSubRewards
           style={{ margin: '-12px -16px 0' }}
           isActiveStakingBanner={!data?.hasStaked}
