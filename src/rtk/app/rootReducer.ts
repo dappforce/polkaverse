@@ -1,6 +1,7 @@
 import { combineReducers } from '@reduxjs/toolkit'
 import myAccount from '../features/accounts/myAccountSlice'
 import spaceEditors from '../features/accounts/spaceEditorsSlice'
+import rewardReport from '../features/activeStaking/rewardReport'
 import superLikeCounts from '../features/activeStaking/superLikeCountsSlice'
 import chainsInfo from '../features/chainsInfo/chainsInfoSlice'
 import chat from '../features/chat/chatSlice'
@@ -57,6 +58,7 @@ const rootReducer = combineReducers({
   totalStake,
   creatorsList,
   superLikeCounts,
+  rewardReport,
 })
 
 export type RootState = ReturnType<typeof rootReducer>
