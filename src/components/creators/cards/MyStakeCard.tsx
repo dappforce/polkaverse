@@ -1,5 +1,5 @@
 import { SpaceData } from '@subsocial/api/types'
-import { Button, Skeleton } from 'antd'
+import { Button, Skeleton, Tooltip } from 'antd'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { BsBoxArrowUpRight } from 'react-icons/bs'
@@ -44,7 +44,9 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
         <div className={clsx(styles.MyStake, isMobile && 'flex-column')}>
           <div className='FontSmall ColorMuted d-flex align-items-center GapMini'>
             <span>My Stake</span>
-            <SlQuestion className={clsx('FontTiny', styles.HelpIcon)} />
+            <Tooltip title='How many tokens you have staked towards this creator'>
+              <SlQuestion className={clsx('FontTiny', styles.HelpIcon)} />
+            </Tooltip>
           </div>
           {loading ? (
             <Skeleton round paragraph={false} className={styles.Skeleton} />
