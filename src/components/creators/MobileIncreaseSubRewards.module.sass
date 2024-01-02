@@ -21,7 +21,12 @@
       .Arrow
         transition: transform 300ms
         &.IsOpen
-          transform: rotate(90deg)
+          transform: rotate(-90deg)
+
+      .CountProgress
+        transition: opacity 300ms
+        &.IsOpen
+          opacity: 0
 
     .Gradient
       z-index: 0

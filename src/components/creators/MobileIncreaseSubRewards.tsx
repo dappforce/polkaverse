@@ -37,8 +37,8 @@ export default function MobileStakerRewardDashboard(props: MobileStakerRewardDas
               <SlQuestion className='FontSmall ColorMuted' />
             </Tooltip>
           </span>
-          <div className='d-flex align-items-center GapTiny'>
-            <span className='FontWeightSemibold'>
+          <div className={clsx('d-flex align-items-center GapTiny')}>
+            <span className={clsx('FontWeightSemibold', styles.CountProgress, isOpenClassName)}>
               <span>{likesCount}</span>
               <span className='ColorMuted'>/{CREATORS_CONSTANTS.SUPER_LIKES_FOR_MAX_REWARD}</span>
             </span>
