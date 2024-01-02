@@ -2,7 +2,6 @@ import { SpaceData } from '@subsocial/api/types'
 import { Button, Skeleton } from 'antd'
 import clsx from 'clsx'
 import Link from 'next/link'
-import { BsBoxArrowUpRight } from 'react-icons/bs'
 import { SlQuestion } from 'react-icons/sl'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { FormatBalance } from 'src/components/common/balances'
@@ -56,7 +55,7 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
         </div>
         <Button
           className={clsx(
-            'd-flex align-items-center GapTiny justify-content-center FontWeightMedium',
+            'd-flex align-items-center GapTiny justify-content-center FontWeightMedium pt-1',
             !isMobile && 'mt-3',
           )}
           type='primary'
@@ -66,7 +65,7 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
           target='_blank'
         >
           Manage{isMobile ? '' : ' my stake'}
-          <BsBoxArrowUpRight />
+          {/* <BsBoxArrowUpRight /> */}
         </Button>
       </div>
     </Segment>
