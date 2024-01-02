@@ -8,11 +8,10 @@ import config from 'src/config'
 import { GET_TOTAL_COUNTS } from 'src/graphql/queries'
 import { GetHomePageData } from 'src/graphql/__generated__/GetHomePageData'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
-import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { PostKind } from 'src/types/graphql-global-types'
-import { useIsSignedIn, useMyAddress } from '../auth/MyAccountsContext'
+import { useIsSignedIn } from '../auth/MyAccountsContext'
 import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar'
-import MobileIncreaseSubRewards from '../creators/MobileIncreaseSubRewards'
+import MobileStakerRewardDashboard from '../creators/MobileIncreaseSubRewards'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
 import Section from '../utils/Section'
@@ -168,18 +167,11 @@ const TabsHomePage = ({
     }
   }, [tab, type, date])
 
-  const myAddress = useMyAddress()
-  const { data } = useFetchTotalStake(myAddress ?? '')
   const isMobile = useIsMobileWidthOrDevice()
 
   return (
     <>
-      {isMobile && (
-        <MobileIncreaseSubRewards
-          style={{ margin: '-12px -16px 0' }}
-          isActiveStakingBanner={!data?.hasStaked}
-        />
-      )}
+      {isMobile && <MobileStakerRewardDashboard style={{ margin: '-12px -16px 0' }} />}
       <span>
         <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />
       </span>

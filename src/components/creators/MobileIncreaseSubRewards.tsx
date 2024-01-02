@@ -1,45 +1,33 @@
-import { SpaceData } from '@subsocial/api/types'
 import clsx from 'clsx'
-import Link from 'next/link'
 import { ComponentProps } from 'react'
-import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
-import { activeStakingLinks } from 'src/utils/links'
+import { HiChevronRight } from 'react-icons/hi2'
+import { SlQuestion } from 'react-icons/sl'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
-import { MutedSpan } from '../utils/MutedText'
 import styles from './MobileIncreaseSubRewards.module.sass'
 
-export type MobileIncreaseSubRewardsProps = ComponentProps<'div'> & {
-  space?: SpaceData
-  isActiveStakingBanner?: boolean
-}
+export type MobileStakerRewardDashboardProps = ComponentProps<'div'>
 
-export default function MobileIncreaseSubRewards(props: MobileIncreaseSubRewardsProps) {
-  const { space, isActiveStakingBanner } = props
+export default function MobileStakerRewardDashboard(props: MobileStakerRewardDashboardProps) {
   const myAddress = useMyAddress()
-  const { data } = useFetchStakeData(myAddress ?? '', space?.id || '')
-  if (!data?.hasStaked && space?.id) return null
+  const { data } = useFetchTotalStake(myAddress ?? '')
+  if (!data?.hasStaked) return null
 
   return (
-    <div
-      {...props}
-      className={clsx(
-        props.className,
-        styles.MobileIncreaseSubRewards,
-        isActiveStakingBanner && styles.ActiveStakingBanner,
-      )}
-    >
-      <span className={styles.Title}>
-        {isActiveStakingBanner ? 'Active Staking' : 'Increase SUB rewards'}
-      </span>
-      {isActiveStakingBanner ? (
-        <MutedSpan className={styles.Link}>Coming soon</MutedSpan>
-      ) : (
-        <Link href={activeStakingLinks.learnMore} passHref>
-          <a target='_blank' className={styles.Link}>
-            Learn more
-          </a>
-        </Link>
-      )}
+    <div {...props} className={clsx(props.className, styles.MobileIncreaseSubRewards)}>
+      <div className={styles.Content}>
+        <span className={clsx('d-flex GapTiny align-items-center')}>
+          <span className='FontWeightSemibold'>Extra SUB rewards</span>
+          <SlQuestion className='FontSmall ColorMuted' />
+        </span>
+        <div className='d-flex align-items-center GapTiny'>
+          <span className='FontWeightSemibold'>
+            <span>8</span>
+            <span className='ColorMuted'>/10</span>
+          </span>
+          <HiChevronRight className='ColorMuted FontBig' />
+        </div>
+      </div>
       <div className={styles.Gradient} />
     </div>
   )

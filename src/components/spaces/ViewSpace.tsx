@@ -16,7 +16,7 @@ import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import MyStakeCard from '../creators/cards/MyStakeCard'
 import StakeSubCard from '../creators/cards/StakeSubCard'
-import MobileIncreaseSubRewards from '../creators/MobileIncreaseSubRewards'
+import MobileStakerRewardDashboard from '../creators/MobileIncreaseSubRewards'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { editSpaceUrl, spaceUrl } from '../urls'
@@ -124,7 +124,7 @@ export const InnerViewSpace = (props: Props) => {
   const setChatConfig = useSetChatEntityConfig()
   const setChatOpen = useSetChatOpen()
 
-  const { isCreatorSpace, loading } = useIsCreatorSpace(spaceData?.id)
+  const { isCreatorSpace } = useIsCreatorSpace(spaceData?.id)
 
   // We do not return 404 page here, because this component could be used to render a space in list.
   if (!spaceData) return null
@@ -292,13 +292,11 @@ export const InnerViewSpace = (props: Props) => {
     )
   }
 
-  const showCreatorCards = isCreatorSpace && isMobile && !loading
+  const showCreatorCards = isMobile
 
   return (
     <Section className='mt-3'>
-      {showCreatorCards && (
-        <MobileIncreaseSubRewards space={spaceData} style={{ margin: '-28px -16px 0' }} />
-      )}
+      {showCreatorCards && <MobileStakerRewardDashboard style={{ margin: '-28px -16px 0' }} />}
       <PendingSpaceOwnershipPanel space={space} />
       <HiddenSpaceAlert space={space} />
       <Section className='pt-2'>{renderPreview()}</Section>
@@ -312,10 +310,11 @@ export const InnerViewSpace = (props: Props) => {
 }
 
 function MobileCreatorCard({ spaceData }: { spaceData: SpaceData }) {
+  const { isCreatorSpace, loading: loadingIsCreator } = useIsCreatorSpace(spaceData.id)
   const myAddress = useMyAddress()
   const { data, loading } = useFetchStakeData(myAddress ?? '', spaceData.id)
 
-  if (loading) return null
+  if (loading || loadingIsCreator || !isCreatorSpace) return null
 
   return (
     <div className='mt-4'>
