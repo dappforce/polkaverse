@@ -42,7 +42,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
           <span className='FontWeightSemibold d-flex align-items-center'>
             {loading ? <NumberSkeleton /> : <span>{likeCount}</span>}
             <MutedSpan>/10</MutedSpan>
-            {!!surplusLike && <span> +{surplusLike}</span>}
+            {!!surplusLike && <span className='ml-1'> +{surplusLike}</span>}
           </span>
         </div>
         <StakerRewardProgressBar size={size} className='mt-1' />
