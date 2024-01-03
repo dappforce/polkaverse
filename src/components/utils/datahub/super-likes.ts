@@ -69,7 +69,7 @@ function getDayAndWeekTimestamp(currentDate: Date = new Date()) {
   let date = dayjs.utc(currentDate)
   date = date.startOf('day')
   const week = date.get('year') * 100 + date.week()
-  return { day: date.unix() / 1000, week }
+  return { day: date.unix(), week }
 }
 export async function getRewardReport(address: string): Promise<RewardReport> {
   const res = await datahubQueryRequest<
