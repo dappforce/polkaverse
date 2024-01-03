@@ -131,7 +131,6 @@ export function subscribeSuperLike(myAddress: string | undefined) {
   isSubscribed = true
 
   const client = datahubSubscription()
-  console.log('sub')
   let unsub = client.subscribe(
     {
       query: SUBSCRIBE_SUPER_LIKE,
@@ -139,7 +138,6 @@ export function subscribeSuperLike(myAddress: string | undefined) {
     {
       complete: () => undefined,
       next: async data => {
-        console.log('next subscription', data)
         const eventData = data.data?.activeStakingSuperLike
         if (!eventData) return
 
@@ -152,7 +150,6 @@ export function subscribeSuperLike(myAddress: string | undefined) {
   )
 
   return () => {
-    console.log('unsub')
     unsub()
     isSubscribed = false
   }
@@ -171,9 +168,7 @@ async function processSubscriptionEvent(
   )
     return
 
-  // process
   const { post, staker } = eventData.entity
-  console.log(eventData)
   const dispatch = getStoreDispatcher()
   if (!dispatch) throw new Error('Dispatcher not exist')
 
