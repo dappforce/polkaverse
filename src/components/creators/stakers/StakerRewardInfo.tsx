@@ -1,7 +1,9 @@
 import { Skeleton } from 'antd'
 import clsx from 'clsx'
+import dayjs from 'dayjs'
 import { ComponentProps } from 'react'
 import { SlQuestion } from 'react-icons/sl'
+import { FormatBalance } from 'src/components/common/balances'
 import { MutedSpan } from 'src/components/utils/MutedText'
 import { Pluralize } from 'src/components/utils/Plularize'
 import { CREATORS_CONSTANTS } from 'src/config/constants'
@@ -22,9 +24,9 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
   const surplusLike = isMoreThanMax ? likeCount - SUPER_LIKES_FOR_MAX_REWARD : 0
   const likesLeftToGoal = SUPER_LIKES_FOR_MAX_REWARD - likeCount
 
-  const todayReward = data?.currentRewardAmount ?? 0
-  const weekReward = data?.weeklyReward ?? 0 + todayReward
-  const dayLeftUntilDistribution = DISTRIBUTION_DAY + 7 - new Date().getDay()
+  const todayReward = data?.currentRewardAmount ?? '0'
+  const weekReward = data?.weeklyReward ?? '0'
+  const dayLeftUntilDistribution = DISTRIBUTION_DAY + 7 - dayjs.utc().get('day')
 
   return (
     <div {...props} className={clsx(styles.StakerRewardInfo, props.className)}>
@@ -46,28 +48,39 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
         <StakerRewardProgressBar size={size} className='mt-1' />
       </div>
       <div className='d-flex flex-column GapTiny mt-2'>
-        <div className='d-flex justify-content-between'>
+        <div className='d-flex justify-content-between align-items-center'>
           <div className='d-flex align-items-baseline GapMini'>
             <MutedSpan className={clsx('FontSmall')}>Approx. today</MutedSpan>
             {/* TODO: add tooltip */}
             <SlQuestion className='FontTiny ColorMuted' />
           </div>
           <span className='FontWeightSemibold d-flex align-items-center GapMini'>
-            {loading ? <NumberSkeleton /> : <span>≈{todayReward} </span>}
-            SUB
+            {loading ? (
+              <NumberSkeleton />
+            ) : (
+              <span>
+                ≈<FormatBalance decimals={10} value={todayReward} isShort />{' '}
+              </span>
+            )}
           </span>
         </div>
-        <div className='d-flex justify-content-between'>
+        <div className='d-flex justify-content-between align-items-center'>
           <div className='d-flex align-items-baseline GapMini'>
             <MutedSpan className={clsx('FontSmall')}>Approx. this week</MutedSpan>
             {/* TODO: add tooltip */}
             <SlQuestion className='FontTiny ColorMuted' />
           </div>
           <span className='FontWeightSemibold d-flex align-items-center GapMini'>
-            {loading ? <NumberSkeleton /> : <span>≈{weekReward} </span>} SUB
+            {loading ? (
+              <NumberSkeleton />
+            ) : (
+              <span>
+                ≈<FormatBalance value={weekReward.toString()} decimals={10} isShort />
+              </span>
+            )}
           </span>
         </div>
-        <div className='d-flex justify-content-between'>
+        <div className='d-flex justify-content-between align-items-center'>
           <div className='d-flex align-items-baseline GapMini'>
             <MutedSpan className={clsx('FontSmall')}>Distribution in</MutedSpan>
             {/* TODO: add tooltip */}

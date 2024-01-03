@@ -5,8 +5,8 @@ import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 
 export type RewardReport = {
   superLikesCount: number
-  currentRewardAmount: number
-  weeklyReward: number
+  currentRewardAmount: string
+  weeklyReward: string
   address: string
 }
 
