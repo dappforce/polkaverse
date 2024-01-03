@@ -58,7 +58,10 @@ export function useFetchWithoutApi<Args, Struct>(
 
   const isEnabled = !!enabled
   useEffect(() => {
-    if (!isEnabled) return
+    if (!isEnabled) {
+      setLoading(false)
+      return
+    }
 
     let isMounted = true
     setError(undefined)
