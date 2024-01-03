@@ -66,20 +66,20 @@ const GET_REWARD_REPORT = gql`
 `
 
 function getDayAndWeekTimestamp(currentDate: Date = new Date()) {
-  let date = dayjs(currentDate).utc()
-  date = date.set('hour', 0).set('minute', 0).set('second', 0).set('millisecond', 0)
+  let date = dayjs.utc(currentDate)
+  date = date.startOf('day')
   const week = date.get('year') * 100 + date.week()
-  return { day: date.valueOf() / 1000, week }
+  return { day: date.unix() / 1000, week }
 }
 export async function getRewardReport(address: string): Promise<RewardReport> {
   const res = await datahubQueryRequest<
     {
       activeStakingDailyStatsByStaker: {
         superLikesCount: number
-        currentRewardAmount: number
+        currentRewardAmount: string
       }
       activeStakingRewardsByWeek: {
-        staker: number
+        staker: string
       }
     },
     { address: string; day: number; week: number }
