@@ -34,6 +34,7 @@ export const datahubQueueConfig = {
 }
 
 export const datahubQueryUrl = process.env['NEXT_PUBLIC_DATAHUB_QUERY_URL']
+export const datahubSubscriptionUrl = process.env['NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL']
 
 /**
  * Enable or disable the available features of this web app by overriding them in the .env file.

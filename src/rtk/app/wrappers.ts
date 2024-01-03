@@ -209,7 +209,7 @@ export function createSimpleFetchWrapper<Args, ReturnValue>({
       const id = JSON.stringify(sortKeysRecursive(args))
 
       const alreadyFetchedPromise = currentlyFetchingMap.get(id)
-      if (alreadyFetchedPromise) return alreadyFetchedPromise
+      if (alreadyFetchedPromise && !reload) return alreadyFetchedPromise
 
       if (!reload) {
         const fetchedData = getCachedData(getState(), allArgs)

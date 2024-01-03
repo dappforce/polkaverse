@@ -6,7 +6,10 @@ import {
   socialEventProtVersion,
 } from '@subsocial/data-hub-sdk'
 import { GraphQLClient, RequestOptions, Variables } from 'graphql-request'
-import { datahubQueryUrl } from 'src/config/env'
+import { Client, createClient } from 'graphql-ws'
+import ws from 'isomorphic-ws'
+import { datahubQueryUrl, datahubSubscriptionUrl } from 'src/config/env'
+import { wait } from 'src/utils/promise'
 
 // QUERIES
 export function datahubQueryRequest<T, V extends Variables = Variables>(
@@ -51,4 +54,24 @@ export function createSocialDataEventPayload<T extends keyof typeof socialCallNa
     sig: '',
   }
   return payload
+}
+
+// SUBSCRIPTION
+let client: Client | null = null
+function getClient() {
+  if (!datahubSubscriptionUrl) throw new Error('Datahub (Subscription) config is not set')
+  if (!client) {
+    client = createClient({
+      webSocketImpl: ws,
+      url: datahubSubscriptionUrl,
+      shouldRetry: () => true,
+      retryWait: async attempt => {
+        await wait(2 ** attempt * 1000)
+      },
+    })
+  }
+  return client
+}
+export function datahubSubscription() {
+  return getClient()
 }

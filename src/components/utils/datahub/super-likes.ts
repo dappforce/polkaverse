@@ -1,9 +1,22 @@
-import { SocialCallDataArgs, socialCallName } from '@subsocial/data-hub-sdk'
+import {
+  DataHubSubscriptionEventEnum,
+  SocialCallDataArgs,
+  socialCallName,
+} from '@subsocial/data-hub-sdk'
 import axios from 'axios'
 import { gql } from 'graphql-request'
-import { RewardReport } from 'src/rtk/features/activeStaking/rewardReport'
-import { SuperLikeCount } from 'src/rtk/features/activeStaking/superLikeCountsSlice'
-import { createSocialDataEventPayload, DatahubParams, datahubQueryRequest } from './utils'
+import { getStoreDispatcher } from 'src/rtk/app/store'
+import { fetchRewardReport, RewardReport } from 'src/rtk/features/activeStaking/rewardReport'
+import {
+  fetchSuperLikeCounts,
+  SuperLikeCount,
+} from 'src/rtk/features/activeStaking/superLikeCountsSlice'
+import {
+  createSocialDataEventPayload,
+  DatahubParams,
+  datahubQueryRequest,
+  datahubSubscription,
+} from './utils'
 
 // QUERIES
 const GET_SUPER_LIKE_COUNTS = gql`
@@ -93,4 +106,79 @@ export async function createSuperLike(
 
   const res = await axios.post('/api/datahub/super-likes', input)
   return res.data
+}
+
+// SUBSCRIPTION
+const SUBSCRIBE_SUPER_LIKE = gql`
+  subscription SubscribeSuperLike {
+    activeStakingSuperLike {
+      event
+      entity {
+        staker {
+          id
+        }
+        post {
+          persistentId
+        }
+      }
+    }
+  }
+`
+
+let isSubscribed = false
+export function subscribeSuperLike(myAddress: string | undefined) {
+  if (isSubscribed) return
+  isSubscribed = true
+
+  const client = datahubSubscription()
+  console.log('sub')
+  let unsub = client.subscribe(
+    {
+      query: SUBSCRIBE_SUPER_LIKE,
+    },
+    {
+      complete: () => undefined,
+      next: async data => {
+        console.log('next subscription', data)
+        const eventData = data.data?.activeStakingSuperLike
+        if (!eventData) return
+
+        await processSubscriptionEvent(eventData as any, myAddress)
+      },
+      error: () => {
+        console.log('error subscription')
+      },
+    },
+  )
+
+  return () => {
+    console.log('unsub')
+    unsub()
+    isSubscribed = false
+  }
+}
+
+async function processSubscriptionEvent(
+  eventData: {
+    event: DataHubSubscriptionEventEnum
+    entity: { staker: { id: string }; post: { persistentId: string } }
+  },
+  myAddress: string | undefined,
+) {
+  if (
+    eventData.event !== DataHubSubscriptionEventEnum.ACTIVE_STAKING_SUPER_LIKE_CREATED &&
+    eventData.event !== DataHubSubscriptionEventEnum.ACTIVE_STAKING_SUPER_LIKE_STATE_UPDATED
+  )
+    return
+
+  // process
+  const { post, staker } = eventData.entity
+  console.log(eventData)
+  const dispatch = getStoreDispatcher()
+  if (!dispatch) throw new Error('Dispatcher not exist')
+
+  dispatch(fetchSuperLikeCounts({ postIds: [post.persistentId], reload: true }))
+  if (staker.id === myAddress) {
+    dispatch(fetchRewardReport({ address: myAddress, reload: true }))
+  }
 }
