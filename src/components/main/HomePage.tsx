@@ -171,7 +171,11 @@ const TabsHomePage = ({
 
   return (
     <>
-      {isMobile && <MobileStakerRewardDashboard style={{ margin: '-12px -16px 0' }} />}
+      {isMobile && (
+        <MobileStakerRewardDashboard
+          style={{ margin: '-12px -16px 0', position: 'sticky', top: '64px', zIndex: 10 }}
+        />
+      )}
       <span>
         <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />
       </span>
