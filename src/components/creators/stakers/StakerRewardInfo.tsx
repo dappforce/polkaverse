@@ -31,7 +31,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
       <div className={styles.Goal}>
         <div className={styles.GoalInfo}>
           <div className='d-flex align-items-baseline GapMini'>
-            <MutedSpan className={clsx(size === 'small' && 'FontSmall')}>
+            <MutedSpan className={clsx('FontSmall')}>
               {likesLeftToGoal <= 0 ? 'Goal achieved' : `Like ${likesLeftToGoal} more posts`}
             </MutedSpan>
             {/* TODO: add tooltip */}
@@ -48,7 +48,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
       <div className='d-flex flex-column GapTiny mt-2'>
         <div className='d-flex justify-content-between'>
           <div className='d-flex align-items-baseline GapMini'>
-            <MutedSpan className={clsx(size === 'small' && 'FontSmall')}>Approx. today</MutedSpan>
+            <MutedSpan className={clsx('FontSmall')}>Approx. today</MutedSpan>
             {/* TODO: add tooltip */}
             <SlQuestion className='FontTiny ColorMuted' />
           </div>
@@ -59,9 +59,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
         </div>
         <div className='d-flex justify-content-between'>
           <div className='d-flex align-items-baseline GapMini'>
-            <MutedSpan className={clsx(size === 'small' && 'FontSmall')}>
-              Approx. this week
-            </MutedSpan>
+            <MutedSpan className={clsx('FontSmall')}>Approx. this week</MutedSpan>
             {/* TODO: add tooltip */}
             <SlQuestion className='FontTiny ColorMuted' />
           </div>
@@ -71,7 +69,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
         </div>
         <div className='d-flex justify-content-between'>
           <div className='d-flex align-items-baseline GapMini'>
-            <MutedSpan className={clsx(size === 'small' && 'FontSmall')}>Distribution in</MutedSpan>
+            <MutedSpan className={clsx('FontSmall')}>Distribution in</MutedSpan>
             {/* TODO: add tooltip */}
             <SlQuestion className='FontTiny ColorMuted' />
           </div>
