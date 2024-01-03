@@ -1,9 +1,14 @@
-import { Button } from 'antd'
+import { Button, Skeleton } from 'antd'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { HiArrowUpRight } from 'react-icons/hi2'
+import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import { CreatePostButtonAndModal } from 'src/components/posts/NewPostButtonInTopMenu'
+import { CreateSpaceButton } from 'src/components/spaces/helpers'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
+import { useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus } from 'src/rtk/app/hooks'
+import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
 import { activeStakingLinks } from 'src/utils/links'
 import { CreatorDashboardHomeVariant } from '../CreatorDashboardSidebar'
 import styles from './CreatePostCard.module.sass'
@@ -13,13 +18,13 @@ export type CreatePostCardProps = {
 }
 
 export default function CreatePostCard({ variant }: CreatePostCardProps) {
-  // const myAddress = useMyAddress()
+  const myAddress = useMyAddress()
 
-  // const { isLoading, spaceIds: ids } =
-  //   useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus(myAddress)
-  // const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: ids })
+  const { isLoading, spaceIds: ids } =
+    useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus(myAddress)
+  const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: ids })
 
-  // const anySpace = spaceIds[0]
+  const anySpace = spaceIds[0]
 
   let imagePath = '/images/creators/active-staking.jpeg'
   if (variant === 'spaces') imagePath = '/images/creators/registered-creators.jpeg'
@@ -43,8 +48,7 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
         </Link>
       </span>
       <div className='mt-3 GapSmall flex-column d-flex'>
-        <Button disabled>Coming soon</Button>
-        {/* {isLoading ? (
+        {isLoading ? (
           <Skeleton.Button className='w-100' />
         ) : anySpace ? (
           <CreatePostButtonAndModal>
@@ -61,7 +65,7 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
               Create profile
             </CreateSpaceButton>
           </div>
-        )} */}
+        )}
       </div>
     </Segment>
   )
