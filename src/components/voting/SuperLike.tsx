@@ -1,7 +1,7 @@
 import { PostStruct } from '@subsocial/api/types'
 import { Button, ButtonProps, Image } from 'antd'
 import clsx from 'clsx'
-import { CSSProperties, useState } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
 import { useSuperLikeCount } from 'src/rtk/features/activeStaking/hooks'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
@@ -21,6 +21,11 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
   const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
   const count = useSuperLikeCount(post.id)
   const isActive = true
+
+  const [optimisticCount, setOptimisticCount] = useState(count)
+  useEffect(() => {
+    setOptimisticCount(count)
+  }, [count])
 
   const openOnBoardingModal = useOpenCloseOnBoardingModal()
   const myAddress = useMyAddress()
@@ -42,7 +47,13 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
       return
     }
 
-    await createSuperLike({ address: myAddress, args: { postId: post.id } })
+    try {
+      setOptimisticCount(count => count + 1)
+      await createSuperLike({ address: myAddress, args: { postId: post.id } })
+    } catch (error) {
+      setOptimisticCount(count)
+    }
+
     if (localStorage.getItem(FIRST_TIME_SUPERLIKE) !== 'false') {
       setIsOpenActiveStakingModal(true)
     }
@@ -51,9 +62,9 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
 
   const likeStyle: CSSProperties = { position: 'relative', top: '0.07em' }
   const icon = isActive ? (
-    <AiFillHeart className='FontSemilarge ColorPrimary' style={likeStyle} />
+    <AiFillHeart className='FontLarge ColorPrimary' style={likeStyle} />
   ) : (
-    <AiOutlineHeart className='FontSemilarge' style={likeStyle} />
+    <AiOutlineHeart className='FontLarge' style={likeStyle} />
   )
   return (
     <>
@@ -61,7 +72,7 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
         className={clsx('DfVoterButton ColorMuted', isActive && 'ColorPrimary', props.className)}
         onClick={onClick}
       >
-        <IconWithLabel icon={icon} count={count} />
+        <IconWithLabel renderTextIfEmpty icon={icon} count={optimisticCount} />
       </Button>
       <CustomModal
         visible={isOpenActiveStakingModal}
