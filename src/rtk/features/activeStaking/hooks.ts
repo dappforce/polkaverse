@@ -6,7 +6,8 @@ import {
   getAddressLikeCountId,
   selectAddressLikeCount,
 } from './addressLikeCountSlice'
-import { fetchRewardReport, selectUserRewardReport } from './rewardReport'
+import { fetchRewardHistory, selectUserRewardHistory } from './rewardHistorySlice'
+import { selectUserRewardReport } from './rewardReportSlice'
 import { selectPostSuperLikeCount } from './superLikeCountsSlice'
 
 export function useSuperLikeCount(postId: string) {
@@ -39,9 +40,28 @@ export function useFetchUserRewardReport(address?: string) {
 
   const data = useAppSelector(state => selectUserRewardReport(state, usedAddress))
   const fetchData = useFetchWithoutApi(
-    fetchRewardReport,
+    fetchRewardHistory,
     { address: usedAddress },
     { enabled: !!usedAddress },
+  )
+
+  return {
+    ...fetchData,
+    data,
+  }
+}
+
+export function useFetchUserRewardHistory(address?: string, config?: { enabled?: boolean }) {
+  const { enabled } = config || {}
+  const myAddress = useMyAddress()
+  const usedAddress = address || myAddress || ''
+
+  const data = useAppSelector(state => selectUserRewardHistory(state, usedAddress))
+  console.log('enabled', !!usedAddress && enabled !== false)
+  const fetchData = useFetchWithoutApi(
+    fetchRewardHistory,
+    { address: usedAddress },
+    { enabled: !!usedAddress && enabled !== false },
   )
 
   return {

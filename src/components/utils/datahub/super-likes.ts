@@ -13,7 +13,8 @@ import {
   AddressLikeCount,
   fetchAddressLikeCountSlice,
 } from 'src/rtk/features/activeStaking/addressLikeCountSlice'
-import { fetchRewardReport, RewardReport } from 'src/rtk/features/activeStaking/rewardReport'
+import { RewardHistory } from 'src/rtk/features/activeStaking/rewardHistorySlice'
+import { fetchRewardReport, RewardReport } from 'src/rtk/features/activeStaking/rewardReportSlice'
 import {
   fetchSuperLikeCounts,
   SuperLikeCount,
@@ -110,7 +111,6 @@ const GET_REWARD_REPORT = gql`
     }
   }
 `
-
 function getDayAndWeekTimestamp(currentDate: Date = new Date()) {
   let date = dayjs.utc(currentDate)
   date = date.startOf('day')
@@ -138,6 +138,48 @@ export async function getRewardReport(address: string): Promise<RewardReport> {
     ...res.activeStakingDailyStatsByStaker,
     weeklyReward: res.activeStakingRewardsByWeek[0]?.staker ?? '0',
     address,
+  }
+}
+
+const GET_REWARD_HISTORY = gql`
+  query GetRewardHistory($address: String!) {
+    activeStakingRewardsByWeek(args: { filter: { account: $address } }) {
+      staker
+      week
+    }
+  }
+`
+export async function getRewardHistory(address: string): Promise<RewardHistory> {
+  console.log('FETCH GET REWARD HISTORY')
+  const res = await datahubQueryRequest<
+    {
+      activeStakingRewardsByWeek: {
+        staker: string
+        week: number
+      }[]
+    },
+    { address: string }
+  >({
+    document: GET_REWARD_HISTORY,
+    variables: { address },
+  })
+
+  return {
+    address,
+    rewards: res.activeStakingRewardsByWeek.map(({ staker, week }) => {
+      const startDate = dayjs
+        .utc()
+        .year(week / 100)
+        .week(week % 100)
+        .startOf('week')
+      const endDate = startDate.add(1, 'week')
+      return {
+        reward: staker,
+        week,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      }
+    }),
   }
 }
 
