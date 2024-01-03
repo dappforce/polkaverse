@@ -42,7 +42,13 @@ export default function StakerRewardProgressBar({
         size={size}
       />
       {progress > 100 && (
-        <Progress showInfo={false} percent={100} strokeColor='#5089F8' trailColor='#CBD5E1' />
+        <Progress
+          showInfo={false}
+          percent={100}
+          strokeColor='#5089F8'
+          trailColor='#CBD5E1'
+          size={size}
+        />
       )}
     </div>
   )
