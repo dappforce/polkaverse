@@ -77,6 +77,11 @@ jobs:
             GH_CONNECTION_KIND=main
             GH_SELLER_CLIENT_ID=${{ secrets.SELLER_CLIENT_ID }}
             GH_SELLER_TOKEN_SIGNER=${{ secrets.SELLER_TOKEN_SIGNER }}
+            GH_SERVER_MNEMONIC=${{ secrets.SERVER_MNEMONIC }}
+            GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=https://data-hub.subsocial.network/graphql
+            GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://data-hub.subsocial.network/graphql-ws
+            GH_DATAHUB_QUEUE_URL=https://queue-data-hub.subsocial.network/graphql
+            GH_DATAHUB_QUEUE_TOKEN=${{ secrets.DATAHUB_QUEUE_TOKEN }}
 
           tags: |
             ${{ env.image }}
