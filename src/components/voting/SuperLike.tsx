@@ -3,7 +3,7 @@ import { Button, ButtonProps, Image } from 'antd'
 import clsx from 'clsx'
 import { CSSProperties, useEffect, useState } from 'react'
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
-import { useSuperLikeCount } from 'src/rtk/features/activeStaking/hooks'
+import { useHasISuperLikedPost, useSuperLikeCount } from 'src/rtk/features/activeStaking/hooks'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
 import { useAuth } from '../auth/AuthContext'
 import { useMyAddress } from '../auth/MyAccountsContext'
@@ -20,12 +20,19 @@ const FIRST_TIME_SUPERLIKE = 'df.first-time-superlike'
 export default function SuperLike({ post, ...props }: SuperLikeProps) {
   const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
   const count = useSuperLikeCount(post.id)
-  const isActive = true
+  const hasILiked = useHasISuperLikedPost(post.id)
 
   const [optimisticCount, setOptimisticCount] = useState(count)
   useEffect(() => {
     setOptimisticCount(count)
   }, [count])
+
+  const [hasILikedOptimistic, setHasILikedOptimistic] = useState(hasILiked)
+  useEffect(() => {
+    setHasILikedOptimistic(hasILiked)
+  }, [hasILiked])
+
+  const isActive = hasILikedOptimistic
 
   const openOnBoardingModal = useOpenCloseOnBoardingModal()
   const myAddress = useMyAddress()
@@ -49,9 +56,11 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
 
     try {
       setOptimisticCount(count => count + 1)
+      setHasILikedOptimistic(true)
       await createSuperLike({ address: myAddress, args: { postId: post.id } })
     } catch (error) {
       setOptimisticCount(count)
+      setHasILikedOptimistic(hasILiked)
     }
 
     if (localStorage.getItem(FIRST_TIME_SUPERLIKE) !== 'false') {
@@ -70,6 +79,8 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
     <>
       <Button
         className={clsx('DfVoterButton ColorMuted', isActive && 'ColorPrimary', props.className)}
+        style={{ background: 'transparent' }}
+        disabled={isActive}
         onClick={onClick}
       >
         <IconWithLabel renderTextIfEmpty icon={icon} count={optimisticCount} />

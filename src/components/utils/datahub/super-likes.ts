@@ -9,7 +9,10 @@ import utc from 'dayjs/plugin/utc'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import { gql } from 'graphql-request'
 import { getStoreDispatcher } from 'src/rtk/app/store'
-import { AddressLikeCount } from 'src/rtk/features/activeStaking/addressLikeCountSlice'
+import {
+  AddressLikeCount,
+  fetchAddressLikeCountSlice,
+} from 'src/rtk/features/activeStaking/addressLikeCountSlice'
 import { fetchRewardReport, RewardReport } from 'src/rtk/features/activeStaking/rewardReport'
 import {
   fetchSuperLikeCounts,
@@ -102,7 +105,7 @@ const GET_REWARD_REPORT = gql`
       superLikesCount
       currentRewardAmount
     }
-    activeStakingRewardsByWeek(args: { week: $week, filter: { account: $address } }) {
+    activeStakingRewardsByWeek(args: { weeks: [$week], filter: { account: $address } }) {
       staker
     }
   }
@@ -123,7 +126,7 @@ export async function getRewardReport(address: string): Promise<RewardReport> {
       }
       activeStakingRewardsByWeek: {
         staker: string
-      }
+      }[]
     },
     { address: string; day: number; week: number }
   >({
@@ -133,7 +136,7 @@ export async function getRewardReport(address: string): Promise<RewardReport> {
 
   return {
     ...res.activeStakingDailyStatsByStaker,
-    weeklyReward: res.activeStakingRewardsByWeek.staker,
+    weeklyReward: res.activeStakingRewardsByWeek[0]?.staker ?? '0',
     address,
   }
 }
@@ -218,5 +221,12 @@ async function processSubscriptionEvent(
   dispatch(fetchSuperLikeCounts({ postIds: [post.persistentId], reload: true }))
   if (staker.id === myAddress) {
     dispatch(fetchRewardReport({ address: myAddress, reload: true }))
+    dispatch(
+      fetchAddressLikeCountSlice({
+        address: myAddress,
+        postIds: [post.persistentId],
+        reload: true,
+      }),
+    )
   }
 }

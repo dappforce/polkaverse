@@ -1,7 +1,11 @@
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { useFetchWithoutApi } from 'src/rtk/app/hooksCommon'
 import { useAppSelector } from 'src/rtk/app/store'
-import { fetchAddressLikeCountSlice } from './addressLikeCountSlice'
+import {
+  fetchAddressLikeCountSlice,
+  getAddressLikeCountId,
+  selectAddressLikeCount,
+} from './addressLikeCountSlice'
 import { fetchRewardReport, selectUserRewardReport } from './rewardReport'
 import { selectPostSuperLikeCount } from './superLikeCountsSlice'
 
@@ -16,6 +20,17 @@ export const useFetchMySuperLikesByPostIds = (postIds: string[]) => {
     { postIds, address: myAddress ?? '' },
     { enabled: !!myAddress && postIds.length > 0 },
   )
+}
+
+export function useHasISuperLikedPost(postId: string) {
+  const myAddress = useMyAddress() ?? ''
+  return useAppSelector(state => {
+    const entity = selectAddressLikeCount(
+      state,
+      getAddressLikeCountId({ address: myAddress, postId }),
+    )
+    return (entity?.count ?? 0) > 0
+  })
 }
 
 export function useFetchUserRewardReport(address?: string) {
