@@ -61,11 +61,13 @@ export default function MobileStakerRewardDashboard(props: MobileStakerRewardDas
         </div>
         <div className={clsx(styles.RewardInfo, isOpenClassName)}>
           <StakerRewardInfo size='small' className='pt-1 pb-0' />
-          <div className='pb-3 pt-1 px-3 d-flex justify-content-center align-items-center ColorPrimary FontWeightMedium GapMini'>
+          <div
+            className='pb-3 pt-1 px-3 d-flex justify-content-center align-items-center ColorPrimary FontWeightMedium GapMini'
+            onClick={() => setIsOpenRewardHistoryModal(true)}
+            style={{ cursor: 'pointer' }}
+          >
             <RiHistoryFill />
-            <span className='FontSmall' onClick={() => setIsOpenRewardHistoryModal(true)}>
-              Rewards History
-            </span>
+            <span className='FontSmall'>Rewards History</span>
           </div>
           <div className={clsx(styles.GradientOuter, isOpenClassName)} />
         </div>
