@@ -4,6 +4,9 @@ import {
   socialCallName,
 } from '@subsocial/data-hub-sdk'
 import axios from 'axios'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import weekOfYear from 'dayjs/plugin/weekOfYear'
 import { gql } from 'graphql-request'
 import { getStoreDispatcher } from 'src/rtk/app/store'
 import { fetchRewardReport, RewardReport } from 'src/rtk/features/activeStaking/rewardReport'
@@ -17,6 +20,9 @@ import {
   datahubQueryRequest,
   datahubSubscription,
 } from './utils'
+
+dayjs.extend(utc)
+dayjs.extend(weekOfYear)
 
 // QUERIES
 const GET_SUPER_LIKE_COUNTS = gql`
@@ -58,18 +64,12 @@ const GET_REWARD_REPORT = gql`
     }
   }
 `
-function getWeekNumber() {
-  const currentDate = new Date()
-  const startDate = new Date(currentDate.getFullYear(), 0, 1)
-  const days = Math.floor((currentDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000))
 
-  const weekNumber = Math.ceil(days / 7)
-  return weekNumber
-}
 function getDayAndWeekTimestamp(currentDate: Date = new Date()) {
-  const week = currentDate.getFullYear() * 100 + getWeekNumber()
-  currentDate.setHours(0, 0, 0, 0)
-  return { day: Math.floor(currentDate.getTime() / 1000), week }
+  let date = dayjs(currentDate).utc()
+  date = date.set('hour', 0).set('minute', 0).set('second', 0).set('millisecond', 0)
+  const week = date.get('year') * 100 + date.week()
+  return { day: date.valueOf() / 1000, week }
 }
 export async function getRewardReport(address: string): Promise<RewardReport> {
   const res = await datahubQueryRequest<
