@@ -7,7 +7,7 @@ import { CREATORS_CONSTANTS } from 'src/config/constants'
 import { useFetchUserRewardReport } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
-import styles from './MobileIncreaseSubRewards.module.sass'
+import styles from './MobileStakerRewardDashboard.module.sass'
 import StakerRewardInfo from './stakers/StakerRewardInfo'
 import StakerRewardProgressBar from './stakers/StakerRewardProgressBar'
 
@@ -26,7 +26,7 @@ export default function MobileStakerRewardDashboard(props: MobileStakerRewardDas
   const isOpenClassName = isOpen && styles.IsOpen
 
   return (
-    <div {...props} className={clsx(props.className, styles.MobileIncreaseSubRewards)}>
+    <div {...props} className={clsx(props.className, styles.MobileStakerRewardDashboard)}>
       <div className={clsx(styles.Summary)}>
         <div className={styles.Content}>
           <span className={clsx('d-flex GapTiny align-items-center')}>
