@@ -13,10 +13,16 @@ const CREATE_SUPER_LIKE = gql`
 
 export async function createSuperLikeServer(input: SocialEventDataApiInput) {
   const signedPayload = await backendSigWrapper(input)
-  await datahubQueueRequest({
+  const res = await datahubQueueRequest<{
+    activeStakingCreateSuperLike: { processed: boolean; message: string }
+  }>({
     document: CREATE_SUPER_LIKE,
     variables: {
       createSuperLikeInput: signedPayload,
     },
   })
+  if (!res.activeStakingCreateSuperLike.processed) {
+    console.log('throw error', res.activeStakingCreateSuperLike.message)
+    throw new Error(res.activeStakingCreateSuperLike.message)
+  }
 }

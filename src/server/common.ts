@@ -34,10 +34,14 @@ export function handlerWrapper<Input extends z.ZodTypeAny>(config: {
           return await handler(null, req, res)
         } catch (err) {
           console.error(`Error in ${errorLabel || 'handler'}:`, err)
+          let errorMessage = ''
+          if (err instanceof Error) {
+            errorMessage = err.message
+          }
           return res.status(500).send({
             success: false,
             message: 'Internal server error',
-            errors: err,
+            errors: errorMessage || err,
           } as ApiResponse<Output>)
         }
       }
@@ -56,10 +60,14 @@ export function handlerWrapper<Input extends z.ZodTypeAny>(config: {
         return await handler(params.data, req, res)
       } catch (err) {
         console.error(`Error in ${errorLabel || 'handler'}:`, err)
+        let errorMessage = ''
+        if (err instanceof Error) {
+          errorMessage = err.message
+        }
         return res.status(500).send({
           success: false,
           message: 'Internal server error',
-          errors: err,
+          errors: errorMessage || err,
         } as ApiResponse<Output>)
       }
     }
