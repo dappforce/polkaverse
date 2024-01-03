@@ -220,8 +220,8 @@ export function createSimpleFetchWrapper<Args, ReturnValue>({
       currentlyFetchingMap.set(id, promise)
       const res = await promise
 
-      currentlyFetchingMap.delete(id)
       await dispatch(saveToCacheAction(res))
+      currentlyFetchingMap.delete(id)
 
       return promise
     },

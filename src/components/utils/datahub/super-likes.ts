@@ -9,6 +9,7 @@ import utc from 'dayjs/plugin/utc'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import { gql } from 'graphql-request'
 import { getStoreDispatcher } from 'src/rtk/app/store'
+import { AddressLikeCount } from 'src/rtk/features/activeStaking/addressLikeCountSlice'
 import { fetchRewardReport, RewardReport } from 'src/rtk/features/activeStaking/rewardReport'
 import {
   fetchSuperLikeCounts,
@@ -47,10 +48,52 @@ export async function getSuperLikeCounts(postIds: string[]): Promise<SuperLikeCo
     variables: { postIds },
   })
 
-  return res.activeStakingSuperLikeCountsByPost.map(item => ({
-    postId: item.persistentPostId,
-    count: item.count,
-  }))
+  const resultMap = new Map<string, SuperLikeCount>()
+  res.activeStakingSuperLikeCountsByPost.forEach(item =>
+    resultMap.set(item.persistentPostId, {
+      postId: item.persistentPostId,
+      count: item.count,
+    }),
+  )
+
+  return postIds.map(postId => resultMap.get(postId) ?? { postId, count: 0 })
+}
+
+const GET_ADDRESS_LIKE_COUNT_TO_POSTS = gql`
+  query GetAddressLikeCountToPosts($address: String!, $postIds: [String!]!) {
+    activeStakingSuperLikeCountsByStaker(args: { postPersistentIds: $postIds, address: $address }) {
+      persistentPostId
+      count
+    }
+  }
+`
+export async function getAddressLikeCountToPosts(
+  address: string,
+  postIds: string[],
+): Promise<AddressLikeCount[]> {
+  const res = await datahubQueryRequest<
+    {
+      activeStakingSuperLikeCountsByStaker: {
+        persistentPostId: string
+        count: number
+      }[]
+    },
+    { postIds: string[]; address: string }
+  >({
+    document: GET_ADDRESS_LIKE_COUNT_TO_POSTS,
+    variables: { postIds, address },
+  })
+
+  const resultMap = new Map<string, AddressLikeCount>()
+  res.activeStakingSuperLikeCountsByStaker.forEach(item =>
+    resultMap.set(item.persistentPostId, {
+      address,
+      postId: item.persistentPostId,
+      count: item.count,
+    }),
+  )
+
+  return postIds.map(postId => resultMap.get(postId) ?? { address, postId, count: 0 })
 }
 
 const GET_REWARD_REPORT = gql`
