@@ -1,5 +1,5 @@
 import { PostStruct } from '@subsocial/api/types'
-import { Button, ButtonProps, Image } from 'antd'
+import { Button, ButtonProps } from 'antd'
 import clsx from 'clsx'
 import { CSSProperties, useEffect, useState } from 'react'
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
@@ -10,18 +10,17 @@ import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoard
 import { useAuth } from '../auth/AuthContext'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { IconWithLabel } from '../utils'
-import CustomModal from '../utils/CustomModal'
 import { createSuperLike } from '../utils/datahub/super-likes'
 
 export type SuperLikeProps = ButtonProps & {
   post: PostStruct
 }
 
-const FIRST_TIME_SUPERLIKE = 'df.first-time-superlike'
+// const FIRST_TIME_SUPERLIKE = 'df.first-time-superlike'
 
 export default function SuperLike({ post, ...props }: SuperLikeProps) {
   const dispatch = useAppDispatch()
-  const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
+  // const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
   const count = useSuperLikeCount(post.id)
   const hasILiked = useHasISuperLikedPost(post.id)
 
@@ -67,10 +66,10 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
       dispatch(fetchAddressLikeCountSlice({ address: myAddress, postIds: [post.id], reload: true }))
     }
 
-    if (localStorage.getItem(FIRST_TIME_SUPERLIKE) !== 'false') {
-      setIsOpenActiveStakingModal(true)
-    }
-    localStorage.setItem(FIRST_TIME_SUPERLIKE, 'false')
+    // if (localStorage.getItem(FIRST_TIME_SUPERLIKE) !== 'false') {
+    //   setIsOpenActiveStakingModal(true)
+    // }
+    // localStorage.setItem(FIRST_TIME_SUPERLIKE, 'false')
   }
 
   const likeStyle: CSSProperties = { position: 'relative', top: '0.04em' }
@@ -89,7 +88,7 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
       >
         <IconWithLabel renderTextIfEmpty icon={icon} count={optimisticCount} />
       </Button>
-      <CustomModal
+      {/* <CustomModal
         visible={isOpenActiveStakingModal}
         destroyOnClose
         onCancel={() => setIsOpenActiveStakingModal(false)}
@@ -112,7 +111,7 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
             Confirm
           </Button>
         </div>
-      </CustomModal>
+      </CustomModal> */}
     </>
   )
 }
