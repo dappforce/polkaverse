@@ -20,8 +20,6 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
   const { data, loading } = useFetchUserRewardReport()
 
   const likeCount = data?.superLikesCount ?? 0
-  const isMoreThanMax = likeCount > SUPER_LIKES_FOR_MAX_REWARD
-  const surplusLike = isMoreThanMax ? likeCount - SUPER_LIKES_FOR_MAX_REWARD : 0
   const likesLeftToGoal = SUPER_LIKES_FOR_MAX_REWARD - likeCount
 
   const todayReward = data?.currentRewardAmount ?? '0'
@@ -40,15 +38,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
               <SlQuestion className='FontTiny ColorMuted' />
             </Tooltip>
           </div>
-          <span className='FontWeightSemibold d-flex align-items-center'>
-            {loading ? (
-              <NumberSkeleton />
-            ) : (
-              <span>{Math.min(likeCount, SUPER_LIKES_FOR_MAX_REWARD)}</span>
-            )}
-            <MutedSpan>/10</MutedSpan>
-            {!!surplusLike && <span className='ml-1'> +{surplusLike}</span>}
-          </span>
+          <StakerSuperLikeCount />
         </div>
         <StakerRewardProgressBar size={size} className='mt-1' />
       </div>
@@ -101,6 +91,26 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
         </div>
       </div>
     </div>
+  )
+}
+
+export function StakerSuperLikeCount() {
+  const { data, loading } = useFetchUserRewardReport()
+
+  const likeCount = data?.superLikesCount ?? 0
+  const isMoreThanMax = likeCount > SUPER_LIKES_FOR_MAX_REWARD
+  const surplusLike = isMoreThanMax ? likeCount - SUPER_LIKES_FOR_MAX_REWARD : 0
+
+  return (
+    <span className='FontWeightSemibold d-flex align-items-center'>
+      {loading ? (
+        <NumberSkeleton />
+      ) : (
+        <span>{Math.min(likeCount, SUPER_LIKES_FOR_MAX_REWARD)}</span>
+      )}
+      <MutedSpan>/10</MutedSpan>
+      {!!surplusLike && <span className='ml-1'> +{surplusLike}</span>}
+    </span>
   )
 }
 

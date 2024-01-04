@@ -10,7 +10,7 @@ import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import styles from './MobileStakerRewardDashboard.module.sass'
 import StakerRewardHistoryModal from './stakers/StakerRewardHistoryModal'
-import StakerRewardInfo from './stakers/StakerRewardInfo'
+import StakerRewardInfo, { StakerSuperLikeCount } from './stakers/StakerRewardInfo'
 import StakerRewardProgressBar from './stakers/StakerRewardProgressBar'
 
 export type MobileStakerRewardDashboardProps = ComponentProps<'div'>
@@ -44,10 +44,9 @@ export default function MobileStakerRewardDashboard(props: MobileStakerRewardDas
               </Tooltip>
             </span>
             <div className={clsx('d-flex align-items-center GapTiny')}>
-              <span className={clsx('FontWeightSemibold', styles.CountProgress, isOpenClassName)}>
-                <span>{likesCount}</span>
-                <span className='ColorMuted'>/{CREATORS_CONSTANTS.SUPER_LIKES_FOR_MAX_REWARD}</span>
-              </span>
+              <div className={clsx('FontWeightSemibold', styles.CountProgress, isOpenClassName)}>
+                <StakerSuperLikeCount />
+              </div>
               <HiChevronRight
                 onClick={() => setIsOpen(prev => !prev)}
                 className={clsx('ColorMuted FontBig', styles.Arrow, isOpenClassName)}
