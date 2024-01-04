@@ -17,8 +17,8 @@ export type StakerRewardInfoProps = Omit<ComponentProps<'div'>, 'size'> &
   Pick<StakerRewardProgressBarProps, 'size'>
 
 export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoProps) {
-  let { data, loading } = useFetchUserRewardReport()
-  loading = true
+  const { data, loading } = useFetchUserRewardReport()
+
   const likeCount = data?.superLikesCount ?? 0
   const isMoreThanMax = likeCount > SUPER_LIKES_FOR_MAX_REWARD
   const surplusLike = isMoreThanMax ? likeCount - SUPER_LIKES_FOR_MAX_REWARD : 0
