@@ -77,14 +77,14 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
                 <NumberSkeleton />
               ) : (
                 <span>
-                  ≥
+                  <MutedSpan>≥</MutedSpan>{' '}
                   <FormatBalance
                     withMutedDecimals={false}
                     currency='SUB'
                     decimals={10}
                     value={todayReward}
                     precision={2}
-                  />{' '}
+                  />
                 </span>
               )}
             </span>
@@ -101,7 +101,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
                 <NumberSkeleton />
               ) : (
                 <span>
-                  ≥
+                  <MutedSpan>≥</MutedSpan>{' '}
                   <FormatBalance
                     withMutedDecimals={false}
                     currency='SUB'
