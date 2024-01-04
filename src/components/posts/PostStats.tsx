@@ -32,15 +32,21 @@ export const StatsPanel = (props: StatsProps) => {
     <>
       <div className='DfCountsPreview'>
         <MutedSpan className={reactionsCount ? '' : 'disable'}>
-          <span onClick={showReactionsModal} className={clsx(reactionsCount > 0 && 'DfMutedLink')}>
+          <span
+            style={{ whiteSpace: 'nowrap' }}
+            onClick={showReactionsModal}
+            className={clsx(reactionsCount > 0 && 'DfMutedLink')}
+          >
             <Pluralize count={reactionsCount} singularText='Reaction' />
           </span>
         </MutedSpan>
         <MutedSpan>
-          <span onClick={toggleCommentsSection}>{comments}</span>
+          <span style={{ whiteSpace: 'nowrap' }} onClick={toggleCommentsSection}>
+            {comments}
+          </span>
         </MutedSpan>
         {
-          <MutedSpan>
+          <MutedSpan style={{ whiteSpace: 'nowrap' }}>
             <Pluralize count={sharesCount || 0} singularText='Share' />
           </MutedSpan>
         }
