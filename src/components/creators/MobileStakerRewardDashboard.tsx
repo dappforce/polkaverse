@@ -70,9 +70,7 @@ function StakerRewardDashboard(props: MobileStakerRewardDashboardProps) {
         <div className={styles.Content}>
           <span className={clsx('d-flex GapTiny align-items-center')}>
             <span className='FontWeightSemibold'>Extra SUB rewards</span>
-            <Tooltip
-              title={likesToMaxReward > 0 ? `Like ${likesToMaxReward} more posts` : 'Goal achieved'}
-            >
+            <Tooltip title={likesToMaxReward > 0 ? 'Daily Activity Target' : 'Daily Target Hit'}>
               <SlQuestion className='FontSmall ColorMuted' />
             </Tooltip>
           </span>
