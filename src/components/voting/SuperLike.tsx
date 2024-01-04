@@ -73,7 +73,7 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
     localStorage.setItem(FIRST_TIME_SUPERLIKE, 'false')
   }
 
-  const likeStyle: CSSProperties = { position: 'relative', top: '0.07em' }
+  const likeStyle: CSSProperties = { position: 'relative', top: '0.04em' }
   const icon = isActive ? (
     <AiFillHeart className='FontLarge ColorPrimary' style={likeStyle} />
   ) : (
