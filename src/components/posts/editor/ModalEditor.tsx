@@ -7,7 +7,7 @@ import clsx from 'clsx'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AiFillInfoCircle } from 'react-icons/ai'
 import { BiImage } from 'react-icons/bi'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
@@ -22,7 +22,11 @@ import { getNonEmptyPostContent } from 'src/components/utils/content'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import SelectSpacePreview from 'src/components/utils/SelectSpacePreview'
 import TxButton from 'src/components/utils/TxButton'
-import { useFetchSpaces, useSelectSpaceIdsWhereAccountCanPost } from 'src/rtk/app/hooks'
+import {
+  useFetchSpaces,
+  useSelectProfile,
+  useSelectSpaceIdsWhereAccountCanPost,
+} from 'src/rtk/app/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { AnyId, DataSourceTypes, IpfsCid, PostContent } from 'src/types'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
@@ -47,7 +51,15 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
   const { ipfs } = useSubsocialApi()
   const [IpfsCid, setIpfsCid] = useState<IpfsCid>()
   const [publishIsDisable, setPublishIsDisable] = useState(true)
-  const defaultSpace = allowedSpaceIds[0]
+
+  const profile = useSelectProfile(myAddress)
+  const defaultSpace = useMemo(() => {
+    if (profile && allowedSpaceIds.includes(profile?.id ?? '')) {
+      return profile?.id
+    }
+    return allowedSpaceIds[0]
+  }, [allowedSpaceIds, profile])
+
   const router = useRouter()
   const [spaceId, setSpaceId] = useState<string>(defaultSpace)
 
