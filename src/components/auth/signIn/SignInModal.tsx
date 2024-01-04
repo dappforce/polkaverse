@@ -1,14 +1,13 @@
-import React, { useState } from 'react'
-import LoadingTransaction from 'src/components/utils/LoadingTransaction'
-import WalletButton from '../WalletButton'
-
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import Modal from 'antd/lib/modal'
 import clsx from 'clsx'
+import React, { useState } from 'react'
 import { useResponsiveSize } from 'src/components/responsive'
+import LoadingTransaction from 'src/components/utils/LoadingTransaction'
 import { setCurrentEmailAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import config from 'src/config'
+import { isMobileDevice } from 'src/config/Size.config'
 import { EmailAccount } from 'src/types'
 import { AccountSelector } from '../../profile-selector/AccountSelector'
 import ExternalLink from '../../spaces/helpers/ExternalLink'
@@ -17,6 +16,7 @@ import PrivacyPolicyLinks from '../../utils/PrivacyPolicyLinks'
 import WalletList from '../../wallets/wallet-list/WalletsList'
 import { CompletedSteps, StepsEnum, useAuth } from '../AuthContext'
 import { useMyAccountsContext } from '../MyAccountsContext'
+import WalletButton from '../WalletButton'
 import ConfirmationModalContent from './email/ConfirmationModalContent'
 import ShowMnemonicModalContent from './email/ShowMnemonicModalContent'
 import SignInEmailButton from './email/SignInEmailButton'
@@ -186,6 +186,8 @@ const ModalContent = ({
 
   const dividerText = isMobile ? 'Or' : 'Or connect wallet'
 
+  const isMobileDeviceAndWidth = isMobileDevice && isMobile
+
   switch (currentStep) {
     case StepsEnum.SelectWallet: {
       return (
@@ -193,14 +195,20 @@ const ModalContent = ({
           <ModalBodyWrapper
             title='Sign In'
             desc={
-              <>
-                Choose one of the available wallet providers to connect to {config.appName}, or sign
-                in with your email address.{' '}
-                <ExternalLink
-                  url='https://docs.subsocial.network/docs/tutorials/#polkadotjs'
-                  value='How do I set up a wallet?'
-                />
-              </>
+              isMobileDeviceAndWidth ? (
+                <>
+                  To use PolkaVerse, you need a wallet to manage your account. We recommend{' '}
+                  <ExternalLink url='https://novawallet.io/' value='Nova Wallet' />
+                </>
+              ) : (
+                <>
+                  Choose one of the available wallet providers to connect to {config.appName}.{' '}
+                  <ExternalLink
+                    url='https://docs.subsocial.network/docs/tutorials/#polkadotjs'
+                    value='How do I set up a wallet?'
+                  />
+                </>
+              )
             }
           >
             {config.enableConfirmationLessMode ? (
