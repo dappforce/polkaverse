@@ -99,18 +99,20 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
   else if (isMyPost) tooltipTitle = 'You cannot like your own post'
 
   const button = (
-    <Button
-      className={clsx(
-        'FontSmall',
-        styles.SuperLike,
-        isActive && styles.SuperLikeActive,
-        props.className,
-      )}
-      onClick={onClick}
-      disabled={isDisabled}
-    >
-      <IconWithLabel renderZeroCount icon={icon} count={optimisticCount} />
-    </Button>
+    <div>
+      <Button
+        className={clsx(
+          'FontSmall',
+          styles.SuperLike,
+          isActive && styles.SuperLikeActive,
+          props.className,
+        )}
+        onClick={onClick}
+        disabled={isDisabled}
+      >
+        <IconWithLabel renderZeroCount icon={icon} count={optimisticCount} />
+      </Button>
+    </div>
   )
 
   return (
