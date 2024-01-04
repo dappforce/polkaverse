@@ -66,6 +66,7 @@ export function useFetchWithoutApi<Args, Struct>(
     let isMounted = true
     setError(undefined)
 
+    setLoading(true)
     dispatch(fetch(args))
       .catch(err => {
         if (isMounted) {
