@@ -1,11 +1,13 @@
 import { Tooltip } from 'antd'
 import clsx from 'clsx'
+import Link from 'next/link'
 import { ComponentProps, useState } from 'react'
 import { HiChevronRight } from 'react-icons/hi2'
 import { SlQuestion } from 'react-icons/sl'
 import { CREATORS_CONSTANTS } from 'src/config/constants'
 import { useFetchUserRewardReport } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { getSubIdCreatorsLink } from 'src/utils/links'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import styles from './MobileStakerRewardDashboard.module.sass'
 import StakerRewardInfo, { StakerSuperLikeCount } from './stakers/StakerRewardInfo'
@@ -14,6 +16,43 @@ import StakerRewardProgressBar from './stakers/StakerRewardProgressBar'
 export type MobileStakerRewardDashboardProps = ComponentProps<'div'>
 
 export default function MobileStakerRewardDashboard(props: MobileStakerRewardDashboardProps) {
+  const { data: rewardReport, loading } = useFetchUserRewardReport()
+  const likesCount = rewardReport?.superLikesCount ?? 0
+
+  if (loading) return null
+
+  if (!likesCount) {
+    return <StakeSubBanner {...props} />
+  }
+  return <StakerRewardDashboard {...props} />
+}
+
+function StakeSubBanner(props: MobileStakerRewardDashboardProps) {
+  return (
+    <div
+      {...props}
+      className={clsx(props.className, styles.MobileStakerRewardDashboard, styles.StakeSubBanner)}
+    >
+      <div className={clsx(styles.Summary)}>
+        <div className={styles.Content}>
+          <span className={clsx('d-flex GapTiny align-items-center')}>
+            <span className='FontWeightSemibold'>Stake SUB and earn more</span>
+          </span>
+          <div className={clsx('d-flex align-items-center GapTiny')}>
+            <Link passHref href={getSubIdCreatorsLink()}>
+              <a className='FontWeightSemibold' target='_blank'>
+                Stake SUB
+              </a>
+            </Link>
+          </div>
+        </div>
+        <div className={clsx(styles.Gradient)} />
+      </div>
+    </div>
+  )
+}
+
+function StakerRewardDashboard(props: MobileStakerRewardDashboardProps) {
   const { data: rewardReport } = useFetchUserRewardReport()
   const likesCount = rewardReport?.superLikesCount ?? 0
   const likesToMaxReward = CREATORS_CONSTANTS.SUPER_LIKES_FOR_MAX_REWARD - likesCount
