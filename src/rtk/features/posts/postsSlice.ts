@@ -243,7 +243,7 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
       )
 
       const fetches: Promise<any>[] = []
-      fetches.push(dispatch(fetchSuperLikeCounts({ postIds: entities.map(({ id }) => id) })))
+
       if (withOwner) {
         const ids = getUniqueOwnerIds(entities)
         const prefetchedData = generatePrefetchData<ProfileSpaceIdByAccount>(
@@ -337,6 +337,8 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
             dataSource,
           }),
         )
+      dispatch(fetchSuperLikeCounts({ postIds: newIds }))
+
       withReactionByAccount &&
         dispatch(fetchAddressLikeCountSlice({ postIds: newIds, address: withReactionByAccount }))
 
