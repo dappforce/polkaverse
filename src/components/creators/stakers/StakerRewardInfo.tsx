@@ -49,11 +49,11 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
 
   return (
     <>
-      <div {...props} className={clsx(styles.StakerRewardInfo, props.className)}>
+      <div {...props} className={clsx(styles.StakerRewardInfo, 'FontSmall', props.className)}>
         <div className={clsx(styles.Goal, 'pb-1')}>
           <div className={styles.GoalInfo}>
             <div className='d-flex align-items-baseline GapMini'>
-              <MutedSpan className={clsx('FontSmall')}>
+              <MutedSpan>
                 {likesLeftToGoal <= 0 ? 'Goal achieved' : `Like ${likesLeftToGoal} more posts`}
               </MutedSpan>
               <Tooltip title='Each post you like, up to a maximum of 10, will boost your rewards for today'>
@@ -67,7 +67,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
         <div className='d-flex flex-column GapTiny mt-2'>
           <div className='d-flex justify-content-between align-items-center'>
             <div className='d-flex align-items-baseline GapMini'>
-              <MutedSpan className={clsx('FontSmall')}>Earned today</MutedSpan>
+              <MutedSpan>Earned today</MutedSpan>
               <Tooltip title='The bonus rewards you have earned today from participating in Active Staking'>
                 <SlQuestion className='FontTiny ColorMuted' />
               </Tooltip>
@@ -77,14 +77,20 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
                 <NumberSkeleton />
               ) : (
                 <span>
-                  ≈<FormatBalance currency='SUB' decimals={10} value={todayReward} precision={2} />{' '}
+                  ≥
+                  <FormatBalance
+                    currency='SUB'
+                    decimals={10}
+                    value={todayReward}
+                    precision={2}
+                  />{' '}
                 </span>
               )}
             </span>
           </div>
           <div className='d-flex justify-content-between align-items-center'>
             <div className='d-flex align-items-baseline GapMini'>
-              <MutedSpan className={clsx('FontSmall')}>Earned this week</MutedSpan>
+              <MutedSpan>Earned this week</MutedSpan>
               <Tooltip title='The bonus rewards you have earned this week from participating in Active Staking'>
                 <SlQuestion className='FontTiny ColorMuted' />
               </Tooltip>
@@ -94,7 +100,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
                 <NumberSkeleton />
               ) : (
                 <span>
-                  ≈
+                  ≥
                   <FormatBalance currency='SUB' value={weekReward} decimals={10} precision={2} />
                 </span>
               )}
@@ -102,7 +108,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
           </div>
           <div className='d-flex justify-content-between align-items-center'>
             <div className='d-flex align-items-baseline GapMini'>
-              <MutedSpan className={clsx('FontSmall')}>Distribution in</MutedSpan>
+              <MutedSpan>Distribution in</MutedSpan>
               <Tooltip title='How long until you will receive your bonus staking rewards for this week'>
                 <SlQuestion className='FontTiny ColorMuted' />
               </Tooltip>
