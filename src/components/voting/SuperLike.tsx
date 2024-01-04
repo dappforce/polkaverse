@@ -126,7 +126,7 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
   )
 }
 
-function Diamond(props: ComponentProps<'svg'> & { isFilled?: boolean }) {
+function Diamond({ isFilled, ...props }: ComponentProps<'svg'> & { isFilled?: boolean }) {
   return (
     <svg
       {...props}
@@ -138,7 +138,7 @@ function Diamond(props: ComponentProps<'svg'> & { isFilled?: boolean }) {
     >
       <g id='diamond-2 1' clipPath='url(#clip0_922_11679)'>
         <g id='Group'>
-          {props.isFilled ? (
+          {isFilled ? (
             <>
               <path
                 d='M7.97217 3.13373L7.00062 0.202148H4.9931L4.02734 3.13373H7.97217Z'
