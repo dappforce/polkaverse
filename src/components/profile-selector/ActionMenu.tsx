@@ -12,6 +12,7 @@ import { Menu } from 'antd'
 import Link from 'next/link'
 import { BiUserPin } from 'react-icons/bi'
 import { BsCaretRight } from 'react-icons/bs'
+import { LuActivity } from 'react-icons/lu'
 import config from 'src/config'
 import { useAppSelector } from 'src/rtk/app/store'
 import { selectProfileSpaceStructById } from 'src/rtk/features/profiles/profilesSlice'
@@ -44,6 +45,7 @@ const EditProfileIcon = <EditOutlined />
 const MyRolesIcon = <TagsOutlined />
 const SettingsIcon = <SettingOutlined />
 const MyDomainsIcon = <SubIcon Icon={BiUserPin} />
+const MyActivityIcon = <SubIcon Icon={LuActivity} />
 
 const emptyArr: SpaceId[] = []
 
@@ -140,7 +142,7 @@ export const ActionMenu = () => {
           </Menu.Item>
         )}
 
-        <Menu.Item key='my-activity' icon={MyProfileIcon}>
+        <Menu.Item key='my-activity' icon={MyActivityIcon}>
           <ViewProfileLink account={{ address }} title='My activity' />
         </Menu.Item>
         {enableEmailSettings && (
