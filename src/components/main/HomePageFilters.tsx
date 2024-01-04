@@ -52,7 +52,7 @@ const offchainSpaceFilterOpt = enableGraphQl
   : []
 
 export const spaceFilterOpt = [
-  { label: 'Polkadot Spaces', value: 'suggested' },
+  { label: 'Active Staking', value: 'suggested' },
   ...offchainSpaceFilterOpt,
 ]
 
