@@ -17,8 +17,8 @@ export type StakerRewardInfoProps = Omit<ComponentProps<'div'>, 'size'> &
   Pick<StakerRewardProgressBarProps, 'size'>
 
 export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoProps) {
-  const { data, loading } = useFetchUserRewardReport()
-
+  let { data, loading } = useFetchUserRewardReport()
+  loading = true
   const likeCount = data?.superLikesCount ?? 0
   const isMoreThanMax = likeCount > SUPER_LIKES_FOR_MAX_REWARD
   const surplusLike = isMoreThanMax ? likeCount - SUPER_LIKES_FOR_MAX_REWARD : 0
@@ -63,7 +63,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
               <NumberSkeleton />
             ) : (
               <span>
-                ≈<FormatBalance decimals={10} value={todayReward} isShort />{' '}
+                ≈<FormatBalance currency='SUB' decimals={10} value={todayReward} isShort />{' '}
               </span>
             )}
           </span>
@@ -79,7 +79,8 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
               <NumberSkeleton />
             ) : (
               <span>
-                ≈<FormatBalance value={weekReward.toString()} decimals={10} isShort />
+                ≈
+                <FormatBalance currency='SUB' value={weekReward.toString()} decimals={10} isShort />
               </span>
             )}
           </span>
@@ -101,15 +102,18 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
 
 function NumberSkeleton() {
   return (
-    <Skeleton.Input
-      style={{
-        height: '1em',
-        width: '3ch',
-        marginRight: '4px',
-        borderRadius: '20px',
-        position: 'relative',
-        top: '1px',
-      }}
-    />
+    <div className='d-flex align-items-center'>
+      <Skeleton.Input
+        style={{
+          height: '1em',
+          width: '3ch',
+          marginRight: '4px',
+          borderRadius: '20px',
+          position: 'relative',
+          top: '1px',
+          display: 'block',
+        }}
+      />
+    </div>
   )
 }
