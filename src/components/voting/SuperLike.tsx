@@ -116,18 +116,6 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
   return (
     <>
       {tooltipTitle ? <Tooltip title={tooltipTitle}>{button}</Tooltip> : button}
-      <Button
-        className={clsx(
-          'FontSmall',
-          styles.SuperLike,
-          isActive && styles.SuperLikeActive,
-          props.className,
-        )}
-        onClick={onClick}
-        disabled={isDisabled}
-      >
-        <IconWithLabel renderZeroCount icon={icon} count={optimisticCount} />
-      </Button>
       <ShouldStakeModal
         visible={isOpenShouldStakeModal}
         onCancel={() => setIsOpenShouldStakeModal(false)}
