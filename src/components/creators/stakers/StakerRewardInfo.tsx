@@ -30,7 +30,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
     )
   }
 
-  if (!data?.superLikesCount) {
+  if (!data?.superLikesCount && !data?.weeklyReward) {
     return (
       <p className='FontSmall p-3 mb-1'>
         Like the posts on &quot;
