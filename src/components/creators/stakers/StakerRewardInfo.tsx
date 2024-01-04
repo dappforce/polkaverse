@@ -79,6 +79,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
                 <span>
                   ≥
                   <FormatBalance
+                    withMutedDecimals={false}
                     currency='SUB'
                     decimals={10}
                     value={todayReward}
@@ -101,7 +102,13 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
               ) : (
                 <span>
                   ≥
-                  <FormatBalance currency='SUB' value={weekReward} decimals={10} precision={2} />
+                  <FormatBalance
+                    withMutedDecimals={false}
+                    currency='SUB'
+                    value={weekReward}
+                    decimals={10}
+                    precision={2}
+                  />
                 </span>
               )}
             </span>
