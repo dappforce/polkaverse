@@ -78,7 +78,10 @@ function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name
   return (
     <>
       {(() => {
-        if (!isCreatorSpace && !totalStake?.hasStaked) return <SupportCreatorsCard />
+        if (!isCreatorSpace) {
+          if (!totalStake?.hasStaked) return <SupportCreatorsCard />
+          return null
+        }
 
         if (stakeData?.hasStaked) return <MyStakeCard space={space} />
         else return <StakeSubCard space={space} />
