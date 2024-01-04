@@ -3,9 +3,10 @@ import { PostId } from '@subsocial/api/types/substrate'
 import { isEmptyObj, isEmptyStr } from '@subsocial/utils'
 import { Alert, Image, Tooltip } from 'antd'
 import clsx from 'clsx'
+import dayjs from 'dayjs'
 import isEmpty from 'lodash.isempty'
 import Error from 'next/error'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
 import { HasDataForSlug } from 'src/components/urls'
@@ -20,6 +21,7 @@ import { resolveIpfsUrl } from 'src/ipfs'
 import messages from 'src/messages'
 import { isBlockedPost } from 'src/moderation'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
+import { useCanPostSuperLiked } from 'src/rtk/features/activeStaking/hooks'
 import {
   PostContent as PostContentType,
   PostData,
@@ -293,6 +295,10 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
     post: { struct },
   } = postDetails
 
+  const clientCanPostSuperLiked = useClientValidationOfPostSuperLike(struct.createdAtTime)
+  const canPostSuperLiked = useCanPostSuperLiked(struct.id)
+  if (!canPostSuperLiked || !clientCanPostSuperLiked) return null
+
   const ReactionsAction = () => <SuperLike post={struct} className='DfAction' />
 
   return (
@@ -301,6 +307,18 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
       <ShareDropdown postDetails={postDetails} space={space} className='DfAction' />
     </div>
   )
+}
+
+function useClientValidationOfPostSuperLike(createdAtTime: number) {
+  const [, setState] = useState({})
+
+  useEffect(() => {
+    const interval = setInterval(() => setState({}), 5 * 1000 * 60) // refresh every 5 minutes
+    return () => clearInterval(interval)
+  }, [])
+
+  const isPostMadeMoreThan1WeekAgo = dayjs().diff(dayjs(createdAtTime), 'day') > 7
+  return !isPostMadeMoreThan1WeekAgo
 }
 
 type PostPreviewProps = {

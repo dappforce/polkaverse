@@ -13,6 +13,7 @@ import {
   AddressLikeCount,
   fetchAddressLikeCountSlice,
 } from 'src/rtk/features/activeStaking/addressLikeCountSlice'
+import { CanPostSuperLiked } from 'src/rtk/features/activeStaking/canPostSuperLikedSlice'
 import { RewardHistory } from 'src/rtk/features/activeStaking/rewardHistorySlice'
 import { fetchRewardReport, RewardReport } from 'src/rtk/features/activeStaking/rewardReportSlice'
 import {
@@ -98,6 +99,39 @@ export async function getAddressLikeCountToPosts(
   )
 
   return postIds.map(postId => resultMap.get(postId) ?? { address, postId, count: 0 })
+}
+
+const GET_CAN_POSTS_SUPER_LIKED = gql`
+  query GetCanPostsSuperLiked($postIds: [String!]!) {
+    activeStakingCanDoSuperLikeByPost(args: { postPersistentIds: $postIds }) {
+      persistentPostId
+      possible
+    }
+  }
+`
+export async function getCanPostsSuperLiked(postIds: string[]): Promise<CanPostSuperLiked[]> {
+  const res = await datahubQueryRequest<
+    {
+      activeStakingCanDoSuperLikeByPost: {
+        persistentPostId: string
+        possible: boolean
+      }[]
+    },
+    { postIds: string[] }
+  >({
+    document: GET_CAN_POSTS_SUPER_LIKED,
+    variables: { postIds },
+  })
+
+  const resultMap = new Map<string, CanPostSuperLiked>()
+  res.activeStakingCanDoSuperLikeByPost.forEach(item =>
+    resultMap.set(item.persistentPostId, {
+      postId: item.persistentPostId,
+      canPostSuperLiked: item.possible,
+    }),
+  )
+
+  return postIds.map(postId => resultMap.get(postId) ?? { postId, canPostSuperLiked: false })
 }
 
 const GET_REWARD_REPORT = gql`

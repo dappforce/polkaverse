@@ -41,6 +41,7 @@ import {
   SpaceStruct,
 } from 'src/types'
 import { fetchAddressLikeCountSlice } from '../activeStaking/addressLikeCountSlice'
+import { fetchCanPostsSuperLiked } from '../activeStaking/canPostSuperLikedSlice'
 import { fetchSuperLikeCounts } from '../activeStaking/superLikeCountsSlice'
 import { Content, fetchContents, selectPostContentById } from '../contents/contentsSlice'
 import { fetchProfileSpaces } from '../profiles/profilesSlice'
@@ -338,6 +339,7 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
           }),
         )
       dispatch(fetchSuperLikeCounts({ postIds: newIds }))
+      dispatch(fetchCanPostsSuperLiked({ postIds: newIds }))
 
       withReactionByAccount &&
         dispatch(fetchAddressLikeCountSlice({ postIds: newIds, address: withReactionByAccount }))
