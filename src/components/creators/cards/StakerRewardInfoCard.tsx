@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import Link from 'next/link'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
+import { activeStakingLinks } from 'src/utils/links'
 import StakerRewardInfo from '../stakers/StakerRewardInfo'
 import styles from './StakerRewardInfoCard.module.sass'
 
@@ -12,7 +13,7 @@ export default function StakerRewardInfoCard() {
         <div className='d-flex align-items-center GapNormal justify-content-between'>
           <p className={clsx(styles.Title, 'mb-0')}>Active Staking</p>
         </div>
-        <Link href='https://docs.subsocial.network/docs/basics/creator-staking' passHref>
+        <Link href={activeStakingLinks.learnMore} passHref>
           <a target='_blank' className={styles.Link}>
             How does this work?
           </a>
