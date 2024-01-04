@@ -41,7 +41,8 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
     setHasILikedOptimistic(hasILiked)
   }, [hasILiked])
 
-  const isActive = hasILikedOptimistic
+  const isMyPost = post.ownerId === myAddress
+  const isActive = hasILikedOptimistic || isMyPost
 
   const { openSignInModal } = useAuth()
 
