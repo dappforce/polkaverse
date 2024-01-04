@@ -104,12 +104,7 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
         onClick={onClick}
         disabled={isDisabled}
       >
-        <IconWithLabel
-          renderTextIfEmpty
-          icon={icon}
-          label={optimisticCount === 0 ? 'Like' : undefined}
-          count={optimisticCount}
-        />
+        <IconWithLabel renderZeroCount icon={icon} count={optimisticCount} />
       </Button>
       <ShouldStakeModal
         visible={isOpenShouldStakeModal}
