@@ -7,7 +7,6 @@ import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import CreatePostCard from './cards/CreatePostCard'
 import CreatorInfoCard from './cards/CreatorInfoCard'
-import GetMoreSubCard from './cards/GetMoreSubCard'
 import MyStakeCard from './cards/MyStakeCard'
 import StakerRewardInfoCard from './cards/StakerRewardInfoCard'
 import StakeSubCard from './cards/StakeSubCard'
@@ -79,7 +78,8 @@ function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name
   return (
     <>
       {(() => {
-        if (!isCreatorSpace) return <SupportCreatorsCard />
+        if (!isCreatorSpace && !totalStake?.hasStaked) return <SupportCreatorsCard />
+
         if (stakeData?.hasStaked) return <MyStakeCard space={space} />
         else return <StakeSubCard space={space} />
       })()}
@@ -91,27 +91,15 @@ function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name
 function PostPageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name: 'post-page' }>) {
   const myAddress = useMyAddress() ?? ''
   const { data, loading: loadingTotalStake } = useFetchTotalStake(myAddress)
-  const { isCreatorSpace, loading: loadingCreator } = useIsCreatorSpace(space.id)
+  const { loading: loadingCreator } = useIsCreatorSpace(space.id)
 
   if (loadingCreator) {
     return null
   }
 
-  if (!isCreatorSpace) {
-    return (
-      <>
-        <CreatePostCard variant='posts' />
-        <GetMoreSubCard />
-      </>
-    )
-  }
-
   return (
     <>
-      {(() => {
-        if (!isCreatorSpace) return <CreatePostCard variant='posts' />
-        return <CreatorInfoCard showStakeButton={!data?.hasStaked} space={space} />
-      })()}
+      <CreatorInfoCard showStakeButton={!data?.hasStaked} space={space} />
       {!loadingTotalStake &&
         (data?.hasStaked ? <StakerRewardInfoCard /> : <StakeSubCard space={space} />)}
     </>
