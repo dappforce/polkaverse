@@ -296,7 +296,11 @@ export const InnerViewSpace = (props: Props) => {
 
   return (
     <Section className='mt-3'>
-      {showCreatorCards && <MobileStakerRewardDashboard style={{ margin: '-28px -16px 0' }} />}
+      {showCreatorCards && (
+        <MobileStakerRewardDashboard
+          style={{ margin: '-28px -16px 0', position: 'sticky', top: '64px', zIndex: 10 }}
+        />
+      )}
       <PendingSpaceOwnershipPanel space={space} />
       <HiddenSpaceAlert space={space} />
       <Section className='pt-2'>{renderPreview()}</Section>
