@@ -20,17 +20,19 @@ const { enableGraphQl } = config
 
 const commonFilterOption = [{ label: 'Latest', value: 'latest' }]
 
-const offchainPostFilterOpt = enableGraphQl
-  ? [
-      ...commonFilterOption,
-      { label: 'Most liked', value: 'liked' },
-      { label: 'Most commented', value: 'commented' },
-    ]
-  : []
+// const offchainPostFilterOpt = enableGraphQl
+//   ? [
+//       ...commonFilterOption,
+//       { label: 'Most liked', value: 'liked' },
+//       { label: 'Most commented', value: 'commented' },
+//     ]
+//   : []
 
 export const postFilterOpt = [
   { label: 'Recommended', value: 'suggested' },
-  ...offchainPostFilterOpt,
+  { label: 'All Posts', value: 'latest' },
+  // removed most liked and commented
+  // ...offchainPostFilterOpt,
 ]
 
 export const commentFilterOpt = enableGraphQl

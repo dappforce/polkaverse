@@ -37,18 +37,19 @@ const getPostsByFilter: GetEntityFilter<PostFilterType> = {
     month: q.GET_LATEST_POST_IDS,
     allTime: q.GET_LATEST_POST_IDS,
   },
-  liked: {
-    day: q.GET_MOST_LIKED_POST_IDS_IN_DATE_RANGE,
-    week: q.GET_MOST_LIKED_POST_IDS_IN_DATE_RANGE,
-    month: q.GET_MOST_LIKED_POST_IDS_IN_DATE_RANGE,
-    allTime: q.GET_MOST_LIKED_POST_IDS,
-  },
-  commented: {
-    day: q.GET_MOST_COMMENTED_POST_IDS_IN_DATE_RANGE,
-    week: q.GET_MOST_COMMENTED_POST_IDS_IN_DATE_RANGE,
-    month: q.GET_MOST_COMMENTED_POST_IDS_IN_DATE_RANGE,
-    allTime: q.GET_MOST_COMMENTED_POST_IDS,
-  },
+  // removed most liked and commented
+  // liked: {
+  //   day: q.GET_MOST_LIKED_POST_IDS_IN_DATE_RANGE,
+  //   week: q.GET_MOST_LIKED_POST_IDS_IN_DATE_RANGE,
+  //   month: q.GET_MOST_LIKED_POST_IDS_IN_DATE_RANGE,
+  //   allTime: q.GET_MOST_LIKED_POST_IDS,
+  // },
+  // commented: {
+  //   day: q.GET_MOST_COMMENTED_POST_IDS_IN_DATE_RANGE,
+  //   week: q.GET_MOST_COMMENTED_POST_IDS_IN_DATE_RANGE,
+  //   month: q.GET_MOST_COMMENTED_POST_IDS_IN_DATE_RANGE,
+  //   allTime: q.GET_MOST_COMMENTED_POST_IDS,
+  // },
 }
 
 const getSpacesByFilter: GetEntityFilter<Exclude<SpaceFilterType, 'suggested'>> = {
