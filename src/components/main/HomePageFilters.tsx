@@ -29,7 +29,7 @@ const commonFilterOption = [{ label: 'Latest', value: 'latest' }]
 //   : []
 
 export const postFilterOpt = [
-  { label: 'Recommended', value: 'suggested' },
+  { label: 'Active Staking', value: 'suggested' },
   { label: 'All Posts', value: 'latest' },
   // removed most liked and commented
   // ...offchainPostFilterOpt,
