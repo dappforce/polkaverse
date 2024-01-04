@@ -25,7 +25,7 @@ export const appOverrides: Partial<AppConfig> = {
   appBaseUrl: process.env['NEXT_PUBLIC_APP_BASE_URL'],
 }
 
-export const ampId = process.env['AMP_ID'] || ''
+export const ampId = process.env['NEXT_PUBLIC_AMP_ID'] || ''
 
 export const serverMnemonic = process.env['SERVER_MNEMONIC']
 export const datahubQueueConfig = {
