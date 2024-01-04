@@ -22,6 +22,7 @@ import { getNonEmptyPostContent } from 'src/components/utils/content'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import SelectSpacePreview from 'src/components/utils/SelectSpacePreview'
 import TxButton from 'src/components/utils/TxButton'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import {
   useFetchSpaces,
   useSelectProfile,
@@ -51,6 +52,7 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
   const { ipfs } = useSubsocialApi()
   const [IpfsCid, setIpfsCid] = useState<IpfsCid>()
   const [publishIsDisable, setPublishIsDisable] = useState(true)
+  const sendEvent = useSendEvent()
 
   const profile = useSelectProfile(myAddress)
   const defaultSpace = useMemo(() => {
@@ -145,7 +147,13 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
         defaultValue={defaultSpace}
         imageSize={32}
         onSelect={value => {
-          setSpaceId((value as LabeledValue).value.toString())
+          const newId = (value as LabeledValue).value.toString()
+          setSpaceId(newId)
+          sendEvent('createpost_space_changed', {
+            from: spaceId,
+            to: newId,
+            eventSource: 'fastEditor',
+          })
         }}
       />
     ),
@@ -184,10 +192,18 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
             href='/[spaceId]/posts/new'
             as={`/${spaceId}/posts/new`}
             className={clsx('LightPinkButton', 'mr-2')}
+            onClick={() =>
+              sendEvent('createpost_full_editor_opened', { eventSource: 'fastEditor' })
+            }
           >
             Full Editor
           </ButtonLink>
-          <TxButton type='primary' disabled={publishIsDisable} {...txProps} />
+          <TxButton
+            onClick={() => sendEvent('createpost_post_published', { eventSource: 'fastEditor' })}
+            type='primary'
+            disabled={publishIsDisable}
+            {...txProps}
+          />
         </Col>
       </Row>
     </Form>
@@ -201,6 +217,8 @@ export const PostEditorModal = (props: PostEditorModalProps) => {
   const myAddress = useMyAddress()
   const { data } = useFetchTotalStake(myAddress ?? '')
   const hasStaked = data?.hasStaked
+
+  const sendEvent = useSendEvent()
 
   return (
     <Modal
@@ -224,7 +242,11 @@ export const PostEditorModal = (props: PostEditorModalProps) => {
               You can receive extra SUB when others like your content. Share your posts around the
               internet to get more exposure and rewards.{' '}
               <Link href={activeStakingLinks.learnMore}>
-                <a className='FontWeightMedium' target='_blank'>
+                <a
+                  className='FontWeightMedium'
+                  target='_blank'
+                  onClick={() => sendEvent('lstake_learn_more', { eventSource: 'fastEditor' })}
+                >
                   How does it work?
                 </a>
               </Link>

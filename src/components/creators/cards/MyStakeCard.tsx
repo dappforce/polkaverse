@@ -9,6 +9,7 @@ import { FormatBalance } from 'src/components/common/balances'
 import { useResponsiveSize } from 'src/components/responsive'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import styles from './MyStakeCard.module.sass'
@@ -21,6 +22,7 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
   const myAddress = useMyAddress()
   const { data, loading } = useFetchStakeData(myAddress ?? '', space.id)
   const { isMobile } = useResponsiveSize()
+  const sendEvent = useSendEvent()
 
   return (
     <Segment className={clsx(styles.CreatorStakingCard)}>
@@ -28,7 +30,11 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
         <div className={styles.TopSection}>
           <p className={clsx(styles.Title, 'mb-0')}>Creator Staking</p>
           <Link href='https://docs.subsocial.network/docs/basics/creator-staking' passHref>
-            <a target='_blank' className={styles.Link}>
+            <a
+              target='_blank'
+              className={styles.Link}
+              onClick={() => sendEvent('lstake_learn_more', { eventSource: 'myStakeCard' })}
+            >
               How does it work?
             </a>
           </Link>

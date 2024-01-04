@@ -7,6 +7,7 @@ import React, { MouseEvent, useCallback, useState } from 'react'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
 import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
@@ -102,6 +103,7 @@ export const InnerViewSpace = (props: Props) => {
   const isMobile = useIsMobileWidthOrDevice()
   const address = useMyAddress()
   const [collapseAbout, setCollapseAbout] = useState(true)
+  const sendEvent = useSendEvent()
 
   const spaceData = useSelectSpace(initialSpaceData?.id)
   const isMy = useIsMySpace(spaceData?.struct)
@@ -190,6 +192,7 @@ export const InnerViewSpace = (props: Props) => {
     setCollapseAbout(prev => !prev)
   }
   const toggleCreatorChat = () => {
+    sendEvent('creator_chat_opened', { spaceId: space.id })
     setChatConfig({ entity: { data: spaceData, type: 'space' }, withFloatingButton: false })
     setChatOpen(true)
   }

@@ -7,6 +7,7 @@ import { CreatePostButtonAndModal } from 'src/components/posts/NewPostButtonInTo
 import { CreateSpaceButton } from 'src/components/spaces/helpers'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus } from 'src/rtk/app/hooks'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
 import { activeStakingLinks } from 'src/utils/links'
@@ -19,6 +20,7 @@ export type CreatePostCardProps = {
 
 export default function CreatePostCard({ variant }: CreatePostCardProps) {
   const myAddress = useMyAddress()
+  const sendEvent = useSendEvent()
 
   const { isLoading, spaceIds: ids } =
     useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus(myAddress)
@@ -53,7 +55,13 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
         ) : anySpace ? (
           <CreatePostButtonAndModal>
             {onClick => (
-              <Button onClick={onClick} type='primary'>
+              <Button
+                onClick={() => {
+                  sendEvent('createpost_button_clicked', { eventSource: 'banner' })
+                  onClick()
+                }}
+                type='primary'
+              >
                 Create post
               </Button>
             )}

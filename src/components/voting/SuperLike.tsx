@@ -3,10 +3,12 @@ import { Button, ButtonProps, Image, Tooltip } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { ComponentProps, useEffect, useState } from 'react'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { fetchAddressLikeCountSlice } from 'src/rtk/features/activeStaking/addressLikeCountSlice'
 import {
   useCanPostSuperLiked,
+  useFetchUserRewardReport,
   useHasISuperLikedPost,
   useSuperLikeCount,
 } from 'src/rtk/features/activeStaking/hooks'
@@ -17,6 +19,7 @@ import { useMyAddress } from '../auth/MyAccountsContext'
 import { IconWithLabel } from '../utils'
 import CustomModal from '../utils/CustomModal'
 import { createSuperLike } from '../utils/datahub/super-likes'
+import { useAmISpaceFollower } from '../utils/FollowSpaceButton'
 import styles from './SuperLike.module.sass'
 
 export type SuperLikeProps = ButtonProps & {
@@ -28,14 +31,19 @@ export type SuperLikeProps = ButtonProps & {
 export default function SuperLike({ post, ...props }: SuperLikeProps) {
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
+  const sendEvent = useSendEvent()
 
   const clientCanPostSuperLiked = useClientValidationOfPostSuperLike(post.createdAtTime)
+  const spaceId = post.spaceId
+  const amIFollower = useAmISpaceFollower(spaceId)
+
   const canPostSuperLiked = useCanPostSuperLiked(post.id)
 
   const [isOpenShouldStakeModal, setIsOpenShouldStakeModal] = useState(false)
   // const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
 
   const { data: totalStake, loading: loadingTotalStake } = useFetchTotalStake(myAddress ?? '')
+  const { data: userReport } = useFetchUserRewardReport()
   const count = useSuperLikeCount(post.id)
   const hasILiked = useHasISuperLikedPost(post.id)
 
@@ -68,6 +76,13 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
       setIsOpenShouldStakeModal(true)
       return
     }
+
+    sendEvent('like', {
+      postId: post.id,
+      spaceId,
+      isFollower: amIFollower,
+      amountRange: (userReport?.superLikesCount ?? 0) + 1,
+    })
 
     try {
       setOptimisticCount(count => count + 1)

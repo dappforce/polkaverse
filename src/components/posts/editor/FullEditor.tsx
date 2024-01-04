@@ -13,6 +13,7 @@ import MdEditor from 'src/components/utils/DfMdEditor/client'
 import NoData from 'src/components/utils/EmptyList'
 import SelectSpacePreview from 'src/components/utils/SelectSpacePreview'
 import TxButton from 'src/components/utils/TxButton'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useSelectSpaceIdsWhereAccountCanPost } from 'src/rtk/features/spaceIds/spaceIdsHooks'
 import { PostContent, SpaceId } from 'src/types'
 import { PostType } from '.'
@@ -119,7 +120,7 @@ export type EditorProps = {
   setSpaceForPost: (spaceId?: string) => void
   initialValues: FormValues
   postType?: PostType
-  defaultSpaceId?: SpaceId
+  spaceForPost?: SpaceId
 }
 
 const FullEditor = ({
@@ -128,7 +129,7 @@ const FullEditor = ({
   setSpaceForPost,
   initialValues,
   postType,
-  defaultSpaceId,
+  spaceForPost,
 }: EditorProps) => {
   const myAddress = useMyAddress()
   const allowedSpaceIds = useSelectSpaceIdsWhereAccountCanPost(myAddress as string)
@@ -139,6 +140,11 @@ const FullEditor = ({
   const [publishIsDisable, setPublishIsDisable] = useState(true)
   const [markdownMode, setMarkdownMode] = useState(getMarkdownModeFromLocalStore())
   const { saveContent } = useAutoSaveFromForm({ entity: 'post' })
+  const sendEvent = useSendEvent()
+
+  useEffect(() => {
+    sendEvent('createpost_editor_mode', { value: markdownMode ? 'md' : 'html' })
+  }, [markdownMode])
 
   const type: PostType = postType || (tab?.toString() as PostType)
 
@@ -147,7 +153,7 @@ const FullEditor = ({
     handleChange()
   }
 
-  const defaultSpace = defaultSpaceId || allowedSpaceIds[0]
+  const defaultSpace = spaceForPost || allowedSpaceIds[0]
 
   useEffect(() => {
     setSpaceForPost(defaultSpace)
@@ -258,11 +264,20 @@ const FullEditor = ({
                     disabled={!!postType}
                     imageSize={32}
                     onSelect={value => {
+                      const id = (value as LabeledValue).value.toString()
                       setSpaceForPost((value as LabeledValue).value.toString())
+                      sendEvent('createpost_space_changed', {
+                        eventSource: 'fullEditor',
+                        from: spaceForPost,
+                        to: id,
+                      })
                     }}
                   />
                 </div>
                 <TxButton
+                  onClick={() =>
+                    sendEvent('createpost_post_published', { eventSource: 'fullEditor' })
+                  }
                   size='large'
                   type='primary'
                   block

@@ -2,11 +2,13 @@ import clsx from 'clsx'
 import Link from 'next/link'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { activeStakingLinks } from 'src/utils/links'
 import StakerRewardInfo from '../stakers/StakerRewardInfo'
 import styles from './StakerRewardInfoCard.module.sass'
 
 export default function StakerRewardInfoCard() {
+  const sendEvent = useSendEvent()
   return (
     <Segment className={clsx(styles.StakerRewardInfoCard)}>
       <div className={styles.TopSection}>
@@ -14,8 +16,12 @@ export default function StakerRewardInfoCard() {
           <p className={clsx(styles.Title, 'mb-0')}>Active Staking</p>
         </div>
         <Link href={activeStakingLinks.learnMore} passHref>
-          <a target='_blank' className={styles.Link}>
-            How does this work?
+          <a
+            target='_blank'
+            className={styles.Link}
+            onClick={() => sendEvent('lstake_learn_more', { eventSource: 'rewardInfo' })}
+          >
+            How does it work?
           </a>
         </Link>
         <DfImage preview={false} src='/images/diamond.svg' className={styles.Image} />

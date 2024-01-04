@@ -3,12 +3,15 @@ import clsx from 'clsx'
 import { ComponentProps } from 'react'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { activeStakingLinks } from 'src/utils/links'
 import styles from './GetMoreSubCard.module.sass'
 
 export type GetMoreSubCardProps = ComponentProps<'div'>
 
 export default function GetMoreSubCard({ ...props }: GetMoreSubCardProps) {
+  const sendEvent = useSendEvent()
+
   return (
     <Segment {...props} className={clsx(styles.GetMoreSub, props.className)}>
       <div className={styles.Content}>
@@ -24,6 +27,7 @@ export default function GetMoreSubCard({ ...props }: GetMoreSubCardProps) {
             block
             href={activeStakingLinks.learnMore}
             target='_blank'
+            onClick={() => sendEvent('lstake_learn_more', { eventSource: 'getMoreSubCard' })}
           >
             How does it work?
           </Button>
