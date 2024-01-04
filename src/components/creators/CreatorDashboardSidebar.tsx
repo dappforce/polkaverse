@@ -51,10 +51,15 @@ function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { nam
 
   return (
     <>
-      <CreatePostCard variant={variant} />
       {(() => {
         if (loading) return null
-        if (data?.hasStaked) return <StakerRewardInfoCard />
+        if (data?.hasStaked)
+          return (
+            <>
+              <CreatePostCard variant={variant} />
+              <StakerRewardInfoCard />
+            </>
+          )
         return <SupportCreatorsCard />
       })()}
     </>
