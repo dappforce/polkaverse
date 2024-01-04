@@ -8,8 +8,7 @@ import { ViewOnIpfs } from 'src/components/utils'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { DropdownMenu } from 'src/components/utils/DropDownMenu'
 import { useSendEvent } from 'src/providers/AnalyticContext'
-import { idToBn, PostData, SpaceStruct } from 'src/types'
-import { ReactionModal } from '.'
+import { PostData, SpaceStruct } from 'src/types'
 import { useIsMyAddress, useMyAddress } from '../../auth/MyAccountsContext'
 import HiddenPostButton from '../HiddenPostButton'
 import MovePostLink from '../MovePostLink'
@@ -63,9 +62,9 @@ const InnerPostDropDownMenu: FC<DropdownProps> = props => {
             <MovePostLink post={post} />
           </Menu.Item>
         )}
-        <Menu.Item key={`view-reactions-${postId}`}>
+        {/* <Menu.Item key={`view-reactions-${postId}`}>
           <ReactionModal postId={idToBn(postId)} />
-        </Menu.Item>
+        </Menu.Item> */}
         {/* {struct.createdAtBlock && <Menu.Item key={`view-on-block-${postId}`}>
           <ViewOnBlockchainLink createdAtBlock={struct.createdAtBlock} />
         </Menu.Item>} */}
