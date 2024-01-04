@@ -36,6 +36,12 @@ export const fetchAddressLikeCountSlice = createSimpleFetchWrapper<
     if (postIds === null) {
       postIds = getAllPostIdsFromStore(state)
     }
+    const entities = selectAllAddressLikeCounts(state)
+    const newIds = postIds.filter(postId => {
+      const id = getAddressLikeCountId({ address, postId })
+      return !entities[id]
+    })
+    if (!newIds.length) return []
     return await getAddressLikeCountToPosts(address, postIds)
   },
   saveToCacheAction: data => slice.actions.setSuperLikeCounts(data),
@@ -49,12 +55,12 @@ export const fetchAddressLikeCountSlice = createSimpleFetchWrapper<
 
     const postEntities: AddressLikeCount[] = []
     for (let i = 0; i < postIds.length; i++) {
-      const postId = getAddressLikeCountId({ address, postId: postIds[i] })
-      if (!entities[postId]) {
+      const id = getAddressLikeCountId({ address, postId: postIds[i] })
+      if (!entities[id]) {
         isEveryDataCached = false
         break
       } else {
-        postEntities.push(entities[postId]!)
+        postEntities.push(entities[id]!)
       }
     }
 
