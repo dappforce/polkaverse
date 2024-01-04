@@ -208,16 +208,15 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
                     <ViewTags tags={tags} className='mt-2' />
                   </>
                 )}
+                <div className='mt-3'>
+                  <PostActionsPanel
+                    postDetails={postData}
+                    space={space.struct}
+                    // toogleCommentSection={() => openCommentSection()}
+                  />
+                </div>
               </div>
             )}
-
-            <div className='DfRow mt-2 pl-3'>
-              <PostActionsPanel
-                postDetails={postData}
-                space={space.struct}
-                // toogleCommentSection={() => openCommentSection()}
-              />
-            </div>
 
             <div className='pt-2'>
               <AuthorCard
