@@ -298,7 +298,7 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
   const canPostSuperLiked = useCanPostSuperLiked(struct.id)
   if (!canPostSuperLiked || !clientCanPostSuperLiked) return null
 
-  const ReactionsAction = () => <SuperLike post={struct} className='DfAction' />
+  const ReactionsAction = () => <SuperLike post={struct} />
 
   return (
     <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'} ${className ?? ''}`}>
