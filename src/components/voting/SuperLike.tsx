@@ -1,5 +1,5 @@
 import { PostStruct } from '@subsocial/api/types'
-import { Button, ButtonProps, Image } from 'antd'
+import { Button, ButtonProps, Image, Tooltip } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { ComponentProps, useEffect, useState } from 'react'
@@ -52,7 +52,8 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
   const isMyPost = post.ownerId === myAddress
 
   const isActive = hasILikedOptimistic
-  const isDisabled = !clientCanPostSuperLiked || !canPostSuperLiked || isMyPost || loadingTotalStake
+  const isPostCreatedMoreThan1Week = !clientCanPostSuperLiked || !canPostSuperLiked
+  const isDisabled = isPostCreatedMoreThan1Week || isMyPost || loadingTotalStake
 
   const { openSignInModal } = useAuth()
 
@@ -92,8 +93,29 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
     />
   )
 
+  let tooltipTitle = ''
+  if (isPostCreatedMoreThan1Week)
+    tooltipTitle = 'You cannot super like posts that are older than 7 days'
+  else if (isMyPost) tooltipTitle = 'You cannot like your own post'
+
+  const button = (
+    <Button
+      className={clsx(
+        'FontSmall',
+        styles.SuperLike,
+        isActive && styles.SuperLikeActive,
+        props.className,
+      )}
+      onClick={onClick}
+      disabled={isDisabled}
+    >
+      <IconWithLabel renderZeroCount icon={icon} count={optimisticCount} />
+    </Button>
+  )
+
   return (
     <>
+      {tooltipTitle ? <Tooltip title={tooltipTitle}>{button}</Tooltip> : button}
       <Button
         className={clsx(
           'FontSmall',
