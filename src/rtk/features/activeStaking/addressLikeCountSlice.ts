@@ -25,15 +25,25 @@ const selectors = adapter.getSelectors<RootState>(state => state.addressLikeCoun
 export const selectAddressLikeCount = selectors.selectById
 export const selectAllAddressLikeCounts = selectors.selectEntities
 
+function getAllPostIdsFromStore(state: RootState) {
+  return state.posts.ids as string[]
+}
 export const fetchAddressLikeCountSlice = createSimpleFetchWrapper<
-  { postIds: string[]; address: string },
+  { postIds: string[] | null; address: string },
   AddressLikeCount[]
 >({
-  fetchData: async function ({ postIds, address }) {
+  fetchData: async function ({ postIds, address }, state) {
+    if (postIds === null) {
+      postIds = getAllPostIdsFromStore(state)
+    }
     return await getAddressLikeCountToPosts(address, postIds)
   },
   saveToCacheAction: data => slice.actions.setSuperLikeCounts(data),
   getCachedData: (state, { postIds, address }) => {
+    if (postIds === null) {
+      postIds = getAllPostIdsFromStore(state)
+    }
+
     const entities = selectAllAddressLikeCounts(state)
     let isEveryDataCached = true
 

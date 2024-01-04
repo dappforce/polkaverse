@@ -198,7 +198,7 @@ export function createSimpleFetchWrapper<Args, ReturnValue>({
   sliceName: string
   getCachedData: (state: RootState, args: Args) => ReturnValue | undefined
   saveToCacheAction: (data: ReturnValue) => any
-  fetchData: (args: Args) => Promise<ReturnValue>
+  fetchData: (args: Args, state: RootState) => Promise<ReturnValue>
   shouldFetchCondition?: (cachedData: ReturnValue | undefined) => boolean
 }) {
   const currentlyFetchingMap = new Map<string, Promise<ReturnValue>>()
@@ -216,7 +216,7 @@ export function createSimpleFetchWrapper<Args, ReturnValue>({
         if (fetchedData && !shouldFetchCondition?.(fetchedData)) return fetchedData
       }
 
-      const promise = fetchData(allArgs)
+      const promise = fetchData(allArgs, getState())
       currentlyFetchingMap.set(id, promise)
       const res = await promise
 
