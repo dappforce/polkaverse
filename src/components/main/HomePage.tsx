@@ -177,7 +177,7 @@ const TabsHomePage = ({
         />
       )}
       <span>
-        <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />
+        {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
       </span>
       <Section className='m-0'>
         <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} {...props} />
