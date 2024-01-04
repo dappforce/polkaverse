@@ -40,7 +40,6 @@ import { formatDate, isHidden, toShortUrl, useIsVisible } from '../../utils'
 import { SummarizeMd } from '../../utils/md/SummarizeMd'
 import ViewTags from '../../utils/ViewTags'
 import Embed from '../embed/Embed'
-import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
 import { PostDropDownMenu } from './PostDropDownMenu'
 import TwitterPost from './TwitterPost'
@@ -290,7 +289,7 @@ type PostActionsPanelProps = {
 }
 
 export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
-  const { postDetails, space, withBorder, className } = props
+  const { postDetails, /* space, */ withBorder, className } = props
   const {
     post: { struct },
   } = postDetails
@@ -304,7 +303,7 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
   return (
     <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'} ${className ?? ''}`}>
       <ReactionsAction />
-      <ShareDropdown postDetails={postDetails} space={space} className='DfAction' />
+      {/* <ShareDropdown postDetails={postDetails} space={space} className='DfAction' /> */}
     </div>
   )
 }
