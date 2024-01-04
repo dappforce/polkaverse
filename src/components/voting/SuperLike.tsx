@@ -1,10 +1,15 @@
 import { PostStruct } from '@subsocial/api/types'
 import { Button, ButtonProps, Image } from 'antd'
 import clsx from 'clsx'
+import dayjs from 'dayjs'
 import { ComponentProps, useEffect, useState } from 'react'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { fetchAddressLikeCountSlice } from 'src/rtk/features/activeStaking/addressLikeCountSlice'
-import { useHasISuperLikedPost, useSuperLikeCount } from 'src/rtk/features/activeStaking/hooks'
+import {
+  useCanPostSuperLiked,
+  useHasISuperLikedPost,
+  useSuperLikeCount,
+} from 'src/rtk/features/activeStaking/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import { useAuth } from '../auth/AuthContext'
@@ -24,6 +29,9 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
 
+  const clientCanPostSuperLiked = useClientValidationOfPostSuperLike(post.createdAtTime)
+  const canPostSuperLiked = useCanPostSuperLiked(post.id)
+
   const [isOpenShouldStakeModal, setIsOpenShouldStakeModal] = useState(false)
   // const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
 
@@ -42,12 +50,14 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
   }, [hasILiked])
 
   const isMyPost = post.ownerId === myAddress
-  const isActive = hasILikedOptimistic || isMyPost
+
+  const isActive = hasILikedOptimistic
+  const isDisabled = !clientCanPostSuperLiked || !canPostSuperLiked || isMyPost || loadingTotalStake
 
   const { openSignInModal } = useAuth()
 
   const onClick = async () => {
-    if (isActive || loadingTotalStake) return
+    if (isActive || isDisabled) return
 
     if (!myAddress) {
       openSignInModal()
@@ -92,6 +102,7 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
           props.className,
         )}
         onClick={onClick}
+        disabled={isDisabled}
       >
         <IconWithLabel
           renderTextIfEmpty
@@ -204,4 +215,16 @@ function ShouldStakeModal({ onCancel, visible }: { visible: boolean; onCancel: (
       </div>
     </CustomModal>
   )
+}
+
+function useClientValidationOfPostSuperLike(createdAtTime: number) {
+  const [, setState] = useState({})
+
+  useEffect(() => {
+    const interval = setInterval(() => setState({}), 5 * 1000 * 60) // refresh every 5 minutes
+    return () => clearInterval(interval)
+  }, [])
+
+  const isPostMadeMoreThan1WeekAgo = dayjs().diff(dayjs(createdAtTime), 'day') > 7
+  return !isPostMadeMoreThan1WeekAgo
 }
