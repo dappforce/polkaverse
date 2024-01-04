@@ -44,8 +44,6 @@ function format(
     )
   }
 
-  console.log(postfix, parseFloat(`0.${postfix}`).toPrecision(precision).substring(2))
-
   return (
     <>
       {prefix}

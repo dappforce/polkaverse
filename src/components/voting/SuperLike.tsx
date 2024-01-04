@@ -1,15 +1,17 @@
 import { PostStruct } from '@subsocial/api/types'
-import { Button, ButtonProps } from 'antd'
+import { Button, ButtonProps, Image } from 'antd'
 import clsx from 'clsx'
 import { CSSProperties, useEffect, useState } from 'react'
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { fetchAddressLikeCountSlice } from 'src/rtk/features/activeStaking/addressLikeCountSlice'
 import { useHasISuperLikedPost, useSuperLikeCount } from 'src/rtk/features/activeStaking/hooks'
-import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { getSubIdCreatorsLink } from 'src/utils/links'
 import { useAuth } from '../auth/AuthContext'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { IconWithLabel } from '../utils'
+import CustomModal from '../utils/CustomModal'
 import { createSuperLike } from '../utils/datahub/super-likes'
 
 export type SuperLikeProps = ButtonProps & {
@@ -20,7 +22,12 @@ export type SuperLikeProps = ButtonProps & {
 
 export default function SuperLike({ post, ...props }: SuperLikeProps) {
   const dispatch = useAppDispatch()
+  const myAddress = useMyAddress()
+
+  const [isOpenShouldStakeModal, setIsOpenShouldStakeModal] = useState(false)
   // const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
+
+  const { data: totalStake, loading: loadingTotalStake } = useFetchTotalStake(myAddress ?? '')
   const count = useSuperLikeCount(post.id)
   const hasILiked = useHasISuperLikedPost(post.id)
 
@@ -36,23 +43,15 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
 
   const isActive = hasILikedOptimistic
 
-  const openOnBoardingModal = useOpenCloseOnBoardingModal()
-  const myAddress = useMyAddress()
-
-  const {
-    openSignInModal,
-    state: {
-      completedSteps: { hasTokens },
-    },
-  } = useAuth()
+  const { openSignInModal } = useAuth()
 
   const onClick = async () => {
     if (!myAddress) {
       openSignInModal()
       return
     }
-    if (!hasTokens) {
-      openOnBoardingModal('open', { type: 'partial', toStep: 'energy' })
+    if (!totalStake?.hasStaked) {
+      setIsOpenShouldStakeModal(true)
       return
     }
 
@@ -83,11 +82,15 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
       <Button
         className={clsx('DfVoterButton ColorMuted', isActive && 'ColorPrimary', props.className)}
         style={{ background: 'transparent' }}
-        disabled={isActive}
+        disabled={isActive || loadingTotalStake}
         onClick={onClick}
       >
         <IconWithLabel renderTextIfEmpty icon={icon} count={optimisticCount} />
       </Button>
+      <ShouldStakeModal
+        visible={isOpenShouldStakeModal}
+        onCancel={() => setIsOpenShouldStakeModal(false)}
+      />
       {/* <CustomModal
         visible={isOpenActiveStakingModal}
         destroyOnClose
@@ -113,5 +116,28 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
         </div>
       </CustomModal> */}
     </>
+  )
+}
+
+function ShouldStakeModal({ onCancel, visible }: { visible: boolean; onCancel: () => void }) {
+  return (
+    <CustomModal
+      visible={visible}
+      onCancel={onCancel}
+      title='Wait a sec...'
+      subtitle='In this app, every like is more than just a thumbs-up! When you like a post, both you and the author can earn extra SUB tokens. For this, you need to start staking SUB tokens first.'
+    >
+      <div className='d-flex flex-column align-items-center GapLarge'>
+        <Image
+          src='/images/creators/subsocial-tokens-large.png'
+          className='w-100'
+          style={{ maxWidth: '250px' }}
+          preview={{ mask: null }}
+        />
+        <Button block type='primary' size='large' href={getSubIdCreatorsLink()} target='_blank'>
+          Start Staking SUB
+        </Button>
+      </div>
+    </CustomModal>
   )
 }
