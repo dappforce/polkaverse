@@ -40,7 +40,11 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
             <SlQuestion className='FontTiny ColorMuted' />
           </div>
           <span className='FontWeightSemibold d-flex align-items-center'>
-            {loading ? <NumberSkeleton /> : <span>{likeCount}</span>}
+            {loading ? (
+              <NumberSkeleton />
+            ) : (
+              <span>{Math.min(likeCount, SUPER_LIKES_FOR_MAX_REWARD)}</span>
+            )}
             <MutedSpan>/10</MutedSpan>
             {!!surplusLike && <span className='ml-1'> +{surplusLike}</span>}
           </span>
