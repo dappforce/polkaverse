@@ -32,7 +32,7 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
               How does it work?
             </a>
           </Link>
-          <DfImage src='/images/databases.svg' className={styles.Image} />
+          <DfImage preview={false} src='/images/databases.svg' className={styles.Image} />
         </div>
       )}
       <div

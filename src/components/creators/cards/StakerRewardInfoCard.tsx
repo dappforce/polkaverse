@@ -23,7 +23,7 @@ export default function StakerRewardInfoCard() {
               How does it work?
             </a>
           </Link>
-          <DfImage src='/images/diamond.svg' className={styles.Image} />
+          <DfImage preview={false} src='/images/diamond.svg' className={styles.Image} />
         </div>
         <div className={clsx(styles.BottomSection)}>
           <StakerRewardInfo className='pb-2' />

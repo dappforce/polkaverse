@@ -32,7 +32,7 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
   return (
     <Segment className={clsx(styles.CreatePostCard)}>
       <div className={styles.TitleContainer}>
-        <DfImage src={imagePath} className={styles.Image} />
+        <DfImage preview={false} src={imagePath} className={styles.Image} />
         <span className={styles.Title}>
           {variant === 'posts' ? <span>Active Staking</span> : <span>Featured Creators</span>}
         </span>

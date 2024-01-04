@@ -8,7 +8,11 @@ export default function SupportCreatorsCard() {
   return (
     <div className={clsx(styles.SupportCreatorsCard)}>
       <div className={styles.Content}>
-        <DfImage src='/images/creators/subsocial-tokens.png' className={clsx(styles.Image)} />
+        <DfImage
+          preview={false}
+          src='/images/creators/subsocial-tokens.png'
+          className={clsx(styles.Image)}
+        />
         <p className={clsx('FontWeightSemibold FontLarge mb-2', styles.Title)}>
           Support creators
           <br />

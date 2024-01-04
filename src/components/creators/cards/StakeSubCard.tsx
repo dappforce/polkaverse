@@ -15,7 +15,11 @@ export default function StakeSubCard({ space }: StakeSubCardProps) {
   return (
     <div className={clsx(styles.StakeSubCard)}>
       <div className={styles.Content}>
-        <DfImage src='/images/creators/subsocial-tokens.png' className={clsx(styles.Image)} />
+        <DfImage
+          preview={false}
+          src='/images/creators/subsocial-tokens.png'
+          className={clsx(styles.Image)}
+        />
         <p className={clsx(styles.Title, 'mb-2')}>Stake SUB to this creator and earn more</p>
         <p className={clsx(styles.Subtitle, 'mb-3')}>
           Generate rewards for both you and this creator by staking towards them
