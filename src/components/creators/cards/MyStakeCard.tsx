@@ -52,7 +52,7 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
             <Skeleton round paragraph={false} className={styles.Skeleton} />
           ) : (
             <span className='FontWeightMedium'>
-              <FormatBalance value={data?.stakeAmount} isShort decimals={10} currency='SUB' />
+              <FormatBalance value={data?.stakeAmount} decimals={10} currency='SUB' precision={2} />
             </span>
           )}
         </div>

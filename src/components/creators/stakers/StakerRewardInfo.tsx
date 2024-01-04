@@ -63,7 +63,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
               <NumberSkeleton />
             ) : (
               <span>
-                ≈<FormatBalance currency='SUB' decimals={10} value={todayReward} isShort />{' '}
+                ≈<FormatBalance currency='SUB' decimals={10} value={todayReward} precision={2} />{' '}
               </span>
             )}
           </span>
@@ -80,7 +80,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
             ) : (
               <span>
                 ≈
-                <FormatBalance currency='SUB' value={weekReward.toString()} decimals={10} isShort />
+                <FormatBalance currency='SUB' value={weekReward} decimals={10} precision={2} />
               </span>
             )}
           </span>

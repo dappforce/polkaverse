@@ -27,7 +27,7 @@ export default function StakerRewardHistoryModal({
                 {formatDate(reward.endDate, 'DD.MM.YY')}
               </span>
               <span className='FontWeightSemibold'>
-                + <FormatBalance currency='SUB' decimals={10} value={reward.reward} isShort />
+                + <FormatBalance currency='SUB' decimals={10} value={reward.reward} precision={2} />
               </span>
             </div>
           ))

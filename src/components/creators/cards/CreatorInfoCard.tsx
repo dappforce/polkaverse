@@ -62,7 +62,12 @@ export default function CreatorInfoCard({ space, showStakeButton = true }: Creat
           <div className='GapSmall d-flex align-items-center justify-content-between FontSmall'>
             <span className='ColorMuted'>My Stake</span>
             <span className='FontWeightMedium'>
-              <FormatBalance value={stakeData?.stakeAmount} isShort decimals={10} currency='SUB' />
+              <FormatBalance
+                value={stakeData?.stakeAmount}
+                decimals={10}
+                currency='SUB'
+                precision={2}
+              />
             </span>
           </div>
           <Button
