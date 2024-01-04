@@ -16,11 +16,11 @@ export default function StakerRewardInfoCard() {
       <Segment className={clsx(styles.StakerRewardInfoCard)}>
         <div className={styles.TopSection}>
           <div className='d-flex align-items-center GapNormal justify-content-between'>
-            <p className={clsx(styles.Title, 'mb-0')}>Creator Staking</p>
+            <p className={clsx(styles.Title, 'mb-0')}>My Bonus Rewards</p>
           </div>
           <Link href='https://docs.subsocial.network/docs/basics/creator-staking' passHref>
             <a target='_blank' className={styles.Link}>
-              How does it work?
+              How does this work?
             </a>
           </Link>
           <DfImage preview={false} src='/images/diamond.svg' className={styles.Image} />

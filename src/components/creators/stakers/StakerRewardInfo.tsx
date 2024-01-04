@@ -1,4 +1,4 @@
-import { Skeleton } from 'antd'
+import { Skeleton, Tooltip } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { ComponentProps } from 'react'
@@ -36,8 +36,9 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
             <MutedSpan className={clsx('FontSmall')}>
               {likesLeftToGoal <= 0 ? 'Goal achieved' : `Like ${likesLeftToGoal} more posts`}
             </MutedSpan>
-            {/* TODO: add tooltip */}
-            <SlQuestion className='FontTiny ColorMuted' />
+            <Tooltip title='Each post you like, up to a maximum of 10, will boost your rewards for today'>
+              <SlQuestion className='FontTiny ColorMuted' />
+            </Tooltip>
           </div>
           <span className='FontWeightSemibold d-flex align-items-center'>
             {loading ? (
@@ -54,9 +55,10 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
       <div className='d-flex flex-column GapTiny mt-2'>
         <div className='d-flex justify-content-between align-items-center'>
           <div className='d-flex align-items-baseline GapMini'>
-            <MutedSpan className={clsx('FontSmall')}>Approx. today</MutedSpan>
-            {/* TODO: add tooltip */}
-            <SlQuestion className='FontTiny ColorMuted' />
+            <MutedSpan className={clsx('FontSmall')}>Received today</MutedSpan>
+            <Tooltip title='The bonus rewards you have received today from participating in Active Staking'>
+              <SlQuestion className='FontTiny ColorMuted' />
+            </Tooltip>
           </div>
           <span className='FontWeightSemibold d-flex align-items-center GapMini'>
             {loading ? (
@@ -70,9 +72,10 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
         </div>
         <div className='d-flex justify-content-between align-items-center'>
           <div className='d-flex align-items-baseline GapMini'>
-            <MutedSpan className={clsx('FontSmall')}>Approx. this week</MutedSpan>
-            {/* TODO: add tooltip */}
-            <SlQuestion className='FontTiny ColorMuted' />
+            <MutedSpan className={clsx('FontSmall')}>Received this week</MutedSpan>
+            <Tooltip title='The bonus rewards you have received this week from participating in Active Staking'>
+              <SlQuestion className='FontTiny ColorMuted' />
+            </Tooltip>
           </div>
           <span className='FontWeightSemibold d-flex align-items-center GapMini'>
             {loading ? (
@@ -88,8 +91,9 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
         <div className='d-flex justify-content-between align-items-center'>
           <div className='d-flex align-items-baseline GapMini'>
             <MutedSpan className={clsx('FontSmall')}>Distribution in</MutedSpan>
-            {/* TODO: add tooltip */}
-            <SlQuestion className='FontTiny ColorMuted' />
+            <Tooltip title='How long until you will receive your bonus staking rewards for this week'>
+              <SlQuestion className='FontTiny ColorMuted' />
+            </Tooltip>
           </div>
           <span className='FontWeightSemibold'>
             <Pluralize count={dayLeftUntilDistribution} singularText='day' pluralText='days' />

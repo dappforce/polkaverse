@@ -19,7 +19,7 @@ export default function SupportCreatorsCard() {
           and earn SUB
         </p>
         <p className={clsx(styles.Subtitle, 'mb-3')}>
-          Generate rewards for both you and your favorite creators by staking towards them
+          Generate rewards for both you and creators by staking towards them
         </p>
         <Button href={getSubIdCreatorsLink()} block target='_blank'>
           Stake SUB
