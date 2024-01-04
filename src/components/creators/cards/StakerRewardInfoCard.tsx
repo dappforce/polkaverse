@@ -28,7 +28,7 @@ export default function StakerRewardInfoCard() {
         <div className={clsx(styles.BottomSection)}>
           <StakerRewardInfo className='pb-2' />
           <div
-            className='d-flex justify-content-center GapMini align-items-center pb-3 ColorPrimary FontWeightMedium'
+            className='d-flex justify-content-center GapMini align-items-center pb-3 pt-1 ColorPrimary FontWeightMedium'
             onClick={() => setIsOpenHistoryModal(true)}
             style={{ cursor: 'pointer' }}
           >

@@ -62,7 +62,7 @@ export default function MobileStakerRewardDashboard(props: MobileStakerRewardDas
         <div className={clsx(styles.RewardInfo, isOpenClassName)}>
           <StakerRewardInfo size='small' className='pt-1 pb-0' />
           <div
-            className='pb-3 pt-1 px-3 d-flex justify-content-center align-items-center ColorPrimary FontWeightMedium GapMini'
+            className='pb-3 pt-2 px-3 d-flex justify-content-center align-items-center ColorPrimary FontWeightMedium GapMini'
             onClick={() => setIsOpenRewardHistoryModal(true)}
             style={{ cursor: 'pointer' }}
           >

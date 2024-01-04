@@ -30,7 +30,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
 
   return (
     <div {...props} className={clsx(styles.StakerRewardInfo, props.className)}>
-      <div className={styles.Goal}>
+      <div className={clsx(styles.Goal, 'pb-1')}>
         <div className={styles.GoalInfo}>
           <div className='d-flex align-items-baseline GapMini'>
             <MutedSpan className={clsx('FontSmall')}>
