@@ -9,6 +9,7 @@ import { setCurrentEmailAddress } from 'src/components/utils/OffchainSigner/Exte
 import config from 'src/config'
 import { isMobileDevice } from 'src/config/Size.config'
 import { EmailAccount } from 'src/types'
+import { hasInjectedWallet } from 'src/utils/window'
 import { AccountSelector } from '../../profile-selector/AccountSelector'
 import ExternalLink from '../../spaces/helpers/ExternalLink'
 import { MutedDiv } from '../../utils/MutedText'
@@ -194,13 +195,19 @@ const ModalContent = ({
         <div>
           <ModalBodyWrapper
             title='Sign In'
-            desc={
-              isMobileDeviceAndWidth ? (
-                <>
-                  To use PolkaVerse, you need a wallet to manage your account. We recommend{' '}
-                  <ExternalLink url='https://novawallet.io/' value='Nova Wallet' />
-                </>
-              ) : (
+            desc={(() => {
+              if (isMobileDeviceAndWidth) {
+                if (hasInjectedWallet()) {
+                  return <>To use Polkaverse, you need to connect your wallet</>
+                }
+                return (
+                  <>
+                    To use PolkaVerse, you need a wallet to manage your account. We recommend{' '}
+                    <ExternalLink url='https://novawallet.io/' value='Nova Wallet' />
+                  </>
+                )
+              }
+              return (
                 <>
                   Choose one of the available wallet providers to connect to {config.appName}.{' '}
                   <ExternalLink
@@ -209,7 +216,7 @@ const ModalContent = ({
                   />
                 </>
               )
-            }
+            })()}
           >
             {config.enableConfirmationLessMode ? (
               <>
