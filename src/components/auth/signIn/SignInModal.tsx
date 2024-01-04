@@ -202,8 +202,8 @@ const ModalContent = ({
                 }
                 return (
                   <>
-                    To use PolkaVerse, you need a wallet to manage your account. We recommend{' '}
-                    <ExternalLink url='https://novawallet.io/' value='Nova Wallet' />
+                    To use PolkaVerse, you need a wallet to manage your account. We recommend Nova
+                    Wallet.
                   </>
                 )
               }
