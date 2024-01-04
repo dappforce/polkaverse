@@ -3,6 +3,8 @@ import { Button, ButtonProps, Image } from 'antd'
 import clsx from 'clsx'
 import { CSSProperties, useEffect, useState } from 'react'
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
+import { useAppDispatch } from 'src/rtk/app/store'
+import { fetchAddressLikeCountSlice } from 'src/rtk/features/activeStaking/addressLikeCountSlice'
 import { useHasISuperLikedPost, useSuperLikeCount } from 'src/rtk/features/activeStaking/hooks'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
 import { useAuth } from '../auth/AuthContext'
@@ -18,6 +20,7 @@ export type SuperLikeProps = ButtonProps & {
 const FIRST_TIME_SUPERLIKE = 'df.first-time-superlike'
 
 export default function SuperLike({ post, ...props }: SuperLikeProps) {
+  const dispatch = useAppDispatch()
   const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
   const count = useSuperLikeCount(post.id)
   const hasILiked = useHasISuperLikedPost(post.id)
@@ -61,6 +64,7 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
     } catch (error) {
       setOptimisticCount(count)
       setHasILikedOptimistic(hasILiked)
+      dispatch(fetchAddressLikeCountSlice({ address: myAddress, postIds: [post.id], reload: true }))
     }
 
     if (localStorage.getItem(FIRST_TIME_SUPERLIKE) !== 'false') {
