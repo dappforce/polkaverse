@@ -55,8 +55,8 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
       <div className='d-flex flex-column GapTiny mt-2'>
         <div className='d-flex justify-content-between align-items-center'>
           <div className='d-flex align-items-baseline GapMini'>
-            <MutedSpan className={clsx('FontSmall')}>Received today</MutedSpan>
-            <Tooltip title='The bonus rewards you have received today from participating in Active Staking'>
+            <MutedSpan className={clsx('FontSmall')}>Earned today</MutedSpan>
+            <Tooltip title='The bonus rewards you have earned today from participating in Active Staking'>
               <SlQuestion className='FontTiny ColorMuted' />
             </Tooltip>
           </div>
@@ -72,8 +72,8 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
         </div>
         <div className='d-flex justify-content-between align-items-center'>
           <div className='d-flex align-items-baseline GapMini'>
-            <MutedSpan className={clsx('FontSmall')}>Received this week</MutedSpan>
-            <Tooltip title='The bonus rewards you have received this week from participating in Active Staking'>
+            <MutedSpan className={clsx('FontSmall')}>Earned this week</MutedSpan>
+            <Tooltip title='The bonus rewards you have earned this week from participating in Active Staking'>
               <SlQuestion className='FontTiny ColorMuted' />
             </Tooltip>
           </div>
