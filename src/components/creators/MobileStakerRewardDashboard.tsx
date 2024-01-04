@@ -53,7 +53,7 @@ export default function MobileStakerRewardDashboard(props: MobileStakerRewardDas
         <div className={clsx(styles.Gradient, isOpenClassName)} />
       </div>
       <div className={clsx(styles.RewardInfo, isOpenClassName)}>
-        <StakerRewardInfo size='small' className='pt-1' />
+        <StakerRewardInfo size='small' className='pt-1 position-relative' style={{ zIndex: 1 }} />
         <div className={clsx(styles.GradientOuter, isOpenClassName)} />
       </div>
     </div>
