@@ -45,7 +45,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
 
   const todayReward = data?.currentRewardAmount ?? '0'
   const weekReward = data?.weeklyReward ?? '0'
-  const dayLeftUntilDistribution = DISTRIBUTION_DAY + 7 - dayjs.utc().get('day')
+  const dayLeftUntilDistribution = (DISTRIBUTION_DAY + 7 - dayjs.utc().get('day')) % 7
 
   return (
     <>
