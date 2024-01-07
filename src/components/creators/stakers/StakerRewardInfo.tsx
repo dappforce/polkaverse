@@ -30,12 +30,12 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
     )
   }
 
-  if (!data?.superLikesCount && !data?.weeklyReward) {
+  if (!(data?.currentRewardAmount || data?.weeklyReward)) {
     return (
       <p className='FontSmall p-3 mb-1'>
         Like the posts on &quot;
         <span className='ColorPrimary FontWeightMedium'>Posts &gt; Active Staking</span>&quot; tab
-        to start earning extra SUB tokens on top of your current stake.
+        to start earning extra 50-200% SUB tokens on top of your current stake.
       </p>
     )
   }

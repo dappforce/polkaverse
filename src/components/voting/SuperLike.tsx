@@ -26,7 +26,7 @@ export type SuperLikeProps = ButtonProps & {
   post: PostStruct
 }
 
-// const FIRST_TIME_SUPERLIKE = 'df.first-time-superlike'
+const FIRST_TIME_SUPERLIKE = 'df.first-time-superlike'
 
 export default function SuperLike({ post, ...props }: SuperLikeProps) {
   const dispatch = useAppDispatch()
@@ -40,7 +40,7 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
   const canPostSuperLiked = useCanPostSuperLiked(post.id)
 
   const [isOpenShouldStakeModal, setIsOpenShouldStakeModal] = useState(false)
-  // const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
+  const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
 
   const { data: totalStake, loading: loadingTotalStake } = useFetchTotalStake(myAddress ?? '')
   const { data: userReport } = useFetchUserRewardReport()
@@ -94,10 +94,10 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
       dispatch(fetchAddressLikeCountSlice({ address: myAddress, postIds: [post.id], reload: true }))
     }
 
-    // if (localStorage.getItem(FIRST_TIME_SUPERLIKE) !== 'false') {
-    //   setIsOpenActiveStakingModal(true)
-    // }
-    // localStorage.setItem(FIRST_TIME_SUPERLIKE, 'false')
+    if (localStorage.getItem(FIRST_TIME_SUPERLIKE) !== 'false') {
+      setIsOpenActiveStakingModal(true)
+    }
+    localStorage.setItem(FIRST_TIME_SUPERLIKE, 'false')
   }
 
   const icon = (
@@ -137,7 +137,7 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
         visible={isOpenShouldStakeModal}
         onCancel={() => setIsOpenShouldStakeModal(false)}
       />
-      {/* <CustomModal
+      <CustomModal
         visible={isOpenActiveStakingModal}
         destroyOnClose
         onCancel={() => setIsOpenActiveStakingModal(false)}
@@ -160,7 +160,7 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
             Confirm
           </Button>
         </div>
-      </CustomModal> */}
+      </CustomModal>
     </>
   )
 }
