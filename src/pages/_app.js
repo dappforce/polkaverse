@@ -33,7 +33,7 @@ import config from 'src/config'
 import '@subsocial/definitions/interfaces/types-lookup'
 import '@subsocial/definitions/interfaces/augment-types'
 import '@subsocial/definitions/interfaces/augment-api'
-import AnalyticProvider from 'src/providers/AnalyticContext'
+import AnalyticProvider, { AppLaunchedEventSender } from 'src/providers/AnalyticContext'
 import { GoogleAnalytics } from 'nextjs-google-analytics'
 import { DatahubSubscriber } from 'src/components/utils/datahub/subscriber'
 
@@ -79,6 +79,7 @@ function MyApp(props) {
           <DfApolloProvider initialApolloState={pageProps.initialApolloState}>
             <ThemeProvider defaultTheme={config.themeName}>
               <MainPage>
+                <AppLaunchedEventSender />
                 <Component {...pageProps} />
               </MainPage>
             </ThemeProvider>
