@@ -1,6 +1,7 @@
 import { Skeleton, Tooltip } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
+import Link from 'next/link'
 import { ComponentProps, useState } from 'react'
 import { RiHistoryFill } from 'react-icons/ri'
 import { SlQuestion } from 'react-icons/sl'
@@ -30,12 +31,17 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
     )
   }
 
-  if (!(data?.currentRewardAmount || data?.weeklyReward)) {
+  const todayReward = data?.currentRewardAmount ?? '0'
+  const weekReward = data?.weeklyReward ?? '0'
+
+  if (!(BigInt(todayReward) || BigInt(weekReward))) {
     return (
       <p className='FontSmall p-3 mb-1'>
         Like the posts on &quot;
-        <span className='ColorPrimary FontWeightMedium'>Posts &gt; Active Staking</span>&quot; tab
-        to start earning extra 50-200% SUB tokens on top of your current stake.
+        <Link href='/?tab=posts&type=suggested&date=week' passHref>
+          <a className='ColorPrimary FontWeightMedium'>Posts &gt; Active Staking</a>
+        </Link>
+        &quot; tab to start earning extra 50-200% SUB tokens on top of your current stake.
       </p>
     )
   }
@@ -43,8 +49,6 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
   const likeCount = data?.superLikesCount ?? 0
   const likesLeftToGoal = SUPER_LIKES_FOR_MAX_REWARD - likeCount
 
-  const todayReward = data?.currentRewardAmount ?? '0'
-  const weekReward = data?.weeklyReward ?? '0'
   const dayLeftUntilDistribution = (DISTRIBUTION_DAY + 7 - dayjs.utc().get('day')) % 7
 
   return (
