@@ -49,7 +49,8 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
   const likeCount = data?.superLikesCount ?? 0
   const likesLeftToGoal = SUPER_LIKES_FOR_MAX_REWARD - likeCount
 
-  const dayLeftUntilDistribution = (DISTRIBUTION_DAY + 7 - dayjs.utc().get('day')) % 7
+  // monday: 7 days, tuesday: 6 days, ..., sunday: 1 day
+  const dayLeftUntilDistribution = ((DISTRIBUTION_DAY + 7 - dayjs.utc().get('day')) % 7) + 1
 
   return (
     <>
