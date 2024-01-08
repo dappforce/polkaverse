@@ -184,7 +184,6 @@ const GET_REWARD_HISTORY = gql`
   }
 `
 export async function getRewardHistory(address: string): Promise<RewardHistory> {
-  console.log('FETCH GET REWARD HISTORY')
   const res = await datahubQueryRequest<
     {
       activeStakingRewardsByWeek: {
