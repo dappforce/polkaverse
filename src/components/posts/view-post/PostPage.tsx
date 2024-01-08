@@ -26,7 +26,6 @@ import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
 import ViewTags from '../../utils/ViewTags'
 import Embed, { getEmbedLinkType, getYoutubeVideoId } from '../embed/Embed'
-import { StatsPanel } from '../PostStats'
 import ViewPostLink from '../ViewPostLink'
 import {
   HiddenPostAlert,
@@ -178,7 +177,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               />
               {isNotMobile && (
                 <div className='d-flex justify-content-end align-items-center'>
-                  <StatsPanel post={struct} goToCommentsId={goToCommentsId} />
+                  {/* <StatsPanel post={struct} goToCommentsId={goToCommentsId} /> */}
                   <div className='ml-2' style={{ position: 'relative', top: '2px' }}>
                     <PostDropDownMenu post={post} space={spaceStruct} withEditButton />
                   </div>
