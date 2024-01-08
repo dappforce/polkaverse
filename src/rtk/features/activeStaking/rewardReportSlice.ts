@@ -38,16 +38,17 @@ const slice = createSlice({
     ) => {
       const { address, superLikeCountChange } = payload
       const rewardReport = state.entities[address]
-      if (rewardReport) {
+      if (!rewardReport) return
+
+      if (rewardReport.superLikesCount > 0) {
         const rewardPerLike =
           BigInt(rewardReport.weeklyReward) / BigInt(rewardReport.superLikesCount)
         rewardReport.currentRewardAmount = (
           BigInt(rewardReport.currentRewardAmount) + rewardPerLike
         ).toString()
         rewardReport.weeklyReward = (BigInt(rewardReport.weeklyReward) + rewardPerLike).toString()
-
-        rewardReport.superLikesCount += superLikeCountChange
       }
+      rewardReport.superLikesCount += superLikeCountChange
     },
     setRewardReport: adapter.upsertOne,
   },
