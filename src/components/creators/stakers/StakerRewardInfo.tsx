@@ -37,11 +37,11 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
   if (!(BigInt(todayReward) || BigInt(weekReward))) {
     return (
       <p className='FontSmall p-3 mb-1'>
-        Like the posts on &quot;
+        Like the posts on the &quot;
         <Link href='/?tab=posts&type=suggested&date=week' passHref>
           <a className='ColorPrimary FontWeightMedium'>Posts &gt; Active Staking</a>
         </Link>
-        &quot; tab to start earning extra 50-200% SUB tokens on top of your current stake.
+        &quot; tab to increase your staking rewards by 50-200%.
       </p>
     )
   }
