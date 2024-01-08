@@ -28,7 +28,7 @@ export const selectAllAddressLikeCounts = selectors.selectEntities
 function getAllPostIdsFromStore(state: RootState) {
   return state.posts.ids as string[]
 }
-export const fetchAddressLikeCountSlice = createSimpleFetchWrapper<
+export const fetchAddressLikeCounts = createSimpleFetchWrapper<
   { postIds: string[] | null; address: string },
   AddressLikeCount[]
 >({
@@ -44,7 +44,7 @@ export const fetchAddressLikeCountSlice = createSimpleFetchWrapper<
     if (!newIds.length) return []
     return await getAddressLikeCountToPosts(address, postIds)
   },
-  saveToCacheAction: data => slice.actions.setSuperLikeCounts(data),
+  saveToCacheAction: data => slice.actions.setAddressLikeCounts(data),
   getCachedData: (state, { postIds, address }) => {
     if (postIds === null) {
       postIds = getAllPostIdsFromStore(state)
@@ -76,8 +76,11 @@ const slice = createSlice({
   name: sliceName,
   initialState: adapter.getInitialState(),
   reducers: {
-    setSuperLikeCounts: adapter.upsertMany,
+    setAddressLikeCount: adapter.upsertOne,
+    setAddressLikeCounts: adapter.upsertMany,
   },
 })
+
+export const { setAddressLikeCount } = slice.actions
 
 export default slice.reducer

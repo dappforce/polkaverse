@@ -5,13 +5,20 @@ import dayjs from 'dayjs'
 import { ComponentProps, useEffect, useState } from 'react'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useAppDispatch } from 'src/rtk/app/store'
-import { fetchAddressLikeCountSlice } from 'src/rtk/features/activeStaking/addressLikeCountSlice'
+import {
+  fetchAddressLikeCounts,
+  setAddressLikeCount,
+} from 'src/rtk/features/activeStaking/addressLikeCountSlice'
 import {
   useCanPostSuperLiked,
   useFetchUserRewardReport,
   useHasISuperLikedPost,
   useSuperLikeCount,
 } from 'src/rtk/features/activeStaking/hooks'
+import {
+  fetchSuperLikeCounts,
+  setSuperLikeCount,
+} from 'src/rtk/features/activeStaking/superLikeCountsSlice'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import { useAuth } from '../auth/AuthContext'
@@ -47,19 +54,9 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
   const count = useSuperLikeCount(post.id)
   const hasILiked = useHasISuperLikedPost(post.id)
 
-  const [optimisticCount, setOptimisticCount] = useState(count)
-  useEffect(() => {
-    setOptimisticCount(count)
-  }, [count])
-
-  const [hasILikedOptimistic, setHasILikedOptimistic] = useState(hasILiked)
-  useEffect(() => {
-    setHasILikedOptimistic(hasILiked)
-  }, [hasILiked])
-
   const isMyPost = post.ownerId === myAddress
 
-  const isActive = hasILikedOptimistic
+  const isActive = hasILiked
   const isPostCreatedMoreThan1Week = !clientCanPostSuperLiked || !canPostSuperLiked
   const isDisabled = isPostCreatedMoreThan1Week || isMyPost || loadingTotalStake
 
@@ -85,13 +82,19 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
     })
 
     try {
-      setOptimisticCount(count => count + 1)
-      setHasILikedOptimistic(true)
+      // set optimistic changes
+      dispatch(setSuperLikeCount({ postId: post.id, count: count + 1 }))
+      dispatch(setAddressLikeCount({ address: myAddress, postId: post.id, count: count + 1 }))
+
       await createSuperLike({ address: myAddress, args: { postId: post.id } })
     } catch (error) {
-      setOptimisticCount(count)
-      setHasILikedOptimistic(hasILiked)
-      dispatch(fetchAddressLikeCountSlice({ address: myAddress, postIds: [post.id], reload: true }))
+      // undo the optimistic changes
+      dispatch(setSuperLikeCount({ postId: post.id, count: count - 1 }))
+      dispatch(setAddressLikeCount({ address: myAddress, postId: post.id, count: count - 1 }))
+
+      // refetch the real data
+      dispatch(fetchSuperLikeCounts({ postIds: [post.id], reload: true }))
+      dispatch(fetchAddressLikeCounts({ address: myAddress, postIds: [post.id], reload: true }))
     }
 
     if (localStorage.getItem(FIRST_TIME_SUPERLIKE) !== 'false') {
@@ -125,7 +128,7 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
         onClick={onClick}
         disabled={isDisabled}
       >
-        <IconWithLabel renderZeroCount icon={icon} count={optimisticCount} />
+        <IconWithLabel renderZeroCount icon={icon} count={count} />
       </Button>
     </div>
   )

@@ -2,7 +2,7 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { useFetchWithoutApi } from 'src/rtk/app/hooksCommon'
 import { useAppSelector } from 'src/rtk/app/store'
 import {
-  fetchAddressLikeCountSlice,
+  fetchAddressLikeCounts,
   getAddressLikeCountId,
   selectAddressLikeCount,
 } from './addressLikeCountSlice'
@@ -18,7 +18,7 @@ export function useSuperLikeCount(postId: string) {
 export const useFetchMySuperLikesByPostIds = (postIds: string[]) => {
   const myAddress = useMyAddress()
   return useFetchWithoutApi(
-    fetchAddressLikeCountSlice,
+    fetchAddressLikeCounts,
     { postIds, address: myAddress ?? '' },
     { enabled: !!myAddress && postIds.length > 0 },
   )

@@ -53,8 +53,11 @@ const slice = createSlice({
   name: sliceName,
   initialState: adapter.getInitialState(),
   reducers: {
+    setSuperLikeCount: adapter.upsertOne,
     setSuperLikeCounts: adapter.upsertMany,
   },
 })
+
+export const { setSuperLikeCount } = slice.actions
 
 export default slice.reducer

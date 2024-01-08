@@ -11,7 +11,7 @@ import { gql } from 'graphql-request'
 import { getStoreDispatcher } from 'src/rtk/app/store'
 import {
   AddressLikeCount,
-  fetchAddressLikeCountSlice,
+  fetchAddressLikeCounts,
 } from 'src/rtk/features/activeStaking/addressLikeCountSlice'
 import { CanPostSuperLiked } from 'src/rtk/features/activeStaking/canPostSuperLikedSlice'
 import { RewardHistory } from 'src/rtk/features/activeStaking/rewardHistorySlice'
@@ -298,7 +298,7 @@ async function processSubscriptionEvent(
   if (staker.id === myAddress) {
     dispatch(fetchRewardReport({ address: myAddress, reload: true }))
     dispatch(
-      fetchAddressLikeCountSlice({
+      fetchAddressLikeCounts({
         address: myAddress,
         postIds: [post.persistentId],
         reload: true,

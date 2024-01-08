@@ -40,7 +40,7 @@ import {
   SpaceData,
   SpaceStruct,
 } from 'src/types'
-import { fetchAddressLikeCountSlice } from '../activeStaking/addressLikeCountSlice'
+import { fetchAddressLikeCounts } from '../activeStaking/addressLikeCountSlice'
 import { fetchCanPostsSuperLiked } from '../activeStaking/canPostSuperLikedSlice'
 import { fetchSuperLikeCounts } from '../activeStaking/superLikeCountsSlice'
 import { Content, fetchContents, selectPostContentById } from '../contents/contentsSlice'
@@ -342,7 +342,7 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
       dispatch(fetchCanPostsSuperLiked({ postIds: newIds }))
 
       withReactionByAccount &&
-        dispatch(fetchAddressLikeCountSlice({ postIds: newIds, address: withReactionByAccount }))
+        dispatch(fetchAddressLikeCounts({ postIds: newIds, address: withReactionByAccount }))
 
       const entities = await getPosts(dataSource, {
         chain: { api, ids: idsToBns(newIds) },
