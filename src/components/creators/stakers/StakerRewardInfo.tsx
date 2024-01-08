@@ -61,7 +61,20 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
               <MutedSpan>
                 {likesLeftToGoal <= 0 ? 'Goal achieved' : `Like ${likesLeftToGoal} more posts`}
               </MutedSpan>
-              <Tooltip title='Each post you like today, up to a maximum of 10, will boost your rewards, and reward the authors of the posts you like. If you like more than 10, those author rewards will then be distributed among more authors, resulting in each author receiving fewer rewards.'>
+              <Tooltip
+                title={
+                  <>
+                    <p className='mb-2'>
+                      Each post you like today, up to a maximum of 10, will boost your rewards, and
+                      reward the authors of the posts you like.
+                    </p>
+                    <p className='mb-0'>
+                      If you like more than 10, those author rewards will then be distributed among
+                      more authors, resulting in each author receiving fewer rewards.
+                    </p>
+                  </>
+                }
+              >
                 <SlQuestion className='FontTiny ColorMuted' />
               </Tooltip>
             </div>
