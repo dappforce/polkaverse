@@ -49,7 +49,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
   }
 
   const likeCount = data?.superLikesCount ?? 0
-  const likesLeftToGoal = SUPER_LIKES_FOR_MAX_REWARD - likeCount
+  const likesToMaxReward = SUPER_LIKES_FOR_MAX_REWARD - likeCount
 
   // monday: 7 days, tuesday: 6 days, ..., sunday: 1 day
   const dayLeftUntilDistribution = ((DISTRIBUTION_DAY + 7 - dayjs.utc().get('day')) % 7) + 1
@@ -61,7 +61,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
           <div className={styles.GoalInfo}>
             <div className='d-flex align-items-baseline GapMini'>
               <MutedSpan>
-                {likesLeftToGoal <= 0 ? 'Goal achieved' : `Like ${likesLeftToGoal} more posts`}
+                {likesToMaxReward > 0 ? 'Daily Activity Target' : 'Daily Target Hit'}
               </MutedSpan>
               <Tooltip
                 title={
