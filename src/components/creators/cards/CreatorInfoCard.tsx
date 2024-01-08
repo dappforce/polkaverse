@@ -10,6 +10,7 @@ import CollapsibleParagraph from 'src/components/utils/CollapsibleParagraph/Coll
 import FollowSpaceButton from 'src/components/utils/FollowSpaceButton'
 import { Pluralize } from 'src/components/utils/Plularize'
 import Segment from 'src/components/utils/Segment'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
 import { getSubIdCreatorsLink } from 'src/utils/links'
@@ -24,6 +25,7 @@ export default function CreatorInfoCard({ space, showStakeButton = true }: Creat
   const myAddress = useMyAddress() ?? ''
   const { isCreatorSpace } = useIsCreatorSpace(space.id)
   const { data: stakeData } = useFetchStakeData(myAddress, space.id)
+  const sendEvent = useSendEvent()
 
   return (
     <Segment className={clsx(styles.CreatorInfoCard)}>
@@ -55,7 +57,9 @@ export default function CreatorInfoCard({ space, showStakeButton = true }: Creat
               Stake
             </Button>
           )}
-          <FollowSpaceButton space={space.struct} />
+          <div onClick={() => sendEvent('follow', { spaceId: space.id, eventSource: 'post' })}>
+            <FollowSpaceButton space={space.struct} />
+          </div>
         </div>
       ) : (
         <div className={clsx('d-flex flex-column GapNormal', styles.MyStake)}>

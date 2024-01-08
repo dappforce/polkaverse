@@ -222,7 +222,13 @@ export const InnerViewSpace = (props: Props) => {
                 </Button>
               )}
 
-              {withFollowButton && <FollowSpaceButton ghost={false} space={space} />}
+              {withFollowButton && (
+                <div
+                  onClick={() => sendEvent('follow', { spaceId: space.id, eventSource: 'space' })}
+                >
+                  <FollowSpaceButton ghost={false} space={space} />
+                </div>
+              )}
             </span>
           </div>
 

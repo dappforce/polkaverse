@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react'
 import config from 'src/config'
 import { GET_TOTAL_COUNTS } from 'src/graphql/queries'
 import { GetHomePageData } from 'src/graphql/__generated__/GetHomePageData'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { PostKind } from 'src/types/graphql-global-types'
 import { useIsSignedIn } from '../auth/MyAccountsContext'
@@ -118,6 +119,11 @@ const TabsHomePage = ({
   const tab = tabs[tabIndex] as TabKeys
   const type = getFilterType(tab, typeFromUrl)
   const date = dateFilterOpt[dateFilterIndex].value as DateFilterType
+
+  const sendEvent = useSendEvent()
+  useEffect(() => {
+    sendEvent('home_page_tab_opened', { type: tab, value: type })
+  }, [tab, type])
 
   useEffect(() => {
     let variant: CreatorDashboardHomeVariant = 'posts'

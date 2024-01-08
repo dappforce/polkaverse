@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import capitalize from 'lodash/capitalize'
 import dynamic from 'next/dynamic'
 import React from 'react'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { SpaceContent, SpaceId, SpaceWithSomeDetails } from 'src/types'
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
@@ -40,6 +41,7 @@ export const SpacePreview = ({
   noLink,
 }: SpacePreviewProps) => {
   const address = useMyAddress()
+  const sendEvent = useSendEvent()
   const { id: spaceProfileId } = useSelectProfile(address) || {}
 
   const isCurrentProfile = spaceData.id === spaceProfileId
@@ -94,7 +96,11 @@ export const SpacePreview = ({
               />
             )
           }
-          return <FollowSpaceButton space={space} />
+          return (
+            <div onClick={() => sendEvent('follow', { spaceId: space.id, eventSource: 'home' })}>
+              <FollowSpaceButton space={space} />
+            </div>
+          )
         }
         return currentProfileLabel
       })()}

@@ -1,5 +1,6 @@
 import { EditOutlined } from '@ant-design/icons'
 import CardWithContent, { CardWithContentProps } from 'src/components/utils/cards/CardWithContent'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useSelectProfile, useSelectSpace } from 'src/rtk/app/hooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { editSpaceUrl } from '../urls'
@@ -21,6 +22,7 @@ export default function SpaceCard({ spaceId, ...props }: SpaceCardProps) {
   const myAddress = useMyAddress()
   const myProfile = useSelectProfile(myAddress)
   const isMySpace = useIsMySpace(spaceData?.struct)
+  const sendEvent = useSendEvent()
 
   return (
     <CardWithContent
@@ -68,7 +70,11 @@ export default function SpaceCard({ spaceId, ...props }: SpaceCardProps) {
               <EditOutlined /> Edit
             </ButtonLink>
           ) : (
-            <FollowSpaceButton space={spaceData.struct} />
+            <div
+              onClick={() => sendEvent('follow', { spaceId: spaceData.id, eventSource: 'post' })}
+            >
+              <FollowSpaceButton space={spaceData.struct} />
+            </div>
           ),
         ]
       }
