@@ -73,7 +73,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
           <div className='d-flex justify-content-between align-items-center'>
             <div className='d-flex align-items-baseline GapMini'>
               <MutedSpan>Earned today</MutedSpan>
-              <Tooltip title='The bonus rewards you have earned today from participating in Active Staking'>
+              <Tooltip title='The minimum bonus rewards you have earned today from Active Staking, which may increase depending on network activity'>
                 <SlQuestion className='FontTiny ColorMuted' />
               </Tooltip>
             </div>
