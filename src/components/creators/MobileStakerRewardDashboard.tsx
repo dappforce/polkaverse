@@ -5,6 +5,7 @@ import { ComponentProps, useState } from 'react'
 import { HiChevronRight } from 'react-icons/hi2'
 import { SlQuestion } from 'react-icons/sl'
 import { CREATORS_CONSTANTS } from 'src/config/constants'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchUserRewardReport } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getSubIdCreatorsLink } from 'src/utils/links'
@@ -28,6 +29,7 @@ export default function MobileStakerRewardDashboard(props: MobileStakerRewardDas
 }
 
 function StakeSubBanner(props: MobileStakerRewardDashboardProps) {
+  const sendEvent = useSendEvent()
   return (
     <div
       {...props}
@@ -40,7 +42,13 @@ function StakeSubBanner(props: MobileStakerRewardDashboardProps) {
           </span>
           <div className={clsx('d-flex align-items-center GapTiny')}>
             <Link passHref href={getSubIdCreatorsLink()}>
-              <a className='FontWeightSemibold' target='_blank'>
+              <a
+                className='FontWeightSemibold'
+                target='_blank'
+                onClick={() =>
+                  sendEvent('astake_banner_add_stake', { eventSource: 'mobile-staker-banner' })
+                }
+              >
                 Stake SUB
               </a>
             </Link>
@@ -53,6 +61,7 @@ function StakeSubBanner(props: MobileStakerRewardDashboardProps) {
 }
 
 function StakerRewardDashboard(props: MobileStakerRewardDashboardProps) {
+  const sendEvent = useSendEvent()
   const { data: rewardReport } = useFetchUserRewardReport()
   const likesCount = rewardReport?.superLikesCount ?? 0
   const likesToMaxReward = CREATORS_CONSTANTS.SUPER_LIKES_FOR_MAX_REWARD - likesCount
@@ -79,7 +88,10 @@ function StakerRewardDashboard(props: MobileStakerRewardDashboardProps) {
               <StakerSuperLikeCount />
             </div>
             <HiChevronRight
-              onClick={() => setIsOpen(prev => !prev)}
+              onClick={() => {
+                sendEvent('astake_dashboard_expanded')
+                setIsOpen(prev => !prev)
+              }}
               className={clsx('ColorMuted FontBig', styles.Arrow, isOpenClassName)}
             />
           </div>

@@ -9,6 +9,7 @@ import { FormatBalance } from 'src/components/common/balances'
 import { MutedSpan } from 'src/components/utils/MutedText'
 import { Pluralize } from 'src/components/utils/Plularize'
 import { CREATORS_CONSTANTS } from 'src/config/constants'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchUserRewardReport } from 'src/rtk/features/activeStaking/hooks'
 import StakerRewardHistoryModal from './StakerRewardHistoryModal'
 import styles from './StakerRewardInfo.module.sass'
@@ -20,6 +21,7 @@ export type StakerRewardInfoProps = Omit<ComponentProps<'div'>, 'size'> &
   Pick<StakerRewardProgressBarProps, 'size'>
 
 export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoProps) {
+  const sendEvent = useSendEvent()
   const [isOpenRewardHistoryModal, setIsOpenRewardHistoryModal] = useState(false)
   const { data, loading } = useFetchUserRewardReport()
 
@@ -144,7 +146,10 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
           </div>
           <div
             className='pt-2 px-3 d-flex justify-content-center align-items-center ColorPrimary FontWeightMedium GapMini'
-            onClick={() => setIsOpenRewardHistoryModal(true)}
+            onClick={() => {
+              sendEvent('astake_reward_history_opened')
+              setIsOpenRewardHistoryModal(true)
+            }}
             style={{ cursor: 'pointer' }}
           >
             <RiHistoryFill />

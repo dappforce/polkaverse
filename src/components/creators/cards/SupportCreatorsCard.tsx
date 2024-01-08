@@ -1,10 +1,12 @@
 import { Button } from 'antd'
 import clsx from 'clsx'
 import { DfImage } from 'src/components/utils/DfImage'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import styles from './SupportCreatorsCard.module.sass'
 
 export default function SupportCreatorsCard() {
+  const sendEvent = useSendEvent()
   return (
     <div className={clsx(styles.SupportCreatorsCard)}>
       <div className={styles.Content}>
@@ -21,7 +23,14 @@ export default function SupportCreatorsCard() {
         <p className={clsx(styles.Subtitle, 'mb-3')}>
           Generate rewards for both you and creators by staking towards them
         </p>
-        <Button href={getSubIdCreatorsLink()} block target='_blank'>
+        <Button
+          href={getSubIdCreatorsLink()}
+          block
+          target='_blank'
+          onClick={() =>
+            sendEvent('astake_banner_add_stake', { eventSource: 'support-creators-banner' })
+          }
+        >
           Stake SUB
         </Button>
       </div>

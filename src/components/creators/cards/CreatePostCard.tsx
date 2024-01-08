@@ -43,7 +43,14 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
         By creating new posts and liking new content of others, stakers of SUB can increase their
         staking rewards by 50% to 200%.{' '}
         <Link href={activeStakingLinks.learnMore}>
-          <a target='_blank'>
+          <a
+            target='_blank'
+            onClick={() =>
+              sendEvent('astake_banner_learn_more', {
+                eventSource: 'create-post-banner',
+              })
+            }
+          >
             Learn more{' '}
             <HiArrowUpRight className='d-inline position-relative' style={{ top: '2px' }} />
           </a>

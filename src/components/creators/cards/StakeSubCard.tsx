@@ -3,6 +3,7 @@ import { Button } from 'antd'
 import clsx from 'clsx'
 import { useResponsiveSize } from 'src/components/responsive'
 import { DfImage } from 'src/components/utils/DfImage'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import styles from './StakeSubCard.module.sass'
 
@@ -12,6 +13,8 @@ export type StakeSubCardProps = {
 
 export default function StakeSubCard({ space }: StakeSubCardProps) {
   const { isSmallMobile, isNotMobile } = useResponsiveSize()
+  const sendEvent = useSendEvent()
+
   return (
     <div className={clsx(styles.StakeSubCard)}>
       <div className={styles.Content}>
@@ -29,6 +32,12 @@ export default function StakeSubCard({ space }: StakeSubCardProps) {
           target='_blank'
           type='primary'
           block={isSmallMobile || isNotMobile}
+          onClick={() =>
+            sendEvent('astake_banner_add_stake', {
+              eventSource: 'stake-sub-banner',
+              spaceId: space.id,
+            })
+          }
         >
           Stake SUB
         </Button>

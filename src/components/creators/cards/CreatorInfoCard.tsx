@@ -53,7 +53,17 @@ export default function CreatorInfoCard({ space, showStakeButton = true }: Creat
       {!stakeData?.hasStaked ? (
         <div className='GapSmall d-flex flex-column mt-2'>
           {isCreatorSpace && showStakeButton && (
-            <Button target='_blank' type='primary' href={getSubIdCreatorsLink(space)}>
+            <Button
+              target='_blank'
+              type='primary'
+              href={getSubIdCreatorsLink(space)}
+              onClick={() =>
+                sendEvent('astake_banner_add_stake', {
+                  eventSource: 'creator-info-banner',
+                  spaceId: space.id,
+                })
+              }
+            >
               Stake
             </Button>
           )}
@@ -80,6 +90,12 @@ export default function CreatorInfoCard({ space, showStakeButton = true }: Creat
             ghost
             href={getSubIdCreatorsLink(space)}
             target='_blank'
+            onClick={() =>
+              sendEvent('astake_dashboard_manage_stake', {
+                eventSource: 'creator-info-banner',
+                spaceId: space.id,
+              })
+            }
           >
             Manage my stake
             <BsBoxArrowUpRight />

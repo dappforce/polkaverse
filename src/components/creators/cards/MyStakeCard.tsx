@@ -71,6 +71,12 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
           ghost
           block={!isMobile}
           href={getSubIdCreatorsLink(space)}
+          onClick={() =>
+            sendEvent('astake_dashboard_manage_stake', {
+              spaceId: space.id,
+              eventSource: 'my-stake-banner',
+            })
+          }
           target='_blank'
         >
           Manage{isMobile ? '' : ' my stake'}
