@@ -16,6 +16,10 @@ import {
   useSuperLikeCount,
 } from 'src/rtk/features/activeStaking/hooks'
 import {
+  fetchRewardReport,
+  setOptimisticRewardReportChange,
+} from 'src/rtk/features/activeStaking/rewardReportSlice'
+import {
   fetchSuperLikeCounts,
   setSuperLikeCount,
 } from 'src/rtk/features/activeStaking/superLikeCountsSlice'
@@ -85,16 +89,19 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
       // set optimistic changes
       dispatch(setSuperLikeCount({ postId: post.id, count: count + 1 }))
       dispatch(setAddressLikeCount({ address: myAddress, postId: post.id, count: count + 1 }))
+      dispatch(setOptimisticRewardReportChange({ address: myAddress, superLikeCountChange: 1 }))
 
       await createSuperLike({ address: myAddress, args: { postId: post.id } })
     } catch (error) {
       // undo the optimistic changes
       dispatch(setSuperLikeCount({ postId: post.id, count: count - 1 }))
       dispatch(setAddressLikeCount({ address: myAddress, postId: post.id, count: count - 1 }))
+      dispatch(setOptimisticRewardReportChange({ address: myAddress, superLikeCountChange: -1 }))
 
       // refetch the real data
       dispatch(fetchSuperLikeCounts({ postIds: [post.id], reload: true }))
       dispatch(fetchAddressLikeCounts({ address: myAddress, postIds: [post.id], reload: true }))
+      dispatch(fetchRewardReport({ address: myAddress }))
     }
 
     if (localStorage.getItem(FIRST_TIME_SUPERLIKE) !== 'false') {
