@@ -8,9 +8,9 @@ import { useMyAddress } from '../auth/MyAccountsContext'
 import CreatePostCard from './cards/CreatePostCard'
 import CreatorInfoCard from './cards/CreatorInfoCard'
 import MyStakeCard from './cards/MyStakeCard'
-import StakerRewardInfoCard from './cards/StakerRewardInfoCard'
 import StakeSubCard from './cards/StakeSubCard'
 import SupportCreatorsCard from './cards/SupportCreatorsCard'
+import StakerRewardInfoCard from './staker-rewards/StakerRewardInfoCard'
 
 export type CreatorDashboardHomeVariant = 'posts' | 'spaces'
 export type CreatorDashboardSidebarType =
