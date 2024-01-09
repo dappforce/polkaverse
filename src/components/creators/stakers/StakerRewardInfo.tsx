@@ -5,12 +5,15 @@ import Link from 'next/link'
 import { ComponentProps, useState } from 'react'
 import { RiHistoryFill } from 'react-icons/ri'
 import { SlQuestion } from 'react-icons/sl'
+import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { FormatBalance } from 'src/components/common/balances'
 import { MutedSpan } from 'src/components/utils/MutedText'
 import { Pluralize } from 'src/components/utils/Plularize'
 import { CREATORS_CONSTANTS } from 'src/config/constants'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchUserRewardReport } from 'src/rtk/features/activeStaking/hooks'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { getAmountRange } from 'src/utils/analytics'
 import StakerRewardHistoryModal from './StakerRewardHistoryModal'
 import styles from './StakerRewardInfo.module.sass'
 import StakerRewardProgressBar, { StakerRewardProgressBarProps } from './StakerRewardProgressBar'
@@ -22,6 +25,8 @@ export type StakerRewardInfoProps = Omit<ComponentProps<'div'>, 'size'> &
 
 export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoProps) {
   const sendEvent = useSendEvent()
+  const myAddress = useMyAddress() ?? ''
+  const { data: totalStake } = useFetchTotalStake(myAddress)
   const [isOpenRewardHistoryModal, setIsOpenRewardHistoryModal] = useState(false)
   const { data, loading } = useFetchUserRewardReport()
 
@@ -147,7 +152,9 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
           <div
             className='pt-2 px-3 d-flex justify-content-center align-items-center ColorPrimary FontWeightMedium GapMini'
             onClick={() => {
-              sendEvent('astake_reward_history_opened')
+              sendEvent('astake_reward_history_opened', {
+                amountRange: getAmountRange(totalStake?.amount),
+              })
               setIsOpenRewardHistoryModal(true)
             }}
             style={{ cursor: 'pointer' }}

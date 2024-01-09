@@ -27,7 +27,7 @@ export default function GetMoreSubCard({ ...props }: GetMoreSubCardProps) {
             block
             href={activeStakingLinks.learnMore}
             target='_blank'
-            onClick={() => sendEvent('lstake_learn_more', { eventSource: 'getMoreSubCard' })}
+            onClick={() => sendEvent('astake_banner_learn_more', { eventSource: 'getMoreSubCard' })}
           >
             How does it work?
           </Button>

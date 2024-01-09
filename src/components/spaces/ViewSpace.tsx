@@ -11,7 +11,9 @@ import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
 import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { SpaceContent, SpaceData, SpaceId, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
+import { getAmountRange } from 'src/utils/analytics'
 import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks'
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
@@ -104,6 +106,7 @@ export const InnerViewSpace = (props: Props) => {
   const address = useMyAddress()
   const [collapseAbout, setCollapseAbout] = useState(true)
   const sendEvent = useSendEvent()
+  const { data: totalStake } = useFetchTotalStake(address ?? '')
 
   const spaceData = useSelectSpace(initialSpaceData?.id)
   const isMy = useIsMySpace(spaceData?.struct)
@@ -224,7 +227,13 @@ export const InnerViewSpace = (props: Props) => {
 
               {withFollowButton && (
                 <div
-                  onClick={() => sendEvent('follow', { spaceId: space.id, eventSource: 'space' })}
+                  onClick={() =>
+                    sendEvent('follow', {
+                      spaceId: space.id,
+                      eventSource: 'space',
+                      amountRange: getAmountRange(totalStake?.amount),
+                    })
+                  }
                 >
                   <FollowSpaceButton ghost={false} space={space} />
                 </div>

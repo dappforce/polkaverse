@@ -2,6 +2,8 @@ import { EditOutlined } from '@ant-design/icons'
 import CardWithContent, { CardWithContentProps } from 'src/components/utils/cards/CardWithContent'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useSelectProfile, useSelectSpace } from 'src/rtk/app/hooks'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { getAmountRange } from 'src/utils/analytics'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { editSpaceUrl } from '../urls'
 import { ButtonLink } from '../utils/CustomLinks'
@@ -23,6 +25,7 @@ export default function SpaceCard({ spaceId, ...props }: SpaceCardProps) {
   const myProfile = useSelectProfile(myAddress)
   const isMySpace = useIsMySpace(spaceData?.struct)
   const sendEvent = useSendEvent()
+  const { data: totalStake } = useFetchTotalStake(myAddress ?? '')
 
   return (
     <CardWithContent
@@ -71,7 +74,13 @@ export default function SpaceCard({ spaceId, ...props }: SpaceCardProps) {
             </ButtonLink>
           ) : (
             <div
-              onClick={() => sendEvent('follow', { spaceId: spaceData.id, eventSource: 'post' })}
+              onClick={() =>
+                sendEvent('follow', {
+                  spaceId: spaceData.id,
+                  eventSource: 'post',
+                  amountRange: getAmountRange(totalStake?.amount),
+                })
+              }
             >
               <FollowSpaceButton space={spaceData.struct} />
             </div>

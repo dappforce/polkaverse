@@ -13,6 +13,7 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { ampId } from 'src/config/env'
 import { useFetchProfileSpace } from 'src/rtk/app/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { getAmountRange } from 'src/utils/analytics'
 
 type AnalyticContextState = {
   amp: BrowserClient | null
@@ -141,7 +142,7 @@ export function AppLaunchedEventSender() {
     }
     state.sendEvent('app_launched', undefined, {
       hasProfile,
-      stakeAmount: totalStake,
+      stakeAmountRange: getAmountRange(totalStake?.amount),
       device_id: amp?.getDeviceId(),
     })
   }, [hasProfile, isLoading, amp])

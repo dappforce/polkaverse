@@ -24,6 +24,7 @@ import {
   setSuperLikeCount,
 } from 'src/rtk/features/activeStaking/superLikeCountsSlice'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { getAmountRange } from 'src/utils/analytics'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import { useAuth } from '../auth/AuthContext'
 import { useMyAddress } from '../auth/MyAccountsContext'
@@ -80,9 +81,10 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
 
     sendEvent('like', {
       postId: post.id,
+      value: (userReport?.superLikesCount ?? 0) + 1,
       spaceId,
       isFollower: amIFollower,
-      amountRange: (userReport?.superLikesCount ?? 0) + 1,
+      amountRange: getAmountRange(totalStake.amount),
     })
 
     try {

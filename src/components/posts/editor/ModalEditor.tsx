@@ -245,7 +245,9 @@ export const PostEditorModal = (props: PostEditorModalProps) => {
                 <a
                   className='FontWeightMedium'
                   target='_blank'
-                  onClick={() => sendEvent('lstake_learn_more', { eventSource: 'fastEditor' })}
+                  onClick={() =>
+                    sendEvent('astake_banner_learn_more', { eventSource: 'fastEditor' })
+                  }
                 >
                   How does it work?
                 </a>

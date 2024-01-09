@@ -13,6 +13,8 @@ import Segment from 'src/components/utils/Segment'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { getAmountRange } from 'src/utils/analytics'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import styles from './CreatorInfoCard.module.sass'
 
@@ -25,6 +27,7 @@ export default function CreatorInfoCard({ space, showStakeButton = true }: Creat
   const myAddress = useMyAddress() ?? ''
   const { isCreatorSpace } = useIsCreatorSpace(space.id)
   const { data: stakeData } = useFetchStakeData(myAddress, space.id)
+  const { data: totalStake } = useFetchTotalStake(myAddress)
   const sendEvent = useSendEvent()
 
   return (
@@ -67,7 +70,15 @@ export default function CreatorInfoCard({ space, showStakeButton = true }: Creat
               Stake
             </Button>
           )}
-          <div onClick={() => sendEvent('follow', { spaceId: space.id, eventSource: 'post' })}>
+          <div
+            onClick={() =>
+              sendEvent('follow', {
+                spaceId: space.id,
+                eventSource: 'post',
+                amountRange: getAmountRange(totalStake?.amount),
+              })
+            }
+          >
             <FollowSpaceButton space={space.struct} />
           </div>
         </div>
@@ -94,6 +105,8 @@ export default function CreatorInfoCard({ space, showStakeButton = true }: Creat
               sendEvent('astake_dashboard_manage_stake', {
                 eventSource: 'creator-info-banner',
                 spaceId: space.id,
+                amountRange: getAmountRange(totalStake?.amount),
+                spaceStakeAmountRange: getAmountRange(stakeData?.stakeAmount),
               })
             }
           >

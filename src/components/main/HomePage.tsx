@@ -9,8 +9,10 @@ import { GET_TOTAL_COUNTS } from 'src/graphql/queries'
 import { GetHomePageData } from 'src/graphql/__generated__/GetHomePageData'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { PostKind } from 'src/types/graphql-global-types'
-import { useIsSignedIn } from '../auth/MyAccountsContext'
+import { getAmountRange } from 'src/utils/analytics'
+import { useIsSignedIn, useMyAddress } from '../auth/MyAccountsContext'
 import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar'
 import MobileStakerRewardDashboard from '../creators/MobileStakerRewardDashboard'
 import { useIsMobileWidthOrDevice } from '../responsive'
@@ -120,9 +122,16 @@ const TabsHomePage = ({
   const type = getFilterType(tab, typeFromUrl)
   const date = dateFilterOpt[dateFilterIndex].value as DateFilterType
 
+  const myAddress = useMyAddress() ?? ''
+  const { data: totalStake } = useFetchTotalStake(myAddress)
+
   const sendEvent = useSendEvent()
   useEffect(() => {
-    sendEvent('home_page_tab_opened', { type: tab, value: type })
+    sendEvent('home_page_tab_opened', {
+      type: tab,
+      value: type,
+      amountRange: getAmountRange(totalStake?.amount),
+    })
   }, [tab, type])
 
   useEffect(() => {

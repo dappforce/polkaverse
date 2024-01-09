@@ -19,7 +19,7 @@ export default function StakerRewardInfoCard() {
           <a
             target='_blank'
             className={styles.Link}
-            onClick={() => sendEvent('lstake_learn_more', { eventSource: 'rewardInfo' })}
+            onClick={() => sendEvent('astake_banner_learn_more', { eventSource: 'rewardInfo' })}
           >
             How does it work?
           </a>

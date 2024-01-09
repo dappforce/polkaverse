@@ -8,6 +8,7 @@ import { CREATORS_CONSTANTS } from 'src/config/constants'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchUserRewardReport } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { getAmountRange } from 'src/utils/analytics'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import styles from './MobileStakerRewardDashboard.module.sass'
@@ -89,7 +90,9 @@ function StakerRewardDashboard(props: MobileStakerRewardDashboardProps) {
             </div>
             <HiChevronRight
               onClick={() => {
-                sendEvent('astake_dashboard_expanded')
+                sendEvent('astake_dashboard_expanded', {
+                  amountRange: getAmountRange(data.amount),
+                })
                 setIsOpen(prev => !prev)
               }}
               className={clsx('ColorMuted FontBig', styles.Arrow, isOpenClassName)}
