@@ -125,7 +125,6 @@ export const PageContent: FC<Props> = ({
   return (
     <>
       <HeadMeta {...meta} />
-      <AppLaunchedEventSender />
 
       {isMobile ? (
         <section className={className}>
@@ -181,19 +180,4 @@ export const PageContent: FC<Props> = ({
       )}
     </>
   )
-}
-
-function AppLaunchedEventSender() {
-  // const sendEvent = useSendEvent()
-  // const hasSentEvent = useRef(false)
-
-  // const myAddress = useMyAddress() ?? ''
-  // const { data, loading: loadingTotalStake } = useFetchTotalStake()
-
-  // useEffect(() => {
-  //   if (hasSentEvent.current) return
-
-  // }, [sendEvent])
-
-  return null
 }

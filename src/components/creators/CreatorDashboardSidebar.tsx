@@ -75,17 +75,19 @@ function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name
     return null
   }
 
+  const renderTopCard = () => {
+    if (!isCreatorSpace) {
+      if (!totalStake?.hasStaked) return <SupportCreatorsCard />
+      return null
+    }
+
+    if (stakeData?.hasStaked) return <MyStakeCard space={space} />
+    else return <StakeSubCard space={space} />
+  }
+
   return (
     <>
-      {(() => {
-        if (!isCreatorSpace) {
-          if (!totalStake?.hasStaked) return <SupportCreatorsCard />
-          return null
-        }
-
-        if (stakeData?.hasStaked) return <MyStakeCard space={space} />
-        else return <StakeSubCard space={space} />
-      })()}
+      {renderTopCard()}
       {!loadingTotalStake && totalStake?.hasStaked && <StakerRewardInfoCard />}
     </>
   )
