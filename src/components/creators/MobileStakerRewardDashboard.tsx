@@ -12,8 +12,8 @@ import { getAmountRange } from 'src/utils/analytics'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import styles from './MobileStakerRewardDashboard.module.sass'
-import StakerRewardInfo, { StakerSuperLikeCount } from './stakers/StakerRewardInfo'
-import StakerRewardProgressBar from './stakers/StakerRewardProgressBar'
+import StakerRewardInfo, { StakerSuperLikeCount } from './stakers-rewards/StakerRewardInfo'
+import StakerRewardProgressBar from './stakers-rewards/StakerRewardProgressBar'
 
 export type MobileStakerRewardDashboardProps = ComponentProps<'div'>
 
