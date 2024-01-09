@@ -1,5 +1,6 @@
 import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { getRewardReport } from 'src/components/utils/datahub/super-likes'
+import { CREATORS_CONSTANTS } from 'src/config/constants'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 
@@ -44,15 +45,24 @@ const slice = createSlice({
       const rewardReport = state.entities[address]
       if (!rewardReport) return
 
+      const newSuperLike = rewardReport.superLikesCount + superLikeCountChange
       if (rewardReport.superLikesCount > 0) {
         const rewardPerLike =
           BigInt(rewardReport.currentRewardAmount) / BigInt(rewardReport.superLikesCount)
-        rewardReport.currentRewardAmount = (
-          BigInt(rewardReport.currentRewardAmount) + rewardPerLike
+        const weeklyWithoutCurrentReward =
+          BigInt(rewardReport.weeklyReward) - BigInt(rewardReport.currentRewardAmount)
+
+        const rewardMultiplier = Math.min(
+          newSuperLike,
+          CREATORS_CONSTANTS.SUPER_LIKES_FOR_MAX_REWARD,
+        )
+
+        rewardReport.currentRewardAmount = (BigInt(rewardMultiplier) * rewardPerLike).toString()
+        rewardReport.weeklyReward = (
+          weeklyWithoutCurrentReward + BigInt(rewardReport.currentRewardAmount)
         ).toString()
-        rewardReport.weeklyReward = (BigInt(rewardReport.weeklyReward) + rewardPerLike).toString()
       }
-      rewardReport.superLikesCount += superLikeCountChange
+      rewardReport.superLikesCount = newSuperLike
     },
     setRewardReport: adapter.upsertOne,
   },
