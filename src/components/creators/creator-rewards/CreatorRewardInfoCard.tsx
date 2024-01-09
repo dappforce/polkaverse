@@ -34,7 +34,7 @@ export default function CreatorRewardInfoCard() {
             className={styles.Link}
             onClick={() => sendEvent('astake_banner_learn_more', { eventSource: 'rewardInfo' })}
           >
-            How does it work?
+            How does this work?
           </a>
         </Link>
         <DfImage preview={false} src='/images/databases.svg' className={styles.Image} />
@@ -44,7 +44,7 @@ export default function CreatorRewardInfoCard() {
           <div className='d-flex align-items-center justify-content-between'>
             <div className='d-flex align-items-baseline GapMini'>
               <MutedSpan>Received likes</MutedSpan>
-              <Tooltip title='The total likes you got for all your posts in this week'>
+              <Tooltip title='The amount of times your posts have been superliked this week'>
                 <SlQuestion className='FontTiny ColorMuted' />
               </Tooltip>
             </div>
@@ -55,7 +55,7 @@ export default function CreatorRewardInfoCard() {
           <div className='d-flex align-items-center justify-content-between'>
             <div className='d-flex align-items-baseline GapMini'>
               <MutedSpan>Earned from posts</MutedSpan>
-              <Tooltip title='The minimum bonus rewards you have earned today from the likes you received in your posts'>
+              <Tooltip title='The minimum amount of SUB that you will earn as a result of your posts being superliked this week'>
                 <SlQuestion className='FontTiny ColorMuted' />
               </Tooltip>
             </div>
@@ -79,7 +79,7 @@ export default function CreatorRewardInfoCard() {
           <div className='d-flex align-items-center justify-content-between'>
             <div className='d-flex align-items-baseline GapMini'>
               <MutedSpan>Distribution in</MutedSpan>
-              <Tooltip title='The minimum bonus rewards you have earned today from Active Staking, which may increase depending on network activity'>
+              <Tooltip title='How long until you will receive your creator rewards for this week'>
                 <SlQuestion className='FontTiny ColorMuted' />
               </Tooltip>
             </div>

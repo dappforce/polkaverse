@@ -21,7 +21,7 @@ export default function StakerRewardInfoCard() {
             className={styles.Link}
             onClick={() => sendEvent('astake_banner_learn_more', { eventSource: 'rewardInfo' })}
           >
-            How does it work?
+            How does this work?
           </a>
         </Link>
         <DfImage preview={false} src='/images/diamond.svg' className={styles.Image} />
