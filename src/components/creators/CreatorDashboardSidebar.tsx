@@ -48,21 +48,15 @@ function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { nam
   const myAddress = useMyAddress() ?? ''
   const { data, loading } = useFetchTotalStake(myAddress)
 
-  return (
-    <>
-      {(() => {
-        if (loading) return null
-        if (data?.hasStaked)
-          return (
-            <>
-              <CreatePostCard variant={variant} />
-              <StakerRewardInfoCard />
-            </>
-          )
-        return <SupportCreatorsCard />
-      })()}
-    </>
-  )
+  if (loading) return null
+  if (data?.hasStaked)
+    return (
+      <>
+        <CreatePostCard variant={variant} />
+        <StakerRewardInfoCard />
+      </>
+    )
+  return <SupportCreatorsCard />
 }
 
 function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name: 'space-page' }>) {
