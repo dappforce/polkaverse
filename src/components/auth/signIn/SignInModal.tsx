@@ -3,11 +3,10 @@ import { Button } from 'antd'
 import Modal from 'antd/lib/modal'
 import clsx from 'clsx'
 import React, { useState } from 'react'
-import { useResponsiveSize } from 'src/components/responsive'
+import { useIsMobileWidthOrDevice, useResponsiveSize } from 'src/components/responsive'
 import LoadingTransaction from 'src/components/utils/LoadingTransaction'
 import { setCurrentEmailAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import config from 'src/config'
-import { isMobileDevice } from 'src/config/Size.config'
 import { EmailAccount } from 'src/types'
 import { hasInjectedWallet } from 'src/utils/window'
 import { AccountSelector } from '../../profile-selector/AccountSelector'
@@ -187,37 +186,11 @@ const ModalContent = ({
 
   const dividerText = isMobile ? 'Or' : 'Or connect wallet'
 
-  const isMobileDeviceAndWidth = isMobileDevice && isMobile
-
   switch (currentStep) {
     case StepsEnum.SelectWallet: {
       return (
         <div>
-          <ModalBodyWrapper
-            title='Sign In'
-            desc={(() => {
-              if (isMobileDeviceAndWidth) {
-                if (hasInjectedWallet()) {
-                  return <>To use Polkaverse, you need to connect your wallet</>
-                }
-                return (
-                  <>
-                    To use PolkaVerse, you need a wallet to manage your account. We recommend Nova
-                    Wallet.
-                  </>
-                )
-              }
-              return (
-                <>
-                  Choose one of the available wallet providers to connect to {config.appName}.{' '}
-                  <ExternalLink
-                    url='https://docs.subsocial.network/docs/tutorials/#polkadotjs'
-                    value='How do I set up a wallet?'
-                  />
-                </>
-              )
-            })()}
-          >
+          <ModalBodyWrapper title='Sign In' desc={<SignInDesc />}>
             {config.enableConfirmationLessMode ? (
               <>
                 <SignInEmailButton setCurrentStep={setCurrentStep} />
@@ -327,6 +300,27 @@ const ModalContent = ({
     default:
       return null
   }
+}
+
+function SignInDesc() {
+  const isMobile = useIsMobileWidthOrDevice()
+  if (isMobile) {
+    if (hasInjectedWallet()) {
+      return <>To use Polkaverse, you need to connect your wallet</>
+    }
+    return (
+      <>To use PolkaVerse, you need a wallet to manage your account. We recommend Nova Wallet.</>
+    )
+  }
+  return (
+    <>
+      Choose one of the available wallet providers to connect to {config.appName}.{' '}
+      <ExternalLink
+        url='https://docs.subsocial.network/docs/tutorials/#polkadotjs'
+        value='How do I set up a wallet?'
+      />
+    </>
+  )
 }
 
 export const SignInModalView = ({ open, hide, onAccountChosen }: SignInModalProps) => {
