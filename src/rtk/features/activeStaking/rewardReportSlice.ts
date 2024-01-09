@@ -42,7 +42,7 @@ const slice = createSlice({
 
       if (rewardReport.superLikesCount > 0) {
         const rewardPerLike =
-          BigInt(rewardReport.weeklyReward) / BigInt(rewardReport.superLikesCount)
+          BigInt(rewardReport.currentRewardAmount) / BigInt(rewardReport.superLikesCount)
         rewardReport.currentRewardAmount = (
           BigInt(rewardReport.currentRewardAmount) + rewardPerLike
         ).toString()
