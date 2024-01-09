@@ -12,6 +12,7 @@ import React, {
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { ampId } from 'src/config/env'
 import { useFetchProfileSpace } from 'src/rtk/app/hooks'
+import { useFetchUserRewardReport } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getAmountRange } from 'src/utils/analytics'
 
@@ -125,14 +126,16 @@ export default AnalyticProvider
 export function AppLaunchedEventSender() {
   const state = useContext(AnalyticContext)
 
-  const myAddress = useMyAddress()
-  const { entity, loading: loadingProfile } = useFetchProfileSpace({ id: myAddress ?? '' })
-  const { data: totalStake, loading: loadingTotalStake } = useFetchTotalStake(myAddress ?? '')
+  const myAddress = useMyAddress() ?? ''
+  const { entity, loading: loadingProfile } = useFetchProfileSpace({ id: myAddress })
+  const { data: totalStake, loading: loadingTotalStake } = useFetchTotalStake(myAddress)
+  const { data: rewardReport, loading: loadingRewardReport } = useFetchUserRewardReport(myAddress)
 
   const amp = state.amp
   const hasProfile = !!entity
+  const hasCreatorRewards = BigInt(rewardReport?.creatorReward ?? '0') > 0
   const sentInitRef = useRef(false)
-  const isLoading = loadingProfile || loadingTotalStake
+  const isLoading = loadingProfile || loadingTotalStake || loadingRewardReport
   useEffect(() => {
     if (isLoading || sentInitRef.current) return
     sentInitRef.current = true
@@ -144,8 +147,9 @@ export function AppLaunchedEventSender() {
       hasProfile,
       stakeAmountRange: getAmountRange(totalStake?.amount),
       device_id: amp?.getDeviceId(),
+      hasCreatorRewards,
     })
-  }, [hasProfile, isLoading, amp])
+  }, [hasProfile, isLoading, hasCreatorRewards, amp])
 
   return null
 }
