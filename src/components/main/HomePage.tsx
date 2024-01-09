@@ -67,7 +67,6 @@ const HomeTabs = (props: TabsProps) => {
       <Tabs activeKey={tabKey} onChange={setKey} className={`${className} ${style.DfTabs}`}>
         <TabPane tab='My feed' key='feed' />
         <TabPane tab='Posts' key='posts' />
-        <TabPane tab='Featured Creators' key='creators' />
         <TabPane tab={enableGraphQl ? 'Spaces' : 'Polkadot Spaces'} key='spaces' />
       </Tabs>
       <Filters tabKey={tabKey} isAffix={isAffix} />
@@ -136,7 +135,7 @@ const TabsHomePage = ({
 
   useEffect(() => {
     let variant: CreatorDashboardHomeVariant = 'posts'
-    if (tab === 'spaces' || tab === 'creators') variant = 'spaces'
+    if (tab === 'spaces') variant = 'spaces'
     setCurrentTabVariant(variant)
   }, [setCurrentTabVariant, tab])
 

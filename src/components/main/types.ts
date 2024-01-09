@@ -7,7 +7,8 @@ import { PostKind } from '../../types/graphql-global-types'
 export type PostFilterType = 'latest' | 'suggested'
 // | 'liked' | 'commented' // removed most liked and commented
 
-export type SpaceFilterType = 'latest' | 'suggested' | 'sortByPosts' | 'sortByFollowers'
+export type SpaceFilterType = 'suggested' | 'creators'
+// 'latest' |  'sortByPosts' | 'sortByFollowers'
 
 export type DateFilterType = 'day' | 'week' | 'month' | 'allTime'
 
@@ -30,7 +31,7 @@ export type SpaceDateFilterProps = SpaceFilterProps & {
   filter: SpaceFilterType
 }
 
-export type TabsWithoutFeed = 'posts' | 'spaces' | 'comments' | 'creators'
+export type TabsWithoutFeed = 'posts' | 'spaces' | 'comments'
 
 export type TabKeys = TabsWithoutFeed | 'feed'
 

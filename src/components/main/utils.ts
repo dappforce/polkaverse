@@ -53,24 +53,30 @@ const getPostsByFilter: GetEntityFilter<PostFilterType> = {
 }
 
 const getSpacesByFilter: GetEntityFilter<Exclude<SpaceFilterType, 'suggested'>> = {
-  latest: {
+  creators: {
     day: q.GET_LATEST_SPACE_IDS,
     week: q.GET_LATEST_SPACE_IDS,
     month: q.GET_LATEST_SPACE_IDS,
     allTime: q.GET_LATEST_SPACE_IDS,
   },
-  sortByFollowers: {
-    day: q.GET_MOST_FOLLOWED_SPACE_IDS_IN_DATE_RANGE,
-    week: q.GET_MOST_FOLLOWED_SPACE_IDS_IN_DATE_RANGE,
-    month: q.GET_MOST_FOLLOWED_SPACE_IDS_IN_DATE_RANGE,
-    allTime: q.GET_MOST_FOLLOWED_SPACE_IDS,
-  },
-  sortByPosts: {
-    day: q.GET_SPACE_IDS_SORTED_BY_POSTS_COUNT_IN_DATE_RANGE,
-    week: q.GET_SPACE_IDS_SORTED_BY_POSTS_COUNT_IN_DATE_RANGE,
-    month: q.GET_SPACE_IDS_SORTED_BY_POSTS_COUNT_IN_DATE_RANGE,
-    allTime: q.GET_SPACE_IDS_SORTED_BY_POSTS_COUNT,
-  },
+  // latest: {
+  //   day: q.GET_LATEST_SPACE_IDS,
+  //   week: q.GET_LATEST_SPACE_IDS,
+  //   month: q.GET_LATEST_SPACE_IDS,
+  //   allTime: q.GET_LATEST_SPACE_IDS,
+  // },
+  // sortByFollowers: {
+  //   day: q.GET_MOST_FOLLOWED_SPACE_IDS_IN_DATE_RANGE,
+  //   week: q.GET_MOST_FOLLOWED_SPACE_IDS_IN_DATE_RANGE,
+  //   month: q.GET_MOST_FOLLOWED_SPACE_IDS_IN_DATE_RANGE,
+  //   allTime: q.GET_MOST_FOLLOWED_SPACE_IDS,
+  // },
+  // sortByPosts: {
+  //   day: q.GET_SPACE_IDS_SORTED_BY_POSTS_COUNT_IN_DATE_RANGE,
+  //   week: q.GET_SPACE_IDS_SORTED_BY_POSTS_COUNT_IN_DATE_RANGE,
+  //   month: q.GET_SPACE_IDS_SORTED_BY_POSTS_COUNT_IN_DATE_RANGE,
+  //   allTime: q.GET_SPACE_IDS_SORTED_BY_POSTS_COUNT,
+  // },
 }
 
 export const tabs = ['feed', 'posts', 'comments', 'spaces', 'creators']
