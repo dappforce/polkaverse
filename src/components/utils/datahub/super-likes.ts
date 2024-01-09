@@ -142,6 +142,12 @@ const GET_REWARD_REPORT = gql`
     }
     activeStakingRewardsByWeek(args: { weeks: [$week], filter: { account: $address } }) {
       staker
+      creator {
+        total
+        posts {
+          amount
+        }
+      }
     }
   }
 `
@@ -160,6 +166,12 @@ export async function getRewardReport(address: string): Promise<RewardReport> {
       }
       activeStakingRewardsByWeek: {
         staker: string
+        creator: {
+          total: string
+          posts: {
+            amount: number
+          }[]
+        }
       }[]
     },
     { address: string; day: number; week: number }
@@ -167,10 +179,13 @@ export async function getRewardReport(address: string): Promise<RewardReport> {
     document: GET_REWARD_REPORT,
     variables: { address, ...getDayAndWeekTimestamp() },
   })
+  const weekReward = res.activeStakingRewardsByWeek?.[0]
 
   return {
     ...res.activeStakingDailyStatsByStaker,
-    weeklyReward: res.activeStakingRewardsByWeek[0]?.staker ?? '0',
+    weeklyReward: weekReward?.staker ?? '0',
+    creatorReward: weekReward?.creator.total ?? '0',
+    receivedLikes: weekReward?.creator.posts.reduce((acc, post) => acc + post.amount, 0) ?? 0,
     address,
   }
 }

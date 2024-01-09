@@ -1,6 +1,5 @@
 import { Skeleton, Tooltip } from 'antd'
 import clsx from 'clsx'
-import dayjs from 'dayjs'
 import Link from 'next/link'
 import { ComponentProps, useState } from 'react'
 import { RiHistoryFill } from 'react-icons/ri'
@@ -14,11 +13,12 @@ import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchUserRewardReport } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getAmountRange } from 'src/utils/analytics'
+import NumberSkeleton from '../common/NumberSkeleton'
 import StakerRewardHistoryModal from './StakerRewardHistoryModal'
 import styles from './StakerRewardInfo.module.sass'
 import StakerRewardProgressBar, { StakerRewardProgressBarProps } from './StakerRewardProgressBar'
 
-const { DISTRIBUTION_DAY, SUPER_LIKES_FOR_MAX_REWARD } = CREATORS_CONSTANTS
+const { getDistributionDaysLeft, SUPER_LIKES_FOR_MAX_REWARD } = CREATORS_CONSTANTS
 
 export type StakerRewardInfoProps = Omit<ComponentProps<'div'>, 'size'> &
   Pick<StakerRewardProgressBarProps, 'size'>
@@ -56,8 +56,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
   const likeCount = data?.superLikesCount ?? 0
   const likesToMaxReward = SUPER_LIKES_FOR_MAX_REWARD - likeCount
 
-  // monday: 7 days, tuesday: 6 days, ..., sunday: 1 day
-  const dayLeftUntilDistribution = ((DISTRIBUTION_DAY + 7 - dayjs.utc().get('day')) % 7) + 1
+  const dayLeftUntilDistribution = getDistributionDaysLeft()
 
   return (
     <>
@@ -190,23 +189,5 @@ export function StakerSuperLikeCount() {
       <MutedSpan>/10</MutedSpan>
       {!!surplusLike && <span className='ml-1'> +{surplusLike}</span>}
     </span>
-  )
-}
-
-function NumberSkeleton() {
-  return (
-    <div className='d-flex align-items-center'>
-      <Skeleton.Input
-        style={{
-          height: '1em',
-          width: '3ch',
-          marginRight: '4px',
-          borderRadius: '20px',
-          position: 'relative',
-          top: '1px',
-          display: 'block',
-        }}
-      />
-    </div>
   )
 }

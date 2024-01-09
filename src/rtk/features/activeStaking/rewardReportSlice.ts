@@ -7,6 +7,10 @@ export type RewardReport = {
   superLikesCount: number
   currentRewardAmount: string
   weeklyReward: string
+
+  creatorReward: string
+  receivedLikes: number
+
   address: string
 }
 
