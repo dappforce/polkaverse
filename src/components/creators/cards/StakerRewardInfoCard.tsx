@@ -4,7 +4,7 @@ import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { activeStakingLinks } from 'src/utils/links'
-import StakerRewardInfo from '../stakers-rewards/StakerRewardInfo'
+import StakerRewardInfo from '../staker-rewards/StakerRewardInfo'
 import styles from './StakerRewardInfoCard.module.sass'
 
 export default function StakerRewardInfoCard() {
