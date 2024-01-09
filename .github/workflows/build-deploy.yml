@@ -72,7 +72,7 @@ jobs:
             GH_GA_ID=G-TP1XEFNHQD
             GH_APP_KIND=polkaverse
             GH_HCAPTCHA_SITE_KEY=${{ secrets.PROD_HCAPTCHA_SITE_KEY }}
-            GH_AMP_ID=71bf5a46800fedba5e9a01243b988164
+            GH_AMP_ID=2eeca0e8a0163c89e3f023c971e426a6
             GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
             GH_CONNECTION_KIND=main
             GH_SELLER_CLIENT_ID=${{ secrets.SELLER_CLIENT_ID }}
