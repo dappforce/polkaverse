@@ -6,6 +6,7 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { FormatBalance } from 'src/components/common/balances'
 import { SpaceFollowersModal } from 'src/components/profiles/AccountsListModal'
 import { OfficialSpaceStatus, SpaceAvatar } from 'src/components/spaces/helpers'
+import ViewSpaceLink from 'src/components/spaces/ViewSpaceLink'
 import CollapsibleParagraph from 'src/components/utils/CollapsibleParagraph/CollapsibleParagraph'
 import FollowSpaceButton from 'src/components/utils/FollowSpaceButton'
 import { Pluralize } from 'src/components/utils/Plularize'
@@ -35,10 +36,15 @@ export default function CreatorInfoCard({ space, showStakeButton = true }: Creat
       <div className={styles.TitleContainer}>
         <SpaceAvatar noMargin space={space?.struct} size={44} avatar={space?.content?.image} />
         <div className='d-flex flex-column'>
-          <span className={styles.Title}>
-            <span>{space.content?.name ?? 'Untitled'}</span>
-            <OfficialSpaceStatus withoutContainer space={space.struct} />
-          </span>
+          <ViewSpaceLink
+            space={space.struct}
+            title={
+              <span className={styles.Title}>
+                <span>{space.content?.name ?? 'Untitled'}</span>
+                <OfficialSpaceStatus withoutContainer space={space.struct} />
+              </span>
+            }
+          />
           <SpaceFollowersModal
             address={space.id}
             pluralizeTitle='Follower'
@@ -71,6 +77,7 @@ export default function CreatorInfoCard({ space, showStakeButton = true }: Creat
             </Button>
           )}
           <div
+            className='w-100'
             onClick={() =>
               sendEvent('follow', {
                 spaceId: space.id,
@@ -79,7 +86,7 @@ export default function CreatorInfoCard({ space, showStakeButton = true }: Creat
               })
             }
           >
-            <FollowSpaceButton space={space.struct} />
+            <FollowSpaceButton className='w-100' space={space.struct} />
           </div>
         </div>
       ) : (
