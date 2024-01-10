@@ -24,12 +24,12 @@ export type ActivityEvent =
   | 'AccountFollowed'
 
 export const eventArr = [
+  'PostReactionCreated,CommentReactionCreated',
+  'PostCreated',
   'SpaceCreated',
   'SpaceFollowed',
-  'PostCreated',
   'PostShared,CommentShared',
   // 'CommentCreated,CommentReplyCreated',
-  'PostReactionCreated,CommentReactionCreated',
   'AccountFollowed',
 ]
 
@@ -99,7 +99,9 @@ export function InnerStatistics(props: FormProps) {
           >
             <div onClick={() => showModal(data.activityType)}>
               <Stats
-                title={messages.statistics[data?.activityType as ActivityEvent] + ' in the period'}
+                title={
+                  messages.statistics[data?.activityType as ActivityEvent] + ' during the period'
+                }
                 total={data.countByPeriod}
                 contentHeight={50}
                 footer={

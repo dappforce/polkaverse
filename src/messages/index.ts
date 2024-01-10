@@ -72,7 +72,7 @@ export default {
     PostSharing: 'Posts shared',
     'PostShared,CommentShared': 'Posts shared',
     'CommentCreated,CommentReplyCreated': 'Comments created',
-    'PostReactionCreated,CommentReactionCreated': 'Upvotes + downvotes',
+    'PostReactionCreated,CommentReactionCreated': 'Likes',
   },
   connectingToNetwork: 'Connecting to the network...',
   waitingForTx: 'Waiting for transaction to complete.',
