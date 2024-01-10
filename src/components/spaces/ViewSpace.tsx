@@ -7,16 +7,19 @@ import React, { MouseEvent, useCallback, useState } from 'react'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
 import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { SpaceContent, SpaceData, SpaceId, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
+import { getAmountRange } from 'src/utils/analytics'
 import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks'
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import MyStakeCard from '../creators/cards/MyStakeCard'
 import StakeSubCard from '../creators/cards/StakeSubCard'
-import MobileIncreaseSubRewards from '../creators/MobileIncreaseSubRewards'
+import MobileStakerRewardDashboard from '../creators/MobileStakerRewardDashboard'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { editSpaceUrl, spaceUrl } from '../urls'
@@ -102,6 +105,8 @@ export const InnerViewSpace = (props: Props) => {
   const isMobile = useIsMobileWidthOrDevice()
   const address = useMyAddress()
   const [collapseAbout, setCollapseAbout] = useState(true)
+  const sendEvent = useSendEvent()
+  const { data: totalStake } = useFetchTotalStake(address ?? '')
 
   const spaceData = useSelectSpace(initialSpaceData?.id)
   const isMy = useIsMySpace(spaceData?.struct)
@@ -124,7 +129,7 @@ export const InnerViewSpace = (props: Props) => {
   const setChatConfig = useSetChatEntityConfig()
   const setChatOpen = useSetChatOpen()
 
-  const { isCreatorSpace, loading } = useIsCreatorSpace(spaceData?.id)
+  const { isCreatorSpace } = useIsCreatorSpace(spaceData?.id)
 
   // We do not return 404 page here, because this component could be used to render a space in list.
   if (!spaceData) return null
@@ -190,6 +195,7 @@ export const InnerViewSpace = (props: Props) => {
     setCollapseAbout(prev => !prev)
   }
   const toggleCreatorChat = () => {
+    sendEvent('creator_chat_opened', { spaceId: space.id })
     setChatConfig({ entity: { data: spaceData, type: 'space' }, withFloatingButton: false })
     setChatOpen(true)
   }
@@ -219,7 +225,19 @@ export const InnerViewSpace = (props: Props) => {
                 </Button>
               )}
 
-              {withFollowButton && <FollowSpaceButton ghost={false} space={space} />}
+              {withFollowButton && (
+                <div
+                  onClick={() =>
+                    sendEvent('follow', {
+                      spaceId: space.id,
+                      eventSource: 'space',
+                      amountRange: getAmountRange(totalStake?.amount),
+                    })
+                  }
+                >
+                  <FollowSpaceButton ghost={false} space={space} />
+                </div>
+              )}
             </span>
           </div>
 
@@ -292,12 +310,14 @@ export const InnerViewSpace = (props: Props) => {
     )
   }
 
-  const showCreatorCards = isCreatorSpace && isMobile && !loading
+  const showCreatorCards = isMobile
 
   return (
     <Section className='mt-3'>
       {showCreatorCards && (
-        <MobileIncreaseSubRewards space={spaceData} style={{ margin: '-28px -16px 0' }} />
+        <MobileStakerRewardDashboard
+          style={{ margin: '-28px -16px 0', position: 'sticky', top: '64px', zIndex: 10 }}
+        />
       )}
       <PendingSpaceOwnershipPanel space={space} />
       <HiddenSpaceAlert space={space} />
@@ -312,10 +332,11 @@ export const InnerViewSpace = (props: Props) => {
 }
 
 function MobileCreatorCard({ spaceData }: { spaceData: SpaceData }) {
+  const { isCreatorSpace, loading: loadingIsCreator } = useIsCreatorSpace(spaceData.id)
   const myAddress = useMyAddress()
   const { data, loading } = useFetchStakeData(myAddress ?? '', spaceData.id)
 
-  if (loading) return null
+  if (loading || loadingIsCreator || !isCreatorSpace) return null
 
   return (
     <div className='mt-4'>

@@ -64,6 +64,7 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
                 withFloatingButton: false,
               })
               setChatOpen(true)
+              sendEvent('creator_chat_opened', { spaceId: id })
             }}
           >
             <span className='item'>Creator chat</span>

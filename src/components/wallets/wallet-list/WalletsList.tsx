@@ -1,6 +1,7 @@
 import { DownloadOutlined } from '@ant-design/icons'
 import { Tooltip } from 'antd'
-import { useEffect, useState } from 'react'
+import clsx from 'clsx'
+import { useEffect, useMemo, useState } from 'react'
 import { StepsEnum } from 'src/components/auth/AuthContext'
 import { setCurrentWallet } from 'src/components/auth/utils'
 import config from 'src/config'
@@ -57,7 +58,17 @@ const WalletList = ({ setCurrentStep }: GetWalletPorps) => {
     }
   }
 
-  const wallets = supportedWallets.map(wallet => {
+  const sortedSupportedWallets = useMemo(() => {
+    let installedWallet: (typeof supportedWallets)[number][] = []
+    let notInstalledWallet: (typeof supportedWallets)[number][] = []
+    supportedWallets.forEach(wallet => {
+      if (wallet.installed) installedWallet.push(wallet)
+      else notInstalledWallet.push(wallet)
+    })
+    return [...installedWallet, ...notInstalledWallet]
+  }, [supportedWallets])
+
+  const wallets = sortedSupportedWallets.map(wallet => {
     const { title, logo, installed, installUrls } = wallet
 
     const onInstallButtonClick = (e: React.MouseEvent<HTMLElement>) => {
@@ -65,7 +76,11 @@ const WalletList = ({ setCurrentStep }: GetWalletPorps) => {
     }
 
     return (
-      <div key={title} className={styles.WalletListItem} onClick={() => onClick(wallet)}>
+      <div
+        key={title}
+        className={clsx(styles.WalletListItem, !installed && styles.Disabled)}
+        onClick={() => installed && onClick(wallet)}
+      >
         <div className='d-flex align-items-center'>
           <AvatarOrSkeleton
             externalIcon

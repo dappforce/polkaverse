@@ -2,6 +2,7 @@ import { PlusCircleOutlined } from '@ant-design/icons'
 import { Button, Tooltip } from 'antd'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus } from 'src/rtk/app/hooks'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
 import { useMyAddress } from '../auth/MyAccountsContext'
@@ -53,6 +54,7 @@ const NewPostButtonAndModal = () => {
   const { isMobile } = useResponsiveSize()
   const [visible, setVisible] = useState(false)
   const { asPath } = useRouter()
+  const sendEvent = useSendEvent()
 
   useEffect(() => {
     setVisible(false)
@@ -60,6 +62,7 @@ const NewPostButtonAndModal = () => {
 
   /** Go to new post form or show the space selector modal. */
   const onNewPostClick = () => {
+    sendEvent('createpost_button_clicked', { eventSource: 'top' })
     setVisible(true)
   }
 

@@ -3,13 +3,15 @@ import clsx from 'clsx'
 import { ComponentProps } from 'react'
 import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import CreatePostCard from './cards/CreatePostCard'
 import CreatorInfoCard from './cards/CreatorInfoCard'
-import GetMoreSubCard from './cards/GetMoreSubCard'
 import MyStakeCard from './cards/MyStakeCard'
 import StakeSubCard from './cards/StakeSubCard'
 import SupportCreatorsCard from './cards/SupportCreatorsCard'
+import CreatorRewardInfoCard from './creator-rewards/CreatorRewardInfoCard'
+import StakerRewardInfoCard from './staker-rewards/StakerRewardInfoCard'
 
 export type CreatorDashboardHomeVariant = 'posts' | 'spaces'
 export type CreatorDashboardSidebarType =
@@ -44,61 +46,75 @@ export default function CreatorDashboardSidebar({
 }
 
 function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { name: 'home-page' }>) {
-  return (
-    <>
-      <CreatePostCard variant={variant} />
-      <SupportCreatorsCard />
-    </>
-  )
+  const myAddress = useMyAddress() ?? ''
+  const { data, loading } = useFetchTotalStake(myAddress)
+
+  if (loading) return null
+  if (data?.hasStaked)
+    return (
+      <>
+        <CreatePostCard variant={variant} />
+        <StakerRewardInfoCard />
+        <CreatorRewardInfoCard />
+      </>
+    )
+  return <SupportCreatorsCard />
 }
 
 function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name: 'space-page' }>) {
-  const myAddress = useMyAddress()
-  const { data } = useFetchStakeData(myAddress ?? '', space.id)
-  const { isCreatorSpace, loading } = useIsCreatorSpace(space.id)
+  const myAddress = useMyAddress() ?? ''
+  const { data: stakeData, loading: loadingStakeData } = useFetchStakeData(myAddress, space.id)
+  const { isCreatorSpace, loading: loadingIsCreator } = useIsCreatorSpace(space.id)
+  const { data: totalStake, loading: loadingTotalStake } = useFetchTotalStake(myAddress)
 
-  if (loading) {
+  if (loadingIsCreator || loadingStakeData) {
     return null
   }
 
-  if (!isCreatorSpace) {
-    return <SupportCreatorsCard />
+  const renderTopCard = () => {
+    if (!isCreatorSpace) {
+      if (!totalStake?.hasStaked) return <SupportCreatorsCard />
+      return null
+    }
+
+    if (stakeData?.hasStaked) return <MyStakeCard space={space} />
+    else return <StakeSubCard space={space} />
   }
 
-  return data?.hasStaked ? (
+  return (
     <>
-      <MyStakeCard space={space} />
-      <GetMoreSubCard />
-    </>
-  ) : (
-    <>
-      <StakeSubCard space={space} />
+      {renderTopCard()}
+      {!loadingTotalStake && totalStake?.hasStaked && (
+        <>
+          <StakerRewardInfoCard />
+          <CreatorRewardInfoCard />
+        </>
+      )}
     </>
   )
 }
 
 function PostPageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name: 'post-page' }>) {
-  const myAddress = useMyAddress()
-  const { data, loading } = useFetchStakeData(myAddress ?? '', space.id)
-  const { isCreatorSpace, loading: loadingCreator } = useIsCreatorSpace(space.id)
+  const myAddress = useMyAddress() ?? ''
+  const { data, loading: loadingTotalStake } = useFetchTotalStake(myAddress)
+  const { loading: loadingCreator } = useIsCreatorSpace(space.id)
 
   if (loadingCreator) {
     return null
   }
 
-  if (!isCreatorSpace) {
-    return (
-      <>
-        <CreatePostCard variant='posts' />
-        <GetMoreSubCard />
-      </>
-    )
-  }
-
   return (
     <>
-      <CreatorInfoCard space={space} />
-      {loading ? null : data?.hasStaked ? <GetMoreSubCard /> : <StakeSubCard space={space} />}
+      <CreatorInfoCard showStakeButton={!data?.hasStaked} space={space} />
+      {!loadingTotalStake &&
+        (data?.hasStaked ? (
+          <>
+            <StakerRewardInfoCard />
+            <CreatorRewardInfoCard />
+          </>
+        ) : (
+          <StakeSubCard space={space} />
+        ))}
     </>
   )
 }

@@ -24,6 +24,7 @@ import {
   signOut,
   unsetMyEmailAddress,
 } from 'src/rtk/features/accounts/myAccountSlice'
+import { fetchAddressLikeCounts } from 'src/rtk/features/activeStaking/addressLikeCountSlice'
 import { fetchChainsInfo } from 'src/rtk/features/chainsInfo/chainsInfoSlice'
 import { fetchProfileSpace } from 'src/rtk/features/profiles/profilesSlice'
 import { fetchEntityOfSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
@@ -148,6 +149,7 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
           dispatch(fetchProfileSpace({ id: address, api: subsocial })),
           dispatch(fetchEntityOfSpaceIdsByFollower({ id: address, reload: true, api: subsocial })),
           dispatch(fetchChainsInfo({})),
+          dispatch(fetchAddressLikeCounts({ address, postIds: null })),
         ])
 
         unsubAccountInfo = await readyApi.query.system.account(

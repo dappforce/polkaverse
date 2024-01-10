@@ -9,7 +9,12 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { ampId } from 'src/config/env'
+import { useFetchProfileSpace } from 'src/rtk/app/hooks'
+import { useFetchUserRewardReport } from 'src/rtk/features/activeStaking/hooks'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { getAmountRange } from 'src/utils/analytics'
 
 type AnalyticContextState = {
   amp: BrowserClient | null
@@ -22,10 +27,15 @@ const initialState: AnalyticContextState = {
 }
 
 export type AnalyticContextProps = {
-  sendEvent: (name: string, properties?: Record<string, any>) => void
+  amp: BrowserClient | null
+  sendEvent: (
+    name: string,
+    properties?: Record<string, any>,
+    userProperties?: Record<string, any>,
+  ) => void
 }
 
-const propsStub = { sendEvent: () => undefined }
+const propsStub = { sendEvent: () => undefined, amp: null }
 export const AnalyticContext = createContext<AnalyticContextProps>(propsStub)
 
 export async function createAmplitudeInstance() {
@@ -72,11 +82,17 @@ export function AnalyticProvider(props: React.PropsWithChildren<{}>) {
 
   const contextValue: AnalyticContextProps = useMemo(() => {
     return {
-      sendEvent: (name: string, properties?: Record<string, any>) => {
+      amp: state.amp,
+      sendEvent: (
+        name: string,
+        properties?: Record<string, any>,
+        userProperties?: Record<string, any>,
+      ) => {
         const eventProps = {
           event_type: name,
           device_id: state.deviceId,
           event_properties: properties,
+          user_properties: userProperties,
         }
         if (!state.amp) {
           setQueuedEvents(prev => [...prev, eventProps])
@@ -106,3 +122,34 @@ export function useBuildSendEvent(eventName: string) {
 }
 
 export default AnalyticProvider
+
+export function AppLaunchedEventSender() {
+  const state = useContext(AnalyticContext)
+
+  const myAddress = useMyAddress() ?? ''
+  const { entity, loading: loadingProfile } = useFetchProfileSpace({ id: myAddress })
+  const { data: totalStake, loading: loadingTotalStake } = useFetchTotalStake(myAddress)
+  const { data: rewardReport, loading: loadingRewardReport } = useFetchUserRewardReport(myAddress)
+
+  const amp = state.amp
+  const hasProfile = !!entity
+  const hasCreatorRewards = BigInt(rewardReport?.creatorReward ?? '0') > 0
+  const sentInitRef = useRef(false)
+  const isLoading = loadingProfile || loadingTotalStake || loadingRewardReport
+  useEffect(() => {
+    if (isLoading || sentInitRef.current) return
+    sentInitRef.current = true
+    if (!myAddress) {
+      state.sendEvent('app_launched')
+      return
+    }
+    state.sendEvent('app_launched', undefined, {
+      hasProfile,
+      stakeAmountRange: getAmountRange(totalStake?.amount),
+      device_id: amp?.getDeviceId(),
+      hasCreatorRewards,
+    })
+  }, [hasProfile, isLoading, hasCreatorRewards, amp])
+
+  return null
+}

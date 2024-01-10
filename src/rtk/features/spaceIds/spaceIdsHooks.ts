@@ -3,7 +3,8 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { useActions } from 'src/rtk/app/helpers'
 import { useFetchOneEntity } from 'src/rtk/app/hooksCommon'
 import { useAppSelector } from 'src/rtk/app/store'
-import { AccountId, DataSourceTypes } from 'src/types'
+import { AccountId, DataSourceTypes, SpaceWithSomeDetails } from 'src/types'
+import { selectSpaces } from '../spaces/spacesSlice'
 import {
   fetchEntityOfSpaceIdsByFollower,
   selectEntityOfSpaceIdsByFollower,
@@ -64,15 +65,24 @@ export const useCreateReloadSpaceIdsForMyAccount = () => {
 }
 
 /** Select two lists of space ids: that I own, I gave any role */
-export const useSelectSpaceIdsWhereAccountCanPost = (address?: AccountId) =>
-  useAppSelector(state => {
+export const useSelectSpaceIdsWhereAccountCanPost = (address?: AccountId) => {
+  return useAppSelector(state => {
     if (!address) return []
 
     const ownSpaceIds = selectSpaceIdsByOwner(state, address) || []
     const spaceIdsWithRolesByAccount = selectSpaceIdsWithRolesByAccount(state, address) || []
+    const ids = [...new Set([...ownSpaceIds, ...spaceIdsWithRolesByAccount])]
+    const spaces = selectSpaces(state, { ids })
 
-    return [...new Set([...ownSpaceIds, ...spaceIdsWithRolesByAccount])]
+    const spacesMap = new Map<string, SpaceWithSomeDetails>()
+    spaces.forEach(space => spacesMap.set(space.id, space))
+
+    return ids.filter(id => {
+      const space = spacesMap.get(id)
+      return !space?.struct.hidden
+    })
   }, shallowEqual)
+}
 
 export const useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus = (address?: AccountId) =>
   useAppSelector(state => {

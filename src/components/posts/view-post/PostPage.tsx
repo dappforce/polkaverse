@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import { NextPage } from 'next'
 import router from 'next/router'
 import { FC, useEffect } from 'react'
+import MobileStakerRewardDashboard from 'src/components/creators/MobileStakerRewardDashboard'
 import { PageContent } from 'src/components/main/PageWrapper'
 import AuthorCard from 'src/components/profiles/address-views/AuthorCard'
 import { useResponsiveSize } from 'src/components/responsive'
@@ -25,7 +26,6 @@ import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
 import ViewTags from '../../utils/ViewTags'
 import Embed, { getEmbedLinkType, getYoutubeVideoId } from '../embed/Embed'
-import { StatsPanel } from '../PostStats'
 import ViewPostLink from '../ViewPostLink'
 import {
   HiddenPostAlert,
@@ -48,7 +48,7 @@ export type PostDetailsProps = {
 const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const { postData: initialPostData, rootPostData } = props
   const id = initialPostData.id
-  const { isNotMobile } = useResponsiveSize()
+  const { isNotMobile, isMobile } = useResponsiveSize()
   useFetchMyReactionsByPostId(id)
 
   const postData = useAppSelector(state => selectPost(state, { id })) || initialPostData
@@ -158,6 +158,11 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
       withVoteBanner
       creatorDashboardSidebarType={{ name: 'post-page', space }}
     >
+      {isMobile && (
+        <MobileStakerRewardDashboard
+          style={{ margin: '-12px -16px 0', position: 'sticky', top: '64px', zIndex: 10 }}
+        />
+      )}
       <HiddenPostAlert post={post.struct} />
       <Section>
         <div>
@@ -172,7 +177,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               />
               {isNotMobile && (
                 <div className='d-flex justify-content-end align-items-center'>
-                  <StatsPanel post={struct} goToCommentsId={goToCommentsId} />
+                  {/* <StatsPanel post={struct} goToCommentsId={goToCommentsId} /> */}
                   <div className='ml-2' style={{ position: 'relative', top: '2px' }}>
                     <PostDropDownMenu post={post} space={spaceStruct} withEditButton />
                   </div>
@@ -208,16 +213,14 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
                     <ViewTags tags={tags} className='mt-2' />
                   </>
                 )}
+                <PostActionsPanel
+                  className='mt-3'
+                  postDetails={postData}
+                  space={space.struct}
+                  // toogleCommentSection={() => openCommentSection()}
+                />
               </div>
             )}
-
-            <div className='DfRow mt-2 pl-3'>
-              <PostActionsPanel
-                postDetails={postData}
-                space={space.struct}
-                // toogleCommentSection={() => openCommentSection()}
-              />
-            </div>
 
             <div className='pt-2'>
               <AuthorCard

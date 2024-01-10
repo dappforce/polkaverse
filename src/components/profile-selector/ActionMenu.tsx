@@ -12,10 +12,12 @@ import { Menu } from 'antd'
 import Link from 'next/link'
 import { BiUserPin } from 'react-icons/bi'
 import { BsCaretRight } from 'react-icons/bs'
+import { LuActivity } from 'react-icons/lu'
 import config from 'src/config'
 import { useAppSelector } from 'src/rtk/app/store'
 import { selectProfileSpaceStructById } from 'src/rtk/features/profiles/profilesSlice'
 import { selectSpaceIdsWithRolesByAccount } from 'src/rtk/features/spaceIds/spaceIdsWithRolesByAccountSlice'
+import { selectSpace } from 'src/rtk/features/spaces/spacesSlice'
 import { SpaceId } from 'src/types'
 import { useMyDomains } from '../../rtk/features/domains/domainHooks'
 import { selectSpaceIdsByOwner } from '../../rtk/features/spaceIds/ownSpaceIdsSlice'
@@ -26,6 +28,7 @@ import { CreateOrEditProfileSpace, SettingsLink } from '../profiles/address-view
 import { SwitchProfileSpaceButton } from '../profiles/address-views/utils/SwitchProfileSpaceModal'
 import ViewProfileLink from '../profiles/ViewProfileLink'
 import { SpacesWithRolesByAccountModal } from '../spaces/AccountSpaces'
+import ViewSpaceLink from '../spaces/ViewSpaceLink'
 import { SubIcon } from '../utils'
 import { useMyAccountDrawer } from './MyAccountMenu'
 
@@ -42,6 +45,7 @@ const EditProfileIcon = <EditOutlined />
 const MyRolesIcon = <TagsOutlined />
 const SettingsIcon = <SettingOutlined />
 const MyDomainsIcon = <SubIcon Icon={BiUserPin} />
+const MyActivityIcon = <SubIcon Icon={LuActivity} />
 
 const emptyArr: SpaceId[] = []
 
@@ -58,7 +62,8 @@ export const ActionMenu = () => {
   const ownSpaceIds =
     useAppSelector(state => (address ? selectSpaceIdsByOwner(state, address) : [])) || []
 
-  const { accountFollowedCount, accountFollowersCount } = profileSpaceByAccount || {}
+  const { accountFollowedCount, accountFollowersCount, spaceId } = profileSpaceByAccount || {}
+  const space = useAppSelector(state => (spaceId ? selectSpace(state, { id: spaceId }) : null))
 
   const hasMyRoles = !!useAppSelector(state =>
     address ? selectSpaceIdsWithRolesByAccount(state, address) : emptyArr,
@@ -104,9 +109,11 @@ export const ActionMenu = () => {
           </Menu.Item>
         )}
 
-        <Menu.Item key='my-profile' icon={MyProfileIcon}>
-          <ViewProfileLink account={{ address }} title='My profile' />
-        </Menu.Item>
+        {space && (
+          <Menu.Item key='my-profile' icon={MyProfileIcon}>
+            <ViewSpaceLink space={space?.struct} title='My profile' />
+          </Menu.Item>
+        )}
         <Menu.Item key='edit' icon={EditProfileIcon}>
           <CreateOrEditProfileSpace address={address} onClick={close} />
         </Menu.Item>
@@ -135,6 +142,9 @@ export const ActionMenu = () => {
           </Menu.Item>
         )}
 
+        <Menu.Item key='my-activity' icon={MyActivityIcon}>
+          <ViewProfileLink account={{ address }} title='My activity' />
+        </Menu.Item>
         {enableEmailSettings && (
           <Menu.Item key='settings' icon={SettingsIcon}>
             <SettingsLink address={address} onClick={close} />

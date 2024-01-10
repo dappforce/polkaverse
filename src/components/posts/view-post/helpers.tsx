@@ -14,7 +14,7 @@ import NoData from 'src/components/utils/EmptyList'
 import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels'
 import Segment from 'src/components/utils/Segment'
 import { ActiveVoters, PostVoters } from 'src/components/voting/ListVoters'
-import { VoterButtons } from 'src/components/voting/VoterButtons'
+import SuperLike from 'src/components/voting/SuperLike'
 import { maintenanceMsg } from 'src/config/env'
 import { resolveIpfsUrl } from 'src/ipfs'
 import messages from 'src/messages'
@@ -38,7 +38,6 @@ import { formatDate, isHidden, toShortUrl, useIsVisible } from '../../utils'
 import { SummarizeMd } from '../../utils/md/SummarizeMd'
 import ViewTags from '../../utils/ViewTags'
 import Embed from '../embed/Embed'
-import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
 import { PostDropDownMenu } from './PostDropDownMenu'
 import TwitterPost from './TwitterPost'
@@ -252,7 +251,7 @@ const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
   if (content.tweet?.id) {
     return (
       <div className={clsx(withMarginForCardType && 'mb-3 pb-1')}>
-        <TwitterPost withLinkToDetailPage space={space} post={post} className={clsx('mt-3')} />
+        <TwitterPost withLinkToDetailPage space={space} post={post} className={clsx('my-3')} />
       </div>
     )
   }
@@ -288,17 +287,17 @@ type PostActionsPanelProps = {
 }
 
 export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
-  const { postDetails, space, withBorder, className } = props
+  const { postDetails, /* space, */ withBorder, className } = props
   const {
     post: { struct },
   } = postDetails
 
-  const ReactionsAction = () => <VoterButtons post={struct} className='DfAction' />
+  const ReactionsAction = () => <SuperLike post={struct} />
 
   return (
     <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'} ${className ?? ''}`}>
       <ReactionsAction />
-      <ShareDropdown postDetails={postDetails} space={space} className='DfAction' />
+      {/* <ShareDropdown postDetails={postDetails} space={space} className='DfAction' /> */}
     </div>
   )
 }

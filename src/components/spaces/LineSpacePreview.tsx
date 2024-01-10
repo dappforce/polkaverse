@@ -4,8 +4,11 @@ import clsx from 'clsx'
 import capitalize from 'lodash/capitalize'
 import dynamic from 'next/dynamic'
 import React from 'react'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useSelectProfile } from 'src/rtk/app/hooks'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { SpaceContent, SpaceId, SpaceWithSomeDetails } from 'src/types'
+import { getAmountRange } from 'src/utils/analytics'
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { useAmISpaceFollower } from '../utils/FollowSpaceButton'
@@ -40,6 +43,8 @@ export const SpacePreview = ({
   noLink,
 }: SpacePreviewProps) => {
   const address = useMyAddress()
+  const sendEvent = useSendEvent()
+  const { data: totalStake } = useFetchTotalStake(address ?? '')
   const { id: spaceProfileId } = useSelectProfile(address) || {}
 
   const isCurrentProfile = spaceData.id === spaceProfileId
@@ -94,7 +99,19 @@ export const SpacePreview = ({
               />
             )
           }
-          return <FollowSpaceButton space={space} />
+          return (
+            <div
+              onClick={() =>
+                sendEvent('follow', {
+                  spaceId: space.id,
+                  eventSource: 'home',
+                  amountRange: getAmountRange(totalStake?.amount),
+                })
+              }
+            >
+              <FollowSpaceButton space={space} />
+            </div>
+          )
         }
         return currentProfileLabel
       })()}

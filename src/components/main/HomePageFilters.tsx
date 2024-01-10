@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import config from 'src/config'
 import LatestPostsPage from '../posts/LatestPostsPage'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
-import LatestSpacesPage from '../spaces/LatestSpacesPage'
+import LatestSpacesPage, { CreatorsSpaces } from '../spaces/LatestSpacesPage'
 import style from './HomePage.module.sass'
 import {
   DateFilterType,
@@ -20,17 +20,19 @@ const { enableGraphQl } = config
 
 const commonFilterOption = [{ label: 'Latest', value: 'latest' }]
 
-const offchainPostFilterOpt = enableGraphQl
-  ? [
-      ...commonFilterOption,
-      { label: 'Most liked', value: 'liked' },
-      { label: 'Most commented', value: 'commented' },
-    ]
-  : []
+// const offchainPostFilterOpt = enableGraphQl
+//   ? [
+//       ...commonFilterOption,
+//       { label: 'Most liked', value: 'liked' },
+//       { label: 'Most commented', value: 'commented' },
+//     ]
+//   : []
 
 export const postFilterOpt = [
-  { label: 'Recommended', value: 'suggested' },
-  ...offchainPostFilterOpt,
+  { label: 'Active Staking', value: 'suggested' },
+  { label: 'All Posts', value: 'latest' },
+  // removed most liked and commented
+  // ...offchainPostFilterOpt,
 ]
 
 export const commentFilterOpt = enableGraphQl
@@ -41,17 +43,18 @@ export const commentFilterOpt = enableGraphQl
     ]
   : []
 
-const offchainSpaceFilterOpt = enableGraphQl
-  ? [
-      ...commonFilterOption,
-      { label: 'Sort by followers ', value: 'sortByFollowers' },
-      { label: 'Sort by posts', value: 'sortByPosts' },
-    ]
-  : []
+// const offchainSpaceFilterOpt = enableGraphQl
+//   ? [
+//       ...commonFilterOption,
+//       { label: 'Sort by followers ', value: 'sortByFollowers' },
+//       { label: 'Sort by posts', value: 'sortByPosts' },
+//     ]
+//   : []
 
 export const spaceFilterOpt = [
-  { label: 'Polkadot Spaces', value: 'suggested' },
-  ...offchainSpaceFilterOpt,
+  { label: 'Active Staking', value: 'suggested' },
+  { label: 'Featured Creators', value: 'creators' },
+  // ...offchainSpaceFilterOpt,
 ]
 
 export const dateFilterOpt = [
@@ -79,9 +82,10 @@ export const PostFilterView = ({ filter: { type, date }, ...props }: PostFilterP
   <LatestPostsPage filter={type} dateFilter={date} {...props} />
 )
 
-export const SpaceFilterView = ({ filter: { type, date }, ...props }: SpaceFilterProps) => (
-  <LatestSpacesPage filter={type} dateFilter={date} {...props} />
-)
+export const SpaceFilterView = ({ filter: { type, date }, ...props }: SpaceFilterProps) => {
+  if (type === 'creators') return <CreatorsSpaces />
+  return <LatestSpacesPage filter={type} dateFilter={date} {...props} />
+}
 
 const onChangeWrap = (onChange: OnChangeFn) => (e: RadioChangeEvent) => onChange(e.target.value)
 
@@ -101,7 +105,7 @@ export const Filters = (props: Props) => {
   const onDateChange: any = (value: DateFilterType = 'week') =>
     setFiltersInUrl(router, tabKey, { type: type as EntityFilter, date: value })
 
-  const needDateFilter = !!type && type !== 'latest' && type !== 'suggested'
+  const needDateFilter = !!type && type !== 'latest' && type !== 'suggested' && type !== 'creators'
 
   if (!needDateFilter && !filterByKey[tabKey]?.length) return null
 

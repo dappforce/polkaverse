@@ -25,10 +25,15 @@ function format(
   decimals: number,
   withSi?: boolean,
   _isShort?: boolean,
+  precision?: number,
+  withMutedDecimals = true,
 ): React.ReactNode {
-  const [prefix, postfix] = formatBalance(value, { forceUnit: '-', decimals, withSi: false }).split(
-    '.',
-  )
+  const [prefix, postfix] = formatBalance(value, {
+    forceUnit: '-',
+    decimals,
+    withSi: false,
+    withZero: true,
+  }).split('.')
   const isShort = _isShort || (withSi && prefix.length >= K_LENGTH)
 
   if (prefix.length > M_LENGTH) {
@@ -45,7 +50,12 @@ function format(
       {prefix}
       {!isShort && (
         <>
-          .<span className='DfBalanceDecimals'>{postfix || '0000'}</span>
+          .
+          <span className={clsx(withMutedDecimals && 'DfBalanceDecimals')}>
+            {precision
+              ? parseFloat(`0.${postfix}`).toPrecision(precision).substring(2)
+              : postfix || '0000'}
+          </span>
         </>
       )}
       &nbsp;{currency}
@@ -58,6 +68,8 @@ type FormatBalanceProps = BareProps & {
   decimals?: number
   currency?: string
   isShort?: boolean
+  precision?: number
+  withMutedDecimals?: boolean
 }
 
 export const FormatBalance = ({
@@ -66,6 +78,8 @@ export const FormatBalance = ({
   currency,
   isShort,
   className,
+  precision,
+  withMutedDecimals = true,
   ...bareProps
 }: FormatBalanceProps) => {
   if (!value) return null
@@ -78,6 +92,8 @@ export const FormatBalance = ({
     decimals || defaultDecimal,
     true,
     isShort,
+    precision,
+    withMutedDecimals,
   )
 
   return (

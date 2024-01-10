@@ -67,6 +67,11 @@ jobs:
             GH_CONNECTION_KIND=dev
             GH_SELLER_CLIENT_ID=5DYm3Wk4aa1BbfhH1ajmY6MNEELXoicmKRnP4tzHYjSKnD9K
             GH_SELLER_TOKEN_SIGNER=retire strong pole intact cool music high path salt praise stadium spatial
+            GH_SERVER_MNEMONIC=plunge pumpkin penalty segment cattle more print below fat lemon clap uniform
+            GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=https://super-likes-fixed-data-hub.subsocial.network/graphql
+            GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://super-likes-fixed-data-hub.subsocial.network/graphql-ws
+            GH_DATAHUB_QUEUE_URL=https://super-likes-fixed-queue-data-hub.subsocial.network/graphql
+            GH_DATAHUB_QUEUE_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZX0.jpXwkIJ4DpV4IvSI3eWVVXE6x89qr_GIq7IlbBv5YE0
           tags: |
             ${{ env.image }}
           cache-from: type=local,src=/tmp/.buildx-cache
