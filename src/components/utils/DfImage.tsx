@@ -6,12 +6,11 @@ type Props = {
   size?: string | number
   rounded?: boolean
   className?: string
-  preview?: boolean
 }
 
 // TODO: create props onError
 export const DfImage = (props: Props) => {
-  const { src, size, rounded, className, preview = true } = props
+  const { src, size, rounded, className } = props
   const style: React.CSSProperties = {
     width: size,
     height: size,
@@ -19,12 +18,12 @@ export const DfImage = (props: Props) => {
     minHeight: size,
     overflow: 'hidden',
     borderRadius: rounded ? '50%' : undefined,
-    cursor: preview ? 'pointer' : undefined,
+    cursor: 'pointer',
   }
 
   return (
     <div style={style} className={className}>
-      <Image src={src} preview={preview ? { mask: null } : false} />
+      <Image src={src} preview={{ mask: null }} />
     </div>
   )
 }

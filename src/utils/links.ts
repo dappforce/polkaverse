@@ -8,7 +8,7 @@ export const getSubIdCreatorsLink = (space?: SpaceData) =>
   `https://sub.id/creators/${space ? getSpaceHandleOrId(space.struct) : ''}`
 
 export const activeStakingLinks = {
-  learnMore: 'https://docs.subsocial.network/docs/basics/creator-staking/active-staking',
+  learnMore: 'https://subsocial.network/active-staking-details',
   discuss: () => {
     const currentWallet = getCurrentWallet()
     const link = 'https://grill.chat/creators/stakers-20132'

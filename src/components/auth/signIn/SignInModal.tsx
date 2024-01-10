@@ -1,14 +1,15 @@
+import React, { useState } from 'react'
+import LoadingTransaction from 'src/components/utils/LoadingTransaction'
+import WalletButton from '../WalletButton'
+
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import Modal from 'antd/lib/modal'
 import clsx from 'clsx'
-import React, { useState } from 'react'
-import { useIsMobileWidthOrDevice, useResponsiveSize } from 'src/components/responsive'
-import LoadingTransaction from 'src/components/utils/LoadingTransaction'
+import { useResponsiveSize } from 'src/components/responsive'
 import { setCurrentEmailAddress } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import config from 'src/config'
 import { EmailAccount } from 'src/types'
-import { hasInjectedWallet } from 'src/utils/window'
 import { AccountSelector } from '../../profile-selector/AccountSelector'
 import ExternalLink from '../../spaces/helpers/ExternalLink'
 import { MutedDiv } from '../../utils/MutedText'
@@ -16,7 +17,6 @@ import PrivacyPolicyLinks from '../../utils/PrivacyPolicyLinks'
 import WalletList from '../../wallets/wallet-list/WalletsList'
 import { CompletedSteps, StepsEnum, useAuth } from '../AuthContext'
 import { useMyAccountsContext } from '../MyAccountsContext'
-import WalletButton from '../WalletButton'
 import ConfirmationModalContent from './email/ConfirmationModalContent'
 import ShowMnemonicModalContent from './email/ShowMnemonicModalContent'
 import SignInEmailButton from './email/SignInEmailButton'
@@ -190,7 +190,19 @@ const ModalContent = ({
     case StepsEnum.SelectWallet: {
       return (
         <div>
-          <ModalBodyWrapper title='Sign In' desc={<SignInDesc />}>
+          <ModalBodyWrapper
+            title='Sign In'
+            desc={
+              <>
+                Choose one of the available wallet providers to connect to {config.appName}, or sign
+                in with your email address.{' '}
+                <ExternalLink
+                  url='https://docs.subsocial.network/docs/tutorials/#polkadotjs'
+                  value='How do I set up a wallet?'
+                />
+              </>
+            }
+          >
             {config.enableConfirmationLessMode ? (
               <>
                 <SignInEmailButton setCurrentStep={setCurrentStep} />
@@ -300,27 +312,6 @@ const ModalContent = ({
     default:
       return null
   }
-}
-
-function SignInDesc() {
-  const isMobile = useIsMobileWidthOrDevice()
-  if (isMobile) {
-    if (hasInjectedWallet()) {
-      return <>To use Polkaverse, you need to connect your wallet</>
-    }
-    return (
-      <>To use PolkaVerse, you need a wallet to manage your account. We recommend Nova Wallet.</>
-    )
-  }
-  return (
-    <>
-      Choose one of the available wallet providers to connect to {config.appName}.{' '}
-      <ExternalLink
-        url='https://docs.subsocial.network/docs/tutorials/#polkadotjs'
-        value='How do I set up a wallet?'
-      />
-    </>
-  )
 }
 
 export const SignInModalView = ({ open, hide, onAccountChosen }: SignInModalProps) => {

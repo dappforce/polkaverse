@@ -1,14 +1,12 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import { IpfsContent } from '@subsocial/api/substrate/wrappers'
 import { newLogger } from '@subsocial/utils'
-import { Button, Col, Form, Modal, ModalProps, Row } from 'antd'
+import { Col, Form, Modal, ModalProps, Row } from 'antd'
 import { LabeledValue } from 'antd/lib/select'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { AiFillInfoCircle } from 'react-icons/ai'
+import { useCallback, useEffect, useState } from 'react'
 import { BiImage } from 'react-icons/bi'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { htmlToMd } from 'src/components/editor/tiptap'
@@ -22,16 +20,9 @@ import { getNonEmptyPostContent } from 'src/components/utils/content'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import SelectSpacePreview from 'src/components/utils/SelectSpacePreview'
 import TxButton from 'src/components/utils/TxButton'
-import { useSendEvent } from 'src/providers/AnalyticContext'
-import {
-  useFetchSpaces,
-  useSelectProfile,
-  useSelectSpaceIdsWhereAccountCanPost,
-} from 'src/rtk/app/hooks'
-import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { useFetchSpaces, useSelectSpaceIdsWhereAccountCanPost } from 'src/rtk/app/hooks'
 import { AnyId, DataSourceTypes, IpfsCid, PostContent } from 'src/types'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
-import { activeStakingLinks, getSubIdCreatorsLink } from 'src/utils/links'
 import { RegularPostExt } from '.'
 import { fieldName, FormValues } from './Fileds'
 import styles from './index.module.sass'
@@ -52,16 +43,7 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
   const { ipfs } = useSubsocialApi()
   const [IpfsCid, setIpfsCid] = useState<IpfsCid>()
   const [publishIsDisable, setPublishIsDisable] = useState(true)
-  const sendEvent = useSendEvent()
-
-  const profile = useSelectProfile(myAddress)
-  const defaultSpace = useMemo(() => {
-    if (profile && allowedSpaceIds.includes(profile?.id ?? '')) {
-      return profile?.id
-    }
-    return allowedSpaceIds[0]
-  }, [allowedSpaceIds, profile])
-
+  const defaultSpace = allowedSpaceIds[0]
   const router = useRouter()
   const [spaceId, setSpaceId] = useState<string>(defaultSpace)
 
@@ -147,13 +129,7 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
         defaultValue={defaultSpace}
         imageSize={32}
         onSelect={value => {
-          const newId = (value as LabeledValue).value.toString()
-          setSpaceId(newId)
-          sendEvent('createpost_space_changed', {
-            from: spaceId,
-            to: newId,
-            eventSource: 'fastEditor',
-          })
+          setSpaceId((value as LabeledValue).value.toString())
         }}
       />
     ),
@@ -192,18 +168,10 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
             href='/[spaceId]/posts/new'
             as={`/${spaceId}/posts/new`}
             className={clsx('LightPinkButton', 'mr-2')}
-            onClick={() =>
-              sendEvent('createpost_full_editor_opened', { eventSource: 'fastEditor' })
-            }
           >
             Full Editor
           </ButtonLink>
-          <TxButton
-            onClick={() => sendEvent('createpost_post_published', { eventSource: 'fastEditor' })}
-            type='primary'
-            disabled={publishIsDisable}
-            {...txProps}
-          />
+          <TxButton type='primary' disabled={publishIsDisable} {...txProps} />
         </Col>
       </Row>
     </Form>
@@ -214,11 +182,9 @@ export interface PostEditorModalProps extends Omit<ModalProps, 'onCancel'> {
   onCancel?: () => void
 }
 export const PostEditorModal = (props: PostEditorModalProps) => {
-  const myAddress = useMyAddress()
-  const { data } = useFetchTotalStake(myAddress ?? '')
-  const hasStaked = data?.hasStaked
-
-  const sendEvent = useSendEvent()
+  // const myAddress = useMyAddress()
+  // const { data } = useFetchTotalStake(myAddress ?? '')
+  // const hasStaked = data?.hasStaked
 
   return (
     <Modal
@@ -231,7 +197,7 @@ export const PostEditorModal = (props: PostEditorModalProps) => {
       <div className={styles.Content}>
         <PostEditorModalBody closeModal={() => props.onCancel && props.onCancel()} />
       </div>
-      <div className={styles.InfoPanel}>
+      {/* <div className={styles.InfoPanel}>
         <div className={styles.InfoPanelContent}>
           <div className={styles.Title}>
             <AiFillInfoCircle />
@@ -239,23 +205,17 @@ export const PostEditorModal = (props: PostEditorModalProps) => {
           </div>
           {hasStaked ? (
             <p>
-              You can receive extra SUB when others like your content. Share your posts around the
-              internet to get more exposure and rewards.{' '}
+              You can receive extra SUB when others like your posts. Feel free to share your post to
+              accumulate more rewards.{' '}
               <Link href={activeStakingLinks.learnMore}>
-                <a
-                  className='FontWeightMedium'
-                  target='_blank'
-                  onClick={() =>
-                    sendEvent('astake_banner_learn_more', { eventSource: 'fastEditor' })
-                  }
-                >
+                <a className='FontWeightMedium' target='_blank'>
                   How does it work?
                 </a>
               </Link>
             </p>
           ) : (
             <p>
-              You can receive extra SUB when others like your content. However, you need to first
+              You can receive extra SUB when others like your posts. However, you need to first
               stake some SUB to become eligible.
             </p>
           )}
@@ -265,7 +225,7 @@ export const PostEditorModal = (props: PostEditorModalProps) => {
             Stake SUB
           </Button>
         )}
-      </div>
+      </div> */}
     </Modal>
   )
 }

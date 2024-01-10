@@ -97,11 +97,7 @@ const SearchInput = () => {
       },
     }
 
-    sendEvent('search', {
-      value,
-      spaceId: withSpaceFilter ? spaceId : undefined,
-      type: withSpaceFilter ? 'bySpace' : 'all',
-    })
+    sendEvent('search', { value })
     return nonEmptyStr(value) && router.replace(queryPath, queryPath)
   }
 

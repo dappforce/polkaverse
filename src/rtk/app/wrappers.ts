@@ -198,7 +198,7 @@ export function createSimpleFetchWrapper<Args, ReturnValue>({
   sliceName: string
   getCachedData: (state: RootState, args: Args) => ReturnValue | undefined
   saveToCacheAction: (data: ReturnValue) => any
-  fetchData: (args: Args, state: RootState) => Promise<ReturnValue>
+  fetchData: (args: Args) => Promise<ReturnValue>
   shouldFetchCondition?: (cachedData: ReturnValue | undefined) => boolean
 }) {
   const currentlyFetchingMap = new Map<string, Promise<ReturnValue>>()
@@ -207,21 +207,19 @@ export function createSimpleFetchWrapper<Args, ReturnValue>({
     async (allArgs, { getState, dispatch }): Promise<ReturnValue> => {
       const { reload, ...args } = allArgs
       const id = JSON.stringify(sortKeysRecursive(args))
-
-      const alreadyFetchedPromise = currentlyFetchingMap.get(id)
-      if (alreadyFetchedPromise && !reload) return alreadyFetchedPromise
-
       if (!reload) {
         const fetchedData = getCachedData(getState(), allArgs)
         if (fetchedData && !shouldFetchCondition?.(fetchedData)) return fetchedData
       }
+      const alreadyFetchedPromise = currentlyFetchingMap.get(id)
+      if (alreadyFetchedPromise) return alreadyFetchedPromise
 
-      const promise = fetchData(allArgs, getState())
+      const promise = fetchData(allArgs)
       currentlyFetchingMap.set(id, promise)
       const res = await promise
 
-      await dispatch(saveToCacheAction(res))
       currentlyFetchingMap.delete(id)
+      await dispatch(saveToCacheAction(res))
 
       return promise
     },

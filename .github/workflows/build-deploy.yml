@@ -72,16 +72,11 @@ jobs:
             GH_GA_ID=G-TP1XEFNHQD
             GH_APP_KIND=polkaverse
             GH_HCAPTCHA_SITE_KEY=${{ secrets.PROD_HCAPTCHA_SITE_KEY }}
-            GH_AMP_ID=2eeca0e8a0163c89e3f023c971e426a6
+            GH_AMP_ID=71bf5a46800fedba5e9a01243b988164
             GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
             GH_CONNECTION_KIND=main
             GH_SELLER_CLIENT_ID=${{ secrets.SELLER_CLIENT_ID }}
             GH_SELLER_TOKEN_SIGNER=${{ secrets.SELLER_TOKEN_SIGNER }}
-            GH_SERVER_MNEMONIC=${{ secrets.SERVER_MNEMONIC }}
-            GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=https://sub-data-hub.subsocial.network/graphql
-            GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://sub-data-hub.subsocial.network/graphql-ws
-            GH_DATAHUB_QUEUE_URL=https://sub-queue-data-hub.subsocial.network/graphql
-            GH_DATAHUB_QUEUE_TOKEN=${{ secrets.DATAHUB_QUEUE_TOKEN }}
 
           tags: |
             ${{ env.image }}

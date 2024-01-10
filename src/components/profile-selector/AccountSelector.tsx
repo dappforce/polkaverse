@@ -1,9 +1,10 @@
-import { Divider } from 'antd'
+import { Button, Divider } from 'antd'
 import { useState } from 'react'
 import { EmailAccount } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { StepsEnum, useAuth } from '../auth/AuthContext'
 import { useMyAccounts, useMyAccountsContext, useMyAddress } from '../auth/MyAccountsContext'
+import styles from '../auth/signIn/email/SignInModalContent.module.sass'
 import { ProfilePreviewByAccountId, SelectAddressPreview } from '../profiles/address-views'
 import SubTitle from '../utils/SubTitle'
 
@@ -172,8 +173,14 @@ const noExtension = (onClickSignIn: () => void, onClickRegister: () => void) =>
     </div>
   ) : (
     <div className='p-3 text-center'>
-      You can continue reading {config.appName} content without signing in, however, in order to
-      create new posts, write comments, and follow others, you will need to create an account.
+      {`You can continue reading ${config.appName} content without signing in, however, in order to create new posts, write comments, and follow others, you will need to`}
+      <Button className={styles.ButtonLinkDiv} type='link' onClick={() => onClickSignIn()}>
+        sign in
+      </Button>{' '}
+      {"with an email address and password. If you don't already have an account, you can"}
+      <Button className={styles.ButtonLinkDiv} type='link' onClick={() => onClickRegister()}>
+        create one.
+      </Button>
     </div>
   )
 

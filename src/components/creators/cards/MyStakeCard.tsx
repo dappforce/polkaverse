@@ -9,10 +9,7 @@ import { FormatBalance } from 'src/components/common/balances'
 import { useResponsiveSize } from 'src/components/responsive'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
-import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
-import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
-import { getAmountRange } from 'src/utils/analytics'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import styles from './MyStakeCard.module.sass'
 
@@ -21,11 +18,9 @@ export type MyStakeCardProps = {
 }
 
 export default function MyStakeCard({ space }: MyStakeCardProps) {
-  const myAddress = useMyAddress() ?? ''
-  const { data, loading } = useFetchStakeData(myAddress, space.id)
+  const myAddress = useMyAddress()
+  const { data, loading } = useFetchStakeData(myAddress ?? '', space.id)
   const { isMobile } = useResponsiveSize()
-  const sendEvent = useSendEvent()
-  const { data: totalStake } = useFetchTotalStake(myAddress)
 
   return (
     <Segment className={clsx(styles.CreatorStakingCard)}>
@@ -33,15 +28,11 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
         <div className={styles.TopSection}>
           <p className={clsx(styles.Title, 'mb-0')}>Creator Staking</p>
           <Link href='https://docs.subsocial.network/docs/basics/creator-staking' passHref>
-            <a
-              target='_blank'
-              className={styles.Link}
-              onClick={() => sendEvent('lstake_learn_more', { eventSource: 'myStakeCard' })}
-            >
+            <a target='_blank' className={styles.Link}>
               How does it work?
             </a>
           </Link>
-          <DfImage preview={false} src='/images/databases.svg' className={styles.Image} />
+          <DfImage src='/images/databases.svg' className={styles.Image} />
         </div>
       )}
       <div
@@ -61,27 +52,19 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
             <Skeleton round paragraph={false} className={styles.Skeleton} />
           ) : (
             <span className='FontWeightMedium'>
-              <FormatBalance value={data?.stakeAmount} decimals={10} currency='SUB' precision={2} />
+              <FormatBalance value={data?.stakeAmount} isShort decimals={10} currency='SUB' />
             </span>
           )}
         </div>
         <Button
           className={clsx(
-            'd-flex align-items-center GapTiny justify-content-center FontWeightMedium pt-1',
+            'd-flex align-items-center GapTiny justify-content-center FontWeightMedium',
             !isMobile && 'mt-3',
           )}
           type='primary'
           ghost
           block={!isMobile}
           href={getSubIdCreatorsLink(space)}
-          onClick={() =>
-            sendEvent('astake_dashboard_manage_stake', {
-              spaceId: space.id,
-              eventSource: 'my-stake-banner',
-              amountRange: getAmountRange(totalStake?.amount),
-              spaceStakeAmountRange: getAmountRange(data?.stakeAmount),
-            })
-          }
           target='_blank'
         >
           Manage{isMobile ? '' : ' my stake'}

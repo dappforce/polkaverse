@@ -7,14 +7,12 @@ import { useCallback, useEffect, useState } from 'react'
 import config from 'src/config'
 import { GET_TOTAL_COUNTS } from 'src/graphql/queries'
 import { GetHomePageData } from 'src/graphql/__generated__/GetHomePageData'
-import { useSendEvent } from 'src/providers/AnalyticContext'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { PostKind } from 'src/types/graphql-global-types'
-import { getAmountRange } from 'src/utils/analytics'
 import { useIsSignedIn, useMyAddress } from '../auth/MyAccountsContext'
 import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar'
-import MobileStakerRewardDashboard from '../creators/MobileStakerRewardDashboard'
+import MobileIncreaseSubRewards from '../creators/MobileIncreaseSubRewards'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
 import Section from '../utils/Section'
@@ -67,6 +65,7 @@ const HomeTabs = (props: TabsProps) => {
       <Tabs activeKey={tabKey} onChange={setKey} className={`${className} ${style.DfTabs}`}>
         <TabPane tab='My feed' key='feed' />
         <TabPane tab='Posts' key='posts' />
+        <TabPane tab='Featured Creators' key='creators' />
         <TabPane tab={enableGraphQl ? 'Spaces' : 'Polkadot Spaces'} key='spaces' />
       </Tabs>
       <Filters tabKey={tabKey} isAffix={isAffix} />
@@ -121,21 +120,9 @@ const TabsHomePage = ({
   const type = getFilterType(tab, typeFromUrl)
   const date = dateFilterOpt[dateFilterIndex].value as DateFilterType
 
-  const myAddress = useMyAddress() ?? ''
-  const { data: totalStake } = useFetchTotalStake(myAddress)
-
-  const sendEvent = useSendEvent()
-  useEffect(() => {
-    sendEvent('home_page_tab_opened', {
-      type: tab,
-      value: type,
-      amountRange: getAmountRange(totalStake?.amount),
-    })
-  }, [tab, type])
-
   useEffect(() => {
     let variant: CreatorDashboardHomeVariant = 'posts'
-    if (tab === 'spaces') variant = 'spaces'
+    if (tab === 'spaces' || tab === 'creators') variant = 'spaces'
     setCurrentTabVariant(variant)
   }, [setCurrentTabVariant, tab])
 
@@ -181,17 +168,20 @@ const TabsHomePage = ({
     }
   }, [tab, type, date])
 
+  const myAddress = useMyAddress()
+  const { data, loading } = useFetchTotalStake(myAddress ?? '')
   const isMobile = useIsMobileWidthOrDevice()
 
   return (
     <>
-      {isMobile && (
-        <MobileStakerRewardDashboard
-          style={{ margin: '-12px -16px 0', position: 'sticky', top: '64px', zIndex: 10 }}
+      {isMobile && !loading && (
+        <MobileIncreaseSubRewards
+          style={{ margin: '-12px -16px 0' }}
+          isActiveStakingBanner={!data?.hasStaked}
         />
       )}
       <span>
-        {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
+        <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />
       </span>
       <Section className='m-0'>
         <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} {...props} />

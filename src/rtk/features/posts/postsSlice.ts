@@ -40,9 +40,6 @@ import {
   SpaceData,
   SpaceStruct,
 } from 'src/types'
-import { fetchAddressLikeCounts } from '../activeStaking/addressLikeCountSlice'
-import { fetchCanPostsSuperLiked } from '../activeStaking/canPostSuperLikedSlice'
-import { fetchSuperLikeCounts } from '../activeStaking/superLikeCountsSlice'
 import { Content, fetchContents, selectPostContentById } from '../contents/contentsSlice'
 import { fetchProfileSpaces } from '../profiles/profilesSlice'
 import { fetchMyReactionsByPostIds } from '../reactions/myPostReactionsSlice'
@@ -244,7 +241,6 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
       )
 
       const fetches: Promise<any>[] = []
-
       if (withOwner) {
         const ids = getUniqueOwnerIds(entities)
         const prefetchedData = generatePrefetchData<ProfileSpaceIdByAccount>(
@@ -338,11 +334,6 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
             dataSource,
           }),
         )
-      dispatch(fetchSuperLikeCounts({ postIds: newIds }))
-      dispatch(fetchCanPostsSuperLiked({ postIds: newIds }))
-
-      withReactionByAccount &&
-        dispatch(fetchAddressLikeCounts({ postIds: newIds, address: withReactionByAccount }))
 
       const entities = await getPosts(dataSource, {
         chain: { api, ids: idsToBns(newIds) },

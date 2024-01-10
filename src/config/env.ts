@@ -25,16 +25,7 @@ export const appOverrides: Partial<AppConfig> = {
   appBaseUrl: process.env['NEXT_PUBLIC_APP_BASE_URL'],
 }
 
-export const ampId = process.env['NEXT_PUBLIC_AMP_ID'] || ''
-
-export const serverMnemonic = process.env['SERVER_MNEMONIC']
-export const datahubQueueConfig = {
-  url: process.env['DATAHUB_QUEUE_URL'],
-  token: process.env['DATAHUB_QUEUE_TOKEN'],
-}
-
-export const datahubQueryUrl = process.env['NEXT_PUBLIC_DATAHUB_QUERY_URL']
-export const datahubSubscriptionUrl = process.env['NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL']
+export const ampId = process.env['AMP_ID'] || ''
 
 /**
  * Enable or disable the available features of this web app by overriding them in the .env file.

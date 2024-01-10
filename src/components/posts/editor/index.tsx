@@ -135,7 +135,7 @@ function EditPostForm(props: PostFormProps) {
       setSpaceForPost={setSpaceForPost}
       initialValues={initialValues}
       postType={postType}
-      spaceForPost={spaceId}
+      defaultSpaceId={spaceId}
     />
   )
 }
