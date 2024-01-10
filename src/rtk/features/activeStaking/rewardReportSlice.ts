@@ -47,17 +47,15 @@ const slice = createSlice({
 
       const newSuperLike = rewardReport.superLikesCount + superLikeCountChange
       if (rewardReport.superLikesCount > 0) {
-        const rewardPerLike =
-          BigInt(rewardReport.currentRewardAmount) / BigInt(rewardReport.superLikesCount)
+        const rewardMultiplier = BigInt(
+          Math.min(newSuperLike, CREATORS_CONSTANTS.SUPER_LIKES_FOR_MAX_REWARD),
+        )
+
+        const rewardPerLike = BigInt(rewardReport.currentRewardAmount) / rewardMultiplier
         const weeklyWithoutCurrentReward =
           BigInt(rewardReport.weeklyReward) - BigInt(rewardReport.currentRewardAmount)
 
-        const rewardMultiplier = Math.min(
-          newSuperLike,
-          CREATORS_CONSTANTS.SUPER_LIKES_FOR_MAX_REWARD,
-        )
-
-        rewardReport.currentRewardAmount = (BigInt(rewardMultiplier) * rewardPerLike).toString()
+        rewardReport.currentRewardAmount = (rewardMultiplier * rewardPerLike).toString()
         rewardReport.weeklyReward = (
           weeklyWithoutCurrentReward + BigInt(rewardReport.currentRewardAmount)
         ).toString()
