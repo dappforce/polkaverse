@@ -79,7 +79,7 @@ export default function CreatorRewardInfoCard() {
           <div className='d-flex align-items-center justify-content-between'>
             <div className='d-flex align-items-baseline GapMini'>
               <MutedSpan>Distribution in</MutedSpan>
-              <Tooltip title='How long until you will receive your creator rewards for this week'>
+              <Tooltip title='The amount of time remaining until your bonus rewards for this week are deposited into your account'>
                 <SlQuestion className='FontTiny ColorMuted' />
               </Tooltip>
             </div>

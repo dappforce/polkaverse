@@ -75,8 +75,8 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
                       reward the authors of the posts you like.
                     </p>
                     <p className='mb-0'>
-                      If you like more than 10, those author rewards will then be distributed among
-                      more authors, resulting in each author receiving fewer rewards.
+                      Liking more than 10 posts will spread the author rewards across more authors,
+                      resulting in each author receiving fewer rewards.
                     </p>
                   </>
                 }
@@ -140,7 +140,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
           <div className='d-flex justify-content-between align-items-center'>
             <div className='d-flex align-items-baseline GapMini'>
               <MutedSpan>Distribution in</MutedSpan>
-              <Tooltip title='How long until you will receive your bonus staking rewards for this week'>
+              <Tooltip title='The amount of time remaining until your bonus rewards for this week are deposited into your account'>
                 <SlQuestion className='FontTiny ColorMuted' />
               </Tooltip>
             </div>

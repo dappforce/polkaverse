@@ -105,7 +105,7 @@ function PostPageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name:
 
   return (
     <>
-      <CreatorInfoCard showStakeButton={!data?.hasStaked} space={space} />
+      <CreatorInfoCard showStakeButton={data?.hasStaked} space={space} />
       {!loadingTotalStake &&
         (data?.hasStaked ? (
           <>

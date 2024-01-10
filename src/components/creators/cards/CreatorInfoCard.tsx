@@ -5,7 +5,8 @@ import { BsBoxArrowUpRight } from 'react-icons/bs'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { FormatBalance } from 'src/components/common/balances'
 import { SpaceFollowersModal } from 'src/components/profiles/AccountsListModal'
-import { OfficialSpaceStatus, SpaceAvatar } from 'src/components/spaces/helpers'
+import { OfficialSpaceStatus, SpaceAvatar, useIsMySpace } from 'src/components/spaces/helpers'
+import ViewSpaceLink from 'src/components/spaces/ViewSpaceLink'
 import CollapsibleParagraph from 'src/components/utils/CollapsibleParagraph/CollapsibleParagraph'
 import FollowSpaceButton from 'src/components/utils/FollowSpaceButton'
 import { Pluralize } from 'src/components/utils/Plularize'
@@ -29,16 +30,25 @@ export default function CreatorInfoCard({ space, showStakeButton = true }: Creat
   const { data: stakeData } = useFetchStakeData(myAddress, space.id)
   const { data: totalStake } = useFetchTotalStake(myAddress)
   const sendEvent = useSendEvent()
+  const isMySpace = useIsMySpace(space.struct)
+
+  const shouldShowStakeButton = isCreatorSpace && showStakeButton
+  const shouldShowFollowButton = !isMySpace
 
   return (
     <Segment className={clsx(styles.CreatorInfoCard)}>
       <div className={styles.TitleContainer}>
         <SpaceAvatar noMargin space={space?.struct} size={44} avatar={space?.content?.image} />
         <div className='d-flex flex-column'>
-          <span className={styles.Title}>
-            <span>{space.content?.name ?? 'Untitled'}</span>
-            <OfficialSpaceStatus withoutContainer space={space.struct} />
-          </span>
+          <ViewSpaceLink
+            space={space.struct}
+            title={
+              <span className={styles.Title}>
+                <span>{space.content?.name ?? 'Untitled'}</span>
+                <OfficialSpaceStatus withoutContainer space={space.struct} />
+              </span>
+            }
+          />
           <SpaceFollowersModal
             address={space.id}
             pluralizeTitle='Follower'
@@ -54,34 +64,39 @@ export default function CreatorInfoCard({ space, showStakeButton = true }: Creat
       </div>
       <CollapsibleParagraph className='FontSmall mb-2' text={space.content?.about ?? ''} />
       {!stakeData?.hasStaked ? (
-        <div className='GapSmall d-flex flex-column mt-2'>
-          {isCreatorSpace && showStakeButton && (
-            <Button
-              target='_blank'
-              type='primary'
-              href={getSubIdCreatorsLink(space)}
-              onClick={() =>
-                sendEvent('astake_banner_add_stake', {
-                  eventSource: 'creator-info-banner',
-                  spaceId: space.id,
-                })
-              }
-            >
-              Stake
-            </Button>
-          )}
-          <div
-            onClick={() =>
-              sendEvent('follow', {
-                spaceId: space.id,
-                eventSource: 'post',
-                amountRange: getAmountRange(totalStake?.amount),
-              })
-            }
-          >
-            <FollowSpaceButton space={space.struct} />
+        (shouldShowFollowButton || shouldShowStakeButton) && (
+          <div className={clsx('GapSmall d-flex flex-column mt-2')}>
+            {shouldShowStakeButton && (
+              <Button
+                target='_blank'
+                type='primary'
+                href={getSubIdCreatorsLink(space)}
+                onClick={() =>
+                  sendEvent('astake_banner_add_stake', {
+                    eventSource: 'creator-info-banner',
+                    spaceId: space.id,
+                  })
+                }
+              >
+                Stake
+              </Button>
+            )}
+            {shouldShowFollowButton && (
+              <div
+                className='w-100'
+                onClick={() =>
+                  sendEvent('follow', {
+                    spaceId: space.id,
+                    eventSource: 'post',
+                    amountRange: getAmountRange(totalStake?.amount),
+                  })
+                }
+              >
+                <FollowSpaceButton className='w-100' space={space.struct} />
+              </div>
+            )}
           </div>
-        </div>
+        )
       ) : (
         <div className={clsx('d-flex flex-column GapNormal', styles.MyStake)}>
           <div className='GapSmall d-flex align-items-center justify-content-between FontSmall'>
