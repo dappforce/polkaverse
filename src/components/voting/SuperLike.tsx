@@ -121,8 +121,9 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
   )
 
   let tooltipTitle = ''
-  if (isPostCreatedMoreThan1Week) tooltipTitle = 'You cannot like posts that are older than 7 days'
-  else if (isMyPost) tooltipTitle = 'You cannot like your own post'
+  if (isMyPost) tooltipTitle = 'You cannot like your own post'
+  else if (isPostCreatedMoreThan1Week)
+    tooltipTitle = 'You cannot like posts that are older than 7 days'
 
   const button = (
     <div>
