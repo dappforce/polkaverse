@@ -31,7 +31,8 @@ export default function StakerRewardProgressBar({
       className={clsx(styles.StakerRewardProgressBar, props.className)}
       style={{
         ...props.style,
-        gridTemplateColumns: progress <= 100 ? '1fr' : `1fr ${(progress - 100) / 100}fr`,
+        gridTemplateColumns: '1fr',
+        // gridTemplateColumns: progress <= 100 ? '1fr' : `1fr ${(progress - 100) / 100}fr`,
       }}
     >
       <Progress
@@ -41,7 +42,7 @@ export default function StakerRewardProgressBar({
         trailColor='#CBD5E1'
         size={size}
       />
-      {progress > 100 && (
+      {/* {progress > 100 && (
         <Progress
           showInfo={false}
           percent={100}
@@ -49,7 +50,7 @@ export default function StakerRewardProgressBar({
           trailColor='#CBD5E1'
           size={size}
         />
-      )}
+      )} */}
     </div>
   )
 }
