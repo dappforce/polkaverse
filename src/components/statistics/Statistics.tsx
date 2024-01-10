@@ -183,8 +183,6 @@ export function Statistics(props: FormProps) {
     }
   }, [address, period])
 
-  console.log(parseData(constrainedPeriod.toString(), dates, data))
-
   return (
     <PageContent meta={{ title: 'Statistics' }}>
       <Section title='Statistics'>
