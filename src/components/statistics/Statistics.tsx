@@ -19,7 +19,7 @@ export type ActivityEvent =
   | 'SpaceFollowed'
   | 'PostCreated'
   | 'PostShared,CommentShared'
-  | 'CommentCreated,CommentReplyCreated'
+  // | 'CommentCreated,CommentReplyCreated'
   | 'PostReactionCreated,CommentReactionCreated'
   | 'AccountFollowed'
 
@@ -28,7 +28,7 @@ export const eventArr = [
   'SpaceFollowed',
   'PostCreated',
   'PostShared,CommentShared',
-  'CommentCreated,CommentReplyCreated',
+  // 'CommentCreated,CommentReplyCreated',
   'PostReactionCreated,CommentReactionCreated',
   'AccountFollowed',
 ]
@@ -182,6 +182,8 @@ export function Statistics(props: FormProps) {
       isMounted = false
     }
   }, [address, period])
+
+  console.log(parseData(constrainedPeriod.toString(), dates, data))
 
   return (
     <PageContent meta={{ title: 'Statistics' }}>
