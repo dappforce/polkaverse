@@ -50,15 +50,20 @@ function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { nam
   const { data, loading } = useFetchTotalStake(myAddress)
 
   if (loading) return null
-  if (data?.hasStaked)
-    return (
-      <>
-        <CreatePostCard variant={variant} />
-        <StakerRewardInfoCard />
-        <CreatorRewardInfoCard />
-      </>
-    )
-  return <SupportCreatorsCard />
+
+  return (
+    <>
+      {data?.hasStaked ? (
+        <>
+          <CreatePostCard variant={variant} />
+          <StakerRewardInfoCard />
+        </>
+      ) : (
+        <SupportCreatorsCard />
+      )}
+      <CreatorRewardInfoCard />
+    </>
+  )
 }
 
 function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name: 'space-page' }>) {
@@ -84,12 +89,8 @@ function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name
   return (
     <>
       {renderTopCard()}
-      {!loadingTotalStake && totalStake?.hasStaked && (
-        <>
-          <StakerRewardInfoCard />
-          <CreatorRewardInfoCard />
-        </>
-      )}
+      {!loadingTotalStake && totalStake?.hasStaked && <StakerRewardInfoCard />}
+      <CreatorRewardInfoCard />
     </>
   )
 }
@@ -107,14 +108,8 @@ function PostPageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name:
     <>
       <CreatorInfoCard showStakeButton={data?.hasStaked} space={space} />
       {!loadingTotalStake &&
-        (data?.hasStaked ? (
-          <>
-            <StakerRewardInfoCard />
-            <CreatorRewardInfoCard />
-          </>
-        ) : (
-          <StakeSubCard space={space} />
-        ))}
+        (data?.hasStaked ? <StakerRewardInfoCard /> : <StakeSubCard space={space} />)}
+      <CreatorRewardInfoCard />
     </>
   )
 }
