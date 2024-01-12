@@ -36,6 +36,7 @@ import '@subsocial/definitions/interfaces/augment-api'
 import AnalyticProvider, { AppLaunchedEventSender } from 'src/providers/AnalyticContext'
 import { GoogleAnalytics } from 'nextjs-google-analytics'
 import { DatahubSubscriber } from 'src/components/utils/datahub/subscriber'
+import Script from 'next/script'
 
 dayjs.extend(relativeTime)
 dayjs.extend(localizedFormat)
@@ -50,14 +51,6 @@ function MyApp(props) {
   return (
     <>
       <Head>
-        {/* <script src='/env.js' /> */}
-        {/*
-          See how to work with custom fonts in Next.js:
-          https://codeconqueror.com/blog/using-google-fonts-with-next-js
-        */}
-        {/* <link rel="font/ttf" href="/fonts/PTSerif-Bold.ttf" /> */}
-        {/* <link rel="font/ttf" href="/fonts/NotoSerif-Bold.ttf" /> */}
-        {/* <link rel="font/ttf" href="/fonts/Merriweather-Bold.ttf" /> */}
         <link rel='preconnect' href='https://fonts.googleapis.com' />
         <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='' />
         <link
@@ -65,6 +58,16 @@ function MyApp(props) {
           rel='stylesheet'
         />
       </Head>
+      {/* Clarity Script */}
+      <Script strategy="lazyOnload" id="clarity-script">
+        {`
+          (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+          })(window, document, "clarity", "script", "kkqc95491q");
+        `}
+      </Script>
       <NextNProgress
         color='#eb2f96'
         options={{

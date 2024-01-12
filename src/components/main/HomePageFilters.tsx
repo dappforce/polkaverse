@@ -29,7 +29,7 @@ const commonFilterOption = [{ label: 'Latest', value: 'latest' }]
 //   : []
 
 export const postFilterOpt = [
-  { label: 'Active Staking', value: 'suggested' },
+  { label: 'Featured Posts', value: 'suggested' },
   { label: 'All Posts', value: 'latest' },
   // removed most liked and commented
   // ...offchainPostFilterOpt,
@@ -52,8 +52,8 @@ export const commentFilterOpt = enableGraphQl
 //   : []
 
 export const spaceFilterOpt = [
-  { label: 'Active Staking', value: 'suggested' },
-  { label: 'Featured Creators', value: 'creators' },
+  { label: 'Featured Creators', value: 'suggested' },
+  { label: 'Creators Staking', value: 'creators' },
   // ...offchainSpaceFilterOpt,
 ]
 
