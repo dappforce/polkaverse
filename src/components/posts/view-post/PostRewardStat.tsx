@@ -2,13 +2,13 @@ import clsx from 'clsx'
 import { ComponentProps } from 'react'
 import { TbCoins } from 'react-icons/tb'
 import { FormatBalance } from 'src/components/common/balances'
-import { useSelectPostEarned } from 'src/rtk/features/activeStaking/hooks'
+import { useSelectPostReward } from 'src/rtk/features/activeStaking/hooks'
 
-export type PostEarnedStatProps = ComponentProps<'div'> & { postId: string }
+export type PostRewardStatProps = ComponentProps<'div'> & { postId: string }
 
-export default function PostEarnedStat({ postId, ...props }: PostEarnedStatProps) {
-  const postEarn = useSelectPostEarned(postId)
-  if (!postEarn?.hasEarned) return null
+export default function PostRewardStat({ postId, ...props }: PostRewardStatProps) {
+  const postEarn = useSelectPostReward(postId)
+  if (!postEarn?.isNotZero) return null
 
   return (
     <div
@@ -26,7 +26,7 @@ export default function PostEarnedStat({ postId, ...props }: PostEarnedStatProps
           decimals={10}
           precision={2}
           withMutedDecimals={false}
-          value={postEarn.earned}
+          value={postEarn.amount}
         />
       </span>
     </div>

@@ -7,7 +7,7 @@ import {
   selectAddressLikeCount,
 } from './addressLikeCountSlice'
 import { selectCanPostSuperLiked } from './canPostSuperLikedSlice'
-import { selectPostEarned } from './postEarnedSlice'
+import { selectPostReward } from './postRewardSlice'
 import { fetchRewardHistory, selectUserRewardHistory } from './rewardHistorySlice'
 import { fetchRewardReport, selectUserRewardReport } from './rewardReportSlice'
 import { selectPostSuperLikeCount } from './superLikeCountsSlice'
@@ -77,6 +77,6 @@ export function useFetchUserRewardHistory(address?: string, config?: { enabled?:
   }
 }
 
-export function useSelectPostEarned(postId: string) {
-  return useAppSelector(state => selectPostEarned(state, postId))
+export function useSelectPostReward(postId: string) {
+  return useAppSelector(state => selectPostReward(state, postId))
 }

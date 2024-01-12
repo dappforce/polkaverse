@@ -14,7 +14,7 @@ import {
   fetchAddressLikeCounts,
 } from 'src/rtk/features/activeStaking/addressLikeCountSlice'
 import { CanPostSuperLiked } from 'src/rtk/features/activeStaking/canPostSuperLikedSlice'
-import { PostEarned } from 'src/rtk/features/activeStaking/postEarnedSlice'
+import { PostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { RewardHistory } from 'src/rtk/features/activeStaking/rewardHistorySlice'
 import { fetchRewardReport, RewardReport } from 'src/rtk/features/activeStaking/rewardReportSlice'
 import {
@@ -65,38 +65,38 @@ export async function getSuperLikeCounts(postIds: string[]): Promise<SuperLikeCo
   return postIds.map(postId => resultMap.get(postId) ?? { postId, count: 0 })
 }
 
-const GET_POST_EARNED = gql`
-  query GetPostEarned($postIds: [String!]!) {
-    activeStakingPostEarned(args: { postPersistentIds: $postIds }) {
+const GET_POST_REWARDS = gql`
+  query GetPostRewards($postIds: [String!]!) {
+    activeStakingRewardsByPosts(args: { postPersistentIds: $postIds }) {
       persistentPostId
-      earned
+      amount
     }
   }
 `
-export async function getPostEarned(postIds: string[]): Promise<PostEarned[]> {
+export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> {
   const res = await datahubQueryRequest<
     {
-      activeStakingPostEarned: {
+      activeStakingRewardsByPosts: {
         persistentPostId: string
-        earned: string
+        amount: string
       }[]
     },
     { postIds: string[] }
   >({
-    document: GET_POST_EARNED,
+    document: GET_POST_REWARDS,
     variables: { postIds },
   })
 
-  const resultMap = new Map<string, PostEarned>()
-  res.activeStakingPostEarned.forEach(item =>
+  const resultMap = new Map<string, PostRewards>()
+  res.activeStakingRewardsByPosts.forEach(item =>
     resultMap.set(item.persistentPostId, {
       postId: item.persistentPostId,
-      earned: item.earned,
-      hasEarned: BigInt(item.earned) > 0,
+      amount: item.amount,
+      isNotZero: BigInt(item.amount) > 0,
     }),
   )
 
-  return postIds.map(postId => resultMap.get(postId) ?? { postId, earned: '0', hasEarned: false })
+  return postIds.map(postId => resultMap.get(postId) ?? { postId, amount: '0', isNotZero: false })
 }
 
 const GET_ADDRESS_LIKE_COUNT_TO_POSTS = gql`

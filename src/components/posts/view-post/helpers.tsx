@@ -40,7 +40,7 @@ import ViewTags from '../../utils/ViewTags'
 import Embed from '../embed/Embed'
 import ViewPostLink from '../ViewPostLink'
 import { PostDropDownMenu } from './PostDropDownMenu'
-import PostEarnedStat from './PostEarnedStat'
+import PostRewardStat from './PostRewardStat'
 import TwitterPost from './TwitterPost'
 
 type IsUnlistedPostProps = {
@@ -298,7 +298,7 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
   return (
     <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'} ${className ?? ''}`}>
       <ReactionsAction />
-      <PostEarnedStat postId={postDetails.id} />
+      <PostRewardStat postId={postDetails.id} />
       {/* <ShareDropdown postDetails={postDetails} space={space} className='DfAction' /> */}
     </div>
   )
