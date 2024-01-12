@@ -250,13 +250,13 @@ export function createSimpleManyFetchWrapper<Args, ReturnValue>({
       const { reload } = allArgs
 
       let filteredArgs: Args = allArgs
-      let ids: string[] = []
+      let shouldFetchIds: string[] = []
       if (!reload) {
         filteredArgs = filterNewArgs(allArgs, id => {
           const shouldFetch = !currentlyFetchingMap.get(id) && !getCachedData(getState(), id)
           if (!shouldFetch) return false
 
-          ids.push(id)
+          shouldFetchIds.push(id)
           return true
         })
       }
@@ -264,13 +264,13 @@ export function createSimpleManyFetchWrapper<Args, ReturnValue>({
       if (!shouldFetchCondition(filteredArgs)) return []
 
       const promise = fetchData(filteredArgs, getState())
-      ids.forEach(id => {
+      shouldFetchIds.forEach(id => {
         currentlyFetchingMap.set(id, promise)
       })
       const res = await promise
 
       await dispatch(saveToCacheAction(res))
-      ids.forEach(id => {
+      shouldFetchIds.forEach(id => {
         currentlyFetchingMap.delete(id)
       })
 
