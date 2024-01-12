@@ -50,8 +50,11 @@ const slice = createSlice({
         const rewardMultiplier = BigInt(
           Math.min(newSuperLike, CREATORS_CONSTANTS.SUPER_LIKES_FOR_MAX_REWARD),
         )
+        const oldSuperLikeMultiplier = BigInt(
+          Math.min(rewardReport.superLikesCount, CREATORS_CONSTANTS.SUPER_LIKES_FOR_MAX_REWARD),
+        )
 
-        const rewardPerLike = BigInt(rewardReport.currentRewardAmount) / rewardMultiplier
+        const rewardPerLike = BigInt(rewardReport.currentRewardAmount) / oldSuperLikeMultiplier
         const weeklyWithoutCurrentReward =
           BigInt(rewardReport.weeklyReward) - BigInt(rewardReport.currentRewardAmount)
 
@@ -61,6 +64,7 @@ const slice = createSlice({
         ).toString()
       }
       rewardReport.superLikesCount = newSuperLike
+      console.log(rewardReport.weeklyReward, rewardReport.currentRewardAmount)
     },
     setRewardReport: adapter.upsertOne,
   },
