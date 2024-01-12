@@ -64,7 +64,6 @@ const slice = createSlice({
         ).toString()
       }
       rewardReport.superLikesCount = newSuperLike
-      console.log(rewardReport.weeklyReward, rewardReport.currentRewardAmount)
     },
     setRewardReport: adapter.upsertOne,
   },
