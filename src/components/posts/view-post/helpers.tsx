@@ -6,6 +6,7 @@ import clsx from 'clsx'
 import isEmpty from 'lodash.isempty'
 import Error from 'next/error'
 import React, { FC, useState } from 'react'
+import { TbCoins } from 'react-icons/tb'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
 import { HasDataForSlug } from 'src/components/urls'
@@ -297,7 +298,19 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
   return (
     <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'} ${className ?? ''}`}>
       <ReactionsAction />
+      <PostEarnedStat postId={postDetails.id} />
       {/* <ShareDropdown postDetails={postDetails} space={space} className='DfAction' /> */}
+    </div>
+  )
+}
+
+function PostEarnedStat({ postId }: { postId: string }) {
+  return (
+    <div className='d-flex align-items-center'>
+      <span className='d-flex align-items-center GapTiny ColorMuted FontWeightMedium'>
+        <TbCoins />
+        <span>Post earned:</span>
+      </span>
     </div>
   )
 }
