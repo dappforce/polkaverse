@@ -1,7 +1,7 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { getAddressLikeCountToPosts } from 'src/components/utils/datahub/super-likes'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
+import { createSimpleManyFetchWrapper } from 'src/rtk/app/wrappers'
 
 export type AddressLikeCount = {
   address: string
@@ -28,48 +28,28 @@ export const selectAllAddressLikeCounts = selectors.selectEntities
 function getAllPostIdsFromStore(state: RootState) {
   return state.posts.ids as string[]
 }
-export const fetchAddressLikeCounts = createSimpleFetchWrapper<
+export const fetchAddressLikeCounts = createSimpleManyFetchWrapper<
   { postIds: string[] | null; address: string },
-  AddressLikeCount[]
+  AddressLikeCount
 >({
+  sliceName,
   fetchData: async function ({ postIds, address }, state) {
     if (postIds === null) {
       postIds = getAllPostIdsFromStore(state)
     }
-    const entities = selectAllAddressLikeCounts(state)
-    const newIds = postIds.filter(postId => {
-      const id = getAddressLikeCountId({ address, postId })
-      return !entities[id]
-    })
-    if (!newIds.length) return []
     return await getAddressLikeCountToPosts(address, postIds)
   },
+  getCachedData: (state, id) => selectAddressLikeCount(state, id),
   saveToCacheAction: data => slice.actions.setAddressLikeCounts(data),
-  getCachedData: (state, { postIds, address }) => {
-    if (postIds === null) {
-      postIds = getAllPostIdsFromStore(state)
-    }
-
-    const entities = selectAllAddressLikeCounts(state)
-    let isEveryDataCached = true
-
-    const postEntities: AddressLikeCount[] = []
-    for (let i = 0; i < postIds.length; i++) {
-      const id = getAddressLikeCountId({ address, postId: postIds[i] })
-      if (!entities[id]) {
-        isEveryDataCached = false
-        break
-      } else {
-        postEntities.push(entities[id]!)
-      }
-    }
-
-    if (isEveryDataCached) {
-      return postEntities
-    }
-    return undefined
+  shouldFetchCondition: ({ address, postIds }) => postIds?.length !== 0 && !!address,
+  filterNewArgs: ({ address, postIds }, isNewId) => {
+    // if postIds is null, fetch all postIds
+    if (postIds === null) return { address, postIds }
+    const newPostIds = postIds?.filter(postId =>
+      isNewId(getAddressLikeCountId({ address, postId })),
+    )
+    return { address, postIds: newPostIds }
   },
-  sliceName,
 })
 
 const slice = createSlice({

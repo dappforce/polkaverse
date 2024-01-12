@@ -917,6 +917,7 @@ hr {
   display: flex;
   align-items: center;
   gap: $space_big;
+  justify-content: space-between;
 
   > * {
     padding: 0;

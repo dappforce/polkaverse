@@ -1,7 +1,7 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { getSuperLikeCounts } from 'src/components/utils/datahub/super-likes'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
+import { createSimpleManyFetchWrapper } from 'src/rtk/app/wrappers'
 
 export type SuperLikeCount = {
   postId: string
@@ -18,35 +18,21 @@ const selectors = adapter.getSelectors<RootState>(state => state.superLikeCounts
 export const selectPostSuperLikeCount = selectors.selectById
 export const selectPostSuperLikeCounts = selectors.selectEntities
 
-export const fetchSuperLikeCounts = createSimpleFetchWrapper<
+export const fetchSuperLikeCounts = createSimpleManyFetchWrapper<
   { postIds: string[] },
-  SuperLikeCount[]
+  SuperLikeCount
 >({
+  sliceName,
   fetchData: async function ({ postIds }) {
     return await getSuperLikeCounts(postIds)
   },
+  getCachedData: (state, id) => selectPostSuperLikeCount(state, id),
   saveToCacheAction: data => slice.actions.setSuperLikeCounts(data),
-  getCachedData: (state, { postIds }) => {
-    const entities = selectPostSuperLikeCounts(state)
-    let isEveryDataCached = true
-
-    const postEntities: SuperLikeCount[] = []
-    for (let i = 0; i < postIds.length; i++) {
-      const postId = postIds[i]
-      if (!entities[postId]) {
-        isEveryDataCached = false
-        break
-      } else {
-        postEntities.push(entities[postId]!)
-      }
-    }
-
-    if (isEveryDataCached) {
-      return postEntities
-    }
-    return undefined
+  shouldFetchCondition: ({ postIds }) => postIds?.length !== 0,
+  filterNewArgs: ({ postIds }, isNewId) => {
+    const newPostIds = postIds?.filter(postId => isNewId(postId))
+    return { postIds: newPostIds }
   },
-  sliceName,
 })
 
 const slice = createSlice({

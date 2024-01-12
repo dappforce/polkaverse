@@ -3,6 +3,7 @@ import myAccount from '../features/accounts/myAccountSlice'
 import spaceEditors from '../features/accounts/spaceEditorsSlice'
 import addressLikeCount from '../features/activeStaking/addressLikeCountSlice'
 import canPostSuperLiked from '../features/activeStaking/canPostSuperLikedSlice'
+import postReward from '../features/activeStaking/postRewardSlice'
 import rewardHistory from '../features/activeStaking/rewardHistorySlice'
 import rewardReport from '../features/activeStaking/rewardReportSlice'
 import superLikeCounts from '../features/activeStaking/superLikeCountsSlice'
@@ -65,6 +66,7 @@ const rootReducer = combineReducers({
   rewardReport,
   rewardHistory,
   canPostSuperLiked,
+  postReward,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

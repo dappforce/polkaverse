@@ -227,3 +227,54 @@ export function createSimpleFetchWrapper<Args, ReturnValue>({
     },
   )
 }
+
+export function createSimpleManyFetchWrapper<Args, ReturnValue>({
+  sliceName,
+  fetchData,
+  saveToCacheAction,
+  getCachedData,
+  filterNewArgs,
+  shouldFetchCondition,
+}: {
+  sliceName: string
+  saveToCacheAction: (data: ReturnValue[]) => any
+  getCachedData: (state: RootState, id: string) => ReturnValue | undefined
+  fetchData: (args: Args, state: RootState) => Promise<ReturnValue[]>
+  filterNewArgs: (args: Args, isNewId: (id: string) => boolean) => Args
+  shouldFetchCondition: (filteredArgs: Args) => boolean
+}) {
+  const currentlyFetchingMap = new Map<string, Promise<ReturnValue[]>>()
+  return createAsyncThunk<ReturnValue[], Args & { reload?: boolean }, ThunkApiConfig>(
+    `${sliceName}/fetchMany`,
+    async (allArgs, { getState, dispatch }): Promise<ReturnValue[]> => {
+      const { reload } = allArgs
+
+      let filteredArgs: Args = allArgs
+      let shouldFetchIds: string[] = []
+      if (!reload) {
+        filteredArgs = filterNewArgs(allArgs, id => {
+          const shouldFetch = !currentlyFetchingMap.get(id) && !getCachedData(getState(), id)
+          if (!shouldFetch) return false
+
+          shouldFetchIds.push(id)
+          return true
+        })
+      }
+
+      if (!shouldFetchCondition(filteredArgs)) return []
+
+      const promise = fetchData(filteredArgs, getState())
+      shouldFetchIds.forEach(id => {
+        currentlyFetchingMap.set(id, promise)
+      })
+      const res = await promise
+
+      await dispatch(saveToCacheAction(res))
+      shouldFetchIds.forEach(id => {
+        currentlyFetchingMap.delete(id)
+      })
+
+      return promise
+    },
+  )
+}
