@@ -7,6 +7,7 @@ import isEmpty from 'lodash.isempty'
 import Error from 'next/error'
 import React, { FC, useState } from 'react'
 import { TbCoins } from 'react-icons/tb'
+import { FormatBalance } from 'src/components/common/balances'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
 import { HasDataForSlug } from 'src/components/urls'
@@ -306,10 +307,22 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
 
 function PostEarnedStat({ postId }: { postId: string }) {
   return (
-    <div className='d-flex align-items-center'>
-      <span className='d-flex align-items-center GapTiny ColorMuted FontWeightMedium'>
-        <TbCoins />
+    <div
+      className='d-flex align-items-center GapMini FontWeightMedium'
+      style={{ alignSelf: 'end' }}
+    >
+      <span className='d-flex align-items-center GapMini ColorMuted'>
+        <TbCoins className='FontNormal' />
         <span>Post earned:</span>
+      </span>
+      <span className='FontWeightSemibold'>
+        <FormatBalance
+          currency='SUB'
+          decimals={10}
+          precision={2}
+          withMutedDecimals={false}
+          value='10000000000'
+        />
       </span>
     </div>
   )
