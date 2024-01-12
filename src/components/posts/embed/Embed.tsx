@@ -80,7 +80,6 @@ const Embed = ({ link, className }: EmbedProps) => {
 
 function YoutubeEmbed({ src }: { src: string }) {
   const youtubeId = useMemo(() => getYoutubeVideoId(src), [src])
-  console.log(youtubeId, src)
 
   if (!youtubeId) return null
 
