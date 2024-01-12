@@ -16,7 +16,7 @@ const componentMap: {
   youtube: YoutubeEmbed,
 }
 
-const YOUTUBE_REGEX = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+const YOUTUBE_REGEX = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/
 export function getYoutubeVideoId(youtubeLink: string) {
   const match = youtubeLink.match(YOUTUBE_REGEX)
   if (match && match[2].length == 11) {
