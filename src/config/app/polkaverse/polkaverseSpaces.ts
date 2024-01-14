@@ -33,4 +33,6 @@ export default [
   '6953',
   // Astar Korea
   '11991',
+  // Beef's Travel Blog
+  '11220',
 ]
