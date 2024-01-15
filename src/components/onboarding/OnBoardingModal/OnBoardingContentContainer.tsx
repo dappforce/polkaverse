@@ -9,6 +9,7 @@ import PrivacyPolicyText from 'src/components/utils/PrivacyPolicyText'
 import TwitterMock from 'src/components/utils/TwitterMock'
 import TxButton from 'src/components/utils/TxButton'
 import config from 'src/config'
+import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
 import {
   useCurrentOnBoardingStep,
@@ -212,7 +213,10 @@ function ContentWrapper({
 
 function SuccessContent() {
   const myAddress = useMyAddress()
+  const profile = useSelectProfile(myAddress)
   const twitterText = `I just onboarded to ${config.appName}, the premier social platform of the @Polkadot ecosystem, powered by @SubsocialChain!\n\nYou can follow me here:`
+
+  const redirectUrl = profile?.id ? `/${profile.id}` : `/accounts/${myAddress}`
 
   return (
     <div className={clsx('d-flex flex-column', 'position-relative')}>
@@ -226,11 +230,7 @@ function SuccessContent() {
           pointerEvents: 'none',
         }}
       />
-      <TwitterMock
-        url={`/accounts/${myAddress}`}
-        twitterText={twitterText}
-        buttonText='Tweet about it!'
-      >
+      <TwitterMock url={redirectUrl} twitterText={twitterText} buttonText='Tweet about it!'>
         <p>
           I just onboarded to {config.appName}, the premier social platform of the @Polkadot
           ecosystem, powered by @SubsocialChain!
@@ -238,7 +238,7 @@ function SuccessContent() {
           <br />
           You can follow me here:
           <br />
-          <a>{subsocialUrl(`/accounts/${myAddress}`)}</a>
+          <a>{subsocialUrl(redirectUrl)}</a>
         </p>
         <a>#{config.appName} #Subsocial</a>
       </TwitterMock>
