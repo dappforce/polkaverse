@@ -554,7 +554,6 @@ a {
 .DfPostTitle--preview {
   @extend .DfBoldBlackLink;
   @extend .DfUnboundedTitle;
-  margin-bottom: $space_small;
 }
 
 .DfEntirePost {
@@ -978,7 +977,6 @@ hr {
 
 .DfPostImagePreviewWrapper {
   width: 100%;
-  margin-bottom: $space_normal;
   border-radius: $border_radius_normal;
   overflow: hidden;
   border: 1px solid $color_light_border;

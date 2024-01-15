@@ -1,5 +1,5 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
-import { getPostRewards } from 'src/components/utils/datahub/super-likes'
+import { getPostRewards } from 'src/components/utils/datahub/active-staking'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createSimpleManyFetchWrapper } from 'src/rtk/app/wrappers'
 

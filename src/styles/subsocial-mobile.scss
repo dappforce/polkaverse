@@ -231,19 +231,11 @@
     font-weight: 500;
   }
 
-  .header.DfPostTitle--preview {
-    margin-bottom: $space_tiny;
-  }
-
   .DfPostPreview {
     &h2 {
       margin-top: 0;
       font-size: $font_large;
     }
-  }
-
-  .DfPostImagePreviewWrapper {
-    margin-bottom: $space_tiny !important;
   }
 
   .DfSpaceStats {

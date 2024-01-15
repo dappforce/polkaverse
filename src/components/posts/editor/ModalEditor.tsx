@@ -22,6 +22,7 @@ import { getNonEmptyPostContent } from 'src/components/utils/content'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import SelectSpacePreview from 'src/components/utils/SelectSpacePreview'
 import TxButton from 'src/components/utils/TxButton'
+import useExternalStorage from 'src/hooks/useExternalStorage'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import {
   useFetchSpaces,
@@ -54,8 +55,17 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
   const [publishIsDisable, setPublishIsDisable] = useState(true)
   const sendEvent = useSendEvent()
 
+  const { getDataForAddress: getLastUsedSpaceId, setData: setLastUsedSpaceId } = useExternalStorage(
+    'last-space-id',
+    { storageKeyType: 'user' },
+  )
+
   const profile = useSelectProfile(myAddress)
   const defaultSpace = useMemo(() => {
+    const lastUsedSpaceId = getLastUsedSpaceId(myAddress ?? '')
+    if (getLastUsedSpaceId(myAddress ?? '') && allowedSpaceIds.includes(lastUsedSpaceId)) {
+      return lastUsedSpaceId
+    }
     if (profile && allowedSpaceIds.includes(profile?.id ?? '')) {
       return profile?.id
     }
@@ -148,6 +158,7 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
         imageSize={32}
         onSelect={value => {
           const newId = (value as LabeledValue).value.toString()
+          setLastUsedSpaceId(newId, myAddress ?? '')
           setSpaceId(newId)
           sendEvent('createpost_space_changed', {
             from: spaceId,

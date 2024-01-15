@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { datahubSubscriptionUrl } from 'src/config/env'
-import { subscribeSuperLike } from './super-likes'
+import { subscribeSuperLike } from './active-staking'
 
 function useDatahubSubscriber() {
   const unsubRef = useRef<(() => void) | undefined>()

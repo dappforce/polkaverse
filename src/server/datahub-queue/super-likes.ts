@@ -22,6 +22,8 @@ export async function createSuperLikeServer(input: SocialEventDataApiInput) {
   args.blockHash = blockHash.toString()
   input.callData.args = JSON.stringify(args)
 
+  input.callData.timestamp = Date.now()
+
   const signedPayload = await backendSigWrapper(input)
   const res = await datahubQueueRequest<{
     activeStakingCreateSuperLike: { processed: boolean; message: string }

@@ -18,6 +18,8 @@ type DropdownProps = {
   post: PostData
   withEditButton?: boolean
   onEditComment?: VoidFunction
+  className?: string
+  style?: React.CSSProperties
 }
 
 const InnerPostDropDownMenu: FC<DropdownProps> = props => {
@@ -91,7 +93,7 @@ const PostDropDown: FC<DropdownProps> = props => {
 }
 
 export const PostDropDownMenu: FC<DropdownProps> = ({ withEditButton, ...props }) => {
-  const { space, post } = props
+  const { space, post, className, style } = props
   const isMy = useIsMyAddress(post.struct.ownerId)
 
   const editPostProps = {
@@ -100,7 +102,7 @@ export const PostDropDownMenu: FC<DropdownProps> = ({ withEditButton, ...props }
   }
 
   return (
-    <span>
+    <span className={className} style={style}>
       <PostDropDown {...props} />
       {withEditButton && isMy && (
         <ButtonLink {...editPostProps} className='bg-transparent'>

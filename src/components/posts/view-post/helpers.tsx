@@ -1,11 +1,12 @@
 import { BN } from '@polkadot/util'
 import { PostId } from '@subsocial/api/types/substrate'
 import { isEmptyObj, isEmptyStr } from '@subsocial/utils'
-import { Alert, Image, Tooltip } from 'antd'
+import { Alert, Button, Image, Tooltip } from 'antd'
 import clsx from 'clsx'
 import isEmpty from 'lodash.isempty'
 import Error from 'next/error'
 import React, { FC, useState } from 'react'
+import { TbMessageCircle2 } from 'react-icons/tb'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
 import { HasDataForSlug } from 'src/components/urls'
@@ -20,6 +21,7 @@ import { resolveIpfsUrl } from 'src/ipfs'
 import messages from 'src/messages'
 import { isBlockedPost } from 'src/moderation'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
+import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
 import {
   PostContent as PostContentType,
   PostData,
@@ -38,7 +40,9 @@ import { formatDate, isHidden, toShortUrl, useIsVisible } from '../../utils'
 import { SummarizeMd } from '../../utils/md/SummarizeMd'
 import ViewTags from '../../utils/ViewTags'
 import Embed from '../embed/Embed'
+import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
+import styles from './helpers.module.sass'
 import { PostDropDownMenu } from './PostDropDownMenu'
 import PostRewardStat from './PostRewardStat'
 import TwitterPost from './TwitterPost'
@@ -263,7 +267,7 @@ const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
         post={post}
         space={space}
         title={
-          <div>
+          <div className={clsx('d-flex flex-column GapSmall', styles.PostContent)}>
             {withImage && <PostImage content={post.content} withPreview={false} />}
             <PostName post={postDetails} withLink />
             <PostSummary space={space} post={post} />
@@ -293,14 +297,35 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
     post: { struct },
   } = postDetails
 
-  const ReactionsAction = () => <SuperLike post={struct} />
-
   return (
     <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'} ${className ?? ''}`}>
-      <ReactionsAction />
+      <div className={clsx('d-flex align-items-center GapHuge', styles.PostActions)}>
+        <SuperLike post={struct} />
+        <CommentAction post={props.postDetails.post} />
+      </div>
       <PostRewardStat postId={postDetails.id} />
       {/* <ShareDropdown postDetails={postDetails} space={space} className='DfAction' /> */}
     </div>
+  )
+}
+
+function CommentAction({ post }: { post: PostData }) {
+  const setChatOpen = useSetChatOpen()
+  const setChatConfig = useSetChatEntityConfig()
+
+  return (
+    <Button
+      type='default'
+      style={{ border: 'none', boxShadow: 'none', gap: '0.4rem' }}
+      className='p-0 d-flex align-items-center ColorMuted FontWeightMedium'
+      onClick={() => {
+        setChatConfig({ entity: { type: 'post', data: post }, withFloatingButton: false })
+        setChatOpen(true)
+      }}
+    >
+      <TbMessageCircle2 className='FontLarge' />
+      <span>Comments</span>
+    </Button>
   )
 }
 
@@ -371,11 +396,22 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
         <div className='w-100'>
           <div className='DfRow'>
             <PostCreator postDetails={postDetails} space={space} withSpaceName withSpaceAvatar />
-            <PostDropDownMenu
-              post={postDetails.post}
-              space={space?.struct}
-              withEditButton={!isMobile}
-            />
+            <div className='d-flex align-items-center align-self-start GapTiny'>
+              {space && (
+                <ShareDropdown
+                  postDetails={postDetails}
+                  space={space.struct}
+                  className='DfAction p-0'
+                />
+              )}
+              <PostDropDownMenu
+                post={postDetails.post}
+                space={space?.struct}
+                withEditButton={!isMobile}
+                className='ColorMuted'
+                style={{ position: 'relative', top: '1px' }}
+              />
+            </div>
           </div>
           {content.link && <Embed link={content.link} className='mt-3' />}
           <PostContent
