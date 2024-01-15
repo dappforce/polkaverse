@@ -38,6 +38,7 @@ import { formatDate, isHidden, toShortUrl, useIsVisible } from '../../utils'
 import { SummarizeMd } from '../../utils/md/SummarizeMd'
 import ViewTags from '../../utils/ViewTags'
 import Embed from '../embed/Embed'
+import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
 import { PostDropDownMenu } from './PostDropDownMenu'
 import PostRewardStat from './PostRewardStat'
@@ -371,11 +372,22 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
         <div className='w-100'>
           <div className='DfRow'>
             <PostCreator postDetails={postDetails} space={space} withSpaceName withSpaceAvatar />
-            <PostDropDownMenu
-              post={postDetails.post}
-              space={space?.struct}
-              withEditButton={!isMobile}
-            />
+            <div className='d-flex align-items-center align-self-start GapTiny'>
+              {space && (
+                <ShareDropdown
+                  postDetails={postDetails}
+                  space={space.struct}
+                  className='DfAction p-0'
+                />
+              )}
+              <PostDropDownMenu
+                post={postDetails.post}
+                space={space?.struct}
+                withEditButton={!isMobile}
+                className='ColorMuted'
+                style={{ position: 'relative', top: '1px' }}
+              />
+            </div>
           </div>
           {content.link && <Embed link={content.link} className='mt-3' />}
           <PostContent
