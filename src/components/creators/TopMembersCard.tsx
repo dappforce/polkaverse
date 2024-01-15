@@ -4,6 +4,7 @@ import { ComponentProps, CSSProperties } from 'react'
 import { HiOutlineInformationCircle } from 'react-icons/hi2'
 import { IoChevronForward } from 'react-icons/io5'
 import { useSelectSpace } from 'src/rtk/app/hooks'
+import { useIsMobileWidthOrDevice } from '../responsive'
 import { SpaceAvatar } from '../spaces/helpers'
 import { MutedSpan } from '../utils/MutedText'
 import Segment from '../utils/Segment'
@@ -11,42 +12,72 @@ import Segment from '../utils/Segment'
 export type TopMembersCardProps = ComponentProps<'div'> & {}
 
 export default function TopMembersCard({ ...props }: TopMembersCardProps) {
-  return (
-    <Segment {...props} className={clsx(props.className, 'p-3')}>
-      <div className='d-flex align-items-center FontWeightSemibold GapMini'>
-        <span>Top members this week</span>
-        <HiOutlineInformationCircle />
-      </div>
-      <div className='d-flex flex-column FontSmall mt-2'>
-        <MutedSpan className='FontWeightMedium mb-1'>Stakers</MutedSpan>
-        <div className='d-flex flex-column GapTiny'>
-          <CreatorInfo rank={1} />
-          <CreatorInfo rank={2} />
-          <CreatorInfo rank={3} />
+  const isMobile = useIsMobileWidthOrDevice()
+
+  const seeMoreButton = (
+    <Button
+      type='primary'
+      ghost
+      className='p-0 GapMini d-flex align-items-center'
+      style={{ height: 'auto', border: 'none', boxShadow: 'none' }}
+    >
+      <span>See more</span>
+      <IoChevronForward />
+    </Button>
+  )
+
+  const content = (
+    <>
+      <div className='d-flex justify-content-between align-items-center'>
+        <div className='d-flex align-items-center FontWeightSemibold GapMini'>
+          <span>Top members this week</span>
+          <HiOutlineInformationCircle />
         </div>
+        {isMobile && seeMoreButton}
       </div>
       <div
-        className='d-flex flex-column FontSmall mt-3 pt-2'
-        style={{ borderTop: '1px solid #E2E8F0' }}
+        className={clsx('mt-2', isMobile && 'GapNormal')}
+        style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr' }}
       >
-        <MutedSpan className='FontWeightMedium mb-1'>Creators</MutedSpan>
-        <div className='d-flex flex-column GapTiny'>
-          <CreatorInfo rank={1} />
-          <CreatorInfo rank={2} />
-          <CreatorInfo rank={3} />
+        <div className='d-flex flex-column FontSmall' style={{ minWidth: 0 }}>
+          <MutedSpan className='FontWeightMedium mb-1'>Stakers</MutedSpan>
+          <div className='d-flex flex-column GapTiny'>
+            <CreatorInfo rank={1} />
+            <CreatorInfo rank={2} />
+            <CreatorInfo rank={3} />
+          </div>
+        </div>
+        <div
+          className={clsx('d-flex flex-column FontSmall', !isMobile && 'mt-3 pt-2')}
+          style={{ borderTop: !isMobile ? '1px solid #E2E8F0' : 'none', minWidth: 0 }}
+        >
+          <MutedSpan className='FontWeightMedium mb-1'>Creators</MutedSpan>
+          <div className='d-flex flex-column GapTiny'>
+            <CreatorInfo rank={1} />
+            <CreatorInfo rank={2} />
+            <CreatorInfo rank={3} />
+          </div>
         </div>
       </div>
-      <div className='d-flex justify-content-center mt-2'>
-        <Button
-          type='primary'
-          ghost
-          className='p-0 GapMini d-flex align-items-center'
-          style={{ height: 'auto', border: 'none', boxShadow: 'none' }}
-        >
-          <span>See more</span>
-          <IoChevronForward />
-        </Button>
+      {!isMobile && <div className='d-flex justify-content-center mt-2'>{seeMoreButton}</div>}
+    </>
+  )
+
+  if (isMobile) {
+    return (
+      <div {...props} className={clsx(props.className, 'p-3 pt-2.5')}>
+        {content}
       </div>
+    )
+  }
+
+  return (
+    <Segment
+      {...props}
+      style={{ background: 'white', ...props.style }}
+      className={clsx(props.className, 'p-3')}
+    >
+      {content}
     </Segment>
   )
 }

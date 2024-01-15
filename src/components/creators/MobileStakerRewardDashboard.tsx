@@ -1,4 +1,4 @@
-import { Tooltip } from 'antd'
+import { Button, Tooltip } from 'antd'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { ComponentProps, useState } from 'react'
@@ -18,12 +18,12 @@ import StakerRewardProgressBar from './staker-rewards/StakerRewardProgressBar'
 export type MobileStakerRewardDashboardProps = ComponentProps<'div'>
 
 export default function MobileStakerRewardDashboard(props: MobileStakerRewardDashboardProps) {
-  const { data: rewardReport, loading } = useFetchUserRewardReport()
-  const likesCount = rewardReport?.superLikesCount ?? 0
+  const myAddress = useMyAddress() ?? ''
+  const { data: totalStake, loading } = useFetchTotalStake(myAddress)
 
   if (loading) return null
 
-  if (!likesCount) {
+  if (!totalStake?.amount) {
     return <StakeSubBanner {...props} />
   }
   return <StakerRewardDashboard {...props} />
@@ -36,14 +36,15 @@ function StakeSubBanner(props: MobileStakerRewardDashboardProps) {
       {...props}
       className={clsx(props.className, styles.MobileStakerRewardDashboard, styles.StakeSubBanner)}
     >
-      <div className={clsx(styles.Summary)}>
+      <div className={clsx(styles.Summary, 'py-2')}>
         <div className={styles.Content}>
           <span className={clsx('d-flex GapTiny align-items-center')}>
             <span className='FontWeightSemibold'>Stake SUB and earn more</span>
           </span>
           <div className={clsx('d-flex align-items-center GapTiny')}>
             <Link passHref href={getSubIdCreatorsLink()}>
-              <a
+              <Button
+                type='primary'
                 className='FontWeightSemibold'
                 target='_blank'
                 onClick={() =>
@@ -51,7 +52,7 @@ function StakeSubBanner(props: MobileStakerRewardDashboardProps) {
                 }
               >
                 Stake SUB
-              </a>
+              </Button>
             </Link>
           </div>
         </div>

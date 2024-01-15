@@ -14,7 +14,7 @@ import { PostKind } from 'src/types/graphql-global-types'
 import { getAmountRange } from 'src/utils/analytics'
 import { useIsSignedIn, useMyAddress } from '../auth/MyAccountsContext'
 import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar'
-import MobileStakerRewardDashboard from '../creators/MobileStakerRewardDashboard'
+import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
 import Section from '../utils/Section'
@@ -185,11 +185,7 @@ const TabsHomePage = ({
 
   return (
     <>
-      {isMobile && (
-        <MobileStakerRewardDashboard
-          style={{ margin: '-12px -16px 0', position: 'sticky', top: '64px', zIndex: 10 }}
-        />
-      )}
+      <MobileActiveStakingSection />
       <span>
         {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
       </span>

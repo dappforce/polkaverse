@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { NextPage } from 'next'
 import router from 'next/router'
 import { FC, useEffect } from 'react'
-import MobileStakerRewardDashboard from 'src/components/creators/MobileStakerRewardDashboard'
+import MobileActiveStakingSection from 'src/components/creators/MobileActiveStakingSection'
 import { PageContent } from 'src/components/main/PageWrapper'
 import AuthorCard from 'src/components/profiles/address-views/AuthorCard'
 import { useResponsiveSize } from 'src/components/responsive'
@@ -48,7 +48,7 @@ export type PostDetailsProps = {
 const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const { postData: initialPostData, rootPostData } = props
   const id = initialPostData.id
-  const { isNotMobile, isMobile } = useResponsiveSize()
+  const { isNotMobile } = useResponsiveSize()
   useFetchMyReactionsByPostId(id)
 
   const postData = useAppSelector(state => selectPost(state, { id })) || initialPostData
@@ -158,11 +158,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
       withVoteBanner
       creatorDashboardSidebarType={{ name: 'post-page', space }}
     >
-      {isMobile && (
-        <MobileStakerRewardDashboard
-          style={{ margin: '-12px -16px 0', position: 'sticky', top: '64px', zIndex: 10 }}
-        />
-      )}
+      <MobileActiveStakingSection />
       <HiddenPostAlert post={post.struct} />
       <Section>
         <div>
