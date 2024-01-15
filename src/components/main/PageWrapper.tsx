@@ -3,13 +3,14 @@ import { summarize } from '@subsocial/utils/summarize'
 import clsx from 'clsx'
 import { CID } from 'ipfs-http-client'
 import Head from 'next/head'
-import React, { FC } from 'react'
+import React, { ComponentProps, FC } from 'react'
 import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
 import CreatorDashboardSidebar, {
   CreatorDashboardSidebarType,
 } from '../creators/CreatorDashboardSidebar'
-import { useIsMobileWidthOrDevice } from '../responsive'
+import TopMembersCard from '../creators/TopMembersCard'
+import { useIsMobileWidthOrDevice, useResponsiveSize } from '../responsive'
 import { fullUrl } from '../urls/helpers'
 import Section from '../utils/Section'
 
@@ -121,7 +122,23 @@ export const PageContent: FC<Props> = ({
   // const myAddress = useMyAddress()
 
   const isMobile = useIsMobileWidthOrDevice()
+  const { isDesktop } = useResponsiveSize()
   // const isPanels = leftPanel || rightPanel
+
+  const sidebarStyles: ComponentProps<'div'> = {
+    className: 'HideScrollbar sm-hidden',
+    style: {
+      width: SIDEBAR_WIDTH + BOX_SHADOW_OFFSET * 2,
+      flexShrink: 0.2,
+      position: 'sticky',
+      top: 76 - BOX_SHADOW_OFFSET,
+      overflowY: 'auto',
+      maxHeight: `calc(100vh - ${76 - BOX_SHADOW_OFFSET}px)`,
+      margin: -BOX_SHADOW_OFFSET,
+      padding: BOX_SHADOW_OFFSET,
+    },
+  }
+
   return (
     <>
       <HeadMeta {...meta} />
@@ -133,6 +150,11 @@ export const PageContent: FC<Props> = ({
         </section>
       ) : (
         <div className={clsx('DfSectionOuterContainer')}>
+          {creatorDashboardSidebarType && isDesktop && (
+            <div {...sidebarStyles}>
+              <TopMembersCard />
+            </div>
+          )}
           <section className={clsx('DfSectionOuter', 'w-100', outerClassName)}>
             {/* {isPanels && <div className='DfLeftPanel DfPanel'>{leftPanel}</div>} */}
             <Section className={outerClassName} outerClassName={outerClassName}>
@@ -159,19 +181,7 @@ export const PageContent: FC<Props> = ({
           </section>
           {rightPanel}
           {rightPanel === undefined && creatorDashboardSidebarType && (
-            <div
-              style={{
-                width: SIDEBAR_WIDTH + BOX_SHADOW_OFFSET * 2,
-                flexShrink: 0.2,
-                position: 'sticky',
-                top: 76 - BOX_SHADOW_OFFSET,
-                overflowY: 'auto',
-                maxHeight: `calc(100vh - ${76 - BOX_SHADOW_OFFSET}px)`,
-                margin: -BOX_SHADOW_OFFSET,
-                padding: BOX_SHADOW_OFFSET,
-              }}
-              className='HideScrollbar sm-hidden'
-            >
+            <div {...sidebarStyles}>
               <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
               {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}
             </div>
