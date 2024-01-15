@@ -136,6 +136,7 @@ export const PageContent: FC<Props> = ({
       maxHeight: `calc(100vh - ${76 - BOX_SHADOW_OFFSET}px)`,
       margin: -BOX_SHADOW_OFFSET,
       padding: BOX_SHADOW_OFFSET,
+      zIndex: 10,
     },
   }
 
@@ -152,7 +153,9 @@ export const PageContent: FC<Props> = ({
         <div className={clsx('DfSectionOuterContainer')}>
           {creatorDashboardSidebarType && isDesktop && (
             <div {...sidebarStyles}>
-              <TopMembersCard />
+              <div>
+                <TopMembersCard />
+              </div>
             </div>
           )}
           <section className={clsx('DfSectionOuter', 'w-100', outerClassName)}>
