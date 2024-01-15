@@ -19,7 +19,7 @@ export default function StakerRewardHistoryModal({
     <CustomModal title='Active Staking History' visible={visible} onCancel={onCancel}>
       <div className='d-flex flex-column'>
         <MutedSpan className='mb-1 FontWeightSemibold'>Staker Rewards</MutedSpan>
-        <div className='d-flex flex-column GapSmall'>
+        <div className='d-flex flex-column GapTiny'>
           {(() => {
             if (loading) return <Skeleton />
             if (data?.rewards.length === 0)
@@ -47,7 +47,7 @@ export default function StakerRewardHistoryModal({
       {(creatorRewards?.length ?? 0) > 0 && (
         <div className='d-flex flex-column mt-3'>
           <MutedSpan className='mb-1 FontWeightSemibold'>Creator Rewards</MutedSpan>
-          <div className='d-flex flex-column GapSmall'>
+          <div className='d-flex flex-column GapTiny'>
             {creatorRewards?.map(reward => (
               <div
                 className='d-flex align-items-center justify-content-between GapSmall'
