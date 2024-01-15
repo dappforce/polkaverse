@@ -91,12 +91,18 @@ export const mapSimpleSpaceFragment = (space: SpaceSimpleFragment): SpaceSimpleF
   }
 }
 
+function getFirstImageLink(mdText: string) {
+  const imageRegex = /!\[.*?\]\((.*?)\)/
+  const match = mdText.match(imageRegex)
+  return match ? match[1] : null
+}
 export const mapSimplePostFragment = (post: PostSimpleFragment): PostSimpleFragmentMapped => {
   const getContent = (): PostContent => {
     const summary = summarizeMd(post.body ?? '')
+    const firstImageLink = getFirstImageLink(post.body ?? '')
     return {
       summary: summary.summary ?? '',
-      image: post.image ?? '',
+      image: post.image || firstImageLink || '',
       title: post.title ?? '',
       link: post.link ?? undefined,
       body: post.body || '',

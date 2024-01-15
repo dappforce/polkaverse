@@ -267,7 +267,7 @@ const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
         post={post}
         space={space}
         title={
-          <div>
+          <div className={clsx('d-flex flex-column GapSmall', styles.PostContent)}>
             {withImage && <PostImage content={post.content} withPreview={false} />}
             <PostName post={postDetails} withLink />
             <PostSummary space={space} post={post} />
