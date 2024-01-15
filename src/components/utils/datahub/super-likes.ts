@@ -231,6 +231,9 @@ const GET_REWARD_HISTORY = gql`
     activeStakingRewardsByWeek(args: { filter: { account: $address } }) {
       staker
       week
+      creator {
+        total
+      }
     }
   }
 `
@@ -240,6 +243,9 @@ export async function getRewardHistory(address: string): Promise<RewardHistory> 
       activeStakingRewardsByWeek: {
         staker: string
         week: number
+        creator: {
+          total: string
+        }
       }[]
     },
     { address: string }
@@ -250,18 +256,20 @@ export async function getRewardHistory(address: string): Promise<RewardHistory> 
 
   return {
     address,
-    rewards: res.activeStakingRewardsByWeek.map(({ staker, week }) => {
+    rewards: res.activeStakingRewardsByWeek.map(({ staker, week, creator }) => {
       const startDate = dayjs
         .utc()
         .year(week / 100)
         .week(week % 100)
         .startOf('week')
       const endDate = startDate.add(1, 'week')
+
       return {
         reward: staker,
         week,
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
+        creatorReward: creator.total,
       }
     }),
   }

@@ -10,6 +10,7 @@ export type RewardHistory = {
     startDate: string
     endDate: string
     reward: string
+    creatorReward: string
   }[]
 }
 
