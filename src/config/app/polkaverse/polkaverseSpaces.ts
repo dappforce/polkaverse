@@ -35,4 +35,6 @@ export default [
   '11991',
   // Beef's Travel Blog
   '11220',
+  // Polkadot Arena
+  '7218',
 ]
