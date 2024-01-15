@@ -1,6 +1,5 @@
 import { Skeleton, Tooltip } from 'antd'
 import clsx from 'clsx'
-import Link from 'next/link'
 import { ComponentProps, useState } from 'react'
 import { RiHistoryFill } from 'react-icons/ri'
 import { SlQuestion } from 'react-icons/sl'
@@ -40,18 +39,6 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
 
   const todayReward = data?.currentRewardAmount ?? '0'
   const weekReward = data?.weeklyReward ?? '0'
-
-  if (!(BigInt(todayReward) || BigInt(weekReward))) {
-    return (
-      <p className='FontSmall p-3 mb-1'>
-        Like the posts on the &quot;
-        <Link href='/?tab=posts&type=suggested&date=week' passHref>
-          <a className='ColorPrimary FontWeightMedium'>Posts &gt; Active Staking</a>
-        </Link>
-        &quot; tab to increase your staking rewards by 50-200%.
-      </p>
-    )
-  }
 
   const likeCount = data?.superLikesCount ?? 0
   const likesToMaxReward = SUPER_LIKES_FOR_MAX_REWARD - likeCount
