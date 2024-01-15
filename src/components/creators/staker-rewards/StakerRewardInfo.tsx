@@ -163,10 +163,18 @@ export function StakerSuperLikeCount() {
   const { data, loading } = useFetchUserRewardReport()
 
   const likeCount = data?.superLikesCount ?? 0
+  const surplusLikes = likeCount - SUPER_LIKES_FOR_MAX_REWARD
 
   return (
     <span className='FontWeightSemibold d-flex align-items-center'>
-      {loading ? <NumberSkeleton /> : <span>{likeCount}</span>}{' '}
+      {loading ? (
+        <NumberSkeleton />
+      ) : (
+        <>
+          <span>{Math.min(likeCount, SUPER_LIKES_FOR_MAX_REWARD)}</span>
+          {surplusLikes > 0 && <span>+{surplusLikes}</span>}
+        </>
+      )}{' '}
       <MutedSpan className='ml-1'>likes</MutedSpan>
     </span>
   )
