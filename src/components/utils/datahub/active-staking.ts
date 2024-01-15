@@ -5,8 +5,8 @@ import {
 } from '@subsocial/data-hub-sdk'
 import axios from 'axios'
 import dayjs from 'dayjs'
+import isoWeek from 'dayjs/plugin/isoWeek'
 import utc from 'dayjs/plugin/utc'
-import weekOfYear from 'dayjs/plugin/weekOfYear'
 import { gql } from 'graphql-request'
 import { getStoreDispatcher } from 'src/rtk/app/store'
 import {
@@ -29,7 +29,7 @@ import {
 } from './utils'
 
 dayjs.extend(utc)
-dayjs.extend(weekOfYear)
+dayjs.extend(isoWeek)
 
 // QUERIES
 const GET_SUPER_LIKE_COUNTS = gql`
@@ -189,7 +189,7 @@ const GET_REWARD_REPORT = gql`
 function getDayAndWeekTimestamp(currentDate: Date = new Date()) {
   let date = dayjs.utc(currentDate)
   date = date.startOf('day')
-  const week = date.get('year') * 100 + date.week()
+  const week = date.get('year') * 100 + date.isoWeek()
   return { day: date.unix(), week }
 }
 export async function getRewardReport(address: string): Promise<RewardReport> {
@@ -260,7 +260,7 @@ export async function getRewardHistory(address: string): Promise<RewardHistory> 
       const startDate = dayjs
         .utc()
         .year(week / 100)
-        .week(week % 100)
+        .isoWeek(week % 100)
         .startOf('week')
       const endDate = startDate.add(1, 'week')
 

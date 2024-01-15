@@ -30,7 +30,7 @@ import { useAuth } from '../auth/AuthContext'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { IconWithLabel } from '../utils'
 import CustomModal from '../utils/CustomModal'
-import { createSuperLike } from '../utils/datahub/super-likes'
+import { createSuperLike } from '../utils/datahub/active-staking'
 import { useAmISpaceFollower } from '../utils/FollowSpaceButton'
 import styles from './SuperLike.module.sass'
 
