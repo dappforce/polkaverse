@@ -37,11 +37,12 @@ import styles from './SuperLike.module.sass'
 export type SuperLikeProps = ButtonProps & {
   post: PostStruct
   iconClassName?: string
+  isComment?: boolean
 }
 
 const FIRST_TIME_SUPERLIKE = 'df.first-time-superlike'
 
-export default function SuperLike({ post, iconClassName, ...props }: SuperLikeProps) {
+export default function SuperLike({ post, iconClassName, isComment, ...props }: SuperLikeProps) {
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
   const sendEvent = useSendEvent()
@@ -121,11 +122,13 @@ export default function SuperLike({ post, iconClassName, ...props }: SuperLikePr
     />
   )
 
+  const entity = isComment ? 'comment' : 'post'
+
   let tooltipTitle = ''
-  if (isMyPost) tooltipTitle = 'You cannot like your own post'
-  else if (!isExist) tooltipTitle = 'The fresh comment is minting for Active Staking'
+  if (isMyPost) tooltipTitle = `You cannot like your own ${entity}`
+  else if (!isExist) tooltipTitle = `The fresh ${entity} is minting for Active Staking`
   else if (isPostCreatedMoreThan1Week)
-    tooltipTitle = 'You cannot like posts that are older than 7 days'
+    tooltipTitle = `You cannot like ${entity}s that are older than 7 days`
 
   const button = (
     <div>

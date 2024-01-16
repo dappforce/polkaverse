@@ -151,6 +151,7 @@ export const InnerViewComment: FC<Props> = props => {
           </div>
           <div className='d-flex align-items-center GapSmall mt-1.5'>
             <SuperLike
+              isComment
               key={`voters-of-comments-${id}`}
               className='!FontTiny'
               iconClassName='!FontSmall'
