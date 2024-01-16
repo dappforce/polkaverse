@@ -118,7 +118,7 @@ export const InnerViewSpace = (props: Props) => {
     space: spaceData?.struct,
     permission: 'CreatePosts',
   })
-  const canCreatePostAndIsNotHidden = canCreatePost && !isHidden(spaceData?.struct)
+  const canCreatePostAndIsNotHidden = address && canCreatePost && !isHidden(spaceData?.struct)
 
   const Avatar = useCallback(() => {
     if (!spaceData) return null
