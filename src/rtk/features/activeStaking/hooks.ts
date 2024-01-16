@@ -6,7 +6,7 @@ import {
   getAddressLikeCountId,
   selectAddressLikeCount,
 } from './addressLikeCountSlice'
-import { selectCanPostSuperLiked } from './canPostSuperLikedSlice'
+import { CanPostSuperLiked, selectCanPostSuperLiked } from './canPostSuperLikedSlice'
 import { selectPostReward } from './postRewardSlice'
 import { fetchRewardHistory, selectUserRewardHistory } from './rewardHistorySlice'
 import { fetchRewardReport, selectUserRewardReport } from './rewardReportSlice'
@@ -36,9 +36,11 @@ export function useHasISuperLikedPost(postId: string) {
   })
 }
 
-export function useCanPostSuperLiked(postId: string) {
+export function useCanPostSuperLiked(postId: string): CanPostSuperLiked {
   return useAppSelector(state => {
-    return selectCanPostSuperLiked(state, postId)?.canPostSuperLiked ?? false
+    return (
+      selectCanPostSuperLiked(state, postId) || { postId, canPostSuperLiked: false, isExist: false }
+    )
   })
 }
 

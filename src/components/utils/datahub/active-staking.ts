@@ -163,10 +163,13 @@ export async function getCanPostsSuperLiked(postIds: string[]): Promise<CanPostS
     resultMap.set(item.persistentPostId, {
       postId: item.persistentPostId,
       canPostSuperLiked: item.possible,
+      isExist: true,
     }),
   )
 
-  return postIds.map(postId => resultMap.get(postId) ?? { postId, canPostSuperLiked: false })
+  return postIds.map(
+    postId => resultMap.get(postId) ?? { postId, canPostSuperLiked: false, isExist: false },
+  )
 }
 
 const GET_REWARD_REPORT = gql`

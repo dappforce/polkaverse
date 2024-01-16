@@ -50,7 +50,7 @@ export default function SuperLike({ post, iconClassName, ...props }: SuperLikePr
   const spaceId = post.spaceId
   const amIFollower = useAmISpaceFollower(spaceId)
 
-  const canPostSuperLiked = useCanPostSuperLiked(post.id)
+  const { isExist, canPostSuperLiked } = useCanPostSuperLiked(post.id)
 
   const [isOpenShouldStakeModal, setIsOpenShouldStakeModal] = useState(false)
   const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
@@ -122,6 +122,7 @@ export default function SuperLike({ post, iconClassName, ...props }: SuperLikePr
   )
 
   let tooltipTitle = ''
+  if (!isExist) tooltipTitle = 'The fresh comment is minting for Active Staking'
   if (isMyPost) tooltipTitle = 'You cannot like your own post'
   else if (isPostCreatedMoreThan1Week)
     tooltipTitle = 'You cannot like posts that are older than 7 days'
