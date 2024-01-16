@@ -330,7 +330,9 @@ export const InnerViewSpace = (props: Props) => {
       <PendingSpaceOwnershipPanel space={space} />
       <HiddenSpaceAlert space={space} />
       <Section className='pt-2'>{renderPreview()}</Section>
-      {canCreatePostAndIsNotHidden && <WriteSomething className='mt-3' defaultSpaceId={spaceId} />}
+      {canCreatePostAndIsNotHidden && (
+        <WriteSomething className='mt-3' defaultSpaceId={spaceData.id} />
+      )}
       {showCreatorCards && <MobileCreatorCard spaceData={spaceData} />}
       <Section className='DfContentPage mt-4'>
         <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />

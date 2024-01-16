@@ -53,7 +53,13 @@ export const PostEditorModalBody = ({
 }) => {
   const myAddress = useMyAddress()
   const allowedSpaceIds = useSelectSpaceIdsWhereAccountCanPost(myAddress as string)
-  const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: allowedSpaceIds })
+  const spaceIdOptions = useMemo(() => {
+    if (defaultSpaceId && !allowedSpaceIds.includes(defaultSpaceId))
+      return [defaultSpaceId, ...allowedSpaceIds]
+    return allowedSpaceIds
+  }, [allowedSpaceIds, defaultSpaceId])
+
+  const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: spaceIdOptions })
   const [imgUrl, setUrl] = useState<string>()
   const [form] = Form.useForm()
   const { ipfs } = useSubsocialApi()
@@ -68,16 +74,16 @@ export const PostEditorModalBody = ({
 
   const profile = useSelectProfile(myAddress)
   const defaultSpace = useMemo(() => {
-    if (defaultSpaceId && allowedSpaceIds.includes(defaultSpaceId)) return defaultSpaceId
+    if (defaultSpaceId) return defaultSpaceId
     const lastUsedSpaceId = getLastUsedSpaceId(myAddress ?? '')
-    if (getLastUsedSpaceId(myAddress ?? '') && allowedSpaceIds.includes(lastUsedSpaceId)) {
+    if (getLastUsedSpaceId(myAddress ?? '') && spaceIdOptions.includes(lastUsedSpaceId)) {
       return lastUsedSpaceId
     }
-    if (profile && allowedSpaceIds.includes(profile?.id ?? '')) {
+    if (profile && spaceIdOptions.includes(profile?.id ?? '')) {
       return profile?.id
     }
-    return allowedSpaceIds[0]
-  }, [allowedSpaceIds, profile, defaultSpaceId])
+    return spaceIdOptions[0]
+  }, [spaceIdOptions, profile, defaultSpaceId])
 
   const router = useRouter()
   const [spaceId, setSpaceId] = useState<string>(defaultSpace)
@@ -160,7 +166,7 @@ export const PostEditorModalBody = ({
       <SelectSpacePreview
         loading={loading}
         className={styles.SpaceSelector}
-        spaceIds={allowedSpaceIds}
+        spaceIds={spaceIdOptions}
         defaultValue={defaultSpace}
         imageSize={32}
         onSelect={value => {
