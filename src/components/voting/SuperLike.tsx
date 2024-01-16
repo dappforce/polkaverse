@@ -36,11 +36,12 @@ import styles from './SuperLike.module.sass'
 
 export type SuperLikeProps = ButtonProps & {
   post: PostStruct
+  iconClassName?: string
 }
 
 const FIRST_TIME_SUPERLIKE = 'df.first-time-superlike'
 
-export default function SuperLike({ post, ...props }: SuperLikeProps) {
+export default function SuperLike({ post, iconClassName, ...props }: SuperLikeProps) {
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
   const sendEvent = useSendEvent()
@@ -114,7 +115,7 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
 
   const icon = (
     <Diamond
-      className='FontNormal'
+      className={clsx('FontNormal', iconClassName)}
       style={{ position: 'relative', top: '0.05em' }}
       isFilled={isActive}
     />

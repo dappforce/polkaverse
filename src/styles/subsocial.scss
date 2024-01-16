@@ -141,6 +141,9 @@ a {
 .ColorWhite {
   color: white;
 }
+.ColorNormal {
+  color: $color_font_normal;
+}
 
 .GapMini {
   gap: $space_mini;
@@ -213,6 +216,9 @@ a {
   border-radius: $border_radius_huge;
 }
 
+.FontWeightNormal {
+  font-weight: $font_weight_normal;
+}
 .FontWeightMedium {
   font-weight: $font_weight_medium;
 }
@@ -533,6 +539,13 @@ a {
   line-height: $line-height-normal;
   // margin: $space_small 0;
   /* white-space: pre-wrap; */
+}
+
+.mt-1\.5 {
+  margin-top: 0.325rem;
+}
+.mt-2\.5 {
+  margin-top: 0.75rem !important;
 }
 .-mt-2 {
   margin-top: -$space_small !important;
@@ -1886,17 +1899,6 @@ hr {
         font-size: $font_small;
         // color: $color_muted;
       }
-
-      button,
-      button:hover,
-      button:active,
-      button:focus {
-        cursor: pointer;
-        background: transparent;
-        border: none;
-        @extend .DfNoBoxShadow;
-        // color: $color_link;
-      }
     }
   }
 
@@ -2175,4 +2177,17 @@ hr {
   .sm-hidden {
     display: none !important;
   }
+}
+
+.\!FontTiny {
+  font-size: $font_tiny !important;
+}
+.\!FontSmall {
+  font-size: $font_small !important;
+}
+.\!FontWeightNormal {
+  font-weight: $font_weight_normal !important;
+}
+.\!ColorMuted {
+  color: $color_muted !important;
 }

@@ -2,6 +2,7 @@ import styles from './CommentEditor.module.sass'
 
 import { Button, Input } from 'antd'
 import BN from 'bn.js'
+import clsx from 'clsx'
 import { useState } from 'react'
 import { Controller, ErrorMessage, useForm } from 'react-hook-form'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
@@ -29,6 +30,7 @@ type Props = MyAccountProps & {
   callback?: (id?: BN) => void
   CommentTxButton: (props: CommentTxButtonType) => JSX.Element
   asStub?: boolean
+  className?: string
 }
 
 const Fields = {
@@ -102,7 +104,7 @@ export const CommentEditor = (props: Props) => {
   }
 
   return (
-    <div className='DfShareModalBody'>
+    <div className={clsx('DfShareModalBody', props.className)}>
       <form onClick={showToolbar}>
         <Controller
           control={control}

@@ -23,9 +23,16 @@ type NewCommentProps = {
   callback?: (id?: BN) => void
   withCancel?: boolean
   asStub?: boolean
+  className?: string
 }
 
-export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, asStub }) => {
+export const NewComment: FC<NewCommentProps> = ({
+  post,
+  callback,
+  withCancel,
+  asStub,
+  className,
+}) => {
   const { id: parentId, isComment } = post
   const { subsocial } = useSubsocialApi()
   const address = useMyAddress()
@@ -143,6 +150,7 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
       CommentTxButton={buildTxButton}
       withCancel={withCancel}
       asStub={asStub}
+      className={className}
     />
   )
 }

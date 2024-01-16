@@ -70,6 +70,8 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({ parentId }) => {
     <DataList
       dataSource={replyIds}
       getKey={replyId => replyId}
+      className='mt-2.5'
+      listClassName='GapSmall d-flex flex-column'
       renderItem={replyId => <CommentById commentId={replyId} />}
     />
   )
