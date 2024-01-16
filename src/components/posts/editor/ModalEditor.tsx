@@ -44,7 +44,13 @@ const HtmlEditor = dynamic(() => import('./HtmlEditor'), {
 
 const log = newLogger('ModalEditor')
 
-export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) => {
+export const PostEditorModalBody = ({
+  closeModal,
+  defaultSpaceId,
+}: {
+  closeModal: () => void
+  defaultSpaceId?: string
+}) => {
   const myAddress = useMyAddress()
   const allowedSpaceIds = useSelectSpaceIdsWhereAccountCanPost(myAddress as string)
   const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: allowedSpaceIds })
@@ -62,6 +68,7 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
 
   const profile = useSelectProfile(myAddress)
   const defaultSpace = useMemo(() => {
+    if (defaultSpaceId && allowedSpaceIds.includes(defaultSpaceId)) return defaultSpaceId
     const lastUsedSpaceId = getLastUsedSpaceId(myAddress ?? '')
     if (getLastUsedSpaceId(myAddress ?? '') && allowedSpaceIds.includes(lastUsedSpaceId)) {
       return lastUsedSpaceId
@@ -70,7 +77,7 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
       return profile?.id
     }
     return allowedSpaceIds[0]
-  }, [allowedSpaceIds, profile])
+  }, [allowedSpaceIds, profile, defaultSpaceId])
 
   const router = useRouter()
   const [spaceId, setSpaceId] = useState<string>(defaultSpace)
@@ -223,8 +230,9 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
 
 export interface PostEditorModalProps extends Omit<ModalProps, 'onCancel'> {
   onCancel?: () => void
+  defaultSpaceId?: string
 }
-export const PostEditorModal = (props: PostEditorModalProps) => {
+export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalProps) => {
   const myAddress = useMyAddress()
   const { data } = useFetchTotalStake(myAddress ?? '')
   const hasStaked = data?.hasStaked
@@ -240,7 +248,10 @@ export const PostEditorModal = (props: PostEditorModalProps) => {
       {...props}
     >
       <div className={styles.Content}>
-        <PostEditorModalBody closeModal={() => props.onCancel && props.onCancel()} />
+        <PostEditorModalBody
+          defaultSpaceId={defaultSpaceId}
+          closeModal={() => props.onCancel && props.onCancel()}
+        />
       </div>
       <div className={styles.InfoPanel}>
         <div className={styles.InfoPanelContent}>

@@ -4,6 +4,7 @@ import { useAppSelector } from 'src/rtk/app/store'
 import { selectFeedByAccount } from 'src/rtk/features/posts/myFeedSlice'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import NotAuthorized from '../auth/NotAuthorized'
+import WriteSomething from '../posts/WriteSomething'
 import Section from '../utils/Section'
 import { createLoadMorePosts, FeedActivities, onchainLoadMorePosts } from './FeedActivities'
 import { BaseActivityProps } from './types'
@@ -45,6 +46,7 @@ export const MyFeed = () => {
 
   return (
     <Section>
+      <WriteSomething className='mt-3' />
       <InnerMyFeed address={myAddress} />
     </Section>
   )

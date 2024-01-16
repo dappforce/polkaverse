@@ -7,6 +7,7 @@ import React, { MouseEvent, useCallback, useState } from 'react'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
+import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
 import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
@@ -20,9 +21,11 @@ import { useMyAddress } from '../auth/MyAccountsContext'
 import MyStakeCard from '../creators/cards/MyStakeCard'
 import StakeSubCard from '../creators/cards/StakeSubCard'
 import MobileStakerRewardDashboard from '../creators/MobileStakerRewardDashboard'
+import WriteSomething from '../posts/WriteSomething'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { editSpaceUrl, spaceUrl } from '../urls'
+import { isHidden } from '../utils'
 import { DfMd } from '../utils/DfMd'
 import { EntityStatusGroup, PendingSpaceOwnershipPanel } from '../utils/EntityStatusPanels'
 import { SummarizeMd } from '../utils/md'
@@ -111,6 +114,11 @@ export const InnerViewSpace = (props: Props) => {
   const spaceData = useSelectSpace(initialSpaceData?.id)
   const isMy = useIsMySpace(spaceData?.struct)
   const { spaceId } = useSelectProfileSpace(address) || {}
+  const canCreatePost = useHasUserASpacePermission({
+    space: spaceData?.struct,
+    permission: 'CreatePosts',
+  })
+  const canCreatePostAndIsNotHidden = canCreatePost && !isHidden(spaceData?.struct)
 
   const Avatar = useCallback(() => {
     if (!spaceData) return null
@@ -322,6 +330,7 @@ export const InnerViewSpace = (props: Props) => {
       <PendingSpaceOwnershipPanel space={space} />
       <HiddenSpaceAlert space={space} />
       <Section className='pt-2'>{renderPreview()}</Section>
+      {canCreatePostAndIsNotHidden && <WriteSomething className='mt-3' defaultSpaceId={spaceId} />}
       {showCreatorCards && <MobileCreatorCard spaceData={spaceData} />}
       <Section className='DfContentPage mt-4'>
         <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
