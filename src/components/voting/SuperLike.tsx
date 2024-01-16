@@ -126,7 +126,8 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
 
   let tooltipTitle = ''
   if (isMyPost) tooltipTitle = `You cannot like your own ${entity}`
-  else if (!isExist) tooltipTitle = `The fresh ${entity} is minting for Active Staking`
+  else if (!isExist)
+    tooltipTitle = `This ${entity} is still being minted, please wait a few seconds`
   else if (isPostCreatedMoreThan1Week)
     tooltipTitle = `You cannot like ${entity}s that are older than 7 days`
 
