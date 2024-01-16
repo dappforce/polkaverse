@@ -37,4 +37,6 @@ export default [
   '11220',
   // Polkadot Arena
   '7218',
+  // Dotcast
+  '10132',
 ]
