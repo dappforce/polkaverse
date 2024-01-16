@@ -1,7 +1,6 @@
+import { nonEmptyStr } from '@subsocial/utils'
 import clsx from 'clsx'
 import { useState } from 'react'
-import { useSetChatOpen } from 'src/rtk/app/hooks'
-import { useAppSelector } from 'src/rtk/app/store'
 import { idToBn, PostStruct } from 'src/types'
 import { MutedSpan } from '../utils/MutedText'
 import { Pluralize } from '../utils/Plularize'
@@ -13,20 +12,20 @@ type StatsProps = {
 }
 
 export const StatsPanel = (props: StatsProps) => {
-  const { post } = props
+  const { post, goToCommentsId } = props
 
-  const setChatOpen = useSetChatOpen()
+  const [commentsSection, setCommentsSection] = useState(false)
   const [postVotersOpen, setPostVotersOpen] = useState(false)
 
-  const totalMessageCount = useAppSelector(state => state.chat.totalMessageCount)
-  const { upvotesCount, downvotesCount, sharesCount, id } = post
+  const { upvotesCount, downvotesCount, repliesCount, sharesCount, id } = post
+
   const reactionsCount = upvotesCount + downvotesCount
   const showReactionsModal = () => reactionsCount && setPostVotersOpen(true)
 
-  const toggleCommentsSection = () => {
-    setChatOpen(true)
-  }
-  const comments = <Pluralize count={totalMessageCount || 0} singularText='Comment' />
+  const toggleCommentsSection = goToCommentsId
+    ? undefined
+    : () => setCommentsSection(!commentsSection)
+  const comments = <Pluralize count={repliesCount || 0} singularText='Comment' />
 
   return (
     <>
@@ -41,9 +40,13 @@ export const StatsPanel = (props: StatsProps) => {
           </span>
         </MutedSpan>
         <MutedSpan>
-          <span style={{ whiteSpace: 'nowrap' }} onClick={toggleCommentsSection}>
-            {comments}
-          </span>
+          {nonEmptyStr(goToCommentsId) ? (
+            <a className='DfMutedLink' href={'#' + goToCommentsId}>
+              {comments}
+            </a>
+          ) : (
+            <span onClick={toggleCommentsSection}>{comments}</span>
+          )}
         </MutedSpan>
         {
           <MutedSpan style={{ whiteSpace: 'nowrap' }}>

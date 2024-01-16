@@ -21,7 +21,6 @@ import { resolveIpfsUrl } from 'src/ipfs'
 import messages from 'src/messages'
 import { isBlockedPost } from 'src/moderation'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
-import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
 import {
   PostContent as PostContentType,
   PostData,
@@ -289,10 +288,11 @@ type PostActionsPanelProps = {
   toogleCommentSection?: () => void
   withBorder?: boolean
   className?: string
+  preview?: boolean
 }
 
 export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
-  const { postDetails, /* space, */ withBorder, className } = props
+  const { postDetails, /* space, */ withBorder, className, preview } = props
   const {
     post: { struct },
   } = postDetails
@@ -301,7 +301,7 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
     <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'} ${className ?? ''}`}>
       <div className={clsx('d-flex align-items-center GapHuge', styles.PostActions)}>
         <SuperLike post={struct} />
-        <CommentAction post={props.postDetails.post} />
+        {preview && <CommentAction {...props} />}
       </div>
       <PostRewardStat postId={postDetails.id} />
       {/* <ShareDropdown postDetails={postDetails} space={space} className='DfAction' /> */}
@@ -309,9 +309,13 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
   )
 }
 
-function CommentAction({ post }: { post: PostData }) {
-  const setChatOpen = useSetChatOpen()
-  const setChatConfig = useSetChatEntityConfig()
+function CommentAction(props: PostActionsPanelProps) {
+  const { postDetails, toogleCommentSection } = props
+  const {
+    post: {
+      struct: { repliesCount },
+    },
+  } = postDetails
 
   return (
     <Button
@@ -319,12 +323,11 @@ function CommentAction({ post }: { post: PostData }) {
       style={{ border: 'none', boxShadow: 'none', gap: '0.4rem' }}
       className='p-0 d-flex align-items-center ColorMuted FontWeightMedium'
       onClick={() => {
-        setChatConfig({ entity: { type: 'post', data: post }, withFloatingButton: false })
-        setChatOpen(true)
+        toogleCommentSection?.()
       }}
     >
       <TbMessageCircle2 className='FontLarge' />
-      <span>Comments</span>
+      {repliesCount}
     </Button>
   )
 }

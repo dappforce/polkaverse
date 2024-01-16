@@ -1,4 +1,5 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
+import { CommentSection } from 'src/components/comments/CommentsSection'
 import { SpaceData } from 'src/types'
 import { InfoPostPreview, PostActionsPanel, PostNotFound } from './helpers'
 import { PreviewProps } from './PostPreview'
@@ -11,7 +12,8 @@ type ComponentType = FC<InnerPreviewProps>
 
 /** Sloooooooow Regular Preview */
 export const RegularPreview: ComponentType = props => {
-  const { postDetails, space, withImage, withTags, withActions } = props
+  const { postDetails, space, withImage, replies, withTags, withActions } = props
+  const [commentsSection, setCommentsSection] = useState(false)
 
   const { isSharedPost } = postDetails.post.struct
 
@@ -24,7 +26,17 @@ export const RegularPreview: ComponentType = props => {
         withTags={withTags}
         withMarginForCardType={!withActions}
       />
-      {withActions && <PostActionsPanel postDetails={postDetails} space={space?.struct} />}
+      {withActions && (
+        <PostActionsPanel
+          postDetails={postDetails}
+          space={space?.struct}
+          preview
+          toogleCommentSection={() => setCommentsSection(!commentsSection)}
+        />
+      )}
+      {commentsSection && (
+        <CommentSection post={postDetails} replies={replies} space={space?.struct} />
+      )}
     </>
   ) : (
     <PostNotFound />

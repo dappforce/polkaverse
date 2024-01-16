@@ -36,11 +36,13 @@ import styles from './SuperLike.module.sass'
 
 export type SuperLikeProps = ButtonProps & {
   post: PostStruct
+  iconClassName?: string
+  isComment?: boolean
 }
 
 const FIRST_TIME_SUPERLIKE = 'df.first-time-superlike'
 
-export default function SuperLike({ post, ...props }: SuperLikeProps) {
+export default function SuperLike({ post, iconClassName, isComment, ...props }: SuperLikeProps) {
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
   const sendEvent = useSendEvent()
@@ -49,7 +51,7 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
   const spaceId = post.spaceId
   const amIFollower = useAmISpaceFollower(spaceId)
 
-  const canPostSuperLiked = useCanPostSuperLiked(post.id)
+  const { isExist, canPostSuperLiked } = useCanPostSuperLiked(post.id)
 
   const [isOpenShouldStakeModal, setIsOpenShouldStakeModal] = useState(false)
   const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
@@ -114,16 +116,20 @@ export default function SuperLike({ post, ...props }: SuperLikeProps) {
 
   const icon = (
     <Diamond
-      className='FontNormal'
+      className={clsx('FontNormal', iconClassName)}
       style={{ position: 'relative', top: '0.05em' }}
       isFilled={isActive}
     />
   )
 
+  const entity = isComment ? 'comment' : 'post'
+
   let tooltipTitle = ''
-  if (isMyPost) tooltipTitle = 'You cannot like your own post'
+  if (isMyPost) tooltipTitle = `You cannot like your own ${entity}`
+  else if (!isExist)
+    tooltipTitle = `This ${entity} is still being minted, please wait a few seconds`
   else if (isPostCreatedMoreThan1Week)
-    tooltipTitle = 'You cannot like posts that are older than 7 days'
+    tooltipTitle = `You cannot like ${entity}s that are older than 7 days`
 
   const button = (
     <div>

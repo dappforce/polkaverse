@@ -1,0 +1,27 @@
+@import "src/styles/subsocial-vars.scss"
+
+.WriteSomething
+  display: flex
+  font-size: $font_small
+
+  .InputButton
+    flex: 1
+    background: #F8FAFC
+    color: #64748B
+    border-radius: 60px
+    border: none
+    text-align: left
+    padding: 0 $space_normal
+    margin-right: $space_tiny
+    transition: filter 200ms ease-in-out
+    cursor: pointer
+
+    &:focus-visible, &:hover
+      filter: brightness(0.98)
+
+  .PostButton
+    background: $color_primary
+    color: white
+    opacity: 0.3
+    border-radius: 60px
+    padding: 0 $space_big

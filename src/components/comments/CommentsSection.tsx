@@ -26,12 +26,11 @@ export const CommentSection: FC<CommentSectionProps> = ({ post, hashId, withBord
     post: { struct },
   } = post
   const { id, repliesCount } = struct
-  const hasAnyReply = (repliesCount ?? 0) > 0
 
   return (
     <Section
       id={hashId}
-      className={clsx('DfCommentSection', hasAnyReply ? 'mb-2' : 'mb-4', {
+      className={clsx('DfCommentSection', {
         TopBorder: withBorder,
       })}
     >

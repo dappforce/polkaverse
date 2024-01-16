@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import { useSelectSpace } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { useSelectPost } from 'src/rtk/features/posts/postsHooks'
@@ -39,6 +39,9 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({ parentId }) => {
   const comment = useSelectPost(parentId)
   const repliesCount = comment?.post.struct.repliesCount || 0
   const { replyIds, hasReplies } = useRepliesData({ id: parentId, repliesCount: repliesCount })
+  const reversedReplyIds = useMemo(() => {
+    return replyIds.slice().reverse()
+  }, [replyIds])
 
   useSubsocialEffect(
     ({ subsocial }) => {
@@ -68,8 +71,10 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({ parentId }) => {
 
   return (
     <DataList
-      dataSource={replyIds}
+      dataSource={reversedReplyIds}
       getKey={replyId => replyId}
+      className='mt-2.5'
+      listClassName='GapSmall d-flex flex-column'
       renderItem={replyId => <CommentById commentId={replyId} />}
     />
   )

@@ -75,8 +75,7 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
           </CreatePostButtonAndModal>
         ) : (
           <div className='d-flex flex-column'>
-            <span className='FontSmall ColorMuted'>Create a profile to get started.</span>
-            <CreateSpaceButton className='mt-3' type='primary' ghost={false}>
+            <CreateSpaceButton type='primary' ghost={false}>
               Create profile
             </CreateSpaceButton>
           </div>
