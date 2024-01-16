@@ -1,3 +1,4 @@
+import dynamic from 'next/dynamic'
 import React from 'react'
 import { NotifCounterProvider } from 'src/components/activity/NotifCounter'
 import { LazyConnectionsProvider } from 'src/components/lazy-connection/LazyConnectionContext'
@@ -10,9 +11,9 @@ import { SubstrateProvider, SubstrateWebConsole } from '../components/substrate'
 import SidebarCollapsedProvider from '../components/utils/SideBarCollapsedContext'
 import { Navigation } from './Navigation'
 
-// const ChatFloatingModal = dynamic(() => import('../components/chat/ChatFloatingModal'), {
-//   ssr: false,
-// })
+const ChatFloatingModal = dynamic(() => import('../components/chat/ChatFloatingModal'), {
+  ssr: false,
+})
 
 const ClientLayout: React.FunctionComponent = ({ children }) => {
   return (
@@ -26,7 +27,7 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
                 <AuthProvider>
                   <NotifCounterProvider>
                     <Navigation>{children}</Navigation>
-                    {/* <ChatFloatingModal /> */}
+                    <ChatFloatingModal />
                   </NotifCounterProvider>
                 </AuthProvider>
               </MyAccountsProvider>
