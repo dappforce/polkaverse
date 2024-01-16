@@ -219,7 +219,7 @@ export const PostImage = React.memo(
             inset: 0,
             width: '100%',
             height: '100%',
-            filter: 'blur(10px)',
+            filter: 'blur(20px)',
             transform: 'scale(1.1)',
             transformOrigin: 'center',
           }}
