@@ -189,7 +189,11 @@ export const PostEditorModalBody = ({
       <SpaceSelector />
       <Form.Item name={fieldName('body')} className='my-3'>
         {/* value and onChange are provided by Form.Item */}
-        <HtmlEditor saveBodyDraft={saveDraft} className={clsx(styles.FastEditor, 'ant-input')} />
+        <HtmlEditor
+          autoFocus
+          saveBodyDraft={saveDraft}
+          className={clsx(styles.FastEditor, 'ant-input')}
+        />
       </Form.Item>
       {imgUrl && (
         <PreviewUploadedImage
