@@ -8,6 +8,7 @@ export interface HTMLEditorProps {
   saveBodyDraft?: (body: string) => void
   className?: string
   showToolbar?: boolean
+  autoFocus?: boolean
 }
 
 export default function HtmlEditor({
@@ -16,13 +17,14 @@ export default function HtmlEditor({
   saveBodyDraft,
   className,
   showToolbar,
+  autoFocus,
 }: HTMLEditorProps) {
   const editor = useCreateEditor(onChange, value, saveBodyDraft)
 
   return (
     <>
       {showToolbar && <ToolBar editor={editor} />}
-      <EditorContent tabIndex={0} className={className} editor={editor} />
+      <EditorContent autoFocus tabIndex={0} className={className} editor={editor} />
     </>
   )
 }
