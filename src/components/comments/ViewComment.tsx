@@ -1,5 +1,5 @@
-import { CaretDownOutlined, CaretUpOutlined, NotificationOutlined } from '@ant-design/icons'
-import { Button, Tag } from 'antd'
+import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons'
+import { Button } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import Link from 'next/link'
@@ -15,11 +15,13 @@ import {
   SpaceStruct,
 } from 'src/types'
 import { PostDropDownMenu } from '../posts/view-post/PostDropDownMenu'
+import PostRewardStat from '../posts/view-post/PostRewardStat'
 import AuthorSpaceAvatar from '../profiles/address-views/AuthorSpaceAvatar'
 import Name from '../profiles/address-views/Name'
 import { equalAddresses } from '../substrate'
 import { postUrl } from '../urls'
 import { formatDate, IconWithLabel, useIsHidden } from '../utils'
+import { MutedSpan } from '../utils/MutedText'
 import { Pluralize } from '../utils/Plularize'
 import SuperLike from '../voting/SuperLike'
 import { ViewCommentsTree } from './CommentTree'
@@ -111,27 +113,28 @@ export const InnerViewComment: FC<Props> = props => {
       <div className={clsx('d-flex align-items-start w-100')}>
         <AuthorSpaceAvatar size={32} authorAddress={ownerId} />
         <div className='d-flex flex-column w-100'>
-          <div className='d-flex align-items-center GapTiny'>
-            <Name
-              className='!ColorMuted !FontWeightNormal FontSmall'
-              address={ownerId}
-              owner={owner}
-              asLink
-            />
-            {isRootPostOwner ? (
-              <Tag color='blue' className='mr-0'>
-                <NotificationOutlined className='mr-2' />
-                Post author
-              </Tag>
-            ) : undefined}
-            <Link href='/[spaceId]/[slug]' as={commentLink}>
-              <a className='DfGreyLink FontTiny' title={formatDate(createdAtTime)}>
-                {dayjs(createdAtTime).fromNow()}
-              </a>
-            </Link>
+          <div className='d-flex align-items-center justify-content-between GapTiny'>
+            <div className='d-flex align-items-baseline GapSemiTiny'>
+              <div className='d-flex align-items-baseline GapSemiTiny'>
+                <Name
+                  className='!ColorMuted !FontWeightNormal FontSmall'
+                  address={ownerId}
+                  owner={owner}
+                  asLink
+                />
+                {isRootPostOwner && <span className='ColorPrimary FontWeightSemibold'>OP</span>}
+              </div>
+              <MutedSpan>&middot;</MutedSpan>
+              <Link href='/[spaceId]/[slug]' as={commentLink}>
+                <a className='DfGreyLink FontTiny' title={formatDate(createdAtTime)}>
+                  {dayjs(createdAtTime).fromNow()}
+                </a>
+              </Link>
+            </div>
             {!isFake && (
               <PostDropDownMenu
                 className='d-flex align-items-center ColorMuted'
+                style={{ position: 'relative', top: '1px' }}
                 post={comment}
                 space={space}
                 onEditComment={onEditComment}
@@ -167,6 +170,7 @@ export const InnerViewComment: FC<Props> = props => {
                 <IconWithLabel icon={<TbMessageCircle2 className='FontNormal' />} label='Reply' />
               </span>
             </Button>
+            <PostRewardStat postId={comment.id} style={{ marginLeft: 'auto' }} />
           </div>
           <div className='mt-1.5 d-flex flex-column'>
             {newCommentForm}

@@ -14,7 +14,6 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
     <div
       {...props}
       className={clsx('d-flex align-items-center GapMini FontWeightMedium', props.className)}
-      style={{ alignSelf: 'end', ...props.style }}
     >
       <TbCoins className='FontNormal' />
       <span className='FontWeightSemibold'>
