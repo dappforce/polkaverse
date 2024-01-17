@@ -52,7 +52,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
           <div className={styles.GoalInfo}>
             <div className='d-flex align-items-baseline GapMini'>
               <MutedSpan>
-                {likesToMaxReward > 0 ? 'Daily Activity Target' : 'Daily Target Hit'}
+                {likesToMaxReward > 0 ? 'Daily activity target' : 'Daily target hit'}
               </MutedSpan>
               <Tooltip
                 title={
