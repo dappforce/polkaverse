@@ -6,6 +6,7 @@ import { useCreateReloadPost } from 'src/rtk/app/hooks'
 import { useCreateUpsertReply } from 'src/rtk/features/replies/repliesHooks'
 import { CommentContent, IpfsCid, PostContent, PostStruct } from 'src/types'
 import { getTxParams } from '../substrate'
+import { CommentEventProps } from './CommentEditor'
 import { CommentTxButtonType } from './utils'
 
 const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false })
@@ -17,9 +18,10 @@ type EditCommentProps = {
   struct: PostStruct
   content: CommentContent
   callback?: FCallback
+  eventProps: CommentEventProps
 }
 
-export const EditComment: FC<EditCommentProps> = ({ struct, content, callback }) => {
+export const EditComment: FC<EditCommentProps> = ({ struct, content, callback, eventProps }) => {
   const upsertReply = useCreateUpsertReply()
   const reloadPost = useCreateReloadPost()
   const id = struct.id
@@ -80,6 +82,7 @@ export const EditComment: FC<EditCommentProps> = ({ struct, content, callback })
 
   return (
     <CommentEditor
+      eventProps={{ ...eventProps, isEditing: true }}
       callback={callback}
       content={content}
       CommentTxButton={buildTxButton}

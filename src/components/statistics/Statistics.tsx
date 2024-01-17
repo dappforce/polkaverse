@@ -19,7 +19,7 @@ export type ActivityEvent =
   | 'SpaceFollowed'
   | 'PostCreated'
   | 'PostShared,CommentShared'
-  // | 'CommentCreated,CommentReplyCreated'
+  | 'CommentCreated,CommentReplyCreated'
   | 'PostReactionCreated,CommentReactionCreated'
   | 'AccountFollowed'
 
@@ -29,7 +29,7 @@ export const eventArr = [
   'SpaceCreated',
   'SpaceFollowed',
   'PostShared,CommentShared',
-  // 'CommentCreated,CommentReplyCreated',
+  'CommentCreated,CommentReplyCreated',
   'AccountFollowed',
 ]
 

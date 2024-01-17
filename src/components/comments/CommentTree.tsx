@@ -8,30 +8,49 @@ import useSubsocialEffect from '../api/useSubsocialEffect'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import DataList from '../lists/DataList'
 import { Loading } from '../utils'
+import { CommentEventProps } from './CommentEditor'
 import { useRepliesData } from './utils'
 import ViewComment from './ViewComment'
 
 type CommentsTreeProps = {
   parentId: PostId
+  eventProps: CommentEventProps
+  directlyExpandReplies?: boolean
 }
 
 type CommentByIdProps = {
   commentId: PostId
+  eventProps: CommentEventProps
+  directlyExpandReplies?: boolean
 }
 
-const CommentById = React.memo(({ commentId: id }: CommentByIdProps) => {
-  const comment = useSelectPost(id)
+const CommentById = React.memo(
+  ({ commentId: id, eventProps, directlyExpandReplies }: CommentByIdProps) => {
+    const comment = useSelectPost(id)
 
-  const rootPostId = comment ? asCommentStruct(comment.post.struct).rootPostId : undefined
-  const rootPost = useSelectPost(rootPostId)?.post.struct
-  const space = useSelectSpace(rootPost?.spaceId)?.struct
+    const rootPostId = comment ? asCommentStruct(comment.post.struct).rootPostId : undefined
+    const rootPost = useSelectPost(rootPostId)?.post.struct
+    const space = useSelectSpace(rootPost?.spaceId)?.struct
 
-  if (!comment) return null
+    if (!comment) return null
 
-  return <ViewComment rootPost={rootPost} space={space} comment={comment} />
-})
+    return (
+      <ViewComment
+        withShowReplies={directlyExpandReplies}
+        rootPost={rootPost}
+        space={space}
+        comment={comment}
+        eventProps={eventProps}
+      />
+    )
+  },
+)
 
-export const ViewCommentsTree: FC<CommentsTreeProps> = ({ parentId }) => {
+export const ViewCommentsTree: FC<CommentsTreeProps> = ({
+  parentId,
+  eventProps,
+  directlyExpandReplies,
+}) => {
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
   const [loading, setLoading] = useState(true)
@@ -75,7 +94,13 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({ parentId }) => {
       getKey={replyId => replyId}
       className='mt-2.5'
       listClassName='GapSmall d-flex flex-column'
-      renderItem={replyId => <CommentById commentId={replyId} />}
+      renderItem={replyId => (
+        <CommentById
+          directlyExpandReplies={directlyExpandReplies}
+          commentId={replyId}
+          eventProps={eventProps}
+        />
+      )}
     />
   )
 }

@@ -22,6 +22,11 @@
   .PostButton
     background: $color_primary
     color: white
-    opacity: 0.3
+    border: none
     border-radius: 60px
     padding: 0 $space_big
+    cursor: pointer
+
+    &:disabled
+      opacity: 0.3
+      cursor: default

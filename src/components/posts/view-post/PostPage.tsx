@@ -225,7 +225,12 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
           </div>
 
           <div className='mt-2'>
-            <CommentSection post={postData} hashId={goToCommentsId} space={spaceStruct} />
+            <CommentSection
+              post={postData}
+              hashId={goToCommentsId}
+              space={spaceStruct}
+              eventSource='post-page'
+            />
           </div>
         </div>
       </Section>

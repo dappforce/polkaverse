@@ -1,9 +1,14 @@
 import clsx from 'clsx'
 import { ComponentProps, useState } from 'react'
 import { useSendEvent } from 'src/providers/AnalyticContext'
-import { useSelectProfile } from 'src/rtk/app/hooks'
+import {
+  useSelectProfile,
+  useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus,
+} from 'src/rtk/app/hooks'
+import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import Avatar from '../profiles/address-views/Avatar'
+import { newSpaceUrl } from '../urls'
 import Segment from '../utils/Segment'
 import { PostEditorModal } from './editor/ModalEditor'
 import styles from './WriteSomething.module.sass'
@@ -18,21 +23,45 @@ export default function WriteSomething({ defaultSpaceId, ...props }: WriteSometh
   const myAddress = useMyAddress() ?? ''
   const profileData = useSelectProfile(myAddress)
 
-  const onClickInput = () => {
-    sendEvent('createpost_button_clicked', { eventSource: 'write-something' })
-    setVisible(true)
+  const { isLoading, spaceIds: ids } =
+    useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus(myAddress)
+  if (isLoading) {
+    return null
   }
+
+  const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: ids })
+  const anySpace = spaceIds[0]
+
+  const onClickInput = () => {
+    if (anySpace) {
+      sendEvent('createpost_button_clicked', { eventSource: 'write-something' })
+      setVisible(true)
+      return
+    }
+  }
+
+  const content = (
+    <>
+      <button className={styles.InputButton} onClick={onClickInput}>
+        {anySpace ? 'Write something...' : 'Create a profile to start posting'}
+      </button>
+      <button className={styles.PostButton} disabled={!!anySpace}>
+        {anySpace ? 'Post' : 'Create Profile'}
+      </button>
+    </>
+  )
 
   return (
     <>
       <Segment {...props} className={clsx('d-flex', styles.WriteSomething, props.className)}>
         <Avatar address={myAddress} avatar={profileData?.content?.image} size={40} />
-        <button className={styles.InputButton} onClick={onClickInput}>
-          Write something...
-        </button>
-        <button className={styles.PostButton} disabled>
-          Post
-        </button>
+        {anySpace ? (
+          content
+        ) : (
+          <a href={newSpaceUrl(true)} className='d-flex w-100'>
+            {content}
+          </a>
+        )}
       </Segment>
       <PostEditorModal
         defaultSpaceId={defaultSpaceId}

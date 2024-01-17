@@ -203,18 +203,42 @@ export const PostImage = React.memo(
       setShouldImageBeCropped(isTallerThan16By9)
     }
 
-    const wrapperClassName = clsx(className, {
+    const wrapperClassName = clsx(className, 'w-100 d-flex', {
       DfPostImagePreviewWrapperCropped: shouldImageBeCropped,
-      DfPostImagePreviewWrapper: true,
     })
     return (
-      <Image
-        src={resolveIpfsUrl(image)}
-        className='DfPostImagePreview'
-        preview={withPreview ? { mask: null } : false}
-        wrapperClassName={wrapperClassName}
-        onLoad={onImgLoad}
-      />
+      <div
+        className='position-relative DfPostImagePreviewWrapper'
+        style={{ overflow: 'hidden', borderRadius: '5px' }}
+      >
+        <Image
+          src={resolveIpfsUrl(image)}
+          className='DfPostImagePreview'
+          wrapperStyle={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            filter: 'blur(20px)',
+            transform: 'scale(1.1)',
+            transformOrigin: 'center',
+          }}
+          style={{
+            objectFit: 'cover',
+          }}
+          preview={withPreview ? { mask: null } : false}
+          wrapperClassName={wrapperClassName}
+          onLoad={onImgLoad}
+        />
+        <Image
+          src={resolveIpfsUrl(image)}
+          className='DfPostImagePreview'
+          style={{ objectFit: 'contain' }}
+          preview={withPreview ? { mask: null } : false}
+          wrapperClassName={wrapperClassName}
+          onLoad={onImgLoad}
+        />
+      </div>
     )
   },
 )
@@ -303,7 +327,7 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
         <SuperLike post={struct} />
         {preview && <CommentAction {...props} />}
       </div>
-      <PostRewardStat postId={postDetails.id} />
+      <PostRewardStat postId={postDetails.id} style={{ alignSelf: 'end' }} />
       {/* <ShareDropdown postDetails={postDetails} space={space} className='DfAction' /> */}
     </div>
   )
@@ -327,7 +351,7 @@ function CommentAction(props: PostActionsPanelProps) {
       }}
     >
       <TbMessageCircle2 className='FontLarge' />
-      {repliesCount}
+      {(repliesCount ?? 0) > 0 ? repliesCount : 'Comment'}
     </Button>
   )
 }

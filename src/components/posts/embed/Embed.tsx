@@ -8,7 +8,7 @@ type EmbedProps = {
   className?: string
 }
 
-const allowEmbedList = ['vimeo', 'youtube', 'youtu.be', 'soundcloud'] as const
+const allowEmbedList = ['vimeo', 'youtube', 'youtu.be', 'soundcloud', 'gleev'] as const
 const componentMap: {
   [key in (typeof allowEmbedList)[number]]?: (props: { src: string }) => JSX.Element | null
 } = {
@@ -33,6 +33,11 @@ export function getVimeoVideoId(vimeoLink: string) {
   return parseUrl[5]
 }
 
+export function getGleevVideoId(gleevLink: string) {
+  const url = gleevLink.split('?')[0]
+  return url.split('/').pop()
+}
+
 const getEmbedUrl = (url: string, embed: string | undefined) => {
   if (!embed) return
 
@@ -42,6 +47,7 @@ const getEmbedUrl = (url: string, embed: string | undefined) => {
     'youtu.be': `https://www.youtube.com/embed/${getYoutubeVideoId(url)}`,
     soundcloud: `https://w.soundcloud.com/player/
       ?url=${url}&amp;auto_play=false&amp;hide_related=true&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true`,
+    gleev: `https://gleev.xyz/embedded/video/${getGleevVideoId(url)}`,
   }
 
   return urls[embed]
