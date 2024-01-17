@@ -16,12 +16,10 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
       className={clsx('d-flex align-items-center GapMini FontWeightMedium', props.className)}
       style={{ alignSelf: 'end', ...props.style }}
     >
-      <span className='d-flex align-items-center GapMini ColorMuted'>
-        <TbCoins className='FontNormal' />
-        <span>Rewards earned:</span>
-      </span>
+      <TbCoins className='FontNormal' />
       <span className='FontWeightSemibold'>
         <FormatBalance
+          style={{ whiteSpace: 'nowrap' }}
           currency='SUB'
           decimals={10}
           precision={2}
@@ -29,6 +27,7 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
           value={reward.amount}
         />
       </span>
+      <span className='d-flex align-items-center GapMini ColorMuted'>earned</span>
     </div>
   )
 }
