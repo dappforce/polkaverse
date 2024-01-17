@@ -24,6 +24,7 @@ type NewCommentProps = {
   withCancel?: boolean
   asStub?: boolean
   className?: string
+  autoFocus?: boolean
 }
 
 export const NewComment: FC<NewCommentProps> = ({
@@ -32,6 +33,7 @@ export const NewComment: FC<NewCommentProps> = ({
   withCancel,
   asStub,
   className,
+  autoFocus,
 }) => {
   const { id: parentId, isComment } = post
   const { subsocial } = useSubsocialApi()
@@ -146,6 +148,7 @@ export const NewComment: FC<NewCommentProps> = ({
 
   return (
     <CommentEditor
+      autoFocus={autoFocus}
       callback={callback}
       CommentTxButton={buildTxButton}
       withCancel={withCancel}

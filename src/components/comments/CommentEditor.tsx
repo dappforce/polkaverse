@@ -31,6 +31,7 @@ type Props = MyAccountProps & {
   CommentTxButton: (props: CommentTxButtonType) => JSX.Element
   asStub?: boolean
   className?: string
+  autoFocus?: boolean
 }
 
 const Fields = {
@@ -38,7 +39,7 @@ const Fields = {
 }
 
 export const CommentEditor = (props: Props) => {
-  const { content, withCancel, callback, CommentTxButton, asStub } = props
+  const { content, withCancel, callback, CommentTxButton, asStub, autoFocus } = props
   const { ipfs } = useSubsocialApi()
   const [ipfsCid, setIpfsCid] = useState<IpfsCid>()
   const [fakeId] = useState(tmpClientId())
@@ -113,6 +114,7 @@ export const CommentEditor = (props: Props) => {
               disabled={isLoading}
               placeholder='Write a comment...'
               autoSize={{ minRows: 1, maxRows: 5 }}
+              autoFocus={autoFocus}
             />
           }
           name={Fields.body}

@@ -100,6 +100,7 @@ export const InnerViewComment: FC<Props> = props => {
 
   const newCommentForm = showReplyForm && (
     <NewComment
+      autoFocus
       post={commentStruct}
       callback={() => {
         setShowReplyForm(false)
