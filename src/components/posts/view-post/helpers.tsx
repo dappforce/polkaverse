@@ -351,7 +351,7 @@ function CommentAction(props: PostActionsPanelProps) {
       }}
     >
       <TbMessageCircle2 className='FontLarge' />
-      {repliesCount}
+      {(repliesCount ?? 0) > 0 ? repliesCount : 'Comment'}
     </Button>
   )
 }
