@@ -1,5 +1,4 @@
 import { nonEmptyStr } from '@subsocial/utils'
-import clsx from 'clsx'
 import { useState } from 'react'
 import { idToBn, PostStruct } from 'src/types'
 import { MutedSpan } from '../utils/MutedText'
@@ -17,10 +16,14 @@ export const StatsPanel = (props: StatsProps) => {
   const [commentsSection, setCommentsSection] = useState(false)
   const [postVotersOpen, setPostVotersOpen] = useState(false)
 
-  const { upvotesCount, downvotesCount, repliesCount, sharesCount, id } = post
+  const {
+    // upvotesCount, downvotesCount, sharesCount
+    repliesCount,
+    id,
+  } = post
 
-  const reactionsCount = upvotesCount + downvotesCount
-  const showReactionsModal = () => reactionsCount && setPostVotersOpen(true)
+  // const reactionsCount = upvotesCount + downvotesCount
+  // const showReactionsModal = () => reactionsCount && setPostVotersOpen(true)
 
   const toggleCommentsSection = goToCommentsId
     ? undefined
@@ -30,7 +33,7 @@ export const StatsPanel = (props: StatsProps) => {
   return (
     <>
       <div className='DfCountsPreview'>
-        <MutedSpan className={reactionsCount ? '' : 'disable'}>
+        {/* <MutedSpan className={reactionsCount ? '' : 'disable'}>
           <span
             style={{ whiteSpace: 'nowrap' }}
             onClick={showReactionsModal}
@@ -38,21 +41,23 @@ export const StatsPanel = (props: StatsProps) => {
           >
             <Pluralize count={reactionsCount} singularText='Reaction' />
           </span>
-        </MutedSpan>
+        </MutedSpan> */}
         <MutedSpan>
           {nonEmptyStr(goToCommentsId) ? (
-            <a className='DfMutedLink' href={'#' + goToCommentsId}>
+            <a className='DfMutedLink' href={'#' + goToCommentsId} style={{ whiteSpace: 'nowrap' }}>
               {comments}
             </a>
           ) : (
-            <span onClick={toggleCommentsSection}>{comments}</span>
+            <span onClick={toggleCommentsSection} style={{ whiteSpace: 'nowrap' }}>
+              {comments}
+            </span>
           )}
         </MutedSpan>
-        {
+        {/* {
           <MutedSpan style={{ whiteSpace: 'nowrap' }}>
             <Pluralize count={sharesCount || 0} singularText='Share' />
           </MutedSpan>
-        }
+        } */}
         {/* <MutedSpan><Pluralize count={score} singularText='Point' /></MutedSpan> */}
       </div>
       <PostVoters
