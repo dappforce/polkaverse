@@ -9,7 +9,7 @@ export default {
       everyone: 'Everyone can create and edit their own posts in this space.',
       none: 'None can create or edit posts in this space.',
     },
-    embedded: 'You can embed links from YouTube, Vimeo and SoundCloud.',
+    embedded: 'You can embed links from YouTube, Vimeo, Gleev (Joystream) and SoundCloud.',
   },
   forms: {
     permissions: {
