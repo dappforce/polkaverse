@@ -8,6 +8,7 @@ import messages from 'src/messages'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { PageContent } from '../main/PageWrapper'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
+import { getSuperLikesStats } from '../utils/datahub/active-staking'
 import { Loading } from '../utils/index'
 import Section from '../utils/Section'
 import { Stats } from '../utils/Stats'
@@ -165,12 +166,19 @@ export function Statistics(props: FormProps) {
     const load = async () => {
       setIsLoaded(false)
 
-      const statisticsDataArr = await Promise.all(
+      const statisticsDataArrPromise = Promise.all(
         eventArr.map(async eventName => {
           const event = eventName as ActivityEvent
           return getActivityCountStat({ event, period: constrainedPeriod })
         }),
       )
+      const superLikeDataPromise = getSuperLikesStats(constrainedPeriod)
+
+      const [statisticsDataArr, superLikeData] = await Promise.all([
+        statisticsDataArrPromise,
+        superLikeDataPromise,
+      ] as const)
+      console.log(statisticsDataArr, superLikeData)
 
       if (isMounted) {
         setData(statisticsDataArr)
