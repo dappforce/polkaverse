@@ -16,13 +16,13 @@ import { MyAccountProps } from '../utils/MyAccount'
 import { CommentTxButtonType } from './utils'
 
 // A height of EasyMDE toolbar with our custom styles. Can be changed
-const toolbarHeight = 49
+// const toolbarHeight = 49
 
-function scrollToolbarHeight() {
-  if (window) {
-    window.scrollBy(0, toolbarHeight)
-  }
-}
+// function scrollToolbarHeight() {
+//   if (window) {
+//     window.scrollBy(0, toolbarHeight)
+//   }
+// }
 
 type Props = MyAccountProps & {
   content?: CommentContent
@@ -100,7 +100,7 @@ export const CommentEditor = (props: Props) => {
   const showToolbar = () => {
     if (!toolbar) {
       setToolbar(true)
-      scrollToolbarHeight()
+      // scrollToolbarHeight()
     }
   }
 
