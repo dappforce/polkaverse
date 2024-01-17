@@ -39,7 +39,11 @@ export const CommentSection: FC<CommentSectionProps> = ({
         <Pluralize count={repliesCount || 0} singularText='comment' />
       </h3>
       <NewComment post={struct} asStub eventProps={{ eventSource, level: 0, isPostAuthor }} />
-      <ViewCommentsTree eventProps={{ eventSource, level: 1, isPostAuthor }} parentId={id} />
+      <ViewCommentsTree
+        eventProps={{ eventSource, level: 1, isPostAuthor }}
+        parentId={id}
+        directlyExpandReplies
+      />
     </Section>
   )
 }
