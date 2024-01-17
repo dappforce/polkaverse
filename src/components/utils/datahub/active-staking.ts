@@ -278,6 +278,36 @@ export async function getRewardHistory(address: string): Promise<RewardHistory> 
   }
 }
 
+const GET_SUPER_LIKES_STATS = gql`
+  query GetSuperLikesStats($from: String!, $to: String!) {
+    activeStakingSuperLikeCountsByDate(args: { fromDate: $from, toDate: $to }) {
+      count
+      dayUnixTimestamp
+    }
+  }
+`
+export async function getSuperLikesStats(
+  period: number,
+): Promise<{ count: number; dayUnixTimestamp: number }[]> {
+  const { day: currentTimestamp } = getDayAndWeekTimestamp()
+  const currentMinusPeriod = dayjs().subtract(period, 'day').toDate()
+  const { day: startTimestamp } = getDayAndWeekTimestamp(currentMinusPeriod)
+  const res = await datahubQueryRequest<
+    {
+      activeStakingSuperLikeCountsByData: {
+        count: number
+        dayUnixTimestamp: number
+      }[]
+    },
+    { from: string; to: string }
+  >({
+    document: GET_SUPER_LIKES_STATS,
+    variables: { from: startTimestamp.toString(), to: currentTimestamp.toString() },
+  })
+
+  return res.activeStakingSuperLikeCountsByData
+}
+
 // MUTATIONS
 export async function createSuperLike(
   params: DatahubParams<SocialCallDataArgs<'synth_active_staking_create_super_like'>>,
