@@ -14,7 +14,7 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
   return (
     <div {...props} className={clsx(props.className)}>
       <Tooltip
-        className='d-flex align-items-center GapMini FontWeightMedium'
+        className='d-flex align-items-center GapMini FontWeightMedium ColorMuted'
         title='Rewards earned depend on how many likes a post or comment gets, and how much SUB each liker has staked'
       >
         <TbCoins className='FontNormal' />
@@ -28,7 +28,7 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
             value={reward.amount}
           />
         </span>
-        <span className='d-flex align-items-center GapMini ColorMuted'>earned</span>
+        <span className='d-flex align-items-center GapMini'>earned</span>
       </Tooltip>
     </div>
   )
