@@ -52,7 +52,7 @@ export default function CreatorRewardInfoCard() {
             <div className='d-flex align-items-center justify-content-between'>
               <div className='d-flex align-items-baseline GapMini'>
                 <MutedSpan>Received likes</MutedSpan>
-                <Tooltip title='The amount of times your posts have been superliked this week'>
+                <Tooltip title='The amount of times your posts and comments have been superliked this week'>
                   <SlQuestion className='FontTiny ColorMuted' />
                 </Tooltip>
               </div>
@@ -63,7 +63,7 @@ export default function CreatorRewardInfoCard() {
             <div className='d-flex align-items-center justify-content-between'>
               <div className='d-flex align-items-baseline GapMini'>
                 <MutedSpan>Earned from posts</MutedSpan>
-                <Tooltip title='The minimum amount of SUB that you will earn as a result of your posts being superliked this week'>
+                <Tooltip title='The minimum amount of SUB that you will earn as a result of your posts and comments being superliked this week'>
                   <SlQuestion className='FontTiny ColorMuted' />
                 </Tooltip>
               </div>
