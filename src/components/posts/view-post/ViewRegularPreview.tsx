@@ -35,7 +35,12 @@ export const RegularPreview: ComponentType = props => {
         />
       )}
       {commentsSection && (
-        <CommentSection post={postDetails} replies={replies} space={space?.struct} />
+        <CommentSection
+          post={postDetails}
+          replies={replies}
+          space={space?.struct}
+          eventSource='post-preview'
+        />
       )}
     </>
   ) : (

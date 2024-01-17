@@ -8,18 +8,21 @@ import useSubsocialEffect from '../api/useSubsocialEffect'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import DataList from '../lists/DataList'
 import { Loading } from '../utils'
+import { CommentEventProps } from './CommentEditor'
 import { useRepliesData } from './utils'
 import ViewComment from './ViewComment'
 
 type CommentsTreeProps = {
   parentId: PostId
+  eventProps: CommentEventProps
 }
 
 type CommentByIdProps = {
   commentId: PostId
+  eventProps: CommentEventProps
 }
 
-const CommentById = React.memo(({ commentId: id }: CommentByIdProps) => {
+const CommentById = React.memo(({ commentId: id, eventProps }: CommentByIdProps) => {
   const comment = useSelectPost(id)
 
   const rootPostId = comment ? asCommentStruct(comment.post.struct).rootPostId : undefined
@@ -28,10 +31,10 @@ const CommentById = React.memo(({ commentId: id }: CommentByIdProps) => {
 
   if (!comment) return null
 
-  return <ViewComment rootPost={rootPost} space={space} comment={comment} />
+  return <ViewComment rootPost={rootPost} space={space} comment={comment} eventProps={eventProps} />
 })
 
-export const ViewCommentsTree: FC<CommentsTreeProps> = ({ parentId }) => {
+export const ViewCommentsTree: FC<CommentsTreeProps> = ({ parentId, eventProps }) => {
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
   const [loading, setLoading] = useState(true)
@@ -75,7 +78,7 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({ parentId }) => {
       getKey={replyId => replyId}
       className='mt-2.5'
       listClassName='GapSmall d-flex flex-column'
-      renderItem={replyId => <CommentById commentId={replyId} />}
+      renderItem={replyId => <CommentById commentId={replyId} eventProps={eventProps} />}
     />
   )
 }

@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { Controller, ErrorMessage, useForm } from 'react-hook-form'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import { TxCallback, TxFailedCallback } from 'src/components/substrate/SubstrateTxButton'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { CommentContent, IpfsCid } from 'src/types'
 import { useAmIBlocked } from '../auth/MyAccountsContext'
 import { buildSharePostValidationSchema } from '../posts/PostValidation'
@@ -24,6 +25,12 @@ import { CommentTxButtonType } from './utils'
 //   }
 // }
 
+export type CommentEventProps = {
+  eventSource: string
+  level: number
+  isPostAuthor: boolean
+  isEditing?: boolean
+}
 type Props = MyAccountProps & {
   content?: CommentContent
   withCancel?: boolean
@@ -32,6 +39,7 @@ type Props = MyAccountProps & {
   asStub?: boolean
   className?: string
   autoFocus?: boolean
+  eventProps: CommentEventProps
 }
 
 const Fields = {
@@ -39,11 +47,13 @@ const Fields = {
 }
 
 export const CommentEditor = (props: Props) => {
-  const { content, withCancel, callback, CommentTxButton, asStub, autoFocus } = props
+  const { content, withCancel, callback, CommentTxButton, asStub, autoFocus, eventProps } = props
   const { ipfs } = useSubsocialApi()
   const [ipfsCid, setIpfsCid] = useState<IpfsCid>()
   const [fakeId] = useState(tmpClientId())
   const [toolbar, setToolbar] = useState(!asStub)
+
+  const sendEvent = useSendEvent()
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -93,7 +103,10 @@ export const CommentEditor = (props: Props) => {
       disabled={isSubmitting || !dirty}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
-      onClick={() => setIsLoading(true)}
+      onClick={() => {
+        setIsLoading(true)
+        sendEvent('comment', eventProps)
+      }}
     />
   )
 

@@ -24,6 +24,7 @@ import { formatDate, IconWithLabel, useIsHidden } from '../utils'
 import { MutedSpan } from '../utils/MutedText'
 import { Pluralize } from '../utils/Plularize'
 import SuperLike from '../voting/SuperLike'
+import { CommentEventProps } from './CommentEditor'
 import { ViewCommentsTree } from './CommentTree'
 import { NewComment } from './CreateComment'
 import { CommentBody } from './helpers'
@@ -35,6 +36,7 @@ type Props = {
   rootPost?: PostStruct
   comment: PostWithSomeDetails
   withShowReplies?: boolean
+  eventProps: CommentEventProps
 }
 
 export const InnerViewComment: FC<Props> = props => {
@@ -43,6 +45,7 @@ export const InnerViewComment: FC<Props> = props => {
     rootPost,
     comment: commentDetails,
     withShowReplies = false,
+    eventProps,
   } = props
 
   const { post: comment } = commentDetails
@@ -100,6 +103,7 @@ export const InnerViewComment: FC<Props> = props => {
 
   const newCommentForm = showReplyForm && (
     <NewComment
+      eventProps={eventProps}
       autoFocus
       post={commentStruct}
       callback={() => {
@@ -145,6 +149,7 @@ export const InnerViewComment: FC<Props> = props => {
           <div className='mt-1'>
             {showEditForm ? (
               <EditComment
+                eventProps={eventProps}
                 struct={commentStruct}
                 content={commentContent}
                 callback={() => setShowEditForm(false)}
@@ -178,7 +183,12 @@ export const InnerViewComment: FC<Props> = props => {
             {hasReplies && (
               <div className='pb-2'>
                 {!withShowReplies && <ViewRepliesLink />}
-                {showReplies && <ViewCommentsTree parentId={commentStruct.id} />}
+                {showReplies && (
+                  <ViewCommentsTree
+                    eventProps={{ ...eventProps, level: eventProps.level + 1 }}
+                    parentId={commentStruct.id}
+                  />
+                )}
               </div>
             )}
           </div>
