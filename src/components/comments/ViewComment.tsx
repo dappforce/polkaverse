@@ -1,5 +1,5 @@
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons'
-import { Button } from 'antd'
+import { Button, Tag, Tooltip } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import Link from 'next/link'
@@ -127,7 +127,11 @@ export const InnerViewComment: FC<Props> = props => {
                   owner={owner}
                   asLink
                 />
-                {isRootPostOwner && <span className='ColorPrimary FontWeightSemibold'>OP</span>}
+                {isRootPostOwner && (
+                  <Tag color='blue' className='mr-0'>
+                    <Tooltip title='Original Poster'>OP</Tooltip>
+                  </Tag>
+                )}
               </div>
               <MutedSpan>&middot;</MutedSpan>
               <Link href='/[spaceId]/[slug]' as={commentLink}>
