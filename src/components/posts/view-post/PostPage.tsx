@@ -3,7 +3,7 @@ import { getPostIdFromSlug } from '@subsocial/utils/slugify'
 import clsx from 'clsx'
 import { NextPage } from 'next'
 import router from 'next/router'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import { CommentSection } from 'src/components/comments/CommentsSection'
 import MobileStakerRewardDashboard from 'src/components/creators/MobileStakerRewardDashboard'
 import { PageContent } from 'src/components/main/PageWrapper'
@@ -17,7 +17,7 @@ import { return404 } from 'src/components/utils/next'
 import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { getInitialPropsWithRedux, NextContextWithRedux } from 'src/rtk/app'
-import { useSelectProfile, useSetChatEntityConfig } from 'src/rtk/app/hooks'
+import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
@@ -58,16 +58,6 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
 
   const { post, space } = postData
   const { struct, content } = post
-
-  const setChatConfig = useSetChatEntityConfig()
-  useEffect(() => {
-    if (!post) return
-    setChatConfig({ entity: { data: post, type: 'post' }, withFloatingButton: true })
-
-    return () => {
-      setChatConfig(null)
-    }
-  }, [])
 
   const goToCommentsId = 'comments'
 
