@@ -8,7 +8,7 @@ import messages from 'src/messages'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { PageContent } from '../main/PageWrapper'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
-import { getSuperLikesStats } from '../utils/datahub/active-staking'
+import { getSuperLikesStats, SuperLikesStat } from '../utils/datahub/active-staking'
 import { Loading } from '../utils/index'
 import Section from '../utils/Section'
 import { Stats } from '../utils/Stats'
@@ -178,7 +178,8 @@ export function Statistics(props: FormProps) {
         statisticsDataArrPromise,
         superLikeDataPromise,
       ] as const)
-      console.log(statisticsDataArr, superLikeData)
+
+      combineOldLikesAndSuperLikes(statisticsDataArr, superLikeData)
 
       if (isMounted) {
         setData(statisticsDataArr)
@@ -230,6 +231,39 @@ export function Statistics(props: FormProps) {
       </Section>
     </PageContent>
   )
+}
+
+function combineOldLikesAndSuperLikes(
+  stats: StatType[],
+  superLikesStats: SuperLikesStat[],
+): StatType[] {
+  const likesStat = stats.find(
+    stat => stat.activityType === 'PostReactionCreated,CommentReactionCreated',
+  )
+  if (!likesStat) return stats
+
+  const totalSuperLikes = superLikesStats.reduce((acc, stat) => acc + stat.count, 0)
+  likesStat.totalCount += totalSuperLikes
+  likesStat.countByPeriod += totalSuperLikes
+  likesStat.todayCount = superLikesStats[superLikesStats.length - 1].count
+
+  const allLikesMap = new Map<string, StatsType>()
+  likesStat.statisticsData.forEach(stat => allLikesMap.set(stat.format_date, stat))
+
+  superLikesStats.forEach(stat => {
+    const dateFormat = dayjs(stat.dayUnixTimestamp).format('YYYY-MM-DD')
+    const existingStat = allLikesMap.get(dateFormat)
+    if (existingStat) {
+      existingStat.count += stat.count
+    } else {
+      likesStat.statisticsData.push({ count: stat.count, format_date: dateFormat })
+    }
+  })
+
+  likesStat.statisticsData.sort((a, b) => {
+    return dayjs(a.format_date).unix() - dayjs(b.format_date).unix()
+  })
+  return stats
 }
 
 const getDatesBetweenDates = (startDate: Date, endDate: Date) => {

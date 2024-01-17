@@ -286,9 +286,8 @@ const GET_SUPER_LIKES_STATS = gql`
     }
   }
 `
-export async function getSuperLikesStats(
-  period: number,
-): Promise<{ count: number; dayUnixTimestamp: number }[]> {
+export type SuperLikesStat = { count: number; dayUnixTimestamp: number }
+export async function getSuperLikesStats(period: number): Promise<SuperLikesStat[]> {
   const { day: currentTimestamp } = getDayAndWeekTimestamp()
   const currentMinusPeriod = dayjs().subtract(period, 'day').toDate()
   const { day: startTimestamp } = getDayAndWeekTimestamp(currentMinusPeriod)
