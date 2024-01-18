@@ -1,8 +1,8 @@
 import { Skeleton } from 'antd'
 import clsx from 'clsx'
-import { ComponentProps, CSSProperties, useMemo } from 'react'
+import { ComponentProps, CSSProperties } from 'react'
 import { HiOutlineInformationCircle } from 'react-icons/hi2'
-import { useFetchProfileSpaces, useSelectProfileSpace, useSelectSpace } from 'src/rtk/app/hooks'
+import { useSelectProfileSpace, useSelectSpace } from 'src/rtk/app/hooks'
 import { useFetchTopUsers } from 'src/rtk/features/activeStaking/hooks'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { SpaceAvatar } from '../spaces/helpers'
@@ -16,15 +16,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
   const { data, loading } = useFetchTopUsers()
   const isMobile = useIsMobileWidthOrDevice()
 
-  const args = useMemo(
-    () => ({
-      ids: [...(data?.stakers ?? []), ...(data?.creators ?? [])].map(({ address }) => address),
-    }),
-    [data],
-  )
-  const { loading: loadingSpaces } = useFetchProfileSpaces(args)
-
-  const isLoading = loading || !data || loadingSpaces
+  const isLoading = loading || !data
 
   // const seeMoreButton = (
   //   <Button

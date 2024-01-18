@@ -19,6 +19,7 @@ import { resolveIpfsUrl } from 'src/ipfs'
 import { getInitialPropsWithRedux, NextContextWithRedux } from 'src/rtk/app'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
+import { fetchTopUsersWithSpaces } from 'src/rtk/features/activeStaking/topUsersSlice'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
 import { asCommentStruct, HasStatusCode, idToBn, PostData, PostWithSomeDetails } from 'src/types'
@@ -296,21 +297,33 @@ const PostPage: FC<PostDetailsProps & HasStatusCode> = props => {
 getInitialPropsWithRedux(PostPage, async props => {
   const { subsocial, dispatch, reduxStore, context } = props
 
-  const data = await loadPostOnNextReq(props)
+  async function getData() {
+    const data = await loadPostOnNextReq(props)
 
-  if (data.statusCode === 404) return return404(context)
+    if (data.statusCode === 404) return null
 
-  let rootPostData: PostWithSomeDetails | undefined
+    let rootPostData: PostWithSomeDetails | undefined
 
-  const postStruct = data?.post?.struct
+    const postStruct = data?.post?.struct
 
-  if (postStruct?.isComment) {
-    const { rootPostId } = asCommentStruct(postStruct)
-    await dispatch(
-      fetchPost({ api: subsocial, id: rootPostId, reload: true, eagerLoadHandles: true }),
-    )
-    rootPostData = selectPost(reduxStore.getState(), { id: rootPostId })
+    if (postStruct?.isComment) {
+      const { rootPostId } = asCommentStruct(postStruct)
+      await dispatch(
+        fetchPost({ api: subsocial, id: rootPostId, reload: true, eagerLoadHandles: true }),
+      )
+      rootPostData = selectPost(reduxStore.getState(), { id: rootPostId })
+    }
+
+    return { data, rootPostData }
   }
+
+  const [res] = await Promise.all([
+    getData(),
+    fetchTopUsersWithSpaces(dispatch, subsocial),
+  ] as const)
+  if (res === null) return return404(context)
+
+  const { data, rootPostData } = res
 
   return {
     postData: data,

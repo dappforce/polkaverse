@@ -206,7 +206,7 @@ export function createSimpleFetchWrapper<Args, ReturnValue>({
   return createAsyncThunk<ReturnValue, Args & { reload?: boolean }, ThunkApiConfig>(
     `${sliceName}/fetchOne`,
     async (allArgs, { getState, dispatch }): Promise<ReturnValue> => {
-      const { reload, ...args } = allArgs
+      const { reload, ...args } = allArgs || {}
       const id = JSON.stringify(sortKeysRecursive(args))
 
       const alreadyFetchedPromise = currentlyFetchingMap.get(id)
