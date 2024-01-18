@@ -62,7 +62,11 @@ export default function CreatorInfoCard({ space, showStakeButton = true }: Creat
           />
         </div>
       </div>
-      <CollapsibleParagraph className='FontSmall mb-2' text={space.content?.about ?? ''} />
+      <CollapsibleParagraph
+        className='FontSmall mb-2'
+        text={space.content?.about ?? ''}
+        limit={120}
+      />
       {!stakeData?.hasStaked ? (
         (shouldShowFollowButton || shouldShowStakeButton) && (
           <div className={clsx('GapSmall d-flex flex-column mt-2')}>

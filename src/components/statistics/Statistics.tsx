@@ -8,6 +8,7 @@ import messages from 'src/messages'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { PageContent } from '../main/PageWrapper'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
+import { getSuperLikesStats, SuperLikesStat } from '../utils/datahub/active-staking'
 import { Loading } from '../utils/index'
 import Section from '../utils/Section'
 import { Stats } from '../utils/Stats'
@@ -26,10 +27,10 @@ export type ActivityEvent =
 export const eventArr = [
   'PostReactionCreated,CommentReactionCreated',
   'PostCreated',
+  'CommentCreated,CommentReplyCreated',
   'SpaceCreated',
   'SpaceFollowed',
-  'PostShared,CommentShared',
-  'CommentCreated,CommentReplyCreated',
+  // 'PostShared,CommentShared',
   'AccountFollowed',
 ]
 
@@ -165,12 +166,20 @@ export function Statistics(props: FormProps) {
     const load = async () => {
       setIsLoaded(false)
 
-      const statisticsDataArr = await Promise.all(
+      const statisticsDataArrPromise = Promise.all(
         eventArr.map(async eventName => {
           const event = eventName as ActivityEvent
           return getActivityCountStat({ event, period: constrainedPeriod })
         }),
       )
+      const superLikeDataPromise = getSuperLikesStats(constrainedPeriod)
+
+      const [statisticsDataArr, superLikeData] = await Promise.all([
+        statisticsDataArrPromise,
+        superLikeDataPromise,
+      ] as const)
+
+      combineOldLikesAndSuperLikes(statisticsDataArr, superLikeData)
 
       if (isMounted) {
         setData(statisticsDataArr)
@@ -222,6 +231,39 @@ export function Statistics(props: FormProps) {
       </Section>
     </PageContent>
   )
+}
+
+function combineOldLikesAndSuperLikes(
+  stats: StatType[],
+  superLikesStats: SuperLikesStat,
+): StatType[] {
+  const likesStat = stats.find(
+    stat => stat.activityType === 'PostReactionCreated,CommentReactionCreated',
+  )
+  if (!likesStat) return stats
+
+  const totalSuperLikes = superLikesStats.data.reduce((acc, stat) => acc + stat.count, 0)
+  likesStat.totalCount += superLikesStats.total
+  likesStat.countByPeriod += totalSuperLikes
+  likesStat.todayCount = superLikesStats.data[superLikesStats.data.length - 1].count
+
+  const allLikesMap = new Map<string, StatsType>()
+  likesStat.statisticsData.forEach(stat => allLikesMap.set(stat.format_date, stat))
+
+  superLikesStats.data.forEach(stat => {
+    const dateFormat = dayjs(stat.dayUnixTimestamp * 1000).format('YYYY-MM-DD')
+    const existingStat = allLikesMap.get(dateFormat)
+    if (existingStat) {
+      existingStat.count += stat.count
+    } else {
+      likesStat.statisticsData.push({ count: stat.count, format_date: dateFormat })
+    }
+  })
+
+  likesStat.statisticsData.sort((a, b) => {
+    return dayjs(a.format_date).unix() - dayjs(b.format_date).unix()
+  })
+  return stats
 }
 
 const getDatesBetweenDates = (startDate: Date, endDate: Date) => {
