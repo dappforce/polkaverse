@@ -1,8 +1,7 @@
-import { Button, Skeleton } from 'antd'
+import { Skeleton } from 'antd'
 import clsx from 'clsx'
 import { ComponentProps, CSSProperties, useMemo } from 'react'
 import { HiOutlineInformationCircle } from 'react-icons/hi2'
-import { IoChevronForward } from 'react-icons/io5'
 import { useFetchProfileSpaces, useSelectProfileSpace, useSelectSpace } from 'src/rtk/app/hooks'
 import { useFetchTopUsers } from 'src/rtk/features/activeStaking/hooks'
 import { useIsMobileWidthOrDevice } from '../responsive'
@@ -26,17 +25,17 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
 
   const isLoading = loading || !data || loadingSpaces
 
-  const seeMoreButton = (
-    <Button
-      type='primary'
-      ghost
-      className='p-0 GapMini d-flex align-items-center'
-      style={{ height: 'auto', border: 'none', boxShadow: 'none' }}
-    >
-      <span>See more</span>
-      <IoChevronForward />
-    </Button>
-  )
+  // const seeMoreButton = (
+  //   <Button
+  //     type='primary'
+  //     ghost
+  //     className='p-0 GapMini d-flex align-items-center'
+  //     style={{ height: 'auto', border: 'none', boxShadow: 'none' }}
+  //   >
+  //     <span>See more</span>
+  //     <IoChevronForward />
+  //   </Button>
+  // )
 
   const content = isLoading ? (
     <Skeleton />
@@ -47,7 +46,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
           <span>Top members (last 24h)</span>
           <HiOutlineInformationCircle />
         </div>
-        {isMobile && seeMoreButton}
+        {/* {isMobile && seeMoreButton} */}
       </div>
       <div
         className={clsx('mt-2', isMobile && 'GapNormal')}
