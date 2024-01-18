@@ -2,20 +2,9 @@ import dayjs from 'dayjs'
 
 export type DateIntervalType = 'day' | 'month' | 'year'
 export function getDateWithOffset(offset: number, interval: DateIntervalType = 'day') {
-  const now = new Date()
-  const date = now.getDate()
-  const month = now.getMonth()
-  const year = now.getFullYear()
-
-  const multipliers: { [key in DateIntervalType]: number } = {
-    day: 1,
-    month: 30,
-    year: 365,
-  }
-  let multiplier = multipliers[interval]
-
-  const offsetDate = date - offset * multiplier
-  return new Date(year, month, offsetDate).toISOString()
+  const now = dayjs.utc().startOf('day')
+  now.subtract(offset, interval)
+  return now.toISOString()
 }
 
 const DIVISIONS: { amount: number; name: Intl.RelativeTimeFormatUnit }[] = [
