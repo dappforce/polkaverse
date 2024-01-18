@@ -293,7 +293,7 @@ export async function getSuperLikesStats(period: number): Promise<SuperLikesStat
   const { day: startTimestamp } = getDayAndWeekTimestamp(currentMinusPeriod)
   const res = await datahubQueryRequest<
     {
-      activeStakingSuperLikeCountsByData: {
+      activeStakingSuperLikeCountsByDate: {
         count: number
         dayUnixTimestamp: number
       }[]
@@ -304,7 +304,7 @@ export async function getSuperLikesStats(period: number): Promise<SuperLikesStat
     variables: { from: startTimestamp.toString(), to: currentTimestamp.toString() },
   })
 
-  return res.activeStakingSuperLikeCountsByData
+  return res.activeStakingSuperLikeCountsByDate
 }
 
 // MUTATIONS
