@@ -324,7 +324,7 @@ export async function getActivityCountStat(
   const res = await client.query<GetActivityCountStat>({
     query: getActivityCountStatQuery(period, eventFilters),
   })
-  const statisticsData = Array.from({ length: period + 1 }).reduce<StatType['statisticsData']>(
+  const statisticsData = Array.from({ length: period }).reduce<StatType['statisticsData']>(
     (acc, _, index) => {
       const offset = period - index
       const dateAfterOffset = getDateWithOffset(offset)

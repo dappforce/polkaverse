@@ -259,6 +259,8 @@ function combineOldLikesAndSuperLikes(
 
   superLikesStats.data.forEach(stat => {
     const dateFormat = dayjs.utc(stat.dayUnixTimestamp * 1000).format('YYYY-MM-DD')
+    if (dayjs.utc().startOf('day').format('YYYY-MM-DD') === dateFormat) return
+
     const existingStat = allLikesMap.get(dateFormat)
     if (existingStat) {
       existingStat.count += stat.count
