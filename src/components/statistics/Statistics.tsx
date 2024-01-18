@@ -132,6 +132,7 @@ export function InnerStatistics(props: FormProps) {
 const AFTER_PARACHAIN_MIGRATION_DATE = new Date(2022, 8, 1)
 const MAX_DAY_DIFF = dayjs(new Date()).diff(AFTER_PARACHAIN_MIGRATION_DATE, 'days')
 
+const cachedData: Record<number, StatType[]> = {}
 export function Statistics(props: FormProps) {
   const address = useMyAddress()
   const getActivityCountStat = useGetActivityCountStat()
@@ -182,12 +183,18 @@ export function Statistics(props: FormProps) {
       combineOldLikesAndSuperLikes(statisticsDataArr, superLikeData)
 
       if (isMounted) {
+        cachedData[constrainedPeriod] = statisticsDataArr
         setData(statisticsDataArr)
         setIsLoaded(true)
       }
     }
 
-    load()
+    if (cachedData[constrainedPeriod]) {
+      setData(cachedData[constrainedPeriod])
+      setIsLoaded(true)
+    } else {
+      load()
+    }
 
     return () => {
       isMounted = false
@@ -251,7 +258,7 @@ function combineOldLikesAndSuperLikes(
   likesStat.statisticsData.forEach(stat => allLikesMap.set(stat.format_date, stat))
 
   superLikesStats.data.forEach(stat => {
-    const dateFormat = dayjs(stat.dayUnixTimestamp * 1000).format('YYYY-MM-DD')
+    const dateFormat = dayjs.utc(stat.dayUnixTimestamp * 1000).format('YYYY-MM-DD')
     const existingStat = allLikesMap.get(dateFormat)
     if (existingStat) {
       existingStat.count += stat.count
