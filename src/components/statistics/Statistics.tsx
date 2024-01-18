@@ -179,8 +179,6 @@ export function Statistics(props: FormProps) {
         superLikeDataPromise,
       ] as const)
 
-      console.log(superLikeData)
-
       combineOldLikesAndSuperLikes(statisticsDataArr, superLikeData)
 
       if (isMounted) {
@@ -242,7 +240,6 @@ function combineOldLikesAndSuperLikes(
   const likesStat = stats.find(
     stat => stat.activityType === 'PostReactionCreated,CommentReactionCreated',
   )
-  console.log(likesStat, stats)
   if (!likesStat) return stats
 
   const totalSuperLikes = superLikesStats.reduce((acc, stat) => acc + stat.count, 0)
