@@ -312,14 +312,18 @@ export async function getTopUsers(): Promise<TopUsers> {
   })
 
   return {
-    creators: res.activeStakingCreatorsRankedBySuperLikesForPeriod.map(({ address, count }) => ({
-      address,
-      superLikesCount: count,
-    })),
-    stakers: res.activeStakingStakersRankedBySuperLikesForPeriod.map(({ address, count }) => ({
-      address,
-      superLikesCount: count,
-    })),
+    creators: res.activeStakingCreatorsRankedBySuperLikesForPeriod
+      .slice(0, 3)
+      .map(({ address, count }) => ({
+        address,
+        superLikesCount: count,
+      })),
+    stakers: res.activeStakingStakersRankedBySuperLikesForPeriod
+      .slice(0, 3)
+      .map(({ address, count }) => ({
+        address,
+        superLikesCount: count,
+      })),
   }
 }
 // MUTATIONS
