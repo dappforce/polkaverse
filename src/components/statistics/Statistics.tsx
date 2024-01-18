@@ -132,6 +132,7 @@ export function InnerStatistics(props: FormProps) {
 const AFTER_PARACHAIN_MIGRATION_DATE = new Date(2022, 8, 1)
 const MAX_DAY_DIFF = dayjs(new Date()).diff(AFTER_PARACHAIN_MIGRATION_DATE, 'days')
 
+const cachedData: Record<number, StatType[]> = {}
 export function Statistics(props: FormProps) {
   const address = useMyAddress()
   const getActivityCountStat = useGetActivityCountStat()
@@ -182,12 +183,18 @@ export function Statistics(props: FormProps) {
       combineOldLikesAndSuperLikes(statisticsDataArr, superLikeData)
 
       if (isMounted) {
+        cachedData[constrainedPeriod] = statisticsDataArr
         setData(statisticsDataArr)
         setIsLoaded(true)
       }
     }
 
-    load()
+    if (cachedData[constrainedPeriod]) {
+      setData(cachedData[constrainedPeriod])
+      setIsLoaded(true)
+    } else {
+      load()
+    }
 
     return () => {
       isMounted = false
