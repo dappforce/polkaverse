@@ -122,7 +122,7 @@ export const PageContent: FC<Props> = ({
   // const myAddress = useMyAddress()
 
   const isMobile = useIsMobileWidthOrDevice()
-  const { isDesktop } = useResponsiveSize()
+  const { isLargeDesktop } = useResponsiveSize()
   // const isPanels = leftPanel || rightPanel
 
   const sidebarStyles: ComponentProps<'div'> = {
@@ -151,7 +151,7 @@ export const PageContent: FC<Props> = ({
         </section>
       ) : (
         <div className={clsx('DfSectionOuterContainer')}>
-          {creatorDashboardSidebarType && isDesktop && (
+          {creatorDashboardSidebarType && isLargeDesktop && (
             <div {...sidebarStyles}>
               <div>
                 <TopUsersCard />
@@ -186,6 +186,11 @@ export const PageContent: FC<Props> = ({
           {rightPanel === undefined && creatorDashboardSidebarType && (
             <div {...sidebarStyles}>
               <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
+              {!isLargeDesktop && (
+                <div className='mt-3'>
+                  <TopUsersCard />
+                </div>
+              )}
               {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}
             </div>
           )}

@@ -6,6 +6,7 @@ import { useFetchProfileSpaces, useSelectProfileSpace, useSelectSpace } from 'sr
 import { useFetchTopUsers } from 'src/rtk/features/activeStaking/hooks'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { SpaceAvatar } from '../spaces/helpers'
+import ViewSpaceLink from '../spaces/ViewSpaceLink'
 import { MutedSpan } from '../utils/MutedText'
 import Segment from '../utils/Segment'
 
@@ -119,19 +120,24 @@ function UserInfo({
         )}
       </div>
       <div className='d-flex flex-column' style={{ minWidth: 0 }}>
-        <span
-          className='FontWeightMedium'
-          style={{
-            minWidth: 0,
-            textOverflow: 'ellipsis',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            position: 'relative',
-            top: '2px',
-          }}
-        >
-          {space.content?.name ?? 'Unnamed'}
-        </span>
+        <ViewSpaceLink
+          title={
+            <span
+              className='FontWeightMedium'
+              style={{
+                minWidth: 0,
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                position: 'relative',
+                top: '2px',
+              }}
+            >
+              {space.content?.name ?? 'Unnamed'}
+            </span>
+          }
+          space={space.struct}
+        />
         <div className='d-flex align-items-center ColorMuted GapMini'>
           <span>{user.superLikesCount} Likes</span>
         </div>
