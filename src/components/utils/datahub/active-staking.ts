@@ -280,7 +280,7 @@ export async function getRewardHistory(address: string): Promise<RewardHistory> 
 
 const GET_SUPER_LIKES_STATS = gql`
   query GetSuperLikesStats($from: String!, $to: String!) {
-    activeStakingSuperLikeCountsByDate(args: { fromDate: $from, toDate: $to }) {
+    activeStakingSuperLikeCountsByDate(args: { fromDate: $from, toDate: $to, total: true }) {
       byDate {
         count
         dayUnixTimestamp
