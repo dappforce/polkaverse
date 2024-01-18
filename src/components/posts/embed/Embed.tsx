@@ -133,7 +133,6 @@ export function YoutubeThumbnailChecker({
 function YoutubeEmbed({ src }: { src: string }) {
   const youtubeId = useMemo(() => getYoutubeVideoId(src), [src])
   const [thumbnailRes, setThumbnailRes] = useState<ThumbnailRes>('maxresdefault')
-  console.log(thumbnailRes)
 
   if (!youtubeId) return null
 

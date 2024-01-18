@@ -9,7 +9,7 @@ import { resolveIpfsUrl } from 'src/ipfs'
 import CreatorDashboardSidebar, {
   CreatorDashboardSidebarType,
 } from '../creators/CreatorDashboardSidebar'
-import TopMembersCard from '../creators/TopMembersCard'
+import TopUsersCard from '../creators/TopUsersCard'
 import { useIsMobileWidthOrDevice, useResponsiveSize } from '../responsive'
 import { fullUrl } from '../urls/helpers'
 import Section from '../utils/Section'
@@ -154,7 +154,7 @@ export const PageContent: FC<Props> = ({
           {creatorDashboardSidebarType && isDesktop && (
             <div {...sidebarStyles}>
               <div>
-                <TopMembersCard />
+                <TopUsersCard />
               </div>
             </div>
           )}

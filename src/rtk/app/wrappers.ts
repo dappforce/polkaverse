@@ -11,6 +11,7 @@ import {
   validateDataSource,
 } from './helpers'
 import { RootState } from './rootReducer'
+import { AppDispatch } from './store'
 
 type GetFirstArgumentOfAnyFunction<T> = T extends (
   first: infer FirstArgument,
@@ -198,7 +199,7 @@ export function createSimpleFetchWrapper<Args, ReturnValue>({
   sliceName: string
   getCachedData: (state: RootState, args: Args) => ReturnValue | undefined
   saveToCacheAction: (data: ReturnValue) => any
-  fetchData: (args: Args, state: RootState) => Promise<ReturnValue>
+  fetchData: (args: Args, state: RootState, dispatch: AppDispatch) => Promise<ReturnValue>
   shouldFetchCondition?: (cachedData: ReturnValue | undefined) => boolean
 }) {
   const currentlyFetchingMap = new Map<string, Promise<ReturnValue>>()
@@ -216,7 +217,7 @@ export function createSimpleFetchWrapper<Args, ReturnValue>({
         if (fetchedData && !shouldFetchCondition?.(fetchedData)) return fetchedData
       }
 
-      const promise = fetchData(allArgs, getState())
+      const promise = fetchData(allArgs, getState(), dispatch)
       currentlyFetchingMap.set(id, promise)
       const res = await promise
 

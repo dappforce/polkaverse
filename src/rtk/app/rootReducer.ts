@@ -7,6 +7,7 @@ import postReward from '../features/activeStaking/postRewardSlice'
 import rewardHistory from '../features/activeStaking/rewardHistorySlice'
 import rewardReport from '../features/activeStaking/rewardReportSlice'
 import superLikeCounts from '../features/activeStaking/superLikeCountsSlice'
+import topUsers from '../features/activeStaking/topUsersSlice'
 import chainsInfo from '../features/chainsInfo/chainsInfoSlice'
 import chat from '../features/chat/chatSlice'
 import enableConfirmation from '../features/confirmationPopup/enableConfirmationSlice'
@@ -67,6 +68,7 @@ const rootReducer = combineReducers({
   rewardHistory,
   canPostSuperLiked,
   postReward,
+  topUsers,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

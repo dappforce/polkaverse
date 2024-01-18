@@ -1,18 +1,30 @@
-import { Button } from 'antd'
+import { Button, Skeleton } from 'antd'
 import clsx from 'clsx'
-import { ComponentProps, CSSProperties } from 'react'
+import { ComponentProps, CSSProperties, useMemo } from 'react'
 import { HiOutlineInformationCircle } from 'react-icons/hi2'
 import { IoChevronForward } from 'react-icons/io5'
-import { useSelectSpace } from 'src/rtk/app/hooks'
+import { useFetchProfileSpaces, useSelectProfileSpace, useSelectSpace } from 'src/rtk/app/hooks'
+import { useFetchTopUsers } from 'src/rtk/features/activeStaking/hooks'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { SpaceAvatar } from '../spaces/helpers'
 import { MutedSpan } from '../utils/MutedText'
 import Segment from '../utils/Segment'
 
-export type TopMembersCardProps = ComponentProps<'div'> & {}
+export type TopUsersCardProps = ComponentProps<'div'>
 
-export default function TopMembersCard({ ...props }: TopMembersCardProps) {
+export default function TopUsersCard({ ...props }: TopUsersCardProps) {
+  const { data, loading } = useFetchTopUsers()
   const isMobile = useIsMobileWidthOrDevice()
+
+  const args = useMemo(
+    () => ({
+      ids: [...(data?.stakers ?? []), ...(data?.creators ?? [])].map(({ address }) => address),
+    }),
+    [data],
+  )
+  const { loading: loadingSpaces } = useFetchProfileSpaces(args)
+
+  const isLoading = loading || !data || loadingSpaces
 
   const seeMoreButton = (
     <Button
@@ -26,7 +38,9 @@ export default function TopMembersCard({ ...props }: TopMembersCardProps) {
     </Button>
   )
 
-  const content = (
+  const content = isLoading ? (
+    <Skeleton />
+  ) : (
     <>
       <div className='d-flex justify-content-between align-items-center'>
         <div className='d-flex align-items-center FontWeightSemibold GapMini'>
@@ -42,9 +56,9 @@ export default function TopMembersCard({ ...props }: TopMembersCardProps) {
         <div className='d-flex flex-column FontSmall' style={{ minWidth: 0 }}>
           <MutedSpan className='FontWeightMedium mb-1'>Stakers</MutedSpan>
           <div className='d-flex flex-column GapTiny'>
-            <CreatorInfo rank={1} />
-            <CreatorInfo rank={2} />
-            <CreatorInfo rank={3} />
+            {data.stakers.map((staker, i) => (
+              <UserInfo rank={i + 1} key={i} user={staker} />
+            ))}
           </div>
         </div>
         <div
@@ -53,9 +67,9 @@ export default function TopMembersCard({ ...props }: TopMembersCardProps) {
         >
           <MutedSpan className='FontWeightMedium mb-1'>Creators</MutedSpan>
           <div className='d-flex flex-column GapTiny'>
-            <CreatorInfo rank={1} />
-            <CreatorInfo rank={2} />
-            <CreatorInfo rank={3} />
+            {data?.creators.map((creator, i) => (
+              <UserInfo rank={i + 1} key={i} user={creator} />
+            ))}
           </div>
         </div>
       </div>
@@ -82,8 +96,15 @@ export default function TopMembersCard({ ...props }: TopMembersCardProps) {
   )
 }
 
-function CreatorInfo({ rank }: { rank: number }) {
-  const space = useSelectSpace('11157')
+function UserInfo({
+  rank,
+  user,
+}: {
+  rank: number
+  user: { address: string; superLikesCount: number }
+}) {
+  const profile = useSelectProfileSpace(user.address)
+  const space = useSelectSpace(profile?.spaceId)
   if (!space) return null
 
   return (
@@ -110,9 +131,13 @@ function CreatorInfo({ rank }: { rank: number }) {
             top: '2px',
           }}
         >
-          Adam Smith Adam Smith Adam Smith Adam Smith Adam Smith
+          {space.content?.name ?? 'Unnamed'}
         </span>
-        <MutedSpan>245.45 SUB</MutedSpan>
+        <div className='d-flex align-items-center ColorMuted GapMini'>
+          <span>{user.superLikesCount} Likes</span>
+          <span>&middot;</span>
+          <span>245.45 SUB</span>
+        </div>
       </div>
     </div>
   )

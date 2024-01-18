@@ -1,7 +1,7 @@
 import { ComponentProps } from 'react'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import MobileStakerRewardDashboard from './MobileStakerRewardDashboard'
-import TopMembersCard from './TopMembersCard'
+import TopUsersCard from './TopUsersCard'
 
 export type MobileActiveStakingSectionProps = ComponentProps<'div'>
 
@@ -22,7 +22,7 @@ export default function MobileActiveStakingSection({ ...props }: MobileActiveSta
       }}
     >
       <MobileStakerRewardDashboard />
-      <TopMembersCard />
+      <TopUsersCard />
     </div>
   )
 }
