@@ -327,7 +327,7 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
         <SuperLike post={struct} />
         {preview && <CommentAction {...props} />}
       </div>
-      <PostRewardStat postId={postDetails.id} style={{ alignSelf: 'end' }} />
+      <PostRewardStat postId={postDetails.id} />
       {/* <ShareDropdown postDetails={postDetails} space={space} className='DfAction' /> */}
     </div>
   )

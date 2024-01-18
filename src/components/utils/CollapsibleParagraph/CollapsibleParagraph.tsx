@@ -7,9 +7,10 @@ import styles from './CollapsibleParagraph.module.sass'
 
 export type CollapsibleParagraphProps = ComponentProps<'span'> & {
   text: string
+  limit?: number
 }
 
-export default function CollapsibleParagraph({ text, ...props }: CollapsibleParagraphProps) {
+export default function CollapsibleParagraph({ text, limit, ...props }: CollapsibleParagraphProps) {
   const [collapseAbout, setCollapseAbout] = useState(true)
   const summarized = useMemo(() => summarizeMd(text), [text])
 
@@ -31,6 +32,7 @@ export default function CollapsibleParagraph({ text, ...props }: CollapsiblePara
       ) : (
         <SummarizeMd
           omitDefaultClassName
+          limit={limit}
           content={summarized}
           more={
             <span className='DfBlackLink font-weight-semibold' onClick={onToggleShow}>

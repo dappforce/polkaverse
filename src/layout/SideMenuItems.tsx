@@ -3,6 +3,7 @@ import {
   BugOutlined,
   BulbOutlined,
   GlobalOutlined,
+  LineChartOutlined,
   // LineChartOutlined,
   LinkOutlined,
   NotificationOutlined,
@@ -55,11 +56,11 @@ export const DefaultMenu: MenuItem[] = [
   //   page: [ polkaStatsUrl ],
   //   icon: <BlockOutlined />,
   // },
-  // {
-  //   name: 'Statistics',
-  //   page: ['/stats'],
-  //   icon: <LineChartOutlined />,
-  // },
+  {
+    name: 'Statistics',
+    page: ['/stats'],
+    icon: <LineChartOutlined />,
+  },
   Divider,
   {
     name: config.appName,

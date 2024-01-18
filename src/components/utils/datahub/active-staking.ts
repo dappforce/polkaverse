@@ -326,6 +326,45 @@ export async function getTopUsers(): Promise<TopUsers> {
       })),
   }
 }
+
+const GET_SUPER_LIKES_STATS = gql`
+  query GetSuperLikesStats($from: String!, $to: String!) {
+    activeStakingSuperLikeCountsByDate(args: { fromDate: $from, toDate: $to, total: true }) {
+      byDate {
+        count
+        dayUnixTimestamp
+      }
+      total
+    }
+  }
+`
+export type SuperLikesStat = { total: number; data: { count: number; dayUnixTimestamp: number }[] }
+export async function getSuperLikesStats(period: number): Promise<SuperLikesStat> {
+  const { day: currentTimestamp } = getDayAndWeekTimestamp()
+  const currentMinusPeriod = dayjs().subtract(period, 'day').toDate()
+  const { day: startTimestamp } = getDayAndWeekTimestamp(currentMinusPeriod)
+  const res = await datahubQueryRequest<
+    {
+      activeStakingSuperLikeCountsByDate: {
+        byDate: {
+          count: number
+          dayUnixTimestamp: number
+        }[]
+        total: number
+      }
+    },
+    { from: string; to: string }
+  >({
+    document: GET_SUPER_LIKES_STATS,
+    variables: { from: startTimestamp.toString(), to: currentTimestamp.toString() },
+  })
+
+  return {
+    data: res.activeStakingSuperLikeCountsByDate.byDate,
+    total: res.activeStakingSuperLikeCountsByDate.total,
+  }
+}
+
 // MUTATIONS
 export async function createSuperLike(
   params: DatahubParams<SocialCallDataArgs<'synth_active_staking_create_super_like'>>,
