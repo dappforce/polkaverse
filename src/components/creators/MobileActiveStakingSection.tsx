@@ -3,9 +3,16 @@ import { useIsMobileWidthOrDevice } from '../responsive'
 import MobileStakerRewardDashboard from './MobileStakerRewardDashboard'
 import TopUsersCard from './TopUsersCard'
 
-export type MobileActiveStakingSectionProps = ComponentProps<'div'>
+export type MobileActiveStakingSectionProps = ComponentProps<'div'> & {
+  offsetX?: number
+  offsetY?: number
+}
 
-export default function MobileActiveStakingSection({ ...props }: MobileActiveStakingSectionProps) {
+export default function MobileActiveStakingSection({
+  offsetX = -16,
+  offsetY = -12,
+  ...props
+}: MobileActiveStakingSectionProps) {
   const isMobile = useIsMobileWidthOrDevice()
   if (!isMobile) return null
 
@@ -14,7 +21,7 @@ export default function MobileActiveStakingSection({ ...props }: MobileActiveSta
       <div
         {...props}
         style={{
-          margin: '-12px -16px 0',
+          margin: `${offsetY}px ${offsetX}px 0`,
           position: 'sticky',
           top: '64px',
           zIndex: 10,
@@ -24,7 +31,7 @@ export default function MobileActiveStakingSection({ ...props }: MobileActiveSta
       >
         <MobileStakerRewardDashboard />
       </div>
-      <TopUsersCard />
+      <TopUsersCard style={{ margin: `0 ${offsetX}px`, background: 'white' }} />
     </>
   )
 }
