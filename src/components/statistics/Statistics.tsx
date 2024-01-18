@@ -27,10 +27,10 @@ export type ActivityEvent =
 export const eventArr = [
   'PostReactionCreated,CommentReactionCreated',
   'PostCreated',
+  'CommentCreated,CommentReplyCreated',
   'SpaceCreated',
   'SpaceFollowed',
-  'PostShared,CommentShared',
-  'CommentCreated,CommentReplyCreated',
+  // 'PostShared,CommentShared',
   'AccountFollowed',
 ]
 
