@@ -23,7 +23,7 @@ export default function MobileStakerRewardDashboard(props: MobileStakerRewardDas
 
   if (loading) return null
 
-  if (!totalStake?.amount) {
+  if (!totalStake?.hasStaked) {
     return <StakeSubBanner {...props} />
   }
   return <StakerRewardDashboard {...props} />

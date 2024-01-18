@@ -44,7 +44,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
     <>
       <div className='d-flex justify-content-between align-items-center'>
         <div className='d-flex align-items-center FontWeightSemibold GapMini'>
-          <span>Top members this week</span>
+          <span>Top members (last 24h)</span>
           <HiOutlineInformationCircle />
         </div>
         {isMobile && seeMoreButton}
@@ -73,7 +73,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
           </div>
         </div>
       </div>
-      {!isMobile && <div className='d-flex justify-content-center mt-2'>{seeMoreButton}</div>}
+      {/* {!isMobile && <div className='d-flex justify-content-center mt-2'>{seeMoreButton}</div>} */}
     </>
   )
 
@@ -135,8 +135,6 @@ function UserInfo({
         </span>
         <div className='d-flex align-items-center ColorMuted GapMini'>
           <span>{user.superLikesCount} Likes</span>
-          <span>&middot;</span>
-          <span>245.45 SUB</span>
         </div>
       </div>
     </div>
