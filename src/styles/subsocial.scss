@@ -1198,6 +1198,10 @@ hr {
     position: relative;
     z-index: 0;
 
+    &.DfSectionLarger {
+      max-width: calc(890px + #{$space_normal} * 2);
+    }
+
     .DfSectionOuter {
       width: 100%;
     }
@@ -2019,6 +2023,20 @@ hr {
   background-color: #fff;
   padding: $space_big;
   border-radius: $border_radius_huge;
+
+  &.NoShadow {
+    box-shadow: none !important;
+  }
+
+  &.DfCardInfo {
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    background: #edf4ff;
+  }
+
+  &.small {
+    padding: $space_normal;
+    border-radius: $border_radius_big;
+  }
 }
 
 .DfMobileOnBoarding {
