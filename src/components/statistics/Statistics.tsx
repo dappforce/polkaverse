@@ -1,8 +1,7 @@
 import { AppstoreOutlined, MenuOutlined } from '@ant-design/icons'
-import { isEmptyArray } from '@subsocial/utils'
 import { Col, Radio, Row } from 'antd'
 import dayjs from 'dayjs'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useGetActivityCountStat } from 'src/graphql/hooks'
 import messages from 'src/messages'
 import { useMyAddress } from '../auth/MyAccountsContext'
@@ -139,7 +138,6 @@ export function Statistics(props: FormProps) {
 
   const [data, setData] = useState<StatType[]>()
   const [isLoaded, setIsLoaded] = useState(false)
-  const [dates, setDates] = useState<string[]>([])
   const [period, setPeriod] = useState<string>('30')
   const [tilesView, setTilesView] = useState<string>('block')
   const { isMobile } = useResponsiveSize()
@@ -147,11 +145,11 @@ export function Statistics(props: FormProps) {
   let constrainedPeriod = parseInt(period)
   if (constrainedPeriod > MAX_DAY_DIFF) constrainedPeriod = MAX_DAY_DIFF
 
-  if (isEmptyArray(dates)) {
-    const currentDate = new Date()
-    const formatDate = new Date(currentDate.setDate(currentDate.getDate() - 90))
-    setDates(getDatesBetweenDates(formatDate, new Date()))
-  }
+  const dates = useMemo(() => {
+    const currentDate = dayjs.utc().startOf('day').subtract(1, 'day')
+    const startDate = currentDate.subtract(90, 'day')
+    return getDatesBetweenDates(startDate, currentDate)
+  }, [period])
 
   const onRadioChange = (e: any) => {
     setPeriod(e.target.value)
@@ -275,12 +273,12 @@ function combineOldLikesAndSuperLikes(
   return stats
 }
 
-const getDatesBetweenDates = (startDate: Date, endDate: Date) => {
+const getDatesBetweenDates = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs) => {
   let dates: string[] = []
-  const theDate = new Date(startDate)
+  let theDate = dayjs.utc(startDate)
   while (theDate <= endDate) {
-    dates = [...dates, dayjs(new Date(theDate)).format('YYYY-MM-DD')]
-    theDate.setDate(theDate.getDate() + 1)
+    dates = [...dates, theDate.format('YYYY-MM-DD')]
+    theDate = theDate.add(1, 'day')
   }
   return dates
 }
