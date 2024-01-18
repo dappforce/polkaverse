@@ -106,6 +106,8 @@ function CreatorInfo({ rank }: { rank: number }) {
             textOverflow: 'ellipsis',
             overflow: 'hidden',
             whiteSpace: 'nowrap',
+            position: 'relative',
+            top: '2px',
           }}
         >
           Adam Smith Adam Smith Adam Smith Adam Smith Adam Smith
