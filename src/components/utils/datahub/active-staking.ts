@@ -281,22 +281,28 @@ export async function getRewardHistory(address: string): Promise<RewardHistory> 
 const GET_SUPER_LIKES_STATS = gql`
   query GetSuperLikesStats($from: String!, $to: String!) {
     activeStakingSuperLikeCountsByDate(args: { fromDate: $from, toDate: $to }) {
-      count
-      dayUnixTimestamp
+      byDate {
+        count
+        dayUnixTimestamp
+      }
+      total
     }
   }
 `
-export type SuperLikesStat = { count: number; dayUnixTimestamp: number }
-export async function getSuperLikesStats(period: number): Promise<SuperLikesStat[]> {
+export type SuperLikesStat = { total: number; data: { count: number; dayUnixTimestamp: number }[] }
+export async function getSuperLikesStats(period: number): Promise<SuperLikesStat> {
   const { day: currentTimestamp } = getDayAndWeekTimestamp()
   const currentMinusPeriod = dayjs().subtract(period, 'day').toDate()
   const { day: startTimestamp } = getDayAndWeekTimestamp(currentMinusPeriod)
   const res = await datahubQueryRequest<
     {
       activeStakingSuperLikeCountsByDate: {
-        count: number
-        dayUnixTimestamp: number
-      }[]
+        byDate: {
+          count: number
+          dayUnixTimestamp: number
+        }[]
+        total: number
+      }
     },
     { from: string; to: string }
   >({
@@ -304,7 +310,10 @@ export async function getSuperLikesStats(period: number): Promise<SuperLikesStat
     variables: { from: startTimestamp.toString(), to: currentTimestamp.toString() },
   })
 
-  return res.activeStakingSuperLikeCountsByDate
+  return {
+    data: res.activeStakingSuperLikeCountsByDate.byDate,
+    total: res.activeStakingSuperLikeCountsByDate.total,
+  }
 }
 
 // MUTATIONS

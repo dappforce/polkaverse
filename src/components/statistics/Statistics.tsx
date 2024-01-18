@@ -235,22 +235,22 @@ export function Statistics(props: FormProps) {
 
 function combineOldLikesAndSuperLikes(
   stats: StatType[],
-  superLikesStats: SuperLikesStat[],
+  superLikesStats: SuperLikesStat,
 ): StatType[] {
   const likesStat = stats.find(
     stat => stat.activityType === 'PostReactionCreated,CommentReactionCreated',
   )
   if (!likesStat) return stats
 
-  const totalSuperLikes = superLikesStats.reduce((acc, stat) => acc + stat.count, 0)
-  likesStat.totalCount += totalSuperLikes
+  const totalSuperLikes = superLikesStats.data.reduce((acc, stat) => acc + stat.count, 0)
+  likesStat.totalCount += superLikesStats.total
   likesStat.countByPeriod += totalSuperLikes
-  likesStat.todayCount = superLikesStats[superLikesStats.length - 1].count
+  likesStat.todayCount = superLikesStats.data[superLikesStats.data.length - 1].count
 
   const allLikesMap = new Map<string, StatsType>()
   likesStat.statisticsData.forEach(stat => allLikesMap.set(stat.format_date, stat))
 
-  superLikesStats.forEach(stat => {
+  superLikesStats.data.forEach(stat => {
     const dateFormat = dayjs(stat.dayUnixTimestamp * 1000).format('YYYY-MM-DD')
     const existingStat = allLikesMap.get(dateFormat)
     if (existingStat) {
