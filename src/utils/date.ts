@@ -3,8 +3,8 @@ import dayjs from 'dayjs'
 export type DateIntervalType = 'day' | 'month' | 'year'
 export function getDateWithOffset(offset: number, interval: DateIntervalType = 'day') {
   const now = dayjs.utc().startOf('day')
-  now.subtract(offset, interval)
-  return now.toISOString()
+  const offsetted = now.subtract(offset, interval)
+  return offsetted.toISOString()
 }
 
 const DIVISIONS: { amount: number; name: Intl.RelativeTimeFormatUnit }[] = [
