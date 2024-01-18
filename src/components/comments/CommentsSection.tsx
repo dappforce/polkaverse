@@ -1,17 +1,11 @@
 import clsx from 'clsx'
-import { NextPage } from 'next'
 import { FC } from 'react'
-import { PostData, PostWithSomeDetails, SpaceStruct } from 'src/types'
-import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
-import { PageContent } from '../main/PageWrapper'
-import ViewPostLink from '../posts/ViewPostLink'
-import { getProfileName } from '../substrate'
-import { postUrl } from '../urls'
+import { PostWithSomeDetails, SpaceStruct } from 'src/types'
+import { useIsMyAddress } from '../auth/MyAccountsContext'
 import { Pluralize } from '../utils/Plularize'
 import Section from '../utils/Section'
 import { ViewCommentsTree } from './CommentTree'
 import { NewComment } from './CreateComment'
-import { ViewComment } from './ViewComment'
 
 type CommentSectionProps = {
   post: PostWithSomeDetails
@@ -19,64 +13,74 @@ type CommentSectionProps = {
   replies?: PostWithSomeDetails[]
   hashId?: string
   withBorder?: boolean
+  eventSource: 'post-page' | 'post-preview'
 }
 
-export const CommentSection: FC<CommentSectionProps> = ({ post, hashId, withBorder }) => {
+export const CommentSection: FC<CommentSectionProps> = ({
+  post,
+  hashId,
+  withBorder,
+  eventSource,
+}) => {
   const {
     post: { struct },
   } = post
-  const { id, repliesCount } = struct
-  const hasAnyReply = (repliesCount ?? 0) > 0
+  const { id, repliesCount, ownerId } = struct
+  const isPostAuthor = useIsMyAddress(ownerId)
 
   return (
     <Section
       id={hashId}
-      className={clsx('DfCommentSection', hasAnyReply ? 'mb-2' : 'mb-4', {
+      className={clsx('DfCommentSection', {
         TopBorder: withBorder,
       })}
     >
       <h3>
         <Pluralize count={repliesCount || 0} singularText='comment' />
       </h3>
-      <NewComment post={struct} asStub />
-      <ViewCommentsTree parentId={id} />
+      <NewComment post={struct} asStub eventProps={{ eventSource, level: 0, isPostAuthor }} />
+      <ViewCommentsTree
+        eventProps={{ eventSource, level: 1, isPostAuthor }}
+        parentId={id}
+        directlyExpandReplies
+      />
     </Section>
   )
 }
 
-type CommentPageProps = {
-  comment: PostWithSomeDetails
-  parentPost: PostData
-  space: SpaceStruct
-  replies: PostWithSomeDetails[]
-}
+// type CommentPageProps = {
+//   comment: PostWithSomeDetails
+//   parentPost: PostData
+//   space: SpaceStruct
+//   replies: PostWithSomeDetails[]
+// }
 
-export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, space }) => {
-  const {
-    post: { struct, content },
-  } = comment
-  const { content: postContent } = parentPost
-  const address = struct.ownerId
+// export const CommentPage: NextPage<CommentPageProps> = ({ comment, parentPost, space }) => {
+//   const {
+//     post: { struct, content },
+//   } = comment
+//   const { content: postContent } = parentPost
+//   const address = struct.ownerId
 
-  const owner = useSelectSpace()
-  const profileName = getProfileName({ address, owner }).toString()
+//   const owner = useSelectSpace()
+//   const profileName = getProfileName({ address, owner }).toString()
 
-  const renderResponseTitle = () => (
-    <>
-      In response to <ViewPostLink space={space} post={parentPost} title={postContent?.title} />
-    </>
-  )
+//   const renderResponseTitle = () => (
+//     <>
+//       In response to <ViewPostLink space={space} post={parentPost} title={postContent?.title} />
+//     </>
+//   )
 
-  const meta = {
-    title: `${profileName} commented on ${content?.title}`,
-    desc: content?.summary,
-    canonical: postUrl(space, comment.post),
-  }
+//   const meta = {
+//     title: `${profileName} commented on ${content?.title}`,
+//     desc: content?.summary,
+//     canonical: postUrl(space, comment.post),
+//   }
 
-  return (
-    <PageContent meta={meta} className='DfContentPage DfEntirePost' withSidebar>
-      {renderResponseTitle()}
-      <ViewComment space={space} comment={comment} withShowReplies />
-    </PageContent>
-  )
-}
+//   return (
+//     <PageContent meta={meta} className='DfContentPage DfEntirePost' withSidebar>
+//       {renderResponseTitle()}
+//       <ViewComment space={space} comment={comment} withShowReplies />
+//     </PageContent>
+//   )
+// }

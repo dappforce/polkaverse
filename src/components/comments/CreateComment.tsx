@@ -13,6 +13,7 @@ import { asCommentStruct, convertToDerivedContent, IpfsCid, PostData, PostStruct
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { HiddenPostAlert } from '../posts/view-post'
 import { getNewIdFromEvent, getTxParams } from '../substrate'
+import { CommentEventProps } from './CommentEditor'
 import { buildMockComment, CommentTxButtonType } from './utils'
 
 const CommentEditor = dynamic(() => import('./CommentEditor'), { ssr: false })
@@ -23,9 +24,20 @@ type NewCommentProps = {
   callback?: (id?: BN) => void
   withCancel?: boolean
   asStub?: boolean
+  className?: string
+  autoFocus?: boolean
+  eventProps: CommentEventProps
 }
 
-export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, asStub }) => {
+export const NewComment: FC<NewCommentProps> = ({
+  post,
+  callback,
+  withCancel,
+  asStub,
+  className,
+  autoFocus,
+  eventProps,
+}) => {
   const { id: parentId, isComment } = post
   const { subsocial } = useSubsocialApi()
   const address = useMyAddress()
@@ -139,10 +151,13 @@ export const NewComment: FC<NewCommentProps> = ({ post, callback, withCancel, as
 
   return (
     <CommentEditor
+      eventProps={eventProps}
+      autoFocus={autoFocus}
       callback={callback}
       CommentTxButton={buildTxButton}
       withCancel={withCancel}
       asStub={asStub}
+      className={className}
     />
   )
 }

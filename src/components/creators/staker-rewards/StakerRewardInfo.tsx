@@ -1,6 +1,5 @@
 import { Skeleton, Tooltip } from 'antd'
 import clsx from 'clsx'
-import Link from 'next/link'
 import { ComponentProps, useState } from 'react'
 import { RiHistoryFill } from 'react-icons/ri'
 import { SlQuestion } from 'react-icons/sl'
@@ -41,18 +40,6 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
   const todayReward = data?.currentRewardAmount ?? '0'
   const weekReward = data?.weeklyReward ?? '0'
 
-  if (!(BigInt(todayReward) || BigInt(weekReward))) {
-    return (
-      <p className='FontSmall p-3 mb-1'>
-        Like the posts on the &quot;
-        <Link href='/?tab=posts&type=suggested&date=week' passHref>
-          <a className='ColorPrimary FontWeightMedium'>Posts &gt; Active Staking</a>
-        </Link>
-        &quot; tab to increase your staking rewards by 50-200%.
-      </p>
-    )
-  }
-
   const likeCount = data?.superLikesCount ?? 0
   const likesToMaxReward = SUPER_LIKES_FOR_MAX_REWARD - likeCount
 
@@ -65,18 +52,18 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
           <div className={styles.GoalInfo}>
             <div className='d-flex align-items-baseline GapMini'>
               <MutedSpan>
-                {likesToMaxReward > 0 ? 'Daily Activity Target' : 'Daily Target Hit'}
+                {likesToMaxReward > 0 ? 'Daily activity target' : 'Daily target hit'}
               </MutedSpan>
               <Tooltip
                 title={
                   <>
                     <p className='mb-2'>
-                      Each post you like today, up to a maximum of 10, will boost your rewards, and
-                      reward the authors of the posts you like.
+                      Each post or comment you like today, up to a maximum of 10, will boost your
+                      rewards, and reward the authors of the posts or comments you like.
                     </p>
                     <p className='mb-0'>
-                      Liking more than 10 posts will spread the author rewards across more authors,
-                      resulting in each author receiving fewer rewards.
+                      Liking more than 10 posts or comments will spread the author rewards across
+                      more authors, resulting in each author receiving fewer rewards.
                     </p>
                   </>
                 }
@@ -176,10 +163,18 @@ export function StakerSuperLikeCount() {
   const { data, loading } = useFetchUserRewardReport()
 
   const likeCount = data?.superLikesCount ?? 0
+  const surplusLikes = likeCount - SUPER_LIKES_FOR_MAX_REWARD
 
   return (
     <span className='FontWeightSemibold d-flex align-items-center'>
-      {loading ? <NumberSkeleton /> : <span>{likeCount}</span>}{' '}
+      {loading ? (
+        <NumberSkeleton />
+      ) : (
+        <>
+          <span>{Math.min(likeCount, SUPER_LIKES_FOR_MAX_REWARD)}</span>
+          {surplusLikes > 0 && <span>+{surplusLikes}</span>}
+        </>
+      )}{' '}
       <MutedSpan className='ml-1'>likes</MutedSpan>
     </span>
   )

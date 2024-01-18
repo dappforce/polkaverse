@@ -54,6 +54,7 @@ export type CommonFetchPropsWithPrefetch<T> = CommonFetchPropsAndIds & {
 export type SelectOneArgs<T> = T & {
   id: EntityId
   dataSource?: DataSourceTypes
+  reload?: boolean
 }
 
 export type SelectManyArgs<T> = T & {

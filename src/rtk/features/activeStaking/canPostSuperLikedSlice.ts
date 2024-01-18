@@ -1,11 +1,12 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
-import { getCanPostsSuperLiked } from 'src/components/utils/datahub/super-likes'
+import { getCanPostsSuperLiked } from 'src/components/utils/datahub/active-staking'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createSimpleManyFetchWrapper } from 'src/rtk/app/wrappers'
 
 export type CanPostSuperLiked = {
   postId: string
   canPostSuperLiked: boolean
+  isExist?: boolean
 }
 
 const sliceName = 'canPostSuperLiked'

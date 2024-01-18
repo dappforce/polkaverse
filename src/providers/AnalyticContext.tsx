@@ -140,15 +140,19 @@ export function AppLaunchedEventSender() {
     if (isLoading || sentInitRef.current) return
     sentInitRef.current = true
     if (!myAddress) {
-      state.sendEvent('app_launched')
+      state.sendEvent('app_launched', { signIn: false })
       return
     }
-    state.sendEvent('app_launched', undefined, {
-      hasProfile,
-      stakeAmountRange: getAmountRange(totalStake?.amount),
-      device_id: amp?.getDeviceId(),
-      hasCreatorRewards,
-    })
+    state.sendEvent(
+      'app_launched',
+      { signIn: true },
+      {
+        hasProfile,
+        stakeAmountRange: getAmountRange(totalStake?.amount),
+        device_id: amp?.getDeviceId(),
+        hasCreatorRewards,
+      },
+    )
   }, [hasProfile, isLoading, hasCreatorRewards, amp])
 
   return null

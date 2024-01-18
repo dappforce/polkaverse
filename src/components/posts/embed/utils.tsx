@@ -1,7 +1,13 @@
 import { isEmptyStr } from '@subsocial/utils'
 import { Popover } from 'antd'
 
-export const supportedEmbeddedLink = ['youtube.com', 'youtu.be', 'vimeo.com', 'soundcloud.com']
+export const supportedEmbeddedLink = [
+  'youtube.com',
+  'youtu.be',
+  'vimeo.com',
+  'soundcloud.com',
+  'gleev.xyz',
+]
 
 const supportedEmbeddedLinkSet = new Set(supportedEmbeddedLink)
 

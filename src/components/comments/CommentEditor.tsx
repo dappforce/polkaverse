@@ -2,10 +2,12 @@ import styles from './CommentEditor.module.sass'
 
 import { Button, Input } from 'antd'
 import BN from 'bn.js'
+import clsx from 'clsx'
 import { useState } from 'react'
 import { Controller, ErrorMessage, useForm } from 'react-hook-form'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import { TxCallback, TxFailedCallback } from 'src/components/substrate/SubstrateTxButton'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { CommentContent, IpfsCid } from 'src/types'
 import { useAmIBlocked } from '../auth/MyAccountsContext'
 import { buildSharePostValidationSchema } from '../posts/PostValidation'
@@ -15,20 +17,29 @@ import { MyAccountProps } from '../utils/MyAccount'
 import { CommentTxButtonType } from './utils'
 
 // A height of EasyMDE toolbar with our custom styles. Can be changed
-const toolbarHeight = 49
+// const toolbarHeight = 49
 
-function scrollToolbarHeight() {
-  if (window) {
-    window.scrollBy(0, toolbarHeight)
-  }
+// function scrollToolbarHeight() {
+//   if (window) {
+//     window.scrollBy(0, toolbarHeight)
+//   }
+// }
+
+export type CommentEventProps = {
+  eventSource: string
+  level: number
+  isPostAuthor: boolean
+  isEditing?: boolean
 }
-
 type Props = MyAccountProps & {
   content?: CommentContent
   withCancel?: boolean
   callback?: (id?: BN) => void
   CommentTxButton: (props: CommentTxButtonType) => JSX.Element
   asStub?: boolean
+  className?: string
+  autoFocus?: boolean
+  eventProps: CommentEventProps
 }
 
 const Fields = {
@@ -36,11 +47,13 @@ const Fields = {
 }
 
 export const CommentEditor = (props: Props) => {
-  const { content, withCancel, callback, CommentTxButton, asStub } = props
+  const { content, withCancel, callback, CommentTxButton, asStub, autoFocus, eventProps } = props
   const { ipfs } = useSubsocialApi()
   const [ipfsCid, setIpfsCid] = useState<IpfsCid>()
   const [fakeId] = useState(tmpClientId())
   const [toolbar, setToolbar] = useState(!asStub)
+
+  const sendEvent = useSendEvent()
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -90,19 +103,22 @@ export const CommentEditor = (props: Props) => {
       disabled={isSubmitting || !dirty}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
-      onClick={() => setIsLoading(true)}
+      onClick={() => {
+        setIsLoading(true)
+        sendEvent('comment', eventProps)
+      }}
     />
   )
 
   const showToolbar = () => {
     if (!toolbar) {
       setToolbar(true)
-      scrollToolbarHeight()
+      // scrollToolbarHeight()
     }
   }
 
   return (
-    <div className='DfShareModalBody'>
+    <div className={clsx('DfShareModalBody', props.className)}>
       <form onClick={showToolbar}>
         <Controller
           control={control}
@@ -111,6 +127,7 @@ export const CommentEditor = (props: Props) => {
               disabled={isLoading}
               placeholder='Write a comment...'
               autoSize={{ minRows: 1, maxRows: 5 }}
+              autoFocus={autoFocus}
             />
           }
           name={Fields.body}

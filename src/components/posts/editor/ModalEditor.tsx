@@ -22,6 +22,7 @@ import { getNonEmptyPostContent } from 'src/components/utils/content'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import SelectSpacePreview from 'src/components/utils/SelectSpacePreview'
 import TxButton from 'src/components/utils/TxButton'
+import useExternalStorage from 'src/hooks/useExternalStorage'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import {
   useFetchSpaces,
@@ -43,10 +44,22 @@ const HtmlEditor = dynamic(() => import('./HtmlEditor'), {
 
 const log = newLogger('ModalEditor')
 
-export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) => {
+export const PostEditorModalBody = ({
+  closeModal,
+  defaultSpaceId,
+}: {
+  closeModal: () => void
+  defaultSpaceId?: string
+}) => {
   const myAddress = useMyAddress()
   const allowedSpaceIds = useSelectSpaceIdsWhereAccountCanPost(myAddress as string)
-  const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: allowedSpaceIds })
+  const spaceIdOptions = useMemo(() => {
+    if (defaultSpaceId && !allowedSpaceIds.includes(defaultSpaceId))
+      return [defaultSpaceId, ...allowedSpaceIds]
+    return allowedSpaceIds
+  }, [allowedSpaceIds, defaultSpaceId])
+
+  const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: spaceIdOptions })
   const [imgUrl, setUrl] = useState<string>()
   const [form] = Form.useForm()
   const { ipfs } = useSubsocialApi()
@@ -54,13 +67,23 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
   const [publishIsDisable, setPublishIsDisable] = useState(true)
   const sendEvent = useSendEvent()
 
+  const { getDataForAddress: getLastUsedSpaceId, setData: setLastUsedSpaceId } = useExternalStorage(
+    'last-space-id',
+    { storageKeyType: 'user' },
+  )
+
   const profile = useSelectProfile(myAddress)
   const defaultSpace = useMemo(() => {
-    if (profile && allowedSpaceIds.includes(profile?.id ?? '')) {
+    if (defaultSpaceId) return defaultSpaceId
+    const lastUsedSpaceId = getLastUsedSpaceId(myAddress ?? '')
+    if (getLastUsedSpaceId(myAddress ?? '') && spaceIdOptions.includes(lastUsedSpaceId)) {
+      return lastUsedSpaceId
+    }
+    if (profile && spaceIdOptions.includes(profile?.id ?? '')) {
       return profile?.id
     }
-    return allowedSpaceIds[0]
-  }, [allowedSpaceIds, profile])
+    return spaceIdOptions[0]
+  }, [spaceIdOptions, profile, defaultSpaceId])
 
   const router = useRouter()
   const [spaceId, setSpaceId] = useState<string>(defaultSpace)
@@ -143,11 +166,12 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
       <SelectSpacePreview
         loading={loading}
         className={styles.SpaceSelector}
-        spaceIds={allowedSpaceIds}
+        spaceIds={spaceIdOptions}
         defaultValue={defaultSpace}
         imageSize={32}
         onSelect={value => {
           const newId = (value as LabeledValue).value.toString()
+          setLastUsedSpaceId(newId, myAddress ?? '')
           setSpaceId(newId)
           sendEvent('createpost_space_changed', {
             from: spaceId,
@@ -165,7 +189,11 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
       <SpaceSelector />
       <Form.Item name={fieldName('body')} className='my-3'>
         {/* value and onChange are provided by Form.Item */}
-        <HtmlEditor saveBodyDraft={saveDraft} className={clsx(styles.FastEditor, 'ant-input')} />
+        <HtmlEditor
+          autoFocus
+          saveBodyDraft={saveDraft}
+          className={clsx(styles.FastEditor, 'ant-input')}
+        />
       </Form.Item>
       {imgUrl && (
         <PreviewUploadedImage
@@ -212,8 +240,9 @@ export const PostEditorModalBody = ({ closeModal }: { closeModal: () => void }) 
 
 export interface PostEditorModalProps extends Omit<ModalProps, 'onCancel'> {
   onCancel?: () => void
+  defaultSpaceId?: string
 }
-export const PostEditorModal = (props: PostEditorModalProps) => {
+export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalProps) => {
   const myAddress = useMyAddress()
   const { data } = useFetchTotalStake(myAddress ?? '')
   const hasStaked = data?.hasStaked
@@ -229,7 +258,10 @@ export const PostEditorModal = (props: PostEditorModalProps) => {
       {...props}
     >
       <div className={styles.Content}>
-        <PostEditorModalBody closeModal={() => props.onCancel && props.onCancel()} />
+        <PostEditorModalBody
+          defaultSpaceId={defaultSpaceId}
+          closeModal={() => props.onCancel && props.onCancel()}
+        />
       </div>
       <div className={styles.InfoPanel}>
         <div className={styles.InfoPanelContent}>

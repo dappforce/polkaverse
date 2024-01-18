@@ -23,6 +23,7 @@ export type DataListProps<T extends any> = DataListOptProps &
     paginationConfig?: PaginationConfig
     beforeList?: React.ReactNode
     children?: React.ReactNode
+    listClassName?: string
   }
 
 export function DataList<T extends any>(props: DataListProps<T>) {
@@ -38,6 +39,7 @@ export function DataList<T extends any>(props: DataListProps<T>) {
     customNoData,
     paginationConfig,
     beforeList,
+    listClassName,
   } = props
 
   const total = dataSource.length
@@ -59,7 +61,7 @@ export function DataList<T extends any>(props: DataListProps<T>) {
               className || '',
             )}
           >
-            <ul className='ant-list-items'>
+            <ul className={clsx('ant-list-items', listClassName)}>
               {dataSource.map((x, i) => (
                 <li key={getKey(x)}>{renderItem(x, i)}</li>
               ))}

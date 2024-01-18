@@ -33,4 +33,10 @@ export default [
   '6953',
   // Astar Korea
   '11991',
+  // Beef's Travel Blog
+  '11220',
+  // Polkadot Arena
+  '7218',
+  // Dotcast
+  '10132',
 ]

@@ -1,5 +1,5 @@
 import { ArrowLeftOutlined } from '@ant-design/icons'
-import { Button } from 'antd'
+import { Button, Skeleton } from 'antd'
 import clsx from 'clsx'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { subsocialUrl } from 'src/components/urls'
@@ -9,6 +9,7 @@ import PrivacyPolicyText from 'src/components/utils/PrivacyPolicyText'
 import TwitterMock from 'src/components/utils/TwitterMock'
 import TxButton from 'src/components/utils/TxButton'
 import config from 'src/config'
+import { useFetchProfileSpace } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
 import {
   useCurrentOnBoardingStep,
@@ -19,6 +20,7 @@ import {
   markStepAsDraftOnBoardingModal,
   resetOnBoardingData,
 } from 'src/rtk/features/onBoarding/onBoardingSlice'
+import { DataSourceTypes } from 'src/types'
 import styles from './OnBoardingModal.module.sass'
 import CustomFooterAction from './steps/Signer/CustomFooterAction'
 import { OnBoardingContentContainerProps } from './types'
@@ -212,7 +214,18 @@ function ContentWrapper({
 
 function SuccessContent() {
   const myAddress = useMyAddress()
+  const { entity: profile, loading } = useFetchProfileSpace({
+    id: myAddress ?? '',
+    dataSource: DataSourceTypes.CHAIN,
+    reload: true,
+  })
   const twitterText = `I just onboarded to ${config.appName}, the premier social platform of the @Polkadot ecosystem, powered by @SubsocialChain!\n\nYou can follow me here:`
+
+  const redirectUrl = profile?.id ? `/${profile.id}` : `/accounts/${myAddress}`
+
+  if (loading) {
+    return <Skeleton />
+  }
 
   return (
     <div className={clsx('d-flex flex-column', 'position-relative')}>
@@ -226,11 +239,7 @@ function SuccessContent() {
           pointerEvents: 'none',
         }}
       />
-      <TwitterMock
-        url={`/accounts/${myAddress}`}
-        twitterText={twitterText}
-        buttonText='Tweet about it!'
-      >
+      <TwitterMock url={redirectUrl} twitterText={twitterText} buttonText='Tweet about it!'>
         <p>
           I just onboarded to {config.appName}, the premier social platform of the @Polkadot
           ecosystem, powered by @SubsocialChain!
@@ -238,7 +247,7 @@ function SuccessContent() {
           <br />
           You can follow me here:
           <br />
-          <a>{subsocialUrl(`/accounts/${myAddress}`)}</a>
+          <a>{subsocialUrl(redirectUrl)}</a>
         </p>
         <a>#{config.appName} #Subsocial</a>
       </TwitterMock>

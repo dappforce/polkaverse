@@ -1,11 +1,12 @@
 import { BN } from '@polkadot/util'
 import { PostId } from '@subsocial/api/types/substrate'
 import { isEmptyObj, isEmptyStr } from '@subsocial/utils'
-import { Alert, Image, Tooltip } from 'antd'
+import { Alert, Button, Image, Tooltip } from 'antd'
 import clsx from 'clsx'
 import isEmpty from 'lodash.isempty'
 import Error from 'next/error'
 import React, { FC, useState } from 'react'
+import { TbMessageCircle2 } from 'react-icons/tb'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
 import { HasDataForSlug } from 'src/components/urls'
@@ -38,7 +39,9 @@ import { formatDate, isHidden, toShortUrl, useIsVisible } from '../../utils'
 import { SummarizeMd } from '../../utils/md/SummarizeMd'
 import ViewTags from '../../utils/ViewTags'
 import Embed from '../embed/Embed'
+import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
+import styles from './helpers.module.sass'
 import { PostDropDownMenu } from './PostDropDownMenu'
 import PostRewardStat from './PostRewardStat'
 import TwitterPost from './TwitterPost'
@@ -200,18 +203,42 @@ export const PostImage = React.memo(
       setShouldImageBeCropped(isTallerThan16By9)
     }
 
-    const wrapperClassName = clsx(className, {
+    const wrapperClassName = clsx(className, 'w-100 d-flex', {
       DfPostImagePreviewWrapperCropped: shouldImageBeCropped,
-      DfPostImagePreviewWrapper: true,
     })
     return (
-      <Image
-        src={resolveIpfsUrl(image)}
-        className='DfPostImagePreview'
-        preview={withPreview ? { mask: null } : false}
-        wrapperClassName={wrapperClassName}
-        onLoad={onImgLoad}
-      />
+      <div
+        className='position-relative DfPostImagePreviewWrapper'
+        style={{ overflow: 'hidden', borderRadius: '5px' }}
+      >
+        <Image
+          src={resolveIpfsUrl(image)}
+          className='DfPostImagePreview'
+          wrapperStyle={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            filter: 'blur(20px)',
+            transform: 'scale(1.1)',
+            transformOrigin: 'center',
+          }}
+          style={{
+            objectFit: 'cover',
+          }}
+          preview={withPreview ? { mask: null } : false}
+          wrapperClassName={wrapperClassName}
+          onLoad={onImgLoad}
+        />
+        <Image
+          src={resolveIpfsUrl(image)}
+          className='DfPostImagePreview'
+          style={{ objectFit: 'contain' }}
+          preview={withPreview ? { mask: null } : false}
+          wrapperClassName={wrapperClassName}
+          onLoad={onImgLoad}
+        />
+      </div>
     )
   },
 )
@@ -263,7 +290,7 @@ const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
         post={post}
         space={space}
         title={
-          <div>
+          <div className={clsx('d-flex flex-column GapSmall', styles.PostContent)}>
             {withImage && <PostImage content={post.content} withPreview={false} />}
             <PostName post={postDetails} withLink />
             <PostSummary space={space} post={post} />
@@ -285,22 +312,47 @@ type PostActionsPanelProps = {
   toogleCommentSection?: () => void
   withBorder?: boolean
   className?: string
+  preview?: boolean
 }
 
 export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
-  const { postDetails, /* space, */ withBorder, className } = props
+  const { postDetails, /* space, */ withBorder, className, preview } = props
   const {
     post: { struct },
   } = postDetails
 
-  const ReactionsAction = () => <SuperLike post={struct} />
-
   return (
     <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'} ${className ?? ''}`}>
-      <ReactionsAction />
-      <PostRewardStat postId={postDetails.id} />
+      <div className={clsx('d-flex align-items-center GapHuge', styles.PostActions)}>
+        <SuperLike post={struct} />
+        {preview && <CommentAction {...props} />}
+      </div>
+      <PostRewardStat postId={postDetails.id} style={{ alignSelf: 'end' }} />
       {/* <ShareDropdown postDetails={postDetails} space={space} className='DfAction' /> */}
     </div>
+  )
+}
+
+function CommentAction(props: PostActionsPanelProps) {
+  const { postDetails, toogleCommentSection } = props
+  const {
+    post: {
+      struct: { repliesCount },
+    },
+  } = postDetails
+
+  return (
+    <Button
+      type='default'
+      style={{ border: 'none', boxShadow: 'none', gap: '0.4rem' }}
+      className='p-0 d-flex align-items-center ColorMuted FontWeightMedium'
+      onClick={() => {
+        toogleCommentSection?.()
+      }}
+    >
+      <TbMessageCircle2 className='FontLarge' />
+      {(repliesCount ?? 0) > 0 ? repliesCount : 'Comment'}
+    </Button>
   )
 }
 
@@ -371,11 +423,22 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
         <div className='w-100'>
           <div className='DfRow'>
             <PostCreator postDetails={postDetails} space={space} withSpaceName withSpaceAvatar />
-            <PostDropDownMenu
-              post={postDetails.post}
-              space={space?.struct}
-              withEditButton={!isMobile}
-            />
+            <div className='d-flex align-items-center align-self-start GapTiny'>
+              {space && (
+                <ShareDropdown
+                  postDetails={postDetails}
+                  space={space.struct}
+                  className='DfAction p-0'
+                />
+              )}
+              <PostDropDownMenu
+                post={postDetails.post}
+                space={space?.struct}
+                withEditButton={!isMobile}
+                className='ColorMuted'
+                style={{ position: 'relative', top: '1px' }}
+              />
+            </div>
           </div>
           {content.link && <Embed link={content.link} className='mt-3' />}
           <PostContent

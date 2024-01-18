@@ -1,13 +1,11 @@
-import {
-  CaretDownOutlined,
-  CaretUpOutlined,
-  CommentOutlined,
-  NotificationOutlined,
-} from '@ant-design/icons'
-import { Button, Comment, Tag } from 'antd'
+import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons'
+import { Button, Tag, Tooltip } from 'antd'
+import clsx from 'clsx'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { FC, useEffect, useState } from 'react'
+import { TbMessageCircle2 } from 'react-icons/tb'
+import { useSelectProfile } from 'src/rtk/app/hooks'
 import {
   asCommentData,
   asCommentStruct,
@@ -16,28 +14,29 @@ import {
   PostWithSomeDetails,
   SpaceStruct,
 } from 'src/types'
-import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
-import { ShareDropdown } from '../posts/share/ShareDropdown'
 import { PostDropDownMenu } from '../posts/view-post/PostDropDownMenu'
-import AuthorPreview from '../profiles/address-views/AuthorPreview'
+import PostRewardStat from '../posts/view-post/PostRewardStat'
+import AuthorSpaceAvatar from '../profiles/address-views/AuthorSpaceAvatar'
+import Name from '../profiles/address-views/Name'
 import { equalAddresses } from '../substrate'
 import { postUrl } from '../urls'
 import { formatDate, IconWithLabel, useIsHidden } from '../utils'
+import { MutedSpan } from '../utils/MutedText'
 import { Pluralize } from '../utils/Plularize'
-import { VoterButtons } from '../voting/VoterButtons'
+import SuperLike from '../voting/SuperLike'
+import { CommentEventProps } from './CommentEditor'
 import { ViewCommentsTree } from './CommentTree'
 import { NewComment } from './CreateComment'
 import { CommentBody } from './helpers'
 import { EditComment } from './UpdateComment'
 import { useRepliesData } from './utils'
 
-const CommentsIcon = <CommentOutlined />
-
 type Props = {
   space?: SpaceStruct
   rootPost?: PostStruct
   comment: PostWithSomeDetails
   withShowReplies?: boolean
+  eventProps: CommentEventProps
 }
 
 export const InnerViewComment: FC<Props> = props => {
@@ -46,6 +45,7 @@ export const InnerViewComment: FC<Props> = props => {
     rootPost,
     comment: commentDetails,
     withShowReplies = false,
+    eventProps,
   } = props
 
   const { post: comment } = commentDetails
@@ -54,7 +54,7 @@ export const InnerViewComment: FC<Props> = props => {
   const commentContent = comment.content as CommentContent
   const { id, createdAtTime, ownerId } = commentStruct
 
-  const owner = useSelectSpace()
+  const owner = useSelectProfile(ownerId)
 
   const [showEditForm, setShowEditForm] = useState(false)
   const [showReplyForm, setShowReplyForm] = useState(false)
@@ -101,40 +101,10 @@ export const InnerViewComment: FC<Props> = props => {
 
   const onEditComment = () => setShowEditForm(true)
 
-  const commentAuthor = (
-    <div className='DfAuthorBlock'>
-      <AuthorPreview
-        address={ownerId}
-        owner={owner}
-        isShort={true}
-        isPadded={false}
-        size={32}
-        afterName={
-          isRootPostOwner ? (
-            <Tag color='blue' className='ml-2'>
-              <NotificationOutlined className='mr-2' />
-              Post author
-            </Tag>
-          ) : undefined
-        }
-        details={
-          <span>
-            <Link href='/[spaceId]/[slug]' as={commentLink}>
-              <a className='DfGreyLink' title={formatDate(createdAtTime)}>
-                {dayjs(createdAtTime).fromNow()}
-              </a>
-            </Link>
-            {/* {' · '} */}
-            {/* {pluralize(score, 'Point')} */}
-          </span>
-        }
-      />
-      {!isFake && <PostDropDownMenu post={comment} space={space} onEditComment={onEditComment} />}
-    </div>
-  )
-
   const newCommentForm = showReplyForm && (
     <NewComment
+      eventProps={eventProps}
+      autoFocus
       post={commentStruct}
       callback={() => {
         setShowReplyForm(false)
@@ -143,60 +113,91 @@ export const InnerViewComment: FC<Props> = props => {
     />
   )
 
-  const actionCss = 'DfCommentAction'
-  const hoverActionCss = `${actionCss} AnimatedVisibility`
-
   return (
-    <div className={isFake ? 'DfDisableLayout pb-3' : ''}>
-      <Comment
-        className='DfNewComment'
-        actions={
-          isFake
-            ? []
-            : [
-                <VoterButtons
-                  key={`voters-of-comments-${id}`}
-                  post={commentStruct}
-                  className={actionCss}
-                />,
-                <Button
-                  key={`reply-comment-${id}`}
-                  className={hoverActionCss}
-                  onClick={() => setShowReplyForm(true)}
-                >
-                  <IconWithLabel icon={CommentsIcon} label='Reply' />
-                </Button>,
-                <ShareDropdown
-                  key={`dropdown-comment-${id}`}
-                  postDetails={commentDetails}
-                  space={space}
-                  className={hoverActionCss}
-                />,
-              ]
-        }
-        author={commentAuthor}
-        content={
-          showEditForm ? (
-            <EditComment
-              struct={commentStruct}
-              content={commentContent}
-              callback={() => setShowEditForm(false)}
-            />
-          ) : (
-            <CommentBody comment={asCommentData(comment)} />
-          )
-        }
-      >
-        <div>
-          {newCommentForm}
-          {hasReplies && (
-            <div className='pb-2'>
-              {!withShowReplies && <ViewRepliesLink />}
-              {showReplies && <ViewCommentsTree parentId={commentStruct.id} />}
+    <div className={clsx('w-100', isFake ? 'DfDisableLayout pb-3' : '')}>
+      <div className={clsx('d-flex align-items-start w-100')}>
+        <AuthorSpaceAvatar size={32} authorAddress={ownerId} />
+        <div className='d-flex flex-column w-100'>
+          <div className='d-flex align-items-center justify-content-between GapTiny'>
+            <div className='d-flex align-items-baseline GapSemiTiny'>
+              <div className='d-flex align-items-baseline GapSemiTiny'>
+                <Name
+                  className='!ColorMuted !FontWeightNormal FontSmall'
+                  address={ownerId}
+                  owner={owner}
+                  asLink
+                />
+                {isRootPostOwner && (
+                  <Tag color='blue' className='mr-0'>
+                    <Tooltip title='Original Poster'>OP</Tooltip>
+                  </Tag>
+                )}
+              </div>
+              <MutedSpan>&middot;</MutedSpan>
+              <Link href='/[spaceId]/[slug]' as={commentLink}>
+                <a className='DfGreyLink FontTiny' title={formatDate(createdAtTime)}>
+                  {dayjs(createdAtTime).fromNow()}
+                </a>
+              </Link>
             </div>
-          )}
+            {!isFake && (
+              <PostDropDownMenu
+                className='d-flex align-items-center ColorMuted'
+                style={{ position: 'relative', top: '1px' }}
+                post={comment}
+                space={space}
+                onEditComment={onEditComment}
+              />
+            )}
+          </div>
+          <div className='mt-1'>
+            {showEditForm ? (
+              <EditComment
+                eventProps={eventProps}
+                struct={commentStruct}
+                content={commentContent}
+                callback={() => setShowEditForm(false)}
+              />
+            ) : (
+              <CommentBody comment={asCommentData(comment)} />
+            )}
+          </div>
+          <div className='d-flex align-items-center GapSmall mt-1.5'>
+            <SuperLike
+              isComment
+              key={`voters-of-comments-${id}`}
+              className='!FontTiny'
+              iconClassName='!FontSmall'
+              post={commentStruct}
+            />
+            <Button
+              key={`reply-comment-${id}`}
+              className='p-0'
+              style={{ border: 'none', boxShadow: 'none', background: 'transparent' }}
+              onClick={() => setShowReplyForm(true)}
+            >
+              <span className='d-flex align-items-center ColorMuted'>
+                <IconWithLabel icon={<TbMessageCircle2 className='FontNormal' />} label='Reply' />
+              </span>
+            </Button>
+            <PostRewardStat postId={comment.id} style={{ marginLeft: 'auto' }} />
+          </div>
+          <div className='mt-1.5 d-flex flex-column'>
+            {newCommentForm}
+            {hasReplies && (
+              <div className='pb-2'>
+                {!withShowReplies && <ViewRepliesLink />}
+                {showReplies && (
+                  <ViewCommentsTree
+                    eventProps={{ ...eventProps, level: eventProps.level + 1 }}
+                    parentId={commentStruct.id}
+                  />
+                )}
+              </div>
+            )}
+          </div>
         </div>
-      </Comment>
+      </div>
     </div>
   )
 }

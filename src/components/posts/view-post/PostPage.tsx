@@ -3,7 +3,8 @@ import { getPostIdFromSlug } from '@subsocial/utils/slugify'
 import clsx from 'clsx'
 import { NextPage } from 'next'
 import router from 'next/router'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
+import { CommentSection } from 'src/components/comments/CommentsSection'
 import MobileActiveStakingSection from 'src/components/creators/MobileActiveStakingSection'
 import { PageContent } from 'src/components/main/PageWrapper'
 import AuthorCard from 'src/components/profiles/address-views/AuthorCard'
@@ -16,7 +17,7 @@ import { return404 } from 'src/components/utils/next'
 import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { getInitialPropsWithRedux, NextContextWithRedux } from 'src/rtk/app'
-import { useSelectProfile, useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
+import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
@@ -26,6 +27,8 @@ import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
 import ViewTags from '../../utils/ViewTags'
 import Embed, { getEmbedLinkType, getYoutubeVideoId } from '../embed/Embed'
+import { StatsPanel } from '../PostStats'
+import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
 import {
   HiddenPostAlert,
@@ -56,24 +59,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const { post, space } = postData
   const { struct, content } = post
 
-  const setChatConfig = useSetChatEntityConfig()
-  useEffect(() => {
-    if (!post) return
-    setChatConfig({ entity: { data: post, type: 'post' }, withFloatingButton: true })
-
-    return () => {
-      setChatConfig(null)
-    }
-  }, [])
-
-  const setChatOpen = useSetChatOpen()
   const goToCommentsId = 'comments'
-  useEffect(() => {
-    const hash = window.location.hash.substring(1)
-    if (hash === goToCommentsId) {
-      setChatOpen(true)
-    }
-  }, [])
 
   const profile = useSelectProfile(postData.post.struct.ownerId)
   const spaceId = space?.id
@@ -173,7 +159,12 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               />
               {isNotMobile && (
                 <div className='d-flex justify-content-end align-items-center'>
-                  {/* <StatsPanel post={struct} goToCommentsId={goToCommentsId} /> */}
+                  <StatsPanel post={struct} goToCommentsId={goToCommentsId} />
+                  <ShareDropdown
+                    postDetails={postData}
+                    space={space.struct}
+                    className='DfAction p-0 ml-3'
+                  />
                   <div className='ml-2' style={{ position: 'relative', top: '2px' }}>
                     <PostDropDownMenu post={post} space={spaceStruct} withEditButton />
                   </div>
@@ -218,17 +209,24 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               </div>
             )}
 
-            <div className='pt-2'>
-              <AuthorCard
-                className='mt-4'
-                address={postData.post.struct.ownerId}
-                withAuthorTag
-                withTipButton
-              />
-            </div>
+            <AuthorCard
+              className='mt-4'
+              address={postData.post.struct.ownerId}
+              withAuthorTag
+              withTipButton
+            />
             {!isSameProfileAndSpace && !isSpaceAlreadyRenderedInSidebar && (
               <SpaceCard className='mt-4' spaceId={postData.space?.id ?? ''} />
             )}
+          </div>
+
+          <div className='mt-2'>
+            <CommentSection
+              post={postData}
+              hashId={goToCommentsId}
+              space={spaceStruct}
+              eventSource='post-page'
+            />
           </div>
         </div>
       </Section>
