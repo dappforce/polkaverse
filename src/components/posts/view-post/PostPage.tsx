@@ -27,7 +27,7 @@ import { DfImage } from '../../utils/DfImage'
 import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
 import ViewTags from '../../utils/ViewTags'
-import Embed, { getEmbedLinkType, getYoutubeVideoId } from '../embed/Embed'
+import Embed, { getEmbedLinkType, getGleevVideoId, getYoutubeVideoId } from '../embed/Embed'
 import { StatsPanel } from '../PostStats'
 import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
@@ -125,6 +125,8 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
     const embedType = getEmbedLinkType(link)
     if (embedType === 'youtube' || embedType === 'youtu.be') {
       usedImage = `https://i3.ytimg.com/vi/${getYoutubeVideoId(link)}/maxresdefault.jpg`
+    } else if (embedType === 'gleev') {
+      usedImage = `https://assets.joyutils.org/video/${getGleevVideoId(link)}/thumbnail`
     }
   }
 
