@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
+import { fetchTopUsersWithSpaces } from 'src/rtk/features/activeStaking/topUsersSlice'
 import { useFetchMyPermissionsBySpaceId } from 'src/rtk/features/permissions/mySpacePermissionsHooks'
 import { fetchPosts, selectPosts } from 'src/rtk/features/posts/postsSlice'
 import { DataSourceTypes, HasStatusCode, idToBn, SpaceContent } from 'src/types'
@@ -90,15 +91,19 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
 
   const pageIds = getPageOfIds(sortedPostIds, query)
 
-  await dispatch(
-    fetchPosts({
-      api: subsocial,
-      ids: pageIds,
-      reload: true,
-      eagerLoadHandles: true,
-      dataSource: DataSourceTypes.SQUID,
-    }),
-  )
+  await Promise.all([
+    dispatch(
+      fetchPosts({
+        api: subsocial,
+        ids: pageIds,
+        reload: true,
+        eagerLoadHandles: true,
+        dataSource: DataSourceTypes.SQUID,
+      }),
+    ),
+    fetchTopUsersWithSpaces(dispatch, subsocial),
+  ])
+
   const posts = selectPosts(reduxStore.getState(), { ids: pageIds })
 
   return {

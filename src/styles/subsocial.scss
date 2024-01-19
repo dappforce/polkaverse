@@ -106,6 +106,54 @@ a {
   -moz-text-fill-color: transparent;
 }
 
+.p-2\.5 {
+  padding: 0.75rem !important;
+}
+.px-2\.5 {
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+}
+.py-2\.5 {
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+}
+.pt-2\.5 {
+  padding-top: 0.75rem !important;
+}
+.pb-2\.5 {
+  padding-bottom: 0.75rem !important;
+}
+.pl-2\.5 {
+  padding-left: 0.75rem !important;
+}
+.pr-2\.5 {
+  padding-right: 0.75rem !important;
+}
+
+.m-2\.5 {
+  margin: 0.75rem !important;
+}
+.mx-2\.5 {
+  margin-left: 0.75rem !important;
+  margin-right: 0.75rem !important;
+}
+.my-2\.5 {
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+}
+.mt-2\.5 {
+  margin-top: 0.75rem !important;
+}
+.mb-2\.5 {
+  margin-bottom: 0.75rem !important;
+}
+.ml-2\.5 {
+  margin-left: 0.75rem !important;
+}
+.mr-2\.5 {
+  margin-right: 0.75rem !important;
+}
+
 .CursorPointer {
   cursor: pointer !important;
 }
@@ -2179,6 +2227,12 @@ hr {
   margin-top: 4px;
 }
 
+@media screen and (min-width: 769px) {
+  .lg-hidden {
+    display: none !important;
+  }
+}
+
 @media screen and (max-width: 768px) {
   .sm-hidden {
     display: none !important;
@@ -2196,4 +2250,8 @@ hr {
 }
 .\!ColorMuted {
   color: $color_muted !important;
+}
+
+.\!BreakWord {
+  word-break: break-word !important;
 }

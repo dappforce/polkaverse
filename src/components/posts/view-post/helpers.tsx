@@ -9,10 +9,12 @@ import React, { FC, useState } from 'react'
 import { TbMessageCircle2 } from 'react-icons/tb'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
+import SpacePreviewPopup from 'src/components/spaces/SpacePreviewPopup'
 import { HasDataForSlug } from 'src/components/urls'
 import { DfMd } from 'src/components/utils/DfMd'
 import NoData from 'src/components/utils/EmptyList'
 import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels'
+import FollowSpaceButton from 'src/components/utils/FollowSpaceButton'
 import Segment from 'src/components/utils/Segment'
 import { ActiveVoters, PostVoters } from 'src/components/voting/ListVoters'
 import SuperLike from 'src/components/voting/SuperLike'
@@ -155,7 +157,7 @@ export const PostCreator: FC<PostCreatorProps> = ({
       spaceId={withSpaceAvatar ? spaceId : undefined}
       address={ownerId}
       owner={owner}
-      withFollowButton
+      withFollowButton={false}
       isShort={true}
       isPadded={false}
       size={size}
@@ -163,12 +165,16 @@ export const PostCreator: FC<PostCreatorProps> = ({
         <div>
           {withSpaceName && space && (
             <>
-              <SpaceNameAsLink space={space} className='DfGreyLink' />
+              <SpacePreviewPopup
+                space={space}
+                className='d-inline'
+                content={<SpaceNameAsLink space={space} className='DfGreyLink' />}
+              />
               {' • '}
             </>
           )}
           <ViewPostLink
-            className='DfGreyLink'
+            className='DfGreyLink !BreakWord'
             post={post}
             space={space?.struct}
             title={
@@ -424,6 +430,15 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
           <div className='DfRow'>
             <PostCreator postDetails={postDetails} space={space} withSpaceName withSpaceAvatar />
             <div className='d-flex align-items-center align-self-start GapTiny'>
+              {space && !isMobile && (
+                <FollowSpaceButton
+                  className='mr-1'
+                  size='small'
+                  ghost
+                  space={space.struct}
+                  withUnfollowButton={false}
+                />
+              )}
               {space && (
                 <ShareDropdown
                   postDetails={postDetails}

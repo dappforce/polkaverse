@@ -5,12 +5,12 @@ import {
   InstagramOutlined,
   LinkedinOutlined,
   MediumOutlined,
-  TwitterOutlined,
   YoutubeOutlined,
 } from '@ant-design/icons'
 import { isEmptyStr } from '@subsocial/utils'
 
 import { FaTelegram } from 'react-icons/fa'
+import { RiTwitterXLine } from 'react-icons/ri'
 import { SubIcon } from 'src/components/utils'
 
 type SocialBrand =
@@ -44,7 +44,7 @@ export const getLinkIcon = (brand?: LinkLabel) => {
     case 'Facebook':
       return <FacebookOutlined />
     case 'Twitter':
-      return <TwitterOutlined />
+      return <SubIcon Icon={RiTwitterXLine} />
     case 'Medium':
       return <MediumOutlined />
     case 'LinkedIn':
@@ -77,7 +77,7 @@ const socialLinksRegExp: Record<SocialBrand, RegExp[]> = {
     newSocialLinkRegExp('fb.com'),
     newSocialLinkRegExp('facebook.me'),
   ],
-  Twitter: [newSocialLinkRegExp('twitter.com')],
+  Twitter: [newSocialLinkRegExp('twitter.com'), newSocialLinkRegExp('x.com')],
   Medium: [newSocialLinkRegExp('medium.com')],
   LinkedIn: [newSocialLinkRegExp('linkedin.com'), newSocialLinkRegExp('linked.in')],
   GitHub: [newSocialLinkRegExp('github.com')],

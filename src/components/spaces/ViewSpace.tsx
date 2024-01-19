@@ -20,7 +20,7 @@ import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import MyStakeCard from '../creators/cards/MyStakeCard'
 import StakeSubCard from '../creators/cards/StakeSubCard'
-import MobileStakerRewardDashboard from '../creators/MobileStakerRewardDashboard'
+import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
 import WriteSomething from '../posts/WriteSomething'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
 import { useIsMobileWidthOrDevice } from '../responsive'
@@ -318,24 +318,23 @@ export const InnerViewSpace = (props: Props) => {
     )
   }
 
-  const showCreatorCards = isMobile
-
   return (
     <Section className='mt-3'>
-      {showCreatorCards && (
-        <MobileStakerRewardDashboard
-          style={{ margin: '-28px -16px 0', position: 'sticky', top: '64px', zIndex: 10 }}
-        />
-      )}
+      <MobileActiveStakingSection offsetY={-28} />
       <PendingSpaceOwnershipPanel space={space} />
       <HiddenSpaceAlert space={space} />
       <Section className='pt-2'>{renderPreview()}</Section>
       {canCreatePostAndIsNotHidden && (
         <WriteSomething className='mt-3' defaultSpaceId={spaceData.id} />
       )}
-      {showCreatorCards && <MobileCreatorCard spaceData={spaceData} />}
+      {isMobile && <MobileCreatorCard spaceData={spaceData} />}
       <Section className='DfContentPage mt-4'>
-        <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
+        <PostPreviewsOnSpace
+          key={spaceData.id}
+          spaceData={spaceData}
+          posts={posts}
+          postIds={postIds}
+        />
       </Section>
       <MakeAsProfileModal isMySpace={isMy} />
     </Section>

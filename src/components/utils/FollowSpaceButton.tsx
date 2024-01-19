@@ -14,6 +14,7 @@ import TxButton from './TxButton'
 
 type FollowSpaceButtonProps = BaseTxButtonProps & {
   space: SpaceStruct
+  withUnfollowButton?: boolean
 }
 
 type InnerFollowSpaceButtonProps = FollowSpaceButtonProps & {
@@ -41,7 +42,7 @@ export const useAmISpaceFollower = (spaceId: SpaceId = '0') => {
 }
 
 export function InnerFollowSpaceButton(props: InnerFollowSpaceButtonProps) {
-  const { space, myAddress, ...otherProps } = props
+  const { space, myAddress, withUnfollowButton = true, ...otherProps } = props
   const spaceId = space.id
 
   const isFollower = useAmISpaceFollower(spaceId)
@@ -61,6 +62,10 @@ export function InnerFollowSpaceButton(props: InnerFollowSpaceButtonProps) {
   const loading = notDef(isFollower)
 
   const label = isFollower ? 'Unfollow' : 'Follow'
+
+  if (!withUnfollowButton && isFollower) {
+    return null
+  }
 
   return (
     <TxButton

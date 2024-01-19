@@ -46,7 +46,7 @@ export function useFetchWithoutApi<Args, Struct>(
   args: Args,
   config?: { enabled?: boolean },
 ): CommonResult {
-  const { enabled } = config || {}
+  const { enabled } = config || { enabled: true }
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error>()
