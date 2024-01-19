@@ -16,17 +16,6 @@ const sliceName = 'topUsers'
 
 export const selectTopUsers = (state: RootState) => state.topUsers
 
-export async function fetchTopUsersWithSpaces(dispatch: AppDispatch, api: SubsocialApi) {
-  const { payload } = await dispatch(fetchTopUsers())
-  if (payload === null) return
-
-  const parsedPayload = payload as TopUsers
-  const creators = parsedPayload.creators.map(user => user.address)
-  const stakers = parsedPayload.stakers.map(user => user.address)
-
-  await dispatch(fetchProfileSpaces({ ids: [...creators, ...stakers], api }))
-}
-
 export const fetchTopUsers = createSimpleFetchWrapper<null, TopUsers | null>({
   sliceName,
   fetchData: async function () {
@@ -36,6 +25,17 @@ export const fetchTopUsers = createSimpleFetchWrapper<null, TopUsers | null>({
   getCachedData: state => selectTopUsers(state),
   saveToCacheAction: data => slice.actions.setTopUsers(data),
 })
+
+export async function fetchTopUsersWithSpaces(dispatch: AppDispatch, api: SubsocialApi) {
+  const { payload } = await dispatch(fetchTopUsers())
+  if (!payload) return
+
+  const parsedPayload = payload as TopUsers
+  const creators = parsedPayload.creators.map(user => user.address)
+  const stakers = parsedPayload.stakers.map(user => user.address)
+
+  await dispatch(fetchProfileSpaces({ ids: [...creators, ...stakers], api }))
+}
 
 const initialState = null as TopUsers | null
 const slice = createSlice({
