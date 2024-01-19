@@ -5,11 +5,24 @@ import {
   SocialEventDataType,
   socialEventProtVersion,
 } from '@subsocial/data-hub-sdk'
+import dayjs from 'dayjs'
+import isoWeek from 'dayjs/plugin/isoWeek'
+import utc from 'dayjs/plugin/utc'
 import { GraphQLClient, RequestOptions, Variables } from 'graphql-request'
 import { Client, createClient } from 'graphql-ws'
 import ws from 'isomorphic-ws'
 import { datahubQueryUrl, datahubSubscriptionUrl } from 'src/config/env'
 import { wait } from 'src/utils/promise'
+
+dayjs.extend(utc)
+dayjs.extend(isoWeek)
+
+export function getDayAndWeekTimestamp(currentDate: Date = new Date()) {
+  let date = dayjs.utc(currentDate)
+  date = date.startOf('day')
+  const week = date.get('year') * 100 + date.isoWeek()
+  return { day: date.unix(), week }
+}
 
 // QUERIES
 export function datahubQueryRequest<T, V extends Variables = Variables>(

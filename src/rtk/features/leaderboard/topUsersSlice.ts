@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { SubsocialApi } from '@subsocial/api'
-import { getTopUsers } from 'src/components/utils/datahub/active-staking'
+import { getTopUsers } from 'src/components/utils/datahub/leaderboard'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { AppDispatch } from 'src/rtk/app/store'
 import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'

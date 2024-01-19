@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
-import { fetchTopUsersWithSpaces } from 'src/rtk/features/activeStaking/topUsersSlice'
+import { fetchTopUsersWithSpaces } from 'src/rtk/features/leaderboard/topUsersSlice'
 import { useFetchMyPermissionsBySpaceId } from 'src/rtk/features/permissions/mySpacePermissionsHooks'
 import { fetchPosts, selectPosts } from 'src/rtk/features/posts/postsSlice'
 import { DataSourceTypes, HasStatusCode, idToBn, SpaceContent } from 'src/types'

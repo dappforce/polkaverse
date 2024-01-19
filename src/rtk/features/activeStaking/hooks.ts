@@ -11,7 +11,6 @@ import { selectPostReward } from './postRewardSlice'
 import { fetchRewardHistory, selectUserRewardHistory } from './rewardHistorySlice'
 import { fetchRewardReport, selectUserRewardReport } from './rewardReportSlice'
 import { selectPostSuperLikeCount } from './superLikeCountsSlice'
-import { fetchTopUsers, selectTopUsers } from './topUsersSlice'
 
 export function useSuperLikeCount(postId: string) {
   return useAppSelector(state => selectPostSuperLikeCount(state, postId)?.count ?? 0)
@@ -82,14 +81,4 @@ export function useFetchUserRewardHistory(address?: string, config?: { enabled?:
 
 export function useSelectPostReward(postId: string) {
   return useAppSelector(state => selectPostReward(state, postId))
-}
-
-export function useFetchTopUsers() {
-  const data = useAppSelector(state => selectTopUsers(state))
-  const fetchData = useFetchWithoutApi(fetchTopUsers, {})
-
-  return {
-    ...fetchData,
-    data,
-  }
 }

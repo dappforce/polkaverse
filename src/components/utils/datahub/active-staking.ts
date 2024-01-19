@@ -5,8 +5,6 @@ import {
 } from '@subsocial/data-hub-sdk'
 import axios from 'axios'
 import dayjs from 'dayjs'
-import isoWeek from 'dayjs/plugin/isoWeek'
-import utc from 'dayjs/plugin/utc'
 import { gql } from 'graphql-request'
 import { getStoreDispatcher } from 'src/rtk/app/store'
 import {
@@ -21,16 +19,13 @@ import {
   fetchSuperLikeCounts,
   SuperLikeCount,
 } from 'src/rtk/features/activeStaking/superLikeCountsSlice'
-import { TopUsers } from 'src/rtk/features/activeStaking/topUsersSlice'
 import {
   createSocialDataEventPayload,
   DatahubParams,
   datahubQueryRequest,
   datahubSubscription,
+  getDayAndWeekTimestamp,
 } from './utils'
-
-dayjs.extend(utc)
-dayjs.extend(isoWeek)
 
 // QUERIES
 const GET_SUPER_LIKE_COUNTS = gql`
@@ -190,12 +185,6 @@ const GET_REWARD_REPORT = gql`
     }
   }
 `
-function getDayAndWeekTimestamp(currentDate: Date = new Date()) {
-  let date = dayjs.utc(currentDate)
-  date = date.startOf('day')
-  const week = date.get('year') * 100 + date.isoWeek()
-  return { day: date.unix(), week }
-}
 export async function getRewardReport(address: string): Promise<RewardReport> {
   const res = await datahubQueryRequest<
     {
@@ -276,50 +265,6 @@ export async function getRewardHistory(address: string): Promise<RewardHistory> 
         creatorReward: creator.total,
       }
     }),
-  }
-}
-
-const GET_TOP_USERS = gql`
-  query GetTopUsers($from: String!) {
-    activeStakingStakersRankedBySuperLikesForPeriod(args: { fromTime: $from, limit: 3 }) {
-      address
-      count
-    }
-    activeStakingCreatorsRankedBySuperLikesForPeriod(args: { fromTime: $from, limit: 3 }) {
-      address
-      count
-    }
-  }
-`
-export async function getTopUsers(): Promise<TopUsers> {
-  const now = getDayAndWeekTimestamp().day
-  const from = dayjs(now).subtract(1, 'day').valueOf().toString()
-  const res = await datahubQueryRequest<
-    {
-      activeStakingStakersRankedBySuperLikesForPeriod: {
-        address: string
-        count: number
-      }[]
-      activeStakingCreatorsRankedBySuperLikesForPeriod: {
-        address: string
-        count: number
-      }[]
-    },
-    { from: string }
-  >({
-    document: GET_TOP_USERS,
-    variables: { from },
-  })
-
-  return {
-    creators: res.activeStakingCreatorsRankedBySuperLikesForPeriod.map(({ address, count }) => ({
-      address,
-      superLikesCount: count,
-    })),
-    stakers: res.activeStakingStakersRankedBySuperLikesForPeriod.map(({ address, count }) => ({
-      address,
-      superLikesCount: count,
-    })),
   }
 }
 
