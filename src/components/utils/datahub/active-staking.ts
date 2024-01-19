@@ -281,11 +281,11 @@ export async function getRewardHistory(address: string): Promise<RewardHistory> 
 
 const GET_TOP_USERS = gql`
   query GetTopUsers($from: String!) {
-    activeStakingStakersRankedBySuperLikesForPeriod(args: { fromTime: $from }) {
+    activeStakingStakersRankedBySuperLikesForPeriod(args: { fromTime: $from, limit: 3 }) {
       address
       count
     }
-    activeStakingCreatorsRankedBySuperLikesForPeriod(args: { fromTime: $from }) {
+    activeStakingCreatorsRankedBySuperLikesForPeriod(args: { fromTime: $from, limit: 3 }) {
       address
       count
     }
@@ -312,18 +312,14 @@ export async function getTopUsers(): Promise<TopUsers> {
   })
 
   return {
-    creators: res.activeStakingCreatorsRankedBySuperLikesForPeriod
-      .slice(0, 3)
-      .map(({ address, count }) => ({
-        address,
-        superLikesCount: count,
-      })),
-    stakers: res.activeStakingStakersRankedBySuperLikesForPeriod
-      .slice(0, 3)
-      .map(({ address, count }) => ({
-        address,
-        superLikesCount: count,
-      })),
+    creators: res.activeStakingCreatorsRankedBySuperLikesForPeriod.map(({ address, count }) => ({
+      address,
+      superLikesCount: count,
+    })),
+    stakers: res.activeStakingStakersRankedBySuperLikesForPeriod.map(({ address, count }) => ({
+      address,
+      superLikesCount: count,
+    })),
   }
 }
 
