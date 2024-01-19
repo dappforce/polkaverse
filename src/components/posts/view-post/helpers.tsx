@@ -174,7 +174,7 @@ export const PostCreator: FC<PostCreatorProps> = ({
             </>
           )}
           <ViewPostLink
-            className='DfGreyLink'
+            className='DfGreyLink !BreakWord'
             post={post}
             space={space?.struct}
             title={
