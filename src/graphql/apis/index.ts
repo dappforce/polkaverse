@@ -327,7 +327,6 @@ export async function getActivityCountStat(
   const statisticsData = Array.from({ length: period }).reduce<StatType['statisticsData']>(
     (acc, _, index) => {
       const offset = period - index
-      console.log('offset', offset)
       const dateAfterOffset = getDateWithOffset(offset)
       let count = res.data?.[`offset${offset}`]?.totalCount
       const formatDate = dayjs(dateAfterOffset).format('YYYY-MM-DD')
