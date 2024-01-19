@@ -6,8 +6,7 @@ export function resizeImage(file: File | Blob): Promise<File | Blob> | File | Bl
   return new Promise(resolve => {
     new Compressor(file, {
       maxWidth: 1920,
-      maxHeight: 1024,
-      quality: 0.9,
+      maxHeight: 1920,
       success: file => {
         resolve(file as File)
       },
