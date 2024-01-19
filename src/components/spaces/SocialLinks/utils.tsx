@@ -44,7 +44,7 @@ export const getLinkIcon = (brand?: LinkLabel) => {
     case 'Facebook':
       return <FacebookOutlined />
     case 'Twitter':
-      return <RiTwitterXLine />
+      return <SubIcon Icon={RiTwitterXLine} />
     case 'Medium':
       return <MediumOutlined />
     case 'LinkedIn':
