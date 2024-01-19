@@ -1,7 +1,6 @@
 import { Skeleton } from 'antd'
 import clsx from 'clsx'
 import { ComponentProps, CSSProperties } from 'react'
-import { HiOutlineInformationCircle } from 'react-icons/hi2'
 import { useSelectProfileSpace, useSelectSpace } from 'src/rtk/app/hooks'
 import { useFetchTopUsers } from 'src/rtk/features/activeStaking/hooks'
 import { useIsMobileWidthOrDevice } from '../responsive'
@@ -36,8 +35,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
     <>
       <div className='d-flex justify-content-between align-items-center'>
         <div className='d-flex align-items-center FontWeightSemibold GapMini'>
-          <span className='FontSemilarge'>Top members (last 24h)</span>
-          <HiOutlineInformationCircle />
+          <span className='FontSemilarge'>Top users (last 24h)</span>
         </div>
         {/* {isMobile && seeMoreButton} */}
       </div>
