@@ -1,10 +1,14 @@
 import { IoPeople } from 'react-icons/io5'
 import { SlQuestion } from 'react-icons/sl'
+import { ReactNode } from 'react-markdown'
+import { useFetchUserStatistics } from 'src/rtk/features/leaderboard/hooks'
 import { PageContent } from '../main/PageWrapper'
 import DfCard from '../utils/cards/DfCard'
 import { MutedSpan } from '../utils/MutedText'
 
-export default function LeaderboardPage() {
+export default function UserLeaderboardPage({ address }: { address: string }) {
+  const { data } = useFetchUserStatistics(address)
+
   return (
     <PageContent withLargerMaxWidth meta={{ title: 'Active Staking Dashboard' }}>
       <div className='d-flex align-items-end justify-content-between'>
@@ -29,10 +33,10 @@ export default function LeaderboardPage() {
             <MutedSpan>this week</MutedSpan>
           </div>
         </DfCard>
-        <StatisticCard />
-        <StatisticCard />
-        <StatisticCard />
-        <StatisticCard />
+        <StatisticCard title='Posts I liked this week' value={data?.staker.likedPosts} />
+        <StatisticCard title='SUB earned this week' value={data?.staker.earnedByPeriod} />
+        <StatisticCard title='Creators I liked this week' value={data?.staker.likedCreators} />
+        <StatisticCard title='SUB earned in total' value={data?.staker.earnedTotal} />
       </div>
       <div className='mt-4 GapLarge' style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
         <TopUsersTable />
@@ -54,16 +58,16 @@ function TopUsersTable() {
   )
 }
 
-function StatisticCard() {
+function StatisticCard({ title, value }: { title: string; value: ReactNode }) {
   return (
     <DfCard size='small' className='d-flex flex-column GapMini' withShadow={false}>
       <div className='d-flex align-items-center ColorMuted GapTiny'>
-        <span className='FontSmall'>Total posts liked</span>
+        <span className='FontSmall'>{title}</span>
         <SlQuestion className='FontTiny' />
       </div>
       <div className='d-flex align-items-center justify-content-between GapSmall mt-auto'>
-        <span className='FontWeightMedium FontBig'>125</span>
-        <MutedSpan>+25 today</MutedSpan>
+        <span className='FontWeightMedium FontBig'>{value}</span>
+        {/* <MutedSpan>+25 today</MutedSpan> */}
       </div>
     </DfCard>
   )
