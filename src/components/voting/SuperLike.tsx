@@ -86,6 +86,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
       value: (userReport?.superLikesCount ?? 0) + 1,
       spaceId,
       isFollower: amIFollower,
+      isComment,
       amountRange: getAmountRange(totalStake.amount),
     })
 
