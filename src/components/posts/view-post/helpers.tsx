@@ -13,6 +13,7 @@ import { HasDataForSlug } from 'src/components/urls'
 import { DfMd } from 'src/components/utils/DfMd'
 import NoData from 'src/components/utils/EmptyList'
 import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels'
+import FollowSpaceButton from 'src/components/utils/FollowSpaceButton'
 import Segment from 'src/components/utils/Segment'
 import { ActiveVoters, PostVoters } from 'src/components/voting/ListVoters'
 import SuperLike from 'src/components/voting/SuperLike'
@@ -424,6 +425,15 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
           <div className='DfRow'>
             <PostCreator postDetails={postDetails} space={space} withSpaceName withSpaceAvatar />
             <div className='d-flex align-items-center align-self-start GapTiny'>
+              {space && !isMobile && (
+                <FollowSpaceButton
+                  className='mr-1'
+                  size='small'
+                  ghost
+                  space={space.struct}
+                  withUnfollowButton={false}
+                />
+              )}
               {space && (
                 <ShareDropdown
                   postDetails={postDetails}
