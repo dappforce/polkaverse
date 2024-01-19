@@ -162,11 +162,12 @@ export const PostCreator: FC<PostCreatorProps> = ({
       isPadded={false}
       size={size}
       details={
-        <div className='d-flex align-items-center GapMini'>
+        <div>
           {withSpaceName && space && (
             <>
               <SpacePreviewPopup
                 space={space}
+                className='d-inline'
                 content={<SpaceNameAsLink space={space} className='DfGreyLink' />}
               />
               {' • '}
