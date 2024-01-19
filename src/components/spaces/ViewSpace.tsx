@@ -329,7 +329,12 @@ export const InnerViewSpace = (props: Props) => {
       )}
       {isMobile && <MobileCreatorCard spaceData={spaceData} />}
       <Section className='DfContentPage mt-4'>
-        <PostPreviewsOnSpace spaceData={spaceData} posts={posts} postIds={postIds} />
+        <PostPreviewsOnSpace
+          key={spaceData.id}
+          spaceData={spaceData}
+          posts={posts}
+          postIds={postIds}
+        />
       </Section>
       <MakeAsProfileModal isMySpace={isMy} />
     </Section>
