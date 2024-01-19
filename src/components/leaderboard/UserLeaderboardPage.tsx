@@ -13,6 +13,7 @@ import { PageContent } from '../main/PageWrapper'
 import AuthorSpaceAvatar from '../profiles/address-views/AuthorSpaceAvatar'
 import DfCard from '../utils/cards/DfCard'
 import { MutedSpan } from '../utils/MutedText'
+import LeaderboardTable from './LeaderboardTable'
 
 const stats: Record<
   string,
@@ -178,7 +179,7 @@ export default function UserLeaderboardPage({ address }: { address: string }) {
               Stakers ranked based on the amount of SUB earned with Active Staking.
             </MutedSpan>
           </div>
-          <div className='mt-3'>asdfasdfsdf</div>
+          <LeaderboardTable className='mt-3' />
         </DfCard>
       </div>
     </PageContent>

@@ -1,0 +1,14 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.LeaderboardTable
+  display: grid
+  grid-template-columns: max-content 1fr max-content
+  column-gap: $space_small
+
+  .LeaderboardTitles, :global(.infinite-scroll-component__outerdiv), :global(.infinite-scroll-component), :global(.ant-list), :global(.ant-list-items), :global(.ant-list-items) > li
+    display: grid
+    grid-template-columns: subgrid
+    grid-column: 1/4
+    gap: $space_small
+    align-items: center
+

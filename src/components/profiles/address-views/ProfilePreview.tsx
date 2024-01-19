@@ -30,6 +30,7 @@ type ProfilePreviewProps = AddressProps & {
     right?: number
   }
   emailAddress?: string
+  withAddress?: boolean
 }
 
 export const ProfilePreview: FC<ProfilePreviewProps> = ({
@@ -44,6 +45,7 @@ export const ProfilePreview: FC<ProfilePreviewProps> = ({
   bottom,
   spans,
   emailAddress = '',
+  withAddress,
 }) => {
   return (
     <Row className={clsx('flex-nowrap', 'align-items-center', className)}>
@@ -58,6 +60,7 @@ export const ProfilePreview: FC<ProfilePreviewProps> = ({
           withLabel={withLabel}
           withDetails={withDetails}
           emailAddress={emailAddress}
+          withAddress={withAddress}
         />
         {bottom}
       </Col>
