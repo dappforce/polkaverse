@@ -2273,3 +2273,31 @@ hr {
 .\!BreakWord {
   word-break: break-word !important;
 }
+
+.DfRadioGroup {
+  background: white;
+  border-radius: $border_radius_normal;
+  padding: 0.125rem;
+
+  .ant-radio-button-wrapper {
+    border-radius: $border_radius_normal;
+    border: none;
+    font-weight: $font_weight_medium;
+    color: $color_muted;
+    height: auto;
+    padding: 0 $space_small;
+
+    &::before {
+      display: none;
+    }
+
+    &.ant-radio-button-wrapper-checked {
+      background-color: #e7f0ff;
+      color: $color_font_normal;
+    }
+
+    &:not(.ant-radio-button-wrapper-disabled):focus-within {
+      box-shadow: 0 0 0 2px rgba(0, 94, 255, 0.12);
+    }
+  }
+}
