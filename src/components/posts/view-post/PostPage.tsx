@@ -147,7 +147,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
       withVoteBanner
       creatorDashboardSidebarType={{ name: 'post-page', space }}
     >
-      <MobileActiveStakingSection />
+      <MobileActiveStakingSection showTopUsers={false} />
       <HiddenPostAlert post={post.struct} />
       <Section>
         <div>

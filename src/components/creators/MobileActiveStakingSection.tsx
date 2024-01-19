@@ -6,11 +6,13 @@ import TopUsersCard from './TopUsersCard'
 export type MobileActiveStakingSectionProps = ComponentProps<'div'> & {
   offsetX?: number
   offsetY?: number
+  showTopUsers?: boolean
 }
 
 export default function MobileActiveStakingSection({
   offsetX = -16,
   offsetY = -12,
+  showTopUsers = true,
   ...props
 }: MobileActiveStakingSectionProps) {
   const isMobile = useIsMobileWidthOrDevice()
@@ -31,7 +33,7 @@ export default function MobileActiveStakingSection({
       >
         <MobileStakerRewardDashboard />
       </div>
-      <TopUsersCard style={{ margin: `0 ${offsetX}px`, background: 'white' }} />
+      {showTopUsers && <TopUsersCard style={{ margin: `0 ${offsetX}px`, background: 'white' }} />}
     </>
   )
 }
