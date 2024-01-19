@@ -292,11 +292,8 @@ const GET_TOP_USERS = gql`
   }
 `
 export async function getTopUsers(): Promise<TopUsers> {
-  const now = getDayAndWeekTimestamp().day
-  const from = dayjs(now * 1000)
-    .subtract(1, 'day')
-    .valueOf()
-    .toString()
+  const now = dayjs()
+  const from = now.subtract(1, 'day').valueOf().toString()
   const res = await datahubQueryRequest<
     {
       activeStakingStakersRankedBySuperLikesForPeriod: {
