@@ -7,6 +7,7 @@ import clsx from 'clsx'
 import React, { FC, useCallback, useState } from 'react'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import { resolveIpfsUrl } from 'src/ipfs'
+import { resizeImage } from 'src/utils/image'
 import { DfBgImg } from '../utils/DfBgImg'
 import { showErrorMessage } from '../utils/Message'
 import { MutedSpan } from '../utils/MutedText'
@@ -51,7 +52,7 @@ export const UploadImg = ({
   const [loading, setLoading] = useState(false)
   const { ipfs } = useSubsocialApi()
 
-  const beforeUpload = useCallback((file: File | Blob) => {
+  const validateImage = useCallback((file: File | Blob) => {
     const isJpgOrPng =
       file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif'
     if (!isJpgOrPng) {
@@ -69,10 +70,11 @@ export const UploadImg = ({
       <Upload
         accept='.gif, .png, .jpeg, .jpg'
         action={async file => {
-          if (file) {
+          const compressedImage = await resizeImage(file)
+          if (compressedImage && validateImage(compressedImage)) {
             try {
               setLoading(true)
-              const cid = await ipfs.saveFileToOffchain(file)
+              const cid = await ipfs.saveFileToOffchain(compressedImage)
               onChange(cid)
               setLoading(false)
               return cid
@@ -87,7 +89,6 @@ export const UploadImg = ({
         }}
         listType={listType}
         showUploadList={false}
-        beforeUpload={beforeUpload}
         className={styles.DfUploadImg}
         {...props}
       >
