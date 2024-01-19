@@ -71,7 +71,7 @@ export const UploadImg = ({
         accept='.gif, .png, .jpeg, .jpg'
         action={async file => {
           const compressedImage = await resizeImage(file)
-          if (compressedImage && validateImage(compressedImage)) {
+          if (compressedImage) {
             try {
               setLoading(true)
               const cid = await ipfs.saveFileToOffchain(compressedImage)
@@ -90,6 +90,7 @@ export const UploadImg = ({
         listType={listType}
         showUploadList={false}
         className={styles.DfUploadImg}
+        beforeUpload={validateImage}
         {...props}
       >
         <UploadButton loading={loading} />
