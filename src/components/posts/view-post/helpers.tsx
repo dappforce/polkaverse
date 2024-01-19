@@ -9,6 +9,7 @@ import React, { FC, useState } from 'react'
 import { TbMessageCircle2 } from 'react-icons/tb'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
+import SpacePreviewPopup from 'src/components/spaces/SpacePreviewPopup'
 import { HasDataForSlug } from 'src/components/urls'
 import { DfMd } from 'src/components/utils/DfMd'
 import NoData from 'src/components/utils/EmptyList'
@@ -156,15 +157,18 @@ export const PostCreator: FC<PostCreatorProps> = ({
       spaceId={withSpaceAvatar ? spaceId : undefined}
       address={ownerId}
       owner={owner}
-      withFollowButton
+      withFollowButton={false}
       isShort={true}
       isPadded={false}
       size={size}
       details={
-        <div>
+        <div className='d-flex align-items-center GapMini'>
           {withSpaceName && space && (
             <>
-              <SpaceNameAsLink space={space} className='DfGreyLink' />
+              <SpacePreviewPopup
+                space={space}
+                content={<SpaceNameAsLink space={space} className='DfGreyLink' />}
+              />
               {' • '}
             </>
           )}

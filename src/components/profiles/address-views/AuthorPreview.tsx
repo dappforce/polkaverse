@@ -49,6 +49,7 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
     details,
     children,
     spaceId,
+    withFollowButton,
   } = props
   const nameClass = `ui--AddressComponents-address ${className}`
 
@@ -61,7 +62,14 @@ export const AuthorPreview = (props: ExtendedAddressProps) => {
             <Popover
               trigger='hover'
               mouseEnterDelay={0.3}
-              content={<ProfilePreviewPopup address={address} owner={owner} withDetails />}
+              content={
+                <ProfilePreviewPopup
+                  withFollowButton={withFollowButton}
+                  address={address}
+                  owner={owner}
+                  withDetails
+                />
+              }
             >
               <div className='d-flex align-items-center'>
                 <Name address={address} owner={owner} className={nameClass} asLink />

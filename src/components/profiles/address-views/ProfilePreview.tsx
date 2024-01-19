@@ -19,6 +19,7 @@ const FollowAccountButton = dynamic(() => import('../../utils/FollowAccountButto
 type ProfilePreviewProps = AddressProps & {
   withLabel?: boolean
   withDetails?: boolean
+  withFollowButton?: boolean
   size?: number
   left?: React.ReactNode
   right?: React.ReactNode
@@ -68,7 +69,7 @@ export const ProfilePreview: FC<ProfilePreviewProps> = ({
 }
 
 export const ProfilePreviewPopup: FC<ProfilePreviewProps> = props => {
-  const { address, withDetails = false, bottom } = props
+  const { address, withDetails = false, bottom, withFollowButton = true } = props
 
   return (
     <ProfilePreview
@@ -110,9 +111,11 @@ export const ProfilePreviewPopup: FC<ProfilePreviewProps> = props => {
         </>
       }
       right={
-        <Row justify='end' align='top'>
-          <FollowAccountButton address={address} />
-        </Row>
+        withFollowButton && (
+          <Row justify='end' align='top'>
+            <FollowAccountButton address={address} />
+          </Row>
+        )
       }
     />
   )
