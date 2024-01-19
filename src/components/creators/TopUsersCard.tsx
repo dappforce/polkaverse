@@ -36,7 +36,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
     <>
       <div className='d-flex justify-content-between align-items-center'>
         <div className='d-flex align-items-center FontWeightSemibold GapMini'>
-          <span>Top members (last 24h)</span>
+          <span className='FontSemilarge'>Top members (last 24h)</span>
           <HiOutlineInformationCircle />
         </div>
         {/* {isMobile && seeMoreButton} */}
@@ -115,7 +115,7 @@ function UserInfo({
         <ViewSpaceLink
           title={
             <span
-              className='FontWeightMedium'
+              className='FontWeightMedium FontNormal'
               style={{
                 minWidth: 0,
                 textOverflow: 'ellipsis',
