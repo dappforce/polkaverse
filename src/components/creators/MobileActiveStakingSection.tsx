@@ -26,7 +26,7 @@ export default function MobileActiveStakingSection({
           margin: `${offsetY}px ${offsetX}px 0`,
           position: 'sticky',
           top: '64px',
-          zIndex: 10,
+          zIndex: 9,
           background: 'white',
           ...props.style,
         }}
