@@ -320,7 +320,7 @@ export const InnerViewSpace = (props: Props) => {
 
   return (
     <Section className='mt-3'>
-      <MobileActiveStakingSection offsetY={-28} />
+      <MobileActiveStakingSection offsetY={-28} showTopUsers={false} />
       <PendingSpaceOwnershipPanel space={space} />
       <HiddenSpaceAlert space={space} />
       <Section className='pt-2'>{renderPreview()}</Section>
