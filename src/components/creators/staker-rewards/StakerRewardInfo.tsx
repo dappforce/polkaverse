@@ -13,7 +13,7 @@ import { useFetchUserRewardReport } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getAmountRange } from 'src/utils/analytics'
 import NumberSkeleton from '../common/NumberSkeleton'
-import StakerRewardHistoryModal from './StakerRewardHistoryModal'
+import RewardHistoryModal from '../RewardHistoryModal'
 import styles from './StakerRewardInfo.module.sass'
 import StakerRewardProgressBar, { StakerRewardProgressBarProps } from './StakerRewardProgressBar'
 
@@ -151,7 +151,7 @@ export default function StakerRewardInfo({ size, ...props }: StakerRewardInfoPro
         </div>
       </div>
 
-      <StakerRewardHistoryModal
+      <RewardHistoryModal
         visible={isOpenRewardHistoryModal}
         onCancel={() => setIsOpenRewardHistoryModal(false)}
       />

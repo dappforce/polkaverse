@@ -17,7 +17,7 @@ import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getAmountRange } from 'src/utils/analytics'
 import { activeStakingLinks } from 'src/utils/links'
 import NumberSkeleton from '../common/NumberSkeleton'
-import StakerRewardHistoryModal from '../staker-rewards/StakerRewardHistoryModal'
+import RewardHistoryModal from '../RewardHistoryModal'
 import styles from './CreatorRewardInfoCard.module.sass'
 
 export default function CreatorRewardInfoCard() {
@@ -116,7 +116,7 @@ export default function CreatorRewardInfoCard() {
         </div>
       </Segment>
 
-      <StakerRewardHistoryModal
+      <RewardHistoryModal
         visible={isOpenRewardHistoryModal}
         onCancel={() => setIsOpenRewardHistoryModal(false)}
       />
