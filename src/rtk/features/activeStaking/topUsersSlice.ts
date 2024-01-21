@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { SubsocialApi } from '@subsocial/api'
 import { getTopUsers } from 'src/components/utils/datahub/active-staking'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { AppDispatch } from 'src/rtk/app/store'
+import { AppDispatch, AppStore } from 'src/rtk/app/store'
 import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 import { fetchProfileSpaces } from '../profiles/profilesSlice'
 
@@ -26,13 +26,18 @@ export const fetchTopUsers = createSimpleFetchWrapper<null, TopUsers | null>({
   saveToCacheAction: data => slice.actions.setTopUsers(data),
 })
 
-export async function fetchTopUsersWithSpaces(dispatch: AppDispatch, api: SubsocialApi) {
-  const { payload } = await dispatch(fetchTopUsers())
-  if (!payload) return
+export async function fetchTopUsersWithSpaces(
+  store: AppStore,
+  dispatch: AppDispatch,
+  api: SubsocialApi,
+) {
+  await dispatch(fetchTopUsers())
+  const state = selectTopUsers(store.getState())
+  if (!state) return
 
-  const parsedPayload = payload as TopUsers
-  const creators = parsedPayload.creators.map(user => user.address)
-  const stakers = parsedPayload.stakers.map(user => user.address)
+  const parsedState = state as TopUsers
+  const creators = parsedState.creators.map(user => user.address)
+  const stakers = parsedState.stakers.map(user => user.address)
 
   await dispatch(fetchProfileSpaces({ ids: [...creators, ...stakers], api }))
 }

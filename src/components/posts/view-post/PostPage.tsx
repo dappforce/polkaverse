@@ -326,7 +326,7 @@ getInitialPropsWithRedux(PostPage, async props => {
 
   const [res] = await Promise.all([
     getData(),
-    fetchTopUsersWithSpaces(dispatch, subsocial),
+    fetchTopUsersWithSpaces(reduxStore, dispatch, subsocial),
   ] as const)
   if (res === null) return return404(context)
 
