@@ -16,7 +16,7 @@ const sliceName = 'topUsers'
 
 export const selectTopUsers = (state: RootState) => state.topUsers
 
-export const fetchTopUsers = createSimpleFetchWrapper<null, TopUsers | null>({
+export const fetchTopUsers = createSimpleFetchWrapper<{}, TopUsers | null>({
   sliceName,
   fetchData: async function () {
     const data = await getTopUsers()
@@ -31,7 +31,7 @@ export async function fetchTopUsersWithSpaces(
   dispatch: AppDispatch,
   api: SubsocialApi,
 ) {
-  await dispatch(fetchTopUsers())
+  await dispatch(fetchTopUsers({ reload: true }))
   const state = selectTopUsers(store.getState())
   if (!state) return
 
