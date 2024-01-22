@@ -217,14 +217,18 @@ export function createSimpleFetchWrapper<Args, ReturnValue>({
         if (fetchedData && !shouldFetchCondition?.(fetchedData)) return fetchedData
       }
 
-      const promise = fetchData(allArgs, getState(), dispatch)
-      currentlyFetchingMap.set(id, promise)
-      const res = await promise
+      try {
+        const promise = fetchData(allArgs, getState(), dispatch)
+        currentlyFetchingMap.set(id, promise)
+        const res = await promise
 
-      await dispatch(saveToCacheAction(res))
-      currentlyFetchingMap.delete(id)
-
-      return promise
+        await dispatch(saveToCacheAction(res))
+        return promise
+      } catch (err) {
+        throw err
+      } finally {
+        currentlyFetchingMap.delete(id)
+      }
     },
   )
 }

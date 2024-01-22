@@ -6,6 +6,7 @@ import router from 'next/router'
 import { FC } from 'react'
 import { CommentSection } from 'src/components/comments/CommentsSection'
 import MobileActiveStakingSection from 'src/components/creators/MobileActiveStakingSection'
+import TopUsersCard from 'src/components/creators/TopUsersCard'
 import { PageContent } from 'src/components/main/PageWrapper'
 import AuthorCard from 'src/components/profiles/address-views/AuthorCard'
 import { useResponsiveSize } from 'src/components/responsive'
@@ -13,6 +14,7 @@ import { useIsUnlistedSpace } from 'src/components/spaces/helpers'
 import SpaceCard from 'src/components/spaces/SpaceCard'
 import { postUrl } from 'src/components/urls'
 import { Loading } from 'src/components/utils'
+import DfCard from 'src/components/utils/cards/DfCard'
 import { return404 } from 'src/components/utils/next'
 import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
@@ -231,6 +233,9 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               eventSource='post-page'
             />
           </div>
+          <DfCard className='p-0 mt-3 lg-hidden'>
+            <TopUsersCard className='pt' />
+          </DfCard>
         </div>
       </Section>
     </PageContent>
@@ -321,7 +326,7 @@ getInitialPropsWithRedux(PostPage, async props => {
 
   const [res] = await Promise.all([
     getData(),
-    fetchTopUsersWithSpaces(dispatch, subsocial),
+    fetchTopUsersWithSpaces(reduxStore, dispatch, subsocial),
   ] as const)
   if (res === null) return return404(context)
 

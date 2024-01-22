@@ -225,7 +225,7 @@ const HomePage: NextPage<Props> = props => {
   )
 }
 
-getInitialPropsWithRedux(HomePage, async ({ apolloClient, subsocial, dispatch }) => {
+getInitialPropsWithRedux(HomePage, async ({ apolloClient, subsocial, dispatch, reduxStore }) => {
   const apolloRes = await apolloClient?.query<GetHomePageData>({
     query: GET_TOTAL_COUNTS,
   })
@@ -241,7 +241,7 @@ getInitialPropsWithRedux(HomePage, async ({ apolloClient, subsocial, dispatch })
     totalSpaceCount = spaceCount.totalCount
   }
 
-  await fetchTopUsersWithSpaces(dispatch, subsocial)
+  await fetchTopUsersWithSpaces(reduxStore, dispatch, subsocial)
 
   return {
     totalPostCount,
