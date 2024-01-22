@@ -71,9 +71,9 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
         </div>
       )}
       <div className={clsx(styles.Leaderboards)}>
-        <DfCard size='small' withShadow={false} className='sm-hidden'>
+        <DfCard size='small' withShadow={false}>
           <div className='d-flex flex-column'>
-            <span className='FontSemilarge FontWeightSemibold'>Leaderboard</span>
+            <span className='FontSemilarge FontWeightSemibold'>Top Stakers this week</span>
             <MutedSpan className='FontSmall'>
               Stakers ranked based on the amount of SUB earned with Active Staking.
             </MutedSpan>
@@ -82,9 +82,9 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
         </DfCard>
         <DfCard size='small' withShadow={false}>
           <div className='d-flex flex-column'>
-            <span className='FontSemilarge FontWeightSemibold'>Leaderboard</span>
+            <span className='FontSemilarge FontWeightSemibold'>Top Creators this week</span>
             <MutedSpan className='FontSmall'>
-              Stakers ranked based on the amount of SUB earned with Active Staking.
+              Creators ranked based on the amount of SUB earned with Active Staking.
             </MutedSpan>
           </div>
           <LeaderboardTable className='mt-3' />
