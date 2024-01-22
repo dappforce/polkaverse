@@ -187,7 +187,7 @@ export const PageContent: FC<Props> = ({
             <div {...sidebarStyles}>
               <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
               {!isLargeDesktop && (
-                <div className='mt-3'>
+                <div className='mt-3 xl-hidden'>
                   <TopUsersCard />
                 </div>
               )}
