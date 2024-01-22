@@ -1,9 +1,10 @@
+import { Button } from 'antd'
 import clsx from 'clsx'
 import { ComponentProps, useState } from 'react'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { wait } from 'src/utils/promise'
-import { InfiniteListByPage } from '../lists'
 import Avatar from '../profiles/address-views/Avatar'
+import { Loading } from '../utils'
 import { MutedSpan } from '../utils/MutedText'
 import styles from './LeaderboardTable.module.sass'
 
@@ -17,13 +18,18 @@ const data: Data = {
 }
 
 export default function LeaderboardTable({ ...props }: LeaderboardTableProps) {
-  const [allData] = useState(() =>
+  const [isLoading, setIsLoading] = useState(false)
+  const [allData, setAllData] = useState(() =>
     Array.from({ length: 10 }).map((_, idx) => ({ ...data, rank: idx + 1 })),
   )
 
   const loadMore = async () => {
+    setIsLoading(true)
     await wait(1000)
-    return Array.from({ length: 10 }).map((_, idx) => ({ ...data, rank: allData.length + idx + 1 }))
+    setAllData(prev =>
+      Array.from({ length: prev.length + 10 }).map((_, idx) => ({ ...data, rank: idx + 1 })),
+    )
+    setIsLoading(false)
   }
 
   return (
@@ -36,13 +42,18 @@ export default function LeaderboardTable({ ...props }: LeaderboardTableProps) {
         <span>Staker</span>
         <span>Rewards this week</span>
       </div>
-      <InfiniteListByPage
-        totalCount={100}
-        getKey={(data: Data) => data.rank.toString()}
-        dataSource={allData}
-        loadMore={loadMore}
-        renderItem={data => <UserRow data={data} key={data.rank} />}
-      />
+      {allData.map(data => (
+        <div className={styles.LeaderboardRow} key={data.rank}>
+          <UserRow data={data} />
+        </div>
+      ))}
+      {isLoading ? (
+        <Loading className={clsx(styles.Loading, 'py-2')} withPadding={false} />
+      ) : (
+        <Button className={styles.LoadMore} onClick={loadMore}>
+          Load more
+        </Button>
+      )}
     </div>
   )
 }

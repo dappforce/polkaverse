@@ -3,14 +3,14 @@
 .LeaderboardTable
   display: grid
   grid-template-columns: max-content 1fr max-content
-  column-gap: $space_small
+  gap: $space_small
 
-  .LeaderboardTitles, :global(.infinite-scroll-component__outerdiv), :global(.infinite-scroll-component), :global(.ant-list), :global(.ant-list-items), :global(.ant-list-items) > li
+  .LeaderboardRow, .LeaderboardTitles
     display: grid
     grid-template-columns: subgrid
     grid-column: 1/4
-    gap: $space_small
     align-items: center
 
-  :global(.InfiniteListLoading)
+  .LoadMore, .Loading
     grid-column: 1/4
+    justify-self: center
