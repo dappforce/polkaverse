@@ -1,0 +1,79 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.Title
+  display: flex
+  align-items: baseline
+  justify-content: space-between
+  gap: $space_tiny
+
+  @media screen and (max-width: 768px)
+    &
+      align-items: stretch
+      flex-direction: column
+
+.Statistics
+  gap: $space_big
+  margin-top: $space_big
+  display: grid
+  grid-template-columns: 1fr 1fr 1fr
+  
+  @media screen and (max-width: 768px)
+    &
+      grid-template-columns: 1fr 1fr
+      gap: $space_normal
+
+  .ProfileCard
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    gap: $space_normal
+    grid-row: span 2
+
+    .ProfileContent
+      display: flex
+      align-items: center
+      flex-direction: column
+
+      .ProfileName
+        font-size: $font_big
+        font-weight: $font_weight_semibold
+    
+    @media screen and (max-width: 768px)
+      &
+        grid-template-columns: 1fr 1fr
+        grid-column: span 2
+        justify-content: flex-start
+        grid-row: auto
+        flex-direction: row
+        gap: $space_small
+
+        .ProfileContent
+          align-items: flex-start
+
+          .ProfileName
+            font-size: $font_large
+
+.StatisticCard
+  display: flex
+  flex-direction: column
+  gap: $space_mini
+
+  .StatisticNumber
+    font-size: $font_big
+    font-weight: $font_weight_medium
+    
+    @media screen and (max-width: 768px)
+      &
+        font-size: $font_semilarge
+
+.Leaderboard
+  margin-top: $space_big
+  gap: $space_large
+  display: grid
+  grid-template-columns: 1fr 2fr
+  align-items: start
+  
+  @media screen and (max-width: 768px)
+    &
+      grid-template-columns: 1fr

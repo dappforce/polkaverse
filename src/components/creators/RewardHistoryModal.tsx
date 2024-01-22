@@ -71,7 +71,7 @@ export function RewardHistoryPanel({
                   {formatDate(reward.startDate, 'DD.MM.YY')} -{' '}
                   {formatDate(reward.endDate, 'DD.MM.YY')}
                 </span>
-                <span className='FontWeightSemibold'>
+                <span className='FontWeightSemibold' style={{ whiteSpace: 'nowrap' }}>
                   +{' '}
                   <FormatBalance
                     currency='SUB'

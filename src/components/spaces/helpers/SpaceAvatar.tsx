@@ -8,12 +8,28 @@ type Props = Omit<BaseAvatarProps, 'identityValue'> & {
   isUnnamedSpace?: boolean
 }
 
-export const SpaceAvatar = ({ asLink = true, isUnnamedSpace = false, space, ...props }: Props) =>
+export const SpaceAvatar = ({
+  asLink = true,
+  isUnnamedSpace = false,
+  space,
+  noMargin,
+  ...props
+}: Props) =>
   asLink ? (
     <ViewSpaceLink
       space={space}
-      title={<BaseAvatar identityValue={isUnnamedSpace ? space.id : space.ownerId} {...props} />}
+      title={
+        <BaseAvatar
+          identityValue={isUnnamedSpace ? space.id : space.ownerId}
+          noMargin={noMargin}
+          {...props}
+        />
+      }
     />
   ) : (
-    <BaseAvatar identityValue={isUnnamedSpace ? space.id : space.ownerId} {...props} />
+    <BaseAvatar
+      identityValue={isUnnamedSpace ? space.id : space.ownerId}
+      noMargin={noMargin}
+      {...props}
+    />
   )

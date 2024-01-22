@@ -1,5 +1,7 @@
-import { Radio, Tooltip } from 'antd'
+import { Button, Radio, Tooltip } from 'antd'
+import clsx from 'clsx'
 import { useState } from 'react'
+import { RiHistoryFill } from 'react-icons/ri'
 import { SlQuestion } from 'react-icons/sl'
 import { ReactNode } from 'react-markdown'
 import { useSelectProfile } from 'src/rtk/app/hooks'
@@ -8,12 +10,14 @@ import { useFetchUserStatistics } from 'src/rtk/features/leaderboard/hooks'
 import { UserStatistics } from 'src/rtk/features/leaderboard/userStatistics'
 import { truncateAddress } from 'src/utils/storage'
 import { FormatBalance } from '../common/balances'
-import { RewardHistoryPanel } from '../creators/RewardHistoryModal'
+import RewardHistoryModal, { RewardHistoryPanel } from '../creators/RewardHistoryModal'
 import { PageContent } from '../main/PageWrapper'
-import AuthorSpaceAvatar from '../profiles/address-views/AuthorSpaceAvatar'
+import Avatar from '../profiles/address-views/Avatar'
+import { useIsMobileWidthOrDevice } from '../responsive'
 import DfCard from '../utils/cards/DfCard'
 import { MutedSpan } from '../utils/MutedText'
 import LeaderboardTable from './LeaderboardTable'
+import styles from './UserLeaderboardPage.module.sass'
 
 const stats: Record<
   string,
@@ -103,48 +107,56 @@ export default function UserLeaderboardPage({ address }: { address: string }) {
   const [tabState, setTabState] = useState<'staker' | 'creator'>('staker')
   const { data } = useFetchUserStatistics(address)
   const profile = useSelectProfile(address)
+  const [isOpenHistoryModal, setIsOpenHistoryModal] = useState(false)
+  const isMobile = useIsMobileWidthOrDevice()
 
   const { data: rewardHistory, loading } = useFetchUserRewardHistory(address)
 
   return (
     <PageContent withLargerMaxWidth meta={{ title: 'Active Staking Dashboard' }}>
-      <div className='d-flex align-items-baseline justify-content-between'>
-        <h1 className='DfUnboundedTitle ColorNormal mb-0'>Active Staking Dashboard</h1>
-        <div className='d-flex align-items-center GapTiny'>
-          <span>Role:</span>
+      <div className={clsx(styles.Title)}>
+        <h1 className='DfUnboundedTitle ColorNormal mb-0 FontBig'>Active Staking Dashboard</h1>
+        <div className='d-flex align-items-center GapNormal justify-content-between'>
+          <div className='d-flex align-items-center GapTiny'>
+            <span>Role:</span>
 
-          <Radio.Group
-            className='DfRadioGroup'
-            options={[
-              { label: 'Staker', value: 'staker' },
-              { label: 'Creator', value: 'creator' },
-            ]}
-            onChange={e => setTabState(e.target.value)}
-            value={tabState}
-            optionType='button'
-          />
+            <Radio.Group
+              className='DfRadioGroup'
+              options={[
+                { label: 'Staker', value: 'staker' },
+                { label: 'Creator', value: 'creator' },
+              ]}
+              onChange={e => setTabState(e.target.value)}
+              value={tabState}
+              optionType='button'
+            />
+          </div>
+          <Button
+            type='link'
+            className='d-flex align-items-center GapTiny lg-hidden'
+            onClick={() => setIsOpenHistoryModal(true)}
+          >
+            <RiHistoryFill />
+            <span className='FontSmall'>Rewards History</span>
+          </Button>
         </div>
       </div>
       {data && (
-        <div
-          className='mt-4 GapBig'
-          style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}
-        >
+        <div className={clsx(styles.Statistics)}>
           <DfCard
-            className='d-flex flex-column GapSmall align-items-center'
+            className={clsx(styles.ProfileCard)}
+            size='small'
             variant='info'
             withShadow={false}
-            style={{ gridRow: 'span 2' }}
           >
-            {/* <div
-            className='rounded-circle d-flex align-items-center justify-content-center'
-            style={{ background: 'white', width: '88px', height: '88px' }}
-          >
-            <IoPeople style={{ fontSize: '42px', color: '#5089F8' }} />
-          </div> */}
-            <AuthorSpaceAvatar size={88} authorAddress={address} />
-            <div className='d-flex flex-column align-items-center'>
-              <span className='FontBig FontWeightSemibold'>
+            <Avatar
+              size={isMobile ? 70 : 88}
+              address={address}
+              avatar={profile?.content?.image}
+              noMargin
+            />
+            <div className={clsx(styles.ProfileContent)}>
+              <span className={clsx(styles.ProfileName)}>
                 {profile?.content?.name ?? truncateAddress(address)}
               </span>
               <MutedSpan>as a {tabState === 'creator' ? 'Creator' : 'Staker'}</MutedSpan>
@@ -160,11 +172,8 @@ export default function UserLeaderboardPage({ address }: { address: string }) {
           ))}
         </div>
       )}
-      <div
-        className='mt-4 GapLarge'
-        style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', alignItems: 'start' }}
-      >
-        <DfCard size='small' withShadow={false}>
+      <div className={clsx(styles.Leaderboard)}>
+        <DfCard size='small' withShadow={false} className='sm-hidden'>
           <RewardHistoryPanel
             title={tabState === 'creator' ? 'My Creator Rewards' : 'My Staker Rewards'}
             loading={loading}
@@ -182,6 +191,12 @@ export default function UserLeaderboardPage({ address }: { address: string }) {
           <LeaderboardTable className='mt-3' />
         </DfCard>
       </div>
+      {isMobile && (
+        <RewardHistoryModal
+          visible={isOpenHistoryModal}
+          onCancel={() => setIsOpenHistoryModal(false)}
+        />
+      )}
     </PageContent>
   )
 }
@@ -196,7 +211,7 @@ function StatisticCard({
   tooltip: string
 }) {
   return (
-    <DfCard size='small' className='d-flex flex-column GapMini' withShadow={false}>
+    <DfCard size='small' className={styles.StatisticCard} withShadow={false}>
       <div className='d-flex align-items-center ColorMuted GapTiny'>
         <span className='FontSmall'>{title}</span>
         <Tooltip title={tooltip}>
@@ -204,9 +219,18 @@ function StatisticCard({
         </Tooltip>
       </div>
       <div className='d-flex align-items-center justify-content-between GapSmall mt-auto'>
-        <span className='FontWeightMedium FontBig'>{value}</span>
+        <span className={styles.StatisticNumber}>{value}</span>
         {/* <MutedSpan>+25 today</MutedSpan> */}
       </div>
     </DfCard>
   )
+}
+
+{
+  /* <div
+            className='rounded-circle d-flex align-items-center justify-content-center'
+            style={{ background: 'white', width: '88px', height: '88px' }}
+          >
+            <IoPeople style={{ fontSize: '42px', color: '#5089F8' }} />
+          </div> */
 }
