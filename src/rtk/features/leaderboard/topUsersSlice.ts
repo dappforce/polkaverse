@@ -31,16 +31,13 @@ export async function fetchTopUsersWithSpaces(
   dispatch: AppDispatch,
   api: SubsocialApi,
 ) {
-  console.log('fetching top users...')
   await dispatch(fetchTopUsers({ reload: true }))
   const state = selectTopUsers(store.getState())
-  console.log('dont have state?', !state)
   if (!state) return
 
   const parsedState = state as TopUsers
   const creators = parsedState.creators.map(user => user.address)
   const stakers = parsedState.stakers.map(user => user.address)
-  console.log('fetching profiles', [...creators, ...stakers])
 
   await dispatch(fetchProfileSpaces({ ids: [...creators, ...stakers], api }))
 }
