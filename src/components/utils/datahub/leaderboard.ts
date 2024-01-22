@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import gql from 'graphql-tag'
 import { TopUsers } from 'src/rtk/features/leaderboard/topUsersSlice'
 import { UserStatistics } from 'src/rtk/features/leaderboard/userStatistics'
-import { datahubQueryRequest, getDayAndWeekTimestamp } from './utils'
+import { datahubQueryRequest } from './utils'
 
 const GET_TOP_USERS = gql`
   query GetTopUsers($from: String!) {
@@ -17,8 +17,8 @@ const GET_TOP_USERS = gql`
   }
 `
 export async function getTopUsers(): Promise<TopUsers> {
-  const now = getDayAndWeekTimestamp().day
-  const from = dayjs(now).subtract(1, 'day').valueOf().toString()
+  const now = dayjs()
+  const from = now.subtract(1, 'day').valueOf().toString()
   const res = await datahubQueryRequest<
     {
       activeStakingStakersRankedBySuperLikesForPeriod: {
