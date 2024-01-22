@@ -133,7 +133,7 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
       next={() => handleInfiniteOnLoad(page)}
       hasMore={hasMore}
       scrollableTarget={scrollableTarget}
-      loader={<Loading label={loadingLabel} />}
+      loader={<Loading label={loadingLabel} className='InfiniteListLoading' />}
     >
       <DataList
         {...otherProps}
