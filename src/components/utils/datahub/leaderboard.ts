@@ -1,7 +1,8 @@
 import dayjs from 'dayjs'
 import gql from 'graphql-tag'
+import { GeneralStatistics } from 'src/rtk/features/leaderboard/generalStatisticsSlice'
 import { TopUsers } from 'src/rtk/features/leaderboard/topUsersSlice'
-import { UserStatistics } from 'src/rtk/features/leaderboard/userStatistics'
+import { UserStatistics } from 'src/rtk/features/leaderboard/userStatisticsSlice'
 import { datahubQueryRequest } from './utils'
 
 const GET_TOP_USERS = gql`
@@ -78,7 +79,6 @@ const GET_USER_STATS = gql`
     }
   }
 `
-
 export async function getUserStatistics({ address }: { address: string }): Promise<UserStatistics> {
   const res = await datahubQueryRequest<
     {
@@ -106,5 +106,48 @@ export async function getUserStatistics({ address }: { address: string }): Promi
   return {
     address,
     ...res.activeStakingAccountActivityMetricsForFixedPeriod,
+  }
+}
+
+const GET_GENERAL_STATS = gql`
+  query GetGeneralStats {
+    activeStakingTotalActivityMetricsForFixedPeriod(
+      args: {
+        period: WEEK
+        likedPostsCount: true
+        likedCreatorsCount: true
+        stakersEarnedTotal: true
+        creatorEarnedTotal: true
+      }
+    ) {
+      likedPostsCount
+      likedCreatorsCount
+      stakersEarnedTotal
+      creatorEarnedTotal
+    }
+  }
+`
+export async function getGeneralStatistics(): Promise<GeneralStatistics> {
+  const res = await datahubQueryRequest<
+    {
+      activeStakingTotalActivityMetricsForFixedPeriod: {
+        likedPostsCount: number
+        likedCreatorsCount: number
+        stakersEarnedTotal: string
+        creatorEarnedTotal: string
+      }
+    },
+    {}
+  >({
+    document: GET_GENERAL_STATS,
+    variables: {},
+  })
+
+  const data = res.activeStakingTotalActivityMetricsForFixedPeriod
+  return {
+    creatorsEarnedTotal: data.creatorEarnedTotal,
+    creatorsLiked: data.likedCreatorsCount,
+    postsLiked: data.likedPostsCount,
+    stakersEarnedTotal: data.stakersEarnedTotal,
   }
 }

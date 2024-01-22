@@ -18,8 +18,9 @@ import ordersById from '../features/domainPendingOrders/pendingOrdersSlice'
 import domainByOwner from '../features/domains/domainsByOwnerSlice'
 import domains from '../features/domains/domainsSlice'
 import topLevelDomains from '../features/domains/topLevelDomains'
+import generalStatistics from '../features/leaderboard/generalStatisticsSlice'
 import topUsers from '../features/leaderboard/topUsersSlice'
-import userStatistics from '../features/leaderboard/userStatistics'
+import userStatistics from '../features/leaderboard/userStatisticsSlice'
 import onBoarding from '../features/onBoarding/onBoardingSlice'
 import mySpacePermissions from '../features/permissions/mySpacePermissionsSlice'
 import myFeed from '../features/posts/myFeedSlice'
@@ -71,6 +72,7 @@ const rootReducer = combineReducers({
   postReward,
   topUsers,
   userStatistics,
+  generalStatistics,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

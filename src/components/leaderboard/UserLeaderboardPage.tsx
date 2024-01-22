@@ -5,7 +5,7 @@ import { RiHistoryFill } from 'react-icons/ri'
 import { ReactNode } from 'react-markdown'
 import { useFetchUserRewardHistory } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchUserStatistics } from 'src/rtk/features/leaderboard/hooks'
-import { UserStatistics } from 'src/rtk/features/leaderboard/userStatistics'
+import { UserStatistics } from 'src/rtk/features/leaderboard/userStatisticsSlice'
 import { FormatBalance } from '../common/balances'
 import RewardHistoryModal, { RewardHistoryPanel } from '../creators/RewardHistoryModal'
 import { PageContent } from '../main/PageWrapper'
@@ -43,7 +43,7 @@ const stats: Record<
     {
       title: 'Stakers that liked me this week',
       value: data => data.creator.stakersWhoLiked,
-      tooltip: 'The amount of individual readers that liked at least one of your posts this week',
+      tooltip: 'The amount of individual stakers that liked at least one of your posts this week',
     },
     {
       title: 'SUB earned in total',

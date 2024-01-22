@@ -1,7 +1,8 @@
 import { useFetchWithoutApi } from 'src/rtk/app/hooksCommon'
 import { useAppSelector } from 'src/rtk/app/store'
+import { fetchGeneralStatistics, selectGeneralStatistics } from './generalStatisticsSlice'
 import { fetchTopUsers, selectTopUsers } from './topUsersSlice'
-import { fetchUserStatistics, selectUserStatistics } from './userStatistics'
+import { fetchUserStatistics, selectUserStatistics } from './userStatisticsSlice'
 
 export function useFetchTopUsers() {
   const data = useAppSelector(state => selectTopUsers(state))
@@ -20,6 +21,16 @@ export function useFetchUserStatistics(address: string) {
     { address: address },
     { enabled: !!address },
   )
+
+  return {
+    ...fetchData,
+    data,
+  }
+}
+
+export function useFetchGeneralStatistics() {
+  const data = useAppSelector(state => selectGeneralStatistics(state))
+  const fetchData = useFetchWithoutApi(fetchGeneralStatistics, {})
 
   return {
     ...fetchData,
