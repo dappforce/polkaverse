@@ -39,4 +39,6 @@ export default [
   '7218',
   // Dotcast
   '10132',
+  // Cappex
+  '4855'
 ]
