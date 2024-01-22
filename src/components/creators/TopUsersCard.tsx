@@ -119,6 +119,9 @@ function UserInfo({
       </div>
       <div className='d-flex flex-column' style={{ minWidth: 0 }}>
         <ViewSpaceLink
+          containerClassName='d-flex'
+          className='d-flex'
+          style={{ minWidth: 0 }}
           title={
             <span
               className='FontWeightMedium FontNormal'
