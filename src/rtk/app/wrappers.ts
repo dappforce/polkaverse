@@ -2,6 +2,7 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { AsyncThunkPayloadCreator, createAsyncThunk, Dictionary, EntityId } from '@reduxjs/toolkit'
 import { isDef } from '@subsocial/utils'
 import sortKeysRecursive from 'sort-keys-recursive'
+import { isClientSide } from 'src/components/utils'
 import { getApolloClient } from 'src/graphql/client'
 import { DataSourceTypes } from 'src/types'
 import {
@@ -212,7 +213,7 @@ export function createSimpleFetchWrapper<Args, ReturnValue>({
       const alreadyFetchedPromise = currentlyFetchingMap.get(id)
       if (alreadyFetchedPromise && !reload) return alreadyFetchedPromise
 
-      if (!reload) {
+      if (!reload && isClientSide()) {
         const fetchedData = getCachedData(getState(), allArgs)
         if (fetchedData && !shouldFetchCondition?.(fetchedData)) return fetchedData
       }
@@ -256,7 +257,7 @@ export function createSimpleManyFetchWrapper<Args, ReturnValue>({
 
       let filteredArgs: Args = allArgs
       let shouldFetchIds: string[] = []
-      if (!reload) {
+      if (!reload && isClientSide()) {
         filteredArgs = filterNewArgs(allArgs, id => {
           const shouldFetch = !currentlyFetchingMap.get(id) && !getCachedData(getState(), id)
           if (!shouldFetch) return false
