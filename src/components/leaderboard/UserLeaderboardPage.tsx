@@ -1,21 +1,19 @@
-import { Button, Radio, Tooltip } from 'antd'
+import { Button, Radio } from 'antd'
 import clsx from 'clsx'
 import { useState } from 'react'
 import { RiHistoryFill } from 'react-icons/ri'
-import { SlQuestion } from 'react-icons/sl'
 import { ReactNode } from 'react-markdown'
-import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useFetchUserRewardHistory } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchUserStatistics } from 'src/rtk/features/leaderboard/hooks'
 import { UserStatistics } from 'src/rtk/features/leaderboard/userStatistics'
-import { truncateAddress } from 'src/utils/storage'
 import { FormatBalance } from '../common/balances'
 import RewardHistoryModal, { RewardHistoryPanel } from '../creators/RewardHistoryModal'
 import { PageContent } from '../main/PageWrapper'
-import Avatar from '../profiles/address-views/Avatar'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import DfCard from '../utils/cards/DfCard'
 import { MutedSpan } from '../utils/MutedText'
+import ProfileCard from './common/ProfileCard'
+import StatisticCard from './common/StatisticCard'
 import LeaderboardTable from './LeaderboardTable'
 import styles from './UserLeaderboardPage.module.sass'
 
@@ -106,7 +104,6 @@ const stats: Record<
 export default function UserLeaderboardPage({ address }: { address: string }) {
   const [tabState, setTabState] = useState<'staker' | 'creator'>('staker')
   const { data } = useFetchUserStatistics(address)
-  const profile = useSelectProfile(address)
   const [isOpenHistoryModal, setIsOpenHistoryModal] = useState(false)
   const isMobile = useIsMobileWidthOrDevice()
 
@@ -143,25 +140,10 @@ export default function UserLeaderboardPage({ address }: { address: string }) {
       </div>
       {data && (
         <div className={clsx(styles.Statistics)}>
-          <DfCard
-            className={clsx(styles.ProfileCard)}
-            size='small'
-            variant='info'
-            withShadow={false}
-          >
-            <Avatar
-              size={isMobile ? 70 : 88}
-              address={address}
-              avatar={profile?.content?.image}
-              noMargin
-            />
-            <div className={clsx(styles.ProfileContent)}>
-              <span className={clsx(styles.ProfileName)}>
-                {profile?.content?.name ?? truncateAddress(address)}
-              </span>
-              <MutedSpan>as a {tabState === 'creator' ? 'Creator' : 'Staker'}</MutedSpan>
-            </div>
-          </DfCard>
+          <ProfileCard
+            address={address}
+            subtitle={`as a ${tabState === 'creator' ? 'Creator' : 'Staker'}`}
+          />
           {stats[tabState].map(stat => (
             <StatisticCard
               tooltip={stat.tooltip}
@@ -199,38 +181,4 @@ export default function UserLeaderboardPage({ address }: { address: string }) {
       )}
     </PageContent>
   )
-}
-
-function StatisticCard({
-  title,
-  value,
-  tooltip,
-}: {
-  title: string
-  value: ReactNode
-  tooltip: string
-}) {
-  return (
-    <DfCard size='small' className={styles.StatisticCard} withShadow={false}>
-      <div className='d-flex align-items-center ColorMuted GapTiny'>
-        <span className='FontSmall'>{title}</span>
-        <Tooltip title={tooltip}>
-          <SlQuestion className='FontTiny' />
-        </Tooltip>
-      </div>
-      <div className='d-flex align-items-center justify-content-between GapSmall mt-auto'>
-        <span className={styles.StatisticNumber}>{value}</span>
-        {/* <MutedSpan>+25 today</MutedSpan> */}
-      </div>
-    </DfCard>
-  )
-}
-
-{
-  /* <div
-            className='rounded-circle d-flex align-items-center justify-content-center'
-            style={{ background: 'white', width: '88px', height: '88px' }}
-          >
-            <IoPeople style={{ fontSize: '42px', color: '#5089F8' }} />
-          </div> */
 }
