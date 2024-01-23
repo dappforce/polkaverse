@@ -124,7 +124,7 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
         <h1 className='DfUnboundedTitle ColorNormal mb-0 FontBig'>Active Staking Dashboard</h1>
         <div className='d-flex align-items-center GapNormal justify-content-between'>
           <div className='d-flex align-items-center GapTiny'>
-            <span>Mode:</span>
+            <span className='FontSmall ColorMuted'>Mode:</span>
 
             <Radio.Group
               className='DfRadioGroup'
