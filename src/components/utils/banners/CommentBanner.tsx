@@ -8,6 +8,7 @@ const CommentBanner = () => (
   <MultiBanner
     uid={BANNER_STORAGE_KEY}
     kinds={bannersKind}
+    withCloseButtonBackground
     buildUrl={({ isMobile }) => `/images/banners/comment${isMobile ? '-mobile' : '-desktop'}.png`}
   />
 )
