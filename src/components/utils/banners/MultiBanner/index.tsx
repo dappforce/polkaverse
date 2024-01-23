@@ -15,7 +15,7 @@ type MultiBannerProps = {
   uid: string
   kinds: string[]
   buildUrl: (props: BuildUrlFnProps) => string
-  href: string
+  href?: string
 }
 
 export const MultiBanner = ({ uid, kinds, buildUrl, href }: MultiBannerProps) => {
@@ -41,14 +41,19 @@ export const MultiBanner = ({ uid, kinds, buildUrl, href }: MultiBannerProps) =>
   }
 
   const closeButton = <CloseOutlined className={styles.DfCloseButton} onClick={closeBanner} />
+  const content = (
+    <div className={styles.Banner}>
+      <img src={backgroundImage} className={styles.BannerImg} alt='Banner image' />
+      {closeButton}
+    </div>
+  )
+
+  if (!href) return content
 
   return (
     <Link href={href}>
       <a target='_blank' rel='noreferrer'>
-        <div className={styles.Banner}>
-          <img src={backgroundImage} className={styles.BannerImg} alt='Banner image' />
-          {closeButton}
-        </div>
+        {content}
       </a>
     </Link>
   )
