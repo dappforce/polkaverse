@@ -65,7 +65,8 @@ const GET_POST_REWARDS = gql`
   query GetPostRewards($postIds: [String!]!) {
     activeStakingRewardsByPosts(args: { postPersistentIds: $postIds }) {
       persistentPostId
-      amount
+      reward
+      draftReward
     }
   }
 `
@@ -74,7 +75,8 @@ export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> 
     {
       activeStakingRewardsByPosts: {
         persistentPostId: string
-        amount: string
+        reward: string
+        draftReward: string
       }[]
     },
     { postIds: string[] }
@@ -84,13 +86,14 @@ export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> 
   })
 
   const resultMap = new Map<string, PostRewards>()
-  res.activeStakingRewardsByPosts.forEach(item =>
+  res.activeStakingRewardsByPosts.forEach(item => {
+    const reward = BigInt(item.reward) > 0 ? item.reward : item.draftReward
     resultMap.set(item.persistentPostId, {
       postId: item.persistentPostId,
-      amount: item.amount,
-      isNotZero: BigInt(item.amount) > 0,
-    }),
-  )
+      amount: reward,
+      isNotZero: BigInt(reward) > 0,
+    })
+  })
 
   return postIds.map(postId => resultMap.get(postId) ?? { postId, amount: '0', isNotZero: false })
 }
