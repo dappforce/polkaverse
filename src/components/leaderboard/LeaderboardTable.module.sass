@@ -1,15 +1,16 @@
 @import 'src/styles/subsocial-vars.scss'
 
-.LeaderboardTable
+.LeaderboardTable, .ModalTable
   display: grid
   grid-template-columns: max-content 1fr max-content
   gap: $space_small
 
-  .LeaderboardRow, .LeaderboardTitles
+  .LeaderboardRow, .LeaderboardTitles, .Loading, .ModalTitles, :global(.infinite-scroll-component__outerdiv), :global(.infinite-scroll-component)
     display: grid
     grid-template-columns: subgrid
     grid-column: 1/4
     align-items: center
+    gap: $space_small
 
   .ViewMore
     grid-column: 1/4
