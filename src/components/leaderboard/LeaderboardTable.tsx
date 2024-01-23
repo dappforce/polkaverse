@@ -13,7 +13,7 @@ import { fetchProfileSpaces } from 'src/rtk/features/profiles/profilesSlice'
 import { FormatBalance } from '../common/balances'
 import { DEFAULT_MODAL_THRESHOLD } from '../lists'
 import Avatar from '../profiles/address-views/Avatar'
-import ViewSpaceLink from '../spaces/ViewSpaceLink'
+import ViewProfileLink from '../profiles/ViewProfileLink'
 import { useSubsocialApi } from '../substrate'
 import { Loading } from '../utils'
 import CustomModal, { CustomModalProps } from '../utils/CustomModal'
@@ -96,10 +96,9 @@ function UserRow({ data, loading }: { data: LeaderboardData['data'][number]; loa
           <>
             <Avatar address={data.address} avatar={profile?.content?.image} size={32} />
             {profile?.struct ? (
-              <ViewSpaceLink
-                containerStyle={{ minWidth: 0, display: 'flex' }}
+              <ViewProfileLink
                 style={{ minWidth: 0, display: 'flex' }}
-                space={profile?.struct}
+                account={{ address: data.address }}
                 title={title}
               />
             ) : (
