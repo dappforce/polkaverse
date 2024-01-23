@@ -1,4 +1,5 @@
 import { CloseOutlined } from '@ant-design/icons'
+import clsx from 'clsx'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { useResponsiveSize } from 'src/components/responsive'
@@ -15,10 +16,17 @@ type MultiBannerProps = {
   uid: string
   kinds: string[]
   buildUrl: (props: BuildUrlFnProps) => string
-  href: string
+  href?: string
+  withCloseButtonBackground?: boolean
 }
 
-export const MultiBanner = ({ uid, kinds, buildUrl, href }: MultiBannerProps) => {
+export const MultiBanner = ({
+  uid,
+  kinds,
+  buildUrl,
+  href,
+  withCloseButtonBackground,
+}: MultiBannerProps) => {
   const { isMobile } = useResponsiveSize()
 
   const bannerFromStorage = store.get(uid)
@@ -40,15 +48,25 @@ export const MultiBanner = ({ uid, kinds, buildUrl, href }: MultiBannerProps) =>
     store.set(uid, false)
   }
 
-  const closeButton = <CloseOutlined className={styles.DfCloseButton} onClick={closeBanner} />
+  const closeButton = (
+    <CloseOutlined
+      className={clsx(styles.DfCloseButton, withCloseButtonBackground && styles.DfCloseButtonBg)}
+      onClick={closeBanner}
+    />
+  )
+  const content = (
+    <div className={styles.Banner}>
+      <img src={backgroundImage} className={styles.BannerImg} alt='Banner image' />
+      {closeButton}
+    </div>
+  )
+
+  if (!href) return content
 
   return (
     <Link href={href}>
       <a target='_blank' rel='noreferrer'>
-        <div className={styles.Banner}>
-          <img src={backgroundImage} className={styles.BannerImg} alt='Banner image' />
-          {closeButton}
-        </div>
+        {content}
       </a>
     </Link>
   )
