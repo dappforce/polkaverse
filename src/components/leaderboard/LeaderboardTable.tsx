@@ -71,7 +71,7 @@ function UserRow({ data, loading }: { data: LeaderboardData['data'][number]; loa
   return (
     <>
       <MutedSpan>{data.rank + 1}</MutedSpan>
-      <div className='d-flex align-items-center'>
+      <div className='d-flex align-items-center' style={{ minWidth: 0 }}>
         {isLoading ? (
           <>
             <Skeleton.Avatar size={32} className='mr-2' />
@@ -80,7 +80,16 @@ function UserRow({ data, loading }: { data: LeaderboardData['data'][number]; loa
         ) : (
           <>
             <Avatar address={data.address} avatar={profile?.content?.image} size={32} />
-            {profile?.struct ? <ViewSpaceLink space={profile?.struct} title={title} /> : title}
+            {profile?.struct ? (
+              <ViewSpaceLink
+                containerStyle={{ minWidth: 0, display: 'flex' }}
+                style={{ minWidth: 0, display: 'flex' }}
+                space={profile?.struct}
+                title={title}
+              />
+            ) : (
+              title
+            )}
           </>
         )}
       </div>
