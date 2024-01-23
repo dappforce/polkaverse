@@ -2257,6 +2257,12 @@ hr {
   }
 }
 
+@media screen and (min-width: 1200px) {
+  .xl-hidden {
+    display: none !important;
+  }
+}
+
 .\!FontTiny {
   font-size: $font_tiny !important;
 }

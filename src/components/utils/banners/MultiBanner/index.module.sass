@@ -18,12 +18,17 @@
 .DfCloseButton
   color: #fff
   cursor: pointer
-  font-size: 1.25rem
   padding-right: 0
   float: right
   position: absolute
   top: $space_small
   right: $space_small
+
+  &.DfCloseButtonBg
+    padding: $space_mini
+    border-radius: $border_radius_normal
+    background: rgba(0, 0, 0, .3)
+    backdrop-filter: blur(4px) saturate(180%)
 
   &:hover
     color: $color_link_hover
