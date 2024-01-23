@@ -95,15 +95,12 @@ function UserRow({ data, loading }: { data: LeaderboardData['data'][number]; loa
         ) : (
           <>
             <Avatar address={data.address} avatar={profile?.content?.image} size={32} />
-            {profile?.struct ? (
-              <ViewProfileLink
-                style={{ minWidth: 0, display: 'flex' }}
-                account={{ address: data.address }}
-                title={title}
-              />
-            ) : (
-              title
-            )}
+            <ViewProfileLink
+              style={{ minWidth: 0, display: 'flex' }}
+              account={{ address: data.address }}
+              title={title}
+              className='ColorNormal'
+            />
           </>
         )}
       </div>
