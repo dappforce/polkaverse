@@ -14,7 +14,7 @@ import {
 import { CanPostSuperLiked } from 'src/rtk/features/activeStaking/canPostSuperLikedSlice'
 import { PostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { RewardHistory } from 'src/rtk/features/activeStaking/rewardHistorySlice'
-import { fetchRewardReport, RewardReport } from 'src/rtk/features/activeStaking/rewardReportSlice'
+import { RewardReport } from 'src/rtk/features/activeStaking/rewardReportSlice'
 import {
   fetchSuperLikeCounts,
   SuperLikeCount,
@@ -388,7 +388,7 @@ async function processSubscriptionEvent(
 
   dispatch(fetchSuperLikeCounts({ postIds: [post.persistentId], reload: true }))
   if (staker.id === myAddress) {
-    dispatch(fetchRewardReport({ address: myAddress, reload: true }))
+    // dispatch(fetchRewardReport({ address: myAddress, reload: true }))
     dispatch(
       fetchAddressLikeCounts({
         address: myAddress,

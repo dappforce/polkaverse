@@ -106,7 +106,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
       // refetch the real data
       dispatch(fetchSuperLikeCounts({ postIds: [post.id], reload: true }))
       dispatch(fetchAddressLikeCounts({ address: myAddress, postIds: [post.id], reload: true }))
-      dispatch(fetchRewardReport({ address: myAddress }))
+      dispatch(fetchRewardReport({ address: myAddress, reload: true }))
     }
 
     if (localStorage.getItem(FIRST_TIME_SUPERLIKE) !== 'false') {
