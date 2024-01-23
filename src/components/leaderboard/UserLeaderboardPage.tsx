@@ -1,13 +1,12 @@
 import { Button, Radio } from 'antd'
 import clsx from 'clsx'
-import router from 'next/router'
+import router, { useRouter } from 'next/router'
 import { useState } from 'react'
 import { RiHistoryFill } from 'react-icons/ri'
 import { ReactNode } from 'react-markdown'
 import { useFetchUserRewardHistory } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchUserStatistics } from 'src/rtk/features/leaderboard/hooks'
 import { UserStatistics } from 'src/rtk/features/leaderboard/userStatisticsSlice'
-import { replaceUrl } from 'src/utils/window'
 import { FormatBalance } from '../common/balances'
 import RewardHistoryModal, { RewardHistoryPanel } from '../creators/RewardHistoryModal'
 import { PageContent } from '../main/PageWrapper'
@@ -105,10 +104,14 @@ const stats: Record<
 
 export type UserLeaderboardPageProps = {
   address: string
-  tab: 'staker' | 'creator'
 }
-export default function UserLeaderboardPage({ address, tab }: UserLeaderboardPageProps) {
-  const [tabState, setTabState] = useState<'staker' | 'creator'>(tab)
+export default function UserLeaderboardPage({ address }: UserLeaderboardPageProps) {
+  const { query } = useRouter()
+  let tabState = query.tab as 'staker' | 'creator'
+  if (tabState !== 'staker' && tabState !== 'creator') {
+    tabState = 'staker'
+  }
+
   const { data } = useFetchUserStatistics(address)
   const [isOpenHistoryModal, setIsOpenHistoryModal] = useState(false)
   const isMobile = useIsMobileWidthOrDevice()
@@ -136,8 +139,7 @@ export default function UserLeaderboardPage({ address, tab }: UserLeaderboardPag
                   router.push('/leaderboard')
                   return
                 }
-                setTabState(value)
-                replaceUrl(`/leaderboard/${address}?tab=${value}`)
+                router.push(`/leaderboard/${address}?tab=${value}`, undefined, { shallow: true })
               }}
               value={tabState}
               optionType='button'
