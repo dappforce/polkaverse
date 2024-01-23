@@ -14,6 +14,7 @@ import React from 'react'
 import { FaDiscord } from 'react-icons/fa'
 import { FiTwitter } from 'react-icons/fi'
 import { IoFlashOutline } from 'react-icons/io5'
+import { LuLayoutDashboard } from 'react-icons/lu'
 import { accountUrl } from 'src/components/urls'
 import { SubIcon } from 'src/components/utils'
 import config from 'src/config'
@@ -60,6 +61,11 @@ export const DefaultMenu: MenuItem[] = [
     name: 'Statistics',
     page: ['/stats'],
     icon: <LineChartOutlined />,
+  },
+  {
+    name: 'Active Staking',
+    page: ['/leaderboard'],
+    icon: <SubIcon Icon={LuLayoutDashboard} />,
   },
   Divider,
   {
