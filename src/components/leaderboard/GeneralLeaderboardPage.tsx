@@ -65,7 +65,7 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
         <div className='d-flex align-items-center GapNormal justify-content-between'>
           {myAddress && (
             <div className='d-flex align-items-center GapTiny'>
-              <span>Role:</span>
+              <span>Mode:</span>
 
               <Radio.Group
                 className='DfRadioGroup'
