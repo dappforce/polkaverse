@@ -11,3 +11,8 @@ export function enablePageScroll() {
 export function hasInjectedWallet() {
   return isClientSide() && !isEmptyObj((window as any).injectedWeb3)
 }
+
+export function replaceUrl(url: string) {
+  const pathname = url.replace(window.location.origin, '')
+  window.history.replaceState({ ...window.history.state, url: pathname, as: pathname }, '', url)
+}

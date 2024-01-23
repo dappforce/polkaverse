@@ -1,4 +1,6 @@
-import UserLeaderboardPage from 'src/components/leaderboard/UserLeaderboardPage'
+import UserLeaderboardPage, {
+  UserLeaderboardPageProps,
+} from 'src/components/leaderboard/UserLeaderboardPage'
 import { return404 } from 'src/components/utils/next'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { fetchRewardHistory } from 'src/rtk/features/activeStaking/rewardHistorySlice'
@@ -10,6 +12,8 @@ getInitialPropsWithRedux(UserLeaderboardPage, async ({ dispatch, context, subsoc
   const { query } = context
   const address = query.address as string
   if (!address || typeof address !== 'string') return return404(context)
+  let tab = query.tab as string
+  if (tab !== 'creator' && tab !== 'staker') tab = 'creator'
 
   await Promise.all([
     dispatch(fetchUserStatistics({ address })),
@@ -18,7 +22,7 @@ getInitialPropsWithRedux(UserLeaderboardPage, async ({ dispatch, context, subsoc
     dispatch(fetchLeaderboardData({ role: 'STAKER' })),
     dispatch(fetchLeaderboardData({ role: 'CREATOR' })),
   ])
-  return { address }
+  return { address, tab } as UserLeaderboardPageProps
 })
 
 export default UserLeaderboardPage

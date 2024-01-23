@@ -6,6 +6,7 @@ import { ReactNode } from 'react-markdown'
 import { useFetchUserRewardHistory } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchUserStatistics } from 'src/rtk/features/leaderboard/hooks'
 import { UserStatistics } from 'src/rtk/features/leaderboard/userStatisticsSlice'
+import { replaceUrl } from 'src/utils/window'
 import { FormatBalance } from '../common/balances'
 import RewardHistoryModal, { RewardHistoryPanel } from '../creators/RewardHistoryModal'
 import { PageContent } from '../main/PageWrapper'
@@ -101,8 +102,12 @@ const stats: Record<
   ],
 }
 
-export default function UserLeaderboardPage({ address }: { address: string }) {
-  const [tabState, setTabState] = useState<'staker' | 'creator'>('staker')
+export type UserLeaderboardPageProps = {
+  address: string
+  tab: 'staker' | 'creator'
+}
+export default function UserLeaderboardPage({ address, tab }: UserLeaderboardPageProps) {
+  const [tabState, setTabState] = useState<'staker' | 'creator'>(tab)
   const { data } = useFetchUserStatistics(address)
   const [isOpenHistoryModal, setIsOpenHistoryModal] = useState(false)
   const isMobile = useIsMobileWidthOrDevice()
@@ -123,7 +128,10 @@ export default function UserLeaderboardPage({ address }: { address: string }) {
                 { label: 'Staker', value: 'staker' },
                 { label: 'Creator', value: 'creator' },
               ]}
-              onChange={e => setTabState(e.target.value)}
+              onChange={e => {
+                setTabState(e.target.value)
+                replaceUrl(`/leaderboard/${address}?tab=${e.target.value}`)
+              }}
               value={tabState}
               optionType='button'
             />
@@ -167,7 +175,9 @@ export default function UserLeaderboardPage({ address }: { address: string }) {
           <div className='d-flex flex-column'>
             <span className='FontSemilarge FontWeightSemibold'>Leaderboard</span>
             <MutedSpan className='FontSmall'>
-              Stakers ranked based on the amount of SUB earned with Active Staking.
+              {tabState === 'staker'
+                ? 'Stakers ranked based on the amount of SUB earned with Active Staking.'
+                : 'Creators ranked based on the amount of SUB earned with Active Staking.'}
             </MutedSpan>
           </div>
           <LeaderboardTable className='mt-3' role={tabState === 'creator' ? 'CREATOR' : 'STAKER'} />
