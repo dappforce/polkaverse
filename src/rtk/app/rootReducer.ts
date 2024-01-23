@@ -19,6 +19,7 @@ import domainByOwner from '../features/domains/domainsByOwnerSlice'
 import domains from '../features/domains/domainsSlice'
 import topLevelDomains from '../features/domains/topLevelDomains'
 import generalStatistics from '../features/leaderboard/generalStatisticsSlice'
+import leaderboard from '../features/leaderboard/leaderboardSlice'
 import topUsers from '../features/leaderboard/topUsersSlice'
 import userStatistics from '../features/leaderboard/userStatisticsSlice'
 import onBoarding from '../features/onBoarding/onBoardingSlice'
@@ -73,6 +74,7 @@ const rootReducer = combineReducers({
   topUsers,
   userStatistics,
   generalStatistics,
+  leaderboard,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

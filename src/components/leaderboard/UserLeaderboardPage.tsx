@@ -170,7 +170,7 @@ export default function UserLeaderboardPage({ address }: { address: string }) {
               Stakers ranked based on the amount of SUB earned with Active Staking.
             </MutedSpan>
           </div>
-          <LeaderboardTable className='mt-3' />
+          <LeaderboardTable className='mt-3' role={tabState === 'creator' ? 'CREATOR' : 'STAKER'} />
         </DfCard>
       </div>
       {isMobile && (

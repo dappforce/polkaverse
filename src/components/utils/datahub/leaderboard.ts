@@ -1,9 +1,10 @@
 import dayjs from 'dayjs'
 import gql from 'graphql-tag'
 import { GeneralStatistics } from 'src/rtk/features/leaderboard/generalStatisticsSlice'
+import { LeaderboardData } from 'src/rtk/features/leaderboard/leaderboardSlice'
 import { TopUsers } from 'src/rtk/features/leaderboard/topUsersSlice'
 import { UserStatistics } from 'src/rtk/features/leaderboard/userStatisticsSlice'
-import { datahubQueryRequest } from './utils'
+import { datahubQueryRequest, getDayAndWeekTimestamp } from './utils'
 
 const GET_TOP_USERS = gql`
   query GetTopUsers($from: String!) {
@@ -149,5 +150,69 @@ export async function getGeneralStatistics(): Promise<GeneralStatistics> {
     creatorsLiked: data.likedCreatorsCount,
     postsLiked: data.likedPostsCount,
     stakersEarnedTotal: data.stakersEarnedTotal,
+  }
+}
+
+const GET_LEADERBOARD = gql`
+  query GetLeaderboardTableData(
+    $role: ActiveStakingAccountRole!
+    $timestamp: String!
+    $limit: Int!
+    $offset: Int!
+  ) {
+    activeStakingAddressesRankedByRewardsForPeriod(
+      args: {
+        filter: { period: WEEK, role: $role, timestamp: $timestamp }
+        limit: $limit
+        offset: $offset
+        order: DESC
+      }
+    ) {
+      data {
+        address
+        reward
+        rank
+      }
+      total
+      limit
+    }
+  }
+`
+export const LEADERBOARD_PAGE_LIMIT = 15
+export type LeaderboardRole = 'STAKER' | 'CREATOR'
+export async function getLeaderboardData({
+  page,
+  role,
+}: {
+  role: LeaderboardRole
+  page: number
+}): Promise<LeaderboardData> {
+  const { week } = getDayAndWeekTimestamp()
+  const offset = Math.max(page - 1, 0) * LEADERBOARD_PAGE_LIMIT
+  const res = await datahubQueryRequest<
+    {
+      activeStakingAddressesRankedByRewardsForPeriod: {
+        data: {
+          address: string
+          reward: string
+          rank: number
+        }[]
+        total: number
+        limit: number
+      }
+    },
+    { role: string; timestamp: string; limit: number; offset: number }
+  >({
+    document: GET_LEADERBOARD,
+    variables: { role, timestamp: week.toString(), limit: LEADERBOARD_PAGE_LIMIT, offset },
+  })
+
+  const data = res.activeStakingAddressesRankedByRewardsForPeriod
+  return {
+    data: data.data,
+    hasMore: data.total > data.limit + offset,
+    total: data.total,
+    page,
+    role,
   }
 }

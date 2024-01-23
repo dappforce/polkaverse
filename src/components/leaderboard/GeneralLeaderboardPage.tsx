@@ -78,7 +78,7 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
               Stakers ranked based on the amount of SUB earned with Active Staking.
             </MutedSpan>
           </div>
-          <LeaderboardTable className='mt-3' />
+          <LeaderboardTable className='mt-3' role='STAKER' />
         </DfCard>
         <DfCard size='small' withShadow={false}>
           <div className='d-flex flex-column'>
@@ -87,7 +87,7 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
               Creators ranked based on the amount of SUB earned with Active Staking.
             </MutedSpan>
           </div>
-          <LeaderboardTable className='mt-3' />
+          <LeaderboardTable className='mt-3' role='CREATOR' />
         </DfCard>
       </div>
     </PageContent>
