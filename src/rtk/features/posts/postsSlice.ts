@@ -232,6 +232,7 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
     handleAfterDataFetch: async (entities, args, { dispatch }) => {
       const {
         api,
+        newIds,
         withContent = true,
         withOwner = true,
         withSpace = true,
@@ -244,7 +245,11 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
         entities,
       )
 
-      const fetches: Promise<any>[] = []
+      const fetches: Promise<any>[] = [
+        dispatch(fetchSuperLikeCounts({ postIds: newIds as string[] })),
+        dispatch(fetchPostRewards({ postIds: newIds as string[] })),
+        dispatch(fetchCanPostsSuperLiked({ postIds: newIds as string[] })),
+      ]
 
       if (withOwner) {
         const ids = getUniqueOwnerIds(entities)
@@ -339,9 +344,6 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
             dataSource,
           }),
         )
-      dispatch(fetchSuperLikeCounts({ postIds: newIds }))
-      dispatch(fetchPostRewards({ postIds: newIds }))
-      dispatch(fetchCanPostsSuperLiked({ postIds: newIds }))
 
       withReactionByAccount &&
         dispatch(fetchAddressLikeCounts({ postIds: newIds, address: withReactionByAccount }))
