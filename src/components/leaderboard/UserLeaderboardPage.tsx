@@ -1,5 +1,6 @@
 import { Button, Radio } from 'antd'
 import clsx from 'clsx'
+import router from 'next/router'
 import { useState } from 'react'
 import { RiHistoryFill } from 'react-icons/ri'
 import { ReactNode } from 'react-markdown'
@@ -127,10 +128,16 @@ export default function UserLeaderboardPage({ address, tab }: UserLeaderboardPag
               options={[
                 { label: 'Staker', value: 'staker' },
                 { label: 'Creator', value: 'creator' },
+                { label: 'General', value: 'general' },
               ]}
               onChange={e => {
-                setTabState(e.target.value)
-                replaceUrl(`/leaderboard/${address}?tab=${e.target.value}`)
+                const value = e.target.value
+                if (value === 'general') {
+                  router.push('/leaderboard')
+                  return
+                }
+                setTabState(value)
+                replaceUrl(`/leaderboard/${address}?tab=${value}`)
               }}
               value={tabState}
               optionType='button'

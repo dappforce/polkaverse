@@ -1,5 +1,16 @@
 @import 'src/styles/subsocial-vars.scss'
 
+.Title
+  display: flex
+  align-items: baseline
+  justify-content: space-between
+  gap: $space_tiny
+
+  @media screen and (max-width: 768px)
+    &
+      align-items: stretch
+      flex-direction: column
+
 .Statistics
   gap: $space_big
   margin-top: $space_big

@@ -17,7 +17,7 @@ export default function StatisticCard({ title, tooltip, value, ...props }: Stati
       <div className='d-flex align-items-center ColorMuted GapTiny'>
         <span className='FontSmall'>{title}</span>
         <Tooltip title={tooltip}>
-          <SlQuestion className='FontTiny' />
+          <SlQuestion className='FontTiny' style={{ flexShrink: 0 }} />
         </Tooltip>
       </div>
       <div className='d-flex align-items-center justify-content-between GapSmall mt-auto'>

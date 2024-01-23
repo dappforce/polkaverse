@@ -1,7 +1,10 @@
+import { Radio } from 'antd'
 import clsx from 'clsx'
+import router from 'next/router'
 import { ReactNode } from 'react-markdown'
 import { GeneralStatistics } from 'src/rtk/features/leaderboard/generalStatisticsSlice'
 import { useFetchGeneralStatistics } from 'src/rtk/features/leaderboard/hooks'
+import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import { PageContent } from '../main/PageWrapper'
 import DfCard from '../utils/cards/DfCard'
@@ -53,10 +56,38 @@ const stats: { title: string; value: (data: GeneralStatistics) => ReactNode; too
 export type GeneralLeaderboardPageProps = {}
 export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) {
   const { data } = useFetchGeneralStatistics()
+  const myAddress = useMyAddress()
 
   return (
     <PageContent withLargerMaxWidth meta={{ title: 'Active Staking Dashboard' }}>
-      <h1 className='DfUnboundedTitle ColorNormal mb-0 FontBig'>Active Staking Dashboard</h1>
+      <div className={clsx(styles.Title)}>
+        <h1 className='DfUnboundedTitle ColorNormal mb-0 FontBig'>Active Staking Dashboard</h1>
+        <div className='d-flex align-items-center GapNormal justify-content-between'>
+          {myAddress && (
+            <div className='d-flex align-items-center GapTiny'>
+              <span>Role:</span>
+
+              <Radio.Group
+                className='DfRadioGroup'
+                options={[
+                  { label: 'Staker', value: 'staker' },
+                  { label: 'Creator', value: 'creator' },
+                  { label: 'General', value: 'general' },
+                ]}
+                onChange={e => {
+                  const value = e.target.value
+                  if (value === 'general') {
+                    return
+                  }
+                  router.push(`/leaderboard/${myAddress}?tab=${value}`)
+                }}
+                value='general'
+                optionType='button'
+              />
+            </div>
+          )}
+        </div>
+      </div>
       {data && (
         <div className={clsx(styles.Statistics)}>
           <ProfileCard title='Total Activity' subtitle='this week' />
