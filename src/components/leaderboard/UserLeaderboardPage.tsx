@@ -1,4 +1,4 @@
-import { Tabs } from 'antd'
+import { Radio, Tabs } from 'antd'
 import clsx from 'clsx'
 import router, { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -129,15 +129,30 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
           else if (key === 'stats') router.push('/stats')
         }}
       >
-        <Tabs.TabPane tab='My Staking Stats' key='user' />
+        {myAddress && <Tabs.TabPane tab='My Staking Stats' key='user' />}
         <Tabs.TabPane tab='Global Staking Stats' key='general' />
         <Tabs.TabPane tab='Polkaverse Activity' key='stats' />
       </Tabs>
       {data && (
         <div className={clsx(styles.Statistics)}>
           <ProfileCard
+            variant={tabState === 'creator' ? 'pink' : 'blue'}
             address={address}
-            subtitle={`as a ${tabState === 'creator' ? 'Creator' : 'Staker'}`}
+            detail={
+              <Radio.Group
+                className={clsx('DfRadioGroup mt-3', tabState === 'staker' && 'Blue')}
+                options={[
+                  { label: 'Staker', value: 'staker' },
+                  { label: 'Creator', value: 'creator' },
+                ]}
+                onChange={e => {
+                  const value = e.target.value
+                  router.push(`/leaderboard/${address}?tab=${value}`, undefined, { shallow: true })
+                }}
+                value={tabState}
+                optionType='button'
+              />
+            }
           />
           {stats[tabState].map(stat => (
             <StatisticCard
@@ -167,7 +182,7 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
                 : 'Creators ranked based on the amount of SUB earned with Active Staking.'}
             </MutedSpan>
           </div>
-          <LeaderboardTable className='mt-3' role={tabState === 'creator' ? 'CREATOR' : 'STAKER'} />
+          <LeaderboardTable className='mt-3' role={tabState} />
         </DfCard>
       </div>
       {isMobile && (

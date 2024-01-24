@@ -3,13 +3,14 @@ import { HTMLProps } from 'react'
 
 export type DfCardProps = Omit<HTMLProps<HTMLDivElement>, 'size'> & {
   withShadow?: boolean
-  variant?: 'default' | 'info'
+  variant?: 'default' | 'blue' | 'pink'
   size?: 'medium' | 'small'
 }
 
 const variants: Record<NonNullable<DfCardProps['variant']>, string> = {
   default: '',
-  info: 'DfCardInfo',
+  blue: 'DfCardBlue',
+  pink: 'DfCardPink',
 }
 export default function DfCard({
   className,

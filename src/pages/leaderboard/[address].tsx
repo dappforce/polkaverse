@@ -15,8 +15,8 @@ getInitialPropsWithRedux(UserLeaderboardPage, async ({ dispatch, context, subsoc
     dispatch(fetchUserStatistics({ address })),
     dispatch(fetchRewardHistory({ address })),
     dispatch(fetchProfileSpace({ id: address, api: subsocial })),
-    dispatch(fetchLeaderboardData({ role: 'STAKER' })),
-    dispatch(fetchLeaderboardData({ role: 'CREATOR' })),
+    dispatch(fetchLeaderboardData({ role: 'staker' })),
+    dispatch(fetchLeaderboardData({ role: 'creator' })),
   ])
   return { address }
 })

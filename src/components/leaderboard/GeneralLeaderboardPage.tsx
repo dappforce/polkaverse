@@ -67,13 +67,17 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
           else if (key === 'stats') router.push('/stats')
         }}
       >
-        <Tabs.TabPane tab='My Staking Stats' key='user' />
+        {myAddress && <Tabs.TabPane tab='My Staking Stats' key='user' />}
         <Tabs.TabPane tab='Global Staking Stats' key='general' />
         <Tabs.TabPane tab='Polkaverse Activity' key='stats' />
       </Tabs>
       {data && (
         <div className={clsx(styles.Statistics)}>
-          <ProfileCard title='Total Activity' subtitle='this week' />
+          <ProfileCard
+            variant='blue'
+            title='Total Activity'
+            detail={<MutedSpan>this week</MutedSpan>}
+          />
           {stats.map(stat => (
             <StatisticCard
               tooltip={stat.tooltip}
@@ -92,7 +96,7 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
               Stakers ranked based on the amount of SUB earned with Active Staking.
             </MutedSpan>
           </div>
-          <LeaderboardTable className='mt-3' role='STAKER' />
+          <LeaderboardTable className='mt-3' role='staker' />
         </DfCard>
         <DfCard size='small' withShadow={false} style={{ overflowX: 'clip' }}>
           <div className='d-flex flex-column'>
@@ -101,7 +105,7 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
               Creators ranked based on the amount of SUB earned with Active Staking.
             </MutedSpan>
           </div>
-          <LeaderboardTable className='mt-3' role='CREATOR' />
+          <LeaderboardTable className='mt-3' role='creator' />
         </DfCard>
       </div>
     </PageContent>

@@ -6,8 +6,8 @@ import { fetchLeaderboardData } from 'src/rtk/features/leaderboard/leaderboardSl
 getInitialPropsWithRedux(GeneralLeaderboardPage, async ({ dispatch }) => {
   await Promise.all([
     dispatch(fetchGeneralStatistics({ reload: true })),
-    dispatch(fetchLeaderboardData({ role: 'STAKER' })),
-    dispatch(fetchLeaderboardData({ role: 'CREATOR' })),
+    dispatch(fetchLeaderboardData({ role: 'staker' })),
+    dispatch(fetchLeaderboardData({ role: 'creator' })),
   ])
   return {}
 })

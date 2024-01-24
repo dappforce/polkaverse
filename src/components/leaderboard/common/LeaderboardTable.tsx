@@ -1,5 +1,6 @@
 import { Button, Skeleton } from 'antd'
 import clsx from 'clsx'
+import Link from 'next/link'
 import { ComponentProps, useEffect, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useFetchProfileSpaces, useSelectProfile } from 'src/rtk/app/hooks'
@@ -14,7 +15,6 @@ import { useMyAddress } from '../../auth/MyAccountsContext'
 import { FormatBalance } from '../../common/balances'
 import { DEFAULT_MODAL_THRESHOLD } from '../../lists'
 import Avatar from '../../profiles/address-views/Avatar'
-import ViewProfileLink from '../../profiles/ViewProfileLink'
 import { useSubsocialApi } from '../../substrate'
 import { Loading } from '../../utils'
 import CustomModal, { CustomModalProps } from '../../utils/CustomModal'
@@ -58,7 +58,7 @@ export default function LeaderboardTable({ role, ...props }: LeaderboardTablePro
           <span>Rewards this week</span>
         </div>
         {slicedData.map(row => (
-          <UserRow key={row.rank} data={row} loading={!!loading} />
+          <UserRow role={role} key={row.rank} data={row} loading={!!loading} />
         ))}
         <Button onClick={() => setIsOpenModal(true)} type='link' className={styles.ViewMore}>
           View more
@@ -74,44 +74,64 @@ export default function LeaderboardTable({ role, ...props }: LeaderboardTablePro
   )
 }
 
-function UserRow({ data, loading }: { data: LeaderboardData['data'][number]; loading: boolean }) {
+function UserRow({
+  data,
+  loading,
+  role,
+}: {
+  data: LeaderboardData['data'][number]
+  loading: boolean
+  role: LeaderboardRole
+}) {
   const myAddress = useMyAddress()
   const profile = useSelectProfile(data.address)
   const isLoading = loading && !profile
+
+  const isMyAddress = myAddress === data.address
+
   const title = (
     <span
       style={{ overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, whiteSpace: 'nowrap' }}
       className={clsx(!profile?.content?.name && 'ColorMuted')}
     >
-      {profile?.content?.name ?? 'Unnamed'}
+      {profile?.content?.name ?? 'Unnamed'} {<MutedSpan>{isMyAddress ? '(you)' : ''}</MutedSpan>}
     </span>
   )
 
   return (
-    <div className={clsx(styles.LeaderboardRow, myAddress === data.address && styles.Active)}>
-      <MutedSpan>{data.rank + 1}</MutedSpan>
-      <div className='d-flex align-items-center' style={{ minWidth: 0 }}>
-        {isLoading ? (
-          <>
-            <Skeleton.Avatar size={32} className='mr-2' />
-            <SpanSkeleton />
-          </>
-        ) : (
-          <>
-            <Avatar address={data.address} avatar={profile?.content?.image} size={32} />
-            <ViewProfileLink
-              style={{ minWidth: 0, display: 'flex' }}
-              account={{ address: data.address }}
-              title={title}
-              className='ColorNormal'
-            />
-          </>
+    <Link href={`/leaderboard/${data.address}?tab=${role}`} passHref>
+      <a
+        className={clsx(
+          styles.LeaderboardRow,
+          role === 'creator' && styles.RowPink,
+          myAddress === data.address && styles.Active,
+          '!ColorNormal',
         )}
-      </div>
-      <span style={{ textAlign: 'right' }}>
-        <FormatBalance value={data.reward} currency='SUB' decimals={10} precision={2} />
-      </span>
-    </div>
+      >
+        <MutedSpan>{data.rank + 1}</MutedSpan>
+        <div className='d-flex align-items-center' style={{ minWidth: 0 }}>
+          {isLoading ? (
+            <>
+              <Skeleton.Avatar size={32} className='mr-2' />
+              <SpanSkeleton />
+            </>
+          ) : (
+            <>
+              <Avatar
+                asLink={false}
+                address={data.address}
+                avatar={profile?.content?.image}
+                size={32}
+              />
+              <span>{title}</span>
+            </>
+          )}
+        </div>
+        <span style={{ textAlign: 'right' }}>
+          <FormatBalance value={data.reward} currency='SUB' decimals={10} precision={2} />
+        </span>
+      </a>
+    </Link>
   )
 }
 
@@ -148,7 +168,7 @@ function LeaderboardTableModal({
     title: 'Top Stakers this week',
     subtitle: 'Stakers ranked based on the amount of SUB earned with Active Staking.',
   }
-  if (role === 'CREATOR') {
+  if (role === 'creator') {
     wording = {
       title: 'Top Creators this week',
       subtitle: 'Creators ranked based on the amount of SUB earned with Active Staking.',
@@ -177,7 +197,7 @@ function LeaderboardTableModal({
           loader={<Loading className={styles.Loading} />}
         >
           {data.map(row => (
-            <UserRow data={row} loading={isLoading} key={row.rank} />
+            <UserRow role={role} data={row} loading={isLoading} key={row.rank} />
           ))}
         </InfiniteScroll>
       </div>

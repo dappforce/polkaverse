@@ -2028,9 +2028,13 @@ hr {
     box-shadow: none !important;
   }
 
-  &.DfCardInfo {
+  &.DfCardBlue {
     border: 1px solid rgba(99, 102, 241, 0.2);
     background: #edf4ff;
+  }
+  &.DfCardPink {
+    border: 1px solid rgba(168, 21, 128, 0.2);
+    background: #faeff9;
   }
 
   &.small {
@@ -2272,6 +2276,9 @@ hr {
 .\!FontWeightNormal {
   font-weight: $font_weight_normal !important;
 }
+.\!ColorNormal {
+  color: $color_font_normal !important;
+}
 .\!ColorMuted {
   color: $color_muted !important;
 }
@@ -2298,12 +2305,23 @@ hr {
     }
 
     &.ant-radio-button-wrapper-checked {
-      background-color: #e7f0ff;
+      background-color: #faeff9;
+    }
+
+    &.ant-radio-button-wrapper-checked {
       color: $color_font_normal;
     }
 
     &:not(.ant-radio-button-wrapper-disabled):focus-within {
-      box-shadow: 0 0 0 2px rgba(0, 94, 255, 0.12);
+      box-shadow: none;
+    }
+  }
+
+  &.Blue {
+    .ant-radio-button-wrapper {
+      &.ant-radio-button-wrapper-checked {
+        background-color: #e7f0ff;
+      }
     }
   }
 }

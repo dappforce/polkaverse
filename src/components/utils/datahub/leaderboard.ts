@@ -179,7 +179,7 @@ const GET_LEADERBOARD = gql`
   }
 `
 export const LEADERBOARD_PAGE_LIMIT = 15
-export type LeaderboardRole = 'STAKER' | 'CREATOR'
+export type LeaderboardRole = 'staker' | 'creator'
 export async function getLeaderboardData({
   page,
   role,
@@ -204,7 +204,12 @@ export async function getLeaderboardData({
     { role: string; timestamp: string; limit: number; offset: number }
   >({
     document: GET_LEADERBOARD,
-    variables: { role, timestamp: week.toString(), limit: LEADERBOARD_PAGE_LIMIT, offset },
+    variables: {
+      role: role === 'creator' ? 'CREATOR' : 'STAKER',
+      timestamp: week.toString(),
+      limit: LEADERBOARD_PAGE_LIMIT,
+      offset,
+    },
   })
 
   const data = res.activeStakingAddressesRankedByRewardsForPeriod

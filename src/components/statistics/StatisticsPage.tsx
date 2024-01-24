@@ -32,7 +32,7 @@ export default function StatisticsPage(props: StatisticsProps) {
           else if (key === 'user') router.push(`/leaderboard/${myAddress}?tab=staker`)
         }}
       >
-        <Tabs.TabPane tab='My Staking Stats' key='user' />
+        {myAddress && <Tabs.TabPane tab='My Staking Stats' key='user' />}
         <Tabs.TabPane tab='Global Staking Stats' key='general' />
         <Tabs.TabPane tab='Polkaverse Activity' key='stats' />
       </Tabs>

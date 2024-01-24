@@ -20,7 +20,7 @@ export default function StatisticCard({ title, tooltip, value, ...props }: Stati
           <SlQuestion className='FontTiny' style={{ flexShrink: 0 }} />
         </Tooltip>
       </div>
-      <div className='d-flex align-items-center justify-content-between GapSmall mt-auto'>
+      <div className='d-flex align-items-center justify-content-between GapSmall mt-1'>
         <span className={styles.StatisticNumber}>{value}</span>
         {/* <MutedSpan>+25 today</MutedSpan> */}
       </div>

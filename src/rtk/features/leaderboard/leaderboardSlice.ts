@@ -32,19 +32,19 @@ export const fetchLeaderboardData = createSimpleFetchWrapper<
 })
 
 const initialState: Leaderboard = {
-  CREATOR: {
+  creator: {
     data: [],
     hasMore: true,
     page: 0,
     total: 0,
-    role: 'CREATOR',
+    role: 'creator',
   },
-  STAKER: {
+  staker: {
     data: [],
     hasMore: true,
     page: 0,
     total: 0,
-    role: 'STAKER',
+    role: 'staker',
   },
 }
 const slice = createSlice({

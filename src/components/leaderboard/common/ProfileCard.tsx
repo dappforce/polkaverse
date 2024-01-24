@@ -1,21 +1,20 @@
 import clsx from 'clsx'
-import { ComponentProps } from 'react'
 import { IoPeople } from 'react-icons/io5'
+import { ReactNode } from 'react-markdown'
 import Avatar from 'src/components/profiles/address-views/Avatar'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
-import DfCard from 'src/components/utils/cards/DfCard'
-import { MutedSpan } from 'src/components/utils/MutedText'
+import DfCard, { DfCardProps } from 'src/components/utils/cards/DfCard'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { truncateAddress } from 'src/utils/storage'
 import styles from './ProfileCard.module.sass'
 
-export type ProfileCardProps = ComponentProps<'div'> & {
+export type ProfileCardProps = DfCardProps & {
   address?: string
   title?: string
-  subtitle: string
+  detail?: ReactNode
 }
 
-export default function ProfileCard({ address, title, subtitle, ...props }: ProfileCardProps) {
+export default function ProfileCard({ address, title, detail, ...props }: ProfileCardProps) {
   const isMobile = useIsMobileWidthOrDevice()
   const profile = useSelectProfile(address)
 
@@ -27,7 +26,6 @@ export default function ProfileCard({ address, title, subtitle, ...props }: Prof
       {...props}
       className={clsx(styles.ProfileCard, props.className)}
       size='small'
-      variant='info'
       withShadow={false}
     >
       {address ? (
@@ -42,7 +40,7 @@ export default function ProfileCard({ address, title, subtitle, ...props }: Prof
       )}
       <div className={clsx(styles.ProfileContent)}>
         <span className={clsx(styles.ProfileName)}>{usedTitle}</span>
-        <MutedSpan>{subtitle}</MutedSpan>
+        {detail}
       </div>
     </DfCard>
   )
