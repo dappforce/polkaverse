@@ -4,6 +4,7 @@ import { ComponentProps, CSSProperties, useMemo } from 'react'
 import { IoChevronForward } from 'react-icons/io5'
 import { useFetchProfileSpaces, useSelectProfileSpace, useSelectSpace } from 'src/rtk/app/hooks'
 import { useFetchTopUsers } from 'src/rtk/features/leaderboard/hooks'
+import { truncateAddress } from 'src/utils/storage'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { SpaceAvatar } from '../spaces/helpers'
@@ -138,7 +139,7 @@ function UserInfo({
                 top: '2px',
               }}
             >
-              {space.content?.name ?? 'Unnamed'}
+              {space.content?.name || truncateAddress(user.address)}
             </span>
           }
           space={space.struct}

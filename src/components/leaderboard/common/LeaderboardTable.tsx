@@ -11,6 +11,7 @@ import {
   LeaderboardData,
 } from 'src/rtk/features/leaderboard/leaderboardSlice'
 import { fetchProfileSpaces } from 'src/rtk/features/profiles/profilesSlice'
+import { truncateAddress } from 'src/utils/storage'
 import { useMyAddress } from '../../auth/MyAccountsContext'
 import { FormatBalance } from '../../common/balances'
 import { DEFAULT_MODAL_THRESHOLD } from '../../lists'
@@ -124,7 +125,7 @@ function UserRow({
                 }}
                 className={clsx(!profile?.content?.name && 'ColorMuted')}
               >
-                {profile?.content?.name ?? 'Unnamed'}{' '}
+                {profile?.content?.name || truncateAddress(data.address)}{' '}
                 {<MutedSpan>{isMyAddress ? '(you)' : ''}</MutedSpan>}
               </span>
             </>
