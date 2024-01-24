@@ -172,7 +172,7 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
             address={address}
             detail={
               <Radio.Group
-                className={clsx('DfRadioGroup mt-3', tabState === 'staker' && 'Blue')}
+                className={clsx('DfRadioGroup mt-2', tabState === 'staker' && 'Blue')}
                 options={[
                   { label: 'Staker', value: 'staker' },
                   { label: 'Creator', value: 'creator' },
