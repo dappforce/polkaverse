@@ -10,6 +10,7 @@ import {
   LeaderboardData,
 } from 'src/rtk/features/leaderboard/leaderboardSlice'
 import { fetchProfileSpaces } from 'src/rtk/features/profiles/profilesSlice'
+import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import { DEFAULT_MODAL_THRESHOLD } from '../lists'
 import Avatar from '../profiles/address-views/Avatar'
@@ -74,6 +75,7 @@ export default function LeaderboardTable({ role, ...props }: LeaderboardTablePro
 }
 
 function UserRow({ data, loading }: { data: LeaderboardData['data'][number]; loading: boolean }) {
+  const myAddress = useMyAddress()
   const profile = useSelectProfile(data.address)
   const isLoading = loading && !profile
   const title = (
@@ -86,7 +88,7 @@ function UserRow({ data, loading }: { data: LeaderboardData['data'][number]; loa
   )
 
   return (
-    <div className={styles.LeaderboardRow}>
+    <div className={clsx(styles.LeaderboardRow, myAddress === data.address && styles.Active)}>
       <MutedSpan>{data.rank + 1}</MutedSpan>
       <div className='d-flex align-items-center' style={{ minWidth: 0 }}>
         {isLoading ? (
@@ -154,7 +156,12 @@ function LeaderboardTableModal({
   }
 
   return (
-    <CustomModal {...props} {...wording} contentElementId='leaderboard-container'>
+    <CustomModal
+      {...props}
+      {...wording}
+      contentElementId='leaderboard-container'
+      contentClassName={styles.ModalContent}
+    >
       <div className={clsx(styles.ModalTable, 'FontWeightMedium')}>
         <div className={clsx(styles.ModalTitles, 'ColorMuted')}>
           <span>#</span>

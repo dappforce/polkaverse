@@ -12,6 +12,39 @@
     align-items: center
     gap: $space_small
 
+  .LeaderboardRow
+    position: relative
+
+    > *
+      position: relative
+
+    &::before
+      content: ''
+      position: absolute
+      background: rgba(134, 145, 251, 0.07)
+      opacity: 0
+      transition: opacity 0.2s ease-in-out
+      width: calc(100% + 2 * $space_normal)
+      margin-left: -$space_normal
+      height: calc(100% + 2 * $space_mini)
+      margin-top: -$space_mini
+      inset: 0
+    
+    &:hover::before, &:focus::before
+      opacity: 0.5
+
+    &.Active::before
+      opacity: 1
+
   .ViewMore
     grid-column: 1/4
     justify-self: center
+
+.ModalTable
+  .LeaderboardRow::before
+    border-radius: $border_radius_normal
+    width: calc(100% + 2 * $space_small)
+    margin-left: -$space_small
+
+.ModalContent
+  overflow-x: clip !important

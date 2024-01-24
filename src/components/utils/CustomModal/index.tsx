@@ -1,5 +1,6 @@
 import { Modal, ModalProps } from 'antd'
 import clsx from 'clsx'
+import { CSSProperties } from 'react'
 import { MutedSpan } from 'src/components/utils/MutedText'
 import styles from './index.module.sass'
 
@@ -9,6 +10,7 @@ export interface CustomModalProps extends ModalProps {
   footer?: JSX.Element
   contentClassName?: string
   contentElementId?: string
+  contentStyle?: CSSProperties
   footerClassName?: string
   fullHeight?: boolean
   noScroll?: boolean
@@ -21,6 +23,7 @@ export default function CustomModal({
   footer,
   className,
   contentClassName,
+  contentStyle,
   contentElementId,
   footerClassName,
   fullHeight,
@@ -53,6 +56,7 @@ export default function CustomModal({
           contentClassName,
         )}
         id={contentElementId}
+        style={contentStyle}
       >
         {children}
       </div>

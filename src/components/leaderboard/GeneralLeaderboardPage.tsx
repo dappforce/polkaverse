@@ -102,7 +102,7 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
         </div>
       )}
       <div className={clsx(styles.Leaderboards)}>
-        <DfCard size='small' withShadow={false}>
+        <DfCard size='small' withShadow={false} style={{ overflowX: 'clip' }}>
           <div className='d-flex flex-column'>
             <span className='FontSemilarge FontWeightSemibold'>Top Stakers this week</span>
             <MutedSpan className='FontSmall'>
@@ -111,7 +111,7 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
           </div>
           <LeaderboardTable className='mt-3' role='STAKER' />
         </DfCard>
-        <DfCard size='small' withShadow={false}>
+        <DfCard size='small' withShadow={false} style={{ overflowX: 'clip' }}>
           <div className='d-flex flex-column'>
             <span className='FontSemilarge FontWeightSemibold'>Top Creators this week</span>
             <MutedSpan className='FontSmall'>
