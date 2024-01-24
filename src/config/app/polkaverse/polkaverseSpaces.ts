@@ -43,4 +43,6 @@ export default [
   '4855',
   // Tony the trader
   '12434',
+  // PolkaWarriors
+  '1573'
 ]
