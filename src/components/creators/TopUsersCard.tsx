@@ -2,8 +2,11 @@ import { Button, Skeleton } from 'antd'
 import clsx from 'clsx'
 import { ComponentProps, CSSProperties, useMemo } from 'react'
 import { IoChevronForward } from 'react-icons/io5'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchProfileSpaces, useSelectProfile } from 'src/rtk/app/hooks'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { useFetchTopUsers } from 'src/rtk/features/leaderboard/hooks'
+import { getAmountRange } from 'src/utils/analytics'
 import { truncateAddress } from 'src/utils/storage'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
@@ -17,9 +20,11 @@ import Segment from '../utils/Segment'
 export type TopUsersCardProps = ComponentProps<'div'>
 
 export default function TopUsersCard({ ...props }: TopUsersCardProps) {
-  const myAddress = useMyAddress()
+  const myAddress = useMyAddress() ?? ''
   const { data, loading } = useFetchTopUsers()
+  const { data: totalStake } = useFetchTotalStake(myAddress)
   const isMobile = useIsMobileWidthOrDevice()
+  const sendEvent = useSendEvent()
 
   const args = useMemo(
     () => ({
@@ -38,6 +43,20 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
       className='p-0 GapMini d-flex align-items-center'
       href={myAddress ? `/leaderboard/${myAddress}` : '/leaderboard'}
       style={{ height: 'auto', border: 'none', boxShadow: 'none' }}
+      onClick={() => {
+        if (myAddress) {
+          sendEvent('leaderboard_my_stats_opened', {
+            role: 'staker',
+            eventSource: 'top_users',
+            amountRange: getAmountRange(totalStake?.amount),
+          })
+        } else {
+          sendEvent('leaderboard_global_stats_opened', {
+            eventSource: 'top_users',
+            amountRange: getAmountRange(totalStake?.amount),
+          })
+        }
+      }}
     >
       <span>See more</span>
       <IoChevronForward />

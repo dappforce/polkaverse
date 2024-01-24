@@ -174,7 +174,9 @@ export default function StakerRewardInfo({
               <a
                 className='py-2.5 px-3 d-flex justify-content-center align-items-center ColorPrimary FontWeightMedium GapTiny'
                 onClick={() => {
-                  sendEvent('astake_my_stats_clicked', {
+                  sendEvent('leaderboard_my_stats_opened', {
+                    eventSource: 'my_stats_banner',
+                    role: 'staker',
                     amountRange: getAmountRange(totalStake?.amount),
                   })
                 }}
