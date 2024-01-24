@@ -18,7 +18,7 @@ import Avatar from '../../profiles/address-views/Avatar'
 import { useSubsocialApi } from '../../substrate'
 import { Loading } from '../../utils'
 import CustomModal, { CustomModalProps } from '../../utils/CustomModal'
-import { LeaderboardRole, LEADERBOARD_PAGE_LIMIT } from '../../utils/datahub/leaderboard'
+import { LeaderboardRole } from '../../utils/datahub/leaderboard'
 import { MutedSpan } from '../../utils/MutedText'
 import SpanSkeleton from '../../utils/SpanSkeleton'
 import styles from './LeaderboardTable.module.sass'
@@ -27,6 +27,7 @@ export type LeaderboardTableProps = ComponentProps<'div'> & {
   role: LeaderboardRole
 }
 
+const TABLE_LIMIT = 10
 export default function LeaderboardTable({ role, ...props }: LeaderboardTableProps) {
   const [isOpenModal, setIsOpenModal] = useState(false)
   const { page, data } = useGetLeaderboardData(role)
@@ -39,8 +40,8 @@ export default function LeaderboardTable({ role, ...props }: LeaderboardTablePro
 
   const { addresses, slicedData } = useMemo(
     () => ({
-      addresses: data.slice(0, LEADERBOARD_PAGE_LIMIT).map(row => row.address),
-      slicedData: data.slice(0, LEADERBOARD_PAGE_LIMIT),
+      addresses: data.slice(0, TABLE_LIMIT).map(row => row.address),
+      slicedData: data.slice(0, TABLE_LIMIT),
     }),
     [data],
   )
