@@ -64,7 +64,7 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
       <Tabs
         activeKey='general'
         onChange={key => {
-          if (key === 'user') router.push(`/leaderboard/${myAddress}?role=${key}`)
+          if (key === 'user') router.push(`/leaderboard/${myAddress}?role=staker`)
           else if (key === 'stats') router.push('/stats')
         }}
       >
