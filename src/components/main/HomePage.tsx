@@ -1,6 +1,5 @@
 import { UpOutlined } from '@ant-design/icons'
 import { Affix, BackTop, Button, Tabs, Tooltip } from 'antd'
-import clsx from 'clsx'
 import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
@@ -19,7 +18,6 @@ import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar
 import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
-import CommentBanner from '../utils/banners/CommentBanner'
 import Section from '../utils/Section'
 import style from './HomePage.module.sass'
 import { dateFilterOpt, Filters, PostFilterView, SpaceFilterView } from './HomePageFilters'
@@ -189,9 +187,9 @@ const TabsHomePage = ({
   return (
     <>
       <MobileActiveStakingSection />
-      <div className={clsx(isMobile ? 'mt-3' : '')}>
+      {/* <div className={clsx(isMobile ? 'mt-3' : '')}>
         <CommentBanner />
-      </div>
+      </div> */}
       <span>
         {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
       </span>
