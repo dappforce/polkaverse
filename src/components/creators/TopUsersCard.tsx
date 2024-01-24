@@ -164,7 +164,11 @@ function UserInfo({ rank, user }: { rank: number; user: { address: string; rewar
             space={profile?.struct}
           />
         ) : (
-          <ViewProfileLink title={name} account={{ address: user.address }} />
+          <ViewProfileLink
+            className='ColorNormal'
+            title={name}
+            account={{ address: user.address }}
+          />
         )}
         <div className='d-flex align-items-center ColorMuted GapMini'>
           <FormatBalance value={user.reward} currency='SUB' decimals={10} precision={2} />
