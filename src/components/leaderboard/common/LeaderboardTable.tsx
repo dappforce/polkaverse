@@ -90,15 +90,6 @@ function UserRow({
 
   const isMyAddress = myAddress === data.address
 
-  const title = (
-    <span
-      style={{ overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, whiteSpace: 'nowrap' }}
-      className={clsx(!profile?.content?.name && 'ColorMuted')}
-    >
-      {profile?.content?.name ?? 'Unnamed'} {<MutedSpan>{isMyAddress ? '(you)' : ''}</MutedSpan>}
-    </span>
-  )
-
   return (
     <Link href={`/leaderboard/${data.address}?role=${role}`} passHref>
       <a
@@ -113,7 +104,7 @@ function UserRow({
         <div className='d-flex align-items-center' style={{ minWidth: 0 }}>
           {isLoading ? (
             <>
-              <Skeleton.Avatar size={32} className='mr-2' />
+              <Skeleton.Avatar size={32} className='mr-1' />
               <SpanSkeleton />
             </>
           ) : (
@@ -124,7 +115,18 @@ function UserRow({
                 avatar={profile?.content?.image}
                 size={32}
               />
-              <span>{title}</span>
+              <span
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  minWidth: 0,
+                  whiteSpace: 'nowrap',
+                }}
+                className={clsx(!profile?.content?.name && 'ColorMuted')}
+              >
+                {profile?.content?.name ?? 'Unnamed'}{' '}
+                {<MutedSpan>{isMyAddress ? '(you)' : ''}</MutedSpan>}
+              </span>
             </>
           )}
         </div>
