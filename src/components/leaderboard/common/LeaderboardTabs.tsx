@@ -22,6 +22,7 @@ export default function LeaderboardTabs({
         onChange={key => {
           if (key === 'user') {
             sendEvent('leaderboard_my_stats_opened', {
+              myStats: true,
               eventSource: 'leaderboard_tab',
               role: 'staker',
               amountRange: getAmountRange(totalStake?.amount),

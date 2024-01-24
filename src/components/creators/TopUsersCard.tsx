@@ -46,6 +46,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
       onClick={() => {
         if (myAddress) {
           sendEvent('leaderboard_my_stats_opened', {
+            myStats: true,
             role: 'staker',
             eventSource: 'top_users',
             amountRange: getAmountRange(totalStake?.amount),

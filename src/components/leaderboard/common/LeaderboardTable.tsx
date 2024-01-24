@@ -3,14 +3,17 @@ import clsx from 'clsx'
 import Link from 'next/link'
 import { ComponentProps, useEffect, useMemo, useRef, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchProfileSpaces, useSelectProfile } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { useGetLeaderboardData } from 'src/rtk/features/leaderboard/hooks'
 import {
   fetchLeaderboardData,
   LeaderboardData,
 } from 'src/rtk/features/leaderboard/leaderboardSlice'
 import { fetchProfileSpaces } from 'src/rtk/features/profiles/profilesSlice'
+import { getAmountRange } from 'src/utils/analytics'
 import { truncateAddress } from 'src/utils/storage'
 import { useMyAddress } from '../../auth/MyAccountsContext'
 import { FormatBalance } from '../../common/balances'
@@ -85,8 +88,10 @@ function UserRow({
   loading: boolean
   role: LeaderboardRole
 }) {
-  const myAddress = useMyAddress()
+  const myAddress = useMyAddress() ?? ''
+  const sendEvent = useSendEvent()
   const profile = useSelectProfile(data.address)
+  const { data: totalStake } = useFetchTotalStake(myAddress)
   const isLoading = loading && !profile
 
   const isMyAddress = myAddress === data.address
@@ -94,6 +99,14 @@ function UserRow({
   return (
     <Link href={`/leaderboard/${data.address}?role=${role}`} passHref>
       <a
+        onClick={() => {
+          sendEvent('leaderboard_my_stats_opened', {
+            myStats: isMyAddress,
+            role,
+            eventSource: 'leaderboard_table',
+            amountRange: getAmountRange(totalStake?.amount),
+          })
+        }}
         className={clsx(
           styles.LeaderboardRow,
           role === 'creator' && styles.RowPink,

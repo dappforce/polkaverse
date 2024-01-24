@@ -130,6 +130,7 @@ export default function CreatorRewardInfoCard() {
                   className='py-2.5 px-3 d-flex justify-content-center align-items-center ColorPrimary FontWeightMedium GapTiny'
                   onClick={() => {
                     sendEvent('leaderboard_my_stats_opened', {
+                      myStats: true,
                       eventSource: 'my_stats_banner',
                       role: 'creator',
                       amountRange: getAmountRange(totalStake?.amount),
