@@ -40,5 +40,9 @@ export default [
   // Dotcast
   '10132',
   // Cappex
-  '4855'
+  '4855',
+  // Tony the trader
+  '12434',
+  // PolkaWarriors
+  '1573'
 ]

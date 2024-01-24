@@ -217,7 +217,7 @@ const SpaceUsername: FC<ManageDomainStepProps> = ({ domainStruct }) => {
           className='mr-2'
           params={getTxParams}
           customNodeApi={api}
-          disabled={defaultInnerSpace === innerValue}
+          disabled={!!defaultInnerSpace && defaultInnerSpace === innerValue}
           label='Save'
           successMessage='Username for your space updated'
           onSuccess={onSuccess}
