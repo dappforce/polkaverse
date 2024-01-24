@@ -125,7 +125,7 @@ export default function CreatorRewardInfoCard() {
                 <span className='FontSmall'>History</span>
               </div>
 
-              <Link href={`/leaderboard/${myAddress}?tab=creator`}>
+              <Link href={`/leaderboard/${myAddress}?role=creator`} passHref>
                 <a
                   className='py-2.5 px-3 d-flex justify-content-center align-items-center ColorPrimary FontWeightMedium GapTiny'
                   onClick={() => {
