@@ -75,14 +75,14 @@ export async function getNewsFeeds(client: GqlClient, variables: GetNewsFeedsVar
     variables,
   })
 
-  const postIds: string[] = []
+  const postIds = new Set<string>()
   feedIds.data.accountById?.feeds.forEach(({ activity }) => {
     const postId = activity.post?.id
     if (postId) {
-      postIds.push(postId)
+      postIds.add(postId)
     }
   })
-  return postIds
+  return Array.from(postIds)
 }
 
 export async function getPostIdsBySpaces(
