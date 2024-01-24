@@ -159,7 +159,7 @@ function LeaderboardTableModal({
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    if (isLoadingFirstBatchOfData) setIsLoading(true)
+    if (currentPageLoading.current === 0) setIsLoading(isLoadingFirstBatchOfData)
   }, [isLoadingFirstBatchOfData])
 
   const loadMore = async () => {
