@@ -216,6 +216,15 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
           <LeaderboardTable className='mt-3' role={tabState} />
         </DfCard>
       </div>
+      <DfCard size='small' withShadow={false} className='lg-hidden mt-4'>
+        <RewardHistoryPanel
+          title={tabState === 'creator' ? 'Creator Rewards' : 'Staker Rewards'}
+          description='The last 30 days of your Active Staking rewards'
+          loading={loading}
+          rewardHistory={rewardHistory}
+          rewardType={tabState}
+        />
+      </DfCard>
       {isMobile && (
         <RewardHistoryModal
           visible={isOpenHistoryModal}
