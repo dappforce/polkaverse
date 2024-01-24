@@ -106,7 +106,12 @@ function StakerRewardDashboard(props: MobileStakerRewardDashboardProps) {
         <div className={clsx(styles.Gradient, isOpenClassName)} />
       </div>
       <div className={clsx(styles.RewardInfo, isOpenClassName)}>
-        <StakerRewardInfo size='small' className='pt-1 position-relative' style={{ zIndex: 1 }} />
+        <StakerRewardInfo
+          withOffsetForFooterButton
+          size='small'
+          className='pt-1 position-relative'
+          style={{ zIndex: 1 }}
+        />
         <div className={clsx(styles.GradientOuter, isOpenClassName)} />
       </div>
     </div>

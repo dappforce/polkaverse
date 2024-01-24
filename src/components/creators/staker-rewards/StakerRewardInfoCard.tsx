@@ -27,7 +27,7 @@ export default function StakerRewardInfoCard() {
         <DfImage preview={false} src='/images/diamond.svg' className={styles.Image} />
       </div>
       <div className={clsx(styles.BottomSection)}>
-        <StakerRewardInfo />
+        <StakerRewardInfo withOffsetForFooterButton />
       </div>
     </Segment>
   )
