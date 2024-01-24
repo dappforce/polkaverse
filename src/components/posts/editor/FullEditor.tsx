@@ -106,7 +106,7 @@ const EditorCard = ({
           <HtmlEditor
             onChange={onChangeHtmlEditor}
             saveBodyDraft={saveDraftHtmlEditor}
-            showToolbar={!isMobile}
+            showToolbar
           />
         )}
       </Form.Item>

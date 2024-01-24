@@ -1,8 +1,7 @@
-import { Col, Radio, Row, Tabs } from 'antd'
+import { Col, Radio, Row } from 'antd'
 import dynamic from 'next/dynamic'
-import router from 'next/router'
 import { useState } from 'react'
-import { useMyAddress } from '../auth/MyAccountsContext'
+import LeaderboardTabs from '../leaderboard/common/LeaderboardTabs'
 import { PageContent } from '../main/PageWrapper'
 import { StatisticsProps } from './Statistics'
 import style from './Statistics.module.sass'
@@ -16,7 +15,6 @@ export const periodOpt = [
 const Statistics = dynamic(() => import('./Statistics'), { ssr: false })
 
 export default function StatisticsPage(props: StatisticsProps) {
-  const myAddress = useMyAddress()
   const [period, setPeriod] = useState<string>('30')
 
   const onRadioChange = (e: any) => {
@@ -25,17 +23,7 @@ export default function StatisticsPage(props: StatisticsProps) {
 
   return (
     <PageContent meta={{ title: 'Statistics' }} withLargerMaxWidth>
-      <Tabs
-        activeKey='stats'
-        onChange={key => {
-          if (key === 'general') router.push('/leaderboard')
-          else if (key === 'user') router.push(`/leaderboard/${myAddress}?role=staker`)
-        }}
-      >
-        {myAddress && <Tabs.TabPane tab='My Staking Stats' key='user' />}
-        <Tabs.TabPane tab='Global Staking Stats' key='general' />
-        <Tabs.TabPane tab='Polkaverse Activity' key='stats' />
-      </Tabs>
+      <LeaderboardTabs activeKey='stats' />
       <Row className={`${style.DfGridParams} my-3`}>
         <Col>
           <Radio.Group

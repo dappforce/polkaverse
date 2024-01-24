@@ -1,4 +1,4 @@
-import { Radio, Tabs } from 'antd'
+import { Radio } from 'antd'
 import clsx from 'clsx'
 import router, { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -14,6 +14,7 @@ import { useIsMobileWidthOrDevice } from '../responsive'
 import DfCard from '../utils/cards/DfCard'
 import { MutedSpan } from '../utils/MutedText'
 import LeaderboardTable from './common/LeaderboardTable'
+import LeaderboardTabs from './common/LeaderboardTabs'
 import ProfileCard from './common/ProfileCard'
 import StatisticCard from './common/StatisticCard'
 import styles from './UserLeaderboardPage.module.sass'
@@ -151,18 +152,7 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
 
   return (
     <PageContent withLargerMaxWidth meta={{ title: 'Active Staking Dashboard' }}>
-      <Tabs
-        activeKey={isMyAddress ? 'user' : ''}
-        onChange={key => {
-          if (key === 'general') router.push('/leaderboard')
-          else if (key === 'stats') router.push('/stats')
-          else router.push(`/leaderboard/${myAddress}?role=${tabState}`)
-        }}
-      >
-        {myAddress && <Tabs.TabPane tab='My Staking Stats' key='user' />}
-        <Tabs.TabPane tab='Global Staking Stats' key='general' />
-        <Tabs.TabPane tab='Polkaverse Activity' key='stats' />
-      </Tabs>
+      <LeaderboardTabs activeKey={isMyAddress ? 'user' : ''} />
       {data && (
         <div className={clsx(styles.Statistics)}>
           <ProfileCard
@@ -198,12 +188,13 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
         <DfCard size='small' withShadow={false} className='sm-hidden'>
           <RewardHistoryPanel
             title={tabState === 'creator' ? 'Creator Rewards' : 'Staker Rewards'}
+            description='The last 30 days of your Active Staking rewards'
             loading={loading}
             rewardHistory={rewardHistory}
             rewardType={tabState}
           />
         </DfCard>
-        <DfCard size='small' withShadow={false} style={{ overflowX: 'clip' }}>
+        <DfCard size='small' withShadow={false} style={{ overflowX: 'clip', gridColumn: 'span 2' }}>
           <div className='d-flex flex-column'>
             <span className='FontSemilarge FontWeightSemibold'>Leaderboard</span>
             <MutedSpan className='FontSmall'>
@@ -215,6 +206,15 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
           <LeaderboardTable className='mt-3' role={tabState} />
         </DfCard>
       </div>
+      <DfCard size='small' withShadow={false} className='lg-hidden mt-4'>
+        <RewardHistoryPanel
+          title={tabState === 'creator' ? 'Creator Rewards' : 'Staker Rewards'}
+          description='The last 30 days of your Active Staking rewards'
+          loading={loading}
+          rewardHistory={rewardHistory}
+          rewardType={tabState}
+        />
+      </DfCard>
       {isMobile && (
         <RewardHistoryModal
           visible={isOpenHistoryModal}

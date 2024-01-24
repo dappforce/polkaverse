@@ -78,7 +78,15 @@ function StakerRewardDashboard(props: MobileStakerRewardDashboardProps) {
   return (
     <div {...props} className={clsx(props.className, styles.MobileStakerRewardDashboard)}>
       <div className={clsx(styles.Summary)}>
-        <div className={styles.Content}>
+        <div
+          className={clsx(styles.Content, 'cursor-pointer')}
+          onClick={() => {
+            sendEvent('astake_dashboard_expanded', {
+              amountRange: getAmountRange(data.amount),
+            })
+            setIsOpen(prev => !prev)
+          }}
+        >
           <span className={clsx('d-flex GapTiny align-items-center')}>
             <span className='FontWeightSemibold'>Extra SUB rewards</span>
             <Tooltip title={likesToMaxReward > 0 ? 'Daily Activity Target' : 'Daily Target Hit'}>
@@ -89,15 +97,7 @@ function StakerRewardDashboard(props: MobileStakerRewardDashboardProps) {
             <div className={clsx('FontWeightSemibold', styles.CountProgress, isOpenClassName)}>
               <StakerSuperLikeCount />
             </div>
-            <HiChevronRight
-              onClick={() => {
-                sendEvent('astake_dashboard_expanded', {
-                  amountRange: getAmountRange(data.amount),
-                })
-                setIsOpen(prev => !prev)
-              }}
-              className={clsx('ColorMuted FontBig', styles.Arrow, isOpenClassName)}
-            />
+            <HiChevronRight className={clsx('ColorMuted FontBig', styles.Arrow, isOpenClassName)} />
           </div>
         </div>
         <div className={styles.ProgressContainer}>

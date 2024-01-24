@@ -14,7 +14,7 @@ import {
 import { CanPostSuperLiked } from 'src/rtk/features/activeStaking/canPostSuperLikedSlice'
 import { PostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { RewardHistory } from 'src/rtk/features/activeStaking/rewardHistorySlice'
-import { RewardReport } from 'src/rtk/features/activeStaking/rewardReportSlice'
+import { fetchRewardReport, RewardReport } from 'src/rtk/features/activeStaking/rewardReportSlice'
 import {
   fetchSuperLikeCounts,
   SuperLikeCount,
@@ -250,24 +250,27 @@ export async function getRewardHistory(address: string): Promise<RewardHistory> 
     variables: { address },
   })
 
+  const rewards = res.activeStakingRewardsByWeek.map(({ staker, week, creator }) => {
+    const startDate = dayjs
+      .utc()
+      .year(week / 100)
+      .isoWeek(week % 100)
+      .startOf('week')
+    const endDate = startDate.add(1, 'week')
+
+    return {
+      reward: staker,
+      week,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      creatorReward: creator.total,
+    }
+  })
+  rewards.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+
   return {
     address,
-    rewards: res.activeStakingRewardsByWeek.map(({ staker, week, creator }) => {
-      const startDate = dayjs
-        .utc()
-        .year(week / 100)
-        .isoWeek(week % 100)
-        .startOf('week')
-      const endDate = startDate.add(1, 'week')
-
-      return {
-        reward: staker,
-        week,
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
-        creatorReward: creator.total,
-      }
-    }),
+    rewards,
   }
 }
 
@@ -388,6 +391,7 @@ async function processSubscriptionEvent(
 
   dispatch(fetchSuperLikeCounts({ postIds: [post.persistentId], reload: true }))
   if (staker.id === myAddress) {
+    dispatch(fetchRewardReport({ address: myAddress, reload: true }))
     dispatch(
       fetchAddressLikeCounts({
         address: myAddress,

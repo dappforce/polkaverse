@@ -65,7 +65,27 @@ const slice = createSlice({
       }
       rewardReport.superLikesCount = newSuperLike
     },
-    setRewardReport: adapter.upsertOne,
+    setRewardReport: (state, action: PayloadAction<RewardReport>) => {
+      const { address, superLikesCount, currentRewardAmount, weeklyReward } = action.payload
+      const rewardReport = state.entities[address]
+      if (!rewardReport || rewardReport.superLikesCount < superLikesCount) {
+        adapter.upsertOne(state, action.payload)
+        return
+      }
+
+      const rewardMultiplier = BigInt(
+        Math.min(superLikesCount, CREATORS_CONSTANTS.SUPER_LIKES_FOR_MAX_REWARD),
+      )
+      const rewardPerLike = BigInt(currentRewardAmount) / rewardMultiplier
+      const weeklyWithoutCurrentReward = BigInt(weeklyReward) - BigInt(currentRewardAmount)
+
+      rewardReport.currentRewardAmount = (
+        rewardPerLike * BigInt(rewardReport.superLikesCount)
+      ).toString()
+      rewardReport.weeklyReward = (
+        weeklyWithoutCurrentReward + BigInt(rewardReport.currentRewardAmount)
+      ).toString()
+    },
   },
 })
 

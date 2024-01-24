@@ -170,11 +170,14 @@ export default function StakerRewardInfo({
               <span className='FontSmall'>History</span>
             </div>
 
-            <Link href={`/leaderboard/${myAddress}?tab=staker`}>
+            <Link href={`/leaderboard/${myAddress}?role=staker`} passHref>
               <a
                 className='py-2.5 px-3 d-flex justify-content-center align-items-center ColorPrimary FontWeightMedium GapTiny'
                 onClick={() => {
-                  sendEvent('astake_my_stats_clicked', {
+                  sendEvent('leaderboard_my_stats_opened', {
+                    myStats: true,
+                    eventSource: 'my_stats_banner',
+                    role: 'staker',
                     amountRange: getAmountRange(totalStake?.amount),
                   })
                 }}
