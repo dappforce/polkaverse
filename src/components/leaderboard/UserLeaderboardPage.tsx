@@ -109,7 +109,7 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
   const myAddress = useMyAddress()
 
   const { query } = useRouter()
-  let tabState = query.tab as 'staker' | 'creator'
+  let tabState = query.role as 'staker' | 'creator'
   if (tabState !== 'staker' && tabState !== 'creator') {
     tabState = 'staker'
   }
@@ -127,6 +127,7 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
         onChange={key => {
           if (key === 'general') router.push('/leaderboard')
           else if (key === 'stats') router.push('/stats')
+          else router.push(`/leaderboard/${myAddress}?role=${tabState}`)
         }}
       >
         {myAddress && <Tabs.TabPane tab='My Staking Stats' key='user' />}
@@ -147,7 +148,7 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
                 ]}
                 onChange={e => {
                   const value = e.target.value
-                  router.push(`/leaderboard/${address}?tab=${value}`, undefined, { shallow: true })
+                  router.push(`/leaderboard/${address}?role=${value}`, undefined, { shallow: true })
                 }}
                 value={tabState}
                 optionType='button'

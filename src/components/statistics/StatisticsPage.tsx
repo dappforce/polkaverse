@@ -29,7 +29,7 @@ export default function StatisticsPage(props: StatisticsProps) {
         activeKey='stats'
         onChange={key => {
           if (key === 'general') router.push('/leaderboard')
-          else if (key === 'user') router.push(`/leaderboard/${myAddress}?tab=staker`)
+          else if (key === 'user') router.push(`/leaderboard/${myAddress}?role=staker`)
         }}
       >
         {myAddress && <Tabs.TabPane tab='My Staking Stats' key='user' />}

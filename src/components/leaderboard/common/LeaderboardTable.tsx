@@ -99,7 +99,7 @@ function UserRow({
   )
 
   return (
-    <Link href={`/leaderboard/${data.address}?tab=${role}`} passHref>
+    <Link href={`/leaderboard/${data.address}?role=${role}`} passHref>
       <a
         className={clsx(
           styles.LeaderboardRow,
