@@ -128,7 +128,13 @@ function UserRow({
           )}
         </div>
         <span style={{ textAlign: 'right' }}>
-          <FormatBalance value={data.reward} currency='SUB' decimals={10} precision={2} />
+          <FormatBalance
+            alwaysShowDecimals
+            value={data.reward}
+            currency='SUB'
+            decimals={10}
+            precision={2}
+          />
         </span>
       </a>
     </Link>

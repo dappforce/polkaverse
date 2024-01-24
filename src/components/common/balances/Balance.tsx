@@ -27,6 +27,7 @@ function format(
   _isShort?: boolean,
   precision?: number,
   withMutedDecimals = true,
+  alwaysShowDecimals = false,
 ): React.ReactNode {
   const [prefix, postfix] = formatBalance(value, {
     forceUnit: '-',
@@ -34,9 +35,9 @@ function format(
     withSi: false,
     withZero: true,
   }).split('.')
-  const isShort = _isShort || (withSi && prefix.length >= K_LENGTH)
+  const isShort = _isShort || (withSi && prefix.length >= K_LENGTH && !alwaysShowDecimals)
 
-  if (prefix.length > M_LENGTH) {
+  if (prefix.length > M_LENGTH && !alwaysShowDecimals) {
     const balance = formatBalance(value, { decimals, withUnit: false })
     return (
       <>
@@ -70,6 +71,7 @@ type FormatBalanceProps = BareProps & {
   isShort?: boolean
   precision?: number
   withMutedDecimals?: boolean
+  alwaysShowDecimals?: boolean
 }
 
 export const FormatBalance = ({
@@ -80,6 +82,7 @@ export const FormatBalance = ({
   className,
   precision,
   withMutedDecimals = true,
+  alwaysShowDecimals,
   ...bareProps
 }: FormatBalanceProps) => {
   if (!value) return null
@@ -94,6 +97,7 @@ export const FormatBalance = ({
     isShort,
     precision,
     withMutedDecimals,
+    alwaysShowDecimals,
   )
 
   return (
