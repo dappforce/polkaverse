@@ -69,9 +69,6 @@ const DefaultNav: FunctionComponent = () => {
 
 export const Navigation = (props: Props): JSX.Element => {
   const { children } = props
-  // const {
-  //   state: { asDrawer },
-  // } = useSidebarCollapsed()
 
   const content = useMemo(
     () => <Content className={clsx('DfPageContent', styles.PagePadding)}>{children}</Content>,
@@ -85,7 +82,6 @@ export const Navigation = (props: Props): JSX.Element => {
       </Header>
       <Layout className='ant-layout-has-sider'>
         <DefaultNav />
-        {/* {asDrawer ? <DefaultNav /> : <HomeNav />} */}
         {content}
       </Layout>
     </Layout>

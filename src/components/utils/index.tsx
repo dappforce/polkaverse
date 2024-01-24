@@ -79,7 +79,7 @@ export const Loading = ({
   const alignCss = center ? 'justify-content-center align-items-center' : ''
   return (
     <div
-      className={`d-flex w-100 h-100 ${withPadding ? 'pt-4 pb-3' : ''} ${alignCss} ${className}`}
+      className={clsx('d-flex w-100 h-100', withPadding ? 'pt-4 pb-3' : '', alignCss, className)}
       style={style}
     >
       <div className='d-flex align-items-center'>

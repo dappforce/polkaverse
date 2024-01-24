@@ -18,14 +18,12 @@ import ProfileCard from './common/ProfileCard'
 import StatisticCard from './common/StatisticCard'
 import styles from './UserLeaderboardPage.module.sass'
 
-const stats: Record<
-  string,
-  {
-    title: (isMyAddress: boolean) => string
-    value: (data: UserStatistics) => ReactNode
-    tooltip: (isMyAddress: boolean) => string
-  }[]
-> = {
+type Stat = {
+  title: (isMyAddress: boolean) => string
+  value: (data: UserStatistics) => ReactNode
+  tooltip: (isMyAddress: boolean) => string
+}
+const stats: Record<string, Stat[]> = {
   creator: [
     {
       title: isMyAddress =>

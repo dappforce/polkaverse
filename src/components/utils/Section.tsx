@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import React from 'react'
 import { BareProps } from 'src/components/utils/types'
 
@@ -29,7 +30,9 @@ export const Section = ({
   }
 
   return (
-    <div className={`${outerClassName} ${withLargerMaxWidth && 'DfSectionLarger'} DfSectionOuter`}>
+    <div
+      className={clsx(outerClassName, withLargerMaxWidth && 'DfSectionLarger', 'DfSectionOuter')}
+    >
       <section id={id} className={`DfSection ${className}`}>
         {renderTitle()}
         {children}

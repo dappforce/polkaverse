@@ -388,7 +388,6 @@ async function processSubscriptionEvent(
 
   dispatch(fetchSuperLikeCounts({ postIds: [post.persistentId], reload: true }))
   if (staker.id === myAddress) {
-    // dispatch(fetchRewardReport({ address: myAddress, reload: true }))
     dispatch(
       fetchAddressLikeCounts({
         address: myAddress,

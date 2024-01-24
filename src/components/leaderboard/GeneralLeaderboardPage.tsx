@@ -14,7 +14,8 @@ import ProfileCard from './common/ProfileCard'
 import StatisticCard from './common/StatisticCard'
 import styles from './GeneralLeaderboardPage.module.sass'
 
-const stats: { title: string; value: (data: GeneralStatistics) => ReactNode; tooltip: string }[] = [
+type Stat = { title: string; value: (data: GeneralStatistics) => ReactNode; tooltip: string }
+const stats: Stat[] = [
   {
     title: 'Total posts liked',
     value: data => data.postsLiked,
