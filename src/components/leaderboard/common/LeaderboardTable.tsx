@@ -62,6 +62,8 @@ export default function LeaderboardTable({ role, ...props }: LeaderboardTablePro
           <span>Staker</span>
           <span>Rewards this week</span>
         </div>
+        {slicedData.length === 0 &&
+          Array.from({ length: 3 }).map((_, idx) => <UserRowSkeleton key={idx} />)}
         {slicedData.map(row => (
           <UserRow role={role} key={row.rank} data={row} loading={!!loading} />
         ))}
@@ -76,6 +78,21 @@ export default function LeaderboardTable({ role, ...props }: LeaderboardTablePro
         role={role}
       />
     </>
+  )
+}
+
+function UserRowSkeleton() {
+  return (
+    <a className={clsx(styles.LeaderboardRow)}>
+      <SpanSkeleton style={{ width: '2ch' }} />
+      <div className='d-flex align-items-center' style={{ minWidth: 0 }}>
+        <Skeleton.Avatar size={32} className='mr-1' />
+        <SpanSkeleton />
+      </div>
+      <span style={{ textAlign: 'right' }}>
+        <SpanSkeleton />
+      </span>
+    </a>
   )
 }
 
