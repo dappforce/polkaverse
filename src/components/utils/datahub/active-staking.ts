@@ -250,24 +250,27 @@ export async function getRewardHistory(address: string): Promise<RewardHistory> 
     variables: { address },
   })
 
+  const rewards = res.activeStakingRewardsByWeek.map(({ staker, week, creator }) => {
+    const startDate = dayjs
+      .utc()
+      .year(week / 100)
+      .isoWeek(week % 100)
+      .startOf('week')
+    const endDate = startDate.add(1, 'week')
+
+    return {
+      reward: staker,
+      week,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      creatorReward: creator.total,
+    }
+  })
+  rewards.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+
   return {
     address,
-    rewards: res.activeStakingRewardsByWeek.map(({ staker, week, creator }) => {
-      const startDate = dayjs
-        .utc()
-        .year(week / 100)
-        .isoWeek(week % 100)
-        .startOf('week')
-      const endDate = startDate.add(1, 'week')
-
-      return {
-        reward: staker,
-        week,
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
-        creatorReward: creator.total,
-      }
-    }),
+    rewards,
   }
 }
 
