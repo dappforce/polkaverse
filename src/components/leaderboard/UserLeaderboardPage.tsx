@@ -198,6 +198,7 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
         <DfCard size='small' withShadow={false} className='sm-hidden'>
           <RewardHistoryPanel
             title={tabState === 'creator' ? 'Creator Rewards' : 'Staker Rewards'}
+            description='The last 30 days of your Active Staking rewards'
             loading={loading}
             rewardHistory={rewardHistory}
             rewardType={tabState}
