@@ -1,4 +1,4 @@
-import { Radio, Tabs } from 'antd'
+import { Radio } from 'antd'
 import clsx from 'clsx'
 import router, { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -14,6 +14,7 @@ import { useIsMobileWidthOrDevice } from '../responsive'
 import DfCard from '../utils/cards/DfCard'
 import { MutedSpan } from '../utils/MutedText'
 import LeaderboardTable from './common/LeaderboardTable'
+import LeaderboardTabs from './common/LeaderboardTabs'
 import ProfileCard from './common/ProfileCard'
 import StatisticCard from './common/StatisticCard'
 import styles from './UserLeaderboardPage.module.sass'
@@ -151,18 +152,7 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
 
   return (
     <PageContent withLargerMaxWidth meta={{ title: 'Active Staking Dashboard' }}>
-      <Tabs
-        activeKey={isMyAddress ? 'user' : ''}
-        onChange={key => {
-          if (key === 'general') router.push('/leaderboard')
-          else if (key === 'stats') router.push('/stats')
-          else router.push(`/leaderboard/${myAddress}?role=${tabState}`)
-        }}
-      >
-        {myAddress && <Tabs.TabPane tab='My Staking Stats' key='user' />}
-        <Tabs.TabPane tab='Global Staking Stats' key='general' />
-        <Tabs.TabPane tab='Polkaverse Activity' key='stats' />
-      </Tabs>
+      <LeaderboardTabs activeKey={isMyAddress ? 'user' : ''} />
       {data && (
         <div className={clsx(styles.Statistics)}>
           <ProfileCard

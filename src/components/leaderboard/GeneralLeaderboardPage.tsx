@@ -1,15 +1,13 @@
-import { Tabs } from 'antd'
 import clsx from 'clsx'
-import router from 'next/router'
 import { ReactNode } from 'react-markdown'
 import { GeneralStatistics } from 'src/rtk/features/leaderboard/generalStatisticsSlice'
 import { useFetchGeneralStatistics } from 'src/rtk/features/leaderboard/hooks'
-import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import { PageContent } from '../main/PageWrapper'
 import DfCard from '../utils/cards/DfCard'
 import { MutedSpan } from '../utils/MutedText'
 import LeaderboardTable from './common/LeaderboardTable'
+import LeaderboardTabs from './common/LeaderboardTabs'
 import ProfileCard from './common/ProfileCard'
 import StatisticCard from './common/StatisticCard'
 import styles from './GeneralLeaderboardPage.module.sass'
@@ -57,21 +55,10 @@ const stats: Stat[] = [
 export type GeneralLeaderboardPageProps = {}
 export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) {
   const { data } = useFetchGeneralStatistics()
-  const myAddress = useMyAddress()
 
   return (
     <PageContent withLargerMaxWidth meta={{ title: 'Active Staking Dashboard' }}>
-      <Tabs
-        activeKey='general'
-        onChange={key => {
-          if (key === 'user') router.push(`/leaderboard/${myAddress}?role=staker`)
-          else if (key === 'stats') router.push('/stats')
-        }}
-      >
-        {myAddress && <Tabs.TabPane tab='My Staking Stats' key='user' />}
-        <Tabs.TabPane tab='Global Staking Stats' key='general' />
-        <Tabs.TabPane tab='Polkaverse Activity' key='stats' />
-      </Tabs>
+      <LeaderboardTabs activeKey='general' />
       {data && (
         <div className={clsx(styles.Statistics)}>
           <ProfileCard

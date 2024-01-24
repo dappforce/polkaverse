@@ -21,8 +21,6 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
   const { data, loading } = useFetchTopUsers()
   const isMobile = useIsMobileWidthOrDevice()
 
-  console.log(data)
-
   const args = useMemo(
     () => ({
       ids: [...(data?.stakers ?? []), ...(data?.creators ?? [])].map(({ address }) => address),
