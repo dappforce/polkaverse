@@ -9,10 +9,10 @@ import { FormatBalance } from '../common/balances'
 import { PageContent } from '../main/PageWrapper'
 import DfCard from '../utils/cards/DfCard'
 import { MutedSpan } from '../utils/MutedText'
+import LeaderboardTable from './common/LeaderboardTable'
 import ProfileCard from './common/ProfileCard'
 import StatisticCard from './common/StatisticCard'
 import styles from './GeneralLeaderboardPage.module.sass'
-import LeaderboardTable from './LeaderboardTable'
 
 const stats: { title: string; value: (data: GeneralStatistics) => ReactNode; tooltip: string }[] = [
   {

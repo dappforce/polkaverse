@@ -13,9 +13,9 @@ import { PageContent } from '../main/PageWrapper'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import DfCard from '../utils/cards/DfCard'
 import { MutedSpan } from '../utils/MutedText'
+import LeaderboardTable from './common/LeaderboardTable'
 import ProfileCard from './common/ProfileCard'
 import StatisticCard from './common/StatisticCard'
-import LeaderboardTable from './LeaderboardTable'
 import styles from './UserLeaderboardPage.module.sass'
 
 const stats: Record<
