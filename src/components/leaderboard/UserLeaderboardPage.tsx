@@ -204,7 +204,7 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
             rewardType={tabState}
           />
         </DfCard>
-        <DfCard size='small' withShadow={false} style={{ overflowX: 'clip' }}>
+        <DfCard size='small' withShadow={false} style={{ overflowX: 'clip', gridColumn: 'span 2' }}>
           <div className='d-flex flex-column'>
             <span className='FontSemilarge FontWeightSemibold'>Leaderboard</span>
             <MutedSpan className='FontSmall'>
