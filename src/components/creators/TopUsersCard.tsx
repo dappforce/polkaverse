@@ -1,8 +1,10 @@
-import { Skeleton } from 'antd'
+import { Button, Skeleton } from 'antd'
 import clsx from 'clsx'
 import { ComponentProps, CSSProperties, useMemo } from 'react'
+import { IoChevronForward } from 'react-icons/io5'
 import { useFetchProfileSpaces, useSelectProfileSpace, useSelectSpace } from 'src/rtk/app/hooks'
-import { useFetchTopUsers } from 'src/rtk/features/activeStaking/hooks'
+import { useFetchTopUsers } from 'src/rtk/features/leaderboard/hooks'
+import { useMyAddress } from '../auth/MyAccountsContext'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { SpaceAvatar } from '../spaces/helpers'
 import ViewSpaceLink from '../spaces/ViewSpaceLink'
@@ -12,6 +14,7 @@ import Segment from '../utils/Segment'
 export type TopUsersCardProps = ComponentProps<'div'>
 
 export default function TopUsersCard({ ...props }: TopUsersCardProps) {
+  const myAddress = useMyAddress()
   const { data, loading } = useFetchTopUsers()
   const isMobile = useIsMobileWidthOrDevice()
 
@@ -25,17 +28,18 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
 
   const isLoading = loading || !data || loadingSpaces
 
-  // const seeMoreButton = (
-  //   <Button
-  //     type='primary'
-  //     ghost
-  //     className='p-0 GapMini d-flex align-items-center'
-  //     style={{ height: 'auto', border: 'none', boxShadow: 'none' }}
-  //   >
-  //     <span>See more</span>
-  //     <IoChevronForward />
-  //   </Button>
-  // )
+  const seeMoreButton = (
+    <Button
+      type='primary'
+      ghost
+      className='p-0 GapMini d-flex align-items-center'
+      href={myAddress ? `/leaderboard/${myAddress}` : '/leaderboard'}
+      style={{ height: 'auto', border: 'none', boxShadow: 'none' }}
+    >
+      <span>See more</span>
+      <IoChevronForward />
+    </Button>
+  )
 
   const content = isLoading ? (
     <Skeleton />
@@ -45,7 +49,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
         <div className='d-flex align-items-center FontWeightSemibold GapMini'>
           <span className='FontSemilarge'>Top users (last 24h)</span>
         </div>
-        {/* {isMobile && seeMoreButton} */}
+        {isMobile && seeMoreButton}
       </div>
       <div
         className={clsx('mt-2', isMobile && 'GapNormal')}
@@ -71,7 +75,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
           </div>
         </div>
       </div>
-      {/* {!isMobile && <div className='d-flex justify-content-center mt-2'>{seeMoreButton}</div>} */}
+      {!isMobile && <div className='d-flex justify-content-center mt-2'>{seeMoreButton}</div>}
     </>
   )
 

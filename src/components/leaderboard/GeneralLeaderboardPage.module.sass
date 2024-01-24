@@ -1,0 +1,34 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.Title
+  display: flex
+  align-items: baseline
+  justify-content: space-between
+  gap: $space_tiny
+
+  @media screen and (max-width: 768px)
+    &
+      align-items: stretch
+      flex-direction: column
+
+.Statistics
+  gap: $space_big
+  margin-top: $space_big
+  display: grid
+  grid-template-columns: 1fr 1fr 1fr
+  
+  @media screen and (max-width: 768px)
+    &
+      grid-template-columns: 1fr 1fr
+      gap: $space_normal
+
+.Leaderboards
+  margin-top: $space_big
+  gap: $space_large
+  display: grid
+  grid-template-columns: 1fr 1fr
+  align-items: start
+  
+  @media screen and (max-width: 768px)
+    &
+      grid-template-columns: 1fr

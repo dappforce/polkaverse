@@ -27,17 +27,21 @@ function format(
   _isShort?: boolean,
   precision?: number,
   withMutedDecimals = true,
+  alwaysShowDecimals = false,
 ): React.ReactNode {
-  const [prefix, postfix] = formatBalance(value, {
+  // Remove any excess decimals, because this expects big integers
+  const balanceValue = value.toString().split('.')[0]
+
+  const [prefix, postfix] = formatBalance(balanceValue, {
     forceUnit: '-',
     decimals,
     withSi: false,
     withZero: true,
   }).split('.')
-  const isShort = _isShort || (withSi && prefix.length >= K_LENGTH)
+  const isShort = _isShort || (withSi && prefix.length >= K_LENGTH && !alwaysShowDecimals)
 
-  if (prefix.length > M_LENGTH) {
-    const balance = formatBalance(value, { decimals, withUnit: false })
+  if (prefix.length > M_LENGTH && !alwaysShowDecimals) {
+    const balance = formatBalance(balanceValue, { decimals, withUnit: false })
     return (
       <>
         {balance}&nbsp;{currency}
@@ -70,6 +74,7 @@ type FormatBalanceProps = BareProps & {
   isShort?: boolean
   precision?: number
   withMutedDecimals?: boolean
+  alwaysShowDecimals?: boolean
 }
 
 export const FormatBalance = ({
@@ -80,6 +85,7 @@ export const FormatBalance = ({
   className,
   precision,
   withMutedDecimals = true,
+  alwaysShowDecimals,
   ...bareProps
 }: FormatBalanceProps) => {
   if (!value) return null
@@ -94,6 +100,7 @@ export const FormatBalance = ({
     isShort,
     precision,
     withMutedDecimals,
+    alwaysShowDecimals,
   )
 
   return (

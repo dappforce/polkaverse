@@ -1,3 +1,4 @@
+import { LineChartOutlined } from '@ant-design/icons'
 import { Tooltip } from 'antd'
 import clsx from 'clsx'
 import Link from 'next/link'
@@ -17,7 +18,7 @@ import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getAmountRange } from 'src/utils/analytics'
 import { activeStakingLinks } from 'src/utils/links'
 import NumberSkeleton from '../common/NumberSkeleton'
-import StakerRewardHistoryModal from '../staker-rewards/StakerRewardHistoryModal'
+import RewardHistoryModal from '../RewardHistoryModal'
 import styles from './CreatorRewardInfoCard.module.sass'
 
 export default function CreatorRewardInfoCard() {
@@ -100,23 +101,50 @@ export default function CreatorRewardInfoCard() {
               </span>
             </div>
             <div
-              className='pt-2 px-3 d-flex justify-content-center align-items-center ColorPrimary FontWeightMedium GapMini'
-              onClick={() => {
-                sendEvent('astake_reward_history_opened', {
-                  amountRange: getAmountRange(totalStake?.amount),
-                })
-                setIsOpenRewardHistoryModal(true)
+              className='mt-2'
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                borderTop: '1px solid #dddddd',
+                marginLeft: '-1rem',
+                marginBottom: '-1rem',
+                width: 'calc(100% + 2rem)',
               }}
-              style={{ cursor: 'pointer' }}
             >
-              <RiHistoryFill />
-              <span className='FontSmall'>Rewards History</span>
+              <div
+                className='py-2.5 px-3 d-flex justify-content-center align-items-center ColorPrimary FontWeightMedium GapTiny'
+                onClick={() => {
+                  sendEvent('astake_reward_history_opened', {
+                    amountRange: getAmountRange(totalStake?.amount),
+                  })
+                  setIsOpenRewardHistoryModal(true)
+                }}
+                style={{ cursor: 'pointer', flex: 1, borderRight: '1px solid #dddddd' }}
+              >
+                <RiHistoryFill />
+                <span className='FontSmall'>History</span>
+              </div>
+
+              <Link href={`/leaderboard/${myAddress}?tab=creator`}>
+                <a
+                  className='py-2.5 px-3 d-flex justify-content-center align-items-center ColorPrimary FontWeightMedium GapTiny'
+                  onClick={() => {
+                    sendEvent('astake_my_stats_clicked', {
+                      amountRange: getAmountRange(totalStake?.amount),
+                    })
+                  }}
+                  style={{ cursor: 'pointer', flex: 1 }}
+                >
+                  <LineChartOutlined />
+                  <span className='FontSmall'>My Stats</span>
+                </a>
+              </Link>
             </div>
           </div>
         </div>
       </Segment>
 
-      <StakerRewardHistoryModal
+      <RewardHistoryModal
         visible={isOpenRewardHistoryModal}
         onCancel={() => setIsOpenRewardHistoryModal(false)}
       />

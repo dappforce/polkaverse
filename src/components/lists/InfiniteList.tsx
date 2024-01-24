@@ -12,8 +12,8 @@ import DataList, { DataListProps } from './DataList'
 import { CanHaveMoreDataFn, DataListItemProps, InnerLoadMoreFn } from './types'
 import { useLinkParams } from './utils'
 
-const DEFAULT_THRESHOLD = isClientSide() ? window.innerHeight / 2 : undefined
-const DEFAULT_MODAL_THRESHOLD = isClientSide()
+export const DEFAULT_THRESHOLD = isClientSide() ? window.innerHeight / 2 : undefined
+export const DEFAULT_MODAL_THRESHOLD = isClientSide()
   ? REGULAR_MODAL_HEIGHT * window.screen.height * 0.4
   : undefined
 
@@ -133,7 +133,7 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
       next={() => handleInfiniteOnLoad(page)}
       hasMore={hasMore}
       scrollableTarget={scrollableTarget}
-      loader={<Loading label={loadingLabel} />}
+      loader={<Loading label={loadingLabel} className='InfiniteListLoading' />}
     >
       <DataList
         {...otherProps}

@@ -14,6 +14,7 @@ type Props = AddressProps & {
   withDetails?: boolean
   network?: string
   emailAddress?: string
+  withAddress?: boolean
 }
 
 export const NameDetails = ({
@@ -22,6 +23,7 @@ export const NameDetails = ({
   withLabel,
   withDetails,
   emailAddress = '',
+  withAddress = true,
 }: Props) => {
   // const { struct } = owner
 
@@ -50,9 +52,11 @@ export const NameDetails = ({
         {withLabel && <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>}
       </div>
       {/* {extensionName && <div className='DfPopup-handle'>{extensionName}</div>} */}
-      <CopyAddress address={address}>
-        <span className='DfGreyLink'>{shortAddress}</span>
-      </CopyAddress>
+      {withAddress && (
+        <CopyAddress address={address}>
+          <span className='DfGreyLink'>{shortAddress}</span>
+        </CopyAddress>
+      )}
       <InfoPanel layout='horizontal' column={1} items={[...getDetails()]} />
     </>
   )

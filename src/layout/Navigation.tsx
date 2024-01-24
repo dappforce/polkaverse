@@ -10,30 +10,34 @@ import { useRouter } from 'next/router'
 const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false })
 const Menu = dynamic(() => import('./SideMenu'), { ssr: false })
 
-const { Header, Sider, Content } = Layout
+const {
+  Header,
+  // Sider
+  Content,
+} = Layout
 
 interface Props {
   children: React.ReactNode
 }
 
-const HomeNav = () => {
-  const {
-    state: { collapsed },
-  } = useSidebarCollapsed()
+// const HomeNav = () => {
+//   const {
+//     state: { collapsed },
+//   } = useSidebarCollapsed()
 
-  return (
-    <Sider
-      className='DfSider'
-      width='230'
-      collapsedWidth='81'
-      trigger={null}
-      collapsible
-      collapsed={collapsed}
-    >
-      <Menu />
-    </Sider>
-  )
-}
+//   return (
+//     <Sider
+//       className='DfSider'
+//       width='230'
+//       collapsedWidth='81'
+//       trigger={null}
+//       collapsible
+//       collapsed={collapsed}
+//     >
+//       <Menu />
+//     </Sider>
+//   )
+// }
 
 const DefaultNav: FunctionComponent = () => {
   const {
@@ -65,9 +69,6 @@ const DefaultNav: FunctionComponent = () => {
 
 export const Navigation = (props: Props): JSX.Element => {
   const { children } = props
-  const {
-    state: { asDrawer },
-  } = useSidebarCollapsed()
 
   const content = useMemo(
     () => <Content className={clsx('DfPageContent', styles.PagePadding)}>{children}</Content>,
@@ -80,7 +81,7 @@ export const Navigation = (props: Props): JSX.Element => {
         <TopMenu />
       </Header>
       <Layout className='ant-layout-has-sider'>
-        {asDrawer ? <DefaultNav /> : <HomeNav />}
+        <DefaultNav />
         {content}
       </Layout>
     </Layout>

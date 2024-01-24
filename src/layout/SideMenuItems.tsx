@@ -58,7 +58,7 @@ export const DefaultMenu: MenuItem[] = [
   // },
   {
     name: 'Statistics',
-    page: ['/stats'],
+    page: ['/leaderboard'],
     icon: <LineChartOutlined />,
   },
   Divider,

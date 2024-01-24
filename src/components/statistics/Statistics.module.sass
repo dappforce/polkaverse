@@ -8,8 +8,9 @@
     border-color: $color_link
 
 .DfGridParams
-  row-gap: .5rem
-  column-gap: 0.5rem
+  display: grid
+  grid-template-columns: 1fr 1fr
+  gap: $space_normal
   justify-content: space-between
 
 .DfNavButtonCol
@@ -20,15 +21,12 @@
 @media ( max-width: 755px)
   .DfGridParams
     justify-content: center
+    grid-template-columns: 1fr
 
   .DfNavButtonCol
     width: 94%
     margin-top: $space_normal
     justify-content: space-around
-
-.DfColStatistics
-  width: 21.75rem
-  margin-bottom: $space_normal
 
 .DfFullSize
   width: 712px

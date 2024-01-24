@@ -1,0 +1,35 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.ProfileCard
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  gap: $space_normal
+  grid-row: span 2
+
+  .ProfileContent
+    display: flex
+    align-items: center
+    flex-direction: column
+
+    .ProfileName
+      font-size: $font_big
+      font-weight: $font_weight_semibold
+      text-align: center
+      line-height: normal
+  
+  @media screen and (max-width: 768px)
+    &
+      grid-template-columns: 1fr 1fr
+      grid-column: span 2
+      justify-content: flex-start
+      grid-row: auto
+      flex-direction: row
+      gap: $space_small
+
+      .ProfileContent
+        align-items: flex-start
+
+        .ProfileName
+          font-size: $font_large

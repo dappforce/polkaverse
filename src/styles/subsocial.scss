@@ -1198,6 +1198,10 @@ hr {
     position: relative;
     z-index: 0;
 
+    &.DfSectionLarger {
+      max-width: calc(890px + #{$space_normal} * 2);
+    }
+
     .DfSectionOuter {
       width: 100%;
     }
@@ -2019,6 +2023,24 @@ hr {
   background-color: #fff;
   padding: $space_big;
   border-radius: $border_radius_huge;
+
+  &.NoShadow {
+    box-shadow: none !important;
+  }
+
+  &.DfCardBlue {
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    background: #edf4ff;
+  }
+  &.DfCardPink {
+    border: 1px solid rgba(168, 21, 128, 0.2);
+    background: #faeff9;
+  }
+
+  &.small {
+    padding: $space_normal;
+    border-radius: $border_radius_big;
+  }
 }
 
 .DfMobileOnBoarding {
@@ -2254,10 +2276,52 @@ hr {
 .\!FontWeightNormal {
   font-weight: $font_weight_normal !important;
 }
+.\!ColorNormal {
+  color: $color_font_normal !important;
+}
 .\!ColorMuted {
   color: $color_muted !important;
 }
 
 .\!BreakWord {
   word-break: break-word !important;
+}
+
+.DfRadioGroup {
+  background: white;
+  border-radius: $border_radius_normal;
+  padding: 0.125rem;
+
+  .ant-radio-button-wrapper {
+    border-radius: $border_radius_normal;
+    border: none;
+    font-weight: $font_weight_medium;
+    color: $color_muted;
+    height: auto;
+    padding: 0 $space_small;
+
+    &::before {
+      display: none;
+    }
+
+    &.ant-radio-button-wrapper-checked {
+      background-color: #faeff9;
+    }
+
+    &.ant-radio-button-wrapper-checked {
+      color: $color_font_normal;
+    }
+
+    &:not(.ant-radio-button-wrapper-disabled):focus-within {
+      box-shadow: none;
+    }
+  }
+
+  &.Blue {
+    .ant-radio-button-wrapper {
+      &.ant-radio-button-wrapper-checked {
+        background-color: #e7f0ff;
+      }
+    }
+  }
 }

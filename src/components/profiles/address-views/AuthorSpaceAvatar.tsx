@@ -27,7 +27,12 @@ export default function AuthorSpaceAvatar({
   const isSameSpace = profile?.id === spaceId
 
   const authorAvatar = (
-    <Avatar size={size} address={authorAddress} avatar={profile?.content?.image} />
+    <Avatar
+      size={size}
+      address={authorAddress}
+      avatar={profile?.content?.image}
+      noMargin={noMargin}
+    />
   )
 
   return (
@@ -38,7 +43,12 @@ export default function AuthorSpaceAvatar({
           leftAvatar={authorAvatar}
           rightAvatarSize={size}
           rightAvatar={
-            <SpaceAvatar space={spaceData.struct} avatar={spaceData.content?.image} size={size} />
+            <SpaceAvatar
+              space={spaceData.struct}
+              avatar={spaceData.content?.image}
+              size={size}
+              noMargin={noMargin}
+            />
           }
         />
       ) : (

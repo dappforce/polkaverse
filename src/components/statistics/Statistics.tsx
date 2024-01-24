@@ -1,15 +1,11 @@
-import { AppstoreOutlined, MenuOutlined } from '@ant-design/icons'
-import { Col, Radio, Row } from 'antd'
+import { Col, Row } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
 import { useGetActivityCountStat } from 'src/graphql/hooks'
 import messages from 'src/messages'
 import { useMyAddress } from '../auth/MyAccountsContext'
-import { PageContent } from '../main/PageWrapper'
-import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { getSuperLikesStats, SuperLikesStat } from '../utils/datahub/active-staking'
 import { Loading } from '../utils/index'
-import Section from '../utils/Section'
 import { Stats } from '../utils/Stats'
 import GraphModal from './ChartModal'
 import style from './Statistics.module.sass'
@@ -33,16 +29,10 @@ export const eventArr = [
   'AccountFollowed',
 ]
 
-export const periodOpt = [
-  { label: 'Last 7 days', value: '7' },
-  { label: 'Last month', value: '30' },
-  { label: 'Last 3 months', value: '90' },
-]
-
-const tailsViewOpt = [
-  { label: <AppstoreOutlined />, value: 'block' },
-  { label: <MenuOutlined />, value: 'inline' },
-]
+// const tailsViewOpt = [
+//   { label: <AppstoreOutlined />, value: 'block' },
+//   { label: <MenuOutlined />, value: 'inline' },
+// ]
 
 type StatsType = {
   format_date: string
@@ -70,13 +60,13 @@ export type StatType = {
   statisticsData: StatsType[]
 }
 
-type FormProps = {
+export type StatisticsProps = {
   statisticsData?: StatisticsDataType[]
   tilesView?: string
   period?: string
 }
 
-export function InnerStatistics(props: FormProps) {
+export function InnerStatistics(props: StatisticsProps) {
   const [modalData, setModalData] = useState<StatisticsDataType>()
   const [openModal, setOpenModal] = useState<boolean>(false)
 
@@ -132,15 +122,15 @@ const AFTER_PARACHAIN_MIGRATION_DATE = new Date(2022, 8, 1)
 const MAX_DAY_DIFF = dayjs(new Date()).diff(AFTER_PARACHAIN_MIGRATION_DATE, 'days')
 
 const cachedData: Record<number, StatType[]> = {}
-export function Statistics(props: FormProps) {
+export default function Statistics({ period, ...props }: StatisticsProps & { period: string }) {
   const address = useMyAddress()
   const getActivityCountStat = useGetActivityCountStat()
 
   const [data, setData] = useState<StatType[]>()
   const [isLoaded, setIsLoaded] = useState(false)
-  const [period, setPeriod] = useState<string>('30')
-  const [tilesView, setTilesView] = useState<string>('block')
-  const { isMobile } = useResponsiveSize()
+  const tilesView = 'block'
+  // const [tilesView, setTilesView] = useState<string>('block')
+  // const { isMobile } = useResponsiveSize()
 
   let constrainedPeriod = parseInt(period)
   if (constrainedPeriod > MAX_DAY_DIFF) constrainedPeriod = MAX_DAY_DIFF
@@ -151,13 +141,9 @@ export function Statistics(props: FormProps) {
     return getDatesBetweenDates(startDate, currentDate)
   }, [period])
 
-  const onRadioChange = (e: any) => {
-    setPeriod(e.target.value)
-  }
-
-  const onRadioTilesChange = (e: any) => {
-    setTilesView(e.target.value)
-  }
+  // const onRadioTilesChange = (e: any) => {
+  //   setTilesView(e.target.value)
+  // }
 
   useEffect(() => {
     let isMounted = true
@@ -199,42 +185,15 @@ export function Statistics(props: FormProps) {
     }
   }, [address, period])
 
-  return (
-    <PageContent meta={{ title: 'Statistics' }}>
-      <Section title='Statistics'>
-        <Row className={`${style.DfGridParams} my-3`}>
-          <Col>
-            <Radio.Group
-              options={periodOpt}
-              onChange={onRadioChange}
-              value={period}
-              optionType={'button'}
-            />
-          </Col>
-          {!isMobile && (
-            <Col className={style.DfNavButtonCol}>
-              <Radio.Group
-                options={tailsViewOpt}
-                onChange={onRadioTilesChange}
-                value={tilesView}
-                optionType={'button'}
-                className={style.DfTilesView}
-              />
-            </Col>
-          )}
-        </Row>
-        {isLoaded ? (
-          <InnerStatistics
-            statisticsData={parseData(constrainedPeriod.toString(), dates, data)}
-            tilesView={tilesView}
-            period={period}
-            {...props}
-          />
-        ) : (
-          <Loading />
-        )}
-      </Section>
-    </PageContent>
+  return isLoaded ? (
+    <InnerStatistics
+      statisticsData={parseData(constrainedPeriod.toString(), dates, data)}
+      tilesView={tilesView}
+      period={period}
+      {...props}
+    />
+  ) : (
+    <Loading />
   )
 }
 
@@ -311,5 +270,3 @@ const parseData = (period: string, dates: string[], statData: StatType[] | undef
 
   return statisticsDataArr
 }
-
-export default InnerStatistics

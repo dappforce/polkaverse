@@ -7,7 +7,6 @@ import postReward from '../features/activeStaking/postRewardSlice'
 import rewardHistory from '../features/activeStaking/rewardHistorySlice'
 import rewardReport from '../features/activeStaking/rewardReportSlice'
 import superLikeCounts from '../features/activeStaking/superLikeCountsSlice'
-import topUsers from '../features/activeStaking/topUsersSlice'
 import chainsInfo from '../features/chainsInfo/chainsInfoSlice'
 import chat from '../features/chat/chatSlice'
 import enableConfirmation from '../features/confirmationPopup/enableConfirmationSlice'
@@ -19,6 +18,10 @@ import ordersById from '../features/domainPendingOrders/pendingOrdersSlice'
 import domainByOwner from '../features/domains/domainsByOwnerSlice'
 import domains from '../features/domains/domainsSlice'
 import topLevelDomains from '../features/domains/topLevelDomains'
+import generalStatistics from '../features/leaderboard/generalStatisticsSlice'
+import leaderboard from '../features/leaderboard/leaderboardSlice'
+import topUsers from '../features/leaderboard/topUsersSlice'
+import userStatistics from '../features/leaderboard/userStatisticsSlice'
 import onBoarding from '../features/onBoarding/onBoardingSlice'
 import mySpacePermissions from '../features/permissions/mySpacePermissionsSlice'
 import myFeed from '../features/posts/myFeedSlice'
@@ -69,6 +72,9 @@ const rootReducer = combineReducers({
   canPostSuperLiked,
   postReward,
   topUsers,
+  userStatistics,
+  generalStatistics,
+  leaderboard,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

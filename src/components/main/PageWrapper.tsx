@@ -97,6 +97,7 @@ type Props = {
   outerClassName?: string
   withSidebar?: boolean
   withVoteBanner?: boolean
+  withLargerMaxWidth?: boolean
   creatorDashboardSidebarType?: CreatorDashboardSidebarType
 }
 
@@ -113,6 +114,7 @@ export const PageContent: FC<Props> = ({
   outerClassName,
   // withSidebar,
   children,
+  withLargerMaxWidth,
   creatorDashboardSidebarType,
 }) => {
   // const {
@@ -158,9 +160,20 @@ export const PageContent: FC<Props> = ({
               </div>
             </div>
           )}
-          <section className={clsx('DfSectionOuter', 'w-100', outerClassName)}>
+          <section
+            className={clsx(
+              'DfSectionOuter',
+              'w-100',
+              withLargerMaxWidth && 'DfSectionLarger',
+              outerClassName,
+            )}
+          >
             {/* {isPanels && <div className='DfLeftPanel DfPanel'>{leftPanel}</div>} */}
-            <Section className={outerClassName} outerClassName={outerClassName}>
+            <Section
+              withLargerMaxWidth={withLargerMaxWidth}
+              className={outerClassName}
+              outerClassName={outerClassName}
+            >
               {/* <Alert
                 className='mb-2'
                 message='Maintenance Alert'
@@ -172,6 +185,7 @@ export const PageContent: FC<Props> = ({
                 </>}
               /> */}
               <Section
+                withLargerMaxWidth={withLargerMaxWidth}
                 className={`${className}`}
                 outerClassName={outerClassName}
                 level={level}

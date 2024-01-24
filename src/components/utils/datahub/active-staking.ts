@@ -5,8 +5,6 @@ import {
 } from '@subsocial/data-hub-sdk'
 import axios from 'axios'
 import dayjs from 'dayjs'
-import isoWeek from 'dayjs/plugin/isoWeek'
-import utc from 'dayjs/plugin/utc'
 import { gql } from 'graphql-request'
 import { getStoreDispatcher } from 'src/rtk/app/store'
 import {
@@ -16,21 +14,18 @@ import {
 import { CanPostSuperLiked } from 'src/rtk/features/activeStaking/canPostSuperLikedSlice'
 import { PostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { RewardHistory } from 'src/rtk/features/activeStaking/rewardHistorySlice'
-import { fetchRewardReport, RewardReport } from 'src/rtk/features/activeStaking/rewardReportSlice'
+import { RewardReport } from 'src/rtk/features/activeStaking/rewardReportSlice'
 import {
   fetchSuperLikeCounts,
   SuperLikeCount,
 } from 'src/rtk/features/activeStaking/superLikeCountsSlice'
-import { TopUsers } from 'src/rtk/features/activeStaking/topUsersSlice'
 import {
   createSocialDataEventPayload,
   DatahubParams,
   datahubQueryRequest,
   datahubSubscription,
+  getDayAndWeekTimestamp,
 } from './utils'
-
-dayjs.extend(utc)
-dayjs.extend(isoWeek)
 
 // QUERIES
 const GET_SUPER_LIKE_COUNTS = gql`
@@ -70,7 +65,8 @@ const GET_POST_REWARDS = gql`
   query GetPostRewards($postIds: [String!]!) {
     activeStakingRewardsByPosts(args: { postPersistentIds: $postIds }) {
       persistentPostId
-      amount
+      reward
+      draftReward
     }
   }
 `
@@ -79,7 +75,8 @@ export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> 
     {
       activeStakingRewardsByPosts: {
         persistentPostId: string
-        amount: string
+        reward: string
+        draftReward: string
       }[]
     },
     { postIds: string[] }
@@ -89,13 +86,14 @@ export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> 
   })
 
   const resultMap = new Map<string, PostRewards>()
-  res.activeStakingRewardsByPosts.forEach(item =>
+  res.activeStakingRewardsByPosts.forEach(item => {
+    const reward = BigInt(item.reward) > 0 ? item.reward : item.draftReward
     resultMap.set(item.persistentPostId, {
       postId: item.persistentPostId,
-      amount: item.amount,
-      isNotZero: BigInt(item.amount) > 0,
-    }),
-  )
+      amount: reward,
+      isNotZero: BigInt(reward) > 0,
+    })
+  })
 
   return postIds.map(postId => resultMap.get(postId) ?? { postId, amount: '0', isNotZero: false })
 }
@@ -190,12 +188,6 @@ const GET_REWARD_REPORT = gql`
     }
   }
 `
-function getDayAndWeekTimestamp(currentDate: Date = new Date()) {
-  let date = dayjs.utc(currentDate)
-  date = date.startOf('day')
-  const week = date.get('year') * 100 + date.isoWeek()
-  return { day: date.unix(), week }
-}
 export async function getRewardReport(address: string): Promise<RewardReport> {
   const res = await datahubQueryRequest<
     {
@@ -276,50 +268,6 @@ export async function getRewardHistory(address: string): Promise<RewardHistory> 
         creatorReward: creator.total,
       }
     }),
-  }
-}
-
-const GET_TOP_USERS = gql`
-  query GetTopUsers($from: String!) {
-    activeStakingStakersRankedBySuperLikesForPeriod(args: { fromTime: $from, limit: 3 }) {
-      address
-      count
-    }
-    activeStakingCreatorsRankedBySuperLikesForPeriod(args: { fromTime: $from, limit: 3 }) {
-      address
-      count
-    }
-  }
-`
-export async function getTopUsers(): Promise<TopUsers> {
-  const now = dayjs()
-  const from = now.subtract(1, 'day').valueOf().toString()
-  const res = await datahubQueryRequest<
-    {
-      activeStakingStakersRankedBySuperLikesForPeriod: {
-        address: string
-        count: number
-      }[]
-      activeStakingCreatorsRankedBySuperLikesForPeriod: {
-        address: string
-        count: number
-      }[]
-    },
-    { from: string }
-  >({
-    document: GET_TOP_USERS,
-    variables: { from },
-  })
-
-  return {
-    creators: res.activeStakingCreatorsRankedBySuperLikesForPeriod.map(({ address, count }) => ({
-      address,
-      superLikesCount: count,
-    })),
-    stakers: res.activeStakingStakersRankedBySuperLikesForPeriod.map(({ address, count }) => ({
-      address,
-      superLikesCount: count,
-    })),
   }
 }
 
@@ -440,7 +388,6 @@ async function processSubscriptionEvent(
 
   dispatch(fetchSuperLikeCounts({ postIds: [post.persistentId], reload: true }))
   if (staker.id === myAddress) {
-    dispatch(fetchRewardReport({ address: myAddress, reload: true }))
     dispatch(
       fetchAddressLikeCounts({
         address: myAddress,

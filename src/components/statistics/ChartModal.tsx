@@ -3,8 +3,9 @@ import { Divider } from 'antd'
 import Modal from 'antd/lib/modal'
 import clsx from 'clsx'
 import messages from 'src/messages'
-import { periodOpt, StatisticsDataType } from './Statistics'
+import { StatisticsDataType } from './Statistics'
 import styles from './Statistics.module.sass'
+import { periodOpt } from './StatisticsPage'
 
 type ModalProps = {
   open: boolean

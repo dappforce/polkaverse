@@ -59,7 +59,7 @@ function MyApp(props) {
         />
       </Head>
       {/* Clarity Script */}
-      <Script strategy="lazyOnload" id="clarity-script">
+      <Script strategy='lazyOnload' id='clarity-script'>
         {`
           (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -69,6 +69,7 @@ function MyApp(props) {
         `}
       </Script>
       <NextNProgress
+        showOnShallow={false}
         color='#eb2f96'
         options={{
           showSpinner: false,

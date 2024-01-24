@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import React from 'react'
 import { BareProps } from 'src/components/utils/types'
 
@@ -8,10 +9,19 @@ type Props = React.PropsWithChildren<
     outerClassName?: string
     title?: React.ReactNode
     level?: number
+    withLargerMaxWidth?: boolean
   }
 >
 
-export const Section = ({ title, level = 2, className, id, outerClassName, children }: Props) => {
+export const Section = ({
+  title,
+  level = 2,
+  className,
+  id,
+  outerClassName,
+  children,
+  withLargerMaxWidth,
+}: Props) => {
   const renderTitle = () => {
     if (!title) return null
 
@@ -20,7 +30,9 @@ export const Section = ({ title, level = 2, className, id, outerClassName, child
   }
 
   return (
-    <div className={`${outerClassName} DfSectionOuter`}>
+    <div
+      className={clsx(outerClassName, withLargerMaxWidth && 'DfSectionLarger', 'DfSectionOuter')}
+    >
       <section id={id} className={`DfSection ${className}`}>
         {renderTitle()}
         {children}

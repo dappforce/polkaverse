@@ -9,13 +9,14 @@ import { GET_TOTAL_COUNTS } from 'src/graphql/queries'
 import { GetHomePageData } from 'src/graphql/__generated__/GetHomePageData'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
-import { fetchTopUsersWithSpaces } from 'src/rtk/features/activeStaking/topUsersSlice'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { fetchTopUsersWithSpaces } from 'src/rtk/features/leaderboard/topUsersSlice'
 import { PostKind } from 'src/types/graphql-global-types'
 import { getAmountRange } from 'src/utils/analytics'
 import { useIsSignedIn, useMyAddress } from '../auth/MyAccountsContext'
 import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar'
 import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
+import WriteSomething from '../posts/WriteSomething'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
 import Section from '../utils/Section'
@@ -169,18 +170,21 @@ const TabsHomePage = ({
       return <MyFeed />
     } else if (tab === 'posts') {
       return (
-        <PostFilterView
-          kind={PostKind.RegularPost}
-          filter={{ type: type as PostFilterType, date }}
-          {...props}
-        />
+        <>
+          {myAddress && <WriteSomething className='mt-3' />}
+          <PostFilterView
+            kind={PostKind.RegularPost}
+            filter={{ type: type as PostFilterType, date }}
+            {...props}
+          />
+        </>
       )
     } else if (tab === 'spaces') {
       return <SpaceFilterView filter={{ type: type as SpaceFilterType, date }} {...props} />
     } else {
       return <CreatorsSpaces />
     }
-  }, [tab, type, date])
+  }, [tab, type, date, myAddress])
 
   const isMobile = useIsMobileWidthOrDevice()
 
