@@ -60,7 +60,7 @@ export default function LeaderboardTable({ role, ...props }: LeaderboardTablePro
         <div className={clsx(styles.LeaderboardTitles, 'ColorMuted')}>
           <span>#</span>
           <span>Staker</span>
-          <span>Rewards this week</span>
+          <span style={{ textAlign: 'right' }}>Rewards</span>
         </div>
         {slicedData.length === 0 &&
           Array.from({ length: 3 }).map((_, idx) => <UserRowSkeleton key={idx} />)}

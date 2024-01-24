@@ -201,8 +201,8 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
             </span>
             <MutedSpan className='FontSmall'>
               {tabState === 'staker'
-                ? 'Stakers ranked based on the amount of SUB earned with Active Staking.'
-                : 'Creators ranked based on the amount of SUB earned with Active Staking.'}
+                ? 'Stakers ranked based on the amount of SUB earned with Active Staking this week.'
+                : 'Creators ranked based on the amount of SUB earned with Active Staking this week.'}
             </MutedSpan>
           </div>
           <LeaderboardTable className='mt-3' role={tabState} />
