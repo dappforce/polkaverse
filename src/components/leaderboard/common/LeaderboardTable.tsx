@@ -1,7 +1,7 @@
 import { Button, Skeleton } from 'antd'
 import clsx from 'clsx'
 import Link from 'next/link'
-import { ComponentProps, useEffect, useMemo, useState } from 'react'
+import { ComponentProps, useEffect, useMemo, useRef, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useFetchProfileSpaces, useSelectProfile } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
@@ -154,6 +154,8 @@ function LeaderboardTableModal({
   const { data, hasMore } = useGetLeaderboardData(role)
   const { subsocial } = useSubsocialApi()
   const dispatch = useAppDispatch()
+
+  const currentPageLoading = useRef(0)
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
@@ -164,11 +166,14 @@ function LeaderboardTableModal({
     const { payload } = (await dispatch(fetchLeaderboardData({ role }))) as {
       payload: LeaderboardData
     }
+    // prevent race condition
+    currentPageLoading.current += 1
+    const currentPage = currentPageLoading.current
     setIsLoading(true)
     await dispatch(
       fetchProfileSpaces({ ids: payload.data.map(({ address }) => address), api: subsocial }),
     )
-    setIsLoading(false)
+    if (currentPage === currentPageLoading.current) setIsLoading(false)
   }
 
   let wording = {
