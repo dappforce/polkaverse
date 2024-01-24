@@ -20,16 +20,24 @@ import styles from './UserLeaderboardPage.module.sass'
 
 const stats: Record<
   string,
-  { title: string; value: (data: UserStatistics) => ReactNode; tooltip: string }[]
+  {
+    title: (isMyAddress: boolean) => string
+    value: (data: UserStatistics) => ReactNode
+    tooltip: (isMyAddress: boolean) => string
+  }[]
 > = {
   creator: [
     {
-      title: 'Likes I received this week',
+      title: isMyAddress =>
+        isMyAddress ? 'Likes I received this week' : 'Liked received this week',
       value: data => data.creator.likesCountByPeriod,
-      tooltip: 'The amount of likes that all of your posts received this week',
+      tooltip: isMyAddress =>
+        isMyAddress
+          ? 'The amount of likes that all of your posts received this week'
+          : "The amount of likes that all of this creator's posts received this week",
     },
     {
-      title: 'SUB earned this week',
+      title: () => 'SUB earned this week',
       value: data => (
         <FormatBalance
           withMutedDecimals={false}
@@ -39,15 +47,22 @@ const stats: Record<
           decimals={10}
         />
       ),
-      tooltip: 'The amount of SUB rewards you have earned this week from Active Staking rewards',
+      tooltip: isMyAddress =>
+        isMyAddress
+          ? 'The amount of SUB rewards you have earned this week from Active Staking rewards'
+          : 'The amount of SUB rewards this creator has earned this week from Active Staking rewards',
     },
     {
-      title: 'Stakers that liked me this week',
+      title: isMyAddress =>
+        isMyAddress ? 'Stakers that liked me this week' : 'Stakers that liked this week',
       value: data => data.creator.stakersWhoLiked,
-      tooltip: 'The amount of individual stakers that liked at least one of your posts this week',
+      tooltip: isMyAddress =>
+        isMyAddress
+          ? 'The amount of individual stakers that liked at least one of your posts this week'
+          : "The amount of individual stakers that liked at least one of this creator's posts this week",
     },
     {
-      title: 'SUB earned in total',
+      title: () => 'SUB earned in total',
       value: data => (
         <FormatBalance
           withMutedDecimals={false}
@@ -57,17 +72,23 @@ const stats: Record<
           decimals={10}
         />
       ),
-      tooltip: 'The total amount of SUB rewards you have earned from Active Staking rewards',
+      tooltip: isMyAddress =>
+        isMyAddress
+          ? 'The total amount of SUB rewards you have earned from Active Staking rewards'
+          : 'The total amount of SUB rewards this creator has earned from Active Staking rewards',
     },
   ],
   staker: [
     {
-      title: 'Posts I liked this week',
+      title: isMyAddress => (isMyAddress ? 'Posts I liked this week' : 'Posts liked this week'),
       value: data => data.staker.likedPosts,
-      tooltip: 'The number of individual posts that you liked this week',
+      tooltip: isMyAddress =>
+        isMyAddress
+          ? 'The number of individual posts that you liked this week'
+          : 'The number of individual posts this staker liked this week',
     },
     {
-      title: 'SUB earned this week',
+      title: () => 'SUB earned this week',
       value: data => (
         <FormatBalance
           withMutedDecimals={false}
@@ -77,16 +98,22 @@ const stats: Record<
           decimals={10}
         />
       ),
-      tooltip: 'The amount of SUB rewards you have earned this week from Active Staking rewards',
+      tooltip: isMyAddress =>
+        isMyAddress
+          ? 'The amount of SUB rewards you have earned this week from Active Staking rewards'
+          : 'The amount of SUB rewards this staker has earned this week from Active Staking rewards',
     },
     {
-      title: 'Creators I liked this week',
+      title: isMyAddress =>
+        isMyAddress ? 'Creators I liked this week' : 'Creators liked this week',
       value: data => data.staker.likedCreators,
-      tooltip:
-        'The number of individual creators that you supported this week by liking at least one of their posts',
+      tooltip: isMyAddress =>
+        isMyAddress
+          ? 'The number of individual creators that you supported this week by liking at least one of their posts'
+          : 'The number of individual creators that this staker supported this week by liking at least one of their posts',
     },
     {
-      title: 'SUB earned in total',
+      title: () => 'SUB earned in total',
       value: data => (
         <FormatBalance
           withMutedDecimals={false}
@@ -96,8 +123,10 @@ const stats: Record<
           decimals={10}
         />
       ),
-      tooltip:
-        'The total amount of SUB rewards you have earned this week from Active Staking rewards',
+      tooltip: isMyAddress =>
+        isMyAddress
+          ? 'The total amount of SUB rewards you have earned this week from Active Staking rewards'
+          : 'The total amount of SUB rewards this staker has earned from Active Staking rewards',
     },
   ],
 }
@@ -120,10 +149,12 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
 
   const { data: rewardHistory, loading } = useFetchUserRewardHistory(address)
 
+  const isMyAddress = address === myAddress
+
   return (
     <PageContent withLargerMaxWidth meta={{ title: 'Active Staking Dashboard' }}>
       <Tabs
-        activeKey={address === myAddress ? 'user' : ''}
+        activeKey={isMyAddress ? 'user' : ''}
         onChange={key => {
           if (key === 'general') router.push('/leaderboard')
           else if (key === 'stats') router.push('/stats')
@@ -157,10 +188,10 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
           />
           {stats[tabState].map(stat => (
             <StatisticCard
-              tooltip={stat.tooltip}
-              title={stat.title}
+              tooltip={stat.tooltip(isMyAddress)}
+              title={stat.title(isMyAddress)}
               value={stat.value(data)}
-              key={stat.title}
+              key={stat.title(isMyAddress)}
             />
           ))}
         </div>
