@@ -79,6 +79,7 @@ function UserRow({ data, loading }: { data: LeaderboardData['data'][number]; loa
   const title = (
     <span
       style={{ overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, whiteSpace: 'nowrap' }}
+      className={clsx(!profile?.content?.name && 'ColorMuted')}
     >
       {profile?.content?.name ?? 'Unnamed'}
     </span>
