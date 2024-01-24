@@ -64,6 +64,7 @@ export default function LeaderboardTable({ role, ...props }: LeaderboardTablePro
         </Button>
       </div>
       <LeaderboardTableModal
+        isLoadingFirstBatchOfData={!!loading}
         visible={isOpenModal}
         onCancel={() => setIsOpenModal(false)}
         role={role}
@@ -113,19 +114,31 @@ function UserRow({ data, loading }: { data: LeaderboardData['data'][number]; loa
 
 type LeaderboardTableModalProps = {
   role: LeaderboardRole
+  isLoadingFirstBatchOfData: boolean
 } & CustomModalProps
-function LeaderboardTableModal({ role, ...props }: LeaderboardTableModalProps) {
+function LeaderboardTableModal({
+  role,
+  isLoadingFirstBatchOfData,
+  ...props
+}: LeaderboardTableModalProps) {
   const { data, hasMore } = useGetLeaderboardData(role)
   const { subsocial } = useSubsocialApi()
   const dispatch = useAppDispatch()
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    if (isLoadingFirstBatchOfData) setIsLoading(true)
+  }, [isLoadingFirstBatchOfData])
 
   const loadMore = async () => {
     const { payload } = (await dispatch(fetchLeaderboardData({ role }))) as {
       payload: LeaderboardData
     }
+    setIsLoading(true)
     await dispatch(
       fetchProfileSpaces({ ids: payload.data.map(({ address }) => address), api: subsocial }),
     )
+    setIsLoading(false)
   }
 
   let wording = {
@@ -156,7 +169,7 @@ function LeaderboardTableModal({ role, ...props }: LeaderboardTableModalProps) {
           loader={<Loading className={styles.Loading} />}
         >
           {data.map(row => (
-            <UserRow data={row} loading={false} key={row.rank} />
+            <UserRow data={row} loading={isLoading} key={row.rank} />
           ))}
         </InfiniteScroll>
       </div>
