@@ -168,7 +168,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
             src='/images/creators/subsocial-tokens-large.png'
             className='w-100'
             style={{ maxWidth: '250px' }}
-            preview={{ mask: null }}
+            preview={{ mask: false }}
           />
           <Button
             block
