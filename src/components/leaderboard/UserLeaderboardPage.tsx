@@ -196,7 +196,9 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
         </DfCard>
         <DfCard size='small' withShadow={false} style={{ overflowX: 'clip', gridColumn: 'span 2' }}>
           <div className='d-flex flex-column'>
-            <span className='FontSemilarge FontWeightSemibold'>Leaderboard</span>
+            <span className='FontSemilarge FontWeightSemibold'>
+              {tabState === 'staker' ? 'Staker' : 'Creator'} Leaderboard
+            </span>
             <MutedSpan className='FontSmall'>
               {tabState === 'staker'
                 ? 'Stakers ranked based on the amount of SUB earned with Active Staking.'
