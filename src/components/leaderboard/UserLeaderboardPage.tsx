@@ -188,7 +188,9 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
         <DfCard size='small' withShadow={false} className='sm-hidden'>
           <RewardHistoryPanel
             title={tabState === 'creator' ? 'Creator Rewards' : 'Staker Rewards'}
-            description='The last 30 days of your Active Staking rewards'
+            description={`The last 30 days of ${
+              isMyAddress ? 'my' : "this user's"
+            } Active Staking rewards`}
             loading={loading}
             rewardHistory={rewardHistory}
             rewardType={tabState}
@@ -196,11 +198,13 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
         </DfCard>
         <DfCard size='small' withShadow={false} style={{ overflowX: 'clip', gridColumn: 'span 2' }}>
           <div className='d-flex flex-column'>
-            <span className='FontSemilarge FontWeightSemibold'>Leaderboard</span>
+            <span className='FontSemilarge FontWeightSemibold'>
+              {tabState === 'staker' ? 'Staker' : 'Creator'} Leaderboard
+            </span>
             <MutedSpan className='FontSmall'>
               {tabState === 'staker'
-                ? 'Stakers ranked based on the amount of SUB earned with Active Staking.'
-                : 'Creators ranked based on the amount of SUB earned with Active Staking.'}
+                ? 'Stakers ranked based on the amount of SUB earned with Active Staking this week.'
+                : 'Creators ranked based on the amount of SUB earned with Active Staking this week.'}
             </MutedSpan>
           </div>
           <LeaderboardTable className='mt-3' role={tabState} />

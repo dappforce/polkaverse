@@ -1,4 +1,4 @@
-import { Button, Skeleton } from 'antd'
+import { Button, Skeleton, Tag } from 'antd'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { ComponentProps, useEffect, useMemo, useRef, useState } from 'react'
@@ -60,7 +60,7 @@ export default function LeaderboardTable({ role, ...props }: LeaderboardTablePro
         <div className={clsx(styles.LeaderboardTitles, 'ColorMuted')}>
           <span>#</span>
           <span>Staker</span>
-          <span>Rewards this week</span>
+          <span style={{ textAlign: 'right' }}>Rewards</span>
         </div>
         {slicedData.length === 0 &&
           Array.from({ length: 3 }).map((_, idx) => <UserRowSkeleton key={idx} />)}
@@ -146,17 +146,35 @@ function UserRow({
                 avatar={profile?.content?.image}
                 size={32}
               />
-              <span
-                style={{
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  minWidth: 0,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {profile?.content?.name || truncateAddress(data.address)}{' '}
-                {<MutedSpan>{isMyAddress ? '(you)' : ''}</MutedSpan>}
-              </span>
+              <div className='d-flex flex-column' style={{ minWidth: 0 }}>
+                <span
+                  style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    minWidth: 0,
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {profile?.content?.name || truncateAddress(data.address)}{' '}
+                  {
+                    <MutedSpan>
+                      {isMyAddress ? (
+                        <Tag color='blue' className='FontWeightNormal'>
+                          you
+                        </Tag>
+                      ) : (
+                        ''
+                      )}
+                    </MutedSpan>
+                  }
+                </span>
+                <span
+                  className='ColorMuted FontTiny FontWeightNormal'
+                  style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
+                >
+                  {profile?.content?.about}
+                </span>
+              </div>
             </>
           )}
         </div>
