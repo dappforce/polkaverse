@@ -3,6 +3,7 @@ import { IoPeople } from 'react-icons/io5'
 import { ReactNode } from 'react-markdown'
 import Avatar from 'src/components/profiles/address-views/Avatar'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
+import ViewSpaceLink from 'src/components/spaces/ViewSpaceLink'
 import DfCard, { DfCardProps } from 'src/components/utils/cards/DfCard'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { truncateAddress } from 'src/utils/storage'
@@ -21,6 +22,17 @@ export default function ProfileCard({ address, title, detail, ...props }: Profil
   const usedTitle = title || (profile?.content?.name ?? truncateAddress(address ?? ''))
   const size = isMobile ? 70 : 88
 
+  const avatar = (
+    <Avatar
+      asLink={false}
+      size={size}
+      address={address ?? ''}
+      avatar={profile?.content?.image}
+      noMargin
+    />
+  )
+  const name = <span className={clsx(styles.ProfileName)}>{usedTitle}</span>
+
   return (
     <DfCard
       {...props}
@@ -29,7 +41,11 @@ export default function ProfileCard({ address, title, detail, ...props }: Profil
       withShadow={false}
     >
       {address ? (
-        <Avatar size={size} address={address} avatar={profile?.content?.image} noMargin />
+        profile?.struct ? (
+          <ViewSpaceLink space={profile?.struct} title={avatar} />
+        ) : (
+          avatar
+        )
       ) : (
         <div
           className='rounded-circle d-flex align-items-center justify-content-center'
@@ -39,7 +55,7 @@ export default function ProfileCard({ address, title, detail, ...props }: Profil
         </div>
       )}
       <div className={clsx(styles.ProfileContent)}>
-        <span className={clsx(styles.ProfileName)}>{usedTitle}</span>
+        {profile ? <ViewSpaceLink space={profile.struct} title={name} /> : name}
         {detail}
       </div>
     </DfCard>

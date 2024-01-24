@@ -168,7 +168,7 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
       <div className={clsx(styles.Leaderboard)}>
         <DfCard size='small' withShadow={false} className='sm-hidden'>
           <RewardHistoryPanel
-            title={tabState === 'creator' ? 'My Creator Rewards' : 'My Staker Rewards'}
+            title={tabState === 'creator' ? 'Creator Rewards' : 'Staker Rewards'}
             loading={loading}
             rewardHistory={rewardHistory}
             rewardType={tabState}
