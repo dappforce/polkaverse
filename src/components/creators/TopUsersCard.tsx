@@ -2,12 +2,14 @@ import { Button, Skeleton } from 'antd'
 import clsx from 'clsx'
 import { ComponentProps, CSSProperties, useMemo } from 'react'
 import { IoChevronForward } from 'react-icons/io5'
-import { useFetchProfileSpaces, useSelectProfileSpace, useSelectSpace } from 'src/rtk/app/hooks'
+import { useFetchProfileSpaces, useSelectProfile } from 'src/rtk/app/hooks'
 import { useFetchTopUsers } from 'src/rtk/features/leaderboard/hooks'
 import { truncateAddress } from 'src/utils/storage'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import { FormatBalance } from '../common/balances'
+import Avatar from '../profiles/address-views/Avatar'
+import ViewProfileLink from '../profiles/ViewProfileLink'
 import { useIsMobileWidthOrDevice } from '../responsive'
-import { SpaceAvatar } from '../spaces/helpers'
 import ViewSpaceLink from '../spaces/ViewSpaceLink'
 import { MutedSpan } from '../utils/MutedText'
 import Segment from '../utils/Segment'
@@ -18,6 +20,8 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
   const myAddress = useMyAddress()
   const { data, loading } = useFetchTopUsers()
   const isMobile = useIsMobileWidthOrDevice()
+
+  console.log(data)
 
   const args = useMemo(
     () => ({
@@ -48,7 +52,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
     <>
       <div className='d-flex justify-content-between align-items-center'>
         <div className='d-flex align-items-center FontWeightSemibold GapMini'>
-          <span className='FontSemilarge'>Top users (last 24h)</span>
+          <span className='FontSemilarge'>Top users (this week)</span>
         </div>
         {isMobile && seeMoreButton}
       </div>
@@ -99,21 +103,31 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
   )
 }
 
-function UserInfo({
-  rank,
-  user,
-}: {
-  rank: number
-  user: { address: string; superLikesCount: number }
-}) {
-  const profile = useSelectProfileSpace(user.address)
-  const space = useSelectSpace(profile?.spaceId)
-  if (!space) return null
+function UserInfo({ rank, user }: { rank: number; user: { address: string; reward: string } }) {
+  const profile = useSelectProfile(user.address)
 
+  const avatar = (
+    <Avatar asLink={!profile} address={user.address} avatar={profile?.content?.image} size={34} />
+  )
+  const name = (
+    <span
+      className='FontWeightMedium FontNormal'
+      style={{
+        minWidth: 0,
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        position: 'relative',
+        top: '2px',
+      }}
+    >
+      {profile?.content?.name || truncateAddress(user.address)}
+    </span>
+  )
   return (
     <div className='d-flex align-items-center'>
       <div className='position-relative'>
-        <SpaceAvatar space={space.struct} avatar={space.content?.image} size={34} />
+        {profile ? <ViewSpaceLink space={profile.struct} title={avatar} /> : avatar}
         {[1, 2, 3].includes(rank) && (
           <Medal
             className='position-absolute FontTiny'
@@ -123,29 +137,19 @@ function UserInfo({
         )}
       </div>
       <div className='d-flex flex-column' style={{ minWidth: 0 }}>
-        <ViewSpaceLink
-          containerClassName='d-flex'
-          className='d-flex'
-          style={{ minWidth: 0 }}
-          title={
-            <span
-              className='FontWeightMedium FontNormal'
-              style={{
-                minWidth: 0,
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                position: 'relative',
-                top: '2px',
-              }}
-            >
-              {space.content?.name || truncateAddress(user.address)}
-            </span>
-          }
-          space={space.struct}
-        />
+        {profile ? (
+          <ViewSpaceLink
+            containerClassName='d-flex'
+            className='d-flex'
+            style={{ minWidth: 0 }}
+            title={name}
+            space={profile?.struct}
+          />
+        ) : (
+          <ViewProfileLink title={name} account={{ address: user.address }} />
+        )}
         <div className='d-flex align-items-center ColorMuted GapMini'>
-          <span>{user.superLikesCount} Likes</span>
+          <FormatBalance value={user.reward} currency='SUB' decimals={10} precision={2} />
         </div>
       </div>
     </div>

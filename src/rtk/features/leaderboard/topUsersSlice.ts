@@ -6,7 +6,7 @@ import { AppDispatch, AppStore } from 'src/rtk/app/store'
 import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 import { fetchProfileSpaces } from '../profiles/profilesSlice'
 
-type User = { address: string; superLikesCount: number }
+type User = { address: string; reward: string }
 export type TopUsers = {
   creators: User[]
   stakers: User[]
