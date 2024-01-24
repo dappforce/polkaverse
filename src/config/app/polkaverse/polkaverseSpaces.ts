@@ -40,5 +40,7 @@ export default [
   // Dotcast
   '10132',
   // Cappex
-  '4855'
+  '4855',
+  // PolkaWarriors
+  '1573',
 ]
