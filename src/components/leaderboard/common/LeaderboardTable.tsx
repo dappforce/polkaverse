@@ -136,7 +136,6 @@ function UserRow({
                   minWidth: 0,
                   whiteSpace: 'nowrap',
                 }}
-                className={clsx(!profile?.content?.name && 'ColorMuted')}
               >
                 {profile?.content?.name || truncateAddress(data.address)}{' '}
                 {<MutedSpan>{isMyAddress ? '(you)' : ''}</MutedSpan>}
