@@ -37,6 +37,7 @@ export default function ProfileCard({ address, title, detail, ...props }: Profil
     <DfCard
       {...props}
       className={clsx(styles.ProfileCard, props.className)}
+      style={{ minWidth: 0, ...props.style }}
       size='small'
       withShadow={false}
     >
@@ -54,8 +55,21 @@ export default function ProfileCard({ address, title, detail, ...props }: Profil
           <IoPeople style={{ fontSize: '42px', color: '#5089F8' }} />
         </div>
       )}
-      <div className={clsx(styles.ProfileContent)}>
+      <div className={clsx(styles.ProfileContent)} style={{ maxWidth: '100%', minWidth: 0 }}>
         {profile ? <ViewSpaceLink space={profile.struct} title={name} /> : name}
+        {profile?.content?.about && (
+          <p
+            className='my-1 ColorMuted FontSmall'
+            style={{
+              whiteSpace: 'nowrap',
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {profile.content.about}
+          </p>
+        )}
         {detail}
       </div>
     </DfCard>
