@@ -1,8 +1,4 @@
-import dynamic from 'next/dynamic'
-const Statistics = dynamic(
-  () => import('../components/statistics/Statistics').then((mod: any) => mod.Statistics),
-  { ssr: false },
-)
+import StatisticsPage from 'src/components/statistics/StatisticsPage'
 
-export const page = () => <Statistics />
+export const page = () => <StatisticsPage />
 export default page

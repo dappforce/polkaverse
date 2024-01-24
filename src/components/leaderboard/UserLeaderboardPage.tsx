@@ -1,12 +1,12 @@
-import { Button, Radio } from 'antd'
+import { Tabs } from 'antd'
 import clsx from 'clsx'
 import router, { useRouter } from 'next/router'
 import { useState } from 'react'
-import { RiHistoryFill } from 'react-icons/ri'
 import { ReactNode } from 'react-markdown'
 import { useFetchUserRewardHistory } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchUserStatistics } from 'src/rtk/features/leaderboard/hooks'
 import { UserStatistics } from 'src/rtk/features/leaderboard/userStatisticsSlice'
+import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import RewardHistoryModal, { RewardHistoryPanel } from '../creators/RewardHistoryModal'
 import { PageContent } from '../main/PageWrapper'
@@ -106,6 +106,8 @@ export type UserLeaderboardPageProps = {
   address: string
 }
 export default function UserLeaderboardPage({ address }: UserLeaderboardPageProps) {
+  const myAddress = useMyAddress()
+
   const { query } = useRouter()
   let tabState = query.tab as 'staker' | 'creator'
   if (tabState !== 'staker' && tabState !== 'creator') {
@@ -120,41 +122,17 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
 
   return (
     <PageContent withLargerMaxWidth meta={{ title: 'Active Staking Dashboard' }}>
-      <div className={clsx(styles.Title)}>
-        <h1 className='DfUnboundedTitle ColorNormal mb-0 FontBig'>Active Staking Dashboard</h1>
-        <div className='d-flex align-items-center GapNormal justify-content-between'>
-          <div className='d-flex align-items-center GapTiny'>
-            <span className='FontSmall ColorMuted'>Mode:</span>
-
-            <Radio.Group
-              className='DfRadioGroup'
-              options={[
-                { label: 'Staker', value: 'staker' },
-                { label: 'Creator', value: 'creator' },
-                { label: 'General', value: 'general' },
-              ]}
-              onChange={e => {
-                const value = e.target.value
-                if (value === 'general') {
-                  router.push('/leaderboard')
-                  return
-                }
-                router.push(`/leaderboard/${address}?tab=${value}`, undefined, { shallow: true })
-              }}
-              value={tabState}
-              optionType='button'
-            />
-          </div>
-          <Button
-            type='link'
-            className='d-flex align-items-center GapTiny lg-hidden'
-            onClick={() => setIsOpenHistoryModal(true)}
-          >
-            <RiHistoryFill />
-            <span className='FontSmall'>Rewards History</span>
-          </Button>
-        </div>
-      </div>
+      <Tabs
+        activeKey={address === myAddress ? 'user' : ''}
+        onChange={key => {
+          if (key === 'general') router.push('/leaderboard')
+          else if (key === 'stats') router.push('/stats')
+        }}
+      >
+        <Tabs.TabPane tab='My Staking Stats' key='user' />
+        <Tabs.TabPane tab='Global Staking Stats' key='general' />
+        <Tabs.TabPane tab='Polkaverse Activity' key='stats' />
+      </Tabs>
       {data && (
         <div className={clsx(styles.Statistics)}>
           <ProfileCard

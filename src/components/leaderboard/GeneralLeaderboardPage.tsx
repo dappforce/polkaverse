@@ -1,4 +1,4 @@
-import { Radio } from 'antd'
+import { Tabs } from 'antd'
 import clsx from 'clsx'
 import router from 'next/router'
 import { ReactNode } from 'react-markdown'
@@ -60,34 +60,17 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
 
   return (
     <PageContent withLargerMaxWidth meta={{ title: 'Active Staking Dashboard' }}>
-      <div className={clsx(styles.Title)}>
-        <h1 className='DfUnboundedTitle ColorNormal mb-0 FontBig'>Active Staking Dashboard</h1>
-        <div className='d-flex align-items-center GapNormal justify-content-between'>
-          {myAddress && (
-            <div className='d-flex align-items-center GapTiny'>
-              <span className='FontSmall ColorMuted'>Mode:</span>
-
-              <Radio.Group
-                className='DfRadioGroup'
-                options={[
-                  { label: 'Staker', value: 'staker' },
-                  { label: 'Creator', value: 'creator' },
-                  { label: 'General', value: 'general' },
-                ]}
-                onChange={e => {
-                  const value = e.target.value
-                  if (value === 'general') {
-                    return
-                  }
-                  router.push(`/leaderboard/${myAddress}?tab=${value}`)
-                }}
-                value='general'
-                optionType='button'
-              />
-            </div>
-          )}
-        </div>
-      </div>
+      <Tabs
+        activeKey='general'
+        onChange={key => {
+          if (key === 'user') router.push(`/leaderboard/${myAddress}?tab=${key}`)
+          else if (key === 'stats') router.push('/stats')
+        }}
+      >
+        <Tabs.TabPane tab='My Staking Stats' key='user' />
+        <Tabs.TabPane tab='Global Staking Stats' key='general' />
+        <Tabs.TabPane tab='Polkaverse Activity' key='stats' />
+      </Tabs>
       {data && (
         <div className={clsx(styles.Statistics)}>
           <ProfileCard title='Total Activity' subtitle='this week' />
