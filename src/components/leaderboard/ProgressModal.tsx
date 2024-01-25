@@ -33,7 +33,8 @@ export default function ProgressModal() {
 
   useEffect(() => {
     setShouldShowModal(!progressModalStorage.getIsClosed() && !!myAddress)
-  }, [])
+  }, [myAddress])
+
   if (!shouldShowModal) return null
 
   return <InnerProgressModal />
