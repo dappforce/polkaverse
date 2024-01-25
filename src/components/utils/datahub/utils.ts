@@ -1,4 +1,10 @@
 import {
+  ApolloClient,
+  NormalizedCacheObject,
+  OperationVariables,
+  QueryOptions,
+} from '@apollo/client'
+import {
   SocialCallDataArgs,
   socialCallName,
   SocialEventDataApiInput,
@@ -8,10 +14,10 @@ import {
 import dayjs from 'dayjs'
 import isoWeek from 'dayjs/plugin/isoWeek'
 import utc from 'dayjs/plugin/utc'
-import { GraphQLClient, RequestOptions, Variables } from 'graphql-request'
 import { Client, createClient } from 'graphql-ws'
 import ws from 'isomorphic-ws'
 import { datahubQueryUrl, datahubSubscriptionUrl } from 'src/config/env'
+import { createApolloClient } from 'src/graphql/client'
 import { wait } from 'src/utils/promise'
 
 dayjs.extend(utc)
@@ -24,19 +30,30 @@ export function getDayAndWeekTimestamp(currentDate: Date = new Date()) {
   return { day: date.unix(), week }
 }
 
-// QUERIES
-export function datahubQueryRequest<T, V extends Variables = Variables>(
-  config: RequestOptions<V, T>,
-) {
+let apolloClient: ApolloClient<NormalizedCacheObject>
+function getApolloClient() {
+  if (!apolloClient) return initializeDatahubApollo()
+  return apolloClient
+}
+export const initializeDatahubApollo = (initialState: any = null) => {
   if (!datahubQueryUrl) throw new Error('Datahub (Query) config is not set')
+  const _apolloClient = apolloClient ?? createApolloClient(datahubQueryUrl)
 
-  const TIMEOUT = 10 * 1000 // 10 seconds
-  const client = new GraphQLClient(datahubQueryUrl, {
-    timeout: TIMEOUT,
-    ...config,
-  })
+  if (initialState) {
+    _apolloClient.cache.restore(initialState)
+  }
 
-  return client.request({ url: datahubQueryUrl, ...config })
+  if (!apolloClient) apolloClient = _apolloClient
+
+  return _apolloClient
+}
+
+// QUERIES
+export function datahubQueryRequest<T, TVariables extends OperationVariables>(
+  config: QueryOptions<TVariables, T>,
+) {
+  const client = getApolloClient()
+  return client.query(config)
 }
 
 // MUTATIONS
