@@ -156,6 +156,7 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
       {data && (
         <div className={clsx(styles.Statistics)}>
           <ProfileCard
+            rank={data[tabState]?.rank}
             variant={tabState === 'creator' ? 'pink' : 'blue'}
             address={address}
             detail={

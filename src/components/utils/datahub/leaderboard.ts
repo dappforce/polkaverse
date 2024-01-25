@@ -71,7 +71,17 @@ export async function getTopUsers(): Promise<TopUsers> {
 }
 
 const GET_USER_STATS = gql`
-  query GetUserStats($address: String!) {
+  query GetUserStats($address: String!, $timestamp: String!) {
+    staker: activeStakingAddressRankByRewardsForPeriod(
+      args: { address: $address, period: WEEK, role: STAKER, timestamp: $timestamp }
+    ) {
+      rankIndex
+    }
+    creator: activeStakingAddressRankByRewardsForPeriod(
+      args: { address: $address, period: WEEK, role: CREATOR, timestamp: $timestamp }
+    ) {
+      rankIndex
+    }
     activeStakingAccountActivityMetricsForFixedPeriod(
       args: {
         address: $address
@@ -103,6 +113,14 @@ const GET_USER_STATS = gql`
 export async function getUserStatistics({ address }: { address: string }): Promise<UserStatistics> {
   const res = await datahubQueryRequest<
     {
+      staker: {
+        reward: string
+        rankIndex: number
+      }
+      creator: {
+        reward: string
+        rankIndex: number
+      }
       activeStakingAccountActivityMetricsForFixedPeriod: {
         staker: {
           likedCreators: number
@@ -118,15 +136,22 @@ export async function getUserStatistics({ address }: { address: string }): Promi
         }
       }
     },
-    { address: string }
+    { address: string; timestamp: string }
   >({
     document: GET_USER_STATS,
-    variables: { address },
+    variables: { address, timestamp: getDayAndWeekTimestamp().week.toString() },
   })
 
   return {
     address,
-    ...res.activeStakingAccountActivityMetricsForFixedPeriod,
+    creator: {
+      ...res.activeStakingAccountActivityMetricsForFixedPeriod.creator,
+      rank: res.creator.rankIndex,
+    },
+    staker: {
+      ...res.activeStakingAccountActivityMetricsForFixedPeriod.staker,
+      rank: res.staker.rankIndex,
+    },
   }
 }
 
