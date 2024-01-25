@@ -101,6 +101,7 @@ export const SpacePreview = ({
           }
           return (
             <div
+              className='ml-2'
               onClick={() =>
                 sendEvent('follow', {
                   spaceId: space.id,
