@@ -28,7 +28,7 @@ const stats: Record<string, Stat[]> = {
   creator: [
     {
       title: isMyAddress =>
-        isMyAddress ? 'Likes I received this week' : 'Liked received this week',
+        isMyAddress ? 'Likes I received this week' : 'Likes received this week',
       value: data => data.creator.likesCountByPeriod,
       tooltip: isMyAddress =>
         isMyAddress
@@ -203,8 +203,8 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
             </span>
             <MutedSpan className='FontSmall'>
               {tabState === 'staker'
-                ? 'Stakers ranked based on the amount of SUB earned with Active Staking this week.'
-                : 'Creators ranked based on the amount of SUB earned with Active Staking this week.'}
+                ? 'Stakers ranked by the amount of SUB earned with Active Staking this week.'
+                : 'Creators ranked by the amount of SUB earned with Active Staking this week.'}
             </MutedSpan>
           </div>
           <LeaderboardTable className='mt-3' role={tabState} />
