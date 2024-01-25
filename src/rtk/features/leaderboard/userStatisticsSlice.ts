@@ -10,12 +10,14 @@ export type UserStatistics = {
     likedPosts: number
     earnedByPeriod: string
     earnedTotal: string
+    rank: number
   }
   creator: {
     likesCountByPeriod: number
     stakersWhoLiked: number
     earnedByPeriod: string
     earnedTotal: string
+    rank: number
   }
 }
 

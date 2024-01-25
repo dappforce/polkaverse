@@ -13,9 +13,10 @@ export type ProfileCardProps = DfCardProps & {
   address?: string
   title?: string
   detail?: ReactNode
+  rank?: number
 }
 
-export default function ProfileCard({ address, title, detail, ...props }: ProfileCardProps) {
+export default function ProfileCard({ address, rank, title, detail, ...props }: ProfileCardProps) {
   const isMobile = useIsMobileWidthOrDevice()
   const profile = useSelectProfile(address)
 
@@ -41,6 +42,7 @@ export default function ProfileCard({ address, title, detail, ...props }: Profil
       size='small'
       withShadow={false}
     >
+      {typeof rank === 'number' && <span className={clsx(styles.Rank)}>#{rank + 1}</span>}
       {address ? (
         profile?.struct ? (
           <ViewSpaceLink space={profile?.struct} title={avatar} />

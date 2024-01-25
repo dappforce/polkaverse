@@ -29,10 +29,19 @@ import styles from './LeaderboardTable.module.sass'
 
 export type LeaderboardTableProps = ComponentProps<'div'> & {
   role: LeaderboardRole
+  currentUserRank?: {
+    rank: number
+    reward: string
+    address: string
+  }
 }
 
 const TABLE_LIMIT = 10
-export default function LeaderboardTable({ role, ...props }: LeaderboardTableProps) {
+export default function LeaderboardTable({
+  role,
+  currentUserRank,
+  ...props
+}: LeaderboardTableProps) {
   const [isOpenModal, setIsOpenModal] = useState(false)
   const { page, data } = useGetLeaderboardData(role)
   const dispatch = useAppDispatch()
@@ -42,13 +51,25 @@ export default function LeaderboardTable({ role, ...props }: LeaderboardTablePro
     }
   }, [dispatch, role])
 
-  const { addresses, slicedData } = useMemo(
-    () => ({
-      addresses: data.slice(0, TABLE_LIMIT).map(row => row.address),
-      slicedData: data.slice(0, TABLE_LIMIT),
-    }),
-    [data],
-  )
+  const { addresses, slicedData } = useMemo<{
+    addresses: string[]
+    slicedData: typeof data
+  }>(() => {
+    if (!currentUserRank || currentUserRank.rank < TABLE_LIMIT) {
+      return {
+        addresses: data.slice(0, TABLE_LIMIT).map(row => row.address),
+        slicedData: data.slice(0, TABLE_LIMIT),
+      }
+    }
+    return {
+      addresses: [
+        ...data.slice(0, TABLE_LIMIT - 1).map(row => row.address),
+        currentUserRank.address,
+      ],
+      slicedData: [...data.slice(0, TABLE_LIMIT - 1), currentUserRank],
+    }
+  }, [data, currentUserRank])
+
   const { loading } = useFetchProfileSpaces({ ids: addresses })
 
   return (
@@ -65,7 +86,13 @@ export default function LeaderboardTable({ role, ...props }: LeaderboardTablePro
         {slicedData.length === 0 &&
           Array.from({ length: 3 }).map((_, idx) => <UserRowSkeleton key={idx} />)}
         {slicedData.map(row => (
-          <UserRow role={role} key={row.rank} data={row} loading={!!loading} />
+          <UserRow
+            currentAddress={currentUserRank?.address}
+            role={role}
+            key={row.rank}
+            data={row}
+            loading={!!loading}
+          />
         ))}
         <Button onClick={() => setIsOpenModal(true)} type='link' className={styles.ViewMore}>
           View more
@@ -76,6 +103,7 @@ export default function LeaderboardTable({ role, ...props }: LeaderboardTablePro
         visible={isOpenModal}
         onCancel={() => setIsOpenModal(false)}
         role={role}
+        currentAddress={currentUserRank?.address}
       />
     </>
   )
@@ -100,10 +128,12 @@ function UserRow({
   data,
   loading,
   role,
+  currentAddress,
 }: {
   data: LeaderboardData['data'][number]
   loading: boolean
   role: LeaderboardRole
+  currentAddress?: string
 }) {
   const myAddress = useMyAddress() ?? ''
   const sendEvent = useSendEvent()
@@ -127,12 +157,12 @@ function UserRow({
         className={clsx(
           styles.LeaderboardRow,
           role === 'creator' && styles.RowPink,
-          myAddress === data.address && styles.Active,
+          (isMyAddress || currentAddress === data.address) && styles.Active,
           '!ColorNormal',
         )}
       >
         <MutedSpan>{data.rank + 1}</MutedSpan>
-        <div className='d-flex align-items-center' style={{ minWidth: 0 }}>
+        <div className='d-flex align-items-center' style={{ minWidth: 0, height: '41px' }}>
           {isLoading ? (
             <>
               <Skeleton.Avatar size={32} className='mr-1' />
@@ -146,10 +176,7 @@ function UserRow({
                 avatar={profile?.content?.image}
                 size={32}
               />
-              <div
-                className='d-flex flex-column justify-content-center'
-                style={{ minWidth: 0, height: '41px' }}
-              >
+              <div className='d-flex flex-column justify-content-center' style={{ minWidth: 0 }}>
                 <span
                   style={{
                     overflow: 'hidden',
@@ -185,7 +212,7 @@ function UserRow({
             value={data.reward}
             currency='SUB'
             decimals={10}
-            precision={2}
+            fixedDecimalsLength={2}
           />
         </span>
       </a>
@@ -196,10 +223,12 @@ function UserRow({
 type LeaderboardTableModalProps = {
   role: LeaderboardRole
   isLoadingFirstBatchOfData: boolean
+  currentAddress?: string
 } & CustomModalProps
 function LeaderboardTableModal({
   role,
   isLoadingFirstBatchOfData,
+  currentAddress,
   ...props
 }: LeaderboardTableModalProps) {
   const { data, hasMore } = useGetLeaderboardData(role)
@@ -260,7 +289,13 @@ function LeaderboardTableModal({
           loader={<Loading className={styles.Loading} />}
         >
           {data.map(row => (
-            <UserRow role={role} data={row} loading={isLoading} key={row.rank} />
+            <UserRow
+              currentAddress={currentAddress}
+              role={role}
+              data={row}
+              loading={isLoading}
+              key={row.rank}
+            />
           ))}
         </InfiniteScroll>
       </div>
