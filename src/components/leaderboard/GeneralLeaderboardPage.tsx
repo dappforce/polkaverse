@@ -81,7 +81,7 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
           <div className='d-flex flex-column'>
             <span className='FontSemilarge FontWeightSemibold'>Top Stakers this week</span>
             <MutedSpan className='FontSmall'>
-              Stakers ranked based on the amount of SUB earned with Active Staking.
+              Stakers ranked by the amount of SUB earned with Active Staking.
             </MutedSpan>
           </div>
           <LeaderboardTable className='mt-3' role='staker' />
@@ -90,7 +90,7 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
           <div className='d-flex flex-column'>
             <span className='FontSemilarge FontWeightSemibold'>Top Creators this week</span>
             <MutedSpan className='FontSmall'>
-              Creators ranked based on the amount of SUB earned with Active Staking.
+              Creators ranked by the amount of SUB earned with Active Staking.
             </MutedSpan>
           </div>
           <LeaderboardTable className='mt-3' role='creator' />

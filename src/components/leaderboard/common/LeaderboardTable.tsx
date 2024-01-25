@@ -228,12 +228,12 @@ function LeaderboardTableModal({
 
   let wording = {
     title: 'Top Stakers this week',
-    subtitle: 'Stakers ranked based on the amount of SUB earned with Active Staking.',
+    subtitle: 'Stakers ranked by the amount of SUB earned with Active Staking.',
   }
   if (role === 'creator') {
     wording = {
       title: 'Top Creators this week',
-      subtitle: 'Creators ranked based on the amount of SUB earned with Active Staking.',
+      subtitle: 'Creators ranked by the amount of SUB earned with Active Staking.',
     }
   }
 
