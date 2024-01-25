@@ -81,7 +81,7 @@ export function InnerStatistics(props: StatisticsProps) {
 
   return (
     <>
-      <Row className={style.DfGridParams}>
+      <Row className={style.DfGridParams} style={{ rowGap: '16px' }}>
         {statisticsData.map(data => (
           <Col
             key={data.activityType}
