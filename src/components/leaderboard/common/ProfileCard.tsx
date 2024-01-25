@@ -57,7 +57,7 @@ export default function ProfileCard({ address, title, detail, ...props }: Profil
       )}
       <div className={clsx(styles.ProfileContent)} style={{ maxWidth: '100%', minWidth: 0 }}>
         {profile ? <ViewSpaceLink space={profile.struct} title={name} /> : name}
-        {profile?.content?.about && (
+        {profile?.content?.summary && (
           <p
             className='my-1 ColorMuted FontSmall'
             style={{
@@ -67,7 +67,7 @@ export default function ProfileCard({ address, title, detail, ...props }: Profil
               textOverflow: 'ellipsis',
             }}
           >
-            {profile.content.about}
+            {profile.content.summary}
           </p>
         )}
         {detail}

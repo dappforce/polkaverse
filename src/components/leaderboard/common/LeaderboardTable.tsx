@@ -172,7 +172,7 @@ function UserRow({
                   className='ColorMuted FontTiny FontWeightNormal'
                   style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
                 >
-                  {profile?.content?.about}
+                  {profile?.content?.summary}
                 </span>
               </div>
             </>
