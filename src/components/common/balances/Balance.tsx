@@ -19,16 +19,27 @@ const log = newLogger('useCreateBallance')
 const M_LENGTH = 6 + 1
 const K_LENGTH = 3 + 1
 
-function format(
-  value: Compact<any> | BN | string,
-  currency: string,
-  decimals: number,
-  withSi?: boolean,
-  _isShort?: boolean,
-  precision?: number,
+function format({
+  value,
+  currency,
+  decimals,
+  withSi,
+  isShort: _isShort,
+  fixedDecimalsLength,
+  precision,
   withMutedDecimals = true,
   alwaysShowDecimals = false,
-): React.ReactNode {
+}: {
+  value: Compact<any> | BN | string
+  currency: string
+  fixedDecimalsLength?: number
+  decimals: number
+  withSi?: boolean
+  isShort?: boolean
+  precision?: number
+  withMutedDecimals?: boolean
+  alwaysShowDecimals?: boolean
+}): React.ReactNode {
   // Remove any excess decimals, because this expects big integers
   const balanceValue = value.toString().split('.')[0]
 
@@ -56,7 +67,9 @@ function format(
         <>
           .
           <span className={clsx(withMutedDecimals && 'DfBalanceDecimals')}>
-            {precision
+            {fixedDecimalsLength
+              ? postfix.substring(0, fixedDecimalsLength).padEnd(fixedDecimalsLength, '0')
+              : precision
               ? parseFloat(`0.${postfix}`).toPrecision(precision).substring(2)
               : postfix || '0000'}
           </span>
@@ -75,6 +88,7 @@ type FormatBalanceProps = BareProps & {
   precision?: number
   withMutedDecimals?: boolean
   alwaysShowDecimals?: boolean
+  fixedDecimalsLength?: number
 }
 
 export const FormatBalance = ({
@@ -84,6 +98,7 @@ export const FormatBalance = ({
   isShort,
   className,
   precision,
+  fixedDecimalsLength,
   withMutedDecimals = true,
   alwaysShowDecimals,
   ...bareProps
@@ -92,16 +107,17 @@ export const FormatBalance = ({
 
   const { unit: defaultCurrency, decimals: defaultDecimal } = formatBalance.getDefaults()
 
-  const balance = format(
+  const balance = format({
     value,
-    currency || defaultCurrency,
-    decimals || defaultDecimal,
-    true,
+    currency: currency || defaultCurrency,
+    decimals: decimals || defaultDecimal,
+    withSi: true,
     isShort,
     precision,
+    fixedDecimalsLength,
     withMutedDecimals,
     alwaysShowDecimals,
-  )
+  })
 
   return (
     <span className={clsx('DfFormatBalance', className)} {...bareProps}>

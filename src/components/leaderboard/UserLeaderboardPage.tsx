@@ -208,7 +208,13 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
                 : 'Creators ranked by the amount of SUB earned with Active Staking this week.'}
             </MutedSpan>
           </div>
-          <LeaderboardTable className='mt-3' role={tabState} />
+          <LeaderboardTable
+            className='mt-3'
+            role={tabState}
+            currentUserRank={
+              data && { address, rank: data[tabState].rank, reward: data[tabState].earnedByPeriod }
+            }
+          />
         </DfCard>
       </div>
       <DfCard size='small' withShadow={false} className='lg-hidden mt-4'>

@@ -29,10 +29,19 @@ import styles from './LeaderboardTable.module.sass'
 
 export type LeaderboardTableProps = ComponentProps<'div'> & {
   role: LeaderboardRole
+  currentUserRank?: {
+    rank: number
+    reward: string
+    address: string
+  }
 }
 
 const TABLE_LIMIT = 10
-export default function LeaderboardTable({ role, ...props }: LeaderboardTableProps) {
+export default function LeaderboardTable({
+  role,
+  currentUserRank,
+  ...props
+}: LeaderboardTableProps) {
   const [isOpenModal, setIsOpenModal] = useState(false)
   const { page, data } = useGetLeaderboardData(role)
   const dispatch = useAppDispatch()
@@ -42,13 +51,25 @@ export default function LeaderboardTable({ role, ...props }: LeaderboardTablePro
     }
   }, [dispatch, role])
 
-  const { addresses, slicedData } = useMemo(
-    () => ({
-      addresses: data.slice(0, TABLE_LIMIT).map(row => row.address),
-      slicedData: data.slice(0, TABLE_LIMIT),
-    }),
-    [data],
-  )
+  const { addresses, slicedData } = useMemo<{
+    addresses: string[]
+    slicedData: typeof data
+  }>(() => {
+    if (!currentUserRank || currentUserRank.rank < TABLE_LIMIT) {
+      return {
+        addresses: data.slice(0, TABLE_LIMIT).map(row => row.address),
+        slicedData: data.slice(0, TABLE_LIMIT),
+      }
+    }
+    return {
+      addresses: [
+        ...data.slice(0, TABLE_LIMIT - 1).map(row => row.address),
+        currentUserRank.address,
+      ],
+      slicedData: [...data.slice(0, TABLE_LIMIT - 1), currentUserRank],
+    }
+  }, [data, currentUserRank])
+
   const { loading } = useFetchProfileSpaces({ ids: addresses })
 
   return (
@@ -182,7 +203,7 @@ function UserRow({
             value={data.reward}
             currency='SUB'
             decimals={10}
-            precision={2}
+            fixedDecimalsLength={2}
           />
         </span>
       </a>
