@@ -146,7 +146,10 @@ function UserRow({
                 avatar={profile?.content?.image}
                 size={32}
               />
-              <div className='d-flex flex-column' style={{ minWidth: 0 }}>
+              <div
+                className='d-flex flex-column justify-content-center'
+                style={{ minWidth: 0, height: '41px' }}
+              >
                 <span
                   style={{
                     overflow: 'hidden',
@@ -156,17 +159,15 @@ function UserRow({
                   }}
                 >
                   {profile?.content?.name || truncateAddress(data.address)}{' '}
-                  {
-                    <MutedSpan>
-                      {isMyAddress ? (
-                        <Tag color='blue' className='FontWeightNormal'>
-                          you
-                        </Tag>
-                      ) : (
-                        ''
-                      )}
-                    </MutedSpan>
-                  }
+                  <MutedSpan>
+                    {isMyAddress ? (
+                      <Tag color='blue' className='FontWeightNormal'>
+                        you
+                      </Tag>
+                    ) : (
+                      ''
+                    )}
+                  </MutedSpan>
                 </span>
                 <span
                   className='ColorMuted FontTiny FontWeightNormal'
