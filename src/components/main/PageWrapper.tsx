@@ -10,6 +10,7 @@ import CreatorDashboardSidebar, {
   CreatorDashboardSidebarType,
 } from '../creators/CreatorDashboardSidebar'
 import TopUsersCard from '../creators/TopUsersCard'
+import ProgressModal from '../leaderboard/ProgressModal'
 import { useIsMobileWidthOrDevice, useResponsiveSize } from '../responsive'
 import { fullUrl } from '../urls/helpers'
 import Section from '../utils/Section'
@@ -146,6 +147,7 @@ export const PageContent: FC<Props> = ({
     <>
       <HeadMeta {...meta} />
 
+      <ProgressModal />
       {isMobile ? (
         <section className={className}>
           {children}
