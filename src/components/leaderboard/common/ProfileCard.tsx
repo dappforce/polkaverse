@@ -42,7 +42,7 @@ export default function ProfileCard({ address, rank, title, detail, ...props }: 
       size='small'
       withShadow={false}
     >
-      {!!rank && <span className={clsx(styles.Rank)}>#{rank}</span>}
+      {typeof rank === 'number' && <span className={clsx(styles.Rank)}>#{rank + 1}</span>}
       {address ? (
         profile?.struct ? (
           <ViewSpaceLink space={profile?.struct} title={avatar} />

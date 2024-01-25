@@ -86,7 +86,13 @@ export default function LeaderboardTable({
         {slicedData.length === 0 &&
           Array.from({ length: 3 }).map((_, idx) => <UserRowSkeleton key={idx} />)}
         {slicedData.map(row => (
-          <UserRow role={role} key={row.rank} data={row} loading={!!loading} />
+          <UserRow
+            currentAddress={currentUserRank?.address}
+            role={role}
+            key={row.rank}
+            data={row}
+            loading={!!loading}
+          />
         ))}
         <Button onClick={() => setIsOpenModal(true)} type='link' className={styles.ViewMore}>
           View more
@@ -97,6 +103,7 @@ export default function LeaderboardTable({
         visible={isOpenModal}
         onCancel={() => setIsOpenModal(false)}
         role={role}
+        currentAddress={currentUserRank?.address}
       />
     </>
   )
@@ -121,10 +128,12 @@ function UserRow({
   data,
   loading,
   role,
+  currentAddress,
 }: {
   data: LeaderboardData['data'][number]
   loading: boolean
   role: LeaderboardRole
+  currentAddress?: string
 }) {
   const myAddress = useMyAddress() ?? ''
   const sendEvent = useSendEvent()
@@ -148,7 +157,7 @@ function UserRow({
         className={clsx(
           styles.LeaderboardRow,
           role === 'creator' && styles.RowPink,
-          myAddress === data.address && styles.Active,
+          (isMyAddress || currentAddress === data.address) && styles.Active,
           '!ColorNormal',
         )}
       >
@@ -214,10 +223,12 @@ function UserRow({
 type LeaderboardTableModalProps = {
   role: LeaderboardRole
   isLoadingFirstBatchOfData: boolean
+  currentAddress?: string
 } & CustomModalProps
 function LeaderboardTableModal({
   role,
   isLoadingFirstBatchOfData,
+  currentAddress,
   ...props
 }: LeaderboardTableModalProps) {
   const { data, hasMore } = useGetLeaderboardData(role)
@@ -278,7 +289,13 @@ function LeaderboardTableModal({
           loader={<Loading className={styles.Loading} />}
         >
           {data.map(row => (
-            <UserRow role={role} data={row} loading={isLoading} key={row.rank} />
+            <UserRow
+              currentAddress={currentAddress}
+              role={role}
+              data={row}
+              loading={isLoading}
+              key={row.rank}
+            />
           ))}
         </InfiniteScroll>
       </div>
