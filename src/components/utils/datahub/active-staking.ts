@@ -87,15 +87,17 @@ export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> 
 
   const resultMap = new Map<string, PostRewards>()
   res.activeStakingRewardsByPosts.forEach(item => {
-    const reward = BigInt(item.reward) > 0 ? item.reward : item.draftReward
     resultMap.set(item.persistentPostId, {
       postId: item.persistentPostId,
-      amount: reward,
-      isNotZero: BigInt(reward) > 0,
+      reward: item.reward,
+      draftReward: item.draftReward,
+      isNotZero: BigInt(item.reward) > 0 || BigInt(item.draftReward) > 0,
     })
   })
 
-  return postIds.map(postId => resultMap.get(postId) ?? { postId, amount: '0', isNotZero: false })
+  return postIds.map(
+    postId => resultMap.get(postId) ?? { postId, reward: '0', draftReward: '0', isNotZero: false },
+  )
 }
 
 const GET_ADDRESS_LIKE_COUNT_TO_POSTS = gql`
