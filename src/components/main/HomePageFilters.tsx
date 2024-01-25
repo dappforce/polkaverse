@@ -31,6 +31,7 @@ const commonFilterOption = [{ label: 'Latest', value: 'latest' }]
 export const postFilterOpt = [
   { label: 'Featured Posts', value: 'suggested' },
   { label: 'All Posts', value: 'latest' },
+  { label: 'Hot Posts', value: 'hot' },
   // removed most liked and commented
   // ...offchainPostFilterOpt,
 ]
