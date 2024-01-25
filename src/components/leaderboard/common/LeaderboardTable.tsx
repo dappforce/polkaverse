@@ -132,7 +132,7 @@ function UserRow({
         )}
       >
         <MutedSpan>{data.rank + 1}</MutedSpan>
-        <div className='d-flex align-items-center' style={{ minWidth: 0 }}>
+        <div className='d-flex align-items-center' style={{ minWidth: 0, height: '41px' }}>
           {isLoading ? (
             <>
               <Skeleton.Avatar size={32} className='mr-1' />
@@ -146,10 +146,7 @@ function UserRow({
                 avatar={profile?.content?.image}
                 size={32}
               />
-              <div
-                className='d-flex flex-column justify-content-center'
-                style={{ minWidth: 0, height: '41px' }}
-              >
+              <div className='d-flex flex-column justify-content-center' style={{ minWidth: 0 }}>
                 <span
                   style={{
                     overflow: 'hidden',
