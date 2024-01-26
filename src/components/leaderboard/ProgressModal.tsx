@@ -135,7 +135,7 @@ function InnerProgressModal() {
         </div>
       </div>
       <Button type='primary' size='large' className='mt-4'>
-        Post on X!
+        Share on X!
       </Button>
     </CustomModal>
   )
