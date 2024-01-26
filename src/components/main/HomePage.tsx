@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import config from 'src/config'
+import { useIsMyAddressWhitelisted } from 'src/config/constants'
 import { GET_TOTAL_COUNTS } from 'src/graphql/queries'
 import { GetHomePageData } from 'src/graphql/__generated__/GetHomePageData'
 import { useSendEvent } from 'src/providers/AnalyticContext'
@@ -120,11 +121,16 @@ const TabsHomePage = ({
 
   const { tabIndex, typeFromUrl, dateFilterIndex } = getFiltersFromUrl()
   const tab = tabs[tabIndex] as TabKeys
-  const type = getFilterType(tab, typeFromUrl)
+  let type = getFilterType(tab, typeFromUrl)
   const date = dateFilterOpt[dateFilterIndex].value as DateFilterType
 
   const myAddress = useMyAddress() ?? ''
   const { data: totalStake } = useFetchTotalStake(myAddress)
+
+  const isWhitelisted = useIsMyAddressWhitelisted()
+  if (!isWhitelisted && type === 'hot') {
+    type = 'suggested'
+  }
 
   const sendEvent = useSendEvent()
   useEffect(() => {
