@@ -5928,6 +5928,29 @@ elliptic@^6.5.3:
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
 
+embla-carousel-autoplay@^8.0.0-rc21:
+  version "8.0.0-rc21"
+  resolved "https://registry.yarnpkg.com/embla-carousel-autoplay/-/embla-carousel-autoplay-8.0.0-rc21.tgz#7be3c680673430c0607568676588427e9b856f8d"
+  integrity sha512-o8T3+cpkZyJZfpN1PqxRDOdep/wlLvBQTIr0KUQbtk/y44esiAdZEGCjR/GJDJbl2huMIB/GzxkC7JQYEHZPxQ==
+
+embla-carousel-react@^8.0.0-rc21:
+  version "8.0.0-rc21"
+  resolved "https://registry.yarnpkg.com/embla-carousel-react/-/embla-carousel-react-8.0.0-rc21.tgz#10eb8b1b0c829a8d292493693ab9be75678e0e26"
+  integrity sha512-DOa9hgF/T1fwb8D3rZ8FFMceY3aDXtbluZwzZYMLnN2Dqn0IBLN0l97o3obkMxI9Zzog0u1WMM6HE7AGF9SjEg==
+  dependencies:
+    embla-carousel "8.0.0-rc21"
+    embla-carousel-reactive-utils "8.0.0-rc21"
+
+embla-carousel-reactive-utils@8.0.0-rc21:
+  version "8.0.0-rc21"
+  resolved "https://registry.yarnpkg.com/embla-carousel-reactive-utils/-/embla-carousel-reactive-utils-8.0.0-rc21.tgz#bd28b83a6696d0a1b490525638393a4655b2f767"
+  integrity sha512-TnV49hoTdwfcKr2vgQHQ3zcCqJSkvLJ5rR/pGzmEx5GeO07CV/e755lkSD7No0C6cz+JFB8dcHV7uS+5Gnc7Lg==
+
+embla-carousel@8.0.0-rc21, embla-carousel@^8.0.0-rc21:
+  version "8.0.0-rc21"
+  resolved "https://registry.yarnpkg.com/embla-carousel/-/embla-carousel-8.0.0-rc21.tgz#c12f05528a0b6d0dc17e9f78f3e1da622dcc6d68"
+  integrity sha512-rK//vyPIhmD/5QUDtjk9A5RxPoDZ5LOATYMVSFECAzwcAe7yJmqXQbdYzEZf4ASOR+ivod5msqXsKgZXypA35Q==
+
 emittery@^0.7.1:
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/emittery/-/emittery-0.7.2.tgz#25595908e13af0f5674ab419396e2fb394cdfa82"

@@ -14,6 +14,7 @@ import Avatar from '../profiles/address-views/Avatar'
 import ViewProfileLink from '../profiles/ViewProfileLink'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import ViewSpaceLink from '../spaces/ViewSpaceLink'
+import Carousel from '../utils/carousel/Carousel'
 import { MutedSpan } from '../utils/MutedText'
 import Segment from '../utils/Segment'
 
@@ -80,22 +81,52 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
       >
         <div className='d-flex flex-column FontSmall' style={{ minWidth: 0 }}>
           <MutedSpan className='FontWeightMedium mb-1'>Stakers</MutedSpan>
-          <div className='d-flex flex-column GapTiny'>
-            {data.stakers.map((staker, i) => (
-              <UserInfo rank={i + 1} key={i} user={staker} />
-            ))}
-          </div>
+          <Carousel
+            options={{ loop: true }}
+            slides={[
+              <div className='d-flex flex-column GapTiny' key={0}>
+                {data.stakers.slice(0, 3).map((staker, i) => (
+                  <UserInfo rank={i + 1} key={i} user={staker} />
+                ))}
+              </div>,
+              <div className='d-flex flex-column GapTiny' key={1}>
+                {data.stakers.slice(3, 6).map((staker, i) => (
+                  <UserInfo rank={i + 1 + 3} key={i} user={staker} />
+                ))}
+              </div>,
+              <div className='d-flex flex-column GapTiny' key={2}>
+                {data.stakers.slice(6, 9).map((staker, i) => (
+                  <UserInfo rank={i + 1 + 6} key={i} user={staker} />
+                ))}
+              </div>,
+            ]}
+          />
         </div>
         <div
           className={clsx('d-flex flex-column FontSmall', !isMobile && 'mt-3 pt-2')}
           style={{ borderTop: !isMobile ? '1px solid #E2E8F0' : 'none', minWidth: 0 }}
         >
           <MutedSpan className='FontWeightMedium mb-1'>Creators</MutedSpan>
-          <div className='d-flex flex-column GapTiny'>
-            {data?.creators.map((creator, i) => (
-              <UserInfo rank={i + 1} key={i} user={creator} />
-            ))}
-          </div>
+          <Carousel
+            options={{ loop: true }}
+            slides={[
+              <div className='d-flex flex-column GapTiny' key={0}>
+                {data.creators.slice(0, 3).map((staker, i) => (
+                  <UserInfo rank={i + 1} key={i} user={staker} />
+                ))}
+              </div>,
+              <div className='d-flex flex-column GapTiny' key={1}>
+                {data.creators.slice(3, 6).map((staker, i) => (
+                  <UserInfo rank={i + 1 + 3} key={i} user={staker} />
+                ))}
+              </div>,
+              <div className='d-flex flex-column GapTiny' key={2}>
+                {data.creators.slice(6, 9).map((staker, i) => (
+                  <UserInfo rank={i + 1 + 6} key={i} user={staker} />
+                ))}
+              </div>,
+            ]}
+          />
         </div>
       </div>
       {!isMobile && <div className='d-flex justify-content-center mt-2'>{seeMoreButton}</div>}
@@ -146,13 +177,11 @@ function UserInfo({ rank, user }: { rank: number; user: { address: string; rewar
     <div className='d-flex align-items-center'>
       <div className='position-relative'>
         {profile ? <ViewSpaceLink space={profile.struct} title={avatar} /> : avatar}
-        {[1, 2, 3].includes(rank) && (
-          <Medal
-            className='position-absolute FontTiny'
-            style={{ bottom: -2, right: 6 }}
-            rank={rank as 1 | 2 | 3}
-          />
-        )}
+        <Medal
+          className='position-absolute FontTiny'
+          style={{ bottom: -2, right: 6 }}
+          rank={rank as 1 | 2 | 3}
+        />
       </div>
       <div className='d-flex flex-column' style={{ minWidth: 0 }}>
         {profile ? (
@@ -178,7 +207,7 @@ function UserInfo({ rank, user }: { rank: number; user: { address: string; rewar
   )
 }
 
-function Medal({ rank, ...props }: ComponentProps<'div'> & { rank: 1 | 2 | 3 }) {
+function Medal({ rank, ...props }: ComponentProps<'div'> & { rank: number }) {
   const rankStyles: Record<number, CSSProperties> = {
     1: {
       backgroundColor: '#FCDF40',
@@ -195,6 +224,7 @@ function Medal({ rank, ...props }: ComponentProps<'div'> & { rank: 1 | 2 | 3 }) 
   }
 
   const style: CSSProperties = {
+    background: 'white',
     ...rankStyles[rank],
     border: '1px solid white',
     width: '1rem',

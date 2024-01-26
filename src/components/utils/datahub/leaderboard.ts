@@ -10,7 +10,7 @@ const GET_TOP_USERS = gql`
     staker: activeStakingAddressesRankedByRewardsForPeriod(
       args: {
         filter: { period: WEEK, role: STAKER, timestamp: $from }
-        limit: 3
+        limit: 9
         offset: 0
         order: DESC
       }
@@ -23,7 +23,7 @@ const GET_TOP_USERS = gql`
     creator: activeStakingAddressesRankedByRewardsForPeriod(
       args: {
         filter: { period: WEEK, role: CREATOR, timestamp: $from }
-        limit: 3
+        limit: 9
         offset: 0
         order: DESC
       }
