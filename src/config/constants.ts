@@ -17,5 +17,5 @@ export const CREATORS_CONSTANTS = {
 const WHITELISTED_FOR_NEW_FEATURES = ['3tJYxJN55FtVeZgX4WdwieZXDp4HF62TRVj11tY2aXHdrYus']
 export function useIsMyAddressWhitelisted() {
   const myAddress = useMyAddress()
-  return WHITELISTED_FOR_NEW_FEATURES.includes(myAddress ?? '')
+  return WHITELISTED_FOR_NEW_FEATURES.includes(myAddress ?? '') || true
 }
