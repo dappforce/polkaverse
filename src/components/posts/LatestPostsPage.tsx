@@ -45,16 +45,13 @@ export const loadMorePostsFn = async (loadMoreValues: LoadMoreValues<PostFilterT
 
   let postIds: string[] = []
 
-  if (!isSuggested(filter.type) && client) {
-    console.log('logsadfasdf')
-    const data = await loadPostsByQuery({ client, kind, offset, filter })
-
-    const { posts } = data as GetLatestPostIds
-    postIds = posts.map(value => value.id)
-  } else if (filter.type === 'hot') {
-    console.log('hot fetchingg...')
+  if (filter.type === 'hot') {
     const posts = await getHotPosts({ offset, limit: DEFAULT_PAGE_SIZE })
     postIds = posts.data.map(value => value.persistentPostId)
+  } else if (!isSuggested(filter.type) && client) {
+    const data = await loadPostsByQuery({ client, kind, offset, filter })
+    const { posts } = data as GetLatestPostIds
+    postIds = posts.map(value => value.id)
   } else {
     const allSuggestedPotsIds = await loadSuggestedPostIds({ subsocial, client })
     postIds = getSuggestedPostIdsByPage(allSuggestedPotsIds, size, page)
