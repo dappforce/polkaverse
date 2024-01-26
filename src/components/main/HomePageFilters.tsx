@@ -106,7 +106,8 @@ export const Filters = (props: Props) => {
   const onDateChange: any = (value: DateFilterType = 'week') =>
     setFiltersInUrl(router, tabKey, { type: type as EntityFilter, date: value })
 
-  const needDateFilter = !!type && type !== 'latest' && type !== 'suggested' && type !== 'creators'
+  const needDateFilter =
+    !!type && type !== 'latest' && type !== 'suggested' && type !== 'creators' && type !== 'hot'
 
   if (!needDateFilter && !filterByKey[tabKey]?.length) return null
 
