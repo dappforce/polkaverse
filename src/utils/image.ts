@@ -10,6 +10,7 @@ export function resizeImage(file: File | Blob): Promise<File | Blob> | File | Bl
       maxHeight: 900,
       // images with size larger than this will be converted to jpeg
       convertSize: MAX_IMAGE_SIZE,
+      convertTypes: ['image/png', 'image/gif'],
       success: file => {
         resolve(file as File)
       },
