@@ -15,9 +15,10 @@ import styles from './GeneralLeaderboardPage.module.sass'
 type Stat = { title: string; value: (data: GeneralStatistics) => ReactNode; tooltip: string }
 const stats: Stat[] = [
   {
-    title: 'Total posts liked',
+    title: 'Total posts and comments liked',
     value: data => data.postsLiked,
-    tooltip: 'The total number of individual posts that were liked at least one time this week',
+    tooltip:
+      'The total number of individual posts or comments that were liked at least one time this week',
   },
   {
     title: 'Total SUB earned by stakers',
@@ -35,7 +36,8 @@ const stats: Stat[] = [
   {
     title: 'Total creators liked',
     value: data => data.creatorsLiked,
-    tooltip: 'The total number of individual creators that had one of their posts liked this week',
+    tooltip:
+      'The total number of individual creators that had one of their posts or comments liked this week',
   },
   {
     title: 'Total SUB earned by creators',
