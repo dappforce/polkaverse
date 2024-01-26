@@ -41,11 +41,17 @@ export default function RewardInfo({ size, ...props }: RewardInfoProps) {
     )
   }
 
+  const hasCreatorReward = (data?.receivedLikes ?? 0) > 0
+
   return (
     <div {...props} className={clsx(styles.RewardInfo, props.className)}>
       <StakerRewardInfo rewardReport={data} size={size} loading={loading} />
-      <div className='pt-2 mt-2.5' style={{ borderTop: '1px solid #E2E8F0' }} />
-      <CreatorRewardInfo rewardReport={data} size={size} loading={loading} />
+      {hasCreatorReward && (
+        <>
+          <div className='pt-2 mt-2.5' style={{ borderTop: '1px solid #E2E8F0' }} />
+          <CreatorRewardInfo rewardReport={data} size={size} loading={loading} />
+        </>
+      )}
       <div
         className='mt-3'
         style={{
