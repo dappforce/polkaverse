@@ -33,8 +33,8 @@ const stats: Record<LeaderboardRole, Stat[]> = {
       value: data => data.creator.likesCountByPeriod,
       tooltip: isMyAddress =>
         isMyAddress
-          ? 'The amount of likes that all of your posts received this week'
-          : "The amount of likes that all of this user's posts received this week",
+          ? 'The amount of likes that all of your posts and comments received this week'
+          : "The amount of likes that all of this user's posts and comments received this week",
     },
     {
       title: () => 'SUB earned this week',
@@ -58,8 +58,8 @@ const stats: Record<LeaderboardRole, Stat[]> = {
       value: data => data.creator.stakersWhoLiked,
       tooltip: isMyAddress =>
         isMyAddress
-          ? 'The amount of individual stakers that liked at least one of your posts this week'
-          : "The amount of individual stakers that liked at least one of this user's posts this week",
+          ? 'The amount of individual stakers that liked at least one of your posts or comments this week'
+          : "The amount of individual stakers that liked at least one of this user's posts or comments this week",
     },
     {
       title: () => 'SUB earned in total',
@@ -84,8 +84,8 @@ const stats: Record<LeaderboardRole, Stat[]> = {
       value: data => data.staker.likedPosts,
       tooltip: isMyAddress =>
         isMyAddress
-          ? 'The number of individual posts that you liked this week'
-          : 'The number of individual posts this user liked this week',
+          ? 'The number of individual posts or comments that you liked this week'
+          : 'The number of individual posts or comments this user liked this week',
     },
     {
       title: () => 'SUB earned this week',
@@ -109,8 +109,8 @@ const stats: Record<LeaderboardRole, Stat[]> = {
       value: data => data.staker.likedCreators,
       tooltip: isMyAddress =>
         isMyAddress
-          ? 'The number of individual creators that you supported this week by liking at least one of their posts'
-          : 'The number of individual creators that this user supported this week by liking at least one of their posts',
+          ? 'The number of individual creators that you supported this week by liking at least one of their posts or comments'
+          : 'The number of individual creators that this user supported this week by liking at least one of their posts or comments',
     },
     {
       title: () => 'SUB earned in total',

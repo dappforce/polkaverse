@@ -20,7 +20,7 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
     <div {...props} className={clsx(props.className)}>
       <div className='d-flex align-items-center GapMini FontWeightMedium ColorMuted'>
         <div className='position-relative d-flex align-items-center mr-1'>
-          {reward.draftReward ? (
+          {BigInt(reward.draftReward) > 0 ? (
             <Tooltip
               className='d-flex align-items-center'
               title={

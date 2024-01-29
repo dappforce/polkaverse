@@ -11,13 +11,13 @@ import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getAmountRange } from 'src/utils/analytics'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import { useMyAddress } from '../auth/MyAccountsContext'
-import styles from './MobileStakerRewardDashboard.module.sass'
-import StakerRewardInfo, { StakerSuperLikeCount } from './staker-rewards/StakerRewardInfo'
-import StakerRewardProgressBar from './staker-rewards/StakerRewardProgressBar'
+import styles from './MobileRewardDashboard.module.sass'
+import RewardInfo, { StakerSuperLikeCount } from './rewards/RewardInfo'
+import StakerRewardProgressBar from './rewards/StakerRewardProgressBar'
 
-export type MobileStakerRewardDashboardProps = ComponentProps<'div'>
+export type MobileRewardDashboardProps = ComponentProps<'div'>
 
-export default function MobileStakerRewardDashboard(props: MobileStakerRewardDashboardProps) {
+export default function MobileRewardDashboard(props: MobileRewardDashboardProps) {
   const myAddress = useMyAddress() ?? ''
   const { data: totalStake, loading } = useFetchTotalStake(myAddress)
 
@@ -29,12 +29,12 @@ export default function MobileStakerRewardDashboard(props: MobileStakerRewardDas
   return <StakerRewardDashboard {...props} />
 }
 
-function StakeSubBanner(props: MobileStakerRewardDashboardProps) {
+function StakeSubBanner(props: MobileRewardDashboardProps) {
   const sendEvent = useSendEvent()
   return (
     <div
       {...props}
-      className={clsx(props.className, styles.MobileStakerRewardDashboard, styles.StakeSubBanner)}
+      className={clsx(props.className, styles.MobileRewardDashboard, styles.StakeSubBanner)}
     >
       <div className={clsx(styles.Summary, 'py-2')}>
         <div className={styles.Content}>
@@ -62,7 +62,7 @@ function StakeSubBanner(props: MobileStakerRewardDashboardProps) {
   )
 }
 
-function StakerRewardDashboard(props: MobileStakerRewardDashboardProps) {
+function StakerRewardDashboard(props: MobileRewardDashboardProps) {
   const sendEvent = useSendEvent()
   const { data: rewardReport } = useFetchUserRewardReport()
   const likesCount = rewardReport?.superLikesCount ?? 0
@@ -76,7 +76,7 @@ function StakerRewardDashboard(props: MobileStakerRewardDashboardProps) {
   const isOpenClassName = isOpen && styles.IsOpen
 
   return (
-    <div {...props} className={clsx(props.className, styles.MobileStakerRewardDashboard)}>
+    <div {...props} className={clsx(props.className, styles.MobileRewardDashboard)}>
       <div className={clsx(styles.Summary)}>
         <div
           className={clsx(styles.Content, 'cursor-pointer')}
@@ -106,12 +106,7 @@ function StakerRewardDashboard(props: MobileStakerRewardDashboardProps) {
         <div className={clsx(styles.Gradient, isOpenClassName)} />
       </div>
       <div className={clsx(styles.RewardInfo, isOpenClassName)}>
-        <StakerRewardInfo
-          withOffsetForFooterButton
-          size='small'
-          className='pt-1 position-relative'
-          style={{ zIndex: 1 }}
-        />
+        <RewardInfo size='small' className='pt-1 position-relative' style={{ zIndex: 1 }} />
         <div className={clsx(styles.GradientOuter, isOpenClassName)} />
       </div>
     </div>

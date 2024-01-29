@@ -10,8 +10,7 @@ import CreatorInfoCard from './cards/CreatorInfoCard'
 import MyStakeCard from './cards/MyStakeCard'
 import StakeSubCard from './cards/StakeSubCard'
 import SupportCreatorsCard from './cards/SupportCreatorsCard'
-import CreatorRewardInfoCard from './creator-rewards/CreatorRewardInfoCard'
-import StakerRewardInfoCard from './staker-rewards/StakerRewardInfoCard'
+import RewardInfoCard from './rewards/RewardInfoCard'
 
 export type CreatorDashboardHomeVariant = 'posts' | 'spaces'
 export type CreatorDashboardSidebarType =
@@ -56,12 +55,11 @@ function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { nam
       {data?.hasStaked ? (
         <>
           <CreatePostCard variant={variant} />
-          <StakerRewardInfoCard />
+          <RewardInfoCard />
         </>
       ) : (
         <SupportCreatorsCard />
       )}
-      <CreatorRewardInfoCard />
     </>
   )
 }
@@ -89,8 +87,7 @@ function SpacePageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name
   return (
     <>
       {renderTopCard()}
-      {!loadingTotalStake && totalStake?.hasStaked && <StakerRewardInfoCard />}
-      <CreatorRewardInfoCard />
+      {!loadingTotalStake && totalStake?.hasStaked && <RewardInfoCard />}
     </>
   )
 }
@@ -108,8 +105,7 @@ function PostPageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name:
     <>
       <CreatorInfoCard showStakeButton={data?.hasStaked} space={space} />
       {!loadingTotalStake &&
-        (data?.hasStaked ? <StakerRewardInfoCard /> : <StakeSubCard space={space} />)}
-      <CreatorRewardInfoCard />
+        (data?.hasStaked ? <RewardInfoCard /> : <StakeSubCard space={space} />)}
     </>
   )
 }
