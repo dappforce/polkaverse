@@ -7,6 +7,7 @@ import { ReactNode } from 'react-markdown'
 import CustomModal from 'src/components/utils/CustomModal'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useFetchUserPrevReward } from 'src/rtk/features/activeStaking/hooks'
+import { PrevReward } from 'src/rtk/features/activeStaking/prevRewardSlice'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import Avatar from '../profiles/address-views/Avatar'
@@ -82,18 +83,9 @@ const contentMap: Record<
   },
 }
 
-function InnerProgressModal() {
-  const myAddress = useMyAddress() ?? ''
-  const [visible, setVisible] = useState(false)
-  const profile = useSelectProfile(myAddress)
-  const { data } = useFetchUserPrevReward(myAddress)
-
-  useEffect(() => {
-    if (data) setVisible(true)
-  }, [data])
-
-  let status: Status = 'full'
+function parseData(data: PrevReward | undefined) {
   const superLikesCount = data?.likedPosts ?? 0
+  let status: Status = 'full'
   if (superLikesCount === 0) {
     status = 'none'
   } else if (superLikesCount < 10) {
@@ -101,6 +93,27 @@ function InnerProgressModal() {
   }
 
   const isUsingLastWeekData = data?.period === 'WEEK'
+  return {
+    status,
+    isUsingLastWeekData,
+  }
+}
+function InnerProgressModal() {
+  const myAddress = useMyAddress() ?? ''
+  const [visible, setVisible] = useState(false)
+  const profile = useSelectProfile(myAddress)
+  const { data } = useFetchUserPrevReward(myAddress)
+
+  useEffect(() => {
+    if (!data) return
+
+    const { isUsingLastWeekData, status } = parseData(data)
+    if (status === 'none' && isUsingLastWeekData) return
+
+    setVisible(true)
+  }, [data])
+
+  const { isUsingLastWeekData, status } = parseData(data)
 
   const usedContent = contentMap[isUsingLastWeekData ? 'lastWeek' : 'yesterday'][status]
 
