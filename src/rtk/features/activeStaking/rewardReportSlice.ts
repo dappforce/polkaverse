@@ -80,7 +80,10 @@ const slice = createSlice({
       const weeklyWithoutCurrentReward = BigInt(weeklyReward) - BigInt(currentRewardAmount)
 
       rewardReport.currentRewardAmount = (
-        rewardPerLike * BigInt(rewardReport.superLikesCount)
+        rewardPerLike *
+        BigInt(
+          Math.min(rewardReport.superLikesCount, CREATORS_CONSTANTS.SUPER_LIKES_FOR_MAX_REWARD),
+        )
       ).toString()
       rewardReport.weeklyReward = (
         weeklyWithoutCurrentReward + BigInt(rewardReport.currentRewardAmount)
