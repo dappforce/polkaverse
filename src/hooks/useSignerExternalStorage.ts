@@ -1,4 +1,3 @@
-import { toSubsocialAddress } from '@subsocial/utils'
 import {
   PROXY_ADDRESS_KEY,
   SIGNER_ADDRESS_KEY,
@@ -8,6 +7,7 @@ import {
   SIGNER_TOKEN_KEY,
   TEMP_REGISTER_ACCOUNT,
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
+import { convertToSubsocialAddress } from 'src/utils/address'
 import useExternalStorage from './useExternalStorage'
 
 type Props = {
@@ -38,42 +38,42 @@ const useSignerExternalStorage = () => {
     storageKeyType: 'user',
   })
 
-  const convertToSubsocialAddress = (userAddress: string) => {
-    const subsocialAddress = toSubsocialAddress(userAddress)
+  const toSubsocialAddress = (userAddress: string) => {
+    const subsocialAddress = convertToSubsocialAddress(userAddress)
     if (!subsocialAddress) console.warn('Unable to define subsocial address')
 
     return subsocialAddress
   }
 
   const setSignerTokensByAddress = ({ userAddress, token, refreshToken }: Props) => {
-    const subsocialAddress = convertToSubsocialAddress(userAddress)
+    const subsocialAddress = toSubsocialAddress(userAddress)
     setSignerToken(token, subsocialAddress!)
     setSignerRefreshToken(refreshToken, subsocialAddress!)
   }
 
   const setSignerTempRegisterAccount = (userAddress: string) => {
-    const subsocialAddress = convertToSubsocialAddress(userAddress)
+    const subsocialAddress = toSubsocialAddress(userAddress)
     setTempRegisterAccount(subsocialAddress)
   }
 
   const setSignerProxyAddress = (proxyAddress: string, userAddress: string) => {
-    const subsocialAddress = convertToSubsocialAddress(userAddress)
+    const subsocialAddress = toSubsocialAddress(userAddress)
     setProxyAddress(proxyAddress, subsocialAddress)
   }
 
   const setSignerEmailAddress = (emailAddress: string, userAddress: string) => {
-    const subsocialAddress = convertToSubsocialAddress(userAddress)
+    const subsocialAddress = toSubsocialAddress(userAddress)
     setEmailAddress(emailAddress, subsocialAddress)
   }
 
   const setSignerProxyAdded = (state: 'enabled' | 'disabled', userAddress: string) => {
-    const subsocialAddress = convertToSubsocialAddress(userAddress)
+    const subsocialAddress = toSubsocialAddress(userAddress)
     const data = state === 'enabled' ? true : undefined
     setProxyAdded(data, subsocialAddress)
   }
 
   const setIsSignerAddress = (userAddress: string) => {
-    const subsocialAddress = convertToSubsocialAddress(userAddress)
+    const subsocialAddress = toSubsocialAddress(userAddress)
     setSignerAddress(true, subsocialAddress)
   }
 

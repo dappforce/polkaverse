@@ -1,6 +1,5 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { SubsocialApi } from '@subsocial/api'
-import { toSubsocialAddress } from '@subsocial/utils'
 import { getProfilesData } from 'src/graphql/apis'
 import { ProfileFragmentMapped } from 'src/graphql/apis/types'
 import {
@@ -18,6 +17,7 @@ import {
   generatePrefetchDataFn,
 } from 'src/rtk/app/wrappers'
 import { ProfileSpaceIdByAccount, SpaceStruct } from 'src/types'
+import { convertToSubsocialAddress } from 'src/utils/address'
 import { fetchSpaces } from '../spaces/spacesSlice'
 
 const profileSpacesAdapter = createEntityAdapter<ProfileSpaceIdByAccount>()
@@ -49,7 +49,7 @@ export const selectProfileSpace = (
   state: RootState,
   id: EntityId,
 ): ProfileSpaceIdByAccount | undefined => {
-  const subsocialAddress = toSubsocialAddress(id.toString())
+  const subsocialAddress = convertToSubsocialAddress(id.toString())
 
   if (!subsocialAddress) return undefined
 

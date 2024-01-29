@@ -1,8 +1,9 @@
 import { EntityId } from '@reduxjs/toolkit'
-import { isDef, isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
+import { isDef, isEmptyArray } from '@subsocial/utils'
 import { DocumentNode } from 'graphql'
 import { sellerSquidGraphQlClient } from 'src/components/domains/dot-seller/config'
 import { RootState } from 'src/rtk/app/rootReducer'
+import { convertToSubsocialAddress } from 'src/utils/address'
 import {
   ordersAdapter,
   PendingDomainEntity,
@@ -46,9 +47,9 @@ export const getOrders = async ({
 
     return {
       ...order,
-      target: toSubsocialAddress(target) || '',
-      signer: toSubsocialAddress(signer) || '',
-      createdByAccount: toSubsocialAddress(createdByAccount) || '',
+      target: convertToSubsocialAddress(target) || '',
+      signer: convertToSubsocialAddress(signer) || '',
+      createdByAccount: convertToSubsocialAddress(createdByAccount) || '',
     }
   })
 

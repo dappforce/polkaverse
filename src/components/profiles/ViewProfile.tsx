@@ -1,6 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { AccountId } from '@polkadot/types/interfaces'
-import { isEmptyStr, toSubsocialAddress } from '@subsocial/utils'
+import { isEmptyStr } from '@subsocial/utils'
 import { Button } from 'antd'
 import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
@@ -33,6 +33,7 @@ import { Donate } from 'src/components/donate'
 import { isBlockedAccount } from 'src/moderation'
 import { useFetchSpaceIdsByFollower } from 'src/rtk/app/hooks'
 import { fetchEntityOfSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
+import { convertToSubsocialAddress } from 'src/utils/address'
 import { useAppSelector } from '../../rtk/app/store'
 import { useSelectProfile } from '../../rtk/features/profiles/profilesHooks'
 import { fetchSpaceIdsOwnedByAccount } from '../../rtk/features/spaceIds/ownSpaceIdsSlice'
@@ -215,7 +216,7 @@ getInitialPropsWithRedux(ProfilePage, async ({ context, subsocial, dispatch, red
 
   const addressStr = address as string
 
-  const subsocialAddress = toSubsocialAddress(addressStr)
+  const subsocialAddress = convertToSubsocialAddress(addressStr)
   if (subsocialAddress !== addressStr) {
     if (req) {
       res?.writeHead(301, {
