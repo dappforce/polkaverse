@@ -12,6 +12,7 @@ import RewardHistoryModal, { RewardHistoryPanel } from '../creators/RewardHistor
 import { PageContent } from '../main/PageWrapper'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import DfCard from '../utils/cards/DfCard'
+import { LeaderboardRole } from '../utils/datahub/leaderboard'
 import { MutedSpan } from '../utils/MutedText'
 import LeaderboardTable from './common/LeaderboardTable'
 import LeaderboardTabs from './common/LeaderboardTabs'
@@ -24,7 +25,7 @@ type Stat = {
   value: (data: UserStatistics) => ReactNode
   tooltip: (isMyAddress: boolean) => string
 }
-const stats: Record<string, Stat[]> = {
+const stats: Record<LeaderboardRole, Stat[]> = {
   creator: [
     {
       title: isMyAddress =>
@@ -32,8 +33,8 @@ const stats: Record<string, Stat[]> = {
       value: data => data.creator.likesCountByPeriod,
       tooltip: isMyAddress =>
         isMyAddress
-          ? 'The amount of likes that all of your posts received this week'
-          : "The amount of likes that all of this creator's posts received this week",
+          ? 'The amount of likes that all of your posts and comments received this week'
+          : "The amount of likes that all of this user's posts and comments received this week",
     },
     {
       title: () => 'SUB earned this week',
@@ -49,7 +50,7 @@ const stats: Record<string, Stat[]> = {
       tooltip: isMyAddress =>
         isMyAddress
           ? 'The amount of SUB rewards you have earned this week from Active Staking rewards'
-          : 'The amount of SUB rewards this creator has earned this week from Active Staking rewards',
+          : 'The amount of SUB rewards this user has earned this week from Active Staking rewards',
     },
     {
       title: isMyAddress =>
@@ -57,8 +58,8 @@ const stats: Record<string, Stat[]> = {
       value: data => data.creator.stakersWhoLiked,
       tooltip: isMyAddress =>
         isMyAddress
-          ? 'The amount of individual stakers that liked at least one of your posts this week'
-          : "The amount of individual stakers that liked at least one of this creator's posts this week",
+          ? 'The amount of individual stakers that liked at least one of your posts or comments this week'
+          : "The amount of individual stakers that liked at least one of this user's posts or comments this week",
     },
     {
       title: () => 'SUB earned in total',
@@ -74,7 +75,7 @@ const stats: Record<string, Stat[]> = {
       tooltip: isMyAddress =>
         isMyAddress
           ? 'The total amount of SUB rewards you have earned from Active Staking rewards'
-          : 'The total amount of SUB rewards this creator has earned from Active Staking rewards',
+          : 'The total amount of SUB rewards this user has earned from Active Staking rewards',
     },
   ],
   staker: [
@@ -83,8 +84,8 @@ const stats: Record<string, Stat[]> = {
       value: data => data.staker.likedPosts,
       tooltip: isMyAddress =>
         isMyAddress
-          ? 'The number of individual posts that you liked this week'
-          : 'The number of individual posts this staker liked this week',
+          ? 'The number of individual posts or comments that you liked this week'
+          : 'The number of individual posts or comments this user liked this week',
     },
     {
       title: () => 'SUB earned this week',
@@ -100,7 +101,7 @@ const stats: Record<string, Stat[]> = {
       tooltip: isMyAddress =>
         isMyAddress
           ? 'The amount of SUB rewards you have earned this week from Active Staking rewards'
-          : 'The amount of SUB rewards this staker has earned this week from Active Staking rewards',
+          : 'The amount of SUB rewards this user has earned this week from Active Staking rewards',
     },
     {
       title: isMyAddress =>
@@ -108,8 +109,8 @@ const stats: Record<string, Stat[]> = {
       value: data => data.staker.likedCreators,
       tooltip: isMyAddress =>
         isMyAddress
-          ? 'The number of individual creators that you supported this week by liking at least one of their posts'
-          : 'The number of individual creators that this staker supported this week by liking at least one of their posts',
+          ? 'The number of individual creators that you supported this week by liking at least one of their posts or comments'
+          : 'The number of individual creators that this user supported this week by liking at least one of their posts or comments',
     },
     {
       title: () => 'SUB earned in total',
@@ -125,9 +126,20 @@ const stats: Record<string, Stat[]> = {
       tooltip: isMyAddress =>
         isMyAddress
           ? 'The total amount of SUB rewards you have earned this week from Active Staking rewards'
-          : 'The total amount of SUB rewards this staker has earned from Active Staking rewards',
+          : 'The total amount of SUB rewards this user has earned from Active Staking rewards',
     },
   ],
+}
+
+const rankTooltip: Record<LeaderboardRole, (isMyAddress: boolean) => string> = {
+  staker: isMyAddress =>
+    isMyAddress
+      ? 'Your position on the staker leaderboard'
+      : "This user's position on the staker leaderboard",
+  creator: isMyAddress =>
+    isMyAddress
+      ? 'Your position on the creator leaderboard'
+      : "This user's position on the creator leaderboard",
 }
 
 export type UserLeaderboardPageProps = {
@@ -137,7 +149,7 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
   const myAddress = useMyAddress()
 
   const { query } = useRouter()
-  let tabState = query.role as 'staker' | 'creator'
+  let tabState = query.role as LeaderboardRole
   if (tabState !== 'staker' && tabState !== 'creator') {
     tabState = 'staker'
   }
@@ -156,6 +168,8 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
       {data && (
         <div className={clsx(styles.Statistics)}>
           <ProfileCard
+            rank={data[tabState]?.rank}
+            rankTooltip={rankTooltip[tabState]?.(isMyAddress)}
             variant={tabState === 'creator' ? 'pink' : 'blue'}
             address={address}
             detail={
@@ -207,7 +221,13 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
                 : 'Creators ranked by the amount of SUB earned with Active Staking this week.'}
             </MutedSpan>
           </div>
-          <LeaderboardTable className='mt-3' role={tabState} />
+          <LeaderboardTable
+            className='mt-3'
+            role={tabState}
+            currentUserRank={
+              data && { address, rank: data[tabState].rank, reward: data[tabState].earnedByPeriod }
+            }
+          />
         </DfCard>
       </div>
       <DfCard size='small' withShadow={false} className='lg-hidden mt-4'>

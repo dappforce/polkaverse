@@ -1,8 +1,8 @@
-import { toSubsocialAddress } from '@subsocial/utils'
 import jwtDecode from 'jwt-decode'
 import { JwtPayload } from 'src/components/utils/OffchainSigner/api/requests'
 import { SIGNER_TOKEN_KEY } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { EmailAccount } from 'src/types'
+import { convertToSubsocialAddress } from 'src/utils/address'
 import { isExpExpired } from 'src/utils/token'
 import store from 'store'
 
@@ -17,7 +17,7 @@ const useEmailAccount = () => {
         if (!emailVerified || isExpired) return
 
         const result = {
-          accountAddress: toSubsocialAddress(accountAddress) ?? accountAddress,
+          accountAddress: convertToSubsocialAddress(accountAddress) ?? accountAddress,
           email,
         }
 

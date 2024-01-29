@@ -1,4 +1,4 @@
-import { isStr, toSubsocialAddress } from '@subsocial/utils'
+import { isStr } from '@subsocial/utils'
 import { Button, Form } from 'antd'
 import clsx from 'clsx'
 import jwtDecode from 'jwt-decode'
@@ -18,6 +18,7 @@ import {
 } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { CODE_DIGIT } from 'src/config/ValidationsConfig'
 import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
+import { convertToSubsocialAddress } from 'src/utils/address'
 import { StepsEnum } from '../../AuthContext'
 import styles from './SignInModalContent.module.sass'
 import { RegexValidations, useFormValidation } from './useFormValidation'
@@ -36,7 +37,7 @@ type Props = {
 
 const ConfirmationModalContent = ({ setCurrentStep }: Props) => {
   const userAddress = getTempRegisterAccount()
-  const subsocialAddress = toSubsocialAddress(userAddress)
+  const subsocialAddress = convertToSubsocialAddress(userAddress)
   const { isMobile } = useResponsiveSize()
 
   const [error, setError] = useState<string | null>(null)

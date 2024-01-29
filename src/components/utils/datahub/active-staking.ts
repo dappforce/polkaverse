@@ -5,7 +5,8 @@ import {
 } from '@subsocial/data-hub-sdk'
 import axios from 'axios'
 import dayjs from 'dayjs'
-import { gql } from 'graphql-request'
+import { gql as gqlRequest } from 'graphql-request'
+import gql from 'graphql-tag'
 import { getStoreDispatcher } from 'src/rtk/app/store'
 import {
   AddressLikeCount,
@@ -46,12 +47,12 @@ export async function getSuperLikeCounts(postIds: string[]): Promise<SuperLikeCo
     },
     { postIds: string[] }
   >({
-    document: GET_SUPER_LIKE_COUNTS,
+    query: GET_SUPER_LIKE_COUNTS,
     variables: { postIds },
   })
 
   const resultMap = new Map<string, SuperLikeCount>()
-  res.activeStakingSuperLikeCountsByPost.forEach(item =>
+  res.data.activeStakingSuperLikeCountsByPost.forEach(item =>
     resultMap.set(item.persistentPostId, {
       postId: item.persistentPostId,
       count: item.count,
@@ -81,21 +82,23 @@ export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> 
     },
     { postIds: string[] }
   >({
-    document: GET_POST_REWARDS,
+    query: GET_POST_REWARDS,
     variables: { postIds },
   })
 
   const resultMap = new Map<string, PostRewards>()
-  res.activeStakingRewardsByPosts.forEach(item => {
-    const reward = BigInt(item.reward) > 0 ? item.reward : item.draftReward
+  res.data.activeStakingRewardsByPosts.forEach(item => {
     resultMap.set(item.persistentPostId, {
       postId: item.persistentPostId,
-      amount: reward,
-      isNotZero: BigInt(reward) > 0,
+      reward: item.reward,
+      draftReward: item.draftReward,
+      isNotZero: BigInt(item.reward) > 0 || BigInt(item.draftReward) > 0,
     })
   })
 
-  return postIds.map(postId => resultMap.get(postId) ?? { postId, amount: '0', isNotZero: false })
+  return postIds.map(
+    postId => resultMap.get(postId) ?? { postId, reward: '0', draftReward: '0', isNotZero: false },
+  )
 }
 
 const GET_ADDRESS_LIKE_COUNT_TO_POSTS = gql`
@@ -119,12 +122,12 @@ export async function getAddressLikeCountToPosts(
     },
     { postIds: string[]; address: string }
   >({
-    document: GET_ADDRESS_LIKE_COUNT_TO_POSTS,
+    query: GET_ADDRESS_LIKE_COUNT_TO_POSTS,
     variables: { postIds, address },
   })
 
   const resultMap = new Map<string, AddressLikeCount>()
-  res.activeStakingSuperLikeCountsByStaker.forEach(item =>
+  res.data.activeStakingSuperLikeCountsByStaker.forEach(item =>
     resultMap.set(item.persistentPostId, {
       address,
       postId: item.persistentPostId,
@@ -153,12 +156,12 @@ export async function getCanPostsSuperLiked(postIds: string[]): Promise<CanPostS
     },
     { postIds: string[] }
   >({
-    document: GET_CAN_POSTS_SUPER_LIKED,
+    query: GET_CAN_POSTS_SUPER_LIKED,
     variables: { postIds },
   })
 
   const resultMap = new Map<string, CanPostSuperLiked>()
-  res.activeStakingCanDoSuperLikeByPost.forEach(item =>
+  res.data.activeStakingCanDoSuperLikeByPost.forEach(item =>
     resultMap.set(item.persistentPostId, {
       postId: item.persistentPostId,
       canPostSuperLiked: item.possible,
@@ -207,13 +210,13 @@ export async function getRewardReport(address: string): Promise<RewardReport> {
     },
     { address: string; day: number; week: number }
   >({
-    document: GET_REWARD_REPORT,
+    query: GET_REWARD_REPORT,
     variables: { address, ...getDayAndWeekTimestamp() },
   })
-  const weekReward = res.activeStakingRewardsByWeek?.[0]
+  const weekReward = res.data.activeStakingRewardsByWeek?.[0]
 
   return {
-    ...res.activeStakingDailyStatsByStaker,
+    ...res.data.activeStakingDailyStatsByStaker,
     weeklyReward: weekReward?.staker ?? '0',
     creatorReward: weekReward?.creator.total ?? '0',
     receivedLikes:
@@ -246,11 +249,11 @@ export async function getRewardHistory(address: string): Promise<RewardHistory> 
     },
     { address: string }
   >({
-    document: GET_REWARD_HISTORY,
+    query: GET_REWARD_HISTORY,
     variables: { address },
   })
 
-  const rewards = res.activeStakingRewardsByWeek.map(({ staker, week, creator }) => {
+  const rewards = res.data.activeStakingRewardsByWeek.map(({ staker, week, creator }) => {
     const startDate = dayjs
       .utc()
       .year(week / 100)
@@ -302,13 +305,13 @@ export async function getSuperLikesStats(period: number): Promise<SuperLikesStat
     },
     { from: string; to: string }
   >({
-    document: GET_SUPER_LIKES_STATS,
+    query: GET_SUPER_LIKES_STATS,
     variables: { from: startTimestamp.toString(), to: currentTimestamp.toString() },
   })
 
   return {
-    data: res.activeStakingSuperLikeCountsByDate.byDate,
-    total: res.activeStakingSuperLikeCountsByDate.total,
+    data: res.data.activeStakingSuperLikeCountsByDate.byDate,
+    total: res.data.activeStakingSuperLikeCountsByDate.total,
   }
 }
 
@@ -326,7 +329,7 @@ export async function createSuperLike(
 }
 
 // SUBSCRIPTION
-const SUBSCRIBE_SUPER_LIKE = gql`
+const SUBSCRIBE_SUPER_LIKE = gqlRequest`
   subscription SubscribeSuperLike {
     activeStakingSuperLike {
       event

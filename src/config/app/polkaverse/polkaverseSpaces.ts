@@ -7,6 +7,8 @@ export default [
   '4809',
   // Filippo W3F
   '10124',
+  // Subsocial UXer's diary
+  '6163',
   // Zeitgeist
   '4306',
   // Bifrost
@@ -44,5 +46,5 @@ export default [
   // Tony the trader
   '12434',
   // PolkaWarriors
-  '1573'
+  '1573',
 ]

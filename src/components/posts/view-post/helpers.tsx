@@ -432,9 +432,11 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
             <div className='d-flex align-items-center align-self-start GapTiny'>
               {space && !isMobile && (
                 <FollowSpaceButton
-                  className='mr-1'
+                  className='mr-1 px-2'
+                  style={{ height: '28px' }}
                   size='small'
-                  ghost
+                  type='default'
+                  ghost={false}
                   space={space.struct}
                   withUnfollowButton={false}
                 />

@@ -29,6 +29,8 @@ export type BaseActivityProps = {
 }
 
 export type ActivityProps<T> = BaseActivityProps & {
+  initialPage?: number
+  dataSource?: T[]
   loadMore: (props: LoadMoreProps) => Promise<T[]>
   getCount?: GetCountFn
   noDataDesc?: string

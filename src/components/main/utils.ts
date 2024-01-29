@@ -37,6 +37,12 @@ const getPostsByFilter: GetEntityFilter<PostFilterType> = {
     month: q.GET_LATEST_POST_IDS,
     allTime: q.GET_LATEST_POST_IDS,
   },
+  hot: {
+    day: q.GET_LATEST_POST_IDS,
+    week: q.GET_LATEST_POST_IDS,
+    month: q.GET_LATEST_POST_IDS,
+    allTime: q.GET_LATEST_POST_IDS,
+  },
   // removed most liked and commented
   // liked: {
   //   day: q.GET_MOST_LIKED_POST_IDS_IN_DATE_RANGE,

@@ -4,16 +4,17 @@ import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { activeStakingLinks } from 'src/utils/links'
-import StakerRewardInfo from './StakerRewardInfo'
-import styles from './StakerRewardInfoCard.module.sass'
+import RewardInfo from './RewardInfo'
+import styles from './RewardInfoCard.module.sass'
 
-export default function StakerRewardInfoCard() {
+export default function RewardInfoCard() {
   const sendEvent = useSendEvent()
+
   return (
-    <Segment className={clsx(styles.StakerRewardInfoCard)}>
+    <Segment className={clsx(styles.RewardInfoCard)}>
       <div className={styles.TopSection}>
         <div className='d-flex align-items-center GapNormal justify-content-between'>
-          <p className={clsx(styles.Title, 'mb-0')}>Active Staking</p>
+          <p className={clsx(styles.Title, 'mb-0')}>My Weekly Rewards</p>
         </div>
         <Link href={activeStakingLinks.learnMore} passHref>
           <a
@@ -27,7 +28,7 @@ export default function StakerRewardInfoCard() {
         <DfImage preview={false} src='/images/diamond.svg' className={styles.Image} />
       </div>
       <div className={clsx(styles.BottomSection)}>
-        <StakerRewardInfo withOffsetForFooterButton />
+        <RewardInfo />
       </div>
     </Segment>
   )

@@ -1,4 +1,4 @@
-import { toSubsocialAddress } from '@subsocial/utils'
+import { convertToSubsocialAddress } from 'src/utils/address'
 import { createStorageKey } from 'src/utils/storage'
 import store from 'store'
 
@@ -14,7 +14,7 @@ const SIGNER_EMAIL_ADDRESS_KEY = 'SignerEmailAddress'
 const SIGNER_PROXY_ADDED = 'SignerProxyAdded'
 
 export const createStorageKeyWithSubAddress = (key: string, myAddress: string) => {
-  const subsocialAddress = toSubsocialAddress(myAddress)
+  const subsocialAddress = convertToSubsocialAddress(myAddress)
   return createStorageKey(key, subsocialAddress!)
 }
 
@@ -30,7 +30,7 @@ const getTempRegisterAccount = (): string | undefined =>
   store.get(createStorageKey(TEMP_REGISTER_ACCOUNT))
 
 const isCurrentSignerAddress = (myAddress: string) =>
-  store.get(createStorageKey(SIGNER_ADDRESS_KEY, toSubsocialAddress(myAddress))) === 1
+  store.get(createStorageKey(SIGNER_ADDRESS_KEY, convertToSubsocialAddress(myAddress))) === 1
     ? true
     : false
 const getProxyAddress = (myAddress: string): string | undefined =>
@@ -48,7 +48,7 @@ const getSaltByAddress = (myAddress: string): string | undefined =>
   store.get(createStorageKeyWithSubAddress(SALT, myAddress))
 
 const isProxyAdded = (myAddress: string) =>
-  store.get(createStorageKey(SIGNER_PROXY_ADDED, toSubsocialAddress(myAddress))) === 1
+  store.get(createStorageKey(SIGNER_PROXY_ADDED, convertToSubsocialAddress(myAddress))) === 1
     ? true
     : false
 

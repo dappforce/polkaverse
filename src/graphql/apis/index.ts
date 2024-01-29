@@ -329,7 +329,7 @@ export async function getActivityCountStat(
       const offset = period - index
       const dateAfterOffset = getDateWithOffset(offset)
       let count = res.data?.[`offset${offset}`]?.totalCount
-      const formatDate = dayjs(dateAfterOffset).format('YYYY-MM-DD')
+      const formatDate = dayjs.utc(dateAfterOffset).format('YYYY-MM-DD')
       if (count !== undefined) {
         acc.push({
           count,

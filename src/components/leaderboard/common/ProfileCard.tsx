@@ -1,3 +1,4 @@
+import { Tooltip } from 'antd'
 import clsx from 'clsx'
 import { IoPeople } from 'react-icons/io5'
 import { ReactNode } from 'react-markdown'
@@ -13,9 +14,18 @@ export type ProfileCardProps = DfCardProps & {
   address?: string
   title?: string
   detail?: ReactNode
+  rank?: number
+  rankTooltip?: string
 }
 
-export default function ProfileCard({ address, title, detail, ...props }: ProfileCardProps) {
+export default function ProfileCard({
+  address,
+  rank,
+  title,
+  detail,
+  rankTooltip,
+  ...props
+}: ProfileCardProps) {
   const isMobile = useIsMobileWidthOrDevice()
   const profile = useSelectProfile(address)
 
@@ -41,6 +51,14 @@ export default function ProfileCard({ address, title, detail, ...props }: Profil
       size='small'
       withShadow={false}
     >
+      {typeof rank === 'number' &&
+        (rankTooltip ? (
+          <Tooltip title={rankTooltip}>
+            <span className={clsx(styles.Rank)}>#{rank + 1}</span>
+          </Tooltip>
+        ) : (
+          <span className={clsx(styles.Rank)}>#{rank + 1}</span>
+        ))}
       {address ? (
         profile?.struct ? (
           <ViewSpaceLink space={profile?.struct} title={avatar} />

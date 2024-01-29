@@ -54,16 +54,16 @@ export async function getTopUsers(): Promise<TopUsers> {
     },
     { from: string }
   >({
-    document: GET_TOP_USERS,
+    query: GET_TOP_USERS,
     variables: { from: week.toString() },
   })
 
   return {
-    creators: res.creator.data.map(({ address, reward }) => ({
+    creators: res.data.creator.data.map(({ address, reward }) => ({
       address,
       reward,
     })),
-    stakers: res.staker.data.map(({ address, reward }) => ({
+    stakers: res.data.staker.data.map(({ address, reward }) => ({
       address,
       reward,
     })),
@@ -71,7 +71,17 @@ export async function getTopUsers(): Promise<TopUsers> {
 }
 
 const GET_USER_STATS = gql`
-  query GetUserStats($address: String!) {
+  query GetUserStats($address: String!, $timestamp: String!) {
+    staker: activeStakingAddressRankByRewardsForPeriod(
+      args: { address: $address, period: WEEK, role: STAKER, timestamp: $timestamp }
+    ) {
+      rankIndex
+    }
+    creator: activeStakingAddressRankByRewardsForPeriod(
+      args: { address: $address, period: WEEK, role: CREATOR, timestamp: $timestamp }
+    ) {
+      rankIndex
+    }
     activeStakingAccountActivityMetricsForFixedPeriod(
       args: {
         address: $address
@@ -103,6 +113,14 @@ const GET_USER_STATS = gql`
 export async function getUserStatistics({ address }: { address: string }): Promise<UserStatistics> {
   const res = await datahubQueryRequest<
     {
+      staker: {
+        reward: string
+        rankIndex: number
+      }
+      creator: {
+        reward: string
+        rankIndex: number
+      }
       activeStakingAccountActivityMetricsForFixedPeriod: {
         staker: {
           likedCreators: number
@@ -118,15 +136,22 @@ export async function getUserStatistics({ address }: { address: string }): Promi
         }
       }
     },
-    { address: string }
+    { address: string; timestamp: string }
   >({
-    document: GET_USER_STATS,
-    variables: { address },
+    query: GET_USER_STATS,
+    variables: { address, timestamp: getDayAndWeekTimestamp().week.toString() },
   })
 
   return {
     address,
-    ...res.activeStakingAccountActivityMetricsForFixedPeriod,
+    creator: {
+      ...res.data.activeStakingAccountActivityMetricsForFixedPeriod.creator,
+      rank: res.data.creator.rankIndex,
+    },
+    staker: {
+      ...res.data.activeStakingAccountActivityMetricsForFixedPeriod.staker,
+      rank: res.data.staker.rankIndex,
+    },
   }
 }
 
@@ -160,11 +185,11 @@ export async function getGeneralStatistics(): Promise<GeneralStatistics> {
     },
     {}
   >({
-    document: GET_GENERAL_STATS,
+    query: GET_GENERAL_STATS,
     variables: {},
   })
 
-  const data = res.activeStakingTotalActivityMetricsForFixedPeriod
+  const data = res.data.activeStakingTotalActivityMetricsForFixedPeriod
   return {
     creatorsEarnedTotal: data.creatorEarnedTotal,
     creatorsLiked: data.likedCreatorsCount,
@@ -223,7 +248,7 @@ export async function getLeaderboardData({
     },
     { role: string; timestamp: string; limit: number; offset: number }
   >({
-    document: GET_LEADERBOARD,
+    query: GET_LEADERBOARD,
     variables: {
       role: role === 'creator' ? 'CREATOR' : 'STAKER',
       timestamp: week.toString(),
@@ -232,7 +257,7 @@ export async function getLeaderboardData({
     },
   })
 
-  const data = res.activeStakingAddressesRankedByRewardsForPeriod
+  const data = res.data.activeStakingAddressesRankedByRewardsForPeriod
   return {
     data: data.data,
     hasMore: data.total > data.limit + offset,

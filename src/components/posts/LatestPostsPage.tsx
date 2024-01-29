@@ -2,8 +2,10 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import config from 'src/config'
+import { DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import { useDfApolloClient } from 'src/graphql/ApolloProvider'
 import { GetLatestPostIds } from 'src/graphql/__generated__/GetLatestPostIds'
+import { setPostScores } from 'src/rtk/features/posts/postScoreSlice'
 import { fetchPosts } from 'src/rtk/features/posts/postsSlice'
 import { DataSourceTypes, PostId } from 'src/types'
 import { PostKind } from 'src/types/graphql-global-types'
@@ -13,6 +15,7 @@ import { InnerLoadMoreFn } from '../lists'
 import { InfinitePageList } from '../lists/InfiniteList'
 import { DateFilterType, LoadMoreValues, PostFilterType } from '../main/types'
 import { isSuggested, loadPostsByQuery } from '../main/utils'
+import { getHotPosts } from '../utils/datahub/posts'
 import { getSuggestedPostIdsByPage, loadSuggestedPostIds } from './loadSuggestedPostIdsFromEnv'
 import { PublicPostPreviewById } from './PublicPostPreview'
 
@@ -43,9 +46,16 @@ export const loadMorePostsFn = async (loadMoreValues: LoadMoreValues<PostFilterT
 
   let postIds: string[] = []
 
-  if (!isSuggested(filter.type) && client) {
+  if (filter.type === 'hot') {
+    const posts = await getHotPosts({ offset, limit: DEFAULT_PAGE_SIZE })
+    postIds = posts.data.map(value => value.persistentPostId)
+    dispatch(
+      setPostScores(
+        posts.data.map(({ persistentPostId, score }) => ({ id: persistentPostId, score })),
+      ),
+    )
+  } else if (!isSuggested(filter.type) && client) {
     const data = await loadPostsByQuery({ client, kind, offset, filter })
-
     const { posts } = data as GetLatestPostIds
     postIds = posts.map(value => value.id)
   } else {
@@ -66,6 +76,19 @@ export const loadMorePostsFn = async (loadMoreValues: LoadMoreValues<PostFilterT
   return postIds
 }
 
+const sessionPageAndDataMap: Map<
+  string,
+  { initialPage: number; dataSource: Record<number, string[]> }
+> = new Map()
+const getSessionKey = ({
+  dateFilter,
+  filter,
+  kind,
+}: {
+  filter: string
+  dateFilter: string | undefined
+  kind: string
+}) => `${filter}-${dateFilter}-${kind}`
 const InfiniteListOfPublicPosts = (props: Props) => {
   const { totalPostCount, initialPostIds, kind, filter, dateFilter, shouldWaitApiReady } = props
   const client = useDfApolloClient()
@@ -76,21 +99,23 @@ const InfiniteListOfPublicPosts = (props: Props) => {
 
   useSubsocialEffect(
     ({ subsocial }) => {
-      if (config.enableSquidDataSource || !isSuggested(filter)) return
-      loadSuggestedPostIds({ subsocial }).then(ids => setTotalCount(ids.length))
+      if (!config.enableSquidDataSource && isSuggested(filter))
+        loadSuggestedPostIds({ subsocial }).then(ids => setTotalCount(ids.length))
     },
     [filter],
   )
 
   useEffect(() => {
-    if (!config.enableSquidDataSource || !isSuggested(filter)) return
-    loadSuggestedPostIds({ client }).then(ids => setTotalCount(ids.length))
+    if (config.enableSquidDataSource && isSuggested(filter))
+      loadSuggestedPostIds({ client }).then(ids => setTotalCount(ids.length))
   }, [filter])
+
+  const currentSessionKey = getSessionKey({ dateFilter, filter, kind })
 
   const entity = kind === PostKind.RegularPost ? 'posts' : 'comments'
 
-  const loadMore: InnerLoadMoreFn = (page, size) =>
-    loadMorePostsFn({
+  const loadMore: InnerLoadMoreFn = async (page, size) => {
+    const res = await loadMorePostsFn({
       client,
       size,
       page,
@@ -103,24 +128,35 @@ const InfiniteListOfPublicPosts = (props: Props) => {
         date: dateFilter,
       },
     })
+    let { dataSource } = sessionPageAndDataMap.get(currentSessionKey) || {}
+    if (!dataSource) dataSource = {}
+    dataSource[page] = res
+
+    sessionPageAndDataMap.set(currentSessionKey, {
+      initialPage: page + 1,
+      dataSource,
+    })
+    return res
+  }
+
+  const currentSessionData = sessionPageAndDataMap.get(currentSessionKey)
 
   const isUsingBlockchainToFetch = shouldWaitApiReady || !config.enableSquidDataSource
   const loading = isUsingBlockchainToFetch && !isApiReady
-  const List = useCallback(
-    () =>
-      !loading ? (
-        <InfinitePageList
-          loadingLabel={`Loading more ${entity}...`}
-          dataSource={initialPostIds}
-          loadMore={loadMore}
-          totalCount={totalCount}
-          noDataDesc={`No ${entity} yet`}
-          getKey={postId => postId}
-          renderItem={postId => <PublicPostPreviewById postId={postId} />}
-        />
-      ) : null,
-    [filter, dateFilter, totalCount, isApiReady],
-  )
+  const List = useCallback(() => {
+    return !loading ? (
+      <InfinitePageList
+        loadingLabel={`Loading more ${entity}...`}
+        initialPage={currentSessionData?.initialPage}
+        dataSource={Object.values(currentSessionData?.dataSource || {}).flat() || initialPostIds}
+        loadMore={loadMore}
+        totalCount={totalCount}
+        noDataDesc={`No ${entity} yet`}
+        getKey={postId => postId}
+        renderItem={postId => <PublicPostPreviewById postId={postId} />}
+      />
+    ) : null
+  }, [filter, dateFilter, totalCount, isApiReady])
 
   return <List />
 }

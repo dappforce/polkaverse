@@ -1,4 +1,4 @@
-import { balanceWithDecimal, isDef, toSubsocialAddress } from '@subsocial/utils'
+import { balanceWithDecimal, isDef } from '@subsocial/utils'
 import { Avatar, Col, Form, FormInstance, Row, Select } from 'antd'
 import BN from 'bignumber.js'
 import clsx from 'clsx'
@@ -13,6 +13,7 @@ import BaseAvatar from 'src/components/utils/DfAvatar'
 import { showSuccessMessage } from 'src/components/utils/Message'
 import { MutedDiv, MutedSpan } from 'src/components/utils/MutedText'
 import { useChainInfo } from 'src/rtk/features/chainsInfo/chainsInfoHooks'
+import { convertToSubsocialAddress } from 'src/utils/address'
 import { useSelectProfile } from '../../rtk/features/profiles/profilesHooks'
 import { TipAmountInput } from './AmountInput'
 import { useTipContext } from './DonateModalContext'
@@ -106,10 +107,10 @@ export const DonateCard = ({ recipientAddress }: DonateProps) => {
     state: { accounts },
   } = useMyAccountsContext()
 
-  const mySubsocialAddress = toSubsocialAddress(addressFromUrl)
+  const mySubsocialAddress = convertToSubsocialAddress(addressFromUrl)
 
   const accountsForChoosing = accounts
-    .filter(x => toSubsocialAddress(x.address) !== mySubsocialAddress)
+    .filter(x => convertToSubsocialAddress(x.address) !== mySubsocialAddress)
     .map(x => x.address)
 
   const ss58Format = infoByNetwork?.ss58Format
