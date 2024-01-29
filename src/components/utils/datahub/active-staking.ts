@@ -18,7 +18,7 @@ import { PrevReward } from 'src/rtk/features/activeStaking/prevRewardSlice'
 import { RewardHistory } from 'src/rtk/features/activeStaking/rewardHistorySlice'
 import { fetchRewardReport, RewardReport } from 'src/rtk/features/activeStaking/rewardReportSlice'
 import {
-  fetchSuperLikeCounts,
+  invalidateSuperLikeCounts,
   SuperLikeCount,
 } from 'src/rtk/features/activeStaking/superLikeCountsSlice'
 import {
@@ -441,7 +441,7 @@ async function processSubscriptionEvent(
   const dispatch = getStoreDispatcher()
   if (!dispatch) throw new Error('Dispatcher not exist')
 
-  dispatch(fetchSuperLikeCounts({ postIds: [post.persistentId], reload: true }))
+  dispatch(invalidateSuperLikeCounts({ postId: post.persistentId }))
   if (staker.id === myAddress) {
     dispatch(fetchRewardReport({ address: myAddress, reload: true }))
     dispatch(
