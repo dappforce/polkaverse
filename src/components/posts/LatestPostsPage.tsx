@@ -76,6 +76,19 @@ export const loadMorePostsFn = async (loadMoreValues: LoadMoreValues<PostFilterT
   return postIds
 }
 
+const sessionPageAndDataMap: Map<
+  string,
+  { initialPage: number; dataSource: Record<number, string[]> }
+> = new Map()
+const getSessionKey = ({
+  dateFilter,
+  filter,
+  kind,
+}: {
+  filter: string
+  dateFilter: string | undefined
+  kind: string
+}) => `${filter}-${dateFilter}-${kind}`
 const InfiniteListOfPublicPosts = (props: Props) => {
   const { totalPostCount, initialPostIds, kind, filter, dateFilter, shouldWaitApiReady } = props
   const client = useDfApolloClient()
@@ -97,10 +110,12 @@ const InfiniteListOfPublicPosts = (props: Props) => {
       loadSuggestedPostIds({ client }).then(ids => setTotalCount(ids.length))
   }, [filter])
 
+  const currentSessionKey = getSessionKey({ dateFilter, filter, kind })
+
   const entity = kind === PostKind.RegularPost ? 'posts' : 'comments'
 
-  const loadMore: InnerLoadMoreFn = (page, size) =>
-    loadMorePostsFn({
+  const loadMore: InnerLoadMoreFn = async (page, size) => {
+    const res = await loadMorePostsFn({
       client,
       size,
       page,
@@ -113,24 +128,35 @@ const InfiniteListOfPublicPosts = (props: Props) => {
         date: dateFilter,
       },
     })
+    let { dataSource } = sessionPageAndDataMap.get(currentSessionKey) || {}
+    if (!dataSource) dataSource = {}
+    dataSource[page] = res
+
+    sessionPageAndDataMap.set(currentSessionKey, {
+      initialPage: page + 1,
+      dataSource,
+    })
+    return res
+  }
+
+  const currentSessionData = sessionPageAndDataMap.get(currentSessionKey)
 
   const isUsingBlockchainToFetch = shouldWaitApiReady || !config.enableSquidDataSource
   const loading = isUsingBlockchainToFetch && !isApiReady
-  const List = useCallback(
-    () =>
-      !loading ? (
-        <InfinitePageList
-          loadingLabel={`Loading more ${entity}...`}
-          dataSource={initialPostIds}
-          loadMore={loadMore}
-          totalCount={totalCount}
-          noDataDesc={`No ${entity} yet`}
-          getKey={postId => postId}
-          renderItem={postId => <PublicPostPreviewById postId={postId} />}
-        />
-      ) : null,
-    [filter, dateFilter, totalCount, isApiReady],
-  )
+  const List = useCallback(() => {
+    return !loading ? (
+      <InfinitePageList
+        loadingLabel={`Loading more ${entity}...`}
+        initialPage={currentSessionData?.initialPage}
+        dataSource={Object.values(currentSessionData?.dataSource || {}).flat() || initialPostIds}
+        loadMore={loadMore}
+        totalCount={totalCount}
+        noDataDesc={`No ${entity} yet`}
+        getKey={postId => postId}
+        renderItem={postId => <PublicPostPreviewById postId={postId} />}
+      />
+    ) : null
+  }, [filter, dateFilter, totalCount, isApiReady])
 
   return <List />
 }

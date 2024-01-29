@@ -34,14 +34,14 @@ type InfiniteListByPageProps<T> = InfiniteListPropsByData<T> & {
 }
 
 export const InfiniteListByPage = <T extends any>(props: InfiniteListByPageProps<T>) => {
-  const { totalCount } = props
+  const { totalCount, initialPage: _initialPage } = props
   const {
     query: { page: pagePath },
   } = useRouter()
 
   const initialPage = pagePath
     ? tryParseInt(pagePath.toString(), DEFAULT_FIRST_PAGE)
-    : DEFAULT_FIRST_PAGE
+    : _initialPage || DEFAULT_FIRST_PAGE
 
   const offset = (initialPage - 1) * DEFAULT_PAGE_SIZE
   const lastPage = Math.ceil((totalCount - offset) / DEFAULT_PAGE_SIZE)
@@ -75,6 +75,7 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
     totalCount,
     canHaveMoreData,
     scrollableTarget,
+    initialPage: _initialPage,
     ...otherProps
   } = props
 
@@ -86,7 +87,7 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
 
   const initialPage = pagePath
     ? tryParseInt(pagePath.toString(), DEFAULT_FIRST_PAGE)
-    : DEFAULT_FIRST_PAGE
+    : _initialPage || DEFAULT_FIRST_PAGE
 
   const [page, setPage] = useState(initialPage)
   const [data, setData] = useState(dataSource || [])

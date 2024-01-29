@@ -20,6 +20,7 @@ export type DataListProps<T extends any> = DataListOptProps &
   DataListItemProps<T> & {
     totalCount?: number
     dataSource: T[]
+    initialPage?: number
     paginationConfig?: PaginationConfig
     beforeList?: React.ReactNode
     children?: React.ReactNode
