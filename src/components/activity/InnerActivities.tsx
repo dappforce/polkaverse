@@ -41,21 +41,19 @@ export function InnerActivities<T>(props: InnerActivitiesProps<T>) {
   const loadMoreFn = (page: number, size: number) =>
     loadMore({ subsocial, dispatch, address, myAddress, page, size, ids })
 
-  const List = useCallback(
-    () =>
-      loading ? (
-        <Loading label={loadingLabel} />
-      ) : (
-        <InfiniteListByPage
-          {...otherProps}
-          loadMore={loadMoreFn}
-          loadingLabel={loadingLabel}
-          noDataDesc={noDataDesc}
-          totalCount={totalCount || total || 0}
-        />
-      ),
-    [loading, address, total, totalCount],
-  )
+  const List = useCallback(() => {
+    return loading ? (
+      <Loading label={loadingLabel} />
+    ) : (
+      <InfiniteListByPage
+        {...otherProps}
+        loadMore={loadMoreFn}
+        loadingLabel={loadingLabel}
+        noDataDesc={noDataDesc}
+        totalCount={totalCount || total || 0}
+      />
+    )
+  }, [loading, address, total, totalCount])
 
   return <List />
 }
