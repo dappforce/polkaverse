@@ -1,5 +1,6 @@
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { getSuperLikeCounts } from 'src/components/utils/datahub/active-staking'
+import { ThunkApiConfig } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createSimpleManyFetchWrapper } from 'src/rtk/app/wrappers'
 
@@ -34,6 +35,16 @@ export const fetchSuperLikeCounts = createSimpleManyFetchWrapper<
     return { postIds: newPostIds }
   },
 })
+
+export const invalidateSuperLikeCounts = createAsyncThunk<void, { postId: string }, ThunkApiConfig>(
+  `${sliceName}/invalidate`,
+  async ({ postId }, { getState, dispatch }) => {
+    const state = selectPostSuperLikeCount(getState(), postId)
+    if (!state) return
+
+    await dispatch(fetchSuperLikeCounts({ postIds: [postId], reload: true }))
+  },
+)
 
 const slice = createSlice({
   name: sliceName,
