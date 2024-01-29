@@ -8,13 +8,14 @@ import { ProfilePreviewByAccountId, SelectAddressPreview } from '../profiles/add
 import SubTitle from '../utils/SubTitle'
 
 import { asAccountId } from '@subsocial/api'
-import { isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
+import { isEmptyArray } from '@subsocial/utils'
 import config from 'src/config'
 import { isMobileDevice } from 'src/config/Size.config'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { fetchProfileSpaces } from 'src/rtk/features/profiles/profilesSlice'
 import { AccountId, DataSourceTypes } from 'src/types'
+import { convertToSubsocialAddress } from 'src/utils/address'
 import { useSubstrate } from '../substrate/useSubstrate'
 import { Loading } from '../utils'
 import { ActionMenu } from './ActionMenu'
@@ -234,7 +235,8 @@ export const AccountSelector = ({
   const { setCurrentStep } = useAuth()
 
   const excludeCurrentEmailAccounts = emailAccounts.filter(account => {
-    const walletAddress = toSubsocialAddress(account.accountAddress) ?? account.accountAddress
+    const walletAddress =
+      convertToSubsocialAddress(account.accountAddress) ?? account.accountAddress
     if (walletAddress !== currentAddress) return account
     return
   })

@@ -1,12 +1,13 @@
 import { GenericAccountId } from '@polkadot/types'
 import registry from '@subsocial/api/utils/registry'
-import { isDef, isEmptyArray, toSubsocialAddress } from '@subsocial/utils'
+import { isDef, isEmptyArray } from '@subsocial/utils'
 import { Select } from 'antd'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { useMyAccounts } from 'src/components/auth/MyAccountsContext'
 import { equalAddresses } from 'src/components/substrate'
 import { useSelectProfile } from 'src/rtk/app/hooks'
+import { convertToSubsocialAddress } from 'src/utils/address'
 import { SelectAddressPreview } from '../../profile-selector/MyAccountMenu'
 import Avatar from '../../profiles/address-views/Avatar'
 import styles from './inputs.module.sass'
@@ -55,9 +56,7 @@ export const SelectAccountInput = ({
   disabled,
 }: SelectAccountInputProps) => {
   const { accounts, status } = useMyAccounts()
-  const allExtensionAccounts = accounts
-    .map(x => x.address && (toSubsocialAddress(x.address) as string))
-    .filter(isDef)
+  const allExtensionAccounts = accounts.map(x => convertToSubsocialAddress(x.address)).filter(isDef)
 
   const [defaultOptions, setDefaultOptions] = useState<any[]>([])
   const [selectOptions, setSelectOptions] = useState<any[]>(defaultOptions)

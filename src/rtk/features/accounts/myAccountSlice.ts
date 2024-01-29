@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { nonEmptyStr, toSubsocialAddress } from '@subsocial/utils'
+import { nonEmptyStr } from '@subsocial/utils'
 import { equalAddresses } from 'src/components/substrate'
 import { CURRENT_EMAIL_ADDRESS } from 'src/components/utils/OffchainSigner/ExternalStorage'
 import { isBlockedAccount } from 'src/moderation'
 import { AccountId } from 'src/types'
+import { convertToSubsocialAddress } from 'src/utils/address'
 import store from 'store'
 
 const MY_EMAIL_ADDRESS = 'df.myEmailAddress'
@@ -76,7 +77,7 @@ const myAccountSlice = createSlice({
       }
     },
     setMyAddress(state, action: PayloadAction<AccountId>) {
-      const address = toSubsocialAddress(action.payload)
+      const address = convertToSubsocialAddress(action.payload)
 
       if (address && !equalAddresses(state.address, address)) {
         storeMyAddress(address)

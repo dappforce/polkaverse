@@ -1,6 +1,7 @@
 import { Keyring } from '@polkadot/api'
 import { hexToU8a, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util'
 import { keccakAsU8a, naclDecrypt, naclEncrypt } from '@polkadot/util-crypto'
+import { convertToSubsocialAddress } from 'src/utils/address'
 
 const SALT_LENGTH = 32
 const HEX_CONSTANT = '0x80001f'
@@ -37,7 +38,6 @@ class SignerKeyringManager {
 
   public async generateAccount(seed: string) {
     const { sr25519PairFromSeed, mnemonicToMiniSecret } = await import('@polkadot/util-crypto')
-    const { toSubsocialAddress } = await import('@subsocial/utils')
 
     const miniSecret = mnemonicToMiniSecret(seed)
     const { publicKey: publicKeyBuffer } = sr25519PairFromSeed(miniSecret)
@@ -45,7 +45,7 @@ class SignerKeyringManager {
     const publicKey = u8aToHex(publicKeyBuffer)
     const secretKey = u8aToHex(miniSecret)
 
-    return { publicAddress: toSubsocialAddress(publicKey)!, secretKey }
+    return { publicAddress: convertToSubsocialAddress(publicKey)!, secretKey }
   }
 
   public encryptKey(key: string, password: string) {
