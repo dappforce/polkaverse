@@ -7,30 +7,53 @@ import NotAuthorized from '../auth/NotAuthorized'
 import WriteSomething from '../posts/WriteSomething'
 import Section from '../utils/Section'
 import { createLoadMorePosts, FeedActivities, onchainLoadMorePosts } from './FeedActivities'
-import { BaseActivityProps } from './types'
+import { BaseActivityProps, LoadMoreProps } from './types'
 
 const enableOnchainActivities = config.enableOnchainActivities
 
 const loadingLabel = 'Loading your feed...'
 
+const sessionPageAndDataMap: Map<
+  string,
+  { initialPage: number; dataSource: Record<number, string[]> }
+> = new Map()
+const getSessionKey = ({ address }: { address: string | undefined }) => address ?? ''
 const InnerMyFeed = (props: BaseActivityProps) => {
+  const { address } = props
   const getNewsFeeds = useGetNewsFeeds()
   const offchainLoadMoreFeed = createLoadMorePosts(getNewsFeeds)
   const getNewsFeedsCount = useGetNewsFeedsCount()
 
   const feedPostIds = useAppSelector(state =>
-    enableOnchainActivities ? selectFeedByAccount(state, props.address) : [],
+    enableOnchainActivities ? selectFeedByAccount(state, address) : [],
   )
 
+  const currentSessionKey = getSessionKey({ address })
   const loadMoreFn = enableOnchainActivities ? onchainLoadMorePosts : offchainLoadMoreFeed
+  const augmentedLoadMoreFn = async (props: LoadMoreProps) => {
+    const res = await loadMoreFn(props)
+    let { dataSource } = sessionPageAndDataMap.get(currentSessionKey) || {}
+    if (!dataSource) dataSource = {}
+    dataSource[props.page] = res
+
+    sessionPageAndDataMap.set(currentSessionKey, {
+      initialPage: props.page + 1,
+      dataSource,
+    })
+    return res
+  }
+
+  const currentSessionData = sessionPageAndDataMap.get(currentSessionKey)
 
   return (
     <FeedActivities
       {...props}
-      loadMore={loadMoreFn}
+      loadMore={augmentedLoadMoreFn}
       className='DfInfinitePageList'
       loadingLabel={loadingLabel}
       noDataDesc='Your feed is empty. Try to follow more spaces ;)'
+      initialPage={currentSessionData?.initialPage}
+      dataSource={Object.values(currentSessionData?.dataSource || {}).flat()}
       // getCount={getFeedCount}
       totalCount={feedPostIds?.length}
       getCount={enableOnchainActivities ? undefined : getNewsFeedsCount}
