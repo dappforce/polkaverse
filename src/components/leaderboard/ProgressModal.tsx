@@ -6,6 +6,7 @@ import { SlQuestion } from 'react-icons/sl'
 import { ReactNode } from 'react-markdown'
 import CustomModal from 'src/components/utils/CustomModal'
 import { useSelectProfile } from 'src/rtk/app/hooks'
+import { useFetchUserPrevReward } from 'src/rtk/features/activeStaking/hooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import Avatar from '../profiles/address-views/Avatar'
@@ -17,7 +18,6 @@ const progressModalStorage = {
   getIsClosed: () => {
     const today = dayjs.utc().startOf('day').unix()
     const closedTimestamp = localStorage.getItem('progress-modal-closed')
-    console.log(closedTimestamp)
     if (!closedTimestamp) return false
     return today === Number(closedTimestamp)
   },
@@ -84,13 +84,25 @@ const contentMap: Record<
 
 function InnerProgressModal() {
   const myAddress = useMyAddress() ?? ''
-  const [visible, setVisible] = useState(true)
+  const [visible, setVisible] = useState(false)
   const profile = useSelectProfile(myAddress)
+  const { data } = useFetchUserPrevReward(myAddress)
 
-  const status: Status = 'half'
-  const isBeginningOfWeek = dayjs.utc().day() === 1 // monday
+  useEffect(() => {
+    if (data) setVisible(true)
+  }, [data])
 
-  const usedContent = contentMap[isBeginningOfWeek ? 'lastWeek' : 'yesterday'][status]
+  let status: Status = 'full'
+  const superLikesCount = data?.likedPosts ?? 0
+  if (superLikesCount === 0) {
+    status = 'none'
+  } else if (superLikesCount < 10) {
+    status = 'half'
+  }
+
+  const isUsingLastWeekData = data?.period === 'WEEK'
+
+  const usedContent = contentMap[isUsingLastWeekData ? 'lastWeek' : 'yesterday'][status]
 
   return (
     <CustomModal
@@ -99,7 +111,7 @@ function InnerProgressModal() {
         setVisible(false)
         progressModalStorage.close()
       }}
-      title='Your progress last week'
+      title={`Your progress ${isUsingLastWeekData ? 'last week' : 'yesterday'}`}
       closable
     >
       <div className={clsx(styles.ProgressModal, statusClassName[status], 'mt-2')}>
@@ -119,11 +131,11 @@ function InnerProgressModal() {
         </div>
         <div className='d-flex w-100 GapSmall'>
           <RewardCard
-            title="Last week's reward"
+            title={`${isUsingLastWeekData ? 'Last week' : 'Yesterday'}'s reward`}
             content={
               <FormatBalance
                 withMutedDecimals={false}
-                value='134340000000'
+                value={data?.earned}
                 precision={2}
                 currency='SUB'
                 decimals={10}
@@ -131,7 +143,6 @@ function InnerProgressModal() {
             }
             withDiamond
           />
-          <RewardCard title='Bonus to Lazy Staking' content={<span>+134%</span>} tooltip='dummy' />
         </div>
       </div>
       <Button type='primary' size='large' className='mt-4'>

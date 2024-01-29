@@ -14,6 +14,7 @@ import {
 } from 'src/rtk/features/activeStaking/addressLikeCountSlice'
 import { CanPostSuperLiked } from 'src/rtk/features/activeStaking/canPostSuperLikedSlice'
 import { PostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
+import { PrevReward } from 'src/rtk/features/activeStaking/prevRewardSlice'
 import { RewardHistory } from 'src/rtk/features/activeStaking/rewardHistorySlice'
 import { fetchRewardReport, RewardReport } from 'src/rtk/features/activeStaking/rewardReportSlice'
 import {
@@ -312,6 +313,53 @@ export async function getSuperLikesStats(period: number): Promise<SuperLikesStat
   return {
     data: res.data.activeStakingSuperLikeCountsByDate.byDate,
     total: res.data.activeStakingSuperLikeCountsByDate.total,
+  }
+}
+
+const GET_USER_PREV_REWARD = gql`
+  query GetUserPrevReward($address: String!, $period: ActiveStakingPeriod!, $timestamp: String!) {
+    activeStakingAccountActivityMetricsForFixedPeriod(
+      args: {
+        address: $address
+        period: $period
+        staker: { likedPosts: true, earnedByPeriod: true }
+      }
+    ) {
+      staker {
+        likedPosts
+        earnedByPeriod
+      }
+    }
+  }
+`
+export async function getUserPrevReward({ address }: { address: string }): Promise<PrevReward> {
+  const yesterday = dayjs.utc().subtract(1, 'day')
+  const isLastWeek = yesterday.isoWeek() !== dayjs.utc().isoWeek()
+  const { day, week } = getDayAndWeekTimestamp(yesterday.toDate())
+  const res = await datahubQueryRequest<
+    {
+      activeStakingAccountActivityMetricsForFixedPeriod: {
+        staker: {
+          likedPosts: number
+          earnedByPeriod: string
+        }
+      }
+    },
+    { address: string; timestamp: string; period: 'DAY' | 'WEEK' }
+  >({
+    query: GET_USER_PREV_REWARD,
+    variables: {
+      address,
+      period: isLastWeek ? 'WEEK' : 'DAY',
+      timestamp: (isLastWeek ? week : day).toString(),
+    },
+  })
+
+  return {
+    address,
+    period: isLastWeek ? 'WEEK' : 'DAY',
+    earned: res.data.activeStakingAccountActivityMetricsForFixedPeriod.staker.earnedByPeriod,
+    likedPosts: res.data.activeStakingAccountActivityMetricsForFixedPeriod.staker.likedPosts,
   }
 }
 
