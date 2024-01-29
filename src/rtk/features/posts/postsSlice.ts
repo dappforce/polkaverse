@@ -46,7 +46,6 @@ import { fetchPostRewards } from '../activeStaking/postRewardSlice'
 import { fetchSuperLikeCounts } from '../activeStaking/superLikeCountsSlice'
 import { Content, fetchContents, selectPostContentById } from '../contents/contentsSlice'
 import { fetchProfileSpaces } from '../profiles/profilesSlice'
-import { fetchMyReactionsByPostIds } from '../reactions/myPostReactionsSlice'
 import { fetchSpaces } from '../spaces/spacesSlice'
 export interface PostState extends PostStruct {
   isOverview?: boolean
@@ -335,15 +334,16 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
       } = args
       const newIds = _newIds as string[]
 
-      withReactionByAccount &&
-        dispatch(
-          fetchMyReactionsByPostIds({
-            ids: newIds,
-            myAddress: withReactionByAccount,
-            api,
-            dataSource,
-          }),
-        )
+      // removed because now it uses super likes
+      // withReactionByAccount &&
+      //   dispatch(
+      //     fetchMyReactionsByPostIds({
+      //       ids: newIds,
+      //       myAddress: withReactionByAccount,
+      //       api,
+      //       dataSource,
+      //     }),
+      //   )
 
       withReactionByAccount &&
         dispatch(fetchAddressLikeCounts({ postIds: newIds, address: withReactionByAccount }))

@@ -2,6 +2,7 @@ import { Col, Radio, RadioChangeEvent, Row, Select } from 'antd'
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import config from 'src/config'
+import { useIsMyAddressWhitelisted } from 'src/config/constants'
 import LatestPostsPage from '../posts/LatestPostsPage'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import LatestSpacesPage, { CreatorsSpaces } from '../spaces/LatestSpacesPage'
@@ -31,6 +32,7 @@ const commonFilterOption = [{ label: 'Latest', value: 'latest' }]
 export const postFilterOpt = [
   { label: 'Featured Posts', value: 'suggested' },
   { label: 'All Posts', value: 'latest' },
+  { label: 'Hot Posts', value: 'hot' },
   // removed most liked and commented
   // ...offchainPostFilterOpt,
 ]
@@ -92,6 +94,7 @@ const onChangeWrap = (onChange: OnChangeFn) => (e: RadioChangeEvent) => onChange
 export const Filters = (props: Props) => {
   const { tabKey, isAffix } = props
   const { isMobile } = useResponsiveSize()
+  const isWhitelisted = useIsMyAddressWhitelisted()
 
   const router = useRouter()
 
@@ -105,9 +108,15 @@ export const Filters = (props: Props) => {
   const onDateChange: any = (value: DateFilterType = 'week') =>
     setFiltersInUrl(router, tabKey, { type: type as EntityFilter, date: value })
 
-  const needDateFilter = !!type && type !== 'latest' && type !== 'suggested' && type !== 'creators'
+  const needDateFilter =
+    !!type && type !== 'latest' && type !== 'suggested' && type !== 'creators' && type !== 'hot'
 
   if (!needDateFilter && !filterByKey[tabKey]?.length) return null
+
+  let filters = filterByKey[tabKey]
+  if (!isWhitelisted && tabKey === 'posts') {
+    filters = filters.slice(0, -1)
+  }
 
   return (
     <div className={`DfFilters ${!isAffix ? 'mt-3' : ''}`}>
@@ -115,7 +124,7 @@ export const Filters = (props: Props) => {
         {!isMobile ? (
           <Col className={needDateFilter ? style.DfCol : 'ant-col-24'}>
             <Radio.Group
-              options={filterByKey[tabKey]}
+              options={filters}
               onChange={onChangeWrap(onFilterChange)}
               value={type}
               optionType={'button'}
@@ -128,7 +137,7 @@ export const Filters = (props: Props) => {
               onChange={onFilterChange}
               className={clsx('w-100', style.FilterSelect)}
             >
-              {filterByKey[tabKey].map(({ label, value }) => (
+              {filters.map(({ label, value }) => (
                 <Select.Option key={value} value={value}>
                   {label}
                 </Select.Option>
