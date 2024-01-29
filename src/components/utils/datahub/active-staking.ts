@@ -322,6 +322,7 @@ const GET_USER_PREV_REWARD = gql`
       args: {
         address: $address
         period: $period
+        periodValue: $timestamp
         staker: { likedPosts: true, earnedByPeriod: true }
       }
     ) {
