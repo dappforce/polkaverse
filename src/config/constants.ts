@@ -26,5 +26,5 @@ const WHITELISTED_FOR_NEW_FEATURES = [
 ]
 export function useIsMyAddressWhitelisted() {
   const myAddress = useMyAddress()
-  return WHITELISTED_FOR_NEW_FEATURES.includes(myAddress ?? '') || true
+  return WHITELISTED_FOR_NEW_FEATURES.includes(myAddress ?? '')
 }
