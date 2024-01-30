@@ -152,8 +152,8 @@ function InnerProgressModal() {
           />
           {hasMissedReward && (
             <RewardCard
-              aligment={'left'}
-              title="Yesterday's missed rewards"
+              aligment='left'
+              title='Missed rewards'
               tooltip='How many SUB you could have received by liking at least 10 posts yesterday'
               content={
                 <FormatBalance
@@ -164,7 +164,6 @@ function InnerProgressModal() {
                   decimals={10}
                 />
               }
-              withDiamond
             />
           )}
         </div>
@@ -204,16 +203,16 @@ function RewardCard({
   content: ReactNode
 }) {
   return (
-    <div className={styles.RewardCard}>
+    <div
+      className={clsx(
+        styles.RewardCard,
+        aligment === 'center' ? 'align-items-center' : 'align-items-start',
+      )}
+    >
       {withDiamond && (
         <DfImage preview={false} src='/images/diamond.png' className={styles.Diamond} />
       )}
-      <div
-        className={clsx(
-          'd-flex GapTiny ColorSlate',
-          aligment === 'center' ? 'align-items-center' : 'align-items-start',
-        )}
-      >
+      <div className={clsx('d-flex GapTiny ColorSlate align-items-center')}>
         <span className='FontSmall'>{title}</span>
         {tooltip && (
           <Tooltip title={tooltip}>
