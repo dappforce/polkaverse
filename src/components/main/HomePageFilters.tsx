@@ -1,6 +1,8 @@
 import { Col, Radio, RadioChangeEvent, Row, Select } from 'antd'
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
+import { MdVerified } from 'react-icons/md'
+import { ReactNode } from 'react-markdown'
 import config from 'src/config'
 import { useIsMyAddressWhitelisted } from 'src/config/constants'
 import LatestPostsPage from '../posts/LatestPostsPage'
@@ -29,9 +31,18 @@ const commonFilterOption = [{ label: 'Latest', value: 'latest' }]
 //     ]
 //   : []
 
-type Filter = { label: string; value: string; icon?: string }
+type Filter = { label: string; value: string; icon?: ReactNode }
+
+const verifiedIcon = (
+  <MdVerified className='VerifiedIcon FontSemilarge' style={{ top: '4px', position: 'relative' }} />
+)
+
 export const postFilterOpt: Filter[] = [
-  { label: 'Featured Posts', icon: '✅', value: 'suggested' },
+  {
+    label: 'Featured Posts',
+    icon: verifiedIcon,
+    value: 'suggested',
+  },
   { label: 'Hot Posts', icon: '🔥', value: 'hot' },
   { label: 'All Posts', value: 'latest' },
   // removed most liked and commented
@@ -55,7 +66,11 @@ export const commentFilterOpt: Filter[] = enableGraphQl
 //   : []
 
 export const spaceFilterOpt: Filter[] = [
-  { label: 'Featured Creators', icon: '✅', value: 'suggested' },
+  {
+    label: 'Featured Creators',
+    icon: verifiedIcon,
+    value: 'suggested',
+  },
   { label: 'Creators Staking', value: 'creators' },
   // ...offchainSpaceFilterOpt,
 ]
