@@ -109,7 +109,10 @@ function InnerProgressModal() {
       title={`Your progress ${isUsingLastWeekData ? 'last week' : 'yesterday'}`}
       closable
     >
-      <div className={clsx(styles.ProgressModal, statusClassName[status], 'mt-2')}>
+      <div
+        className={clsx(styles.ProgressModal, statusClassName[status], 'mt-2')}
+        style={{ overflowX: 'clip' }}
+      >
         <DiamondIcon className={styles.DiamondIcon} />
         <div className='d-flex flex-column align-items-center'>
           <div className='mb-2'>
