@@ -29,15 +29,16 @@ const commonFilterOption = [{ label: 'Latest', value: 'latest' }]
 //     ]
 //   : []
 
-export const postFilterOpt = [
-  { label: '✅ Featured Posts', value: 'suggested' },
-  { label: '🔥 Hot Posts', value: 'hot' },
+type Filter = { label: string; value: string; icon?: string }
+export const postFilterOpt: Filter[] = [
+  { label: 'Featured Posts', icon: '✅', value: 'suggested' },
+  { label: 'Hot Posts', icon: '🔥', value: 'hot' },
   { label: 'All Posts', value: 'latest' },
   // removed most liked and commented
   // ...offchainPostFilterOpt,
 ]
 
-export const commentFilterOpt = enableGraphQl
+export const commentFilterOpt: Filter[] = enableGraphQl
   ? [
       ...commonFilterOption,
       { label: 'Most liked', value: 'liked' },
@@ -53,13 +54,13 @@ export const commentFilterOpt = enableGraphQl
 //     ]
 //   : []
 
-export const spaceFilterOpt = [
-  { label: '✅ Featured Creators', value: 'suggested' },
-  { label: '📝 Creators Staking', value: 'creators' },
+export const spaceFilterOpt: Filter[] = [
+  { label: 'Featured Creators', icon: '✅', value: 'suggested' },
+  { label: 'Creators Staking', value: 'creators' },
   // ...offchainSpaceFilterOpt,
 ]
 
-export const dateFilterOpt = [
+export const dateFilterOpt: Filter[] = [
   { label: '1 day', value: 'day' },
   { label: '7 days', value: 'week' },
   { label: '30 days', value: 'month' },
@@ -124,7 +125,15 @@ export const Filters = (props: Props) => {
         {!isMobile ? (
           <Col className={needDateFilter ? style.DfCol : 'ant-col-24'}>
             <Radio.Group
-              options={filters}
+              options={filters.map(({ label, value, icon }) => ({
+                label: (
+                  <span>
+                    <span className='mr-1'>{icon}</span>
+                    {label}
+                  </span>
+                ),
+                value,
+              }))}
               onChange={onChangeWrap(onFilterChange)}
               value={type}
               optionType={'button'}
@@ -137,12 +146,10 @@ export const Filters = (props: Props) => {
               onChange={onFilterChange}
               className={clsx('w-100', style.FilterSelect)}
             >
-              {filters.map(({ label, value }) => (
+              {filters.map(({ label, value, icon }) => (
                 <Select.Option key={value} value={value}>
-                  {label === 'All Posts' && (
-                    <span style={{ width: '23px', display: 'inline-block' }} />
-                  )}
                   {label}
+                  {icon && <span className='ml-1'>{icon}</span>}
                 </Select.Option>
               ))}
             </Select>
