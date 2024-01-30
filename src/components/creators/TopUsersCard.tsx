@@ -70,7 +70,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
     <>
       <div className='d-flex justify-content-between align-items-center'>
         <div className='d-flex align-items-center FontWeightSemibold GapMini'>
-          <span className='FontSemilarge'>Top users (this week)</span>
+          <span className='FontSemilarge'>Weekly Top Users</span>
         </div>
         {isMobile && seeMoreButton}
       </div>

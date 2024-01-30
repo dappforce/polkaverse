@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useState } from 'react'
-import { useSelectSpace } from 'src/rtk/app/hooks'
+import { useFilterOutLowValuePosts, useSelectSpace } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { useSelectPost } from 'src/rtk/features/posts/postsHooks'
 import { fetchPostReplyIds } from 'src/rtk/features/replies/repliesSlice'
@@ -13,19 +13,22 @@ import { useRepliesData } from './utils'
 import ViewComment from './ViewComment'
 
 type CommentsTreeProps = {
+  rootPostId: PostId
   parentId: PostId
   eventProps: CommentEventProps
   directlyExpandReplies?: boolean
+  showAllReplies: boolean
 }
 
 type CommentByIdProps = {
   commentId: PostId
   eventProps: CommentEventProps
   directlyExpandReplies?: boolean
+  showAllReplies: boolean
 }
 
 const CommentById = React.memo(
-  ({ commentId: id, eventProps, directlyExpandReplies }: CommentByIdProps) => {
+  ({ commentId: id, eventProps, directlyExpandReplies, showAllReplies }: CommentByIdProps) => {
     const comment = useSelectPost(id)
 
     const rootPostId = comment ? asCommentStruct(comment.post.struct).rootPostId : undefined
@@ -36,6 +39,7 @@ const CommentById = React.memo(
 
     return (
       <ViewComment
+        showAllReplies={showAllReplies}
         withShowReplies={directlyExpandReplies}
         rootPost={rootPost}
         space={space}
@@ -50,6 +54,8 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({
   parentId,
   eventProps,
   directlyExpandReplies,
+  showAllReplies,
+  rootPostId,
 }) => {
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
@@ -61,6 +67,9 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({
   const reversedReplyIds = useMemo(() => {
     return replyIds.slice().reverse()
   }, [replyIds])
+
+  const filteredIds = useFilterOutLowValuePosts(rootPostId, reversedReplyIds)
+  const usedIds = showAllReplies ? reversedReplyIds : filteredIds
 
   useSubsocialEffect(
     ({ subsocial }) => {
@@ -90,13 +99,14 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({
 
   return (
     <DataList
-      dataSource={reversedReplyIds}
+      dataSource={usedIds}
       getKey={replyId => replyId}
       className='mt-2.5'
       listClassName='GapSmall d-flex flex-column'
       renderItem={replyId => (
         <CommentById
           directlyExpandReplies={directlyExpandReplies}
+          showAllReplies={showAllReplies}
           commentId={replyId}
           eventProps={eventProps}
         />

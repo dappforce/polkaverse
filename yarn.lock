@@ -13784,6 +13784,11 @@ url@^0.11.0:
     punycode "1.3.2"
     querystring "0.2.0"
 
+use-local-storage@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/use-local-storage/-/use-local-storage-3.0.0.tgz#ecf90952374150f0c65baf027eaaf2062a4c20c6"
+  integrity sha512-wlPNnBCG3ULIJMr5A+dvWqLiPWCfsN1Kwijq+sAhT5yV4ex0u6XmZuNwP+RerIOfzBuz1pwSZuzhZMiluGQHfQ==
+
 use-memo-one@^1.1.1:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/use-memo-one/-/use-memo-one-1.1.3.tgz#2fd2e43a2169eabc7496960ace8c79efef975e99"

@@ -14,6 +14,7 @@ import React from 'react'
 import { FaDiscord } from 'react-icons/fa'
 import { FiTwitter } from 'react-icons/fi'
 import { IoFlashOutline } from 'react-icons/io5'
+import { MdOutlineLeaderboard } from 'react-icons/md'
 import { accountUrl } from 'src/components/urls'
 import { SubIcon } from 'src/components/utils'
 import config from 'src/config'
@@ -57,8 +58,13 @@ export const DefaultMenu: MenuItem[] = [
   //   icon: <BlockOutlined />,
   // },
   {
-    name: 'Statistics',
+    name: 'Leaderboard',
     page: ['/leaderboard'],
+    icon: <SubIcon Icon={MdOutlineLeaderboard} />,
+  },
+  {
+    name: 'Statistics',
+    page: ['/stats'],
     icon: <LineChartOutlined />,
   },
   Divider,
