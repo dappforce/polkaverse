@@ -116,7 +116,7 @@ export const Filters = (props: Props) => {
 
   let filters = filterByKey[tabKey]
   if (!isWhitelisted && tabKey === 'posts') {
-    filters = filters.slice(0, -1)
+    filters = filters.filter(({ value }) => value !== 'hot')
   }
 
   return (
