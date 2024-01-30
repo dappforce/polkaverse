@@ -1,7 +1,8 @@
-import { CheckCircleFilled, HourglassOutlined } from '@ant-design/icons'
+import { HourglassOutlined } from '@ant-design/icons'
 import { Tag, Tooltip } from 'antd'
 import clsx from 'clsx'
 import Link from 'next/link'
+import { MdVerified } from 'react-icons/md'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import messages from 'src/messages'
 import { SpaceStruct } from 'src/types'
@@ -19,7 +20,7 @@ type InnerIconProps = {
   icon: JSX.Element
 }
 
-const officialSpaceIcon = <CheckCircleFilled className={styles.ClaimedOfficialSpaceIcon} />
+const officialSpaceIcon = <MdVerified className={styles.ClaimedOfficialSpaceIcon} />
 
 const unclaimedSpaceIcon = <HourglassOutlined className={styles.ClaimSpacePendingIcon} />
 
