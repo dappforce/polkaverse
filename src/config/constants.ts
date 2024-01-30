@@ -25,6 +25,10 @@ const WHITELISTED_FOR_NEW_FEATURES = [
   '3q8uTV4HTCd4M8tP4fTKrGdopfKxAfLGfNdsmLbLP7hYj7JM',
   '3tPAVaHYAFRfUVpNP1DAq4E3BxTPanzkGN4uukn3b4ZAefkj',
   '3pjRboNv5rSDoy3thDse1KgaWtfVh3x2rrHqrabxjT7dJQdJ',
+  // filippo
+  '3sVFfCTpfWE5aqodJT5tpcK13uY9HMJNMDKDQYNpzPKmqVwA',
+  // jay TheKus
+  '3pYyydiZfeTL7iVxcYqw9bVyPbFXdVHSomUNzg4SpdycD5tg',
 ]
 export function useIsMyAddressWhitelisted() {
   const myAddress = useMyAddress()
