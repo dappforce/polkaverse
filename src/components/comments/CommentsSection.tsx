@@ -58,7 +58,9 @@ export const CommentSection: FC<CommentSectionProps> = ({
             style={{ marginRight: '-8px' }}
             onChange={e => setShowAllComments(e.target.checked)}
           >
-            <span className='ColorMuted'>Show all comments</span>
+            <span className='ColorMuted' style={{ userSelect: 'none' }}>
+              Show all comments
+            </span>
           </Checkbox>
         )}
       </div>
