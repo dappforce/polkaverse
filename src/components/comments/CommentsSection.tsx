@@ -1,7 +1,8 @@
 import { Checkbox } from 'antd'
 import clsx from 'clsx'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { PostWithSomeDetails, SpaceStruct } from 'src/types'
+import useLocalStorage from 'use-local-storage'
 import { useIsMyAddress } from '../auth/MyAccountsContext'
 import { Pluralize } from '../utils/Plularize'
 import Section from '../utils/Section'
@@ -28,7 +29,10 @@ export const CommentSection: FC<CommentSectionProps> = ({
   } = post
   const { id, repliesCount, ownerId } = struct
   const isPostAuthor = useIsMyAddress(ownerId)
-  const [showAllComments, setShowAllComments] = useState(false)
+  const [showAllComments, setShowAllComments] = useLocalStorage<boolean>('showAllComments', false, {
+    parser: str => str === 'true',
+    serializer: bool => String(bool),
+  })
 
   return (
     <Section
@@ -42,6 +46,7 @@ export const CommentSection: FC<CommentSectionProps> = ({
           <Pluralize count={repliesCount || 0} singularText='comment' />
         </h3>
         <Checkbox
+          checked={showAllComments}
           style={{ marginRight: '-8px' }}
           onChange={e => setShowAllComments(e.target.checked)}
         >
