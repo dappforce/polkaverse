@@ -98,6 +98,11 @@ function InnerProgressModal() {
 
   const usedContent = contentMap[isUsingLastWeekData ? 'lastWeek' : 'yesterday'][status]
 
+  let hasMissedReward = false
+  try {
+    hasMissedReward = BigInt(data?.missedReward || '0') > 0
+  } catch {}
+
   return (
     <CustomModal
       visible={visible}
@@ -128,6 +133,7 @@ function InnerProgressModal() {
         </div>
         <div className='d-flex w-100 GapSmall'>
           <RewardCard
+            aligment={hasMissedReward ? 'left' : 'center'}
             title={`${isUsingLastWeekData ? 'Last week' : 'Yesterday'}'s reward`}
             content={
               <FormatBalance
@@ -140,6 +146,23 @@ function InnerProgressModal() {
             }
             withDiamond
           />
+          {hasMissedReward && (
+            <RewardCard
+              aligment={'left'}
+              title="Yesterday's missed rewards"
+              tooltip='How many SUB you could have received by liking at least 10 posts yesterday'
+              content={
+                <FormatBalance
+                  withMutedDecimals={false}
+                  value={data?.missedReward}
+                  precision={2}
+                  currency='SUB'
+                  decimals={10}
+                />
+              }
+              withDiamond
+            />
+          )}
         </div>
       </div>
       <Button type='primary' size='large' className='mt-4'>
@@ -154,7 +177,9 @@ function RewardCard({
   title,
   tooltip,
   withDiamond,
+  aligment,
 }: {
+  aligment: 'center' | 'left'
   withDiamond?: boolean
   title: string
   tooltip?: string
@@ -165,7 +190,12 @@ function RewardCard({
       {withDiamond && (
         <DfImage preview={false} src='/images/diamond.png' className={styles.Diamond} />
       )}
-      <div className='d-flex align-items-center GapTiny ColorSlate'>
+      <div
+        className={clsx(
+          'd-flex GapTiny ColorSlate',
+          aligment === 'center' ? 'align-items-center' : 'align-items-start',
+        )}
+      >
         <span className='FontSmall'>{title}</span>
         {tooltip && (
           <Tooltip title={tooltip}>
