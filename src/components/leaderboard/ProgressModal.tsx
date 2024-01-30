@@ -128,7 +128,7 @@ function InnerProgressModal() {
               avatar={profile?.content?.image}
             />
           </div>
-          <span className='text-center FontLarge FontWeightBold'>{usedContent.title}</span>
+          <span className='text-center FontLarge FontWeightBold mb-2'>{usedContent.title}</span>
           <p className='text-center ColorSlate mb-0'>{usedContent.subtitle}</p>
         </div>
         <div className='d-flex w-100 GapSmall'>
