@@ -10,6 +10,7 @@ export type PrevReward = {
   likedPosts: number
   earned: string
   rewardStatus: PrevRewardStatus
+  missedReward?: string
 }
 
 const sliceName = 'rewardHistory'
