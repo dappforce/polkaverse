@@ -3,11 +3,13 @@ import { getUserPrevReward } from 'src/components/utils/datahub/active-staking'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 
+export type PrevRewardStatus = 'full' | 'half' | 'none'
 export type PrevReward = {
   address: string
   period: 'WEEK' | 'DAY'
   likedPosts: number
   earned: string
+  rewardStatus: PrevRewardStatus
 }
 
 const sliceName = 'rewardHistory'

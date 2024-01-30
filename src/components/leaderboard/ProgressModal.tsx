@@ -7,7 +7,7 @@ import { ReactNode } from 'react-markdown'
 import CustomModal from 'src/components/utils/CustomModal'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useFetchUserPrevReward } from 'src/rtk/features/activeStaking/hooks'
-import { PrevReward } from 'src/rtk/features/activeStaking/prevRewardSlice'
+import { PrevRewardStatus } from 'src/rtk/features/activeStaking/prevRewardSlice'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import Avatar from '../profiles/address-views/Avatar'
@@ -41,8 +41,7 @@ export default function ProgressModal() {
   return <InnerProgressModal />
 }
 
-type Status = 'full' | 'half' | 'none'
-const statusClassName: Record<Status, string> = {
+const statusClassName: Record<PrevRewardStatus, string> = {
   full: '',
   half: styles.Halfway,
   none: styles.NoProgress,
@@ -50,7 +49,7 @@ const statusClassName: Record<Status, string> = {
 
 const contentMap: Record<
   'lastWeek' | 'yesterday',
-  Record<Status, { title: string; subtitle: string }>
+  Record<PrevRewardStatus, { title: string; subtitle: string }>
 > = {
   lastWeek: {
     full: {
@@ -83,21 +82,6 @@ const contentMap: Record<
   },
 }
 
-function parseData(data: PrevReward | undefined) {
-  const superLikesCount = data?.likedPosts ?? 0
-  let status: Status = 'full'
-  if (superLikesCount === 0) {
-    status = 'none'
-  } else if (superLikesCount < 10) {
-    status = 'half'
-  }
-
-  const isUsingLastWeekData = data?.period === 'WEEK'
-  return {
-    status,
-    isUsingLastWeekData,
-  }
-}
 function InnerProgressModal() {
   const myAddress = useMyAddress() ?? ''
   const [visible, setVisible] = useState(false)
@@ -106,15 +90,13 @@ function InnerProgressModal() {
 
   useEffect(() => {
     if (!data) return
-
-    const { isUsingLastWeekData, status } = parseData(data)
-    if (status === 'none' && isUsingLastWeekData) return
+    if (data.rewardStatus === 'none' && data.period === 'WEEK') return
 
     setVisible(true)
   }, [data])
 
-  const { isUsingLastWeekData, status } = parseData(data)
-
+  const isUsingLastWeekData = data?.period === 'WEEK'
+  const status = data?.rewardStatus ?? 'half'
   const usedContent = contentMap[isUsingLastWeekData ? 'lastWeek' : 'yesterday'][status]
 
   return (
