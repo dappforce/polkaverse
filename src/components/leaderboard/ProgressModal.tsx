@@ -11,6 +11,8 @@ import { PrevRewardStatus } from 'src/rtk/features/activeStaking/prevRewardSlice
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import Avatar from '../profiles/address-views/Avatar'
+import { twitterShareUrl } from '../urls'
+import { openNewWindow } from '../urls/helpers'
 import { DfImage } from '../utils/DfImage'
 import DiamondIcon from '../utils/icons/Diamond'
 import styles from './ProgressModal.module.sass'
@@ -103,6 +105,8 @@ function InnerProgressModal() {
     hasMissedReward = BigInt(data?.missedReward || '0') > 0
   } catch {}
 
+  const spaceHandleOrId = profile?.struct.handle || profile?.id
+
   return (
     <CustomModal
       visible={visible}
@@ -165,7 +169,21 @@ function InnerProgressModal() {
           )}
         </div>
       </div>
-      <Button type='primary' size='large' className='mt-4'>
+      <Button
+        type='primary'
+        size='large'
+        className='mt-4'
+        onClick={() =>
+          openNewWindow(
+            twitterShareUrl(
+              spaceHandleOrId ? `/${spaceHandleOrId}` : `/accounts/${myAddress}`,
+              `I earned #SUB ${
+                isUsingLastWeekData ? 'last week for my activity' : 'yesterday'
+              } on @SubsocialChain! 🥳\n\nFollow me here and join The Creator Economy!`,
+            ),
+          )
+        }
+      >
         Share on X!
       </Button>
     </CustomModal>
