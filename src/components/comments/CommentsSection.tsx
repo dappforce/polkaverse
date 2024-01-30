@@ -1,6 +1,7 @@
 import { Checkbox } from 'antd'
 import clsx from 'clsx'
 import { FC } from 'react'
+import { useIsMyAddressWhitelisted } from 'src/config/constants'
 import { PostWithSomeDetails, SpaceStruct } from 'src/types'
 import useLocalStorage from 'use-local-storage'
 import { useIsMyAddress } from '../auth/MyAccountsContext'
@@ -29,10 +30,16 @@ export const CommentSection: FC<CommentSectionProps> = ({
   } = post
   const { id, repliesCount, ownerId } = struct
   const isPostAuthor = useIsMyAddress(ownerId)
-  const [showAllComments, setShowAllComments] = useLocalStorage<boolean>('showAllComments', false, {
+
+  const isWhitelisted = useIsMyAddressWhitelisted()
+  let [showAllComments, setShowAllComments] = useLocalStorage<boolean>('showAllComments', false, {
     parser: str => str === 'true',
     serializer: bool => String(bool),
   })
+
+  if (!isWhitelisted) {
+    showAllComments = true
+  }
 
   return (
     <Section
@@ -45,13 +52,15 @@ export const CommentSection: FC<CommentSectionProps> = ({
         <h3>
           <Pluralize count={repliesCount || 0} singularText='comment' />
         </h3>
-        <Checkbox
-          checked={showAllComments}
-          style={{ marginRight: '-8px' }}
-          onChange={e => setShowAllComments(e.target.checked)}
-        >
-          <span className='ColorMuted'>Show all comments</span>
-        </Checkbox>
+        {isWhitelisted && (
+          <Checkbox
+            checked={showAllComments}
+            style={{ marginRight: '-8px' }}
+            onChange={e => setShowAllComments(e.target.checked)}
+          >
+            <span className='ColorMuted'>Show all comments</span>
+          </Checkbox>
+        )}
       </div>
       <NewComment post={struct} asStub eventProps={{ eventSource, level: 0, isPostAuthor }} />
       <ViewCommentsTree
