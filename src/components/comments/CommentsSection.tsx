@@ -1,5 +1,6 @@
+import { Checkbox } from 'antd'
 import clsx from 'clsx'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { PostWithSomeDetails, SpaceStruct } from 'src/types'
 import { useIsMyAddress } from '../auth/MyAccountsContext'
 import { Pluralize } from '../utils/Plularize'
@@ -27,6 +28,7 @@ export const CommentSection: FC<CommentSectionProps> = ({
   } = post
   const { id, repliesCount, ownerId } = struct
   const isPostAuthor = useIsMyAddress(ownerId)
+  const [showAllComments, setShowAllComments] = useState(false)
 
   return (
     <Section
@@ -35,14 +37,24 @@ export const CommentSection: FC<CommentSectionProps> = ({
         TopBorder: withBorder,
       })}
     >
-      <h3>
-        <Pluralize count={repliesCount || 0} singularText='comment' />
-      </h3>
+      <div className='d-flex GapNormal justify-content-between align-items-center'>
+        <h3>
+          <Pluralize count={repliesCount || 0} singularText='comment' />
+        </h3>
+        <Checkbox
+          style={{ marginRight: '-8px' }}
+          onChange={e => setShowAllComments(e.target.checked)}
+        >
+          <span className='ColorMuted'>Show all comments</span>
+        </Checkbox>
+      </div>
       <NewComment post={struct} asStub eventProps={{ eventSource, level: 0, isPostAuthor }} />
       <ViewCommentsTree
+        rootPostId={id}
         eventProps={{ eventSource, level: 1, isPostAuthor }}
         parentId={id}
         directlyExpandReplies
+        showAllReplies={showAllComments}
       />
     </Section>
   )

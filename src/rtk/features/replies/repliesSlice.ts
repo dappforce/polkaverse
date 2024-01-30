@@ -8,8 +8,9 @@ import {
   ThunkApiConfig,
 } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { AccountId, PostId, PostWithSomeDetails } from 'src/types'
-import { fetchPosts } from '../posts/postsSlice'
+import { AccountId, CommentStruct, PostId, PostWithSomeDetails } from 'src/types'
+import { fetchPosts, selectPost } from '../posts/postsSlice'
+import { fetchLowValueIds } from './lowValueIdsSlice'
 
 export type ReplyIdsByPostId = {
   /** `id` is a parent id of replies. */
@@ -87,11 +88,21 @@ export const fetchPostReplyIds = createAsyncThunk<
     }
   }
 
+  let rootPostId = parentId
+  const post = selectPost(getState(), { id: parentId })
+  const struct = post?.post.struct as CommentStruct
+  if (struct.rootPostId) {
+    rootPostId = struct.rootPostId
+  }
+
   const replyIds = await api.blockchain.getReplyIdsByPostId(idToBn(parentId))
 
-  await dispatch(
-    fetchPosts({ api, withReactionByAccount: myAddress, ids: replyIds, withSpace: false }),
-  )
+  await Promise.all([
+    dispatch(
+      fetchPosts({ api, withReactionByAccount: myAddress, ids: replyIds, withSpace: false }),
+    ),
+    dispatch(fetchLowValueIds({ rootPostId })),
+  ])
 
   return [
     {
