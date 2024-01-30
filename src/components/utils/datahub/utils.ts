@@ -19,6 +19,7 @@ import ws from 'isomorphic-ws'
 import { datahubQueryUrl, datahubSubscriptionUrl } from 'src/config/env'
 import { createApolloClient } from 'src/graphql/client'
 import { wait } from 'src/utils/promise'
+import { isServerSide } from '..'
 
 dayjs.extend(utc)
 dayjs.extend(isoWeek)
@@ -53,6 +54,9 @@ export function datahubQueryRequest<T, TVariables extends OperationVariables>(
   config: QueryOptions<TVariables, T>,
 ) {
   const client = getApolloClient()
+  if (isServerSide()) {
+    config.fetchPolicy = 'no-cache'
+  }
   return client.query(config)
 }
 

@@ -12,6 +12,8 @@ import {
   useGetReactionActivities,
   useGetTweetActivities,
 } from 'src/graphql/hooks'
+import { useIsMyAddress } from '../auth/MyAccountsContext'
+import WriteSomething from '../posts/WriteSomething'
 import { Loading } from '../utils'
 import { createLoadMorePosts, FeedActivities } from './FeedActivities'
 import { createLoadMoreActivities, NotifActivities } from './Notifications'
@@ -115,9 +117,10 @@ const activityTabs = [
   'spaces',
   'all',
 ] as const
-type ActivityTab = typeof activityTabs[number]
+type ActivityTab = (typeof activityTabs)[number]
 const getTab = (tab: ActivityTab) => tab
 const OffchainAccountActivity = ({ address }: ActivitiesByAddressProps) => {
+  const isMyAddress = useIsMyAddress(address)
   const getActivityCounts = useGetActivityCounts()
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<ActivityTab>('posts')
@@ -172,7 +175,14 @@ const OffchainAccountActivity = ({ address }: ActivitiesByAddressProps) => {
   return (
     <Tabs activeKey={activeTab} onChange={onChangeTab}>
       <TabPane tab={getTabTitle('Posts', postsCount)} key={getTab('posts')}>
-        <PostActivities address={address} totalCount={postsCount} />
+        {isMyAddress ? (
+          <div className='d-flex flex-column mt-3'>
+            <WriteSomething />
+            <PostActivities address={address} totalCount={postsCount} />
+          </div>
+        ) : (
+          <PostActivities address={address} totalCount={postsCount} />
+        )}
       </TabPane>
       {(tweetsCount > 0 || haveDisplayedTweetsTab) && (
         <TabPane tab={getTabTitle('Tweets', tweetsCount)} key={getTab('tweets')}>

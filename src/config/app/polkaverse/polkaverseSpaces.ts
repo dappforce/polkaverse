@@ -47,4 +47,6 @@ export default [
   '12434',
   // PolkaWarriors
   '1573',
+  // Polkadotters
+  '10533'
 ]
