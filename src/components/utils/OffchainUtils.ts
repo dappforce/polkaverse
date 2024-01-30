@@ -3,8 +3,7 @@ import axios from 'axios'
 import config from 'src/config'
 import { AccountId, ElasticQueryParams } from 'src/types'
 
-let { offchainUrl, subIdApiUrl } = config
-subIdApiUrl = 'http://localhost:3001/api/v1'
+const { offchainUrl, subIdApiUrl } = config
 
 const log = newLogger('OffchainRequests')
 
