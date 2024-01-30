@@ -41,15 +41,15 @@ export default function ProgressModal() {
   return <InnerProgressModal />
 }
 
-const statusClassName: Record<PrevRewardStatus, string> = {
-  full: '',
+type DisplayedStatus = Exclude<PrevRewardStatus, 'none'>
+const statusClassName: Record<DisplayedStatus, string> = {
+  full: styles.Full,
   half: styles.Halfway,
-  none: styles.NoProgress,
 }
 
 const contentMap: Record<
   'lastWeek' | 'yesterday',
-  Record<PrevRewardStatus, { title: string; subtitle: string }>
+  Record<DisplayedStatus, { title: string; subtitle: string }>
 > = {
   lastWeek: {
     full: {
@@ -61,7 +61,6 @@ const contentMap: Record<
       subtitle:
         "You had some good activity last week, but you still gave up some rewards. Let's see just a little more this week!",
     },
-    none: { title: '', subtitle: '' },
   },
   yesterday: {
     full: {
@@ -74,11 +73,6 @@ const contentMap: Record<
       subtitle:
         'Good effort yesterday, but you missed out on maximum rewards. Make sure to like at least 10 posts today!',
     },
-    none: {
-      title: 'Lurker',
-      subtitle:
-        "It looks like you had a quiet day yesterday. We miss you, and hope you'll start being more active!",
-    },
   },
 }
 
@@ -90,13 +84,18 @@ function InnerProgressModal() {
 
   useEffect(() => {
     if (!data) return
-    if (data.rewardStatus === 'none' && data.period === 'WEEK') return
+    if (data.rewardStatus === 'none') return
 
     setVisible(true)
   }, [data])
 
   const isUsingLastWeekData = data?.period === 'WEEK'
   const status = data?.rewardStatus ?? 'half'
+
+  if (status === 'none') {
+    return null
+  }
+
   const usedContent = contentMap[isUsingLastWeekData ? 'lastWeek' : 'yesterday'][status]
 
   return (
