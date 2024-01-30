@@ -17,7 +17,7 @@ import { PostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { RewardHistory } from 'src/rtk/features/activeStaking/rewardHistorySlice'
 import { fetchRewardReport, RewardReport } from 'src/rtk/features/activeStaking/rewardReportSlice'
 import {
-  fetchSuperLikeCounts,
+  invalidateSuperLikeCounts,
   SuperLikeCount,
 } from 'src/rtk/features/activeStaking/superLikeCountsSlice'
 import {
@@ -49,6 +49,7 @@ export async function getSuperLikeCounts(postIds: string[]): Promise<SuperLikeCo
   >({
     query: GET_SUPER_LIKE_COUNTS,
     variables: { postIds },
+    fetchPolicy: 'network-only',
   })
 
   const resultMap = new Map<string, SuperLikeCount>()
@@ -124,6 +125,7 @@ export async function getAddressLikeCountToPosts(
   >({
     query: GET_ADDRESS_LIKE_COUNT_TO_POSTS,
     variables: { postIds, address },
+    fetchPolicy: 'network-only',
   })
 
   const resultMap = new Map<string, AddressLikeCount>()
@@ -212,6 +214,7 @@ export async function getRewardReport(address: string): Promise<RewardReport> {
   >({
     query: GET_REWARD_REPORT,
     variables: { address, ...getDayAndWeekTimestamp() },
+    fetchPolicy: 'network-only',
   })
   const weekReward = res.data.activeStakingRewardsByWeek?.[0]
 
@@ -392,7 +395,7 @@ async function processSubscriptionEvent(
   const dispatch = getStoreDispatcher()
   if (!dispatch) throw new Error('Dispatcher not exist')
 
-  dispatch(fetchSuperLikeCounts({ postIds: [post.persistentId], reload: true }))
+  dispatch(invalidateSuperLikeCounts({ postId: post.persistentId }))
   if (staker.id === myAddress) {
     dispatch(fetchRewardReport({ address: myAddress, reload: true }))
     dispatch(
