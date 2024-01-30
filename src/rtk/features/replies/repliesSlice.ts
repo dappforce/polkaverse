@@ -97,7 +97,7 @@ export const fetchPostReplyIds = createAsyncThunk<
 
   const replyIds = await api.blockchain.getReplyIdsByPostId(idToBn(parentId))
 
-  await Promise.all([
+  await Promise.allSettled([
     dispatch(
       fetchPosts({ api, withReactionByAccount: myAddress, ids: replyIds, withSpace: false }),
     ),
