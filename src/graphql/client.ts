@@ -12,8 +12,11 @@ export function getApolloClient() {
   return apolloClient
 }
 
-export const createApolloClient = (graphqlUrl: string): ApolloClient<NormalizedCacheObject> => {
-  let config: DefaultOptions = {}
+export const createApolloClient = (
+  graphqlUrl: string,
+  defaultOptions?: DefaultOptions,
+): ApolloClient<NormalizedCacheObject> => {
+  let config: DefaultOptions = defaultOptions ?? {}
   if (isServerSide()) {
     config = {
       query: {
