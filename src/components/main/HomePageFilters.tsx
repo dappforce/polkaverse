@@ -30,9 +30,9 @@ const commonFilterOption = [{ label: 'Latest', value: 'latest' }]
 //   : []
 
 export const postFilterOpt = [
-  { label: 'Featured Posts', value: 'suggested' },
+  { label: '✅ Featured Posts', value: 'suggested' },
+  { label: '🔥 Hot Posts', value: 'hot' },
   { label: 'All Posts', value: 'latest' },
-  { label: 'Hot Posts', value: 'hot' },
   // removed most liked and commented
   // ...offchainPostFilterOpt,
 ]
@@ -54,8 +54,8 @@ export const commentFilterOpt = enableGraphQl
 //   : []
 
 export const spaceFilterOpt = [
-  { label: 'Featured Creators', value: 'suggested' },
-  { label: 'Creators Staking', value: 'creators' },
+  { label: '✅ Featured Creators', value: 'suggested' },
+  { label: '📝 Creators Staking', value: 'creators' },
   // ...offchainSpaceFilterOpt,
 ]
 
@@ -139,6 +139,9 @@ export const Filters = (props: Props) => {
             >
               {filters.map(({ label, value }) => (
                 <Select.Option key={value} value={value}>
+                  {label === 'All Posts' && (
+                    <span style={{ width: '23px', display: 'inline-block' }} />
+                  )}
                   {label}
                 </Select.Option>
               ))}
