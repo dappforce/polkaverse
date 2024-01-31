@@ -14,6 +14,8 @@ export const CREATORS_CONSTANTS = {
   },
 }
 
+export const PINNED_POST_IDS = ['49731']
+
 const WHITELISTED_FOR_NEW_FEATURES = [
   '3tJYxJN55FtVeZgX4WdwieZXDp4HF62TRVj11tY2aXHdrYus',
   '3rzZpUCan9uAA9VSH12zX552Y6rfemGR3hWeeLmhNT1EGosL',
