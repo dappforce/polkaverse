@@ -1,6 +1,8 @@
 import { Col, Radio, RadioChangeEvent, Row, Select } from 'antd'
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
+import { MdVerified } from 'react-icons/md'
+import { ReactNode } from 'react-markdown'
 import config from 'src/config'
 import { useIsMyAddressWhitelisted } from 'src/config/constants'
 import LatestPostsPage from '../posts/LatestPostsPage'
@@ -29,15 +31,25 @@ const commonFilterOption = [{ label: 'Latest', value: 'latest' }]
 //     ]
 //   : []
 
-export const postFilterOpt = [
-  { label: 'Featured Posts', value: 'suggested' },
+type Filter = { label: string; value: string; icon?: ReactNode }
+
+const verifiedIcon = (
+  <MdVerified className='VerifiedIcon FontSemilarge' style={{ top: '4px', position: 'relative' }} />
+)
+
+export const postFilterOpt: Filter[] = [
+  {
+    label: 'Featured Posts',
+    icon: verifiedIcon,
+    value: 'suggested',
+  },
+  { label: 'Hot Posts', icon: '🔥', value: 'hot' },
   { label: 'All Posts', value: 'latest' },
-  { label: 'Hot Posts', value: 'hot' },
   // removed most liked and commented
   // ...offchainPostFilterOpt,
 ]
 
-export const commentFilterOpt = enableGraphQl
+export const commentFilterOpt: Filter[] = enableGraphQl
   ? [
       ...commonFilterOption,
       { label: 'Most liked', value: 'liked' },
@@ -53,13 +65,17 @@ export const commentFilterOpt = enableGraphQl
 //     ]
 //   : []
 
-export const spaceFilterOpt = [
-  { label: 'Featured Creators', value: 'suggested' },
+export const spaceFilterOpt: Filter[] = [
+  {
+    label: 'Featured Creators',
+    icon: verifiedIcon,
+    value: 'suggested',
+  },
   { label: 'Creators Staking', value: 'creators' },
   // ...offchainSpaceFilterOpt,
 ]
 
-export const dateFilterOpt = [
+export const dateFilterOpt: Filter[] = [
   { label: '1 day', value: 'day' },
   { label: '7 days', value: 'week' },
   { label: '30 days', value: 'month' },
@@ -115,7 +131,7 @@ export const Filters = (props: Props) => {
 
   let filters = filterByKey[tabKey]
   if (!isWhitelisted && tabKey === 'posts') {
-    filters = filters.slice(0, -1)
+    filters = filters.filter(({ value }) => value !== 'hot')
   }
 
   return (
@@ -124,7 +140,15 @@ export const Filters = (props: Props) => {
         {!isMobile ? (
           <Col className={needDateFilter ? style.DfCol : 'ant-col-24'}>
             <Radio.Group
-              options={filters}
+              options={filters.map(({ label, value, icon }) => ({
+                label: (
+                  <span>
+                    <span className='mr-1'>{icon}</span>
+                    {label}
+                  </span>
+                ),
+                value,
+              }))}
               onChange={onChangeWrap(onFilterChange)}
               value={type}
               optionType={'button'}
@@ -137,9 +161,10 @@ export const Filters = (props: Props) => {
               onChange={onFilterChange}
               className={clsx('w-100', style.FilterSelect)}
             >
-              {filters.map(({ label, value }) => (
+              {filters.map(({ label, value, icon }) => (
                 <Select.Option key={value} value={value}>
                   {label}
+                  {icon && <span className='ml-1'>{icon}</span>}
                 </Select.Option>
               ))}
             </Select>

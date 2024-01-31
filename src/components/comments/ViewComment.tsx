@@ -37,6 +37,7 @@ type Props = {
   comment: PostWithSomeDetails
   withShowReplies?: boolean
   eventProps: CommentEventProps
+  showAllReplies: boolean
 }
 
 export const InnerViewComment: FC<Props> = props => {
@@ -46,6 +47,7 @@ export const InnerViewComment: FC<Props> = props => {
     comment: commentDetails,
     withShowReplies = false,
     eventProps,
+    showAllReplies,
   } = props
 
   const { post: comment } = commentDetails
@@ -187,8 +189,10 @@ export const InnerViewComment: FC<Props> = props => {
             {hasReplies && (
               <div className='pb-2'>
                 {!withShowReplies && <ViewRepliesLink />}
-                {showReplies && (
+                {showReplies && rootPost?.id && (
                   <ViewCommentsTree
+                    rootPostId={rootPost.id}
+                    showAllReplies={showAllReplies}
                     eventProps={{ ...eventProps, level: eventProps.level + 1 }}
                     parentId={commentStruct.id}
                   />

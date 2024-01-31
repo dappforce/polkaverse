@@ -48,5 +48,7 @@ export default [
   // PolkaWarriors
   '1573',
   // Polkadotters
-  '10533'
+  '10533',
+  // olehmell
+  '3',
 ]
