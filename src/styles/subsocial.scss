@@ -965,6 +965,7 @@ hr {
 .DfPostPreview {
   display: flex;
   flex-direction: column;
+  position: relative;
 
   .ui.button {
     min-width: initial;

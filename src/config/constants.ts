@@ -15,6 +15,9 @@ export const CREATORS_CONSTANTS = {
 }
 
 export const PINNED_POST_IDS = ['49731']
+export function isPinnedPost(postId: string) {
+  return PINNED_POST_IDS.includes(postId)
+}
 
 const WHITELISTED_FOR_NEW_FEATURES = [
   '3tJYxJN55FtVeZgX4WdwieZXDp4HF62TRVj11tY2aXHdrYus',
