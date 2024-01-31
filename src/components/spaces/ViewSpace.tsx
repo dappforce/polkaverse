@@ -179,19 +179,18 @@ export const InnerViewSpace = (props: Props) => {
   const title = React.createElement(
     preview ? 'span' : 'h1',
     { className: 'header' },
-    <span className='d-flex align-items-center'>
+    <span className='text-wrap-balance'>
       <ViewSpaceLink
         space={space}
         title={
           <>
             <span className='DfUnboundedTitle'>{spaceName}</span>
-            <OfficialSpaceStatus space={space} />
+            <OfficialSpaceStatus space={space} className='!d-inline' />
             <MyEntityLabel isMy={isMy} className='ml-2'>
               {spaceId === initialSpaceData?.id ? 'My profile' : 'My space'}
             </MyEntityLabel>
           </>
         }
-        className='d-flex align-items-center'
         {...props}
       />
     </span>,
@@ -208,90 +207,106 @@ export const InnerViewSpace = (props: Props) => {
     setChatOpen(true)
   }
 
-  const renderPreview = () => (
-    <div className={primaryClass}>
-      <div className='DfSpaceBody'>
-        <Avatar />
-        <div className='ml-2 w-100'>
-          <div className='d-flex justify-content-between align-items-center'>
-            {title}
-            <span className='d-flex align-items-center GapTiny ml-2'>
-              <SpaceDropdownMenu spaceOwnerId={space.ownerId} spaceData={spaceData} />
-              {!isMobile && isMy && (
-                <ButtonLink
-                  href={'/[spaceId]/edit'}
-                  as={editSpaceUrl(space)}
-                  className='bg-transparent'
-                >
-                  <EditOutlined /> Edit
-                </ButtonLink>
-              )}
+  const previewButtons = (size: 'small' | 'middle' = 'middle') => (
+    <div className='d-flex align-items-center GapTiny'>
+      {!isMobile && isMy && (
+        <ButtonLink
+          size={size}
+          href={'/[spaceId]/edit'}
+          as={editSpaceUrl(space)}
+          className='bg-transparent'
+        >
+          <EditOutlined /> Edit
+        </ButtonLink>
+      )}
 
-              {!isMobile && isCreatorSpace && (
-                <Button type='primary' ghost onClick={toggleCreatorChat}>
-                  Creator Chat
-                </Button>
-              )}
+      {!isMobile && isCreatorSpace && (
+        <Button size={size} type='primary' ghost onClick={toggleCreatorChat}>
+          Creator Chat
+        </Button>
+      )}
 
-              {withFollowButton && (
-                <div
-                  onClick={() =>
-                    sendEvent('follow', {
-                      spaceId: space.id,
-                      eventSource: 'space',
-                      amountRange: getAmountRange(totalStake?.amount),
-                    })
-                  }
-                >
-                  <FollowSpaceButton ghost={false} space={space} />
+      {withFollowButton && (
+        <div
+          onClick={() =>
+            sendEvent('follow', {
+              spaceId: space.id,
+              eventSource: 'space',
+              amountRange: getAmountRange(totalStake?.amount),
+            })
+          }
+        >
+          <FollowSpaceButton size={size} ghost={false} space={space} />
+        </div>
+      )}
+    </div>
+  )
+  const spaceAbout = (
+    <div>
+      {nonEmptyStr(about) && (
+        <div className='description mt-2 d-block FontSmall'>
+          {showFullAbout || !collapseAbout ? (
+            <>
+              <DfMd source={content.about} className='FontSmall' />
+              {!showFullAbout && (
+                <div className='DfBlackLink font-weight-semibold mt-1' onClick={onToggleShow}>
+                  Show Less
                 </div>
               )}
-            </span>
-          </div>
-
-          {nonEmptyStr(about) && (
-            <div className='description mt-2 d-block FontSmall'>
-              {showFullAbout || !collapseAbout ? (
-                <>
-                  <DfMd source={content.about} className='FontSmall' />
-                  {!showFullAbout && (
-                    <div className='DfBlackLink font-weight-semibold mt-1' onClick={onToggleShow}>
-                      Show Less
-                    </div>
-                  )}
-                </>
-              ) : (
-                <ViewSpaceLink
-                  space={space}
-                  className='description mt-2 d-block'
-                  title={
-                    <SummarizeMd
-                      content={content}
-                      className='FontSmall'
-                      more={
-                        <span
-                          className='DfBlackLink font-weight-semibold FontSmall'
-                          onClick={onToggleShow}
-                        >
-                          Show More
-                        </span>
-                      }
-                    />
+            </>
+          ) : (
+            <ViewSpaceLink
+              space={space}
+              className='description mt-2 d-block'
+              title={
+                <SummarizeMd
+                  content={content}
+                  className='FontSmall'
+                  more={
+                    <span
+                      className='DfBlackLink font-weight-semibold FontSmall'
+                      onClick={onToggleShow}
+                    >
+                      Show More
+                    </span>
                   }
                 />
-              )}
-            </div>
-          )}
-
-          {withTags && <ViewTags tags={tags} className='mt-2' />}
-
-          {withStats && (
-            <span className='d-flex justify-content-between flex-wrap mt-3'>
-              <SpaceStatsRow space={space} />
-              {!preview && <ContactInfo {...contactInfo} />}
-            </span>
+              }
+            />
           )}
         </div>
+      )}
+
+      {withTags && <ViewTags tags={tags} className='mt-2' />}
+
+      {withStats && (
+        <span className='d-flex justify-content-between flex-wrap mt-3'>
+          <SpaceStatsRow space={space} />
+          {!preview && <ContactInfo {...contactInfo} />}
+        </span>
+      )}
+    </div>
+  )
+  const renderPreview = () => (
+    <div className={primaryClass}>
+      <div className='d-flex flex-column w-100'>
+        <div className={clsx('DfSpaceBody w-100')}>
+          <Avatar />
+          <div className={clsx('ml-2 w-100', isMobile && 'mt-1')}>
+            <div className='d-flex flex-column GapTiny'>
+              <div className={clsx('d-flex justify-content-between align-items-center')}>
+                {title}
+                <span className='d-flex align-items-center GapTiny ml-2'>
+                  <SpaceDropdownMenu spaceOwnerId={space.ownerId} spaceData={spaceData} />
+                  {!isMobile && previewButtons('middle')}
+                </span>
+              </div>
+              {isMobile && previewButtons('middle')}
+            </div>
+            {!isMobile && spaceAbout}
+          </div>
+        </div>
+        {isMobile && <div className='mt-1'>{spaceAbout}</div>}
       </div>
     </div>
   )

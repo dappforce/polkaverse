@@ -59,7 +59,7 @@ export const OfficialSpaceStatus = ({
 
   const content = (
     <>
-      <Tooltip title={title} className='mr-2'>
+      <Tooltip title={title} className={clsx('mr-2', className)}>
         {icon}
       </Tooltip>
       {!isClaimed && !isMobile && claimSpaceLink}
