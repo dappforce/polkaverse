@@ -116,11 +116,11 @@ export async function getUserStatistics({ address }: { address: string }): Promi
       staker: {
         reward: string
         rankIndex: number
-      }
+      } | null
       creator: {
         reward: string
         rankIndex: number
-      }
+      } | null
       activeStakingAccountActivityMetricsForFixedPeriod: {
         staker: {
           likedCreators: number
@@ -146,11 +146,11 @@ export async function getUserStatistics({ address }: { address: string }): Promi
     address,
     creator: {
       ...res.data.activeStakingAccountActivityMetricsForFixedPeriod.creator,
-      rank: res.data.creator.rankIndex,
+      rank: res.data.creator?.rankIndex,
     },
     staker: {
       ...res.data.activeStakingAccountActivityMetricsForFixedPeriod.staker,
-      rank: res.data.staker.rankIndex,
+      rank: res.data.staker?.rankIndex,
     },
   }
 }

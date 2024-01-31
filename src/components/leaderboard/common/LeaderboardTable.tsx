@@ -30,7 +30,7 @@ import styles from './LeaderboardTable.module.sass'
 export type LeaderboardTableProps = ComponentProps<'div'> & {
   role: LeaderboardRole
   currentUserRank?: {
-    rank: number
+    rank?: number
     reward: string
     address: string
   }
@@ -55,7 +55,7 @@ export default function LeaderboardTable({
     addresses: string[]
     slicedData: typeof data
   }>(() => {
-    if (!currentUserRank || currentUserRank.rank < TABLE_LIMIT) {
+    if (!currentUserRank || (currentUserRank?.rank ?? 0) < TABLE_LIMIT) {
       return {
         addresses: data.slice(0, TABLE_LIMIT).map(row => row.address),
         slicedData: data.slice(0, TABLE_LIMIT),
@@ -161,7 +161,7 @@ function UserRow({
           '!ColorNormal',
         )}
       >
-        <MutedSpan>{data.rank + 1}</MutedSpan>
+        <MutedSpan>{data?.rank !== undefined && data.rank + 1}</MutedSpan>
         <div className='d-flex align-items-center' style={{ minWidth: 0, height: '41px' }}>
           {isLoading ? (
             <>
