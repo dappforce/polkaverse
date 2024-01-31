@@ -7,6 +7,7 @@ import axios from 'axios'
 import dayjs from 'dayjs'
 import { gql as gqlRequest } from 'graphql-request'
 import gql from 'graphql-tag'
+import { CREATORS_CONSTANTS } from 'src/config/constants'
 import { getStoreDispatcher } from 'src/rtk/app/store'
 import {
   AddressLikeCount,
@@ -14,6 +15,7 @@ import {
 } from 'src/rtk/features/activeStaking/addressLikeCountSlice'
 import { CanPostSuperLiked } from 'src/rtk/features/activeStaking/canPostSuperLikedSlice'
 import { PostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
+import { PrevReward, PrevRewardStatus } from 'src/rtk/features/activeStaking/prevRewardSlice'
 import { RewardHistory } from 'src/rtk/features/activeStaking/rewardHistorySlice'
 import { fetchRewardReport, RewardReport } from 'src/rtk/features/activeStaking/rewardReportSlice'
 import {
@@ -315,6 +317,131 @@ export async function getSuperLikesStats(period: number): Promise<SuperLikesStat
   return {
     data: res.data.activeStakingSuperLikeCountsByDate.byDate,
     total: res.data.activeStakingSuperLikeCountsByDate.total,
+  }
+}
+
+const GET_USER_YESTERDAY_REWARD = gql`
+  query GetUserYesterdayReward($address: String!, $timestamp: String!) {
+    activeStakingAccountActivityMetricsForFixedPeriod(
+      args: {
+        address: $address
+        period: DAY
+        periodValue: $timestamp
+        staker: { likedPosts: true, earnedByPeriod: true }
+      }
+    ) {
+      staker {
+        likedPosts
+        earnedByPeriod
+      }
+    }
+  }
+`
+const GET_USER_LAST_WEEK_REWARD = gql`
+  query GetUserLastWeekReward($address: String!, $timestamp: String!) {
+    activeStakingAccountActivityMetricsForFixedPeriod(
+      args: {
+        address: $address
+        period: WEEK
+        periodValue: $timestamp
+        staker: { earnedByPeriod: true, likedPostsByDay: true }
+      }
+    ) {
+      staker {
+        earnedByPeriod
+        likedPostsByDay {
+          dayUnixTimestamp
+          count
+        }
+      }
+    }
+  }
+`
+export async function getUserPrevReward({ address }: { address: string }): Promise<PrevReward> {
+  const yesterday = dayjs.utc().subtract(1, 'day')
+  const isLastWeek = yesterday.isoWeek() !== dayjs.utc().isoWeek()
+  const { day, week } = getDayAndWeekTimestamp(yesterday.toDate())
+
+  if (isLastWeek) {
+    const res = await datahubQueryRequest<
+      {
+        activeStakingAccountActivityMetricsForFixedPeriod: {
+          staker: {
+            earnedByPeriod: string
+            likedPostsByDay: {
+              dayUnixTimestamp: string
+              count: number
+            }[]
+          }
+        }
+      },
+      { address: string; timestamp: string }
+    >({
+      query: GET_USER_LAST_WEEK_REWARD,
+      variables: {
+        address,
+        timestamp: week.toString(),
+      },
+    })
+    const data = res.data.activeStakingAccountActivityMetricsForFixedPeriod
+
+    let rewardStatus: PrevRewardStatus = 'half'
+    let has0Activity = true
+    let hasFullActivity = true
+    let totalLikes = 0
+    data.staker.likedPostsByDay.forEach(({ count }) => {
+      totalLikes += count
+      if (count > 0) has0Activity = false
+      if (count < CREATORS_CONSTANTS.SUPER_LIKES_FOR_MAX_REWARD) hasFullActivity = false
+    })
+    if (hasFullActivity) rewardStatus = 'full'
+    else if (has0Activity) rewardStatus = 'none'
+
+    return {
+      address,
+      period: 'WEEK',
+      earned: data.staker.earnedByPeriod,
+      likedPosts: totalLikes,
+      rewardStatus,
+    }
+  } else {
+    const res = await datahubQueryRequest<
+      {
+        activeStakingAccountActivityMetricsForFixedPeriod: {
+          staker: {
+            likedPosts: number
+            earnedByPeriod: string
+          }
+        }
+      },
+      { address: string; timestamp: string }
+    >({
+      query: GET_USER_YESTERDAY_REWARD,
+      variables: {
+        address,
+        timestamp: day.toString(),
+      },
+    })
+    const data = res.data.activeStakingAccountActivityMetricsForFixedPeriod
+
+    let rewardStatus: PrevRewardStatus = 'full'
+    let missedReward: string | undefined
+    if (data.staker.likedPosts === 0) rewardStatus = 'none'
+    else if (data.staker.likedPosts < CREATORS_CONSTANTS.SUPER_LIKES_FOR_MAX_REWARD) {
+      rewardStatus = 'half'
+      const rewardPerLike = BigInt(data.staker.earnedByPeriod) / BigInt(data.staker.likedPosts)
+      const missedLikes = CREATORS_CONSTANTS.SUPER_LIKES_FOR_MAX_REWARD - data.staker.likedPosts
+      missedReward = (rewardPerLike * BigInt(missedLikes)).toString()
+    }
+
+    return {
+      address,
+      period: 'DAY',
+      earned: data.staker.earnedByPeriod,
+      likedPosts: data.staker.likedPosts,
+      rewardStatus,
+      missedReward,
+    }
   }
 }
 

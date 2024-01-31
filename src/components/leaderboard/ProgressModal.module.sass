@@ -1,0 +1,43 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.ProgressModal
+  border-radius: $border_radius_huge
+  display: flex
+  flex-direction: column
+  align-items: center
+  padding: $space_large $space_big
+  gap: $space_big
+  color: white
+  position: relative
+
+  &.Full
+    background: linear-gradient(180deg, #9340E6 0%, #7534A9 100%)
+
+  &.Halfway
+    background: linear-gradient(180deg, #F77400 0%, #F57F00 100%)
+
+  .DiamondIcon
+    font-size: 130px
+    position: absolute
+    top: -$space_normal
+    right: -$space_normal
+
+  .RewardCard
+    display: flex
+    flex-direction: column
+    align-items: center
+    border-radius: $border_radius_large
+    background: rgba(248, 250, 252, 0.10)
+    backdrop-filter: blur(24.5px)
+    flex: 1
+    padding: $space_normal
+    position: relative
+
+    .Diamond
+      width: 44px
+      height: 44px
+      position: absolute
+      top: 0
+      right: 0
+      transform: translate(35%, -50%) rotate(-30deg)
+      transform-origin: center

@@ -50,5 +50,5 @@ export default [
   // Polkadotters
   '10533',
   // olehmell
-  '3'
+  '3',
 ]

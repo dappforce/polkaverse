@@ -15,15 +15,12 @@ type OptionsType = {
 
 export const twitterShareUrl = (url: string, text?: string, options?: OptionsType) => {
   const tags = options?.tags
-  const textVal = text ? `text=${text}` : ''
+  const textVal = text ? `text=${encodeURIComponent(text)}` : ''
   const resolvedUrl = fullUrl(url, options?.externalBaseUrl)
 
-  return encodeURI(
-    `https://twitter.com/intent/tweet?${textVal}&url=${resolvedUrl + '\n\n'}&hashtags=${[
-      SUBSOCIAL_TAGS,
-      ...(tags || []),
-    ]}&original_referer=${url}`,
-  )
+  return `https://twitter.com/intent/tweet?${textVal}&url=${encodeURIComponent(
+    resolvedUrl + '\n\n',
+  )}&hashtags=${[...SUBSOCIAL_TAGS, ...(tags || [])].filter(Boolean)}&original_referer=${url}`
 }
 
 export const linkedInShareUrl = (url: string, title?: string, summary?: string) => {
