@@ -3,6 +3,14 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 
 export const ESTIMATED_ENERGY_FOR_ONE_TX = 100_000_000
 export const MINIMUM_STAKE = BigInt(2_000_00000_00000) // 2k SUB
+export function getNeededStake(currentStake: string | undefined) {
+  try {
+    const neededStake = MINIMUM_STAKE - BigInt(currentStake ?? '0')
+    return neededStake > 0 ? neededStake : MINIMUM_STAKE
+  } catch {
+    return MINIMUM_STAKE
+  }
+}
 
 // distribution is at the start of monday, dayjs week starts from sunday: 0, monday: 1, ...
 const DISTRIBUTION_DAY = 0

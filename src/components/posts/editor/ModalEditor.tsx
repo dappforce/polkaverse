@@ -23,7 +23,7 @@ import { getNonEmptyPostContent } from 'src/components/utils/content'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import SelectSpacePreview from 'src/components/utils/SelectSpacePreview'
 import TxButton from 'src/components/utils/TxButton'
-import { MINIMUM_STAKE } from 'src/config/constants'
+import { getNeededStake } from 'src/config/constants'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import {
@@ -249,7 +249,7 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
   const { data } = useFetchTotalStake(myAddress ?? '')
   const hasStaked = data?.hasStaked
 
-  const neededStake = MINIMUM_STAKE - BigInt(data?.amount ?? '0')
+  const neededStake = getNeededStake(data?.amount)
 
   const sendEvent = useSendEvent()
 
@@ -288,7 +288,7 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
               )
             }
 
-            if (neededStake < 0) {
+            if (neededStake > 0) {
               return (
                 <p>
                   To start earning SUB rewards, increase your stake by at least{' '}
