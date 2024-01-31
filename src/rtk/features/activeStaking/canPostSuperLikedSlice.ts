@@ -6,6 +6,9 @@ import { createSimpleManyFetchWrapper } from 'src/rtk/app/wrappers'
 export type CanPostSuperLiked = {
   postId: string
   canPostSuperLiked: boolean
+  validByCreationDate: boolean
+  validByCreatorMinStake: boolean
+  validByLowValue: boolean
   isExist?: boolean
 }
 

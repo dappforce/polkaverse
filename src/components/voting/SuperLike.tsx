@@ -51,7 +51,8 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const spaceId = post.spaceId
   const amIFollower = useAmISpaceFollower(spaceId)
 
-  const { isExist, canPostSuperLiked } = useCanPostSuperLiked(post.id)
+  const { isExist, canPostSuperLiked, validByCreatorMinStake, validByLowValue } =
+    useCanPostSuperLiked(post.id)
 
   const [isOpenShouldStakeModal, setIsOpenShouldStakeModal] = useState(false)
   const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
@@ -64,8 +65,8 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const isMyPost = post.ownerId === myAddress
 
   const isActive = hasILiked
-  const isPostCreatedMoreThan1Week = !clientCanPostSuperLiked || !canPostSuperLiked
-  const isDisabled = isPostCreatedMoreThan1Week || isMyPost || loadingTotalStake
+  const canBeSuperliked = clientCanPostSuperLiked && canPostSuperLiked
+  const isDisabled = canBeSuperliked || isMyPost || loadingTotalStake
 
   const { openSignInModal } = useAuth()
 
@@ -129,8 +130,11 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   if (isMyPost) tooltipTitle = `You cannot like your own ${entity}`
   else if (!isExist)
     tooltipTitle = `This ${entity} is still being minted, please wait a few seconds`
-  else if (isPostCreatedMoreThan1Week)
-    tooltipTitle = `You cannot like ${entity}s that are older than 7 days`
+  else if (!validByCreatorMinStake)
+    tooltipTitle = `This ${entity} cannot be liked because its author has not yet staked the minimum amount of SUB.`
+  else if (!validByLowValue)
+    tooltipTitle = `This ${entity} cannot be liked because it's marked as low value content`
+  else if (!canBeSuperliked) tooltipTitle = `You cannot like ${entity}s that are older than 7 days`
 
   const button = (
     <div>

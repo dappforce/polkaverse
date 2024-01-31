@@ -146,7 +146,9 @@ const GET_CAN_POSTS_SUPER_LIKED = gql`
   query GetCanPostsSuperLiked($postIds: [String!]!) {
     activeStakingCanDoSuperLikeByPost(args: { postPersistentIds: $postIds }) {
       persistentPostId
-      possible
+      validByCreationDate
+      validByCreatorMinStake
+      validByLowValue
     }
   }
 `
@@ -155,7 +157,9 @@ export async function getCanPostsSuperLiked(postIds: string[]): Promise<CanPostS
     {
       activeStakingCanDoSuperLikeByPost: {
         persistentPostId: string
-        possible: boolean
+        validByCreationDate: boolean
+        validByCreatorMinStake: boolean
+        validByLowValue: boolean
       }[]
     },
     { postIds: string[] }
@@ -168,13 +172,25 @@ export async function getCanPostsSuperLiked(postIds: string[]): Promise<CanPostS
   res.data.activeStakingCanDoSuperLikeByPost.forEach(item =>
     resultMap.set(item.persistentPostId, {
       postId: item.persistentPostId,
-      canPostSuperLiked: item.possible,
+      canPostSuperLiked:
+        item.validByCreationDate && item.validByCreatorMinStake && item.validByLowValue,
+      validByCreationDate: item.validByCreationDate,
+      validByCreatorMinStake: item.validByCreatorMinStake,
+      validByLowValue: item.validByLowValue,
       isExist: true,
     }),
   )
 
   return postIds.map(
-    postId => resultMap.get(postId) ?? { postId, canPostSuperLiked: false, isExist: false },
+    postId =>
+      resultMap.get(postId) ?? {
+        postId,
+        canPostSuperLiked: false,
+        isExist: false,
+        validByCreationDate: false,
+        validByCreatorMinStake: false,
+        validByLowValue: false,
+      },
   )
 }
 
