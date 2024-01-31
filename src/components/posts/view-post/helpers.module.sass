@@ -11,3 +11,23 @@
 
   @media screen and ( max-width: 768px)
     gap: $space_tiny
+
+.PostNotEnoughMinStakeAlert
+  --spacing: 1.25rem
+
+  @media screen and (max-width: 768px)
+    --spacing: 1rem
+    
+  margin: calc(var(--spacing) * -1)
+  margin-top: $space_normal
+  background: #FFFBE6
+  display: flex
+  justify-content: space-between
+  padding: $space_tiny var(--spacing)
+  border-top: 1px solid #F3E8AC
+  border-radius: 0 0 $border_radius_huge $border_radius_huge
+  font-size: $font_small
+
+  svg
+    color: #FAAD14
+    font-size: $font_normal

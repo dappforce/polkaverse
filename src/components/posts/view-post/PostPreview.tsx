@@ -2,6 +2,7 @@ import { newLogger } from '@subsocial/utils'
 import { Segment } from 'src/components/utils/Segment'
 import { PostWithAllDetails, PostWithSomeDetails, SpaceData } from 'src/types'
 import { HiddenPostAlert, RegularPreview, SharedPreview, useIsUnlistedPost } from '.'
+import PostNotEnoughMinStakeAlert from './helpers'
 
 const log = newLogger('ViewPost')
 
@@ -44,6 +45,7 @@ export function PostPreview(props: PreviewProps) {
       ) : (
         <RegularPreview space={space} {...props} />
       )}
+      <PostNotEnoughMinStakeAlert post={post} />
     </Segment>
   )
 }

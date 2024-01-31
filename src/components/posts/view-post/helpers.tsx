@@ -5,8 +5,9 @@ import { Alert, Button, Image, Tooltip } from 'antd'
 import clsx from 'clsx'
 import isEmpty from 'lodash.isempty'
 import Error from 'next/error'
+import Link from 'next/link'
 import React, { FC, useState } from 'react'
-import { TbMessageCircle2 } from 'react-icons/tb'
+import { TbCoins, TbMessageCircle2 } from 'react-icons/tb'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
 import SpacePreviewPopup from 'src/components/spaces/SpacePreviewPopup'
@@ -23,6 +24,7 @@ import { resolveIpfsUrl } from 'src/ipfs'
 import messages from 'src/messages'
 import { isBlockedPost } from 'src/moderation'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
+import { useCanPostSuperLiked } from 'src/rtk/features/activeStaking/hooks'
 import {
   PostContent as PostContentType,
   PostData,
@@ -32,6 +34,7 @@ import {
   SpaceStruct,
 } from 'src/types'
 import { getTimeRelativeToNow } from 'src/utils/date'
+import { activeStakingLinks } from 'src/utils/links'
 import { RegularPreview } from '.'
 import { useSelectSpace } from '../../../rtk/features/spaces/spacesHooks'
 import { useIsMyAddress } from '../../auth/MyAccountsContext'
@@ -498,3 +501,25 @@ export const PostNotFoundPage = () => <Error statusCode={404} title='Post not fo
 export const MaintenancePage = () => (
   <Error statusCode={503} title={maintenanceMsg || messages.errors.maintenance} />
 )
+
+export default function PostNotEnoughMinStakeAlert({ post }: { post: PostStruct }) {
+  const { isExist, validByCreatorMinStake } = useCanPostSuperLiked(post.id)
+  const isMyPost = useIsMyAddress(post.ownerId)
+
+  if (!isMyPost) return null
+  if (isExist && !validByCreatorMinStake) return null
+
+  return (
+    <div className={styles.PostNotEnoughMinStakeAlert}>
+      <div className='d-flex align-items-center GapTiny'>
+        <TbCoins />
+        <span>This post could earn SUB rewards.</span>
+      </div>
+      <Link href={activeStakingLinks.learnMore}>
+        <a target='_blank' className='DfLink'>
+          Learn How
+        </a>
+      </Link>
+    </div>
+  )
+}
