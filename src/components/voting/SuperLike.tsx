@@ -66,7 +66,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
 
   const isActive = hasILiked
   const canBeSuperliked = clientCanPostSuperLiked && canPostSuperLiked
-  const isDisabled = canBeSuperliked || isMyPost || loadingTotalStake
+  const isDisabled = !canBeSuperliked || isMyPost || loadingTotalStake
 
   const { openSignInModal } = useAuth()
 
