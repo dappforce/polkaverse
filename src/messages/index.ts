@@ -93,7 +93,7 @@ export default {
   },
   spaces: {
     offical: {
-      officialSpace: 'Official space',
+      officialSpace: 'Verified space',
       unclaimedSpace: 'Claim ownership is pending',
     },
   },
