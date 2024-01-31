@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import isEmpty from 'lodash.isempty'
 import Error from 'next/error'
 import React, { FC, useState } from 'react'
-import { RiPushpinLine } from 'react-icons/ri'
+import { RiPushpin2Fill } from 'react-icons/ri'
 import { TbMessageCircle2 } from 'react-icons/tb'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
@@ -505,5 +505,13 @@ export function PinnedPostIcon({ postId }: { postId: string }) {
   const isPinned = isPinnedPost(postId)
   if (!isPinned) return null
 
-  return <RiPushpinLine className={styles.PinnedPostIcon} />
+  return (
+    <div
+      className='d-flex align-items-center GapTiny ColorMuted mb-1 FontWeightSemibold'
+      style={{ marginTop: '-12px' }}
+    >
+      <RiPushpin2Fill />
+      <span>Pinned</span>
+    </div>
+  )
 }
