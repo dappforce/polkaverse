@@ -164,24 +164,26 @@ export const InnerViewComment: FC<Props> = props => {
               <CommentBody comment={asCommentData(comment)} />
             )}
           </div>
-          <div className='d-flex align-items-center GapSmall mt-1.5'>
-            <SuperLike
-              isComment
-              key={`voters-of-comments-${id}`}
-              className='!FontTiny'
-              iconClassName='!FontSmall'
-              post={commentStruct}
-            />
-            <Button
-              key={`reply-comment-${id}`}
-              className='p-0'
-              style={{ border: 'none', boxShadow: 'none', background: 'transparent' }}
-              onClick={() => setShowReplyForm(true)}
-            >
-              <span className='d-flex align-items-center ColorMuted'>
-                <IconWithLabel icon={<TbMessageCircle2 className='FontNormal' />} label='Reply' />
-              </span>
-            </Button>
+          <div className='d-flex align-items-center mt-1.5' style={{ flexWrap: 'wrap-reverse' }}>
+            <div className='d-flex align-items-center GapSmall mr-2'>
+              <SuperLike
+                isComment
+                key={`voters-of-comments-${id}`}
+                className='!FontTiny'
+                iconClassName='!FontSmall'
+                post={commentStruct}
+              />
+              <Button
+                key={`reply-comment-${id}`}
+                className='p-0'
+                style={{ border: 'none', boxShadow: 'none', background: 'transparent' }}
+                onClick={() => setShowReplyForm(true)}
+              >
+                <span className='d-flex align-items-center ColorMuted'>
+                  <IconWithLabel icon={<TbMessageCircle2 className='FontNormal' />} label='Reply' />
+                </span>
+              </Button>
+            </div>
             <PostRewardStat postId={comment.id} style={{ marginLeft: 'auto' }} />
           </div>
           <div className='mt-1.5 d-flex flex-column'>
