@@ -11,6 +11,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AiFillInfoCircle } from 'react-icons/ai'
 import { BiImage } from 'react-icons/bi'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import { FormatBalance } from 'src/components/common/balances'
 import { htmlToMd } from 'src/components/editor/tiptap'
 import { getNewIdFromEvent, getTxParams } from 'src/components/substrate'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
@@ -22,6 +23,7 @@ import { getNonEmptyPostContent } from 'src/components/utils/content'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import SelectSpacePreview from 'src/components/utils/SelectSpacePreview'
 import TxButton from 'src/components/utils/TxButton'
+import { MINIMUM_STAKE } from 'src/config/constants'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import {
@@ -247,6 +249,8 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
   const { data } = useFetchTotalStake(myAddress ?? '')
   const hasStaked = data?.hasStaked
 
+  const neededStake = MINIMUM_STAKE - BigInt(data?.amount ?? '0')
+
   const sendEvent = useSendEvent()
 
   return (
@@ -266,37 +270,58 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
       <div className={styles.InfoPanel}>
         <div className={styles.InfoPanelContent}>
           <div className={styles.Title}>
-            <AiFillInfoCircle />
-            <span>Post to Earn</span>
+            <div className='d-flex align-items-center GapTiny'>
+              <AiFillInfoCircle />
+              <span>Post to Earn</span>
+            </div>
+            <Button shape='round' type='primary' href={getSubIdCreatorsLink()} target='_blank'>
+              Stake SUB
+            </Button>
           </div>
-          {hasStaked ? (
-            <p>
-              You can receive extra SUB when others like your content. Share your posts around the
-              internet to get more exposure and rewards.{' '}
-              <Link href={activeStakingLinks.learnMore}>
-                <a
-                  className='FontWeightMedium'
-                  target='_blank'
-                  onClick={() =>
-                    sendEvent('astake_banner_learn_more', { eventSource: 'fastEditor' })
-                  }
-                >
-                  How does it work?
-                </a>
-              </Link>
-            </p>
-          ) : (
-            <p>
-              You can receive extra SUB when others like your content. However, you need to first
-              stake some SUB to become eligible.
-            </p>
-          )}
+          {(() => {
+            if (!hasStaked) {
+              return (
+                <p>
+                  You can receive extra SUB when others like your posts or comments. However, you
+                  need to first stake at least 2,000 SUB to become eligible.
+                </p>
+              )
+            }
+
+            if (neededStake < 0) {
+              return (
+                <p>
+                  To start earning SUB rewards, increase your stake by at least{' '}
+                  <FormatBalance
+                    value={neededStake.toString()}
+                    decimals={10}
+                    currency='SUB'
+                    precision={2}
+                  />
+                  .
+                </p>
+              )
+            }
+
+            return (
+              <p>
+                You can receive extra SUB when others like your content. Share your posts around the
+                internet to get more exposure and rewards.{' '}
+                <Link href={activeStakingLinks.learnMore}>
+                  <a
+                    className='FontWeightMedium'
+                    target='_blank'
+                    onClick={() =>
+                      sendEvent('astake_banner_learn_more', { eventSource: 'fastEditor' })
+                    }
+                  >
+                    How does it work?
+                  </a>
+                </Link>
+              </p>
+            )
+          })()}
         </div>
-        {!hasStaked && (
-          <Button shape='round' type='primary' href={getSubIdCreatorsLink()} target='_blank'>
-            Stake SUB
-          </Button>
-        )}
       </div>
     </Modal>
   )
