@@ -6,7 +6,7 @@ import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 export type LeaderboardData = {
   total: number
   page: number
-  data: { reward: string; rank: number; address: string }[]
+  data: { reward: string; rank?: number; address: string }[]
   hasMore: boolean
   role: LeaderboardRole
 }
