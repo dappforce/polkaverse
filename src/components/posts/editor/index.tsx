@@ -17,6 +17,7 @@ import { postUrl } from 'src/components/urls'
 import { Loading } from 'src/components/utils'
 import { getNonEmptyPostContent } from 'src/components/utils/content'
 import NoData from 'src/components/utils/EmptyList'
+import config from 'src/config'
 import { WriteAccessRequired } from 'src/moderation'
 import {
   useCreateCheckSpacePermission,
@@ -58,7 +59,13 @@ function EditPostForm(props: PostFormProps) {
   const { ipfs } = useSubsocialApi()
   const [IpfsCid, setIpfsCid] = useState<IpfsCid>()
   const blocked = useAmIBlocked()
+
   const { savedData, clearDraft } = useAutoSaveFromForm({ entity: 'post' })
+  const queryImage = router.query.image
+  if (typeof queryImage === 'string' && queryImage.startsWith(config.ipfsNodeUrl)) {
+    savedData.image = queryImage
+  }
+
   const initialValues = post ? getInitialValues(props) : savedData
   const [spaceForPost, setSpaceForPost] = useState<string | undefined>(initialSpace?.struct.id)
 
