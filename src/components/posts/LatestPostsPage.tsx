@@ -153,7 +153,9 @@ const InfiniteListOfPublicPosts = (props: Props) => {
         totalCount={totalCount}
         noDataDesc={`No ${entity} yet`}
         getKey={postId => postId}
-        renderItem={postId => <PublicPostPreviewById postId={postId} />}
+        renderItem={postId => (
+          <PublicPostPreviewById showPinnedIcon={isSuggested(filter)} postId={postId} />
+        )}
       />
     ) : null
   }, [filter, dateFilter, totalCount, isApiReady])

@@ -22,10 +22,11 @@ export type BarePreviewProps = {
 export type PreviewProps = BarePreviewProps & {
   postDetails: PostWithSomeDetails
   space?: SpaceData
+  showPinnedIcon?: boolean
 }
 
 export function PostPreview(props: PreviewProps) {
-  const { postDetails, space: externalSpace } = props
+  const { postDetails, space: externalSpace, showPinnedIcon } = props
   const {
     space: globalSpace,
     post: { struct: post },
@@ -44,7 +45,7 @@ export function PostPreview(props: PreviewProps) {
 
   return (
     <Segment className='DfPostPreview'>
-      <PinnedPostIcon postId={post.id} />
+      {showPinnedIcon && <PinnedPostIcon postId={post.id} />}
       <HiddenPostAlert post={post} space={space?.struct} preview />
       {isSharedPost ? (
         <SharedPreview space={space} {...props} />
