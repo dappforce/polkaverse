@@ -5,7 +5,6 @@ import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import CreatePostCard from './cards/CreatePostCard'
 import CreatorInfoCard from './cards/CreatorInfoCard'
-import StakeSubCard from './cards/StakeSubCard'
 import SupportCreatorsCard from './cards/SupportCreatorsCard'
 import RewardInfoCard from './rewards/RewardInfoCard'
 
@@ -87,8 +86,7 @@ function PostPageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name:
   return (
     <>
       <CreatorInfoCard space={space} />
-      {!loadingTotalStake &&
-        (data?.hasStaked ? <RewardInfoCard /> : <StakeSubCard space={space} />)}
+      {!loadingTotalStake && (data?.hasStaked ? <RewardInfoCard /> : <SupportCreatorsCard />)}
     </>
   )
 }
