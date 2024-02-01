@@ -13,6 +13,7 @@ import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import Avatar from '../profiles/address-views/Avatar'
+import { useResponsiveSize } from '../responsive'
 import { newSpaceUrl } from '../urls'
 import Segment from '../utils/Segment'
 import { PostEditorModal } from './editor/ModalEditor'
@@ -29,6 +30,8 @@ export default function WriteSomething({ defaultSpaceId, ...props }: WriteSometh
   const profileData = useSelectProfile(myAddress)
   const { data: totalStake, loading: loadingTotalStake } = useFetchTotalStake(myAddress)
   const neededLock = getNeededLock(totalStake?.amount)
+
+  const { isSmallMobile } = useResponsiveSize()
 
   const { isLoading, spaceIds: ids } =
     useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus(myAddress)
@@ -71,40 +74,42 @@ export default function WriteSomething({ defaultSpaceId, ...props }: WriteSometh
             </a>
           )}
         </div>
-        {!loadingTotalStake && neededLock > 0 && (
+        {!loadingTotalStake && neededLock > 0 && anySpace && (
           <Alert
             className={clsx(styles.Alert, 'mt-3')}
             message={
-              <div className='d-flex align-items-center justify-content-between GapNormal'>
-                <div className='d-flex align-items-center'>
-                  <InfoCircleFilled className='FontSmall' style={{ color: '#FAAD14' }} />
-                  <span
-                    className='ml-2 FontWeightBold'
-                    style={{ position: 'relative', top: '-1px' }}
-                  >
-                    Post to Earn
-                  </span>
+              <div
+                className={clsx(
+                  'd-flex align-items-center GapNormal justify-content-between',
+                  isSmallMobile && 'flex-column align-items-stretch',
+                )}
+              >
+                <div className='d-flex flex-column GapMini'>
+                  <div className='d-flex align-items-center justify-content-between GapNormal'>
+                    <div className='d-flex align-items-center'>
+                      <InfoCircleFilled className='FontSmall' style={{ color: '#FAAD14' }} />
+                      <span className='ml-2 FontWeightBold'>Post to Earn</span>
+                    </div>
+                  </div>
+                  <div className='d-flex flex-column GapSmall align-items-start'>
+                    <span style={{ color: '#262425CC' }}>
+                      To start earning SUB rewards, increase your lock by at least{' '}
+                      <FormatBalance
+                        value={neededLock.toString()}
+                        decimals={10}
+                        currency='SUB'
+                        precision={2}
+                      />
+                      .
+                    </span>
+                  </div>
                 </div>
-              </div>
-            }
-            type='warning'
-            description={
-              <div className='d-flex flex-column GapSmall align-items-start'>
-                <span style={{ color: '#262425CC' }}>
-                  To start earning SUB rewards, increase your lock by at least{' '}
-                  <FormatBalance
-                    value={neededLock.toString()}
-                    decimals={10}
-                    currency='SUB'
-                    precision={2}
-                  />
-                  .
-                </span>
                 <Button type='primary' shape='round'>
-                  Increase Stake
+                  Increase Lock
                 </Button>
               </div>
             }
+            type='warning'
           />
         )}
       </Segment>
