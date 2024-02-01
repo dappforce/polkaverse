@@ -85,23 +85,25 @@ export default function WriteSomething({ defaultSpaceId, ...props }: WriteSometh
                     Post to Earn
                   </span>
                 </div>
-                <Button type='primary' shape='round'>
-                  Increase Stake
-                </Button>
               </div>
             }
             type='warning'
             description={
-              <span style={{ color: '#262425CC' }}>
-                To start earning SUB rewards, increase your stake by at least{' '}
-                <FormatBalance
-                  value={neededStake.toString()}
-                  decimals={10}
-                  currency='SUB'
-                  precision={2}
-                />
-                .
-              </span>
+              <div className='d-flex flex-column GapSmall align-items-start'>
+                <span style={{ color: '#262425CC' }}>
+                  To start earning SUB rewards, increase your stake by at least{' '}
+                  <FormatBalance
+                    value={neededStake.toString()}
+                    decimals={10}
+                    currency='SUB'
+                    precision={2}
+                  />
+                  .
+                </span>
+                <Button type='primary' shape='round'>
+                  Increase Stake
+                </Button>
+              </div>
             }
           />
         )}
