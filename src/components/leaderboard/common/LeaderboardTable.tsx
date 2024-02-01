@@ -187,12 +187,10 @@ function UserRow({
                 >
                   {profile?.content?.name || truncateAddress(data.address)}{' '}
                   <MutedSpan>
-                    {isMyAddress ? (
+                    {isMyAddress && (
                       <Tag color='blue' className='FontWeightNormal'>
                         you
                       </Tag>
-                    ) : (
-                      ''
                     )}
                   </MutedSpan>
                 </span>

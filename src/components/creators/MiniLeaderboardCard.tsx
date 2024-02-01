@@ -1,4 +1,4 @@
-import { Button, Skeleton } from 'antd'
+import { Button, Skeleton, Tag } from 'antd'
 import clsx from 'clsx'
 import { ComponentProps, CSSProperties, useMemo } from 'react'
 import { IoChevronForward } from 'react-icons/io5'
@@ -8,7 +8,7 @@ import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { useFetchMiniLeaderboard } from 'src/rtk/features/leaderboard/hooks'
 import { getAmountRange } from 'src/utils/analytics'
 import { truncateAddress } from 'src/utils/storage'
-import { useMyAddress } from '../auth/MyAccountsContext'
+import { useIsMyAddress, useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import Avatar from '../profiles/address-views/Avatar'
 import ViewProfileLink from '../profiles/ViewProfileLink'
@@ -16,6 +16,7 @@ import { useIsMobileWidthOrDevice } from '../responsive'
 import ViewSpaceLink from '../spaces/ViewSpaceLink'
 import { MutedSpan } from '../utils/MutedText'
 import Segment from '../utils/Segment'
+import styles from './MiniLeaderboardCard.module.sass'
 
 export type MiniLeaderboardCardProps = ComponentProps<'div'>
 
@@ -80,7 +81,10 @@ export default function MiniLeaderboardCard({ ...props }: MiniLeaderboardCardPro
       >
         <div className='d-flex flex-column FontSmall' style={{ minWidth: 0 }}>
           <MutedSpan className='FontWeightMedium mb-1'>Stakers</MutedSpan>
-          <div className='d-flex flex-column GapTiny'>
+          <div
+            className='GapTiny'
+            style={{ display: 'grid', gridTemplateColumns: 'max-content max-content 1fr' }}
+          >
             {data.stakers.map((staker, i) => (
               <UserInfo rank={i + 1} key={i} user={staker} />
             ))}
@@ -91,9 +95,12 @@ export default function MiniLeaderboardCard({ ...props }: MiniLeaderboardCardPro
           style={{ borderTop: !isMobile ? '1px solid #E2E8F0' : 'none', minWidth: 0 }}
         >
           <MutedSpan className='FontWeightMedium mb-1'>Creators</MutedSpan>
-          <div className='d-flex flex-column GapTiny'>
+          <div
+            className='GapTiny'
+            style={{ display: 'grid', gridTemplateColumns: 'max-content max-content 1fr' }}
+          >
             {data?.creators.map((creator, i) => (
-              <UserInfo rank={i + 1} key={i} user={creator} />
+              <UserInfo rank={i + 1 + 2} key={i} user={creator} />
             ))}
           </div>
         </div>
@@ -104,7 +111,7 @@ export default function MiniLeaderboardCard({ ...props }: MiniLeaderboardCardPro
 
   if (isMobile) {
     return (
-      <div {...props} className={clsx(props.className, 'p-3 pt-2.5')}>
+      <div {...props} className={clsx(props.className, 'p-3 pt-2.5')} style={{ overflowX: 'clip' }}>
         {content}
       </div>
     )
@@ -113,7 +120,7 @@ export default function MiniLeaderboardCard({ ...props }: MiniLeaderboardCardPro
   return (
     <Segment
       {...props}
-      style={{ background: 'white', ...props.style }}
+      style={{ background: 'white', overflowX: 'clip', ...props.style }}
       className={clsx(props.className, 'p-3')}
     >
       {content}
@@ -122,10 +129,17 @@ export default function MiniLeaderboardCard({ ...props }: MiniLeaderboardCardPro
 }
 
 function UserInfo({ rank, user }: { rank: number; user: { address: string; reward: string } }) {
+  const isMyAddress = useIsMyAddress(user.address)
   const profile = useSelectProfile(user.address)
 
   const avatar = (
-    <Avatar asLink={!profile} address={user.address} avatar={profile?.content?.image} size={34} />
+    <Avatar
+      noMargin
+      asLink={!profile}
+      address={user.address}
+      avatar={profile?.content?.image}
+      size={34}
+    />
   )
   const name = (
     <span
@@ -135,41 +149,64 @@ function UserInfo({ rank, user }: { rank: number; user: { address: string; rewar
         textOverflow: 'ellipsis',
         overflow: 'hidden',
         whiteSpace: 'nowrap',
-        position: 'relative',
-        top: '2px',
       }}
     >
       {profile?.content?.name || truncateAddress(user.address)}
     </span>
   )
+
   return (
-    <div className='d-flex align-items-center'>
-      <div className='position-relative'>
-        {profile ? <ViewSpaceLink space={profile.struct} title={avatar} /> : avatar}
-        {[1, 2, 3].includes(rank) && (
-          <Medal
-            className='position-absolute FontTiny'
-            style={{ bottom: -2, right: 6 }}
-            rank={rank as 1 | 2 | 3}
-          />
+    <div
+      className={clsx(
+        'align-items-center',
+        styles.MiniLeaderboardUserRow,
+        isMyAddress && styles.Active,
+      )}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'subgrid',
+        gridColumn: '1/4',
+      }}
+    >
+      <div className='d-flex align-items-center justify-content-center'>
+        {[1, 2, 3].includes(rank) ? (
+          <Medal className='FontTiny' rank={rank as 1 | 2 | 3} />
+        ) : (
+          <span className='FontTiny ColorMuted'>{rank}</span>
         )}
       </div>
+      {profile ? <ViewSpaceLink space={profile.struct} title={avatar} /> : avatar}
       <div className='d-flex flex-column' style={{ minWidth: 0 }}>
-        {profile ? (
-          <ViewSpaceLink
-            containerClassName='d-flex'
-            className='d-flex'
-            style={{ minWidth: 0 }}
-            title={name}
-            space={profile?.struct}
-          />
-        ) : (
-          <ViewProfileLink
-            className='ColorNormal'
-            title={name}
-            account={{ address: user.address }}
-          />
-        )}
+        <div
+          className='d-flex align-items-center GapMini'
+          style={{ minWidth: 0, position: 'relative', top: '1px' }}
+        >
+          {profile ? (
+            <ViewSpaceLink
+              containerClassName='d-flex'
+              className='d-flex'
+              style={{ minWidth: 0 }}
+              title={name}
+              space={profile.struct}
+            />
+          ) : (
+            <ViewProfileLink
+              className='ColorNormal d-flex'
+              style={{ minWidth: 0 }}
+              title={name}
+              account={{ address: user.address }}
+            />
+          )}
+          {isMyAddress && (
+            <Tag
+              color='blue'
+              className='FontWeightNormal'
+              style={{ position: 'relative', top: '1px' }}
+            >
+              you
+            </Tag>
+          )}
+        </div>
         <div className='d-flex align-items-center ColorMuted GapMini'>
           <FormatBalance value={user.reward} currency='SUB' decimals={10} precision={2} />
         </div>
