@@ -1,4 +1,4 @@
-import { Col, Radio, RadioChangeEvent, Row, Select } from 'antd'
+import { Checkbox, Col, Radio, RadioChangeEvent, Row, Select } from 'antd'
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { MdVerified } from 'react-icons/md'
@@ -6,6 +6,7 @@ import { ReactNode } from 'react-markdown'
 import config from 'src/config'
 import { useIsMyAddressWhitelisted } from 'src/config/constants'
 import LatestPostsPage from '../posts/LatestPostsPage'
+import { useShowActiveStakingPostsContext } from '../posts/ShowActiveStakingPostsContext'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import LatestSpacesPage, { CreatorsSpaces } from '../spaces/LatestSpacesPage'
 import style from './HomePage.module.sass'
@@ -112,6 +113,8 @@ export const Filters = (props: Props) => {
   const { isMobile } = useResponsiveSize()
   const isWhitelisted = useIsMyAddressWhitelisted()
 
+  const { setValue, value } = useShowActiveStakingPostsContext()
+
   const router = useRouter()
 
   const { type, date } = router.query
@@ -127,6 +130,9 @@ export const Filters = (props: Props) => {
   const needDateFilter =
     !!type && type !== 'latest' && type !== 'suggested' && type !== 'creators' && type !== 'hot'
 
+  const showActivePostsCheckbox = type === 'latest' && tabKey === 'posts'
+  const hasRightElement = needDateFilter || showActivePostsCheckbox
+
   if (!needDateFilter && !filterByKey[tabKey]?.length) return null
 
   let filters = filterByKey[tabKey]
@@ -138,7 +144,7 @@ export const Filters = (props: Props) => {
     <div className={`DfFilters ${!isAffix ? 'mt-3' : ''}`}>
       <Row className={style.DfGridParams}>
         {!isMobile ? (
-          <Col className={needDateFilter ? style.DfCol : 'ant-col-24'}>
+          <Col className={hasRightElement ? style.DfCol : 'ant-col-24'}>
             <Radio.Group
               options={filters.map(({ label, value, icon }) => ({
                 label: (
@@ -155,7 +161,7 @@ export const Filters = (props: Props) => {
             />
           </Col>
         ) : (
-          <Col className={needDateFilter ? style.DfCol : 'ant-col-24'}>
+          <Col className={clsx(needDateFilter ? style.DfCol : 'ant-col-24')}>
             <Select
               value={type}
               onChange={onFilterChange}
@@ -168,6 +174,15 @@ export const Filters = (props: Props) => {
                 </Select.Option>
               ))}
             </Select>
+          </Col>
+        )}
+        {showActivePostsCheckbox && (
+          <Col className={clsx(isMobile && 'mt-2')}>
+            <Checkbox checked={value} onChange={e => setValue(e.target.checked)}>
+              <span className='ColorMuted' style={{ userSelect: 'none' }}>
+                Active Posts only
+              </span>
+            </Checkbox>
           </Col>
         )}
         {needDateFilter && (

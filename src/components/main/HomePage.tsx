@@ -17,6 +17,7 @@ import { getAmountRange } from 'src/utils/analytics'
 import { useIsSignedIn, useMyAddress } from '../auth/MyAccountsContext'
 import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar'
 import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
+import { ShowActiveStakingPostsProvider } from '../posts/ShowActiveStakingPostsContext'
 import WriteSomething from '../posts/WriteSomething'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
@@ -203,15 +204,18 @@ const TabsHomePage = ({
       <span>
         {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
       </span>
-      <Section className='m-0'>
-        <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} {...props} />
-        <TabsContent />
-        <Tooltip title={'Back to top'} placement={'right'}>
-          <BackTop className={style.DfBackToTop}>
-            <Button size={'large'} icon={ToTopIcon} />
-          </BackTop>
-        </Tooltip>
-      </Section>
+
+      <ShowActiveStakingPostsProvider tab={tab} filter={type}>
+        <Section className='m-0'>
+          <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} {...props} />
+          <TabsContent />
+          <Tooltip title={'Back to top'} placement={'right'}>
+            <BackTop className={style.DfBackToTop}>
+              <Button size={'large'} icon={ToTopIcon} />
+            </BackTop>
+          </Tooltip>
+        </Section>
+      </ShowActiveStakingPostsProvider>
     </>
   )
 }
