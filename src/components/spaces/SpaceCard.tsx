@@ -11,7 +11,6 @@ import { DfMd } from '../utils/DfMd'
 import FollowSpaceButton from '../utils/FollowSpaceButton'
 import MyEntityLabel from '../utils/MyEntityLabel'
 import { OfficialSpaceStatus, SpaceAvatar, useIsMySpace } from './helpers'
-import { StakeButton } from './ViewSpace'
 import ViewSpaceLink from './ViewSpaceLink'
 
 export interface SpaceCardProps
@@ -63,7 +62,7 @@ export default function SpaceCard({ spaceId, ...props }: SpaceCardProps) {
       subtitle={<DfMd className='ColorCurrentColor FontSmall' source={spaceData?.content?.about} />}
       buttons={
         spaceData && [
-          <StakeButton key={'stake'} spaceStruct={spaceData.struct} />,
+          // <StakeButton key={'stake'} spaceStruct={spaceData.struct} />,
           isMySpace ? (
             <ButtonLink
               href={'/[spaceId]/edit'}

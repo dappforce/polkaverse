@@ -50,7 +50,7 @@ const InnerViewSpacePage: FC<Props> = props => {
         }}
         withSidebar
         withVoteBanner
-        creatorDashboardSidebarType={{ name: 'space-page', space: spaceData }}
+        creatorDashboardSidebarType={{ name: 'space-page' }}
       >
         {showBanner && (
           <ClaimSpaceBanner
