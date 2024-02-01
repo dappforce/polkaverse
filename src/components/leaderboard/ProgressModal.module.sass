@@ -1,9 +1,15 @@
 @import 'src/styles/subsocial-vars.scss'
 
 .ProgressModal
+  color: white
+
+  &:global(#progress-image)
+    :global(.ant-modal-content)
+      border-radius: 0
+      box-shadow: none
+
   :global(.ant-modal-content)
     overflow: hidden
-    color: white
 
   .DiamondIcon
     font-size: 130px
@@ -47,6 +53,7 @@
       position: relative
 
       .Diamond
+        overflow: visible !important
         width: 44px
         height: 44px
         position: absolute
