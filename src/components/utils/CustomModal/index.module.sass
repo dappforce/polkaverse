@@ -5,6 +5,13 @@
     :global(.ant-modal-content)
       height: calc(100vh - 100px)
 
+  &.NoPadding
+    :global(.ant-modal-body)
+      padding: 0
+      > *
+        padding-left: 0
+        padding-right: 0
+
   :global(.ant-modal-content)
     max-height: 700px
     border-radius: $space_normal
@@ -28,7 +35,7 @@
     flex: 1
 
   .CustomModalTitle
+    color: inherit
     font-weight: bold
-    color: #222222
     font-size: $font_big
     margin-bottom: $space_mini
