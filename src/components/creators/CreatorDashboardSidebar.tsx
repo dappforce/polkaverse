@@ -65,6 +65,8 @@ function SpacePageSidebar({}: Extract<CreatorDashboardSidebarType, { name: 'spac
   const myAddress = useMyAddress() ?? ''
   const { data: totalStake, loading: loadingTotalStake } = useFetchTotalStake(myAddress)
 
+  if (loadingTotalStake) return null
+
   const renderTopCard = () => {
     if (!totalStake?.hasStaked) return <SupportCreatorsCard />
     return null
@@ -73,7 +75,7 @@ function SpacePageSidebar({}: Extract<CreatorDashboardSidebarType, { name: 'spac
   return (
     <>
       {renderTopCard()}
-      {!loadingTotalStake && totalStake?.hasStaked && <RewardInfoCard />}
+      {totalStake?.hasStaked && <RewardInfoCard />}
     </>
   )
 }
