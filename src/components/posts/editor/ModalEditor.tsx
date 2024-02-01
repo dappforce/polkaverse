@@ -23,7 +23,7 @@ import { getNonEmptyPostContent } from 'src/components/utils/content'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import SelectSpacePreview from 'src/components/utils/SelectSpacePreview'
 import TxButton from 'src/components/utils/TxButton'
-import { getNeededStake } from 'src/config/constants'
+import { getNeededLock } from 'src/config/constants'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import {
@@ -249,7 +249,7 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
   const { data } = useFetchTotalStake(myAddress ?? '')
   const hasStaked = data?.hasStaked
 
-  const neededStake = getNeededStake(data?.amount)
+  const neededStake = getNeededLock(data?.amount)
 
   const sendEvent = useSendEvent()
 
@@ -275,7 +275,7 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
               <span>Post to Earn</span>
             </div>
             <Button shape='round' type='primary' href={getSubIdCreatorsLink()} target='_blank'>
-              Stake SUB
+              Lock SUB
             </Button>
           </div>
           {(() => {
@@ -283,7 +283,7 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
               return (
                 <p>
                   You can receive extra SUB when others like your posts or comments. However, you
-                  need to first stake at least 2,000 SUB to become eligible.
+                  need to first lock at least 2,000 SUB to become eligible.
                 </p>
               )
             }
@@ -291,7 +291,7 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
             if (neededStake > 0) {
               return (
                 <p>
-                  To start earning SUB rewards, increase your stake by at least{' '}
+                  To start earning SUB rewards, increase your lock by at least{' '}
                   <FormatBalance
                     value={neededStake.toString()}
                     decimals={10}

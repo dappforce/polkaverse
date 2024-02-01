@@ -2,13 +2,13 @@ import dayjs from 'dayjs'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 
 export const ESTIMATED_ENERGY_FOR_ONE_TX = 100_000_000
-export const MINIMUM_STAKE = BigInt(2_000_00000_00000) // 2k SUB
-export function getNeededStake(currentStake: string | undefined) {
+export const MINIMUM_LOCK = BigInt(2_000_00000_00000) // 2k SUB
+export function getNeededLock(currentLock: string | undefined) {
   try {
-    const neededStake = MINIMUM_STAKE - BigInt(currentStake ?? '0')
-    return neededStake > 0 ? neededStake : MINIMUM_STAKE
+    const neededLock = MINIMUM_LOCK - BigInt(currentLock ?? '0')
+    return neededLock > 0 ? neededLock : MINIMUM_LOCK
   } catch {
-    return MINIMUM_STAKE
+    return MINIMUM_LOCK
   }
 }
 

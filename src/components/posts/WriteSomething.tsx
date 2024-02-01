@@ -2,7 +2,7 @@ import { InfoCircleFilled } from '@ant-design/icons'
 import { Alert, Button } from 'antd'
 import clsx from 'clsx'
 import { ComponentProps, useState } from 'react'
-import { getNeededStake } from 'src/config/constants'
+import { getNeededLock } from 'src/config/constants'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import {
   useSelectProfile,
@@ -28,7 +28,7 @@ export default function WriteSomething({ defaultSpaceId, ...props }: WriteSometh
   const myAddress = useMyAddress() ?? ''
   const profileData = useSelectProfile(myAddress)
   const { data: totalStake, loading: loadingTotalStake } = useFetchTotalStake(myAddress)
-  const neededStake = getNeededStake(totalStake?.amount)
+  const neededLock = getNeededLock(totalStake?.amount)
 
   const { isLoading, spaceIds: ids } =
     useSelectSpaceIdsWhereAccountCanPostWithLoadingStatus(myAddress)
@@ -71,7 +71,7 @@ export default function WriteSomething({ defaultSpaceId, ...props }: WriteSometh
             </a>
           )}
         </div>
-        {!loadingTotalStake && neededStake > 0 && (
+        {!loadingTotalStake && neededLock > 0 && (
           <Alert
             className={clsx(styles.Alert, 'mt-3')}
             message={
@@ -91,9 +91,9 @@ export default function WriteSomething({ defaultSpaceId, ...props }: WriteSometh
             description={
               <div className='d-flex flex-column GapSmall align-items-start'>
                 <span style={{ color: '#262425CC' }}>
-                  To start earning SUB rewards, increase your stake by at least{' '}
+                  To start earning SUB rewards, increase your lock by at least{' '}
                   <FormatBalance
-                    value={neededStake.toString()}
+                    value={neededLock.toString()}
                     decimals={10}
                     currency='SUB'
                     precision={2}
