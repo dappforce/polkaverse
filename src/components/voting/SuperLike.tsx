@@ -245,7 +245,7 @@ function ShouldStakeModal({ onCancel, visible }: { visible: boolean; onCancel: (
       visible={visible}
       onCancel={onCancel}
       title='Wait a sec...'
-      subtitle='In this app, every like is more than just a thumbs-up! When you like a post, both you and the author can earn extra SUB tokens. For this, you need to start staking SUB tokens first.'
+      subtitle='In this app, every like is more than just a thumbs-up! When you like a post, both you and the author can earn extra SUB tokens. For this, you need to start locking SUB tokens first.'
     >
       <div className='d-flex flex-column align-items-center GapLarge'>
         <Image
@@ -255,7 +255,7 @@ function ShouldStakeModal({ onCancel, visible }: { visible: boolean; onCancel: (
           preview={{ mask: null }}
         />
         <Button block type='primary' size='large' href={getSubIdCreatorsLink()} target='_blank'>
-          Start Staking SUB
+          Start Locking SUB
         </Button>
       </div>
     </CustomModal>

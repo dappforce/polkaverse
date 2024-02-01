@@ -40,8 +40,7 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
         </span>
       </div>
       <span className='FontSmall'>
-        By creating new posts and liking new content of others, stakers of SUB can increase their
-        staking rewards by 50% to 200%.{' '}
+        When users with locked SUB like your posts, you will receive SUB as a reward.{' '}
         <Link href={activeStakingLinks.learnMore}>
           <a
             target='_blank'
