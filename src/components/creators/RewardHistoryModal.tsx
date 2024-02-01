@@ -84,7 +84,7 @@ export function RewardHistoryPanel({
                     currency='SUB'
                     decimals={10}
                     value={usedRewardValue}
-                    precision={2}
+                    fixedDecimalsLength={2}
                   />
                 </span>
               </div>
