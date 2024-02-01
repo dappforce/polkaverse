@@ -6,6 +6,7 @@ import clsx from 'clsx'
 import isEmpty from 'lodash.isempty'
 import Error from 'next/error'
 import React, { FC, useState } from 'react'
+import { RiPushpin2Fill } from 'react-icons/ri'
 import { TbMessageCircle2 } from 'react-icons/tb'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
@@ -18,6 +19,7 @@ import FollowSpaceButton from 'src/components/utils/FollowSpaceButton'
 import Segment from 'src/components/utils/Segment'
 import { ActiveVoters, PostVoters } from 'src/components/voting/ListVoters'
 import SuperLike from 'src/components/voting/SuperLike'
+import { isPinnedPost } from 'src/config/constants'
 import { maintenanceMsg } from 'src/config/env'
 import { resolveIpfsUrl } from 'src/ipfs'
 import messages from 'src/messages'
@@ -498,3 +500,18 @@ export const PostNotFoundPage = () => <Error statusCode={404} title='Post not fo
 export const MaintenancePage = () => (
   <Error statusCode={503} title={maintenanceMsg || messages.errors.maintenance} />
 )
+
+export function PinnedPostIcon({ postId }: { postId: string }) {
+  const isPinned = isPinnedPost(postId)
+  if (!isPinned) return null
+
+  return (
+    <div
+      className='d-flex align-items-center GapTiny ColorMuted mb-1 FontWeightSemibold'
+      style={{ marginTop: '-12px' }}
+    >
+      <RiPushpin2Fill />
+      <span>Pinned</span>
+    </div>
+  )
+}
