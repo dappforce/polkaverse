@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import { GeneralStatistics } from 'src/rtk/features/leaderboard/generalStatisticsSlice'
 import { LeaderboardData } from 'src/rtk/features/leaderboard/leaderboardSlice'
-import { TopUsers } from 'src/rtk/features/leaderboard/topUsersSlice'
+import { MiniLeaderboard } from 'src/rtk/features/leaderboard/miniLeaderboardSlice'
 import { UserStatistics } from 'src/rtk/features/leaderboard/userStatisticsSlice'
 import { datahubQueryRequest, getDayAndWeekTimestamp } from './utils'
 
@@ -35,7 +35,7 @@ const GET_TOP_USERS = gql`
     }
   }
 `
-export async function getTopUsers(): Promise<TopUsers> {
+async function getTopUsers(): Promise<MiniLeaderboard> {
   const { week } = getDayAndWeekTimestamp()
   const res = await datahubQueryRequest<
     {
@@ -59,6 +59,7 @@ export async function getTopUsers(): Promise<TopUsers> {
   })
 
   return {
+    address: '',
     creators: res.data.creator.data.map(({ address, reward }) => ({
       address,
       reward,
@@ -67,6 +68,137 @@ export async function getTopUsers(): Promise<TopUsers> {
       address,
       reward,
     })),
+  }
+}
+
+const GET_MINI_LEADERBOARD = gql`
+  query GetMiniLeaderboard($address: String!, $timestamp: String!) {
+    staker: activeStakingAddressRankByRewardsForPeriod(
+      args: {
+        period: WEEK
+        role: STAKER
+        timestamp: $timestamp
+        withReward: true
+        address: $address
+        aboveCompetitorsNumber: 1
+        belowCompetitorsNumber: 1
+      }
+    ) {
+      rankIndex
+      reward
+      aboveCompetitors {
+        address
+        reward
+        rankIndex
+      }
+      belowCompetitors {
+        address
+        reward
+        rankIndex
+      }
+    }
+    creator: activeStakingAddressRankByRewardsForPeriod(
+      args: {
+        period: WEEK
+        role: CREATOR
+        timestamp: $timestamp
+        withReward: true
+        address: $address
+        aboveCompetitorsNumber: 1
+        belowCompetitorsNumber: 1
+      }
+    ) {
+      rankIndex
+      reward
+      aboveCompetitors {
+        address
+        reward
+        rankIndex
+      }
+      belowCompetitors {
+        address
+        reward
+        rankIndex
+      }
+    }
+  }
+`
+export async function getMiniLeaderboard(address?: string) {
+  if (!address) return getTopUsers()
+
+  const { week } = getDayAndWeekTimestamp()
+  const miniLeaderboardPromise = datahubQueryRequest<
+    {
+      staker: {
+        rankIndex: number
+        reward: string
+        aboveCompetitors: {
+          address: string
+          reward: string
+          rankIndex: number
+        }[]
+        belowCompetitors: {
+          address: string
+          reward: string
+          rankIndex: number
+        }[]
+      } | null
+      creator: {
+        rankIndex: number
+        reward: string
+        aboveCompetitors: {
+          address: string
+          reward: string
+          rankIndex: number
+        }[]
+        belowCompetitors: {
+          address: string
+          reward: string
+          rankIndex: number
+        }[]
+      } | null
+    },
+    { address: string; timestamp: string }
+  >({
+    query: GET_MINI_LEADERBOARD,
+    variables: { address, timestamp: week.toString() },
+  })
+
+  const [miniLeaderboardRes, topUsers] = await Promise.all([
+    miniLeaderboardPromise,
+    getTopUsers(),
+  ] as const)
+
+  const miniLeaderboard = miniLeaderboardRes.data
+  let creators = topUsers.creators
+  if (miniLeaderboard.creator && miniLeaderboard.creator.rankIndex > 2) {
+    creators = [
+      ...miniLeaderboard.creator.aboveCompetitors.reverse(),
+      {
+        address,
+        reward: miniLeaderboard.creator.reward,
+        rankIndex: miniLeaderboard.creator.rankIndex,
+      },
+      ...miniLeaderboard.creator.belowCompetitors,
+    ]
+  }
+  let stakers = topUsers.stakers
+  if (miniLeaderboard.staker && miniLeaderboard.staker.rankIndex > 2) {
+    stakers = [
+      ...miniLeaderboard.staker.aboveCompetitors.reverse(),
+      {
+        address,
+        reward: miniLeaderboard.staker.reward,
+        rankIndex: miniLeaderboard.staker.rankIndex,
+      },
+      ...miniLeaderboard.staker.belowCompetitors,
+    ]
+  }
+
+  return {
+    address,
+    creators,
+    stakers,
   }
 }
 

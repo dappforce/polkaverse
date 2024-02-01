@@ -1,18 +1,18 @@
 import { ComponentProps } from 'react'
 import { useIsMobileWidthOrDevice } from '../responsive'
+import MiniLeaderboardCard from './MiniLeaderboardCard'
 import MobileRewardDashboard from './MobileRewardDashboard'
-import TopUsersCard from './TopUsersCard'
 
 export type MobileActiveStakingSectionProps = ComponentProps<'div'> & {
   offsetX?: number
   offsetY?: number
-  showTopUsers?: boolean
+  showMiniLeaderboard?: boolean
 }
 
 export default function MobileActiveStakingSection({
   offsetX = -16,
   offsetY = -12,
-  showTopUsers = true,
+  showMiniLeaderboard = true,
   ...props
 }: MobileActiveStakingSectionProps) {
   const isMobile = useIsMobileWidthOrDevice()
@@ -33,7 +33,9 @@ export default function MobileActiveStakingSection({
       >
         <MobileRewardDashboard />
       </div>
-      {showTopUsers && <TopUsersCard style={{ margin: `0 ${offsetX}px`, background: 'white' }} />}
+      {showMiniLeaderboard && (
+        <MiniLeaderboardCard style={{ margin: `0 ${offsetX}px`, background: 'white' }} />
+      )}
     </>
   )
 }

@@ -1,14 +1,16 @@
+import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { LeaderboardRole } from 'src/components/utils/datahub/leaderboard'
 import { useFetchWithoutApi } from 'src/rtk/app/hooksCommon'
 import { useAppSelector } from 'src/rtk/app/store'
 import { fetchGeneralStatistics, selectGeneralStatistics } from './generalStatisticsSlice'
 import { selectLeaderboard } from './leaderboardSlice'
-import { fetchTopUsers, selectTopUsers } from './topUsersSlice'
+import { fetchMiniLeaderboard, selectMiniLeaderboard } from './miniLeaderboardSlice'
 import { fetchUserStatistics, selectUserStatistics } from './userStatisticsSlice'
 
-export function useFetchTopUsers() {
-  const data = useAppSelector(state => selectTopUsers(state))
-  const fetchData = useFetchWithoutApi(fetchTopUsers, {})
+export function useFetchMiniLeaderboard() {
+  const address = useMyAddress() ?? ''
+  const data = useAppSelector(state => selectMiniLeaderboard(state, address))
+  const fetchData = useFetchWithoutApi(fetchMiniLeaderboard, { address })
 
   return {
     ...fetchData,

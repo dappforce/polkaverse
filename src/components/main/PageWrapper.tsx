@@ -9,7 +9,7 @@ import { resolveIpfsUrl } from 'src/ipfs'
 import CreatorDashboardSidebar, {
   CreatorDashboardSidebarType,
 } from '../creators/CreatorDashboardSidebar'
-import TopUsersCard from '../creators/TopUsersCard'
+import MiniLeaderboardCard from '../creators/MiniLeaderboardCard'
 import ProgressModal from '../leaderboard/ProgressModal'
 import { useIsMobileWidthOrDevice, useResponsiveSize } from '../responsive'
 import { fullUrl } from '../urls/helpers'
@@ -158,7 +158,7 @@ export const PageContent: FC<Props> = ({
           {creatorDashboardSidebarType && isLargeDesktop && (
             <div {...sidebarStyles}>
               <div>
-                <TopUsersCard />
+                <MiniLeaderboardCard />
               </div>
             </div>
           )}
@@ -204,7 +204,7 @@ export const PageContent: FC<Props> = ({
               <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
               {!isLargeDesktop && (
                 <div className='mt-3 xl-hidden'>
-                  <TopUsersCard />
+                  <MiniLeaderboardCard />
                 </div>
               )}
               {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}

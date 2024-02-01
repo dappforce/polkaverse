@@ -5,7 +5,7 @@ import { IoChevronForward } from 'react-icons/io5'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchProfileSpaces, useSelectProfile } from 'src/rtk/app/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
-import { useFetchTopUsers } from 'src/rtk/features/leaderboard/hooks'
+import { useFetchMiniLeaderboard } from 'src/rtk/features/leaderboard/hooks'
 import { getAmountRange } from 'src/utils/analytics'
 import { truncateAddress } from 'src/utils/storage'
 import { useMyAddress } from '../auth/MyAccountsContext'
@@ -17,11 +17,11 @@ import ViewSpaceLink from '../spaces/ViewSpaceLink'
 import { MutedSpan } from '../utils/MutedText'
 import Segment from '../utils/Segment'
 
-export type TopUsersCardProps = ComponentProps<'div'>
+export type MiniLeaderboardCardProps = ComponentProps<'div'>
 
-export default function TopUsersCard({ ...props }: TopUsersCardProps) {
+export default function MiniLeaderboardCard({ ...props }: MiniLeaderboardCardProps) {
   const myAddress = useMyAddress() ?? ''
-  const { data, loading } = useFetchTopUsers()
+  const { data, loading } = useFetchMiniLeaderboard()
   const { data: totalStake } = useFetchTotalStake(myAddress)
   const isMobile = useIsMobileWidthOrDevice()
   const sendEvent = useSendEvent()

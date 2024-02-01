@@ -21,7 +21,7 @@ import domains from '../features/domains/domainsSlice'
 import topLevelDomains from '../features/domains/topLevelDomains'
 import generalStatistics from '../features/leaderboard/generalStatisticsSlice'
 import leaderboard from '../features/leaderboard/leaderboardSlice'
-import topUsers from '../features/leaderboard/topUsersSlice'
+import miniLeaderboard from '../features/leaderboard/miniLeaderboardSlice'
 import userStatistics from '../features/leaderboard/userStatisticsSlice'
 import onBoarding from '../features/onBoarding/onBoardingSlice'
 import mySpacePermissions from '../features/permissions/mySpacePermissionsSlice'
@@ -74,7 +74,7 @@ const rootReducer = combineReducers({
   rewardHistory,
   canPostSuperLiked,
   postReward,
-  topUsers,
+  miniLeaderboard,
   userStatistics,
   generalStatistics,
   leaderboard,

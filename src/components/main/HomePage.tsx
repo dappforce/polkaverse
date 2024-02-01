@@ -11,7 +11,6 @@ import { GetHomePageData } from 'src/graphql/__generated__/GetHomePageData'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
-import { fetchTopUsersWithSpaces } from 'src/rtk/features/leaderboard/topUsersSlice'
 import { PostKind } from 'src/types/graphql-global-types'
 import { getAmountRange } from 'src/utils/analytics'
 import { useIsSignedIn, useMyAddress } from '../auth/MyAccountsContext'
@@ -238,7 +237,7 @@ const HomePage: NextPage<Props> = props => {
   )
 }
 
-getInitialPropsWithRedux(HomePage, async ({ apolloClient, subsocial, dispatch, reduxStore }) => {
+getInitialPropsWithRedux(HomePage, async ({ apolloClient }) => {
   const apolloRes = await apolloClient?.query<GetHomePageData>({
     query: GET_TOTAL_COUNTS,
   })
@@ -253,8 +252,6 @@ getInitialPropsWithRedux(HomePage, async ({ apolloClient, subsocial, dispatch, r
     totalPostCount = postCount.totalCount
     totalSpaceCount = spaceCount.totalCount
   }
-
-  await fetchTopUsersWithSpaces(reduxStore, dispatch, subsocial)
 
   return {
     totalPostCount,

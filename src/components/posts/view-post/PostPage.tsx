@@ -5,8 +5,8 @@ import { NextPage } from 'next'
 import router from 'next/router'
 import { FC } from 'react'
 import { CommentSection } from 'src/components/comments/CommentsSection'
+import MiniLeaderboardCard from 'src/components/creators/MiniLeaderboardCard'
 import MobileActiveStakingSection from 'src/components/creators/MobileActiveStakingSection'
-import TopUsersCard from 'src/components/creators/TopUsersCard'
 import { PageContent } from 'src/components/main/PageWrapper'
 import AuthorCard from 'src/components/profiles/address-views/AuthorCard'
 import { useResponsiveSize } from 'src/components/responsive'
@@ -21,7 +21,6 @@ import { resolveIpfsUrl } from 'src/ipfs'
 import { getInitialPropsWithRedux, NextContextWithRedux } from 'src/rtk/app'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
-import { fetchTopUsersWithSpaces } from 'src/rtk/features/leaderboard/topUsersSlice'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
 import { asCommentStruct, HasStatusCode, idToBn, PostData, PostWithSomeDetails } from 'src/types'
@@ -149,7 +148,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
       withVoteBanner
       creatorDashboardSidebarType={{ name: 'post-page', space }}
     >
-      <MobileActiveStakingSection showTopUsers={false} />
+      <MobileActiveStakingSection showMiniLeaderboard={false} />
       <HiddenPostAlert post={post.struct} />
       <Section>
         <div>
@@ -234,7 +233,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
             />
           </div>
           <DfCard className='p-0 mt-3 lg-hidden'>
-            <TopUsersCard className='pt' />
+            <MiniLeaderboardCard className='pt' />
           </DfCard>
         </div>
       </Section>
@@ -304,33 +303,21 @@ const PostPage: FC<PostDetailsProps & HasStatusCode> = props => {
 getInitialPropsWithRedux(PostPage, async props => {
   const { subsocial, dispatch, reduxStore, context } = props
 
-  async function getData() {
-    const data = await loadPostOnNextReq(props)
+  const data = await loadPostOnNextReq(props)
 
-    if (data.statusCode === 404) return null
+  if (data.statusCode === 404) return return404(context)
 
-    let rootPostData: PostWithSomeDetails | undefined
+  let rootPostData: PostWithSomeDetails | undefined
 
-    const postStruct = data?.post?.struct
+  const postStruct = data?.post?.struct
 
-    if (postStruct?.isComment) {
-      const { rootPostId } = asCommentStruct(postStruct)
-      await dispatch(
-        fetchPost({ api: subsocial, id: rootPostId, reload: true, eagerLoadHandles: true }),
-      )
-      rootPostData = selectPost(reduxStore.getState(), { id: rootPostId })
-    }
-
-    return { data, rootPostData }
+  if (postStruct?.isComment) {
+    const { rootPostId } = asCommentStruct(postStruct)
+    await dispatch(
+      fetchPost({ api: subsocial, id: rootPostId, reload: true, eagerLoadHandles: true }),
+    )
+    rootPostData = selectPost(reduxStore.getState(), { id: rootPostId })
   }
-
-  const [res] = await Promise.all([
-    getData(),
-    fetchTopUsersWithSpaces(reduxStore, dispatch, subsocial),
-  ] as const)
-  if (res === null) return return404(context)
-
-  const { data, rootPostData } = res
 
   return {
     postData: data,
