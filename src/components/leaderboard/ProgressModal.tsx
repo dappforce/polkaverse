@@ -116,17 +116,16 @@ function InnerProgressModal() {
       }}
       title={`Your progress ${isUsingLastWeekData ? 'last week' : 'yesterday'}`}
       closable
+      className={clsx(styles.ProgressModal, statusClassName[status])}
+      contentClassName={styles.Content}
     >
-      <div
-        className={clsx(styles.ProgressModal, statusClassName[status], 'mt-2')}
-        style={{ overflowX: 'clip' }}
-      >
-        <DiamondIcon className={styles.DiamondIcon} />
+      <DiamondIcon className={styles.DiamondIcon} />
+      <div className={clsx(styles.ProgressModalContent, 'mt-2')}>
         <div className='d-flex flex-column align-items-center'>
           <div className='mb-2'>
             <Avatar
               noMargin
-              size={50}
+              size={60}
               asLink={false}
               address={myAddress}
               avatar={profile?.content?.image}
@@ -169,7 +168,7 @@ function InnerProgressModal() {
         </div>
       </div>
       <Button
-        type='primary'
+        type='default'
         size='large'
         className='mt-4'
         onClick={() =>
