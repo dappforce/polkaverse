@@ -5,12 +5,13 @@ import PostPreview from '../posts/view-post/PostPreview'
 
 type Props = {
   postId: PostId
+  showPinnedIcon?: boolean
 }
 
-export const PublicPostPreviewById = React.memo(({ postId }: Props) => {
+export const PublicPostPreviewById = React.memo(({ postId, showPinnedIcon }: Props) => {
   const post = useSelectPost(postId)
 
   if (!post) return null
 
-  return <PostPreview postDetails={post} withActions />
+  return <PostPreview postDetails={post} withActions showPinnedIcon={showPinnedIcon} />
 })
