@@ -6,7 +6,7 @@ export const MINIMUM_LOCK = BigInt(2_000_00000_00000) // 2k SUB
 export function getNeededLock(currentLock: string | undefined) {
   try {
     const neededLock = MINIMUM_LOCK - BigInt(currentLock ?? '0')
-    return neededLock > 0 ? neededLock : MINIMUM_LOCK
+    return neededLock > 0 ? neededLock : BigInt(0)
   } catch {
     return MINIMUM_LOCK
   }
