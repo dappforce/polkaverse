@@ -505,25 +505,28 @@ export const MaintenancePage = () => (
 )
 
 export default function PostNotEnoughMinStakeAlert({ post }: { post: PostStruct }) {
-  const { isExist, validByCreatorMinStake } = useCanPostSuperLiked(post.id)
+  const { isExist, validByCreatorMinStake, validByCreationDate } = useCanPostSuperLiked(post.id)
   const isMyPost = useIsMyAddress(post.ownerId)
 
   if (!isMyPost) return null
-  if (isExist && !validByCreatorMinStake) return null
 
-  return (
-    <div className={styles.PostNotEnoughMinStakeAlert}>
-      <div className='d-flex align-items-center GapTiny'>
-        <TbCoins />
-        <span>This post could earn SUB rewards.</span>
+  if (isExist && !validByCreatorMinStake && validByCreationDate) {
+    return (
+      <div className={styles.PostNotEnoughMinStakeAlert}>
+        <div className='d-flex align-items-center GapTiny'>
+          <TbCoins />
+          <span>This post could earn SUB rewards.</span>
+        </div>
+        <Link href={activeStakingLinks.learnMore}>
+          <a target='_blank' className='DfLink'>
+            Learn How
+          </a>
+        </Link>
       </div>
-      <Link href={activeStakingLinks.learnMore}>
-        <a target='_blank' className='DfLink'>
-          Learn How
-        </a>
-      </Link>
-    </div>
-  )
+    )
+  }
+
+  return null
 }
 
 export function PinnedPostIcon({ postId }: { postId: string }) {
