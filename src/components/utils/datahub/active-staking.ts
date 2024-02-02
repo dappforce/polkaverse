@@ -172,8 +172,7 @@ export async function getCanPostsSuperLiked(postIds: string[]): Promise<CanPostS
   res.data.activeStakingCanDoSuperLikeByPost.forEach(item =>
     resultMap.set(item.persistentPostId, {
       postId: item.persistentPostId,
-      canPostSuperLiked:
-        item.validByCreationDate && item.validByCreatorMinStake && item.validByLowValue,
+      canPostSuperLiked: item.validByCreationDate && item.validByCreatorMinStake,
       validByCreationDate: item.validByCreationDate,
       validByCreatorMinStake: item.validByCreatorMinStake,
       validByLowValue: item.validByLowValue,
