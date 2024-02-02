@@ -17,7 +17,7 @@ import { getAmountRange } from 'src/utils/analytics'
 import { useIsSignedIn, useMyAddress } from '../auth/MyAccountsContext'
 import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar'
 import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
-import { ShowActiveStakingPostsProvider } from '../posts/ShowActiveStakingPostsContext'
+import { ShowLikeablePostsProvider } from '../posts/ShowLikeablePostsContext'
 import WriteSomething from '../posts/WriteSomething'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
@@ -205,7 +205,7 @@ const TabsHomePage = ({
         {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
       </span>
 
-      <ShowActiveStakingPostsProvider tab={tab} filter={type}>
+      <ShowLikeablePostsProvider tab={tab} filter={type}>
         <Section className='m-0'>
           <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} {...props} />
           <TabsContent />
@@ -215,7 +215,7 @@ const TabsHomePage = ({
             </BackTop>
           </Tooltip>
         </Section>
-      </ShowActiveStakingPostsProvider>
+      </ShowLikeablePostsProvider>
     </>
   )
 }

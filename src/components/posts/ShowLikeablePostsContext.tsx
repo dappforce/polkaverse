@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useMemo } from 'react'
 import useLocalStorage from 'use-local-storage'
 import { TabKeys } from '../main/types'
 
-const ShowActiveStakingPostsContext = createContext<{
+const ShowLikeablePostsContext = createContext<{
   value: boolean
   setValue: (value: boolean) => void
 }>({
@@ -10,7 +10,7 @@ const ShowActiveStakingPostsContext = createContext<{
   setValue: () => undefined,
 })
 
-export function ShowActiveStakingPostsProvider({
+export function ShowLikeablePostsProvider({
   children,
   filter,
   tab,
@@ -37,12 +37,12 @@ export function ShowActiveStakingPostsProvider({
   )
 
   return (
-    <ShowActiveStakingPostsContext.Provider value={memoized}>
+    <ShowLikeablePostsContext.Provider value={memoized}>
       {children}
-    </ShowActiveStakingPostsContext.Provider>
+    </ShowLikeablePostsContext.Provider>
   )
 }
 
-export function useShowActiveStakingPostsContext() {
-  return useContext(ShowActiveStakingPostsContext)
+export function useShowLikeablePostsContext() {
+  return useContext(ShowLikeablePostsContext)
 }

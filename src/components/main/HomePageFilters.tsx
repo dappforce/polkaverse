@@ -6,7 +6,7 @@ import { ReactNode } from 'react-markdown'
 import config from 'src/config'
 import { useIsMyAddressWhitelisted } from 'src/config/constants'
 import LatestPostsPage from '../posts/LatestPostsPage'
-import { useShowActiveStakingPostsContext } from '../posts/ShowActiveStakingPostsContext'
+import { useShowLikeablePostsContext } from '../posts/ShowLikeablePostsContext'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import LatestSpacesPage, { CreatorsSpaces } from '../spaces/LatestSpacesPage'
 import style from './HomePage.module.sass'
@@ -113,7 +113,7 @@ export const Filters = (props: Props) => {
   const { isMobile } = useResponsiveSize()
   const isWhitelisted = useIsMyAddressWhitelisted()
 
-  const { setValue, value } = useShowActiveStakingPostsContext()
+  const { setValue, value } = useShowLikeablePostsContext()
 
   const router = useRouter()
 
@@ -130,8 +130,8 @@ export const Filters = (props: Props) => {
   const needDateFilter =
     !!type && type !== 'latest' && type !== 'suggested' && type !== 'creators' && type !== 'hot'
 
-  const showActivePostsCheckbox = type === 'latest' && tabKey === 'posts'
-  const hasRightElement = needDateFilter || showActivePostsCheckbox
+  const showLikablePostsCheckbox = type === 'latest' && tabKey === 'posts'
+  const hasRightElement = needDateFilter || showLikablePostsCheckbox
 
   if (!needDateFilter && !filterByKey[tabKey]?.length) return null
 
@@ -176,11 +176,11 @@ export const Filters = (props: Props) => {
             </Select>
           </Col>
         )}
-        {showActivePostsCheckbox && (
+        {showLikablePostsCheckbox && (
           <Col className={clsx(isMobile && 'mt-2')}>
             <Checkbox checked={value} onChange={e => setValue(e.target.checked)}>
               <span className='ColorMuted' style={{ userSelect: 'none' }}>
-                Active Posts only
+                Show likeable posts
               </span>
             </Checkbox>
           </Col>
