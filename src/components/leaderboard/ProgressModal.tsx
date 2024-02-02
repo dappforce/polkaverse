@@ -57,29 +57,43 @@ const statusClassName: Record<DisplayedStatus, string> = {
 
 const contentMap: Record<
   'lastWeek' | 'yesterday',
-  Record<DisplayedStatus, { title: string; subtitle: string }>
+  Record<
+    DisplayedStatus,
+    { title: string; subtitle: (withFirstPersonPerspective?: boolean) => string }
+  >
 > = {
   lastWeek: {
     full: {
       title: 'Week Striker',
-      subtitle: 'You dominated last week, and maximized your rewards every day! Impressive!',
+      subtitle: firstPerson =>
+        `${firstPerson ? 'I' : 'You'} dominated last week, and maximized ${
+          firstPerson ? 'my' : 'your'
+        } rewards every day! Impressive!`,
     },
     half: {
       title: 'Halfway Hero',
-      subtitle:
-        "You had some good activity last week, but you still gave up some rewards. Let's see just a little more this week!",
+      subtitle: firstPerson =>
+        `${firstPerson ? 'I' : 'You'} had some good activity last week, but ${
+          firstPerson ? 'I' : 'you'
+        } still gave up some rewards. Let's see just a little more this week!`,
     },
   },
   yesterday: {
     full: {
       title: 'Hustler',
-      subtitle:
-        'Incredible work yesterday! You completed every task and went above and beyond. Your energy is unmatched!',
+      subtitle: firstPerson =>
+        `Incredible work yesterday! ${
+          firstPerson ? 'I' : 'You'
+        } completed every task and went above and beyond. ${
+          firstPerson ? 'My' : 'Your'
+        } energy is unmatched!`,
     },
     half: {
       title: 'Cherry Picker',
-      subtitle:
-        'Good effort yesterday, but you missed out on maximum rewards. Make sure to like at least 10 posts today!',
+      subtitle: firstPerson =>
+        `Good effort yesterday, but ${
+          firstPerson ? 'I' : 'You'
+        } missed out on maximum rewards. Make sure to like at least 10 posts today!`,
     },
   },
 }
@@ -124,7 +138,7 @@ function InnerProgressModal() {
           style={{ width: '400px', display: 'none' }}
         >
           <div className='ant-modal-content p-3 pb-4'>
-            <ProgressPanel />
+            <ProgressPanel withFirstPersonPerspective />
           </div>
         </div>
       </CustomModal>
@@ -132,7 +146,13 @@ function InnerProgressModal() {
   )
 }
 
-function ProgressPanel({ withButtons }: { withButtons?: boolean }) {
+function ProgressPanel({
+  withButtons,
+  withFirstPersonPerspective,
+}: {
+  withButtons?: boolean
+  withFirstPersonPerspective?: boolean
+}) {
   const { ipfs } = useSubsocialApi()
 
   const myAddress = useMyAddress() ?? ''
@@ -221,7 +241,9 @@ function ProgressPanel({ withButtons }: { withButtons?: boolean }) {
             />
           </div>
           <span className='text-center FontLarge FontWeightBold mb-2'>{usedContent.title}</span>
-          <p className='text-center ColorSlate mb-0'>{usedContent.subtitle}</p>
+          <p className='text-center ColorSlate mb-0'>
+            {usedContent.subtitle(withFirstPersonPerspective)}
+          </p>
         </div>
         <div className='d-flex w-100 GapSmall'>
           <RewardCard
