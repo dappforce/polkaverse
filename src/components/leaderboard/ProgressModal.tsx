@@ -232,18 +232,14 @@ function ProgressPanel({
 
   const shareOnX = () => {
     const { isZero, value } = formatSUB(data?.earned)
-    generateImage(image => {
-      openNewWindow(
-        twitterShareUrl(
-          spaceHandleOrId
-            ? `/${spaceHandleOrId}?customImage=${encodeURIComponent(image)}`
-            : `/accounts/${myAddress}`,
-          `I earned ${isZero ? '' : `${value} `}#SUB ${
-            isUsingLastWeekData ? 'last week for my activity' : 'yesterday'
-          } on @SubsocialChain! 🥳\n\nFollow me here and join The Creator Economy!`,
-        ),
-      )
-    })
+    openNewWindow(
+      twitterShareUrl(
+        spaceHandleOrId ? `/${spaceHandleOrId}` : `/accounts/${myAddress}`,
+        `I earned ${isZero ? '' : `${value} `}#SUB ${
+          isUsingLastWeekData ? 'last week for my activity' : 'yesterday'
+        } on @SubsocialChain! 🥳\n\nFollow me here and join The Creator Economy!`,
+      ),
+    )
   }
 
   return (
