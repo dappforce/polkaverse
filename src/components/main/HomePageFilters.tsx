@@ -140,6 +140,18 @@ export const Filters = (props: Props) => {
     filters = filters.filter(({ value }) => value !== 'hot')
   }
 
+  if (isAffix && showLikablePostsCheckbox) {
+    return (
+      <div className={clsx('AffixCheckbox')}>
+        <Checkbox checked={value} onChange={e => setValue(e.target.checked)}>
+          <span className='ColorMuted' style={{ userSelect: 'none' }}>
+            Show likeable posts
+          </span>
+        </Checkbox>
+      </div>
+    )
+  }
+
   return (
     <div className={`DfFilters ${!isAffix ? 'mt-3' : ''}`}>
       <Row className={style.DfGridParams}>
