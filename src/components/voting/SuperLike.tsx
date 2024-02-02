@@ -130,7 +130,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   else if (!isExist)
     tooltipTitle = `This ${entity} is still being minted, please wait a few seconds`
   else if (!validByCreatorMinStake)
-    tooltipTitle = `This ${entity} cannot be liked because its author has not yet locked the minimum amount of SUB`
+    tooltipTitle = `This ${entity} cannot be liked because its author has not yet locked at least 2,000 SUB`
   else if (!canBeSuperliked) tooltipTitle = `You cannot like ${entity}s that are older than 7 days`
 
   const button = (
