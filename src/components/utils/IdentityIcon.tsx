@@ -2,6 +2,7 @@ import Avatar from 'antd/lib/avatar/avatar'
 import React, { useEffect, useRef } from 'react'
 import { DEFAULT_AVATAR_SIZE } from 'src/config/Size.config'
 
+import clsx from 'clsx'
 import * as jdenticon from 'jdenticon'
 
 type JdenticonProps = {
@@ -31,10 +32,15 @@ export const IdentityIcon = React.memo((allProps: JdenticonProps) => {
   return (
     <Avatar
       icon={
-        <Jdenticon className='DfIdentityIconContent' value={address} size={size - 2} {...props} />
+        <Jdenticon
+          value={address}
+          size={size - 2}
+          {...props}
+          className={clsx('DfIdentityIconContent')}
+        />
       }
       size={size}
-      className='DfIdentityIcon'
+      className={clsx('DfIdentityIcon', props.className)}
     />
   )
 })
