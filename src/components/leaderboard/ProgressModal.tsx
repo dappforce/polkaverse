@@ -223,7 +223,7 @@ function ProgressPanel({
 
   const shareOnPolkaverse = () => {
     const { isZero, value } = formatSUB(data?.earned)
-    const title = `I earned ${isZero ? '' : `${value} `} SUB ${
+    const title = `I earned ${isZero ? '' : `${value} `}SUB ${
       isUsingLastWeekData ? 'last week for my activity' : 'yesterday'
     } on @SubsocialChain!`
     const desc = "Let's be active in Polkaverse to join The Creator Economy!"
