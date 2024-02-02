@@ -222,9 +222,18 @@ function ProgressPanel({
   }
 
   const shareOnPolkaverse = () => {
+    const { isZero, value } = formatSUB(data?.earned)
+    const title = `I earned ${isZero ? '' : `${value} `} SUB ${
+      isUsingLastWeekData ? 'last week for my activity' : 'yesterday'
+    } on @SubsocialChain!`
+    const desc = "Let's be active in Polkaverse to join The Creator Economy!"
     generateImage(image => {
       window.open(
-        fullUrl(`${defaultSpaceIdToPost}/posts/new?image=${encodeURIComponent(image)}`),
+        fullUrl(
+          `${defaultSpaceIdToPost}/posts/new?image=${encodeURIComponent(
+            image,
+          )}&title=${encodeURIComponent(title)}&body=${encodeURIComponent(desc)}`,
+        ),
         '_blank',
       )
     })
