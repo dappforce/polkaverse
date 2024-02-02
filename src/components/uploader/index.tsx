@@ -54,9 +54,12 @@ export const UploadImg = ({
 
   const validateImage = useCallback((file: File | Blob) => {
     const isJpgOrPng =
-      file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif'
+      file.type === 'image/jpeg' ||
+      file.type === 'image/png' ||
+      file.type === 'image/gif' ||
+      file.type === 'image/webp'
     if (!isJpgOrPng) {
-      setError('You can only upload JPG/PNG/GIF file.')
+      setError('You can only upload JPG/PNG/GIF/WEBP file.')
     }
     const isLt2M = file.size / 1024 / 1024 < 2
     if (!isLt2M) {
@@ -68,7 +71,7 @@ export const UploadImg = ({
   return (
     <div>
       <Upload
-        accept='.gif, .png, .jpeg, .jpg'
+        accept='.gif, .png, .jpeg, .jpg, .webp'
         action={async file => {
           const compressedImage = await resizeImage(file)
           if (compressedImage) {
