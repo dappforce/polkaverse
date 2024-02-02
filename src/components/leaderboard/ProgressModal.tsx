@@ -178,7 +178,8 @@ function ProgressPanel({
     hasMissedReward = BigInt(data?.missedReward || '0') > 0
   } catch {}
 
-  const spaceHandleOrId = profile?.struct.handle || profile?.id
+  const handle = profile?.struct.handle
+  const spaceHandleOrId = (handle && `@${handle}`) || profile?.id
 
   const generateImage = async (onSuccess: (image: string) => void) => {
     const element = document.getElementById('progress-image')
