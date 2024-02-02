@@ -23,7 +23,7 @@ export const CREATORS_CONSTANTS = {
   },
 }
 
-export const PINNED_POST_IDS = ['50297']
+export const PINNED_POST_IDS = ['51237']
 export function isPinnedPost(postId: string) {
   return PINNED_POST_IDS.includes(postId)
 }
