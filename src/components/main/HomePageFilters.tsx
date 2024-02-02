@@ -72,7 +72,7 @@ export const spaceFilterOpt: Filter[] = [
     icon: verifiedIcon,
     value: 'suggested',
   },
-  { label: 'Creators Staking', value: 'creators' },
+  // { label: 'Creators Staking', value: 'creators' },
   // ...offchainSpaceFilterOpt,
 ]
 

@@ -51,8 +51,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const spaceId = post.spaceId
   const amIFollower = useAmISpaceFollower(spaceId)
 
-  const { isExist, canPostSuperLiked, validByCreatorMinStake, validByLowValue } =
-    useCanPostSuperLiked(post.id)
+  const { isExist, canPostSuperLiked, validByCreatorMinStake } = useCanPostSuperLiked(post.id)
 
   const [isOpenShouldStakeModal, setIsOpenShouldStakeModal] = useState(false)
   const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
@@ -132,8 +131,6 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
     tooltipTitle = `This ${entity} is still being minted, please wait a few seconds`
   else if (!validByCreatorMinStake)
     tooltipTitle = `This ${entity} cannot be liked because its author has not yet locked the minimum amount of SUB`
-  else if (!validByLowValue)
-    tooltipTitle = `This ${entity} cannot be liked because it's marked as low value content`
   else if (!canBeSuperliked) tooltipTitle = `You cannot like ${entity}s that are older than 7 days`
 
   const button = (

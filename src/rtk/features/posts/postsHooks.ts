@@ -1,6 +1,8 @@
+import { useMemo } from 'react'
 import { useActions } from 'src/rtk/app/helpers'
 import { useAppSelector } from 'src/rtk/app/store'
 import { asCommentStruct, PostId, PostStruct, PostWithSomeDetails } from 'src/types'
+import { selectAllCanPostSuperLiked } from '../activeStaking/canPostSuperLikedSlice'
 import { selectPostContentById } from '../contents/contentsSlice'
 import { useSelectSpace } from '../spaces/spacesHooks'
 import {
@@ -62,4 +64,22 @@ export const useCreateReloadPost = () => {
 
 export const useCreateUpsertPost = () => {
   return useActions<PostStruct>(({ dispatch, args }) => dispatch(upsertPost(args)))
+}
+
+export function useFilterLowValuePosts(postIds: string[]) {
+  const allData = useAppSelector(state => selectAllCanPostSuperLiked(state))
+
+  return useMemo(() => {
+    let filteredCount = 0
+    const filtered = postIds.filter(id => {
+      const canPostSuperLiked = allData[id]
+      if (!canPostSuperLiked?.validByLowValue || !canPostSuperLiked?.validByCreatorMinStake) {
+        filteredCount++
+        return false
+      }
+      return true
+    })
+
+    return { filtered, filteredCount }
+  }, [postIds.join(',')])
 }
