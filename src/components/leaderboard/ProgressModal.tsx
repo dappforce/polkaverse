@@ -233,11 +233,14 @@ function ProgressPanel({
   const shareOnX = () => {
     const { isZero, value } = formatSUB(data?.earned)
     generateImage(image => {
+      const redirectTo = spaceHandleOrId ? `/${spaceHandleOrId}` : `/accounts/${myAddress}`
+      const title = 'I earned SUB for my activity on Subsocial!'
+      const desc = 'Follow me here and join The Creator Economy!'
       openNewWindow(
         twitterShareUrl(
-          spaceHandleOrId
-            ? `/${spaceHandleOrId}?customImage=${encodeURIComponent(image)}`
-            : `/accounts/${myAddress}`,
+          `/custom?image=${encodeURIComponent(image)}&title=${encodeURIComponent(
+            title,
+          )}&desc=${encodeURIComponent(desc)}&redirectTo=${encodeURIComponent(redirectTo)}`,
           `I earned ${isZero ? '' : `${value} `}#SUB ${
             isUsingLastWeekData ? 'last week for my activity' : 'yesterday'
           } on @SubsocialChain! 🥳\n\nFollow me here and join The Creator Economy!`,
