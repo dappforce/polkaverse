@@ -61,9 +61,15 @@ function EditPostForm(props: PostFormProps) {
   const blocked = useAmIBlocked()
 
   const { savedData, clearDraft } = useAutoSaveFromForm({ entity: 'post' })
-  const queryImage = router.query.image
-  if (typeof queryImage === 'string' && queryImage.startsWith(config.ipfsNodeUrl)) {
-    savedData.image = queryImage
+  const { image, title, body } = router.query
+  if (typeof image === 'string' && image.startsWith(config.ipfsNodeUrl)) {
+    savedData.image = image
+  }
+  if (typeof title === 'string') {
+    savedData.title = title
+  }
+  if (typeof body === 'string') {
+    savedData.body = body
   }
 
   const initialValues = post ? getInitialValues(props) : savedData
