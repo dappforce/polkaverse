@@ -40,7 +40,14 @@ export function useHasISuperLikedPost(postId: string) {
 export function useCanPostSuperLiked(postId: string): CanPostSuperLiked {
   return useAppSelector(state => {
     return (
-      selectCanPostSuperLiked(state, postId) || { postId, canPostSuperLiked: false, isExist: false }
+      selectCanPostSuperLiked(state, postId) || {
+        postId,
+        canPostSuperLiked: false,
+        validByCreationDate: false,
+        validByCreatorMinStake: false,
+        validByLowValue: false,
+        isExist: false,
+      }
     )
   })
 }

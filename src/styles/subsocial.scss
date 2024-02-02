@@ -2340,3 +2340,10 @@ hr {
 .text-wrap-balance {
   text-wrap: balance;
 }
+
+.AffixCheckbox {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translateY(10px);
+}

@@ -51,7 +51,8 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const spaceId = post.spaceId
   const amIFollower = useAmISpaceFollower(spaceId)
 
-  const { isExist, canPostSuperLiked } = useCanPostSuperLiked(post.id)
+  const { isExist, canPostSuperLiked, validByCreatorMinStake, validByLowValue } =
+    useCanPostSuperLiked(post.id)
 
   const [isOpenShouldStakeModal, setIsOpenShouldStakeModal] = useState(false)
   const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
@@ -64,8 +65,8 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const isMyPost = post.ownerId === myAddress
 
   const isActive = hasILiked
-  const isPostCreatedMoreThan1Week = !clientCanPostSuperLiked || !canPostSuperLiked
-  const isDisabled = isPostCreatedMoreThan1Week || isMyPost || loadingTotalStake
+  const canBeSuperliked = clientCanPostSuperLiked && canPostSuperLiked
+  const isDisabled = !canBeSuperliked || isMyPost || loadingTotalStake
 
   const { openSignInModal } = useAuth()
 
@@ -129,8 +130,11 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   if (isMyPost) tooltipTitle = `You cannot like your own ${entity}`
   else if (!isExist)
     tooltipTitle = `This ${entity} is still being minted, please wait a few seconds`
-  else if (isPostCreatedMoreThan1Week)
-    tooltipTitle = `You cannot like ${entity}s that are older than 7 days`
+  else if (!validByCreatorMinStake)
+    tooltipTitle = `This ${entity} cannot be liked because its author has not yet locked the minimum amount of SUB`
+  else if (!validByLowValue)
+    tooltipTitle = `This ${entity} cannot be liked because it's marked as low value content`
+  else if (!canBeSuperliked) tooltipTitle = `You cannot like ${entity}s that are older than 7 days`
 
   const button = (
     <div>
@@ -241,7 +245,7 @@ function ShouldStakeModal({ onCancel, visible }: { visible: boolean; onCancel: (
       visible={visible}
       onCancel={onCancel}
       title='Wait a sec...'
-      subtitle='In this app, every like is more than just a thumbs-up! When you like a post, both you and the author can earn extra SUB tokens. For this, you need to start staking SUB tokens first.'
+      subtitle='In this app, every like is more than just a thumbs-up! When you like a post, both you and the author can earn extra SUB tokens. For this, you need to start locking SUB tokens first.'
     >
       <div className='d-flex flex-column align-items-center GapLarge'>
         <Image
@@ -251,7 +255,7 @@ function ShouldStakeModal({ onCancel, visible }: { visible: boolean; onCancel: (
           preview={{ mask: null }}
         />
         <Button block type='primary' size='large' href={getSubIdCreatorsLink()} target='_blank'>
-          Start Staking SUB
+          Start Locking SUB
         </Button>
       </div>
     </CustomModal>

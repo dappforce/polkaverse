@@ -11,15 +11,12 @@ import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
 import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
-import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
-import { SpaceContent, SpaceData, SpaceId, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
+import { SpaceContent, SpaceId, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
 import { getAmountRange } from 'src/utils/analytics'
 import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks'
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
-import MyStakeCard from '../creators/cards/MyStakeCard'
-import StakeSubCard from '../creators/cards/StakeSubCard'
 import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
 import WriteSomething from '../posts/WriteSomething'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
@@ -342,7 +339,6 @@ export const InnerViewSpace = (props: Props) => {
       {canCreatePostAndIsNotHidden && (
         <WriteSomething className='mt-3' defaultSpaceId={spaceData.id} />
       )}
-      {isMobile && <MobileCreatorCard spaceData={spaceData} />}
       <Section className='DfContentPage mt-4'>
         <PostPreviewsOnSpace
           key={spaceData.id}
@@ -353,20 +349,6 @@ export const InnerViewSpace = (props: Props) => {
       </Section>
       <MakeAsProfileModal isMySpace={isMy} />
     </Section>
-  )
-}
-
-function MobileCreatorCard({ spaceData }: { spaceData: SpaceData }) {
-  const { isCreatorSpace, loading: loadingIsCreator } = useIsCreatorSpace(spaceData.id)
-  const myAddress = useMyAddress()
-  const { data, loading } = useFetchStakeData(myAddress ?? '', spaceData.id)
-
-  if (loading || loadingIsCreator || !isCreatorSpace) return null
-
-  return (
-    <div className='mt-4'>
-      {data?.hasStaked ? <MyStakeCard space={spaceData} /> : <StakeSubCard space={spaceData} />}
-    </div>
   )
 }
 

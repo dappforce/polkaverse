@@ -21,7 +21,7 @@ export default function SupportCreatorsCard() {
           and earn SUB
         </p>
         <p className={clsx(styles.Subtitle, 'mb-3')}>
-          Generate rewards for both you and creators by staking towards them
+          Lock tokens and like posts to generate rewards for you and creators
         </p>
         <Button
           href={getSubIdCreatorsLink()}
@@ -31,7 +31,7 @@ export default function SupportCreatorsCard() {
             sendEvent('astake_banner_add_stake', { eventSource: 'support-creators-banner' })
           }
         >
-          Stake SUB
+          Lock SUB
         </Button>
       </div>
 

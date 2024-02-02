@@ -17,6 +17,7 @@ import { getAmountRange } from 'src/utils/analytics'
 import { useIsSignedIn, useMyAddress } from '../auth/MyAccountsContext'
 import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar'
 import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
+import { ShowLikeablePostsProvider } from '../posts/ShowLikeablePostsContext'
 import WriteSomething from '../posts/WriteSomething'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
@@ -200,18 +201,21 @@ const TabsHomePage = ({
       {/* <div className={clsx(isMobile ? 'mt-3' : '')}>
         <CommentBanner />
       </div> */}
-      <span>
-        {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
-      </span>
-      <Section className='m-0'>
-        <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} {...props} />
-        <TabsContent />
-        <Tooltip title={'Back to top'} placement={'right'}>
-          <BackTop className={style.DfBackToTop}>
-            <Button size={'large'} icon={ToTopIcon} />
-          </BackTop>
-        </Tooltip>
-      </Section>
+      <ShowLikeablePostsProvider tab={tab} filter={type}>
+        <span>
+          {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
+        </span>
+
+        <Section className='m-0'>
+          <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} {...props} />
+          <TabsContent />
+          <Tooltip title={'Back to top'} placement={'right'}>
+            <BackTop className={style.DfBackToTop}>
+              <Button size={'large'} icon={ToTopIcon} />
+            </BackTop>
+          </Tooltip>
+        </Section>
+      </ShowLikeablePostsProvider>
     </>
   )
 }

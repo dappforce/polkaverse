@@ -8,6 +8,7 @@ import {
   SharedPreview,
   useIsUnlistedPost,
 } from '.'
+import PostNotEnoughMinStakeAlert from './helpers'
 
 const log = newLogger('ViewPost')
 
@@ -52,6 +53,7 @@ export function PostPreview(props: PreviewProps) {
       ) : (
         <RegularPreview space={space} {...props} />
       )}
+      <PostNotEnoughMinStakeAlert post={post} />
     </Segment>
   )
 }
