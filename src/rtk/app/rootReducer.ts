@@ -32,7 +32,6 @@ import posts from '../features/posts/postsSlice'
 import followedAccountIds from '../features/profiles/followedAccountIdsSlice'
 import profileSpaces from '../features/profiles/profilesSlice'
 import myPostReactions from '../features/reactions/myPostReactionsSlice'
-import lowValueIds from '../features/replies/lowValueIdsSlice'
 import replyIds from '../features/replies/repliesSlice'
 import sellerConfig from '../features/sellerConfig/sellerConfigSlice'
 import followedSpaceIds from '../features/spaceIds/followedSpaceIdsSlice'
@@ -80,7 +79,6 @@ const rootReducer = combineReducers({
   leaderboard,
   postScores,
   prevReward,
-  lowValueIds,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

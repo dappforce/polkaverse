@@ -1,11 +1,9 @@
-import { useMemo } from 'react'
 import { useActions } from 'src/rtk/app/helpers'
 import { useAppSelector } from 'src/rtk/app/store'
 import { PostData, PostId, PostStruct } from 'src/types'
 import { upsertContent } from '../contents/contentsSlice'
 import { useCreateReloadPosts } from '../posts/postsHooks'
 import { removePost, upsertPost } from '../posts/postsSlice'
-import { selectLowValueIds } from './lowValueIdsSlice'
 import { ReplyIdsByPostId, selectReplyIdsEntities, upsertReplyIdsByPostId } from './repliesSlice'
 
 type RemoveReplyParams = {
@@ -107,14 +105,4 @@ export const useCreateUpsertReply = () => {
     parentId && upsertReplies(buildUpsertOneArgs({ ...args, reply: replyData.struct, parentId }))
     upsertReply(replyData)
   }
-}
-
-export function useFilterOutLowValuePosts(rootPostId: string, postIds: string[]) {
-  const lowValueState = useAppSelector(state => selectLowValueIds(state, rootPostId))
-  return useMemo(() => {
-    const lowValueSet = new Set(lowValueState?.lowValueIds ?? [])
-    return postIds.filter(postId => {
-      return !lowValueSet.has(postId)
-    })
-  }, [postIds, lowValueState])
 }

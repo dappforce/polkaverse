@@ -1,7 +1,7 @@
 import React, { FC, useMemo, useState } from 'react'
-import { useFilterOutLowValuePosts, useSelectSpace } from 'src/rtk/app/hooks'
+import { useSelectSpace } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
-import { useSelectPost } from 'src/rtk/features/posts/postsHooks'
+import { useFilterLowValuePosts, useSelectPost } from 'src/rtk/features/posts/postsHooks'
 import { fetchPostReplyIds } from 'src/rtk/features/replies/repliesSlice'
 import { asCommentStruct, PostId } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
@@ -55,7 +55,6 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({
   eventProps,
   directlyExpandReplies,
   showAllReplies,
-  rootPostId,
 }) => {
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
@@ -68,7 +67,7 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({
     return replyIds.slice().reverse()
   }, [replyIds])
 
-  const filteredIds = useFilterOutLowValuePosts(rootPostId, reversedReplyIds)
+  const { filtered: filteredIds } = useFilterLowValuePosts(reversedReplyIds)
   const usedIds = showAllReplies ? reversedReplyIds : filteredIds
 
   useSubsocialEffect(

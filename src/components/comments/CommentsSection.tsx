@@ -1,6 +1,7 @@
 import { Checkbox } from 'antd'
 import clsx from 'clsx'
 import { FC } from 'react'
+import { useFilterLowValuePosts } from 'src/rtk/app/hooks'
 import { PostWithSomeDetails, SpaceStruct } from 'src/types'
 import useLocalStorage from 'use-local-storage'
 import { useIsMyAddress } from '../auth/MyAccountsContext'
@@ -8,6 +9,7 @@ import { Pluralize } from '../utils/Plularize'
 import Section from '../utils/Section'
 import { ViewCommentsTree } from './CommentTree'
 import { NewComment } from './CreateComment'
+import { useRepliesData } from './utils'
 
 type CommentSectionProps = {
   post: PostWithSomeDetails
@@ -35,6 +37,9 @@ export const CommentSection: FC<CommentSectionProps> = ({
     serializer: bool => String(bool),
   })
 
+  const { replyIds } = useRepliesData({ id })
+  const { filteredCount } = useFilterLowValuePosts(replyIds)
+
   return (
     <Section
       id={hashId}
@@ -52,7 +57,7 @@ export const CommentSection: FC<CommentSectionProps> = ({
           onChange={e => setShowAllComments(e.target.checked)}
         >
           <span className='ColorMuted' style={{ userSelect: 'none' }}>
-            Show all comments
+            Show all comments{filteredCount ? ` (+${filteredCount})` : ''}
           </span>
         </Checkbox>
       </div>

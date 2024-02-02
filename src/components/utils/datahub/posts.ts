@@ -1,5 +1,4 @@
 import gql from 'graphql-tag'
-import { LowValueIds } from 'src/rtk/features/replies/lowValueIdsSlice'
 import { datahubQueryRequest } from './utils'
 
 // QUERIES
@@ -36,34 +35,4 @@ export async function getHotPosts(variables: { offset: number; limit: number }) 
   })
 
   return res.data.activeStakingRankedPostIdsByActiveStakingActivity
-}
-
-const GET_LOW_VALUE_IDS = gql`
-  query GetLowValueIds($rootPostId: String!) {
-    findPosts(where: { rootPostPersistentId: $rootPostId, lowValue: true }) {
-      data {
-        persistentId
-      }
-    }
-  }
-`
-export async function getLowValueIds(rootPostId: string): Promise<LowValueIds> {
-  const res = await datahubQueryRequest<
-    {
-      findPosts: {
-        data: {
-          persistentId: string
-        }[]
-      }
-    },
-    { rootPostId: string }
-  >({
-    query: GET_LOW_VALUE_IDS,
-    variables: { rootPostId },
-  })
-
-  return {
-    rootPostId,
-    lowValueIds: res.data.findPosts.data.map(post => post.persistentId),
-  }
 }
