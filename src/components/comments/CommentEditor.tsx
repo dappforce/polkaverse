@@ -128,6 +128,7 @@ export const CommentEditor = (props: Props) => {
               placeholder='Write a comment...'
               autoSize={{ minRows: 1, maxRows: 5 }}
               autoFocus={autoFocus}
+              size='large'
             />
           }
           name={Fields.body}
