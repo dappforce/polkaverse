@@ -7,12 +7,16 @@ import { BareProps } from '../utils/types'
 
 const { appBaseUrl } = config
 
-export const openNewWindow = (url: string) =>
+export const openNewWindow = (url: string) => {
+  const biggerWindow = window.innerWidth > 650
   window.open(
     url,
     '_blank',
-    'toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=400,height=400',
+    `toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=${
+      biggerWindow ? 600 : 400
+    },height=${biggerWindow ? 600 : 400}`,
   )
+}
 
 /**
  * Stringify a space's handle by prepending it with '@' char.
