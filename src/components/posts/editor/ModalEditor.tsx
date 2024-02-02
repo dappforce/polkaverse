@@ -46,14 +46,15 @@ const HtmlEditor = dynamic(() => import('./HtmlEditor'), {
 
 const log = newLogger('ModalEditor')
 
-export const PostEditorModalBody = ({
-  closeModal,
-  defaultSpaceId,
-}: {
-  closeModal: () => void
-  defaultSpaceId?: string
-}) => {
+export function useDefaultSpaceIdToPost(defaultSpaceId?: string) {
   const myAddress = useMyAddress()
+  const profile = useSelectProfile(myAddress)
+
+  const { getDataForAddress: getLastUsedSpaceId, setData: setLastUsedSpaceId } = useExternalStorage(
+    'last-space-id',
+    { storageKeyType: 'user' },
+  )
+
   const allowedSpaceIds = useSelectSpaceIdsWhereAccountCanPost(myAddress as string)
   const spaceIdOptions = useMemo(() => {
     if (defaultSpaceId && !allowedSpaceIds.includes(defaultSpaceId))
@@ -61,21 +62,7 @@ export const PostEditorModalBody = ({
     return allowedSpaceIds
   }, [allowedSpaceIds, defaultSpaceId])
 
-  const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: spaceIdOptions })
-  const [imgUrl, setUrl] = useState<string>()
-  const [form] = Form.useForm()
-  const { ipfs } = useSubsocialApi()
-  const [IpfsCid, setIpfsCid] = useState<IpfsCid>()
-  const [publishIsDisable, setPublishIsDisable] = useState(true)
-  const sendEvent = useSendEvent()
-
-  const { getDataForAddress: getLastUsedSpaceId, setData: setLastUsedSpaceId } = useExternalStorage(
-    'last-space-id',
-    { storageKeyType: 'user' },
-  )
-
-  const profile = useSelectProfile(myAddress)
-  const defaultSpace = useMemo(() => {
+  const defaultSpaceIdToPost = useMemo(() => {
     if (defaultSpaceId) return defaultSpaceId
     const lastUsedSpaceId = getLastUsedSpaceId(myAddress ?? '')
     if (getLastUsedSpaceId(myAddress ?? '') && spaceIdOptions.includes(lastUsedSpaceId)) {
@@ -86,6 +73,32 @@ export const PostEditorModalBody = ({
     }
     return spaceIdOptions[0]
   }, [spaceIdOptions, profile, defaultSpaceId])
+
+  return { defaultSpaceIdToPost, setLastUsedSpaceId, spaceIdOptions }
+}
+
+export const PostEditorModalBody = ({
+  closeModal,
+  defaultSpaceId,
+}: {
+  closeModal: () => void
+  defaultSpaceId?: string
+}) => {
+  const myAddress = useMyAddress()
+
+  const {
+    defaultSpaceIdToPost: defaultSpace,
+    setLastUsedSpaceId,
+    spaceIdOptions,
+  } = useDefaultSpaceIdToPost(defaultSpaceId)
+
+  const spaceIds = selectSpaceIdsThatCanSuggestIfSudo({ myAddress, spaceIds: spaceIdOptions })
+  const [imgUrl, setUrl] = useState<string>()
+  const [form] = Form.useForm()
+  const { ipfs } = useSubsocialApi()
+  const [IpfsCid, setIpfsCid] = useState<IpfsCid>()
+  const [publishIsDisable, setPublishIsDisable] = useState(true)
+  const sendEvent = useSendEvent()
 
   const router = useRouter()
   const [spaceId, setSpaceId] = useState<string>(defaultSpace)
