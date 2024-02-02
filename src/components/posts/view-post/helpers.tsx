@@ -391,7 +391,8 @@ const SharedPostMd = (props: PostPreviewProps) => {
 
 export const SharePostContent = (props: PostPreviewProps) => {
   const {
-    postDetails: { ext },
+    postDetails: { ext, post },
+    space,
   } = props
 
   const OriginalPost = () => {
@@ -411,7 +412,7 @@ export const SharePostContent = (props: PostPreviewProps) => {
 
   return (
     <div className='DfSharedSummary'>
-      <SharedPostMd {...props} />
+      <ViewPostLink post={post} space={space?.struct} title={<SharedPostMd {...props} />} />
       <Segment className={clsx('DfPostPreview', summary && 'mt-3')}>
         <OriginalPost />
       </Segment>
