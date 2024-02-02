@@ -7,14 +7,15 @@ import { useShowLikeablePostsContext } from './ShowLikeablePostsContext'
 
 type Props = {
   postId: PostId
+  showPinnedIcon?: boolean
 }
 
-export const PublicPostPreviewById = React.memo(({ postId }: Props) => {
+export const PublicPostPreviewById = React.memo(({ postId, showPinnedIcon }: Props) => {
   const post = useSelectPost(postId)
   const { value: showLikeablePostOnly } = useShowLikeablePostsContext()
   const { validByCreatorMinStake } = useCanPostSuperLiked(postId)
 
   if (!post || (showLikeablePostOnly && !validByCreatorMinStake)) return null
 
-  return <PostPreview postDetails={post} withActions />
+  return <PostPreview postDetails={post} withActions showPinnedIcon={showPinnedIcon} />
 })

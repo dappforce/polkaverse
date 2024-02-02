@@ -1,7 +1,13 @@
 import { newLogger } from '@subsocial/utils'
 import { Segment } from 'src/components/utils/Segment'
 import { PostWithAllDetails, PostWithSomeDetails, SpaceData } from 'src/types'
-import { HiddenPostAlert, RegularPreview, SharedPreview, useIsUnlistedPost } from '.'
+import {
+  HiddenPostAlert,
+  PinnedPostIcon,
+  RegularPreview,
+  SharedPreview,
+  useIsUnlistedPost,
+} from '.'
 import PostNotEnoughMinStakeAlert from './helpers'
 
 const log = newLogger('ViewPost')
@@ -17,10 +23,11 @@ export type BarePreviewProps = {
 export type PreviewProps = BarePreviewProps & {
   postDetails: PostWithSomeDetails
   space?: SpaceData
+  showPinnedIcon?: boolean
 }
 
 export function PostPreview(props: PreviewProps) {
-  const { postDetails, space: externalSpace } = props
+  const { postDetails, space: externalSpace, showPinnedIcon } = props
   const {
     space: globalSpace,
     post: { struct: post },
@@ -39,6 +46,7 @@ export function PostPreview(props: PreviewProps) {
 
   return (
     <Segment className='DfPostPreview'>
+      {showPinnedIcon && <PinnedPostIcon postId={post.id} />}
       <HiddenPostAlert post={post} space={space?.struct} preview />
       {isSharedPost ? (
         <SharedPreview space={space} {...props} />

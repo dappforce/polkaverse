@@ -7,6 +7,7 @@ import isEmpty from 'lodash.isempty'
 import Error from 'next/error'
 import Link from 'next/link'
 import React, { FC, useState } from 'react'
+import { RiPushpin2Fill } from 'react-icons/ri'
 import { TbCoins, TbMessageCircle2 } from 'react-icons/tb'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
@@ -19,6 +20,7 @@ import FollowSpaceButton from 'src/components/utils/FollowSpaceButton'
 import Segment from 'src/components/utils/Segment'
 import { ActiveVoters, PostVoters } from 'src/components/voting/ListVoters'
 import SuperLike from 'src/components/voting/SuperLike'
+import { isPinnedPost } from 'src/config/constants'
 import { maintenanceMsg } from 'src/config/env'
 import { resolveIpfsUrl } from 'src/ipfs'
 import messages from 'src/messages'
@@ -520,6 +522,21 @@ export default function PostNotEnoughMinStakeAlert({ post }: { post: PostStruct 
           Learn How
         </a>
       </Link>
+    </div>
+  )
+}
+
+export function PinnedPostIcon({ postId }: { postId: string }) {
+  const isPinned = isPinnedPost(postId)
+  if (!isPinned) return null
+
+  return (
+    <div
+      className='d-flex align-items-center GapTiny ColorMuted mb-1 FontWeightSemibold'
+      style={{ marginTop: '-12px' }}
+    >
+      <RiPushpin2Fill />
+      <span>Pinned</span>
     </div>
   )
 }
