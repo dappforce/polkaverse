@@ -13,6 +13,7 @@ import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import Avatar from '../profiles/address-views/Avatar'
 import { useIsMobileWidthOrDevice } from '../responsive'
+import { DfImage } from '../utils/DfImage'
 import { MutedSpan } from '../utils/MutedText'
 import { Pluralize } from '../utils/Plularize'
 import Segment from '../utils/Segment'
@@ -80,22 +81,30 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
       >
         <div className='d-flex flex-column FontSmall' style={{ minWidth: 0 }}>
           <MutedSpan className='FontWeightMedium mb-1'>Likers</MutedSpan>
-          <div className='d-flex flex-column GapTiny'>
-            {data.stakers.map((staker, i) => (
-              <UserInfo type='staker' rank={i + 1} key={i} user={staker} />
-            ))}
-          </div>
+          {data.stakers.length < 3 ? (
+            <NoUsersContent text='Like the most posts to reach the top!' />
+          ) : (
+            <div className='d-flex flex-column GapTiny'>
+              {data.stakers.map((staker, i) => (
+                <UserInfo type='staker' rank={i + 1} key={i} user={staker} />
+              ))}
+            </div>
+          )}
         </div>
         <div
           className={clsx('d-flex flex-column FontSmall', !isMobile && 'mt-3 pt-2')}
           style={{ borderTop: !isMobile ? '1px solid #E2E8F0' : 'none', minWidth: 0 }}
         >
           <MutedSpan className='FontWeightMedium mb-1'>Creators</MutedSpan>
-          <div className='d-flex flex-column GapTiny'>
-            {data?.creators.map((creator, i) => (
-              <UserInfo type='creator' rank={i + 1} key={i} user={creator} />
-            ))}
-          </div>
+          {data.creators.length < 3 ? (
+            <NoUsersContent text='Create great content and get the most likes to show up here!' />
+          ) : (
+            <div className='d-flex flex-column GapTiny'>
+              {data.creators.map((creator, i) => (
+                <UserInfo type='creator' rank={i + 1} key={i} user={creator} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
       {!isMobile && <div className='d-flex justify-content-center mt-2'>{seeMoreButton}</div>}
@@ -176,6 +185,20 @@ function UserInfo({
           )}
         </div>
       </div>
+    </div>
+  )
+}
+
+function NoUsersContent({ text }: { text: string }) {
+  return (
+    <div
+      className='d-flex flex-column justify-content-center align-items-center RoundedBig text-center'
+      style={{ background: '#F8FAFC', height: '158px', boxShadow: '0px 2px 14.5px 0px #ECF1F7' }}
+    >
+      <DfImage src='/images/medals.png' preview={false} size={70} />
+      <span className='FontSmall' style={{ color: '#64748B' }}>
+        {text}
+      </span>
     </div>
   )
 }
