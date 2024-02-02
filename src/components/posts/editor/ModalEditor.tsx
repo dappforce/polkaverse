@@ -274,9 +274,11 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
               <AiFillInfoCircle />
               <span>Post to Earn</span>
             </div>
-            <Button shape='round' type='primary' href={getSubIdCreatorsLink()} target='_blank'>
-              Lock SUB
-            </Button>
+            {neededStake > 0 && (
+              <Button shape='round' type='primary' href={getSubIdCreatorsLink()} target='_blank'>
+                Lock SUB
+              </Button>
+            )}
           </div>
           {(() => {
             if (!hasStaked) {
