@@ -180,7 +180,7 @@ function ProgressPanel({
 
   const spaceHandleOrId = profile?.struct.handle || profile?.id
 
-  const shareOnPolkaverse = async () => {
+  const generateImage = async (onSuccess: (image: string) => void) => {
     const element = document.getElementById('progress-image')
     if (!element) return
 
@@ -208,12 +208,7 @@ function ProgressPanel({
         if (!cid) throw new Error('Failed to save image to IPFS')
 
         progressModalStorage.close()
-        window.open(
-          fullUrl(
-            `${defaultSpaceIdToPost}/posts/new?image=${encodeURIComponent(resolveIpfsUrl(cid))}`,
-          ),
-          '_blank',
-        )
+        onSuccess(resolveIpfsUrl(cid))
       } catch (err: any) {
         controlledMessage({
           message: 'Failed to generate reward image',
@@ -223,6 +218,30 @@ function ProgressPanel({
         console.error(err)
       }
       setLoading(false)
+    })
+  }
+
+  const shareOnPolkaverse = () => {
+    generateImage(image => {
+      window.open(
+        fullUrl(`${defaultSpaceIdToPost}/posts/new?image=${encodeURIComponent(image)}`),
+        '_blank',
+      )
+    })
+  }
+
+  const shareOnX = () => {
+    generateImage(image => {
+      openNewWindow(
+        twitterShareUrl(
+          spaceHandleOrId
+            ? `/${spaceHandleOrId}?customImage=${encodeURIComponent(image)}`
+            : `/accounts/${myAddress}`,
+          `I earned #SUB ${
+            isUsingLastWeekData ? 'last week for my activity' : 'yesterday'
+          } on @SubsocialChain! 🥳\n\nFollow me here and join The Creator Economy!`,
+        ),
+      )
     })
   }
 
@@ -283,20 +302,7 @@ function ProgressPanel({
           className='GapNormal mt-4'
           style={{ display: 'grid', gridTemplateColumns: defaultSpaceIdToPost ? '1fr 1fr' : '1fr' }}
         >
-          <Button
-            type='default'
-            size='large'
-            onClick={() =>
-              openNewWindow(
-                twitterShareUrl(
-                  spaceHandleOrId ? `/${spaceHandleOrId}` : `/accounts/${myAddress}`,
-                  `I earned #SUB ${
-                    isUsingLastWeekData ? 'last week for my activity' : 'yesterday'
-                  } on @SubsocialChain! 🥳\n\nFollow me here and join The Creator Economy!`,
-                ),
-              )
-            }
-          >
+          <Button type='default' size='large' loading={loading} onClick={() => shareOnX()}>
             Share on X
           </Button>
           {defaultSpaceIdToPost && (

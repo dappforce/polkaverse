@@ -15,11 +15,14 @@ import { loadSpaceOnNextReq } from './helpers/loadSpaceOnNextReq'
 import { ViewSpace } from './ViewSpace'
 import { ViewSpaceProps } from './ViewSpaceProps'
 
-type Props = ViewSpaceProps & HasStatusCode
+type Props = ViewSpaceProps &
+  HasStatusCode & {
+    customImage?: string
+  }
 
 const InnerViewSpacePage: FC<Props> = props => {
   const myAddress = useMyAddress()
-  const { spaceData } = props
+  const { spaceData, customImage } = props
 
   useFetchMyPermissionsBySpaceId(spaceData?.id)
 
@@ -45,7 +48,7 @@ const InnerViewSpacePage: FC<Props> = props => {
         meta={{
           title,
           desc: `Latest news and updates from ${name} on Polkaverse.`,
-          image,
+          image: customImage || image,
           canonical: spaceUrl(spaceData.struct),
         }}
         withSidebar
@@ -89,6 +92,7 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
   const sortedPostIds = descSort(postIds)
 
   const pageIds = getPageOfIds(sortedPostIds, query)
+  const customImage = query.customImage as string | undefined
 
   await dispatch(
     fetchPosts({
@@ -106,6 +110,7 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
     spaceData: data,
     posts,
     postIds: sortedPostIds,
+    customImage,
   }
 })
 
