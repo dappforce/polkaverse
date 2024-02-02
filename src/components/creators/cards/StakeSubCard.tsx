@@ -28,7 +28,7 @@ export default function StakeSubCard({ space }: StakeSubCardProps) {
           Generate rewards for both you and this creator by staking towards them
         </p>
         <Button
-          href={getSubIdCreatorsLink(space)}
+          href={getSubIdCreatorsLink()}
           target='_blank'
           type='primary'
           block={isSmallMobile || isNotMobile}

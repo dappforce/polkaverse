@@ -10,6 +10,7 @@ import {
 } from 'src/rtk/app/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
+import { getSubIdCreatorsLink } from 'src/utils/links'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import Avatar from '../profiles/address-views/Avatar'
@@ -104,7 +105,7 @@ export default function WriteSomething({ defaultSpaceId, ...props }: WriteSometh
                     </span>
                   </div>
                 </div>
-                <Button type='primary' shape='round'>
+                <Button type='primary' shape='round' href={getSubIdCreatorsLink()} target='_blank'>
                   Increase Lock
                 </Button>
               </div>

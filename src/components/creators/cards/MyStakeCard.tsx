@@ -73,7 +73,7 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
           type='primary'
           ghost
           block={!isMobile}
-          href={getSubIdCreatorsLink(space)}
+          href={getSubIdCreatorsLink()}
           onClick={() =>
             sendEvent('astake_dashboard_manage_stake', {
               spaceId: space.id,

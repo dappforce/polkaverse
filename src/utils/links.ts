@@ -1,11 +1,8 @@
-import { SpaceData } from '@subsocial/api/types'
 import { getCurrentWallet } from 'src/components/auth/utils'
-import { getSpaceHandleOrId } from './spaces'
 
 export const getSubsocialDiscordLink = () => 'https://discord.com/invite/w2Rqy2M'
 
-export const getSubIdCreatorsLink = (space?: SpaceData) =>
-  `https://sub.id/creators/${space ? getSpaceHandleOrId(space.struct) : ''}`
+export const getSubIdCreatorsLink = () => 'https://sub.id/creators'
 
 export const activeStakingLinks = {
   learnMore: 'https://docs.subsocial.network/docs/basics/creator-staking/active-staking',
