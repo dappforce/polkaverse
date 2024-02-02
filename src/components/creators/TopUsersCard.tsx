@@ -162,7 +162,7 @@ function UserInfo({
   return (
     <div className='d-flex align-items-center'>
       <div className='position-relative'>
-        <Link href={`/leaderboard/${user.address}`}>{avatar}</Link>
+        <Link href={`/leaderboard/${user.address}?role=${type}`}>{avatar}</Link>
         {[1, 2, 3].includes(rank) && (
           <Medal
             className='position-absolute FontTiny'
@@ -172,7 +172,7 @@ function UserInfo({
         )}
       </div>
       <div className='d-flex flex-column' style={{ minWidth: 0 }}>
-        <Link href={`/leaderboard/${user.address}`} passHref>
+        <Link href={`/leaderboard/${user.address}?role=${type}`} passHref>
           <a className='ColorNormal'>{name}</a>
         </Link>
         <div className='d-flex align-items-center ColorMuted GapMini'>
