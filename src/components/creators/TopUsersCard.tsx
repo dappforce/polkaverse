@@ -1,5 +1,6 @@
 import { Button, Skeleton } from 'antd'
 import clsx from 'clsx'
+import Link from 'next/link'
 import { ComponentProps, CSSProperties, useMemo } from 'react'
 import { IoChevronForward } from 'react-icons/io5'
 import { useSendEvent } from 'src/providers/AnalyticContext'
@@ -11,9 +12,7 @@ import { truncateAddress } from 'src/utils/storage'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import Avatar from '../profiles/address-views/Avatar'
-import ViewProfileLink from '../profiles/ViewProfileLink'
 import { useIsMobileWidthOrDevice } from '../responsive'
-import ViewSpaceLink from '../spaces/ViewSpaceLink'
 import { MutedSpan } from '../utils/MutedText'
 import { Pluralize } from '../utils/Plularize'
 import Segment from '../utils/Segment'
@@ -80,7 +79,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
         style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr' }}
       >
         <div className='d-flex flex-column FontSmall' style={{ minWidth: 0 }}>
-          <MutedSpan className='FontWeightMedium mb-1'>Stakers</MutedSpan>
+          <MutedSpan className='FontWeightMedium mb-1'>Likers</MutedSpan>
           <div className='d-flex flex-column GapTiny'>
             {data.stakers.map((staker, i) => (
               <UserInfo type='staker' rank={i + 1} key={i} user={staker} />
@@ -154,7 +153,7 @@ function UserInfo({
   return (
     <div className='d-flex align-items-center'>
       <div className='position-relative'>
-        {profile ? <ViewSpaceLink space={profile.struct} title={avatar} /> : avatar}
+        <Link href={`/leaderboard/${user.address}`}>{avatar}</Link>
         {[1, 2, 3].includes(rank) && (
           <Medal
             className='position-absolute FontTiny'
@@ -164,21 +163,9 @@ function UserInfo({
         )}
       </div>
       <div className='d-flex flex-column' style={{ minWidth: 0 }}>
-        {profile ? (
-          <ViewSpaceLink
-            containerClassName='d-flex'
-            className='d-flex'
-            style={{ minWidth: 0 }}
-            title={name}
-            space={profile?.struct}
-          />
-        ) : (
-          <ViewProfileLink
-            className='ColorNormal'
-            title={name}
-            account={{ address: user.address }}
-          />
-        )}
+        <Link href={`/leaderboard/${user.address}`} passHref>
+          <a className='ColorNormal'>{name}</a>
+        </Link>
         <div className='d-flex align-items-center ColorMuted GapMini'>
           {type === 'creator' ? (
             <FormatBalance value={user.reward} currency='SUB' decimals={10} precision={2} />
