@@ -132,6 +132,7 @@ export const NewComment: FC<NewCommentProps> = ({
           setIpfsCid,
         })
       }
+      size='large'
       tx='posts.createPost'
       onFailed={txResult => {
         fakeId && removeTempReplyFromReduxStore(fakeId)
