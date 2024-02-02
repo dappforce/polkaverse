@@ -1,6 +1,7 @@
 import { newLogger } from '@subsocial/utils'
 import axios from 'axios'
 import config from 'src/config'
+import { MINIMUM_LOCK } from 'src/config/constants'
 import { AccountId, ElasticQueryParams } from 'src/types'
 
 const { offchainUrl, subIdApiUrl } = config
@@ -70,7 +71,7 @@ export const getTotalStake = async ({ address }: { address: string }) => {
   const totalStake = (res?.data?.totalLocked as string) || ''
   const stakeAmount = BigInt(totalStake)
 
-  return { amount: stakeAmount.toString(), hasStaked: stakeAmount > 0 }
+  return { amount: stakeAmount.toString(), hasStaked: stakeAmount > MINIMUM_LOCK }
 }
 
 export const getStakeAmount = async ({
