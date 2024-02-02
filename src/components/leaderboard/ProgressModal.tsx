@@ -231,13 +231,14 @@ function ProgressPanel({
   }
 
   const shareOnX = () => {
+    const { isZero, value } = formatSUB(data?.earned)
     generateImage(image => {
       openNewWindow(
         twitterShareUrl(
           spaceHandleOrId
             ? `/${spaceHandleOrId}?customImage=${encodeURIComponent(image)}`
             : `/accounts/${myAddress}`,
-          `I earned #SUB ${
+          `I earned ${isZero ? '' : `${value} `}#SUB ${
             isUsingLastWeekData ? 'last week for my activity' : 'yesterday'
           } on @SubsocialChain! 🥳\n\nFollow me here and join The Creator Economy!`,
         ),
@@ -356,4 +357,15 @@ function RewardCard({
       <span className='FontWeightSemibold FontLarge'>{content}</span>
     </div>
   )
+}
+
+function formatSUB(value: string | undefined) {
+  try {
+    if (!value) throw new Error('Value is not defined')
+
+    const parsedValue = BigInt(value) / BigInt(10 ** 10)
+    return { value: parsedValue.toString(), isZero: parsedValue <= 0 }
+  } catch {
+    return { value: '0', isZero: true }
+  }
 }
