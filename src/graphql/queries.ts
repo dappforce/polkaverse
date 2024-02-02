@@ -163,8 +163,13 @@ export const GET_LATEST_POST_ID = gql`
 `
 
 export const GET_LATEST_POST_IDS = gql`
-  query GetLatestPostIds($kind: PostKind = RegularPost, $offset: Int = 0, $limit: Int!) {
-    posts(where: { kind_eq: $kind }, orderBy: createdAtBlock_DESC, offset: $offset, limit: $limit) {
+  query GetLatestPostIds($kinds: [PostKind!] = [RegularPost], $offset: Int = 0, $limit: Int!) {
+    posts(
+      where: { kind_in: $kinds }
+      orderBy: createdAtBlock_DESC
+      offset: $offset
+      limit: $limit
+    ) {
       id
     }
   }

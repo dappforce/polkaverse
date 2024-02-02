@@ -92,7 +92,7 @@ type GetEntityFilter<Type extends EntityFilter> = Record<Type, Record<DateFilter
 type VariablesType = {
   offset: number
   limit: number
-  kind?: PostKind
+  kinds?: PostKind[]
   startDate?: string
   endDate?: string
 }
@@ -104,11 +104,15 @@ const createLoadEntitiesByQuery =
 
     if (!query) return []
 
+    const kinds: PostKind[] = kind ? [kind] : []
+    if (kind === PostKind.RegularPost) {
+      kinds.push(PostKind.SharedPost)
+    }
     const variables: VariablesType =
       date === 'allTime'
-        ? { kind, offset, limit: DEFAULT_PAGE_SIZE }
+        ? { kinds, offset, limit: DEFAULT_PAGE_SIZE }
         : {
-            kind,
+            kinds,
             offset,
             limit: DEFAULT_PAGE_SIZE,
             startDate: dateToUtcFormat().subtract(1, date).format(DATE_FORMAT),
