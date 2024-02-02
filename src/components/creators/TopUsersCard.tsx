@@ -15,6 +15,7 @@ import ViewProfileLink from '../profiles/ViewProfileLink'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import ViewSpaceLink from '../spaces/ViewSpaceLink'
 import { MutedSpan } from '../utils/MutedText'
+import { Pluralize } from '../utils/Plularize'
 import Segment from '../utils/Segment'
 
 export type TopUsersCardProps = ComponentProps<'div'>
@@ -82,7 +83,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
           <MutedSpan className='FontWeightMedium mb-1'>Stakers</MutedSpan>
           <div className='d-flex flex-column GapTiny'>
             {data.stakers.map((staker, i) => (
-              <UserInfo rank={i + 1} key={i} user={staker} />
+              <UserInfo type='staker' rank={i + 1} key={i} user={staker} />
             ))}
           </div>
         </div>
@@ -93,7 +94,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
           <MutedSpan className='FontWeightMedium mb-1'>Creators</MutedSpan>
           <div className='d-flex flex-column GapTiny'>
             {data?.creators.map((creator, i) => (
-              <UserInfo rank={i + 1} key={i} user={creator} />
+              <UserInfo type='creator' rank={i + 1} key={i} user={creator} />
             ))}
           </div>
         </div>
@@ -121,7 +122,15 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
   )
 }
 
-function UserInfo({ rank, user }: { rank: number; user: { address: string; reward: string } }) {
+function UserInfo({
+  rank,
+  user,
+  type,
+}: {
+  rank: number
+  user: { address: string; reward?: string; count?: number }
+  type: 'staker' | 'creator'
+}) {
   const profile = useSelectProfile(user.address)
 
   const avatar = (
@@ -171,7 +180,13 @@ function UserInfo({ rank, user }: { rank: number; user: { address: string; rewar
           />
         )}
         <div className='d-flex align-items-center ColorMuted GapMini'>
-          <FormatBalance value={user.reward} currency='SUB' decimals={10} precision={2} />
+          {type === 'creator' ? (
+            <FormatBalance value={user.reward} currency='SUB' decimals={10} precision={2} />
+          ) : (
+            <span>
+              <Pluralize count={user.count ?? 0} singularText='like' pluralText='likes' />
+            </span>
+          )}
         </div>
       </div>
     </div>

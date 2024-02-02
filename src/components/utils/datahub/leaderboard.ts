@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import gql from 'graphql-tag'
 import { GeneralStatistics } from 'src/rtk/features/leaderboard/generalStatisticsSlice'
 import { LeaderboardData } from 'src/rtk/features/leaderboard/leaderboardSlice'
@@ -6,19 +7,12 @@ import { UserStatistics } from 'src/rtk/features/leaderboard/userStatisticsSlice
 import { datahubQueryRequest, getDayAndWeekTimestamp } from './utils'
 
 const GET_TOP_USERS = gql`
-  query GetTopUsers($from: String!) {
-    staker: activeStakingAddressesRankedByRewardsForPeriod(
-      args: {
-        filter: { period: WEEK, role: STAKER, timestamp: $from }
-        limit: 3
-        offset: 0
-        order: DESC
-      }
+  query GetTopUsers($from: String!, $fromTimestamp: String!) {
+    staker: activeStakingStakersRankedBySuperLikesForPeriod(
+      args: { fromTime: $fromTimestamp, limit: 3 }
     ) {
-      data {
-        address
-        reward
-      }
+      address
+      count
     }
     creator: activeStakingAddressesRankedByRewardsForPeriod(
       args: {
@@ -40,11 +34,9 @@ export async function getTopUsers(): Promise<TopUsers> {
   const res = await datahubQueryRequest<
     {
       staker: {
-        data: {
-          address: string
-          reward: string
-        }[]
-      }
+        address: string
+        count: number
+      }[]
       creator: {
         data: {
           address: string
@@ -52,10 +44,13 @@ export async function getTopUsers(): Promise<TopUsers> {
         }[]
       }
     },
-    { from: string }
+    { from: string; fromTimestamp: string }
   >({
     query: GET_TOP_USERS,
-    variables: { from: week.toString() },
+    variables: {
+      from: week.toString(),
+      fromTimestamp: dayjs.utc().startOf('week').add(1, 'day').valueOf().toString(),
+    },
   })
 
   return {
@@ -63,9 +58,9 @@ export async function getTopUsers(): Promise<TopUsers> {
       address,
       reward,
     })),
-    stakers: res.data.staker.data.map(({ address, reward }) => ({
+    stakers: res.data.staker.map(({ address, count }) => ({
       address,
-      reward,
+      count,
     })),
   }
 }

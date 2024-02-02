@@ -7,9 +7,10 @@ import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 import { fetchProfileSpaces } from '../profiles/profilesSlice'
 
 type User = { address: string; reward: string }
+type UserByLike = { address: string; count: number }
 export type TopUsers = {
   creators: User[]
-  stakers: User[]
+  stakers: UserByLike[]
 }
 
 const sliceName = 'topUsers'
