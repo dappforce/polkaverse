@@ -201,11 +201,11 @@ const TabsHomePage = ({
       {/* <div className={clsx(isMobile ? 'mt-3' : '')}>
         <CommentBanner />
       </div> */}
-      <span>
-        {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
-      </span>
-
       <ShowLikeablePostsProvider tab={tab} filter={type}>
+        <span>
+          {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
+        </span>
+
         <Section className='m-0'>
           <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} {...props} />
           <TabsContent />

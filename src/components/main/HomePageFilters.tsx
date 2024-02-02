@@ -145,7 +145,7 @@ export const Filters = (props: Props) => {
       <div className={clsx('AffixCheckbox')}>
         <Checkbox checked={value} onChange={e => setValue(e.target.checked)}>
           <span className='ColorMuted' style={{ userSelect: 'none' }}>
-            Show likeable posts
+            Show likeable posts only
           </span>
         </Checkbox>
       </div>
@@ -192,7 +192,7 @@ export const Filters = (props: Props) => {
           <Col className={clsx(isMobile && 'mt-2')}>
             <Checkbox checked={value} onChange={e => setValue(e.target.checked)}>
               <span className='ColorMuted' style={{ userSelect: 'none' }}>
-                Show likeable posts
+                Show likeable posts only
               </span>
             </Checkbox>
           </Col>

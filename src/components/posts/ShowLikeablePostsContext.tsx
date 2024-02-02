@@ -19,21 +19,21 @@ export function ShowLikeablePostsProvider({
   tab: TabKeys
   filter: string | undefined
 }) {
-  let [showActiveStakingPosts, setShowActiveStakingPosts] = useLocalStorage(
-    'show-active-staking-posts',
-    false,
+  let [showLikeablePostsOnly, setShowLikeablePostsOnly] = useLocalStorage(
+    'show-likeable-posts',
+    true,
   )
 
   if (tab !== 'posts' || filter !== 'latest') {
-    showActiveStakingPosts = false
+    showLikeablePostsOnly = false
   }
 
   const memoized = useMemo(
     () => ({
-      value: showActiveStakingPosts,
-      setValue: setShowActiveStakingPosts,
+      value: showLikeablePostsOnly,
+      setValue: setShowLikeablePostsOnly,
     }),
-    [showActiveStakingPosts],
+    [showLikeablePostsOnly],
   )
 
   return (
