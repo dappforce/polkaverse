@@ -31,6 +31,13 @@ const GET_TOP_USERS = gql`
 `
 export async function getTopUsers(): Promise<TopUsers> {
   const { week } = getDayAndWeekTimestamp()
+  let startOfWeekTimestamp = dayjs.utc().startOf('day')
+  let daysToMonday = startOfWeekTimestamp.day() - 1
+  if (daysToMonday < 0) {
+    daysToMonday += 7
+  }
+  startOfWeekTimestamp = startOfWeekTimestamp.subtract(daysToMonday, 'day')
+
   const res = await datahubQueryRequest<
     {
       staker: {
@@ -49,7 +56,7 @@ export async function getTopUsers(): Promise<TopUsers> {
     query: GET_TOP_USERS,
     variables: {
       from: week.toString(),
-      fromTimestamp: dayjs.utc().startOf('week').add(1, 'day').valueOf().toString(),
+      fromTimestamp: startOfWeekTimestamp.valueOf().toString(),
     },
   })
 
