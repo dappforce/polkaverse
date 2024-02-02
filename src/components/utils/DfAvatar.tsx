@@ -32,7 +32,12 @@ export const BaseAvatar = (props: BaseAvatarProps) => {
   if (!avatar || isEmptyStr(avatar)) {
     return (
       <span className='d-flex align-items-center'>
-        <IdentityIcon style={style} size={size} value={identityValue?.toString() || ''} />
+        <IdentityIcon
+          style={style}
+          size={size}
+          className={clsx(noMargin && 'm-0')}
+          value={identityValue?.toString() || ''}
+        />
       </span>
     )
   }
