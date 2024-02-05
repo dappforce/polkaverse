@@ -15,6 +15,7 @@ import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import { useDefaultSpaceIdToPost } from '../posts/editor/ModalEditor'
 import Avatar from '../profiles/address-views/Avatar'
+import { useResponsiveSize } from '../responsive'
 import { useSubsocialApi } from '../substrate'
 import { twitterShareUrl } from '../urls'
 import { fullUrl, openNewWindow } from '../urls/helpers'
@@ -180,6 +181,7 @@ function ProgressPanel({ withButtons }: { withButtons?: boolean }) {
 
   const { defaultSpaceIdToPost } = useDefaultSpaceIdToPost()
 
+  const { isSmallMobile } = useResponsiveSize()
   const [loading, setLoading] = useState(false)
 
   const isUsingLastWeekData = data?.period === 'WEEK'
@@ -323,9 +325,12 @@ function ProgressPanel({ withButtons }: { withButtons?: boolean }) {
       {withButtons && (
         <div
           className='GapNormal mt-4'
-          style={{ display: 'grid', gridTemplateColumns: defaultSpaceIdToPost ? '1fr 1fr' : '1fr' }}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: defaultSpaceIdToPost && !isSmallMobile ? '1fr 1fr' : '1fr',
+          }}
         >
-          <Button type='default' size='large' loading={loading} onClick={() => shareOnX()}>
+          <Button type='default' size='large' onClick={() => shareOnX()}>
             Share on X
           </Button>
           {defaultSpaceIdToPost && (
