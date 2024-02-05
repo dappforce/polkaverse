@@ -3,9 +3,11 @@ import clsx from 'clsx'
 import router, { useRouter } from 'next/router'
 import { useState } from 'react'
 import { ReactNode } from 'react-markdown'
+import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useFetchUserRewardHistory } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchUserStatistics } from 'src/rtk/features/leaderboard/hooks'
 import { UserStatistics } from 'src/rtk/features/leaderboard/userStatisticsSlice'
+import { truncateAddress } from 'src/utils/storage'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import RewardHistoryModal, { RewardHistoryPanel } from '../creators/RewardHistoryModal'
@@ -144,9 +146,13 @@ const rankTooltip: Record<LeaderboardRole, (isMyAddress: boolean) => string> = {
 
 export type UserLeaderboardPageProps = {
   address: string
+  customMeta?: {
+    image?: string
+  }
 }
-export default function UserLeaderboardPage({ address }: UserLeaderboardPageProps) {
+export default function UserLeaderboardPage({ address, customMeta }: UserLeaderboardPageProps) {
   const myAddress = useMyAddress()
+  const profile = useSelectProfile(address)
 
   const { query } = useRouter()
   let tabState = query.role as LeaderboardRole
@@ -162,8 +168,19 @@ export default function UserLeaderboardPage({ address }: UserLeaderboardPageProp
 
   const isMyAddress = address === myAddress
 
+  const name = profile?.content?.name
+  const title = name
+    ? 'Leaderboard of ' + profile?.content?.name
+    : `Leaderboard of ${truncateAddress(address)}`
   return (
-    <PageContent withLargerMaxWidth meta={{ title: 'Active Staking Dashboard' }}>
+    <PageContent
+      withLargerMaxWidth
+      meta={{
+        title: title,
+        desc: profile?.content?.summary,
+        image: customMeta?.image || profile?.content?.image,
+      }}
+    >
       <LeaderboardTabs activeKey={isMyAddress ? 'user' : ''} />
       {data && (
         <div className={clsx(styles.Statistics)}>

@@ -232,9 +232,6 @@ function ProgressPanel({
     hasMissedReward = BigInt(data?.missedReward || '0') > 0
   } catch {}
 
-  const handle = profile?.struct.handle
-  const spaceHandleOrId = (handle && `@${handle}`) || profile?.id
-
   const generateImage = async (onSuccess: (image: string) => void) => {
     const element = document.getElementById('progress-image')
     if (!element) return
@@ -298,14 +295,18 @@ function ProgressPanel({
 
   const shareOnX = () => {
     const { isZero, value } = formatSUB(data?.earned)
-    openNewWindow(
-      twitterShareUrl(
-        spaceHandleOrId ? `/${spaceHandleOrId}` : `/accounts/${myAddress}`,
-        `I earned ${isZero ? '' : `${value} `}#SUB ${
-          isUsingLastWeekData ? 'last week for my activity' : 'yesterday'
-        } on @SubsocialChain! 🥳\n\nFollow me here and join The Creator Economy!`,
-      ),
-    )
+    generateImage(image => {
+      openNewWindow(
+        twitterShareUrl(
+          fullUrl(
+            `${defaultSpaceIdToPost}/leaderboard/${myAddress}?image=${encodeURIComponent(image)}`,
+          ),
+          `I earned ${isZero ? '' : `${value} `}#SUB ${
+            isUsingLastWeekData ? 'last week for my activity' : 'yesterday'
+          } on @SubsocialChain! 🥳\n\nFollow me here and join The Creator Economy!`,
+        ),
+      )
+    })
   }
 
   return (
@@ -371,7 +372,13 @@ function ProgressPanel({
             gridTemplateColumns: defaultSpaceIdToPost && !isSmallMobile ? '1fr 1fr' : '1fr',
           }}
         >
-          <Button disabled={disableButtons} type='default' size='large' onClick={() => shareOnX()}>
+          <Button
+            loading={loading}
+            disabled={disableButtons}
+            type='default'
+            size='large'
+            onClick={() => shareOnX()}
+          >
             Share on X
           </Button>
           {defaultSpaceIdToPost && (

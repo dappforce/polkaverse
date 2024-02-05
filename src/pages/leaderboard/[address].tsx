@@ -11,6 +11,10 @@ getInitialPropsWithRedux(UserLeaderboardPage, async ({ dispatch, context, subsoc
   const address = query.address as string
   if (!address || typeof address !== 'string') return return404(context)
 
+  const customMeta = {
+    image: query.image as string | undefined,
+  }
+
   await Promise.all([
     dispatch(fetchUserStatistics({ address })),
     dispatch(fetchRewardHistory({ address })),
@@ -18,7 +22,7 @@ getInitialPropsWithRedux(UserLeaderboardPage, async ({ dispatch, context, subsoc
     dispatch(fetchLeaderboardData({ role: 'staker' })),
     dispatch(fetchLeaderboardData({ role: 'creator' })),
   ])
-  return { address }
+  return { address, customMeta }
 })
 
 export default UserLeaderboardPage
