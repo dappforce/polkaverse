@@ -174,7 +174,7 @@ function InnerProgressModal() {
         <div
           id='progress-image'
           className={clsx(styles.ProgressModal, statusClassName[status], 'position-relative')}
-          style={{ width: '600px', display: 'none' }}
+          style={{ width: '620px', display: 'none' }}
         >
           <div className='ant-modal-content p-3 pb-4'>
             <img
