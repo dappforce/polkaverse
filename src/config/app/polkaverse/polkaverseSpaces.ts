@@ -51,4 +51,6 @@ export default [
   '10533',
   // olehmell
   '3',
+  // Jonas W3F (Parity)
+  '12616'
 ]
