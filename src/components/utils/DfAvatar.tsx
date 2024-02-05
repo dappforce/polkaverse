@@ -13,6 +13,7 @@ export type BaseAvatarProps = {
   identityValue?: string | AnyAccountId
   avatarPreview?: boolean | PreviewType
   noMargin?: boolean
+  onLoad?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void
 }
 
 const avatarCss = 'DfAvatar space ui--IdentityIcon'
@@ -27,12 +28,18 @@ export const BaseAvatar = (props: BaseAvatarProps) => {
     identityValue,
     avatarPreview,
     noMargin,
+    onLoad,
   } = props
 
   if (!avatar || isEmptyStr(avatar)) {
     return (
       <span className='d-flex align-items-center'>
-        <IdentityIcon style={style} size={size} value={identityValue?.toString() || ''} />
+        <IdentityIcon
+          className={noMargin ? 'm-0' : ''}
+          style={style}
+          size={size}
+          value={identityValue?.toString() || ''}
+        />
       </span>
     )
   }
@@ -45,6 +52,7 @@ export const BaseAvatar = (props: BaseAvatarProps) => {
       className={clsx(avatarCss, noMargin && 'mr-0')}
       preview={avatarPreview}
       rounded
+      onLoad={onLoad}
     />
   )
 }

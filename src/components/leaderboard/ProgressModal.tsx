@@ -128,6 +128,14 @@ function InnerProgressModal() {
   const [visible, setVisible] = useState(false)
   const { data } = useFetchUserPrevReward(myAddress)
   const { loading: loadingProfile } = useFetchProfileSpace({ id: myAddress })
+  const [hasAvatarLoaded, setHasAvatarLoaded] = useState(false)
+  const [isWaitingAvatar, setIsWaitingAvatar] = useState(true)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsWaitingAvatar(false)
+    }, 1_000)
+  }, [])
 
   useEffect(() => {
     if (!data || loadingProfile) return
@@ -156,7 +164,13 @@ function InnerProgressModal() {
         className={clsx(styles.ProgressModal, statusClassName[status])}
         contentClassName={styles.Content}
       >
-        <ProgressPanel />
+        <div id='progress-modal-content'>
+          <ProgressPanel
+            hasAvatarLoaded={hasAvatarLoaded}
+            setHasAvatarLoaded={setHasAvatarLoaded}
+            disableButtons={isWaitingAvatar && !hasAvatarLoaded}
+          />
+        </div>
         <div
           id='progress-image'
           className={clsx(styles.ProgressModal, statusClassName[status], 'position-relative')}
@@ -172,7 +186,7 @@ function InnerProgressModal() {
               className={clsx(styles.OutsideDiamondLeft)}
             />
             <div style={{ maxWidth: '350px', margin: '0 auto' }}>
-              <ProgressPanel forPostImage />
+              <ProgressPanel forPostImage hasAvatarLoaded={hasAvatarLoaded} />
             </div>
           </div>
         </div>
@@ -181,7 +195,17 @@ function InnerProgressModal() {
   )
 }
 
-function ProgressPanel({ forPostImage }: { forPostImage?: boolean }) {
+function ProgressPanel({
+  forPostImage,
+  hasAvatarLoaded,
+  setHasAvatarLoaded,
+  disableButtons,
+}: {
+  forPostImage?: boolean
+  hasAvatarLoaded?: boolean
+  setHasAvatarLoaded?: (hasAvatarLoaded: boolean) => void
+  disableButtons?: boolean
+}) {
   const { ipfs } = useSubsocialApi()
 
   const myAddress = useMyAddress() ?? ''
@@ -219,6 +243,8 @@ function ProgressPanel({ forPostImage }: { forPostImage?: boolean }) {
     const image = await html2canvas(element, {
       backgroundColor: status === 'full' ? '#7534A9' : '#F57F00',
       allowTaint: true,
+      // only render the modal, especially only the progress-image div. this is good to avoid having broken image which html2canvas waits forever
+      ignoreElements: element => element.id === '__next' || element.id === 'progress-modal-content',
       useCORS: true,
       scale: 2,
       onclone: doc => {
@@ -293,7 +319,10 @@ function ProgressPanel({ forPostImage }: { forPostImage?: boolean }) {
               size={60}
               asLink={false}
               address={myAddress}
-              avatar={profile?.content?.image}
+              avatar={hasAvatarLoaded || !forPostImage ? profile?.content?.image : undefined}
+              onLoad={() => {
+                if (!forPostImage) setHasAvatarLoaded?.(true)
+              }}
             />
           </div>
           <span className='text-center FontLarge FontWeightBold mb-2'>{usedContent.title}</span>
@@ -342,11 +371,12 @@ function ProgressPanel({ forPostImage }: { forPostImage?: boolean }) {
             gridTemplateColumns: defaultSpaceIdToPost && !isSmallMobile ? '1fr 1fr' : '1fr',
           }}
         >
-          <Button type='default' size='large' onClick={() => shareOnX()}>
+          <Button disabled={disableButtons} type='default' size='large' onClick={() => shareOnX()}>
             Share on X
           </Button>
           {defaultSpaceIdToPost && (
             <Button
+              disabled={disableButtons}
               type='default'
               ghost
               size='large'
