@@ -2264,9 +2264,15 @@ hr {
   }
 }
 
+.xl-only {
+  display: none;
+}
 @media screen and (min-width: 1200px) {
   .xl-hidden {
     display: none !important;
+  }
+  .xl-only {
+    display: block;
   }
 }
 

@@ -11,7 +11,7 @@ import CreatorDashboardSidebar, {
 } from '../creators/CreatorDashboardSidebar'
 import TopUsersCard from '../creators/TopUsersCard'
 import ProgressModal from '../leaderboard/ProgressModal'
-import { useIsMobileWidthOrDevice, useResponsiveSize } from '../responsive'
+import { useIsMobileWidthOrDevice } from '../responsive'
 import { fullUrl } from '../urls/helpers'
 import Section from '../utils/Section'
 
@@ -125,7 +125,6 @@ export const PageContent: FC<Props> = ({
   // const myAddress = useMyAddress()
 
   const isMobile = useIsMobileWidthOrDevice()
-  const { isLargeDesktop } = useResponsiveSize()
   // const isPanels = leftPanel || rightPanel
 
   const sidebarStyles: ComponentProps<'div'> = {
@@ -155,8 +154,8 @@ export const PageContent: FC<Props> = ({
         </section>
       ) : (
         <div className={clsx('DfSectionOuterContainer')}>
-          {creatorDashboardSidebarType && isLargeDesktop && (
-            <div {...sidebarStyles}>
+          {creatorDashboardSidebarType && (
+            <div {...sidebarStyles} className='xl-only'>
               <div>
                 <TopUsersCard />
               </div>
@@ -202,11 +201,9 @@ export const PageContent: FC<Props> = ({
           {rightPanel === undefined && creatorDashboardSidebarType && (
             <div {...sidebarStyles}>
               <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
-              {!isLargeDesktop && (
-                <div className='mt-3 xl-hidden'>
-                  <TopUsersCard />
-                </div>
-              )}
+              <div className='mt-3 xl-hidden'>
+                <TopUsersCard />
+              </div>
               {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}
             </div>
           )}
