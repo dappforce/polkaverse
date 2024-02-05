@@ -55,29 +55,67 @@ const statusClassName: Record<DisplayedStatus, string> = {
   half: styles.Halfway,
 }
 
+const titles: Record<'lastWeek' | 'yesterday', Record<DisplayedStatus, string[]>> = {
+  lastWeek: {
+    full: [
+      'Week Striker',
+      'Marathoner',
+      'Week Wizard',
+      'Praise Pirate',
+      'Like Legend',
+      'Consistent Champion',
+      'Weeklong Warrior',
+      'Praise Pioneer',
+    ],
+    half: [
+      'Halfway Hero',
+      'Casual Crusader',
+      'Part-Time Powerhouse',
+      'Flexi Fan',
+      'Wave Rider',
+      'Sporadic Superstar',
+    ],
+  },
+  yesterday: {
+    full: ['Hustler', 'Ace of Likes', 'Heartquake', 'Ten-Tap Titan', 'Praise Patron'],
+    half: [
+      'Cherry Picker',
+      'Selective Star',
+      'Picky Praiser',
+      'Like Connoisseur',
+      'Appreciation Artist',
+      'Selective Supporter',
+    ],
+  },
+}
+function randomizeTitle(period: 'lastWeek' | 'yesterday', status: DisplayedStatus) {
+  const title = titles[period][status]
+  return title[Math.min(Math.floor(Math.random() * title.length), title.length - 1)]
+}
+
 const contentMap: Record<
   'lastWeek' | 'yesterday',
   Record<DisplayedStatus, { title: string; subtitle: string }>
 > = {
   lastWeek: {
     full: {
-      title: 'Week Striker',
+      title: randomizeTitle('lastWeek', 'full'),
       subtitle: 'You dominated last week, and maximized your rewards every day! Impressive!',
     },
     half: {
-      title: 'Halfway Hero',
+      title: randomizeTitle('lastWeek', 'half'),
       subtitle:
         "You had some good activity last week, but you still gave up some rewards. Let's see just a little more this week!",
     },
   },
   yesterday: {
     full: {
-      title: 'Hustler',
+      title: randomizeTitle('yesterday', 'full'),
       subtitle:
         'Incredible work yesterday! You completed every task and went above and beyond. Your energy is unmatched!',
     },
     half: {
-      title: 'Cherry Picker',
+      title: randomizeTitle('yesterday', 'half'),
       subtitle:
         'Good effort yesterday, but you missed out on maximum rewards. Make sure to like at least 10 posts today!',
     },
