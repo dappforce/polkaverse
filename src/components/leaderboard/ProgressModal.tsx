@@ -399,7 +399,10 @@ function RewardCard({
           </Tooltip>
         )}
       </div>
-      <span className={clsx('FontWeightSemibold', forPostImage ? 'FontBig' : 'FontLarge')}>
+      {/* If you use FontWeightSemibold forPostImage, it will cause the result of html2canvas has some strange letter spacing */}
+      <span
+        className={clsx(forPostImage ? 'FontBig FontWeightBold' : 'FontLarge FontWeightSemibold')}
+      >
         {content}
       </span>
     </div>
