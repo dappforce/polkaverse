@@ -298,9 +298,7 @@ function ProgressPanel({
     generateImage(image => {
       openNewWindow(
         twitterShareUrl(
-          fullUrl(
-            `${defaultSpaceIdToPost}/leaderboard/${myAddress}?image=${encodeURIComponent(image)}`,
-          ),
+          fullUrl(`/leaderboard/${myAddress}?image=${encodeURIComponent(image)}`),
           `I earned ${isZero ? '' : `${value} `}#SUB ${
             isUsingLastWeekData ? 'last week for my activity' : 'yesterday'
           } on @SubsocialChain! 🥳\n\nFollow me here and join The Creator Economy!`,
