@@ -359,7 +359,7 @@ const GET_USER_LAST_WEEK_REWARD = gql`
         address: $address
         period: WEEK
         periodValue: $timestamp
-        staker: { earnedByPeriod: true, likedPostsByDay: true }
+        staker: { earnedByPeriod: true, likedPostsByDay: true, likedPosts: true }
       }
     ) {
       staker {
@@ -409,7 +409,7 @@ export async function getUserPrevReward({ address }: { address: string }): Promi
       if (count > 0) has0Activity = false
       if (count < CREATORS_CONSTANTS.SUPER_LIKES_FOR_MAX_REWARD) hasFullActivity = false
     })
-    if (hasFullActivity) rewardStatus = 'full'
+    if (hasFullActivity && data.staker.likedPostsByDay.length >= 7) rewardStatus = 'full'
     else if (has0Activity) rewardStatus = 'none'
 
     return {

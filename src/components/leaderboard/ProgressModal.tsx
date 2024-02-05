@@ -15,6 +15,7 @@ import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import { useDefaultSpaceIdToPost } from '../posts/editor/ModalEditor'
 import Avatar from '../profiles/address-views/Avatar'
+import { useResponsiveSize } from '../responsive'
 import { useSubsocialApi } from '../substrate'
 import { twitterShareUrl } from '../urls'
 import { fullUrl, openNewWindow } from '../urls/helpers'
@@ -55,45 +56,69 @@ const statusClassName: Record<DisplayedStatus, string> = {
   half: styles.Halfway,
 }
 
+const titles: Record<'lastWeek' | 'yesterday', Record<DisplayedStatus, string[]>> = {
+  lastWeek: {
+    full: [
+      'Week Striker',
+      'Marathoner',
+      'Week Wizard',
+      'Praise Pirate',
+      'Like Legend',
+      'Consistent Champion',
+      'Weeklong Warrior',
+      'Praise Pioneer',
+    ],
+    half: [
+      'Halfway Hero',
+      'Casual Crusader',
+      'Part-Time Powerhouse',
+      'Flexi Fan',
+      'Wave Rider',
+      'Sporadic Superstar',
+    ],
+  },
+  yesterday: {
+    full: ['Hustler', 'Ace of Likes', 'Heartquake', 'Ten-Tap Titan', 'Praise Patron'],
+    half: [
+      'Cherry Picker',
+      'Selective Star',
+      'Picky Praiser',
+      'Like Connoisseur',
+      'Appreciation Artist',
+      'Selective Supporter',
+    ],
+  },
+}
+function randomizeTitle(period: 'lastWeek' | 'yesterday', status: DisplayedStatus) {
+  const title = titles[period][status]
+  return title[Math.min(Math.floor(Math.random() * title.length), title.length - 1)]
+}
+
 const contentMap: Record<
   'lastWeek' | 'yesterday',
-  Record<
-    DisplayedStatus,
-    { title: string; subtitle: (withFirstPersonPerspective?: boolean) => string }
-  >
+  Record<DisplayedStatus, { title: string; subtitle: string }>
 > = {
   lastWeek: {
     full: {
-      title: 'Week Striker',
-      subtitle: firstPerson =>
-        `${firstPerson ? 'I' : 'You'} dominated last week, and maximized ${
-          firstPerson ? 'my' : 'your'
-        } rewards every day! Impressive!`,
+      title: randomizeTitle('lastWeek', 'full'),
+      subtitle: 'You dominated last week, and maximized your rewards every day! Impressive!',
     },
     half: {
-      title: 'Halfway Hero',
-      subtitle: firstPerson =>
-        `${firstPerson ? 'I' : 'You'} had some good activity last week, but ${
-          firstPerson ? 'I' : 'you'
-        } still gave up some rewards. Let's see just a little more this week!`,
+      title: randomizeTitle('lastWeek', 'half'),
+      subtitle:
+        "You had some good activity last week, but you still gave up some rewards. Let's see just a little more this week!",
     },
   },
   yesterday: {
     full: {
-      title: 'Hustler',
-      subtitle: firstPerson =>
-        `Incredible work yesterday! ${
-          firstPerson ? 'I' : 'You'
-        } completed every task and went above and beyond. ${
-          firstPerson ? 'My' : 'Your'
-        } energy is unmatched!`,
+      title: randomizeTitle('yesterday', 'full'),
+      subtitle:
+        'Incredible work yesterday! You completed every task and went above and beyond. Your energy is unmatched!',
     },
     half: {
-      title: 'Cherry Picker',
-      subtitle: firstPerson =>
-        `Good effort yesterday, but ${
-          firstPerson ? 'I' : 'You'
-        } missed out on maximum rewards. Make sure to like at least 10 posts today!`,
+      title: randomizeTitle('yesterday', 'half'),
+      subtitle:
+        'Good effort yesterday, but you missed out on maximum rewards. Make sure to like at least 10 posts today!',
     },
   },
 }
@@ -103,6 +128,14 @@ function InnerProgressModal() {
   const [visible, setVisible] = useState(false)
   const { data } = useFetchUserPrevReward(myAddress)
   const { loading: loadingProfile } = useFetchProfileSpace({ id: myAddress })
+  const [hasAvatarLoaded, setHasAvatarLoaded] = useState(false)
+  const [isWaitingAvatar, setIsWaitingAvatar] = useState(true)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsWaitingAvatar(false)
+    }, 1_000)
+  }, [])
 
   useEffect(() => {
     if (!data || loadingProfile) return
@@ -131,14 +164,30 @@ function InnerProgressModal() {
         className={clsx(styles.ProgressModal, statusClassName[status])}
         contentClassName={styles.Content}
       >
-        <ProgressPanel withButtons />
+        <div id='progress-modal-content'>
+          <ProgressPanel
+            hasAvatarLoaded={hasAvatarLoaded}
+            setHasAvatarLoaded={setHasAvatarLoaded}
+            disableButtons={isWaitingAvatar && !hasAvatarLoaded}
+          />
+        </div>
         <div
           id='progress-image'
-          className={clsx(styles.ProgressModal, statusClassName[status])}
-          style={{ width: '400px', display: 'none' }}
+          className={clsx(styles.ProgressModal, statusClassName[status], 'position-relative')}
+          style={{ width: '600px', display: 'none' }}
         >
           <div className='ant-modal-content p-3 pb-4'>
-            <ProgressPanel withFirstPersonPerspective />
+            <img
+              src='/images/creators/diamonds/blurred-diamond-right.png'
+              className={clsx(styles.OutsideDiamondRight)}
+            />
+            <img
+              src='/images/creators/diamonds/blurred-diamond-top-left.png'
+              className={clsx(styles.OutsideDiamondLeft)}
+            />
+            <div style={{ maxWidth: '350px', margin: '0 auto' }}>
+              <ProgressPanel forPostImage hasAvatarLoaded={hasAvatarLoaded} />
+            </div>
           </div>
         </div>
       </CustomModal>
@@ -147,11 +196,15 @@ function InnerProgressModal() {
 }
 
 function ProgressPanel({
-  withButtons,
-  withFirstPersonPerspective,
+  forPostImage,
+  hasAvatarLoaded,
+  setHasAvatarLoaded,
+  disableButtons,
 }: {
-  withButtons?: boolean
-  withFirstPersonPerspective?: boolean
+  forPostImage?: boolean
+  hasAvatarLoaded?: boolean
+  setHasAvatarLoaded?: (hasAvatarLoaded: boolean) => void
+  disableButtons?: boolean
 }) {
   const { ipfs } = useSubsocialApi()
 
@@ -162,6 +215,7 @@ function ProgressPanel({
 
   const { defaultSpaceIdToPost } = useDefaultSpaceIdToPost()
 
+  const { isSmallMobile } = useResponsiveSize()
   const [loading, setLoading] = useState(false)
 
   const isUsingLastWeekData = data?.period === 'WEEK'
@@ -178,9 +232,6 @@ function ProgressPanel({
     hasMissedReward = BigInt(data?.missedReward || '0') > 0
   } catch {}
 
-  const handle = profile?.struct.handle
-  const spaceHandleOrId = (handle && `@${handle}`) || profile?.id
-
   const generateImage = async (onSuccess: (image: string) => void) => {
     const element = document.getElementById('progress-image')
     if (!element) return
@@ -189,6 +240,8 @@ function ProgressPanel({
     const image = await html2canvas(element, {
       backgroundColor: status === 'full' ? '#7534A9' : '#F57F00',
       allowTaint: true,
+      // only render the modal, especially only the progress-image div. this is good to avoid having broken image which html2canvas waits forever
+      ignoreElements: element => element.id === '__next' || element.id === 'progress-modal-content',
       useCORS: true,
       scale: 2,
       onclone: doc => {
@@ -242,19 +295,23 @@ function ProgressPanel({
 
   const shareOnX = () => {
     const { isZero, value } = formatSUB(data?.earned)
-    openNewWindow(
-      twitterShareUrl(
-        spaceHandleOrId ? `/${spaceHandleOrId}` : `/accounts/${myAddress}`,
-        `I earned ${isZero ? '' : `${value} `}#SUB ${
-          isUsingLastWeekData ? 'last week for my activity' : 'yesterday'
-        } on @SubsocialChain! 🥳\n\nFollow me here and join The Creator Economy!`,
-      ),
-    )
+    generateImage(image => {
+      openNewWindow(
+        twitterShareUrl(
+          fullUrl(
+            `${defaultSpaceIdToPost}/leaderboard/${myAddress}?image=${encodeURIComponent(image)}`,
+          ),
+          `I earned ${isZero ? '' : `${value} `}#SUB ${
+            isUsingLastWeekData ? 'last week for my activity' : 'yesterday'
+          } on @SubsocialChain! 🥳\n\nFollow me here and join The Creator Economy!`,
+        ),
+      )
+    })
   }
 
   return (
     <>
-      <DiamondIcon className={styles.DiamondIcon} />
+      {!forPostImage && <DiamondIcon className={styles.DiamondIcon} />}
       <div className={clsx(styles.ProgressModalContent, 'mt-2')}>
         <div className='d-flex flex-column align-items-center'>
           <div className='mb-2'>
@@ -263,16 +320,18 @@ function ProgressPanel({
               size={60}
               asLink={false}
               address={myAddress}
-              avatar={profile?.content?.image}
+              avatar={hasAvatarLoaded || !forPostImage ? profile?.content?.image : undefined}
+              onLoad={() => {
+                if (!forPostImage) setHasAvatarLoaded?.(true)
+              }}
             />
           </div>
           <span className='text-center FontLarge FontWeightBold mb-2'>{usedContent.title}</span>
-          <p className='text-center ColorSlate mb-0'>
-            {usedContent.subtitle(withFirstPersonPerspective)}
-          </p>
+          <p className='text-center mb-0'>{usedContent.subtitle}</p>
         </div>
         <div className='d-flex w-100 GapSmall'>
           <RewardCard
+            forPostImage={forPostImage}
             aligment={hasMissedReward ? 'left' : 'center'}
             title={`${isUsingLastWeekData ? 'Last week' : 'Yesterday'}'s reward`}
             content={
@@ -288,6 +347,7 @@ function ProgressPanel({
           />
           {hasMissedReward && (
             <RewardCard
+              forPostImage={forPostImage}
               aligment='left'
               title='Missed rewards'
               tooltip='How many SUB you could have received by liking at least 10 posts yesterday'
@@ -304,16 +364,26 @@ function ProgressPanel({
           )}
         </div>
       </div>
-      {withButtons && (
+      {!forPostImage && (
         <div
           className='GapNormal mt-4'
-          style={{ display: 'grid', gridTemplateColumns: defaultSpaceIdToPost ? '1fr 1fr' : '1fr' }}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: defaultSpaceIdToPost && !isSmallMobile ? '1fr 1fr' : '1fr',
+          }}
         >
-          <Button type='default' size='large' loading={loading} onClick={() => shareOnX()}>
+          <Button
+            loading={loading}
+            disabled={disableButtons}
+            type='default'
+            size='large'
+            onClick={() => shareOnX()}
+          >
             Share on X
           </Button>
           {defaultSpaceIdToPost && (
             <Button
+              disabled={disableButtons}
               type='default'
               ghost
               size='large'
@@ -335,12 +405,14 @@ function RewardCard({
   tooltip,
   withDiamond,
   aligment,
+  forPostImage,
 }: {
   aligment: 'center' | 'left'
   withDiamond?: boolean
   title: string
   tooltip?: string
   content: ReactNode
+  forPostImage?: boolean
 }) {
   return (
     <div
@@ -350,9 +422,13 @@ function RewardCard({
       )}
     >
       {withDiamond && (
-        <DfImage preview={false} src='/images/diamond.png' className={styles.Diamond} />
+        <DfImage
+          preview={false}
+          src='/images/creators/diamonds/diamond.png'
+          className={clsx(styles.Diamond, forPostImage && styles.DiamondRight)}
+        />
       )}
-      <div className={clsx('d-flex GapTiny ColorSlate align-items-center')}>
+      <div className={clsx('d-flex GapTiny align-items-center')}>
         <span className='FontSmall'>{title}</span>
         {tooltip && (
           <Tooltip title={tooltip}>
@@ -360,7 +436,12 @@ function RewardCard({
           </Tooltip>
         )}
       </div>
-      <span className='FontWeightSemibold FontLarge'>{content}</span>
+      {/* If you use FontWeightSemibold forPostImage, it will cause the result of html2canvas has some strange letter spacing */}
+      <span
+        className={clsx(forPostImage ? 'FontBig FontWeightBold' : 'FontLarge FontWeightSemibold')}
+      >
+        {content}
+      </span>
     </div>
   )
 }
