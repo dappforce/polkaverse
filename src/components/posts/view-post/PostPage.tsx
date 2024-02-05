@@ -13,9 +13,11 @@ import { useResponsiveSize } from 'src/components/responsive'
 import { useIsUnlistedSpace } from 'src/components/spaces/helpers'
 import SpaceCard from 'src/components/spaces/SpaceCard'
 import { postUrl } from 'src/components/urls'
-import { Loading } from 'src/components/utils'
+import { Loading, useIsVisible } from 'src/components/utils'
 import DfCard from 'src/components/utils/cards/DfCard'
+import NoData from 'src/components/utils/EmptyList'
 import { return404 } from 'src/components/utils/next'
+import Segment from 'src/components/utils/Segment'
 import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { getInitialPropsWithRedux, NextContextWithRedux } from 'src/rtk/app'
@@ -39,11 +41,11 @@ import {
   PostActionsPanel,
   PostCreator,
   PostNotFoundPage,
-  SharePostContent,
   useIsUnlistedPost,
 } from './helpers'
 import { PostDropDownMenu } from './PostDropDownMenu'
 import TwitterPost from './TwitterPost'
+import { RegularPreview } from './ViewRegularPreview'
 
 export type PostDetailsProps = {
   postData: PostWithSomeDetails
@@ -61,6 +63,9 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
 
   const { post, space } = postData
   const { struct, content } = post
+
+  const originalPost = initialPostData.ext
+  const isVisiblePost = useIsVisible({ struct: originalPost?.post.struct })
 
   const goToCommentsId = 'comments'
 
@@ -191,20 +196,26 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
                     {titleMsg}
                   </h1>
                 )}
-                {struct.isSharedPost ? (
-                  <SharePostContent postDetails={postData} space={space} />
-                ) : (
-                  <>
-                    {image && (
-                      <div className='d-flex justify-content-center'>
-                        <DfImage src={resolveIpfsUrl(image)} className='DfPostImage' />
-                      </div>
-                    )}
-                    {link && <Embed link={link} className={!!body ? 'mb-3' : 'mb-0'} />}
-                    {body && <DfMd source={body} />}
-                    <ViewTags tags={tags} className='mt-2' />
-                  </>
+                {image && (
+                  <div className='d-flex justify-content-center'>
+                    <DfImage src={resolveIpfsUrl(image)} className='DfPostImage' />
+                  </div>
                 )}
+                {link && <Embed link={link} className={!!body ? 'mb-3' : 'mb-0'} />}
+                {body && <DfMd source={body} />}
+                <ViewTags tags={tags} className='mt-2' />
+
+                {struct.isSharedPost &&
+                  originalPost &&
+                  (isVisiblePost ? (
+                    <div className={clsx('DfSharedSummary', body && 'mt-3')}>
+                      <Segment className={clsx('DfPostPreview')}>
+                        <RegularPreview postDetails={originalPost} space={originalPost?.space} />
+                      </Segment>
+                    </div>
+                  ) : (
+                    <NoData description='Post not found' />
+                  ))}
                 <PostActionsPanel
                   className='mt-3'
                   postDetails={postData}
