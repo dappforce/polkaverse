@@ -381,6 +381,7 @@ function ProgressPanel({
           </Button>
           {defaultSpaceIdToPost && (
             <Button
+              className={styles.GhostButton}
               disabled={disableButtons}
               type='default'
               ghost
