@@ -359,7 +359,7 @@ const GET_USER_LAST_WEEK_REWARD = gql`
         address: $address
         period: WEEK
         periodValue: $timestamp
-        staker: { earnedByPeriod: true, likedPostsByDay: true }
+        staker: { earnedByPeriod: true, likedPostsByDay: true, likedPosts: true }
       }
     ) {
       staker {
