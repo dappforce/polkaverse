@@ -156,14 +156,24 @@ function InnerProgressModal() {
         className={clsx(styles.ProgressModal, statusClassName[status])}
         contentClassName={styles.Content}
       >
-        <ProgressPanel withButtons />
+        <ProgressPanel />
         <div
           id='progress-image'
-          className={clsx(styles.ProgressModal, statusClassName[status])}
-          style={{ width: '400px', display: 'none' }}
+          className={clsx(styles.ProgressModal, statusClassName[status], 'position-relative')}
+          style={{ width: '600px', display: 'none' }}
         >
           <div className='ant-modal-content p-3 pb-4'>
-            <ProgressPanel />
+            <img
+              src='/images/creators/diamonds/blurred-diamond-right.png'
+              className={clsx(styles.OutsideDiamondRight)}
+            />
+            <img
+              src='/images/creators/diamonds/blurred-diamond-top-left.png'
+              className={clsx(styles.OutsideDiamondLeft)}
+            />
+            <div style={{ maxWidth: '350px', margin: '0 auto' }}>
+              <ProgressPanel forPostImage />
+            </div>
           </div>
         </div>
       </CustomModal>
@@ -171,7 +181,7 @@ function InnerProgressModal() {
   )
 }
 
-function ProgressPanel({ withButtons }: { withButtons?: boolean }) {
+function ProgressPanel({ forPostImage }: { forPostImage?: boolean }) {
   const { ipfs } = useSubsocialApi()
 
   const myAddress = useMyAddress() ?? ''
@@ -274,7 +284,7 @@ function ProgressPanel({ withButtons }: { withButtons?: boolean }) {
 
   return (
     <>
-      <DiamondIcon className={styles.DiamondIcon} />
+      {!forPostImage && <DiamondIcon className={styles.DiamondIcon} />}
       <div className={clsx(styles.ProgressModalContent, 'mt-2')}>
         <div className='d-flex flex-column align-items-center'>
           <div className='mb-2'>
@@ -287,10 +297,11 @@ function ProgressPanel({ withButtons }: { withButtons?: boolean }) {
             />
           </div>
           <span className='text-center FontLarge FontWeightBold mb-2'>{usedContent.title}</span>
-          <p className='text-center ColorSlate mb-0'>{usedContent.subtitle}</p>
+          <p className='text-center mb-0'>{usedContent.subtitle}</p>
         </div>
         <div className='d-flex w-100 GapSmall'>
           <RewardCard
+            forPostImage={forPostImage}
             aligment={hasMissedReward ? 'left' : 'center'}
             title={`${isUsingLastWeekData ? 'Last week' : 'Yesterday'}'s reward`}
             content={
@@ -306,6 +317,7 @@ function ProgressPanel({ withButtons }: { withButtons?: boolean }) {
           />
           {hasMissedReward && (
             <RewardCard
+              forPostImage={forPostImage}
               aligment='left'
               title='Missed rewards'
               tooltip='How many SUB you could have received by liking at least 10 posts yesterday'
@@ -322,7 +334,7 @@ function ProgressPanel({ withButtons }: { withButtons?: boolean }) {
           )}
         </div>
       </div>
-      {withButtons && (
+      {!forPostImage && (
         <div
           className='GapNormal mt-4'
           style={{
@@ -356,12 +368,14 @@ function RewardCard({
   tooltip,
   withDiamond,
   aligment,
+  forPostImage,
 }: {
   aligment: 'center' | 'left'
   withDiamond?: boolean
   title: string
   tooltip?: string
   content: ReactNode
+  forPostImage?: boolean
 }) {
   return (
     <div
@@ -371,9 +385,13 @@ function RewardCard({
       )}
     >
       {withDiamond && (
-        <DfImage preview={false} src='/images/diamond.png' className={styles.Diamond} />
+        <DfImage
+          preview={false}
+          src='/images/creators/diamonds/diamond.png'
+          className={clsx(styles.Diamond, forPostImage && styles.DiamondRight)}
+        />
       )}
-      <div className={clsx('d-flex GapTiny ColorSlate align-items-center')}>
+      <div className={clsx('d-flex GapTiny align-items-center')}>
         <span className='FontSmall'>{title}</span>
         {tooltip && (
           <Tooltip title={tooltip}>
@@ -381,7 +399,9 @@ function RewardCard({
           </Tooltip>
         )}
       </div>
-      <span className='FontWeightSemibold FontLarge'>{content}</span>
+      <span className={clsx('FontWeightSemibold', forPostImage ? 'FontBig' : 'FontLarge')}>
+        {content}
+      </span>
     </div>
   )
 }

@@ -33,6 +33,20 @@
   .Content
     overflow: visible !important
 
+  .OutsideDiamondLeft, .OutsideDiamondRight
+    position: absolute
+
+  .OutsideDiamondLeft
+    top: 0
+    left: 0
+    width: 225px
+    height: 225px
+
+  .OutsideDiamondRight
+    top: 15%
+    right: -10px
+    width: 120px
+
   .ProgressModalContent
     border-radius: $border_radius_huge
     display: flex
@@ -61,3 +75,6 @@
         right: 0
         transform: translate(35%, -50%) rotate(-30deg)
         transform-origin: center
+
+        &.DiamondRight
+          transform: translate(20%, -50%) rotate(30deg)
