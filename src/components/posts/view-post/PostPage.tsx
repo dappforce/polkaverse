@@ -205,17 +205,17 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
                 {body && <DfMd source={body} />}
                 <ViewTags tags={tags} className='mt-2' />
 
-                {struct.isSharedPost &&
-                  originalPost &&
-                  (isVisiblePost ? (
-                    <div className={clsx('DfSharedSummary', body && 'mt-3')}>
-                      <Segment className={clsx('DfPostPreview')}>
+                {struct.isSharedPost && originalPost && (
+                  <div className={clsx('DfSharedSummary', body && 'mt-3')}>
+                    <Segment className={clsx('DfPostPreview')}>
+                      {isVisiblePost ? (
                         <RegularPreview postDetails={originalPost} space={originalPost?.space} />
-                      </Segment>
-                    </div>
-                  ) : (
-                    <NoData description='Post not found' />
-                  ))}
+                      ) : (
+                        <NoData description='Post not found' />
+                      )}
+                    </Segment>
+                  </div>
+                )}
                 <PostActionsPanel
                   className='mt-3'
                   postDetails={postData}
