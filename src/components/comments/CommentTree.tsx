@@ -8,6 +8,7 @@ import useSubsocialEffect from '../api/useSubsocialEffect'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import DataList from '../lists/DataList'
 import { Loading } from '../utils'
+import { MutedSpan } from '../utils/MutedText'
 import { CommentEventProps } from './CommentEditor'
 import { useRepliesData } from './utils'
 import ViewComment from './ViewComment'
@@ -59,6 +60,7 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
   const [loading, setLoading] = useState(true)
+  const [localShowAllReplies, setLocalShowAllReplies] = useState(false)
 
   const comment = useSelectPost(parentId)
   const repliesCount = comment?.post.struct.repliesCount || 0
@@ -68,7 +70,7 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({
   }, [replyIds])
 
   const { filtered: filteredIds } = useFilterLowValuePosts(reversedReplyIds)
-  const usedIds = showAllReplies ? reversedReplyIds : filteredIds
+  const usedIds = showAllReplies || localShowAllReplies ? reversedReplyIds : filteredIds
 
   useSubsocialEffect(
     ({ subsocial }) => {
@@ -96,12 +98,31 @@ export const ViewCommentsTree: FC<CommentsTreeProps> = ({
 
   if (loading) return <Loading label='Loading replies...' center={false} />
 
+  const hasAllRepliesHidden =
+    !showAllReplies && filteredIds.length === 0 && reversedReplyIds.length > 0
+
   return (
     <DataList
       dataSource={usedIds}
       getKey={replyId => replyId}
       className='mt-2.5'
       listClassName='GapSmall d-flex flex-column'
+      customNoData={
+        hasAllRepliesHidden && (
+          <div
+            className='d-flex px-3 py-2 RoundedLarge d-flex align-items-center GapNormal justify-content-between mt-1'
+            style={{ border: '1px solid #d1d1d1' }}
+          >
+            <MutedSpan>Show additional replies</MutedSpan>
+            <span
+              className='FontWeightSemibold CursorPointer'
+              onClick={() => setLocalShowAllReplies(true)}
+            >
+              Show
+            </span>
+          </div>
+        )
+      }
       renderItem={replyId => (
         <CommentById
           directlyExpandReplies={directlyExpandReplies}
