@@ -53,7 +53,7 @@ const extensions = [
 
 type OnUpdateFn = (htmlText: string) => void
 
-const regexToMatchCodeBlock = /(<pre><code>)([\s\S]+)(\s)(<\/code><\/pre>)/g
+const regexToMatchCodeBlock = /(<pre><code>)([\s\S]+?)(?=<\/code><\/pre>)/g
 
 export const useCreateEditor = (
   onUpdate: OnUpdateFn,
@@ -61,7 +61,9 @@ export const useCreateEditor = (
   saveBodyDraft: (body: string) => void = () => undefined,
 ) => {
   const htmlContent = useMemo(() => {
-    return mdToHtml(content)?.replace(regexToMatchCodeBlock, '$1$2$4')
+    return mdToHtml(content)?.replace(regexToMatchCodeBlock, (_, start, content) => {
+      return `${start}${content.trim()}`
+    })
   }, [content])
 
   const debouncedSaveDraft = useCallback(debounceFunction(saveBodyDraft, 250), [])
