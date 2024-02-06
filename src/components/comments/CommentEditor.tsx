@@ -146,7 +146,7 @@ export const CommentEditor = (props: Props) => {
           <ErrorMessage errors={errors} name={Fields.body} />
         </div>
       </form>
-      {totalStake?.hasStakedEnough === false && (
+      {totalStake?.hasStakedEnough === false && toolbar && (
         <Alert
           message={
             <div className='d-flex align-items-center GapTiny' style={{ color: '#bd7d05' }}>
