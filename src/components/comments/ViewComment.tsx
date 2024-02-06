@@ -5,7 +5,9 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 import { FC, useEffect, useState } from 'react'
 import { TbCoins, TbMessageCircle2 } from 'react-icons/tb'
+import { getNeededLock } from 'src/config/constants'
 import { useSelectProfile } from 'src/rtk/app/hooks'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import {
   asCommentData,
   asCommentStruct,
@@ -15,6 +17,8 @@ import {
   SpaceStruct,
 } from 'src/types'
 import { activeStakingLinks } from 'src/utils/links'
+import { useMyAddress } from '../auth/MyAccountsContext'
+import { FormatBalance } from '../common/balances'
 import { useShouldRenderMinStakeAlert } from '../posts/view-post'
 import { PostDropDownMenu } from '../posts/view-post/PostDropDownMenu'
 import PostRewardStat from '../posts/view-post/PostRewardStat'
@@ -58,6 +62,9 @@ export const InnerViewComment: FC<Props> = props => {
   const commentStruct = asCommentStruct(comment.struct)
   const commentContent = comment.content as CommentContent
   const { id, createdAtTime, ownerId } = commentStruct
+
+  const myAddress = useMyAddress() ?? ''
+  const { data: totalStake } = useFetchTotalStake(myAddress)
 
   const owner = useSelectProfile(ownerId)
 
@@ -199,7 +206,15 @@ export const InnerViewComment: FC<Props> = props => {
                   <Tooltip
                     title={
                       <span>
-                        <span>This comment could earn SUB rewards.</span>
+                        <span>
+                          Lock{' '}
+                          <FormatBalance
+                            currency='SUB'
+                            value={getNeededLock(totalStake?.amount).toString()}
+                            precision={2}
+                          />{' '}
+                          in order to earn rewards for this comment
+                        </span>
                         <Link href={activeStakingLinks.learnMore}>
                           <a
                             target='_blank'
