@@ -506,19 +506,29 @@ export const MaintenancePage = () => (
   <Error statusCode={503} title={maintenanceMsg || messages.errors.maintenance} />
 )
 
-export default function PostNotEnoughMinStakeAlert({ post }: { post: PostStruct }) {
+export function useShouldRenderMinStakeAlert(post: PostStruct) {
   const { isExist, validByCreatorMinStake, validByCreationDate } = useCanPostSuperLiked(post.id)
   const isMyPost = useIsMyAddress(post.ownerId)
   const isMadeWithinOneMinute = Date.now() - post.createdAtTime < 60 * 1000
   const myAddress = useMyAddress() ?? ''
   const { data: totalStake } = useFetchTotalStake(myAddress)
 
-  if (!isMyPost) return null
+  if (!isMyPost) return false
 
   if (
     (isExist && !validByCreatorMinStake && validByCreationDate) ||
     (!isExist && isMadeWithinOneMinute && !totalStake?.hasStakedEnough)
   ) {
+    return true
+  }
+
+  return false
+}
+
+export default function PostNotEnoughMinStakeAlert({ post }: { post: PostStruct }) {
+  const shouldRenderAlert = useShouldRenderMinStakeAlert(post)
+
+  if (shouldRenderAlert) {
     return (
       <div className={styles.PostNotEnoughMinStakeAlert}>
         <div className='d-flex align-items-center GapTiny'>

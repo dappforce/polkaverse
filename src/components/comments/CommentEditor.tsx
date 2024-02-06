@@ -1,19 +1,22 @@
-import styles from './CommentEditor.module.sass'
-
-import { Button, Input } from 'antd'
+import { Alert, Button, Input } from 'antd'
 import BN from 'bn.js'
 import clsx from 'clsx'
+import Link from 'next/link'
 import { useState } from 'react'
 import { Controller, ErrorMessage, useForm } from 'react-hook-form'
+import { TbCoins } from 'react-icons/tb'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import { TxCallback, TxFailedCallback } from 'src/components/substrate/SubstrateTxButton'
 import { useSendEvent } from 'src/providers/AnalyticContext'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { CommentContent, IpfsCid } from 'src/types'
-import { useAmIBlocked } from '../auth/MyAccountsContext'
+import { activeStakingLinks } from 'src/utils/links'
+import { useAmIBlocked, useMyAddress } from '../auth/MyAccountsContext'
 import { buildSharePostValidationSchema } from '../posts/PostValidation'
 import { getNewIdFromEvent } from '../substrate'
 import { tmpClientId } from '../utils'
 import { MyAccountProps } from '../utils/MyAccount'
+import styles from './CommentEditor.module.sass'
 import { CommentTxButtonType } from './utils'
 
 // A height of EasyMDE toolbar with our custom styles. Can be changed
@@ -52,6 +55,9 @@ export const CommentEditor = (props: Props) => {
   const [ipfsCid, setIpfsCid] = useState<IpfsCid>()
   const [fakeId] = useState(tmpClientId())
   const [toolbar, setToolbar] = useState(!asStub)
+
+  const myAddress = useMyAddress() ?? ''
+  const { data: totalStake } = useFetchTotalStake(myAddress)
 
   const sendEvent = useSendEvent()
 
@@ -140,6 +146,24 @@ export const CommentEditor = (props: Props) => {
           <ErrorMessage errors={errors} name={Fields.body} />
         </div>
       </form>
+      {totalStake?.hasStakedEnough === false && toolbar && (
+        <Alert
+          message={
+            <div className='d-flex align-items-center GapTiny' style={{ color: '#bd7d05' }}>
+              <TbCoins className='FontNormal' style={{ flexShrink: '0' }} />
+              <span>
+                <span>This comment could earn SUB rewards.</span>
+                <Link passHref href={activeStakingLinks.learnMore}>
+                  <a className='FontWeightMedium ml-1'>Learn How</a>
+                </Link>
+              </span>
+            </div>
+          }
+          type='warning'
+          className='RoundedLarge mt-2.5'
+          style={{ border: 'none' }}
+        />
+      )}
       <div className='DfActionButtonsBlock'>
         {toolbar && renderTxButton()}
         {withCancel && !isLoading && (
