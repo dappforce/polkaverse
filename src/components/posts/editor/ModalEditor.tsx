@@ -260,7 +260,7 @@ export interface PostEditorModalProps extends Omit<ModalProps, 'onCancel'> {
 export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalProps) => {
   const myAddress = useMyAddress()
   const { data } = useFetchTotalStake(myAddress ?? '')
-  const hasStaked = data?.hasStaked
+  const hasStaked = data?.hasStakedEnough
 
   const neededStake = getNeededLock(data?.amount)
 

@@ -6,7 +6,7 @@ import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 export type TotalStake = {
   address: string
   amount: string
-  hasStaked?: boolean
+  hasStakedEnough?: boolean
 }
 
 const sliceName = 'totalStakes'
@@ -22,7 +22,7 @@ export const fetchTotalStake = createSimpleFetchWrapper<{ address: string }, Tot
   sliceName,
   fetchData: async function ({ address }: { address: string }) {
     const data = await getTotalStake({ address })
-    let stakeAmount = { amount: '0', hasStaked: false }
+    let stakeAmount = { amount: '0', hasStakedEnough: false }
     if (data) stakeAmount = data
     const finalData = { address, ...stakeAmount }
 

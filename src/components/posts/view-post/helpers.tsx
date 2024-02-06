@@ -27,6 +27,7 @@ import messages from 'src/messages'
 import { isBlockedPost } from 'src/moderation'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
 import { useCanPostSuperLiked } from 'src/rtk/features/activeStaking/hooks'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import {
   PostContent as PostContentType,
   PostData,
@@ -39,7 +40,7 @@ import { getTimeRelativeToNow } from 'src/utils/date'
 import { activeStakingLinks } from 'src/utils/links'
 import { RegularPreview } from '.'
 import { useSelectSpace } from '../../../rtk/features/spaces/spacesHooks'
-import { useIsMyAddress } from '../../auth/MyAccountsContext'
+import { useIsMyAddress, useMyAddress } from '../../auth/MyAccountsContext'
 import AuthorPreview from '../../profiles/address-views/AuthorPreview'
 import { SpaceNameAsLink } from '../../spaces/ViewSpace'
 import { formatDate, isHidden, toShortUrl, useIsVisible } from '../../utils'
@@ -508,10 +509,16 @@ export const MaintenancePage = () => (
 export default function PostNotEnoughMinStakeAlert({ post }: { post: PostStruct }) {
   const { isExist, validByCreatorMinStake, validByCreationDate } = useCanPostSuperLiked(post.id)
   const isMyPost = useIsMyAddress(post.ownerId)
+  const isMadeWithinOneMinute = Date.now() - post.createdAtTime < 60 * 1000
+  const myAddress = useMyAddress() ?? ''
+  const { data: totalStake } = useFetchTotalStake(myAddress)
 
   if (!isMyPost) return null
 
-  if (isExist && !validByCreatorMinStake && validByCreationDate) {
+  if (
+    (isExist && !validByCreatorMinStake && validByCreationDate) ||
+    (!isExist && isMadeWithinOneMinute && !totalStake?.hasStakedEnough)
+  ) {
     return (
       <div className={styles.PostNotEnoughMinStakeAlert}>
         <div className='d-flex align-items-center GapTiny'>

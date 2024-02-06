@@ -76,7 +76,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
       openSignInModal()
       return
     }
-    if (!totalStake?.hasStaked) {
+    if (!totalStake?.hasStakedEnough) {
       setIsOpenShouldStakeModal(true)
       return
     }

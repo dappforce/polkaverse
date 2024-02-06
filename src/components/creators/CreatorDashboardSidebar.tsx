@@ -48,7 +48,7 @@ function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { nam
 
   return (
     <>
-      {data?.hasStaked ? (
+      {data?.hasStakedEnough ? (
         <>
           <CreatePostCard variant={variant} />
           <RewardInfoCard />
@@ -67,14 +67,14 @@ function SpacePageSidebar({}: Extract<CreatorDashboardSidebarType, { name: 'spac
   if (loadingTotalStake) return null
 
   const renderTopCard = () => {
-    if (!totalStake?.hasStaked) return <SupportCreatorsCard />
+    if (!totalStake?.hasStakedEnough) return <SupportCreatorsCard />
     return null
   }
 
   return (
     <>
       {renderTopCard()}
-      {totalStake?.hasStaked && <RewardInfoCard />}
+      {totalStake?.hasStakedEnough && <RewardInfoCard />}
     </>
   )
 }
@@ -86,7 +86,7 @@ function PostPageSidebar({ space }: Extract<CreatorDashboardSidebarType, { name:
   return (
     <>
       <CreatorInfoCard space={space} />
-      {!loadingTotalStake && (data?.hasStaked ? <RewardInfoCard /> : <SupportCreatorsCard />)}
+      {!loadingTotalStake && (data?.hasStakedEnough ? <RewardInfoCard /> : <SupportCreatorsCard />)}
     </>
   )
 }
