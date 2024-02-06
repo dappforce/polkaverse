@@ -51,8 +51,8 @@ const stats: Record<LeaderboardRole, Stat[]> = {
       ),
       tooltip: isMyAddress =>
         isMyAddress
-          ? 'The amount of SUB rewards you have earned this week from Active Staking rewards'
-          : 'The amount of SUB rewards this user has earned this week from Active Staking rewards',
+          ? 'The amount of SUB rewards you have earned this week from Content Staking rewards'
+          : 'The amount of SUB rewards this user has earned this week from Content Staking rewards',
     },
     {
       title: isMyAddress =>
@@ -76,8 +76,8 @@ const stats: Record<LeaderboardRole, Stat[]> = {
       ),
       tooltip: isMyAddress =>
         isMyAddress
-          ? 'The total amount of SUB rewards you have earned from Active Staking rewards'
-          : 'The total amount of SUB rewards this user has earned from Active Staking rewards',
+          ? 'The total amount of SUB rewards you have earned from Content Staking rewards'
+          : 'The total amount of SUB rewards this user has earned from Content Staking rewards',
     },
   ],
   staker: [
@@ -102,8 +102,8 @@ const stats: Record<LeaderboardRole, Stat[]> = {
       ),
       tooltip: isMyAddress =>
         isMyAddress
-          ? 'The amount of SUB rewards you have earned this week from Active Staking rewards'
-          : 'The amount of SUB rewards this user has earned this week from Active Staking rewards',
+          ? 'The amount of SUB rewards you have earned this week from Content Staking rewards'
+          : 'The amount of SUB rewards this user has earned this week from Content Staking rewards',
     },
     {
       title: isMyAddress =>
@@ -127,8 +127,8 @@ const stats: Record<LeaderboardRole, Stat[]> = {
       ),
       tooltip: isMyAddress =>
         isMyAddress
-          ? 'The total amount of SUB rewards you have earned this week from Active Staking rewards'
-          : 'The total amount of SUB rewards this user has earned from Active Staking rewards',
+          ? 'The total amount of SUB rewards you have earned this week from Content Staking rewards'
+          : 'The total amount of SUB rewards this user has earned from Content Staking rewards',
     },
   ],
 }
@@ -221,7 +221,7 @@ export default function UserLeaderboardPage({ address, customMeta }: UserLeaderb
             title={tabState === 'creator' ? 'Creator Rewards' : 'Staker Rewards'}
             description={`The last 30 days of ${
               isMyAddress ? 'my' : "this user's"
-            } Active Staking rewards`}
+            } Content Staking rewards`}
             loading={loading}
             rewardHistory={rewardHistory}
             rewardType={tabState}
@@ -234,8 +234,8 @@ export default function UserLeaderboardPage({ address, customMeta }: UserLeaderb
             </span>
             <MutedSpan className='FontSmall'>
               {tabState === 'staker'
-                ? 'Stakers ranked by the amount of SUB earned with Active Staking this week.'
-                : 'Creators ranked by the amount of SUB earned with Active Staking this week.'}
+                ? 'Users ranked by the amount of SUB earned with Content Staking this week.'
+                : 'Creators ranked by the amount of SUB earned from their posts this week.'}
             </MutedSpan>
           </div>
           <LeaderboardTable
@@ -250,7 +250,7 @@ export default function UserLeaderboardPage({ address, customMeta }: UserLeaderb
       <DfCard size='small' withShadow={false} className='lg-hidden mt-4'>
         <RewardHistoryPanel
           title={tabState === 'creator' ? 'Creator Rewards' : 'Staker Rewards'}
-          description='The last 30 days of your Active Staking rewards'
+          description='The last 30 days of your Content Staking rewards'
           loading={loading}
           rewardHistory={rewardHistory}
           rewardType={tabState}

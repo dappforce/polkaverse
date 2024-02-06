@@ -156,7 +156,7 @@ function StakerRewardInfo({ rewardReport, loading, size }: InnerRewardInfoProps)
         <div className='d-flex justify-content-between align-items-center'>
           <div className='d-flex align-items-baseline GapMini'>
             <MutedSpan>Earned today</MutedSpan>
-            <Tooltip title='The minimum bonus rewards you have earned today from Active Staking, which may increase depending on network activity'>
+            <Tooltip title='The minimum bonus rewards you have earned today from Content Staking, which may increase depending on network activity'>
               <SlQuestion className='FontTiny ColorMuted' />
             </Tooltip>
           </div>
@@ -180,7 +180,7 @@ function StakerRewardInfo({ rewardReport, loading, size }: InnerRewardInfoProps)
         <div className='d-flex justify-content-between align-items-center'>
           <div className='d-flex align-items-baseline GapMini'>
             <MutedSpan>Earned this week</MutedSpan>
-            <Tooltip title='The bonus rewards you have earned this week from participating in Active Staking'>
+            <Tooltip title='The bonus rewards you have earned this week from participating in Content Staking'>
               <SlQuestion className='FontTiny ColorMuted' />
             </Tooltip>
           </div>

@@ -15,7 +15,7 @@ export default function RewardHistoryModal({ onCancel, visible }: RewardHistoryM
   const creatorRewards = data?.rewards.filter(reward => BigInt(reward.creatorReward) > 0)
 
   return (
-    <CustomModal title='Active Staking History' visible={visible} onCancel={onCancel}>
+    <CustomModal title='Content Staking History' visible={visible} onCancel={onCancel}>
       <RewardHistoryPanel
         title='Staker Rewards'
         loading={loading}

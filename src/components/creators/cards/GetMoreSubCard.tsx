@@ -16,7 +16,7 @@ export default function GetMoreSubCard({ ...props }: GetMoreSubCardProps) {
     <Segment {...props} className={clsx(styles.GetMoreSub, props.className)}>
       <div className={styles.Content}>
         <DfImage preview={false} src='/images/creators/hearts.png' className={clsx(styles.Image)} />
-        <p className={clsx(styles.Title, 'mb-2')}>Get more SUB with Active Staking</p>
+        <p className={clsx(styles.Title, 'mb-2')}>Get more SUB with Content Staking</p>
         <p className={clsx(styles.Subtitle)}>Get rewarded based on your social activity</p>
         <div className='d-flex flex-column GapSmall'>
           <Button
