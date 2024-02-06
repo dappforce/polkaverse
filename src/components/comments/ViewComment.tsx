@@ -1,10 +1,10 @@
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons'
-import { Button, Tag, Tooltip } from 'antd'
+import { Alert, Button, Tag, Tooltip } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { FC, useEffect, useState } from 'react'
-import { TbMessageCircle2 } from 'react-icons/tb'
+import { TbCoins, TbMessageCircle2 } from 'react-icons/tb'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import {
   asCommentData,
@@ -14,6 +14,8 @@ import {
   PostWithSomeDetails,
   SpaceStruct,
 } from 'src/types'
+import { activeStakingLinks } from 'src/utils/links'
+import { useShouldRenderMinStakeAlert } from '../posts/view-post'
 import { PostDropDownMenu } from '../posts/view-post/PostDropDownMenu'
 import PostRewardStat from '../posts/view-post/PostRewardStat'
 import AuthorSpaceAvatar from '../profiles/address-views/AuthorSpaceAvatar'
@@ -51,6 +53,7 @@ export const InnerViewComment: FC<Props> = props => {
   } = props
 
   const { post: comment } = commentDetails
+  const shouldRenderAlert = useShouldRenderMinStakeAlert(comment.struct)
 
   const commentStruct = asCommentStruct(comment.struct)
   const commentContent = comment.content as CommentContent
@@ -164,8 +167,11 @@ export const InnerViewComment: FC<Props> = props => {
               <CommentBody comment={asCommentData(comment)} />
             )}
           </div>
-          <div className='d-flex align-items-center mt-1.5' style={{ flexWrap: 'wrap-reverse' }}>
-            <div className='d-flex align-items-center GapSmall mr-2'>
+          <div
+            className='d-flex align-items-center mt-1.5'
+            style={{ flexWrap: 'wrap-reverse', gap: '0 0.75rem' }}
+          >
+            <div className='d-flex align-items-center GapSmall'>
               <SuperLike
                 isComment
                 key={`voters-of-comments-${id}`}
@@ -184,6 +190,36 @@ export const InnerViewComment: FC<Props> = props => {
                 </span>
               </Button>
             </div>
+            {shouldRenderAlert && (
+              <Alert
+                style={{ border: 'none', padding: '0.125rem 0.5rem' }}
+                className='RoundedLarge'
+                type='warning'
+                message={
+                  <Tooltip
+                    title={
+                      <span>
+                        <span>This comment could earn SUB rewards.</span>
+                        <Link href={activeStakingLinks.learnMore}>
+                          <a
+                            target='_blank'
+                            className='FontWeightMedium ml-1'
+                            style={{ color: '#f759ab' }}
+                          >
+                            Learn How
+                          </a>
+                        </Link>
+                      </span>
+                    }
+                  >
+                    <div className='d-flex align-items-center GapTiny' style={{ color: '#bd7d05' }}>
+                      <TbCoins />
+                      <span>Not monetized</span>
+                    </div>
+                  </Tooltip>
+                }
+              />
+            )}
             <PostRewardStat postId={comment.id} style={{ marginLeft: 'auto' }} />
           </div>
           <div className='mt-1.5 d-flex flex-column'>

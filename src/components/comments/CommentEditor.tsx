@@ -150,11 +150,13 @@ export const CommentEditor = (props: Props) => {
         <Alert
           message={
             <div className='d-flex align-items-center GapTiny' style={{ color: '#bd7d05' }}>
-              <TbCoins className='FontNormal' />
-              <span>This comment could earn SUB rewards.</span>
-              <Link passHref href={activeStakingLinks.learnMore}>
-                <a className='FontWeightMedium'>Learn How</a>
-              </Link>
+              <TbCoins className='FontNormal' style={{ flexShrink: '0' }} />
+              <span>
+                <span>This comment could earn SUB rewards.</span>
+                <Link passHref href={activeStakingLinks.learnMore}>
+                  <a className='FontWeightMedium ml-1'>Learn How</a>
+                </Link>
+              </span>
             </div>
           }
           type='warning'
