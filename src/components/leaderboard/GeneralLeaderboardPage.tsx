@@ -59,7 +59,7 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
   const { data } = useFetchGeneralStatistics()
 
   return (
-    <PageContent withLargerMaxWidth meta={{ title: 'Active Staking Dashboard' }}>
+    <PageContent withLargerMaxWidth meta={{ title: 'Content Staking Dashboard' }}>
       <LeaderboardTabs activeKey='general' />
       {data && (
         <div className={clsx(styles.Statistics)}>
@@ -83,7 +83,7 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
           <div className='d-flex flex-column'>
             <span className='FontSemilarge FontWeightSemibold'>Top Stakers this week</span>
             <MutedSpan className='FontSmall'>
-              Stakers ranked by the amount of SUB earned with Active Staking.
+              Users ranked by the amount of SUB earned with Content Staking.
             </MutedSpan>
           </div>
           <LeaderboardTable className='mt-3' role='staker' />
@@ -92,7 +92,7 @@ export default function GeneralLeaderboardPage({}: GeneralLeaderboardPageProps) 
           <div className='d-flex flex-column'>
             <span className='FontSemilarge FontWeightSemibold'>Top Creators this week</span>
             <MutedSpan className='FontSmall'>
-              Creators ranked by the amount of SUB earned with Active Staking.
+              Creators ranked by the amount of SUB earned from their posts.
             </MutedSpan>
           </div>
           <LeaderboardTable className='mt-3' role='creator' />
