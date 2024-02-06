@@ -23,7 +23,7 @@ export default function MobileRewardDashboard(props: MobileRewardDashboardProps)
 
   if (loading) return null
 
-  if (!totalStake?.hasStaked) {
+  if (!totalStake?.hasStakedEnough) {
     return <StakeSubBanner {...props} />
   }
   return <StakerRewardDashboard {...props} />
@@ -71,7 +71,7 @@ function StakerRewardDashboard(props: MobileRewardDashboardProps) {
   const [isOpen, setIsOpen] = useState(false)
   const myAddress = useMyAddress()
   const { data } = useFetchTotalStake(myAddress ?? '')
-  if (!data?.hasStaked) return null
+  if (!data?.hasStakedEnough) return null
 
   const isOpenClassName = isOpen && styles.IsOpen
 
