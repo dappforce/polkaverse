@@ -86,7 +86,7 @@ const Embed = ({ link, className }: EmbedProps) => {
   )
 }
 
-const thumbnail = ['maxresdefault', 'mqdefault', 'sddefault', 'hqdefault', 'default'] as const
+const thumbnail = ['maxresdefault', 'sddefault', 'hqdefault', 'mqdefault', 'default'] as const
 export type ThumbnailRes = (typeof thumbnail)[number]
 
 export function YoutubeThumbnailChecker({
