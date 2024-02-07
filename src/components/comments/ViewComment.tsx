@@ -154,20 +154,22 @@ export const InnerViewComment: FC<Props> = props => {
               </Link>
             </div>
             <div className='d-flex align-items-center GapTiny'>
-              <ShareDropdown
-                postDetails={commentDetails}
-                space={space}
-                className='DfAction p-0'
-                iconSize='normal'
-              />
               {!isFake && (
-                <PostDropDownMenu
-                  className='d-flex align-items-center ColorMuted'
-                  style={{ position: 'relative', top: '1px' }}
-                  post={comment}
-                  space={space}
-                  onEditComment={onEditComment}
-                />
+                <>
+                  <ShareDropdown
+                    postDetails={commentDetails}
+                    space={space}
+                    className='DfAction p-0'
+                    iconSize='normal'
+                  />
+                  <PostDropDownMenu
+                    className='d-flex align-items-center ColorMuted'
+                    style={{ position: 'relative', top: '1px' }}
+                    post={comment}
+                    space={space}
+                    onEditComment={onEditComment}
+                  />
+                </>
               )}
             </div>
           </div>
