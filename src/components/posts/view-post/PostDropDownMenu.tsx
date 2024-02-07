@@ -105,7 +105,11 @@ export const PostDropDownMenu: FC<DropdownProps> = ({ withEditButton, ...props }
     <span className={className} style={style}>
       <PostDropDown {...props} />
       {withEditButton && isMy && (
-        <ButtonLink {...editPostProps} className='bg-transparent'>
+        <ButtonLink
+          {...editPostProps}
+          className='bg-transparent ml-1 px-2 py-0'
+          style={{ height: '28px' }}
+        >
           <EditOutlined /> Edit
         </ButtonLink>
       )}

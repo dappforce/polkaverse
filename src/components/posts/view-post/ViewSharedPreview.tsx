@@ -2,8 +2,7 @@ import { FC } from 'react'
 import { useSelectPost } from 'src/rtk/app/hooks'
 import { asSharedPostStruct } from 'src/types'
 import { InnerPreviewProps } from '.'
-import { PostActionsPanel, PostCreator, SharePostContent } from './helpers'
-import { PostDropDownMenu } from './PostDropDownMenu'
+import { PostActionsPanel, PostPreviewCreatorInfo, SharePostContent } from './helpers'
 
 type ComponentType = FC<InnerPreviewProps>
 
@@ -14,10 +13,7 @@ export const SharedPreview: ComponentType = props => {
 
   return (
     <>
-      <div className='DfRow'>
-        <PostCreator withSpaceAvatar postDetails={postDetails} space={space} withSpaceName />
-        <PostDropDownMenu space={space?.struct} post={postDetails.post} />
-      </div>
+      <PostPreviewCreatorInfo postDetails={postDetails} space={space} />
       <div className='my-3'>
         <SharePostContent postDetails={postDetails} space={space} />
       </div>
