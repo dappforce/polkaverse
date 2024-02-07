@@ -13,7 +13,6 @@ import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
 import SpacePreviewPopup from 'src/components/spaces/SpacePreviewPopup'
 import { HasDataForSlug } from 'src/components/urls'
-import { DfMd } from 'src/components/utils/DfMd'
 import NoData from 'src/components/utils/EmptyList'
 import { EntityStatusProps, HiddenEntityPanel } from 'src/components/utils/EntityStatusPanels'
 import FollowSpaceButton from 'src/components/utils/FollowSpaceButton'
@@ -376,24 +375,9 @@ type PostPreviewProps = {
   withMarginForCardType?: boolean
 }
 
-const SharedPostMd = (props: PostPreviewProps) => {
-  const {
-    postDetails: { post },
-    space,
-  } = props
-  const { struct, content } = post
-
-  return struct.isComment ? (
-    <DfMd source={content?.body} className='DfPostBody' />
-  ) : (
-    <PostSummary space={space?.struct} post={post} />
-  )
-}
-
 export const SharePostContent = (props: PostPreviewProps) => {
   const {
-    postDetails: { ext, post },
-    space,
+    postDetails: { ext },
   } = props
 
   const OriginalPost = () => {
@@ -409,12 +393,10 @@ export const SharePostContent = (props: PostPreviewProps) => {
     )
   }
 
-  const summary = props.postDetails.post.content?.summary
-
   return (
     <div className='DfSharedSummary'>
-      <ViewPostLink post={post} space={space?.struct} title={<SharedPostMd {...props} />} />
-      <Segment className={clsx('DfPostPreview', summary && 'mt-3')}>
+      <RegularPreview postDetails={props.postDetails} space={props.space} withActions={false} />
+      <Segment className={clsx('DfPostPreview')}>
         <OriginalPost />
       </Segment>
     </div>
