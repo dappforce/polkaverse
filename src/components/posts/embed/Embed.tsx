@@ -54,7 +54,8 @@ const getEmbedUrl = (url: string, embed: string | undefined) => {
   return urls[embed]
 }
 
-export function getEmbedLinkType(link: string) {
+export function getEmbedLinkType(link: string | undefined) {
+  if (!link) return undefined
   return allowEmbedList.find(embed => link.includes(embed))
 }
 

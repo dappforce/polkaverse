@@ -46,7 +46,7 @@ import { SpaceNameAsLink } from '../../spaces/ViewSpace'
 import { formatDate, isHidden, toShortUrl, useIsVisible } from '../../utils'
 import { SummarizeMd } from '../../utils/md/SummarizeMd'
 import ViewTags from '../../utils/ViewTags'
-import Embed from '../embed/Embed'
+import Embed, { getEmbedLinkType } from '../embed/Embed'
 import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
 import styles from './helpers.module.sass'
@@ -466,6 +466,7 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
     post: { struct, content },
   } = postDetails
 
+  const embedType = getEmbedLinkType(content?.link)
   if (!struct || !content) return null
 
   return (
@@ -478,7 +479,7 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
             withMarginForCardType={withMarginForCardType && !withTags}
             postDetails={postDetails}
             space={space?.struct}
-            withImage={withImage}
+            withImage={withImage && !embedType}
           />
           {withTags && <ViewTags tags={content?.tags} />}
           {/* {withStats && <StatsPanel id={post.id}/>} */}
