@@ -73,6 +73,8 @@ export function useFilterLowValuePosts(postIds: string[]) {
     let filteredCount = 0
     const filtered = postIds.filter(id => {
       const canPostSuperLiked = allData[id]
+      if (!canPostSuperLiked?.isExist) return true
+
       if (!canPostSuperLiked?.validByLowValue || !canPostSuperLiked?.validByCreatorMinStake) {
         filteredCount++
         return false
