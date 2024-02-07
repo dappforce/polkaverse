@@ -31,6 +31,7 @@ type ShareMenuProps = {
   title?: string
   className?: string
   onClick?: FVoid
+  iconSize?: 'large' | 'normal'
 }
 
 export type SomeShareLink = {
@@ -111,12 +112,8 @@ const ShareMenu = (props: ShareMenuProps) => {
   )
 }
 
-const ShareIcon = (
-  <AiOutlineShareAlt className='FontLarge' style={{ position: 'relative', top: '0.04em' }} />
-)
-
 export const ShareDropdown = (props: ShareMenuProps) => {
-  const { title = 'Share', className, postDetails } = props
+  const { title = 'Share', className, postDetails, iconSize = 'large' } = props
   const {
     post: {
       struct: { sharesCount },
@@ -134,7 +131,15 @@ export const ShareDropdown = (props: ShareMenuProps) => {
       overlay={<ShareMenu onClick={hide} {...props} />}
     >
       <Button className={clsx(className, 'ColorMuted')} title={title}>
-        <IconWithLabel icon={ShareIcon} count={sharesCount || 0} />
+        <IconWithLabel
+          icon={
+            <AiOutlineShareAlt
+              className={clsx(iconSize === 'large' ? 'FontLarge' : 'FontNormal')}
+              style={{ position: 'relative', top: '0.04em' }}
+            />
+          }
+          count={sharesCount || 0}
+        />
       </Button>
     </Dropdown>
   )
