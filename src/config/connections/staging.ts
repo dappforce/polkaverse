@@ -5,17 +5,21 @@ const stagingConfig: SubsocialConfig = {
 
   substrateUrl: 'wss://rco-para.subsocial.network',
   substrateRpcUrl: 'https://rco-para.subsocial.network/http',
-  offchainUrl: 'https://staging-api.subsocial.network',
-  offchainSignerUrl: 'https://staging-signer.subsocial.network',
-  graphqlUrl: 'https://squid.subsquid.io/soonsocial/graphql',
-  sellerSquid: 'https://squid.subsquid.io/x-seller-squid-rococo-soon/graphql',
+  offchainUrl: 'https://api.subsocial.network',
+  // offchainSignerUrl: 'https://staging-signer.subsocial.network',
+  // graphqlUrl: 'https://squid.subsquid.io/soonsocial/graphql',
+  // sellerSquid: 'https://squid.subsquid.io/x-seller-squid-rococo-soon/graphql',
 
-  ipfsNodeUrl: 'https://staging-ipfs.subsocial.network',
+  ipfsNodeUrl: 'https://ipfs.subsocial.network',
   dagHttpMethod: 'get',
   useOffchainForIpfs: false,
 
-  subIdApiUrl: 'https://rococo-chain-subid.subsocial.network/api/v1',
+  // subIdApiUrl: 'https://sub.id/api/v1',
   subsocialParaId: 2100,
+
+  ga: {
+    id: 'fake',
+  },
 }
 
 export default stagingConfig

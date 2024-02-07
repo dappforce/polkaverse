@@ -21,8 +21,8 @@ export type SubsocialConfig = ConnectionsSettings & {
   /**
    * A URL of a Sub.ID RestAPI. Example: `http://localhost:3001`
    */
-  subIdApiUrl: string
-  subsocialParaId: number
+  subIdApiUrl?: string
+  subsocialParaId?: number
 
   /**
    * An HTTP method that should be used when requesting for content from IPFS
@@ -77,7 +77,7 @@ export type ConnectionsSettings = {
   /** A URL of Subsocial Offchain signer backend. Example: http://localhost:3002. **/
   offchainSignerUrl?: string
 
-  sellerSquid: string
+  sellerSquid?: string
 }
 
 export type AppConfig = {
