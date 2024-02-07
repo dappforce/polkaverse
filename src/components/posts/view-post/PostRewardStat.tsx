@@ -67,7 +67,7 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
         </div>
         <Tooltip
           className='d-flex align-items-center GapMini'
-          title='Rewards earned depend on how many likes a post or comment gets, and how much SUB each liker has staked'
+          title='Rewards earned depend on how many likes a post or comment gets, and how much SUB each liker has locked'
         >
           <span className='FontWeightSemibold'>
             <FormatBalance
