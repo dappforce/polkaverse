@@ -52,8 +52,12 @@ export function RewardHistoryPanel({
   rewardType: 'staker' | 'creator'
 } & ComponentProps<'div'>) {
   const rewards = useMemo(() => {
-    if (rewardType === 'staker') return rewardHistory?.rewards ?? []
-    return rewardHistory?.rewards.filter(reward => BigInt(reward.creatorReward) > 0) ?? []
+    return (
+      rewardHistory?.rewards.filter(reward => {
+        const usedReward = rewardType === 'staker' ? reward.reward : reward.creatorReward
+        return BigInt(usedReward) > 0
+      }) ?? []
+    )
   }, [rewardHistory, rewardType])
 
   return (
