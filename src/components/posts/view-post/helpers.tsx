@@ -421,8 +421,8 @@ export const SharePostContent = (props: PostPreviewProps) => {
   )
 }
 
-export const InfoPostPreview: FC<PostPreviewProps> = props => {
-  const { postDetails, space, withImage = true, withTags, withMarginForCardType } = props
+export const PostPreviewCreatorInfo = (props: Pick<PostPreviewProps, 'postDetails' | 'space'>) => {
+  const { postDetails, space } = props
   const {
     post: { struct, content },
   } = postDetails
@@ -431,39 +431,48 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
   if (!struct || !content) return null
 
   return (
+    <div className='DfRow'>
+      <PostCreator postDetails={postDetails} space={space} withSpaceName withSpaceAvatar />
+      <div className='d-flex align-items-center align-self-start GapTiny'>
+        {space && !isMobile && (
+          <FollowSpaceButton
+            className='mr-1 px-2'
+            style={{ height: '28px' }}
+            size='small'
+            type='default'
+            ghost={false}
+            space={space.struct}
+            withUnfollowButton={false}
+          />
+        )}
+        {space && !postDetails.post.struct.isSharedPost && (
+          <ShareDropdown postDetails={postDetails} space={space.struct} className='DfAction p-0' />
+        )}
+        <PostDropDownMenu
+          post={postDetails.post}
+          space={space?.struct}
+          withEditButton={!isMobile}
+          className='ColorMuted'
+          style={{ position: 'relative', top: '1px' }}
+        />
+      </div>
+    </div>
+  )
+}
+
+export const InfoPostPreview: FC<PostPreviewProps> = props => {
+  const { postDetails, space, withImage = true, withTags, withMarginForCardType } = props
+  const {
+    post: { struct, content },
+  } = postDetails
+
+  if (!struct || !content) return null
+
+  return (
     <div className='DfInfo'>
       <div className='DfRow'>
         <div className='w-100'>
-          <div className='DfRow'>
-            <PostCreator postDetails={postDetails} space={space} withSpaceName withSpaceAvatar />
-            <div className='d-flex align-items-center align-self-start GapTiny'>
-              {space && !isMobile && (
-                <FollowSpaceButton
-                  className='mr-1 px-2'
-                  style={{ height: '28px' }}
-                  size='small'
-                  type='default'
-                  ghost={false}
-                  space={space.struct}
-                  withUnfollowButton={false}
-                />
-              )}
-              {space && (
-                <ShareDropdown
-                  postDetails={postDetails}
-                  space={space.struct}
-                  className='DfAction p-0'
-                />
-              )}
-              <PostDropDownMenu
-                post={postDetails.post}
-                space={space?.struct}
-                withEditButton={!isMobile}
-                className='ColorMuted'
-                style={{ position: 'relative', top: '1px' }}
-              />
-            </div>
-          </div>
+          <PostPreviewCreatorInfo postDetails={postDetails} space={space} />
           {content.link && <Embed link={content.link} className='mt-3' />}
           <PostContent
             withMarginForCardType={withMarginForCardType && !withTags}
