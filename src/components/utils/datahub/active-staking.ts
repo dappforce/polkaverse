@@ -92,8 +92,8 @@ export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> 
     {
       activeStakingRewardsByPosts: {
         persistentPostId: string
-        totalReward: string
-        totalDraftReward: string
+        rewardTotal: string
+        draftRewardTotal: string
         rewardsBySource: {
           fromDirectSuperLikes: string
           fromCommentSuperLikes: string
@@ -114,8 +114,8 @@ export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> 
 
   const resultMap = new Map<string, PostRewards>()
   res.data.activeStakingRewardsByPosts.forEach(item => {
-    const { draftRewardsBySource, rewardsBySource, totalDraftReward, totalReward } = item
-    const total = parseToBigInt(totalReward) + parseToBigInt(totalDraftReward)
+    const { draftRewardsBySource, rewardsBySource, draftRewardTotal, rewardTotal } = item
+    const total = parseToBigInt(rewardTotal) + parseToBigInt(draftRewardTotal)
 
     resultMap.set(item.persistentPostId, {
       postId: item.persistentPostId,
