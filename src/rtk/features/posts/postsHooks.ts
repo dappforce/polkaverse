@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { useActions } from 'src/rtk/app/helpers'
 import { useAppSelector } from 'src/rtk/app/store'
 import { asCommentStruct, PostId, PostStruct, PostWithSomeDetails } from 'src/types'
@@ -8,6 +9,7 @@ import { useSelectSpace } from '../spaces/spacesHooks'
 import {
   fetchPosts,
   SelectPostArgs,
+  selectPostMap,
   SelectPostsArgs,
   selectPostStructById,
   upsertPost,
@@ -68,11 +70,15 @@ export const useCreateUpsertPost = () => {
 
 export function useFilterLowValuePosts(postIds: string[]) {
   const allData = useAppSelector(state => selectAllCanPostSuperLiked(state))
+  const myAddress = useMyAddress() ?? ''
+  const postsMap = useAppSelector(state => selectPostMap(state, { ids: postIds }))
 
   return useMemo(() => {
     let filteredCount = 0
     const filtered = postIds.filter(id => {
       const canPostSuperLiked = allData[id]
+
+      if (postsMap[id]?.post.struct.ownerId === myAddress) return true
       if (!canPostSuperLiked?.isExist) return true
 
       if (!canPostSuperLiked?.validByLowValue || !canPostSuperLiked?.validByCreatorMinStake) {
@@ -83,5 +89,5 @@ export function useFilterLowValuePosts(postIds: string[]) {
     })
 
     return { filtered, filteredCount }
-  }, [postIds.join(',')])
+  }, [postIds.join(','), myAddress])
 }
