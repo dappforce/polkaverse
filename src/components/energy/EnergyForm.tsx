@@ -40,81 +40,90 @@ export const setAndValidateField = (form: FormInstance, name: string, value?: st
 }
 
 type AmountInputProps = WithForm & {
+  setAmountWithoutValidation?: (amount: BigNumber) => void
   setAmount: (amount: BigNumber) => void
   onBlur?: (e: any) => void
 }
 
-export const AmountInput = React.memo(({ form, setAmount, onBlur }: AmountInputProps) => {
-  const { tokenDecimal, tokenSymbol } = useSubstrate()
-  const { balance: availableBalance } = useAuth()
+export const AmountInput = React.memo(
+  ({ form, setAmount, setAmountWithoutValidation, onBlur }: AmountInputProps) => {
+    const { tokenDecimal, tokenSymbol } = useSubstrate()
+    const { balance: availableBalance } = useAuth()
 
-  const maxAmount = convertToBalanceWithDecimal(availableBalance.toString(), tokenDecimal)
+    const maxAmount = convertToBalanceWithDecimal(availableBalance.toString(), tokenDecimal)
 
-  const label = (
-    <Row justify='space-between' className='w-100'>
-      <Col>SUB amount to burn:</Col>
-      <Col>
-        <MutedSpan className='mr-2'>Balance:</MutedSpan>
-        <FormatBalance value={availableBalance} decimals={tokenDecimal} currency={tokenSymbol} />
-      </Col>
-    </Row>
-  )
+    const label = (
+      <Row justify='space-between' className='w-100'>
+        <Col>SUB amount to burn:</Col>
+        <Col>
+          <MutedSpan className='mr-2'>Balance:</MutedSpan>
+          <FormatBalance value={availableBalance} decimals={tokenDecimal} currency={tokenSymbol} />
+        </Col>
+      </Row>
+    )
 
-  const setMaxAmount = () => setAndValidateField(form, fieldName('amount'), maxAmount.toString())
+    const setMaxAmount = () => setAndValidateField(form, fieldName('amount'), maxAmount.toString())
 
-  const maxBtn = (
-    <>
-      <Button ghost type='primary' onClick={setMaxAmount} size='small'>
-        MAX
-      </Button>
-    </>
-  )
+    const maxBtn = (
+      <>
+        <Button ghost type='primary' onClick={setMaxAmount} size='small'>
+          MAX
+        </Button>
+      </>
+    )
 
-  return (
-    <Form.Item
-      name={fieldName('amount')}
-      label={label}
-      className={styles.AmountFormInput}
-      required
-      rules={[
-        ({ getFieldValue }: any) => ({
-          async validator() {
-            const rawValue = getFieldValue(fieldName('amount'))
-            const value = Number.parseFloat(rawValue).toFixed(4)
+    return (
+      <Form.Item
+        name={fieldName('amount')}
+        label={label}
+        className={styles.AmountFormInput}
+        required
+        rules={[
+          ({ getFieldValue }: any) => ({
+            async validator() {
+              const rawValue = getFieldValue(fieldName('amount'))
+              const value = Number.parseFloat(rawValue).toFixed(4)
 
-            let amount = new BigNumber(value)
-            let err = ''
+              let amount = new BigNumber(value)
+              let err = ''
 
-            if (!value || amount.isNaN() || amount.isZero()) {
-              amount = new BigNumber(0)
-            } else if (amount.gt(maxAmount)) {
-              amount = new BigNumber(0)
-              err = 'You cannot burn more than your available balance'
-            }
+              const balanceValueWithoutValidation = balanceWithDecimal(
+                amount.isNaN() ? '0' : amount.toString(),
+                tokenDecimal,
+              )
+              setAmountWithoutValidation &&
+                setAmountWithoutValidation(balanceValueWithoutValidation)
 
-            if (nonEmptyStr(err)) {
-              setAmount && setAmount(amount)
-              return Promise.reject(err)
-            }
+              if (!value || amount.isNaN() || amount.isZero()) {
+                amount = new BigNumber(0)
+              } else if (amount.gt(maxAmount)) {
+                amount = new BigNumber(0)
+                err = 'You cannot burn more than your available balance'
+              }
+              const balanceValue = balanceWithDecimal(amount.toString(), tokenDecimal)
+              setAmount && setAmount(balanceValue)
 
-            setAmount && setAmount(balanceWithDecimal(amount.toString(), tokenDecimal))
-            return Promise.resolve()
-          },
-        }),
-      ]}
-    >
-      <Input
-        onBlur={onBlur}
-        placeholder='For example, 10'
-        type='number'
-        min='0'
-        step='0.1'
-        size='large'
-        suffix={maxBtn}
-      />
-    </Form.Item>
-  )
-})
+              if (nonEmptyStr(err)) {
+                return Promise.reject(err)
+              }
+              return Promise.resolve()
+            },
+          }),
+        ]}
+      >
+        <Input
+          onBlur={onBlur}
+          placeholder='For example, 10'
+          type='number'
+          min='0'
+          step='0.1'
+          size='large'
+          suffix={maxBtn}
+        />
+      </Form.Item>
+    )
+  },
+)
 
 type EnergyInfoSectionProps = {
   amount?: BigNumber
@@ -181,6 +190,7 @@ const EnergyForm = ({ forSelfOnly, subscribeValues, ...props }: EnergyFormProps)
   const [form] = Form.useForm()
   const myAddress = useMyAddress()
   const [amount, setAmount] = useState<BigNumber>()
+  const [amountWithoutValidation, setAmountWithoutValidation] = useState<BigNumber>()
   const [isAnotherRecipient, setIsAnotherRecipient] = useState(false)
   const [success, setSuccess] = useState(false)
 
@@ -223,7 +233,12 @@ const EnergyForm = ({ forSelfOnly, subscribeValues, ...props }: EnergyFormProps)
   return (
     <Card {...props}>
       <Form form={form} layout='vertical'>
-        <AmountInput form={form} setAmount={setAmount} onBlur={subscribeAmount} />
+        <AmountInput
+          setAmountWithoutValidation={setAmountWithoutValidation}
+          form={form}
+          setAmount={setAmount}
+          onBlur={subscribeAmount}
+        />
         {!forSelfOnly && (
           <div>
             <Checkbox onChange={e => setIsAnotherRecipient(e.target.checked)}>
@@ -244,7 +259,7 @@ const EnergyForm = ({ forSelfOnly, subscribeValues, ...props }: EnergyFormProps)
           />
         )}
       </Form>
-      <EnergyInfoSection amount={amount} />
+      <EnergyInfoSection amount={amountWithoutValidation} />
       {!subscribeValues?.noButton && (
         <TxButton
           disabled={!amount || amount.isZero()}
