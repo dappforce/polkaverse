@@ -8,7 +8,7 @@ import { ModalProps } from '../utils/types'
 type EnergySuccessModalProps = ModalProps
 
 const twitterText =
-  'I just burned $SUB to create energy on @SubsocialChain, allowing me to perform more actions!'
+  'I just burned #SUB to create energy on @SubsocialChain, allowing me to perform more actions!'
 
 export const EnergySuccessModal = ({ open, hide }: EnergySuccessModalProps) => {
   return (
@@ -25,7 +25,7 @@ export const EnergySuccessModal = ({ open, hide }: EnergySuccessModalProps) => {
       <div className='pl-4 pr-4 pb-4'>
         <TwitterMock url='/energy' twitterText={twitterText}>
           <p>
-            I just burned <a>$SUB</a> to create energy on <a>@SubsocialChain</a>, allowing me to
+            I just burned <a>#SUB</a> to create energy on <a>@SubsocialChain</a>, allowing me to
             perform more actions!
             <br />
             <a>{subsocialUrl('/energy')}</a>
