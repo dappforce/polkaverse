@@ -264,7 +264,7 @@ function CreatorRewardInfo({ rewardReport, loading, size }: InnerRewardInfoProps
         </div>
         <div className='d-flex justify-content-between align-items-center'>
           <div className='d-flex align-items-baseline GapMini'>
-            <MutedSpan>Daily reward calculation in</MutedSpan>
+            <MutedSpan>Daily calculation in</MutedSpan>
             <Tooltip title='The amount of time remaining until the reward is updated'>
               <SlQuestion className='FontTiny ColorMuted' />
             </Tooltip>
