@@ -69,18 +69,41 @@ const GET_POST_REWARDS = gql`
   query GetPostRewards($postIds: [String!]!) {
     activeStakingRewardsByPosts(args: { postPersistentIds: $postIds }) {
       persistentPostId
-      reward
-      draftReward
+      rewardTotal
+      draftRewardTotal
+      rewardsBySource {
+        fromDirectSuperLikes
+        fromCommentSuperLikes
+        fromShareSuperLikes
+      }
+      draftRewardsBySource {
+        fromDirectSuperLikes
+        fromCommentSuperLikes
+        fromShareSuperLikes
+      }
     }
   }
 `
+function parseToBigInt(value: string) {
+  return BigInt(value.split('.')[0])
+}
 export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> {
   const res = await datahubQueryRequest<
     {
       activeStakingRewardsByPosts: {
         persistentPostId: string
-        reward: string
-        draftReward: string
+        totalReward: string
+        totalDraftReward: string
+        rewardsBySource: {
+          fromDirectSuperLikes: string
+          fromCommentSuperLikes: string
+          fromShareSuperLikes: string
+        }
+        draftRewardsBySource: {
+          fromDirectSuperLikes: string
+          fromCommentSuperLikes: string
+          fromShareSuperLikes: string
+        }
       }[]
     },
     { postIds: string[] }
@@ -91,16 +114,43 @@ export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> 
 
   const resultMap = new Map<string, PostRewards>()
   res.data.activeStakingRewardsByPosts.forEach(item => {
+    const { draftRewardsBySource, rewardsBySource, totalDraftReward, totalReward } = item
+    const total = parseToBigInt(totalReward) + parseToBigInt(totalDraftReward)
+
     resultMap.set(item.persistentPostId, {
       postId: item.persistentPostId,
-      reward: item.reward,
-      draftReward: item.draftReward,
-      isNotZero: BigInt(item.reward) > 0 || BigInt(item.draftReward) > 0,
+      reward: total.toString(),
+      isNotZero: total > 0,
+      rewardsBySource: {
+        fromCommentSuperLikes: (
+          parseToBigInt(rewardsBySource.fromCommentSuperLikes) +
+          parseToBigInt(draftRewardsBySource.fromCommentSuperLikes)
+        ).toString(),
+        fromDirectSuperLikes: (
+          parseToBigInt(rewardsBySource.fromDirectSuperLikes) +
+          parseToBigInt(draftRewardsBySource.fromDirectSuperLikes)
+        ).toString(),
+        fromShareSuperLikes: (
+          parseToBigInt(rewardsBySource.fromShareSuperLikes) +
+          parseToBigInt(draftRewardsBySource.fromShareSuperLikes)
+        ).toString(),
+      },
     })
   })
 
   return postIds.map(
-    postId => resultMap.get(postId) ?? { postId, reward: '0', draftReward: '0', isNotZero: false },
+    postId =>
+      resultMap.get(postId) ?? {
+        postId,
+        reward: '0',
+        draftReward: '0',
+        isNotZero: false,
+        rewardsBySource: {
+          fromCommentSuperLikes: '0',
+          fromDirectSuperLikes: '0',
+          fromShareSuperLikes: '0',
+        },
+      },
   )
 }
 

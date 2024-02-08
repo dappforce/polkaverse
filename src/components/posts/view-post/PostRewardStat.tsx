@@ -1,73 +1,48 @@
+import { simpleFormatBalance } from '@subsocial/utils'
 import { Tooltip } from 'antd'
 import clsx from 'clsx'
 import { ComponentProps } from 'react'
 import { TbCoins } from 'react-icons/tb'
 import { FormatBalance } from 'src/components/common/balances'
 import { useSelectPostReward } from 'src/rtk/features/activeStaking/hooks'
+import { PostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 
 export type PostRewardStatProps = ComponentProps<'div'> & { postId: string }
+
+function generateTooltip({
+  fromCommentSuperLikes,
+  fromDirectSuperLikes,
+  fromShareSuperLikes,
+}: PostRewards['rewardsBySource']) {
+  let tooltip = `Post author has earned ${simpleFormatBalance(
+    fromDirectSuperLikes,
+    10,
+  )} SUB from this post`
+  if (BigInt(fromCommentSuperLikes) > 0) {
+    tooltip += `, and another ${simpleFormatBalance(
+      fromCommentSuperLikes,
+      10,
+    )} SUB from comment reward splitting`
+  }
+  if (BigInt(fromShareSuperLikes) > 0) {
+    tooltip += `, and ${simpleFormatBalance(fromShareSuperLikes, 10)} SUB from shares of this post`
+  }
+  return tooltip
+}
 
 export default function PostRewardStat({ postId, ...props }: PostRewardStatProps) {
   const reward = useSelectPostReward(postId)
   if (!reward?.isNotZero) return null
 
-  let finalReward = '0'
-  try {
-    finalReward = (BigInt(reward.reward) + BigInt(reward.draftReward)).toString()
-  } catch {}
-
   return (
     <div {...props} className={clsx(props.className)}>
       <div className='d-flex align-items-center GapMini FontWeightMedium ColorMuted'>
         <div className='position-relative d-flex align-items-center mr-1'>
-          {BigInt(reward.draftReward) > 0 ? (
-            <Tooltip
-              className='d-flex align-items-center'
-              title={
-                <span>
-                  {BigInt(reward.reward) > 0 && (
-                    <>
-                      <FormatBalance
-                        withMutedDecimals={false}
-                        value={reward.reward}
-                        currency='SUB'
-                        decimals={10}
-                        precision={2}
-                      />{' '}
-                      earned +{' '}
-                    </>
-                  )}
-                  <FormatBalance
-                    withMutedDecimals={false}
-                    value={reward.draftReward}
-                    currency='SUB'
-                    decimals={10}
-                    precision={2}
-                  />{' '}
-                  approx. today
-                </span>
-              }
-            >
-              <TbCoins className='FontNormal' />
-              <div
-                style={{
-                  width: '4px',
-                  height: '4px',
-                  background: '#F8963A',
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  borderRadius: '50%',
-                }}
-              />
-            </Tooltip>
-          ) : (
-            <TbCoins className='FontNormal' />
-          )}
+          <TbCoins className='FontNormal' />
         </div>
         <Tooltip
           className='d-flex align-items-center GapMini'
-          title='Rewards earned depend on how many likes a post or comment gets, and how much SUB each liker has locked'
+          title={generateTooltip(reward.rewardsBySource)}
         >
           <span className='FontWeightSemibold'>
             <FormatBalance
@@ -76,7 +51,7 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
               decimals={10}
               precision={2}
               withMutedDecimals={false}
-              value={finalReward}
+              value={reward.reward}
             />
           </span>
           <span className='d-flex align-items-center GapMini'>earned</span>

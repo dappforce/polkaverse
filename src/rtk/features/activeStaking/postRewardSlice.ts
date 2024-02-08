@@ -6,8 +6,12 @@ import { createSimpleManyFetchWrapper } from 'src/rtk/app/wrappers'
 export type PostRewards = {
   postId: string
   reward: string
-  draftReward: string
   isNotZero: boolean
+  rewardsBySource: {
+    fromDirectSuperLikes: string
+    fromCommentSuperLikes: string
+    fromShareSuperLikes: string
+  }
 }
 
 const sliceName = 'postRewards'
