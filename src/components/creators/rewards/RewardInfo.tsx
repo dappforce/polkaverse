@@ -1,6 +1,7 @@
 import { LineChartOutlined } from '@ant-design/icons'
 import { Skeleton, Tooltip } from 'antd'
 import clsx from 'clsx'
+import dayjs from 'dayjs'
 import Link from 'next/link'
 import { ComponentProps, useState } from 'react'
 import { RiHistoryFill } from 'react-icons/ri'
@@ -259,6 +260,21 @@ function CreatorRewardInfo({ rewardReport, loading, size }: InnerRewardInfoProps
                 />
               </span>
             )}
+          </span>
+        </div>
+        <div className='d-flex justify-content-between align-items-center'>
+          <div className='d-flex align-items-baseline GapMini'>
+            <MutedSpan>Daily reward calculation in</MutedSpan>
+            <Tooltip title='The amount of time remaining until the reward is updated'>
+              <SlQuestion className='FontTiny ColorMuted' />
+            </Tooltip>
+          </div>
+          <span className='FontWeightSemibold'>
+            <Pluralize
+              count={dayjs.utc().endOf('day').diff(dayjs.utc(), 'hour')}
+              singularText='hour'
+              pluralText='hours'
+            />
           </span>
         </div>
         <div className='d-flex align-items-center justify-content-between'>

@@ -19,6 +19,7 @@ import {
 import { activeStakingLinks } from 'src/utils/links'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
+import { ShareDropdown } from '../posts/share/ShareDropdown'
 import { useShouldRenderMinStakeAlert } from '../posts/view-post'
 import { PostDropDownMenu } from '../posts/view-post/PostDropDownMenu'
 import PostRewardStat from '../posts/view-post/PostRewardStat'
@@ -152,15 +153,25 @@ export const InnerViewComment: FC<Props> = props => {
                 </a>
               </Link>
             </div>
-            {!isFake && (
-              <PostDropDownMenu
-                className='d-flex align-items-center ColorMuted'
-                style={{ position: 'relative', top: '1px' }}
-                post={comment}
-                space={space}
-                onEditComment={onEditComment}
-              />
-            )}
+            <div className='d-flex align-items-center GapTiny'>
+              {!isFake && (
+                <>
+                  <ShareDropdown
+                    postDetails={commentDetails}
+                    space={space}
+                    className='DfAction p-0'
+                    iconSize='normal'
+                  />
+                  <PostDropDownMenu
+                    className='d-flex align-items-center ColorMuted'
+                    style={{ position: 'relative', top: '1px' }}
+                    post={comment}
+                    space={space}
+                    onEditComment={onEditComment}
+                  />
+                </>
+              )}
+            </div>
           </div>
           <div className='mt-1'>
             {showEditForm ? (

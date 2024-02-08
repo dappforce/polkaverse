@@ -5,10 +5,11 @@ import { isEmptyStr } from '@subsocial/utils'
 import BN from 'bn.js'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
+import { CID } from 'ipfs-http-client'
 import isbot from 'isbot'
 import NextError from 'next/error'
 import queryString from 'query-string'
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { IconBaseProps } from 'react-icons'
 import config from 'src/config'
 import { AnyAccountId, PostStruct, SpaceStruct } from 'src/types'
@@ -207,14 +208,30 @@ type ViewOnIpfsProps = {
   label?: string
 }
 
+enum CID_KIND {
+  CBOR = 113,
+  UNIXFS = 112,
+}
 export const ViewOnIpfs = ({ contentId, label = 'View on IPFS' }: ViewOnIpfsProps) => {
+  const url = useMemo(() => {
+    if (!contentId) return ''
+
+    try {
+      const ipfsCid = CID.parse(contentId)
+      if (!ipfsCid) return ''
+
+      const isCbor = ipfsCid.code === CID_KIND.CBOR
+      if (isCbor) {
+        return `${ipfsNodeUrl}/api/v0/dag/get?arg=${contentId}`
+      }
+      return `${ipfsNodeUrl}/ipfs/${contentId}`
+    } catch {
+      return ''
+    }
+  }, [contentId])
+
   return (
-    <a
-      target='_blank'
-      rel='noreferrer'
-      className='item'
-      href={`${ipfsNodeUrl}/api/v0/dag/get?arg=${contentId}`}
-    >
+    <a target='_blank' rel='noreferrer' className='item' href={url}>
       {label}
     </a>
   )

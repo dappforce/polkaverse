@@ -3,7 +3,7 @@ import { CommentSection } from 'src/components/comments/CommentsSection'
 import { useAppSelector } from 'src/rtk/app/store'
 import { selectPostScore } from 'src/rtk/features/posts/postScoreSlice'
 import { SpaceData } from 'src/types'
-import { InfoPostPreview, PostActionsPanel, PostNotFound } from './helpers'
+import { InfoPostPreview, PostActionsPanel } from './helpers'
 import { PreviewProps } from './PostPreview'
 
 export type InnerPreviewProps = PreviewProps & {
@@ -17,11 +17,9 @@ export const RegularPreview: ComponentType = props => {
   const { postDetails, space, withImage, replies, withTags, withActions } = props
   const [commentsSection, setCommentsSection] = useState(false)
 
-  const { isSharedPost } = postDetails.post.struct
-
   const score = useAppSelector(state => selectPostScore(state, postDetails.post.id))
 
-  return !isSharedPost ? (
+  return (
     <>
       <InfoPostPreview
         postDetails={postDetails}
@@ -48,7 +46,5 @@ export const RegularPreview: ComponentType = props => {
         />
       )}
     </>
-  ) : (
-    <PostNotFound />
   )
 }
