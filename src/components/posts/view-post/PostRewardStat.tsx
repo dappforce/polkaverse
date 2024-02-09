@@ -20,36 +20,38 @@ function generateTooltip(
 ) {
   return (
     <>
-      {capitalize(entity)} author has earned $
+      {capitalize(entity)} author has earned{' '}
       {formatBalanceToJsx({
         value: fromDirectSuperLikes,
         precision: 2,
         currency: 'SUB',
         decimals: 10,
       })}
-      SUB from this {entity}
+      from this {entity}
       {BigInt(fromCommentSuperLikes) > 0 && entity === 'post' && (
         <>
-          , and another $
+          , and another{' '}
           {formatBalanceToJsx({
             value: fromCommentSuperLikes,
             precision: 2,
             currency: 'SUB',
             decimals: 10,
+            withMutedDecimals: false,
           })}{' '}
-          SUB from comment reward splitting
+          from comment reward splitting
         </>
       )}
       {BigInt(fromShareSuperLikes) > 0 && (
         <>
-          , and $
+          , and{' '}
           {formatBalanceToJsx({
             value: fromShareSuperLikes,
             precision: 2,
             currency: 'SUB',
             decimals: 10,
+            withMutedDecimals: false,
           })}{' '}
-          SUB from shares of this {entity}
+          from shares of this {entity}
         </>
       )}
     </>
