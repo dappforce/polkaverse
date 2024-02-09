@@ -58,4 +58,6 @@ export default [
   '12658',
   // Investigator515
   '12667',
+  // Meet the Artist
+  '12689'
 ]
