@@ -224,7 +224,7 @@ export const InnerViewComment: FC<Props> = props => {
                             value={getNeededLock(totalStake?.amount).toString()}
                             precision={2}
                           />{' '}
-                          in order to earn rewards for this comment
+                          more in order to earn rewards for this comment.
                         </span>
                         <Link href={activeStakingLinks.learnMore}>
                           <a
