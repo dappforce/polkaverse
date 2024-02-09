@@ -1,10 +1,9 @@
-import { simpleFormatBalance } from '@subsocial/utils'
 import { Tooltip } from 'antd'
 import clsx from 'clsx'
 import capitalize from 'lodash/capitalize'
 import { ComponentProps } from 'react'
 import { TbCoins } from 'react-icons/tb'
-import { FormatBalance } from 'src/components/common/balances'
+import { FormatBalance, formatBalanceToJsx } from 'src/components/common/balances'
 import { useSelectPost } from 'src/rtk/app/hooks'
 import { useSelectPostReward } from 'src/rtk/features/activeStaking/hooks'
 import { PostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
@@ -19,21 +18,27 @@ function generateTooltip(
   }: PostRewards['rewardsBySource'],
   entity: 'post' | 'comment',
 ) {
-  let tooltip = `${capitalize(entity)} author has earned ${simpleFormatBalance(
-    fromDirectSuperLikes,
-    10,
-  )} SUB from this ${entity}`
+  let tooltip = `${capitalize(entity)} author has earned ${formatBalanceToJsx({
+    value: fromDirectSuperLikes,
+    precision: 2,
+    currency: 'SUB',
+    decimals: 10,
+  })} SUB from this ${entity}`
   if (BigInt(fromCommentSuperLikes) > 0 && entity === 'post') {
-    tooltip += `, and another ${simpleFormatBalance(
-      fromCommentSuperLikes,
-      10,
-    )} SUB from comment reward splitting`
+    tooltip += `, and another ${formatBalanceToJsx({
+      value: fromCommentSuperLikes,
+      precision: 2,
+      currency: 'SUB',
+      decimals: 10,
+    })} SUB from comment reward splitting`
   }
   if (BigInt(fromShareSuperLikes) > 0) {
-    tooltip += `, and ${simpleFormatBalance(
-      fromShareSuperLikes,
-      10,
-    )} SUB from shares of this ${entity}`
+    tooltip += `, and ${formatBalanceToJsx({
+      value: fromShareSuperLikes,
+      precision: 2,
+      currency: 'SUB',
+      decimals: 10,
+    })} SUB from shares of this ${entity}`
   }
   return tooltip
 }
