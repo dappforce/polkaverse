@@ -18,29 +18,42 @@ function generateTooltip(
   }: PostRewards['rewardsBySource'],
   entity: 'post' | 'comment',
 ) {
-  let tooltip = `${capitalize(entity)} author has earned ${formatBalanceToJsx({
-    value: fromDirectSuperLikes,
-    precision: 2,
-    currency: 'SUB',
-    decimals: 10,
-  })} SUB from this ${entity}`
-  if (BigInt(fromCommentSuperLikes) > 0 && entity === 'post') {
-    tooltip += `, and another ${formatBalanceToJsx({
-      value: fromCommentSuperLikes,
-      precision: 2,
-      currency: 'SUB',
-      decimals: 10,
-    })} SUB from comment reward splitting`
-  }
-  if (BigInt(fromShareSuperLikes) > 0) {
-    tooltip += `, and ${formatBalanceToJsx({
-      value: fromShareSuperLikes,
-      precision: 2,
-      currency: 'SUB',
-      decimals: 10,
-    })} SUB from shares of this ${entity}`
-  }
-  return tooltip
+  return (
+    <>
+      {capitalize(entity)} author has earned $
+      {formatBalanceToJsx({
+        value: fromDirectSuperLikes,
+        precision: 2,
+        currency: 'SUB',
+        decimals: 10,
+      })}
+      SUB from this {entity}
+      {BigInt(fromCommentSuperLikes) > 0 && entity === 'post' && (
+        <>
+          , and another $
+          {formatBalanceToJsx({
+            value: fromCommentSuperLikes,
+            precision: 2,
+            currency: 'SUB',
+            decimals: 10,
+          })}{' '}
+          SUB from comment reward splitting
+        </>
+      )}
+      {BigInt(fromShareSuperLikes) > 0 && (
+        <>
+          , and $
+          {formatBalanceToJsx({
+            value: fromShareSuperLikes,
+            precision: 2,
+            currency: 'SUB',
+            decimals: 10,
+          })}{' '}
+          SUB from shares of this {entity}
+        </>
+      )}
+    </>
+  )
 }
 
 export default function PostRewardStat({ postId, ...props }: PostRewardStatProps) {
