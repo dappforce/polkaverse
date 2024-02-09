@@ -38,6 +38,8 @@ export type TabKeys = TabsWithoutFeed | 'feed'
 export type FilterType<T extends PostFilterType | SpaceFilterType> = {
   type: T
   date?: DateFilterType
+  // for hot posts filter
+  shuffle?: boolean
 }
 
 export type OnFilterChangeFn = <T extends PostFilterType | SpaceFilterType>(

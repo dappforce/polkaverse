@@ -3,8 +3,10 @@ import { datahubQueryRequest } from './utils'
 
 // QUERIES
 const GET_HOT_POSTS = gql`
-  query GetHotPosts($limit: Int!, $offset: Int!) {
-    activeStakingRankedPostIdsByActiveStakingActivity(args: { limit: $limit, offset: $offset }) {
+  query GetHotPosts($limit: Int!, $offset: Int!, $shuffle: Boolean!) {
+    activeStakingRankedPostIdsByActiveStakingActivity(
+      args: { limit: $limit, offset: $offset, shuffle: $shuffle }
+    ) {
       data {
         postId
         persistentPostId
@@ -15,7 +17,7 @@ const GET_HOT_POSTS = gql`
     }
   }
 `
-export async function getHotPosts(variables: { offset: number; limit: number }) {
+export async function getHotPosts(variables: { offset: number; limit: number; shuffle: boolean }) {
   const res = await datahubQueryRequest<
     {
       activeStakingRankedPostIdsByActiveStakingActivity: {
@@ -28,7 +30,7 @@ export async function getHotPosts(variables: { offset: number; limit: number }) 
         total: number
       }
     },
-    { limit: number; offset: number }
+    { limit: number; offset: number; shuffle: boolean }
   >({
     query: GET_HOT_POSTS,
     variables,

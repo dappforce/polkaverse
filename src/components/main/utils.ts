@@ -17,6 +17,7 @@ import {
 } from './types'
 
 import config from 'src/config'
+import useLocalStorage from 'use-local-storage'
 
 const { enableGraphQl } = config
 
@@ -141,7 +142,11 @@ export const getFilterType = (key: string, type: string | undefined): EntityFilt
   return filterByKey[key as TabsWithoutFeed][filterType].value as EntityFilter
 }
 
-export const setTabInUrl = (router: NextRouter, tab: string, queries?: Record<string, string>) => {
+export const setTabInUrl = (
+  router: NextRouter,
+  tab: string,
+  queries?: Record<string, string | undefined>,
+) => {
   const query = {
     tab,
     ...queries,
@@ -165,9 +170,29 @@ export const setFiltersInUrl = (
   router: NextRouter,
   key: string,
   filterType?: FilterType<EntityFilter> | undefined,
-) => setTabInUrl(router, key, filterType)
+) => {
+  const queries = { ...filterType, shuffle: !!filterType?.shuffle + '' }
+  setTabInUrl(router, key, {
+    ...filterType,
+    shuffle: queries.type === 'hot' ? !!filterType?.shuffle + '' : undefined,
+  })
+}
 
 export const isSuggested = (filterType: EntityFilter) =>
   filterType === 'suggested' || !enableGraphQl
 
 const dateToUtcFormat = () => dayjs().utc()
+
+const shuffleStorageKey = 'shuffle-posts'
+export function useShufflePostsStorage() {
+  const [value, setValue] = useLocalStorage(shuffleStorageKey, false, {
+    parser: val => val === 'true',
+    serializer: val => (val ? 'true' : 'false'),
+  })
+  return {
+    value,
+    setValue,
+    getDefaultValueFromUrl: (shuffleFromUrl: string | string[] | undefined) =>
+      shuffleFromUrl === 'true' || shuffleFromUrl === 'false' ? shuffleFromUrl === 'true' : value,
+  }
+}

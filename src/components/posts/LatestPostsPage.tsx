@@ -25,6 +25,7 @@ type Props = {
   kind: PostKind
   filter: PostFilterType
   dateFilter?: DateFilterType
+  shuffle?: boolean
   shouldWaitApiReady?: boolean
 }
 
@@ -47,7 +48,7 @@ export const loadMorePostsFn = async (loadMoreValues: LoadMoreValues<PostFilterT
   let postIds: string[] = []
 
   if (filter.type === 'hot') {
-    const posts = await getHotPosts({ offset, limit: DEFAULT_PAGE_SIZE })
+    const posts = await getHotPosts({ offset, limit: DEFAULT_PAGE_SIZE, shuffle: !!filter.shuffle })
     postIds = posts.data.map(value => value.persistentPostId)
     dispatch(
       setPostScores(
@@ -84,13 +85,16 @@ const getSessionKey = ({
   dateFilter,
   filter,
   kind,
+  shuffle,
 }: {
   filter: string
   dateFilter: string | undefined
   kind: string
-}) => `${filter}-${dateFilter}-${kind}`
+  shuffle: boolean | undefined
+}) => `${filter}-${dateFilter}-${kind}-${shuffle}`
 const InfiniteListOfPublicPosts = (props: Props) => {
-  const { totalPostCount, initialPostIds, kind, filter, dateFilter, shouldWaitApiReady } = props
+  const { totalPostCount, initialPostIds, kind, filter, dateFilter, shuffle, shouldWaitApiReady } =
+    props
   const client = useDfApolloClient()
   const dispatch = useDispatch()
   const { subsocial, isApiReady } = useSubsocialApi()
@@ -110,7 +114,7 @@ const InfiniteListOfPublicPosts = (props: Props) => {
       loadSuggestedPostIds({ client }).then(ids => setTotalCount(ids.length))
   }, [filter])
 
-  const currentSessionKey = getSessionKey({ dateFilter, filter, kind })
+  const currentSessionKey = getSessionKey({ dateFilter, filter, kind, shuffle })
 
   const entity = kind === PostKind.RegularPost ? 'posts' : 'comments'
 
@@ -126,6 +130,7 @@ const InfiniteListOfPublicPosts = (props: Props) => {
       filter: {
         type: filter,
         date: dateFilter,
+        shuffle,
       },
     })
     let { dataSource } = sessionPageAndDataMap.get(currentSessionKey) || {}

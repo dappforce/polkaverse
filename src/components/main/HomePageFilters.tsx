@@ -18,7 +18,7 @@ import {
   SpaceFilterProps,
   TabKeys,
 } from './types'
-import { setFiltersInUrl } from './utils'
+import { setFiltersInUrl, useShufflePostsStorage } from './utils'
 
 const { enableGraphQl } = config
 
@@ -97,8 +97,8 @@ type Props = {
   isAffix?: boolean
 }
 
-export const PostFilterView = ({ filter: { type, date }, ...props }: PostFilterProps) => (
-  <LatestPostsPage filter={type} dateFilter={date} {...props} />
+export const PostFilterView = ({ filter: { type, date, shuffle }, ...props }: PostFilterProps) => (
+  <LatestPostsPage filter={type} dateFilter={date} shuffle={shuffle} {...props} />
 )
 
 export const SpaceFilterView = ({ filter: { type, date }, ...props }: SpaceFilterProps) => {
@@ -112,26 +112,46 @@ export const Filters = (props: Props) => {
   const { tabKey, isAffix } = props
   const { isMobile } = useResponsiveSize()
   const isWhitelisted = useIsMyAddressWhitelisted()
+  const { getDefaultValueFromUrl, setValue: setShufflePosts } = useShufflePostsStorage()
 
   const { setValue, value } = useShowLikeablePostsContext()
 
   const router = useRouter()
 
-  const { type, date } = router.query
+  const { type, date, shuffle } = router.query
+  const usedShuffle = getDefaultValueFromUrl(shuffle)
 
   if (tabKey === 'feed' || !enableGraphQl) return null
 
+  const onShuffleChange: any = (value: boolean) => {
+    setShufflePosts(value)
+    setFiltersInUrl(router, tabKey, {
+      type: type as EntityFilter,
+      date: date as DateFilterType,
+      shuffle: value,
+    })
+  }
+
   const onFilterChange: any = (value: PostFilterType = 'suggested') =>
-    setFiltersInUrl(router, tabKey, { type: value, date: date as DateFilterType })
+    setFiltersInUrl(router, tabKey, {
+      type: value,
+      date: date as DateFilterType,
+      shuffle: usedShuffle,
+    })
 
   const onDateChange: any = (value: DateFilterType = 'week') =>
-    setFiltersInUrl(router, tabKey, { type: type as EntityFilter, date: value })
+    setFiltersInUrl(router, tabKey, {
+      type: type as EntityFilter,
+      date: value,
+      shuffle: usedShuffle,
+    })
 
   const needDateFilter =
     !!type && type !== 'latest' && type !== 'suggested' && type !== 'creators' && type !== 'hot'
 
   const showLikablePostsCheckbox = type === 'latest' && tabKey === 'posts'
-  const hasRightElement = needDateFilter || showLikablePostsCheckbox
+  const showShuffleCheckbox = type === 'hot' && tabKey === 'posts'
+  const hasRightElement = needDateFilter || showLikablePostsCheckbox || showShuffleCheckbox
 
   if (!needDateFilter && !filterByKey[tabKey]?.length) return null
 
@@ -140,16 +160,26 @@ export const Filters = (props: Props) => {
     filters = filters.filter(({ value }) => value !== 'hot')
   }
 
+  const likeablePostsCheckbox = (
+    <Checkbox checked={value} onChange={e => setValue(e.target.checked)}>
+      <span className='ColorMuted' style={{ userSelect: 'none' }}>
+        Show likeable posts only
+      </span>
+    </Checkbox>
+  )
+  const shuffleCheckbox = (
+    <Checkbox checked={usedShuffle} onChange={e => onShuffleChange(e.target.checked)}>
+      <span className='ColorMuted' style={{ userSelect: 'none' }}>
+        Shuffle posts
+      </span>
+    </Checkbox>
+  )
+
   if (isAffix && showLikablePostsCheckbox) {
-    return (
-      <div className={clsx('AffixCheckbox')}>
-        <Checkbox checked={value} onChange={e => setValue(e.target.checked)}>
-          <span className='ColorMuted' style={{ userSelect: 'none' }}>
-            Show likeable posts only
-          </span>
-        </Checkbox>
-      </div>
-    )
+    return <div className={clsx('AffixCheckbox')}>{likeablePostsCheckbox}</div>
+  }
+  if (isAffix && showShuffleCheckbox) {
+    return <div className={clsx('AffixCheckbox')}>{shuffleCheckbox}</div>
   }
 
   return (
@@ -189,14 +219,9 @@ export const Filters = (props: Props) => {
           </Col>
         )}
         {showLikablePostsCheckbox && (
-          <Col className={clsx(isMobile && 'mt-2')}>
-            <Checkbox checked={value} onChange={e => setValue(e.target.checked)}>
-              <span className='ColorMuted' style={{ userSelect: 'none' }}>
-                Show likeable posts only
-              </span>
-            </Checkbox>
-          </Col>
+          <Col className={clsx(isMobile && 'mt-2')}>{likeablePostsCheckbox}</Col>
         )}
+        {showShuffleCheckbox && <Col className={clsx(isMobile && 'mt-2')}>{shuffleCheckbox}</Col>}
         {needDateFilter && (
           <Col className={style.DfDateCol}>
             <Select

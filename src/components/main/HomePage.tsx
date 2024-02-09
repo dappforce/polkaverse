@@ -33,7 +33,7 @@ import {
   SpaceFilterType,
   TabKeys,
 } from './types'
-import { getFilterType, setFiltersInUrl, tabs } from './utils'
+import { getFilterType, setFiltersInUrl, tabs, useShufflePostsStorage } from './utils'
 
 const MyFeed = dynamic(import('../activity/MyFeed'))
 // import { CrowdloanProgress } from 'src/components/crowdloan/progress/ProgressSection'
@@ -99,6 +99,7 @@ const TabsHomePage = ({
   const isSignedIn = useIsSignedIn()
   const router = useRouter()
   let prevScrollpos = 0
+  const { getDefaultValueFromUrl } = useShufflePostsStorage()
 
   const [hidden, setHidden] = useState(false)
 
@@ -107,7 +108,9 @@ const TabsHomePage = ({
       tab: tabFromUrl = isSignedIn ? 'feed' : 'posts',
       date: dateFromUrl = 'week',
       type: typeFromUrl = 'suggested',
+      shuffle: shuffleFromUrl,
     } = router.query
+    const usedShuffle = getDefaultValueFromUrl(shuffleFromUrl)
 
     const tabIndex = tabs.findIndex(tab => tab === tabFromUrl)
 
@@ -117,10 +120,11 @@ const TabsHomePage = ({
       tabIndex: tabIndex < 0 ? 0 : tabIndex,
       typeFromUrl: typeFromUrl as string,
       dateFilterIndex: dateFilterIndex < 0 ? 0 : dateFilterIndex,
+      shuffle: usedShuffle,
     }
   }
 
-  const { tabIndex, typeFromUrl, dateFilterIndex } = getFiltersFromUrl()
+  const { tabIndex, typeFromUrl, dateFilterIndex, shuffle } = getFiltersFromUrl()
   const tab = tabs[tabIndex] as TabKeys
   let type = getFilterType(tab, typeFromUrl)
   const date = dateFilterOpt[dateFilterIndex].value as DateFilterType
@@ -138,6 +142,7 @@ const TabsHomePage = ({
     sendEvent('home_page_tab_opened', {
       type: tab,
       value: type,
+      shuffle,
       amountRange: getAmountRange(totalStake?.amount),
     })
   }, [tab, type])
@@ -151,7 +156,7 @@ const TabsHomePage = ({
   const onChangeKey = (key: string) => {
     const typeValue = getFilterType(key, type)
     const filterType =
-      key !== 'feed' ? ({ type: typeValue, date } as FilterType<EntityFilter>) : undefined
+      key !== 'feed' ? ({ type: typeValue, date, shuffle } as FilterType<EntityFilter>) : undefined
 
     setFiltersInUrl(router, key, filterType)
   }
@@ -181,7 +186,7 @@ const TabsHomePage = ({
           {myAddress && <WriteSomething className='mt-3' />}
           <PostFilterView
             kind={PostKind.RegularPost}
-            filter={{ type: type as PostFilterType, date }}
+            filter={{ type: type as PostFilterType, date, shuffle }}
             {...props}
           />
         </>
