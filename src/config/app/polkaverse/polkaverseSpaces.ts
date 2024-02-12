@@ -59,5 +59,9 @@ export default [
   // Investigator515
   '12667',
   // Meet the Artist
-  '12689'
+  '12689',
+  // Edmond22
+  '12705',
+  // Mango Juice
+  '12700',
 ]
