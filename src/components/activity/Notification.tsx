@@ -11,7 +11,7 @@ import { ReactionType } from '@subsocial/api/types'
 import { nonEmptyStr } from '@subsocial/utils'
 import { summarize } from '@subsocial/utils/summarize'
 import Link from 'next/link'
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { NAME_MAX_LEN } from 'src/config/ValidationsConfig'
 import messages from 'src/messages'
 import { useSelectPost, useSelectProfile, useSelectSpace } from 'src/rtk/app/hooks'
@@ -33,7 +33,7 @@ import { NotifActivitiesType } from './Notifications'
 import { EventsMsg, PathLinks } from './types'
 
 type NotificationMessageProps = {
-  msg: string
+  msg: ReactNode
   aggregationCount: number
   withAggregation?: boolean
 }
@@ -81,7 +81,7 @@ type InnerNotificationProps = NotificationProps &
   PathLinks & {
     preview: React.ReactNode
     entityOwner?: string
-    msg?: string
+    msg?: ReactNode
     image?: string
     icon?: React.ReactNode
   }
@@ -259,7 +259,7 @@ const PostNotification = (props: NotificationProps) => {
 }
 
 const CommentNotification = (props: NotificationProps) => {
-  const { commentId } = props
+  const { commentId, event } = props
   const commentDetails = useSelectPost(commentId)
 
   const rootPostId = commentDetails
@@ -288,6 +288,19 @@ const CommentNotification = (props: NotificationProps) => {
       image={post.content?.image}
       entityOwner={post.struct.ownerId}
       links={links}
+      msg={
+        <>
+          {event === 'CommentReplyCreated' ? <span>replied </span> : <span>commented </span>}
+          {commentDetails?.post && (
+            <ViewPostLink
+              post={commentDetails.post}
+              space={space?.struct}
+              title={<PostTitleForActivity post={commentDetails.post} />}
+            />
+          )}
+          <span>{event === 'CommentReplyCreated' ? ' to your comment on' : ' on your post'}</span>
+        </>
+      }
       {...props}
     />
   )
