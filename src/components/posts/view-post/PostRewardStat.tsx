@@ -28,8 +28,8 @@ function generateTooltip(
     })
   return (
     <>
-      {capitalize(entity)} author has earned {formatBalance(fromDirectSuperLikes)}
-      from this {entity}
+      {capitalize(entity)} author has earned {formatBalance(fromDirectSuperLikes)} from this{' '}
+      {entity}
       {BigInt(fromCommentSuperLikes) > 0 && entity === 'post' && (
         <>, and another {formatBalance(fromCommentSuperLikes)} from comment reward splitting</>
       )}
