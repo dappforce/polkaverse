@@ -8,9 +8,11 @@ import { useEffect, useState } from 'react'
 import { Controller, ErrorMessage, useForm } from 'react-hook-form'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { TxCallback, TxFailedCallback } from 'src/components/substrate/SubstrateTxButton'
-import { useCreateReloadPost, useCreateReloadSpace } from 'src/rtk/app/hooks'
-import { useAppSelector } from 'src/rtk/app/store'
-import { selectSpaceIdsByOwner } from 'src/rtk/features/spaceIds/ownSpaceIdsSlice'
+import {
+  useCreateReloadPost,
+  useCreateReloadSpace,
+  useSelectSpaceIdsWhereAccountCanPost,
+} from 'src/rtk/app/hooks'
 import { IpfsCid, PostId, SharedPostContent, SpaceId } from 'src/types'
 import { CreateSpaceButton } from '../../../spaces/helpers'
 import { getTxParams } from '../../../substrate'
@@ -157,12 +159,11 @@ const InnerSharePostModal = (props: Props) => {
 
 export const SharePostModal = (props: Props) => {
   const myAddress = useMyAddress()
-  const mySpaceIds =
-    useAppSelector(state => selectSpaceIdsByOwner(state, myAddress as string)) || []
+  const allowedSpaceIds = useSelectSpaceIdsWhereAccountCanPost(myAddress as string)
 
-  if (!mySpaceIds) {
+  if (!allowedSpaceIds) {
     return null
   }
 
-  return <InnerSharePostModal {...props} spaceIds={mySpaceIds} />
+  return <InnerSharePostModal {...props} spaceIds={allowedSpaceIds} />
 }
