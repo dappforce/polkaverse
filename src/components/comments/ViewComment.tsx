@@ -223,6 +223,7 @@ export const InnerViewComment: FC<Props> = props => {
                             currency='SUB'
                             value={getNeededLock(totalStake?.amount).toString()}
                             precision={2}
+                            withMutedDecimals={false}
                           />{' '}
                           more in order to earn rewards for this comment.
                         </span>

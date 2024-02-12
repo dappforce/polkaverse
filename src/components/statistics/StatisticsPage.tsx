@@ -9,7 +9,6 @@ import style from './Statistics.module.sass'
 export const periodOpt = [
   { label: 'Last 7 days', value: '7' },
   { label: 'Last month', value: '30' },
-  { label: 'Last 3 months', value: '90' },
 ]
 
 const Statistics = dynamic(() => import('./Statistics'), { ssr: false })
