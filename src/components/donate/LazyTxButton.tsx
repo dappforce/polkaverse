@@ -179,10 +179,10 @@ function LazyTxButton({
       const errMsg = `Tx failed: ${err.toString()}`
       log.debug(`❌ ${errMsg}`)
 
-      if(errMsg.includes('Cancelled')) {
+      if (errMsg.includes('Cancelled')) {
         onCancel?.()
       }
-      
+
       showErrorMessage(errMsg)
     }
 
@@ -211,7 +211,7 @@ function LazyTxButton({
 
     try {
       const extrinsic = await getExtrinsic()
-      const tx = await extrinsic.signAsync(accountId, { signer })
+      const tx = await extrinsic.signAsync(accountId, { signer, nonce: -1 })
       unsub = await tx.send(onSuccessHandler)
       waitMessage.open()
     } catch (err: any) {

@@ -307,7 +307,7 @@ function TxButton({
         throw new Error('No signer provided')
       }
 
-      tx = await extrinsic.signAsync(accountId, { signer })
+      tx = await extrinsic.signAsync(accountId, { signer, nonce: -1 })
 
       if (hideRememberMePopup) {
         setSignerProxyAdded('enabled', accountId as string)

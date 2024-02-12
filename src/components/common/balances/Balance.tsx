@@ -61,6 +61,16 @@ function format({
       )
     }
 
+    let afterDecimalPoint =
+      precision || fixedDecimalsLength
+        ? parseFloat(`0.${postfix}`).toPrecision(precision).substring(2)
+        : postfix || '0000'
+    if (fixedDecimalsLength) {
+      afterDecimalPoint = afterDecimalPoint
+        .padEnd(fixedDecimalsLength, '0')
+        .substring(0, fixedDecimalsLength)
+    }
+
     return (
       <>
         {prefix}
@@ -68,11 +78,7 @@ function format({
           <>
             .
             <span className={clsx(withMutedDecimals && 'DfBalanceDecimals')}>
-              {fixedDecimalsLength
-                ? postfix.substring(0, fixedDecimalsLength).padEnd(fixedDecimalsLength, '0')
-                : precision
-                ? parseFloat(`0.${postfix}`).toPrecision(precision).substring(2)
-                : postfix || '0000'}
+              {afterDecimalPoint}
             </span>
           </>
         )}
