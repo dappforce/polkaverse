@@ -28,6 +28,7 @@ import { formatDate } from '../utils'
 import { DfBgImageLink } from '../utils/DfBgImg'
 import { MutedDiv } from '../utils/MutedText'
 import { Pluralize } from '../utils/Plularize'
+import { useNotifCounterContext } from './NotifCounter'
 import { NotifActivitiesType } from './Notifications'
 import { EventsMsg, PathLinks } from './types'
 
@@ -108,6 +109,10 @@ const iconByEvent: Record<string, React.ReactNode> = {
 
 export function InnerNotification(props: InnerNotificationProps) {
   const myAddress = useMyAddress()
+
+  const { lastReadNotif } = useNotifCounterContext()
+  const showUnreadBadge = new Date(lastReadNotif ?? new Date()) < new Date(props.date)
+
   const {
     preview,
     entityOwner,
@@ -135,7 +140,10 @@ export function InnerNotification(props: InnerNotificationProps) {
     <Link {...links}>
       <div className='DfNotificationItem'>
         <div className='DfNotificationIcons'>
-          {icon}
+          <div className='position-relative'>
+            {icon}
+            {showUnreadBadge && <div className='DfNotificationUnreadBadge' />}
+          </div>
           <Avatar address={account} avatar={avatar} />
         </div>
         <div className='DfNotificationContent'>

@@ -1,4 +1,5 @@
 import { nonEmptyStr } from '@subsocial/utils'
+import { useEffect } from 'react'
 import { DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import { useGetAllNotifications, useGetNotificationsCount } from 'src/graphql/hooks'
 import { fetchPosts } from 'src/rtk/features/posts/postsSlice'
@@ -6,7 +7,7 @@ import { fetchProfileSpaces } from 'src/rtk/features/profiles/profilesSlice'
 import { fetchSpaces } from 'src/rtk/features/spaces/spacesSlice'
 import { AccountId, Activity, DataSourceTypes, PostId, SpaceId } from 'src/types'
 import { InnerActivities } from './InnerActivities'
-import { UpdateLastReadNotificationFn, useNotifCounterContext } from './NotifCounter'
+import { useNotifCounterContext } from './NotifCounter'
 import { Notification } from './Notification'
 import { ActivityProps, BaseActivityProps, LoadMoreFn, LoadMoreProps } from './types'
 
@@ -64,19 +65,13 @@ export const createLoadMoreActivities =
 
 type LoadNotificationsFn = (props: LoadMoreProps) => Promise<Activity[]>
 
-type LoadMoreNotifications = LoadMoreProps & {
-  updateLastReadNotification: UpdateLastReadNotificationFn
-}
+type LoadMoreNotifications = LoadMoreProps
 const createLoadMoreNotifications =
   (getNotifs: LoadNotificationsFn) => async (props: LoadMoreNotifications) => {
-    const { address, updateLastReadNotification } = props
+    const { address } = props
     if (!address) return []
 
     const notifications = await getNotifs(props)
-    const [firstNotification] = notifications
-    if (firstNotification) {
-      updateLastReadNotification(firstNotification.date)
-    }
 
     return notifications
   }
@@ -85,11 +80,16 @@ export const Notifications = ({ address, title }: BaseActivityProps) => {
   const getNotificationsCount = useGetNotificationsCount()
   const { updateLastReadNotification } = useNotifCounterContext()
 
+  useEffect(() => {
+    return () => {
+      updateLastReadNotification(new Date().toISOString())
+    }
+  }, [])
+
   const getAllNotifications = useGetAllNotifications()
   const loadMoreActivities = createLoadMoreActivities(getAllNotifications)
   const loadMoreNotifications = createLoadMoreNotifications(loadMoreActivities)
-  const loadMore = (props: LoadMoreProps) =>
-    loadMoreNotifications({ ...props, updateLastReadNotification })
+  const loadMore = (props: LoadMoreProps) => loadMoreNotifications(props)
 
   return (
     <NotifActivities
