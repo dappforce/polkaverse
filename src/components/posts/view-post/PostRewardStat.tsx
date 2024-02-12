@@ -18,40 +18,24 @@ function generateTooltip(
   }: PostRewards['rewardsBySource'],
   entity: 'post' | 'comment',
 ) {
+  const formatBalance = (value: string) =>
+    formatBalanceToJsx({
+      value,
+      precision: 2,
+      currency: 'SUB',
+      decimals: 10,
+      withMutedDecimals: false,
+    })
   return (
     <>
-      {capitalize(entity)} author has earned{' '}
-      {formatBalanceToJsx({
-        value: fromDirectSuperLikes,
-        precision: 2,
-        currency: 'SUB',
-        decimals: 10,
-      })}
+      {capitalize(entity)} author has earned {formatBalance(fromDirectSuperLikes)}
       from this {entity}
       {BigInt(fromCommentSuperLikes) > 0 && entity === 'post' && (
-        <>
-          , and another{' '}
-          {formatBalanceToJsx({
-            value: fromCommentSuperLikes,
-            precision: 2,
-            currency: 'SUB',
-            decimals: 10,
-            withMutedDecimals: false,
-          })}{' '}
-          from comment reward splitting
-        </>
+        <>, and another {formatBalance(fromCommentSuperLikes)} from comment reward splitting</>
       )}
       {BigInt(fromShareSuperLikes) > 0 && (
         <>
-          , and{' '}
-          {formatBalanceToJsx({
-            value: fromShareSuperLikes,
-            precision: 2,
-            currency: 'SUB',
-            decimals: 10,
-            withMutedDecimals: false,
-          })}{' '}
-          from shares of this {entity}
+          , and {formatBalance(fromShareSuperLikes)} from shares of this {entity}
         </>
       )}
     </>
