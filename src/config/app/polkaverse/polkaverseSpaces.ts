@@ -64,4 +64,6 @@ export default [
   '12705',
   // Mango Juice
   '12700',
+  // Community Highlights
+  '1244'
 ]
