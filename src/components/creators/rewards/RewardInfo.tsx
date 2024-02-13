@@ -42,7 +42,7 @@ export default function RewardInfo({ size, ...props }: RewardInfoProps) {
     )
   }
 
-  const hasCreatorReward = (data?.receivedLikes ?? 0) > 0
+  const hasCreatorReward = (data?.receivedLikes ?? 0) > 0 || (data?.creatorReward ?? '0') !== '0'
 
   return (
     <div {...props} className={clsx(styles.RewardInfo, props.className)}>
