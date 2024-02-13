@@ -84,7 +84,8 @@ const GET_POST_REWARDS = gql`
     }
   }
 `
-function parseToBigInt(value: string) {
+function parseToBigInt(value: string | undefined) {
+  if (!value) return BigInt(0)
   return BigInt(value.split('.')[0])
 }
 export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> {
@@ -94,12 +95,12 @@ export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> 
         persistentPostId: string
         rewardTotal: string
         draftRewardTotal: string
-        rewardsBySource: {
+        rewardsBySource?: {
           fromDirectSuperLikes: string
           fromCommentSuperLikes: string
           fromShareSuperLikes: string
         }
-        draftRewardsBySource: {
+        draftRewardsBySource?: {
           fromDirectSuperLikes: string
           fromCommentSuperLikes: string
           fromShareSuperLikes: string
@@ -127,16 +128,16 @@ export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> 
       },
       rewardsBySource: {
         fromCommentSuperLikes: (
-          parseToBigInt(rewardsBySource.fromCommentSuperLikes) +
-          parseToBigInt(draftRewardsBySource.fromCommentSuperLikes)
+          parseToBigInt(rewardsBySource?.fromCommentSuperLikes) +
+          parseToBigInt(draftRewardsBySource?.fromCommentSuperLikes)
         ).toString(),
         fromDirectSuperLikes: (
-          parseToBigInt(rewardsBySource.fromDirectSuperLikes) +
-          parseToBigInt(draftRewardsBySource.fromDirectSuperLikes)
+          parseToBigInt(rewardsBySource?.fromDirectSuperLikes) +
+          parseToBigInt(draftRewardsBySource?.fromDirectSuperLikes)
         ).toString(),
         fromShareSuperLikes: (
-          parseToBigInt(rewardsBySource.fromShareSuperLikes) +
-          parseToBigInt(draftRewardsBySource.fromShareSuperLikes)
+          parseToBigInt(rewardsBySource?.fromShareSuperLikes) +
+          parseToBigInt(draftRewardsBySource?.fromShareSuperLikes)
         ).toString(),
       },
     })
@@ -284,7 +285,7 @@ export async function getRewardReport(address: string): Promise<RewardReport> {
         staker: string
         creator: {
           total: string
-          rewardsBySource: {
+          rewardsBySource?: {
             fromDirectSuperLikes: string
             fromCommentSuperLikes: string
             fromShareSuperLikes: string
