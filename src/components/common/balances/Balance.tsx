@@ -19,7 +19,7 @@ const log = newLogger('useCreateBallance')
 const M_LENGTH = 6 + 1
 const K_LENGTH = 3 + 1
 
-function format({
+export function formatBalanceToJsx({
   value,
   currency,
   decimals,
@@ -117,7 +117,7 @@ export const FormatBalance = ({
 
   const { unit: defaultCurrency, decimals: defaultDecimal } = formatBalance.getDefaults()
 
-  const balance = format({
+  const balance = formatBalanceToJsx({
     value,
     currency: currency || defaultCurrency,
     decimals: decimals || defaultDecimal,

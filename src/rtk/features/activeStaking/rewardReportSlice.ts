@@ -10,6 +10,11 @@ export type RewardReport = {
   weeklyReward: string
 
   creatorReward: string
+  creatorRewardBySource: {
+    fromDirectSuperLikes: string
+    fromCommentSuperLikes: string
+    fromShareSuperLikes: string
+  }
   receivedLikes: number
 
   address: string
