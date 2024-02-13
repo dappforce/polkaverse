@@ -52,5 +52,16 @@ export default [
   // olehmell
   '3',
   // Jonas W3F (Parity)
-  '12616'
+  '12616',
+
+  // HattyHats
+  '12658',
+  // Investigator515
+  '12667',
+  // Meet the Artist
+  '12689',
+  // Edmond22
+  '12705',
+  // Mango Juice
+  '12700',
 ]

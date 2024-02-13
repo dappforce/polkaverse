@@ -1,8 +1,7 @@
-import config from 'src/config'
 import { isClientSide } from '../utils'
 import { fullUrl } from './helpers'
 
-const SUBSOCIAL_TAGS = Array.from(new Set([config.appName, 'Subsocial']))
+const SUBSOCIAL_TAGS = Array.from(new Set(['CreatorEconomy', 'Subsocial']))
 
 // TODO should we use fullUrl() here?
 export const subsocialUrl = (url: string) =>

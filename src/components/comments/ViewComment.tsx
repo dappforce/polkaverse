@@ -223,8 +223,9 @@ export const InnerViewComment: FC<Props> = props => {
                             currency='SUB'
                             value={getNeededLock(totalStake?.amount).toString()}
                             precision={2}
+                            withMutedDecimals={false}
                           />{' '}
-                          in order to earn rewards for this comment
+                          more in order to earn rewards for this comment.
                         </span>
                         <Link href={activeStakingLinks.learnMore}>
                           <a

@@ -178,11 +178,11 @@ function InnerProgressModal() {
         >
           <div className='ant-modal-content p-3 pb-4'>
             <img
-              src='/images/creators/diamonds/blurred-diamond-right.png'
+              src='/images/creators/diamonds/diamond-right.svg'
               className={clsx(styles.OutsideDiamondRight)}
             />
             <img
-              src='/images/creators/diamonds/blurred-diamond-top-left.png'
+              src='/images/creators/diamonds/diamond-top-left.svg'
               className={clsx(styles.OutsideDiamondLeft)}
             />
             <div style={{ maxWidth: '350px', margin: '0 auto' }}>

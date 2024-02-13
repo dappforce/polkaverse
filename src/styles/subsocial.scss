@@ -1806,6 +1806,17 @@ hr {
     display: flex;
     align-items: center;
     height: min-content;
+    position: relative;
+
+    .DfNotificationUnreadBadge {
+      width: 6px;
+      height: 6px;
+      background: $color_warning_text;
+      border-radius: 50%;
+      position: absolute;
+      top: 0;
+      right: 8px;
+    }
 
     .DfNotificationIcon {
       font-size: $font_large;
