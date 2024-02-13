@@ -239,7 +239,7 @@ function generateTooltipForCreatorEarned({
         The minimum amount of SUB that you will earn as a result of your posts and comments being
         superliked this week
       </span>
-      <ul className='pl-3 mb-1.5'>
+      <ul className='pl-3 mb-1'>
         <li>{formatBalance(fromDirectSuperLikes)} from direct likes on your posts and comments</li>
         {BigInt(fromCommentSuperLikes) > 0 && (
           <li>

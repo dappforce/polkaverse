@@ -29,7 +29,7 @@ function generateTooltip(
   return (
     <div>
       <span>{capitalize(entity)} author rewards:</span>
-      <ul className='pl-3 mb-1.5'>
+      <ul className='pl-3 mb-1'>
         <li>
           {formatBalance(fromDirectSuperLikes)} from direct likes on this {entity}
         </li>
