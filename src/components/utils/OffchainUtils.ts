@@ -71,7 +71,7 @@ export const getTotalStake = async ({ address }: { address: string }) => {
   const totalStake = (res?.data?.totalLocked as string) || ''
   const stakeAmount = BigInt(totalStake)
 
-  return { amount: stakeAmount.toString(), hasStakedEnough: stakeAmount > MINIMUM_LOCK }
+  return { amount: stakeAmount.toString(), hasStakedEnough: stakeAmount >= MINIMUM_LOCK }
 }
 
 export const getStakeAmount = async ({
