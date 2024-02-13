@@ -285,7 +285,7 @@ export async function getRewardReport(address: string): Promise<RewardReport> {
         staker: string
         creator: {
           total: string
-          rewardsBySource: {
+          rewardsBySource?: {
             fromDirectSuperLikes: string
             fromCommentSuperLikes: string
             fromShareSuperLikes: string
