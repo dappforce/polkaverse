@@ -7,15 +7,17 @@ import { ComponentProps, useState } from 'react'
 import { RiHistoryFill } from 'react-icons/ri'
 import { SlQuestion } from 'react-icons/sl'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
-import { FormatBalance } from 'src/components/common/balances'
+import { FormatBalance, formatBalanceToJsx } from 'src/components/common/balances'
 import { MutedSpan } from 'src/components/utils/MutedText'
 import { Pluralize } from 'src/components/utils/Plularize'
 import { CREATORS_CONSTANTS } from 'src/config/constants'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchUserRewardReport } from 'src/rtk/features/activeStaking/hooks'
+import { PostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { RewardReport } from 'src/rtk/features/activeStaking/rewardReportSlice'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getAmountRange } from 'src/utils/analytics'
+import { WithRequired } from 'src/utils/types'
 import NumberSkeleton from '../common/NumberSkeleton'
 import RewardHistoryModal from '../RewardHistoryModal'
 import styles from './RewardInfo.module.sass'
@@ -50,7 +52,7 @@ export default function RewardInfo({ size, ...props }: RewardInfoProps) {
       {hasCreatorReward && (
         <>
           <div className='pt-2 mt-2.5' style={{ borderTop: '1px solid #E2E8F0' }} />
-          <CreatorRewardInfo rewardReport={data} size={size} loading={loading} />
+          <CreatorRewardInfo rewardReport={data!} size={size} loading={loading} />
         </>
       )}
       <div
@@ -218,7 +220,48 @@ function StakerRewardInfo({ rewardReport, loading, size }: InnerRewardInfoProps)
   )
 }
 
-function CreatorRewardInfo({ rewardReport, loading, size }: InnerRewardInfoProps) {
+function generateTooltipForCreatorEarned({
+  fromCommentSuperLikes,
+  fromDirectSuperLikes,
+  fromShareSuperLikes,
+}: PostRewards['rewardsBySource']) {
+  const formatBalance = (value: string) =>
+    formatBalanceToJsx({
+      value,
+      precision: 2,
+      currency: 'SUB',
+      decimals: 10,
+      withMutedDecimals: false,
+    })
+  return (
+    <div>
+      <span>
+        The minimum amount of SUB that you will earn as a result of your posts and comments being
+        superliked this week
+      </span>
+      <ul className='pl-3 mb-2'>
+        <li>{formatBalance(fromDirectSuperLikes)} from direct likes on your posts and comments</li>
+        {BigInt(fromCommentSuperLikes) > 0 && (
+          <li>
+            {formatBalance(fromCommentSuperLikes)} from the likes on comments to your posts and
+            comments
+          </li>
+        )}
+        {BigInt(fromShareSuperLikes) > 0 && (
+          <li>
+            {formatBalance(fromShareSuperLikes)} from the likes on shared posts of your posts and
+            comments
+          </li>
+        )}
+      </ul>
+    </div>
+  )
+}
+function CreatorRewardInfo({
+  rewardReport,
+  loading,
+  size,
+}: WithRequired<InnerRewardInfoProps, 'rewardReport'>) {
   return (
     <div className={clsx(styles.InnerRewardInfo, 'FontSmall')}>
       <span
@@ -235,13 +278,13 @@ function CreatorRewardInfo({ rewardReport, loading, size }: InnerRewardInfoProps
             </Tooltip>
           </div>
           <span className='FontWeightSemibold d-flex align-items-center GapMini'>
-            {loading ? <NumberSkeleton /> : <span>{rewardReport?.receivedLikes}</span>}
+            {loading ? <NumberSkeleton /> : <span>{rewardReport.receivedLikes}</span>}
           </span>
         </div>
         <div className='d-flex align-items-center justify-content-between'>
           <div className='d-flex align-items-baseline GapMini'>
             <MutedSpan>Earned from posts</MutedSpan>
-            <Tooltip title='The minimum amount of SUB that you will earn as a result of your posts and comments being superliked this week'>
+            <Tooltip title={generateTooltipForCreatorEarned(rewardReport.creatorRewardBySource)}>
               <SlQuestion className='FontTiny ColorMuted' />
             </Tooltip>
           </div>
@@ -255,7 +298,7 @@ function CreatorRewardInfo({ rewardReport, loading, size }: InnerRewardInfoProps
                   withMutedDecimals={false}
                   currency='SUB'
                   decimals={10}
-                  value={rewardReport?.creatorReward}
+                  value={rewardReport.creatorReward}
                   precision={2}
                 />
               </span>

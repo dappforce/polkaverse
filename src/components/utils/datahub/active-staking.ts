@@ -261,6 +261,11 @@ const GET_REWARD_REPORT = gql`
       staker
       creator {
         total
+        rewardsBySource {
+          fromDirectSuperLikes
+          fromCommentSuperLikes
+          fromShareSuperLikes
+        }
         posts {
           superLikesCount
         }
@@ -279,6 +284,11 @@ export async function getRewardReport(address: string): Promise<RewardReport> {
         staker: string
         creator: {
           total: string
+          rewardsBySource: {
+            fromDirectSuperLikes: string
+            fromCommentSuperLikes: string
+            fromShareSuperLikes: string
+          }
           posts: {
             superLikesCount: number
           }[]
@@ -297,6 +307,11 @@ export async function getRewardReport(address: string): Promise<RewardReport> {
     ...res.data.activeStakingDailyStatsByStaker,
     weeklyReward: weekReward?.staker ?? '0',
     creatorReward: weekReward?.creator.total ?? '0',
+    creatorRewardBySource: weekReward?.creator.rewardsBySource ?? {
+      fromDirectSuperLikes: '0',
+      fromCommentSuperLikes: '0',
+      fromShareSuperLikes: '0',
+    },
     receivedLikes:
       weekReward?.creator.posts.reduce((acc, post) => acc + post.superLikesCount, 0) ?? 0,
     address,
