@@ -121,6 +121,10 @@ export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> 
       postId: item.persistentPostId,
       reward: total.toString(),
       isNotZero: total > 0,
+      rewardDetail: {
+        finalizedReward: rewardTotal,
+        draftReward: draftRewardTotal,
+      },
       rewardsBySource: {
         fromCommentSuperLikes: (
           parseToBigInt(rewardsBySource.fromCommentSuperLikes) +
@@ -145,6 +149,10 @@ export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> 
         reward: '0',
         draftReward: '0',
         isNotZero: false,
+        rewardDetail: {
+          finalizedReward: '0',
+          draftReward: '0',
+        },
         rewardsBySource: {
           fromCommentSuperLikes: '0',
           fromDirectSuperLikes: '0',

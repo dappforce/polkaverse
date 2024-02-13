@@ -6,6 +6,10 @@ import { createSimpleManyFetchWrapper } from 'src/rtk/app/wrappers'
 export type PostRewards = {
   postId: string
   reward: string
+  rewardDetail: {
+    finalizedReward: string
+    draftReward: string
+  }
   isNotZero: boolean
   rewardsBySource: {
     fromDirectSuperLikes: string

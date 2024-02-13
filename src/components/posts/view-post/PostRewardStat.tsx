@@ -58,7 +58,50 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
     <div {...props} className={clsx(props.className)}>
       <div className='d-flex align-items-center GapMini FontWeightMedium ColorMuted'>
         <div className='position-relative d-flex align-items-center mr-1'>
-          <TbCoins className='FontNormal' />
+          {BigInt(reward.rewardDetail.draftReward) > 0 ? (
+            <Tooltip
+              className='d-flex align-items-center'
+              title={
+                <span>
+                  {BigInt(reward.rewardDetail.finalizedReward) > 0 && (
+                    <>
+                      <FormatBalance
+                        withMutedDecimals={false}
+                        value={reward.rewardDetail.finalizedReward}
+                        currency='SUB'
+                        decimals={10}
+                        precision={2}
+                      />{' '}
+                      earned +{' '}
+                    </>
+                  )}
+                  <FormatBalance
+                    withMutedDecimals={false}
+                    value={reward.rewardDetail.draftReward}
+                    currency='SUB'
+                    decimals={10}
+                    precision={2}
+                  />{' '}
+                  approx. today
+                </span>
+              }
+            >
+              <TbCoins className='FontNormal' />
+              <div
+                style={{
+                  width: '4px',
+                  height: '4px',
+                  background: '#F8963A',
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  borderRadius: '50%',
+                }}
+              />
+            </Tooltip>
+          ) : (
+            <TbCoins className='FontNormal' />
+          )}
         </div>
         <Tooltip
           className='d-flex align-items-center GapMini'
