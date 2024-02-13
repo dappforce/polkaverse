@@ -27,18 +27,24 @@ function generateTooltip(
       withMutedDecimals: false,
     })
   return (
-    <>
-      {capitalize(entity)} author has earned {formatBalance(fromDirectSuperLikes)} from this{' '}
-      {entity}
-      {BigInt(fromCommentSuperLikes) > 0 && entity === 'post' && (
-        <>, and another {formatBalance(fromCommentSuperLikes)} from comment reward splitting</>
-      )}
-      {BigInt(fromShareSuperLikes) > 0 && (
-        <>
-          , and {formatBalance(fromShareSuperLikes)} from shares of this {entity}
-        </>
-      )}
-    </>
+    <div>
+      <span>{capitalize(entity)} author rewards:</span>
+      <ul className='pl-3 mb-2'>
+        <li>
+          {formatBalance(fromDirectSuperLikes)} from direct likes on this {entity}
+        </li>
+        {BigInt(fromCommentSuperLikes) > 0 && entity === 'post' && (
+          <li>
+            {formatBalance(fromCommentSuperLikes)} from the likes on comments to this {entity}
+          </li>
+        )}
+        {BigInt(fromShareSuperLikes) > 0 && (
+          <li>
+            {formatBalance(fromShareSuperLikes)} from the likes on shared posts of this {entity}
+          </li>
+        )}
+      </ul>
+    </div>
   )
 }
 
