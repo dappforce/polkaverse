@@ -2,7 +2,6 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import config from 'src/config'
-import { DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import { useDfApolloClient } from 'src/graphql/ApolloProvider'
 import { GetLatestPostIds } from 'src/graphql/__generated__/GetLatestPostIds'
 import { setPostScores } from 'src/rtk/features/posts/postScoreSlice'
@@ -47,7 +46,7 @@ export const loadMorePostsFn = async (loadMoreValues: LoadMoreValues<PostFilterT
   let postIds: string[] = []
 
   if (filter.type === 'hot') {
-    const posts = await getHotPosts({ offset, limit: DEFAULT_PAGE_SIZE })
+    const posts = await getHotPosts({ offset, limit: 100 })
     postIds = posts.data.map(value => value.persistentPostId)
     dispatch(
       setPostScores(
