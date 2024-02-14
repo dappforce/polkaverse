@@ -76,4 +76,4 @@ WORKDIR /opt/subsocial/app
 
 COPY --from=builder /opt/subsocial/app .
 
-CMD [ "server.js" ]
+CMD [ "NODE_ENV=production", "server.js" ]
