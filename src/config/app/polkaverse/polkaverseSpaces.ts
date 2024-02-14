@@ -65,5 +65,9 @@ export default [
   // Mango Juice
   '12700',
   // Community Highlights
-  '1244'
+  '1244',
+  // WagMedia
+  '12332',
+  // WagMedia Weekly Newsletter
+  '6111',
 ]
