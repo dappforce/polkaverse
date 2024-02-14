@@ -76,4 +76,4 @@ WORKDIR /opt/subsocial/app
 
 COPY --from=builder /opt/subsocial/app .
 
-CMD [ "node_modules/.bin/next", "start", "-p", "3003" ]
+CMD [ "node", "server.js" ]
