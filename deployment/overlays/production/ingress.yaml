@@ -1,0 +1,30 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/from-to-www-redirect: "true"
+    nginx.ingress.kubernetes.io/client-max-body-size: 10m
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 10m
+    nginx.org/client-max-body-size: 10m
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: polkaverse-grillchat
+  namespace: sub-back
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: grill.so
+    http:
+      paths:
+      - backend:
+          service:
+            name: web-app
+            port:
+              number: 3003
+        path: /b
+        pathType: Prefix
+  tls:
+  - hosts:
+    - grill.so
+    secretName: mainnet-grill-ssl
