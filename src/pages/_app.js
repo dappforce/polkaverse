@@ -16,7 +16,7 @@ import 'src/styles/utils.scss'
 import 'src/styles/subsocial-mobile.scss'
 import 'src/styles/themes.sass'
 
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import Head from 'next/head'
 import MainPage from '../layout/MainPage'
 import { Provider } from 'react-redux'
@@ -37,6 +37,7 @@ import AnalyticProvider, { AppLaunchedEventSender } from 'src/providers/Analytic
 import { GoogleAnalytics } from 'nextjs-google-analytics'
 import { DatahubSubscriber } from 'src/components/utils/datahub/subscriber'
 import Script from 'next/script'
+import { initAllStores } from 'src/stores/registry'
 
 dayjs.extend(relativeTime)
 dayjs.extend(localizedFormat)
@@ -44,6 +45,14 @@ dayjs.extend(localizedFormat)
 function MyApp(props) {
   const { Component, pageProps } = props
   const store = useStore(pageProps.initialReduxState)
+
+  const isInitialized = useRef(false)
+
+  useEffect(() => {
+    if (isInitialized.current) return
+    isInitialized.current = true
+    initAllStores()
+  }, [])
 
   // Debug store
   // console.log(JSON.stringify(pageProps.initialReduxState, null, 2))
