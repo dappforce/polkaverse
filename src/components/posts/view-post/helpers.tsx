@@ -295,6 +295,9 @@ const PostContentMemoized = React.memo((props: PostContentMemoizedProps) => {
     )
   }
 
+  // mostly the post that doesn't have contents are shared post, so this div mt-3 is needed to add offset above the original post card
+  if (!content.image && !content.body && !content.title) return <div className='mt-3' />
+
   return (
     <div className='DfContent'>
       <ViewPostLink
