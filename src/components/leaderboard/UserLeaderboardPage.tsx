@@ -150,11 +150,15 @@ export type UserLeaderboardPageProps = {
     image?: string
   }
 }
-export default function UserLeaderboardPage({ address, customMeta }: UserLeaderboardPageProps) {
+export default function UserLeaderboardPage({
+  address: initialPropsAddress,
+  customMeta,
+}: UserLeaderboardPageProps) {
+  const { query } = useRouter()
+  const address = (query.address as string) || initialPropsAddress
   const myAddress = useMyAddress()
   const profile = useSelectProfile(address)
 
-  const { query } = useRouter()
   let tabState = query.role as LeaderboardRole
   if (tabState !== 'staker' && tabState !== 'creator') {
     tabState = 'staker'
