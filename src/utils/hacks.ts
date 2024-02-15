@@ -56,7 +56,7 @@ export function isPolkaProject(idStr: AnySpaceId): boolean {
   return id.eqn(1) || isReservedPolkadotSpace(id)
 }
 
-const VERIFIED_SPACE = ['12579']
+const VERIFIED_SPACE = ['12579', '10900']
 export function isOfficialSpace(id: SpaceId): boolean {
   return (
     isPolkaProject(new BN(id)) ||
