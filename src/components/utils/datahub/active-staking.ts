@@ -22,6 +22,7 @@ import {
   invalidateSuperLikeCounts,
   SuperLikeCount,
 } from 'src/rtk/features/activeStaking/superLikeCountsSlice'
+import { SuperLikeMessage } from 'src/rtk/features/activeStaking/superLikeMessageSlice'
 import {
   createSocialDataEventPayload,
   DatahubParams,
@@ -534,9 +535,35 @@ export async function getUserPrevReward({ address }: { address: string }): Promi
   }
 }
 
+const GET_SUPER_LIKE_MESSAGE = gql`
+  query GetSuperLikeMessage {
+    activeStakingSuperLikeMessage {
+      message
+    }
+  }
+`
+export async function getSuperLikeMessage(): Promise<SuperLikeMessage> {
+  const res = await datahubQueryRequest<
+    {
+      activeStakingSuperLikeMessage: {
+        message: string
+      }
+    },
+    {}
+  >({
+    query: GET_SUPER_LIKE_MESSAGE,
+    variables: {},
+  })
+
+  return {
+    message: res.data.activeStakingSuperLikeMessage.message ?? '',
+  }
+}
 // MUTATIONS
 export async function createSuperLike(
-  params: DatahubParams<SocialCallDataArgs<'synth_active_staking_create_super_like'>>,
+  params: DatahubParams<
+    SocialCallDataArgs<'synth_active_staking_create_super_like'> & { sig: string }
+  >,
 ) {
   const input = createSocialDataEventPayload(
     socialCallName.synth_active_staking_create_super_like,

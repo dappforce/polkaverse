@@ -1,9 +1,11 @@
+import type { Signer } from '@polkadot/api/types'
 import { InjectedAccountWithMeta, InjectedWindow } from '@polkadot/extension-inject/types'
 import { isEmptyArray } from '@subsocial/utils'
 import config from 'src/config'
 import store from 'store'
+import { useIsMobileWidthOrDevice } from '../responsive'
 import { getWalletBySource } from '../wallets/supportedWallets/index'
-import { Status } from './MyAccountsContext'
+import { Status, useMyAddress } from './MyAccountsContext'
 
 export const recheckStatuses = ['UNAVAILABLE', 'UNAUTHORIZED']
 
@@ -129,5 +131,30 @@ export const setAccountsToState = (
     })
 
     setAccounts(addressesWithMeta as InjectedAccountWithMeta[])
+  }
+}
+
+export function useGetCurrentSigner() {
+  const myAddress = useMyAddress()
+  const isMobile = useIsMobileWidthOrDevice()
+
+  return async () => {
+    if (!myAddress) return undefined
+
+    let signer: Signer | undefined
+    if (isMobile) {
+      const { web3Enable, web3FromAddress } = await import('@polkadot/extension-dapp')
+      const extensions = await web3Enable(appName)
+
+      if (extensions.length === 0) {
+        return
+      }
+      signer = (await web3FromAddress(myAddress)).signer
+    } else {
+      const currentWallet = getCurrentWallet()
+      const wallet = getWalletBySource(currentWallet)
+      signer = wallet?.signer
+    }
+    return signer
   }
 }

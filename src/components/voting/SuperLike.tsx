@@ -1,3 +1,5 @@
+import { stringToHex } from '@polkadot/util'
+import { signatureVerify } from '@polkadot/util-crypto'
 import { PostStruct } from '@subsocial/api/types'
 import { Button, ButtonProps, Image, Tooltip } from 'antd'
 import clsx from 'clsx'
@@ -11,6 +13,7 @@ import {
 } from 'src/rtk/features/activeStaking/addressLikeCountSlice'
 import {
   useCanPostSuperLiked,
+  useFetchSuperLikeMessage,
   useFetchUserRewardReport,
   useHasISuperLikedPost,
   useSuperLikeCount,
@@ -23,11 +26,13 @@ import {
   fetchSuperLikeCounts,
   setSuperLikeCount,
 } from 'src/rtk/features/activeStaking/superLikeCountsSlice'
+import { fetchSuperLikeMessage } from 'src/rtk/features/activeStaking/superLikeMessageSlice'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getAmountRange } from 'src/utils/analytics'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import { useAuth } from '../auth/AuthContext'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import { useGetCurrentSigner } from '../auth/utils'
 import { IconWithLabel } from '../utils'
 import CustomModal from '../utils/CustomModal'
 import { createSuperLike } from '../utils/datahub/active-staking'
@@ -40,12 +45,15 @@ export type SuperLikeProps = ButtonProps & {
   isComment?: boolean
 }
 
-const FIRST_TIME_SUPERLIKE = 'df.first-time-superlike'
+const CURRENT_WEEK_SIG = 'df.current-week-sig'
 
 export default function SuperLike({ post, iconClassName, isComment, ...props }: SuperLikeProps) {
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
   const sendEvent = useSendEvent()
+  const getSigner = useGetCurrentSigner()
+
+  const { data: superLikeMessage } = useFetchSuperLikeMessage()
 
   const clientCanPostSuperLiked = useClientValidationOfPostSuperLike(post.createdAtTime)
   const spaceId = post.spaceId
@@ -65,7 +73,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
 
   const isActive = hasILiked
   const canBeSuperliked = clientCanPostSuperLiked && canPostSuperLiked
-  const isDisabled = !canBeSuperliked || isMyPost || loadingTotalStake || true
+  const isDisabled = !canBeSuperliked || isMyPost || loadingTotalStake || !superLikeMessage.message
 
   const { openSignInModal } = useAuth()
 
@@ -79,6 +87,21 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
     if (!totalStake?.hasStakedEnough) {
       setIsOpenShouldStakeModal(true)
       return
+    }
+
+    const signature = localStorage.getItem(CURRENT_WEEK_SIG)
+    if (!signature) {
+      setIsOpenActiveStakingModal(true)
+      return
+    } else {
+      const message = superLikeMessage.message
+      const result = signatureVerify(message, signature, myAddress)
+      if (!result.isValid) {
+        localStorage.removeItem(CURRENT_WEEK_SIG)
+        setIsOpenActiveStakingModal(true)
+        dispatch(fetchSuperLikeMessage({ reload: true }))
+        return
+      }
     }
 
     sendEvent('like', {
@@ -96,7 +119,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
       dispatch(setAddressLikeCount({ address: myAddress, postId: post.id, count: count + 1 }))
       dispatch(setOptimisticRewardReportChange({ address: myAddress, superLikeCountChange: 1 }))
 
-      await createSuperLike({ address: myAddress, args: { postId: post.id } })
+      await createSuperLike({ address: myAddress, args: { postId: post.id, sig: signature } })
     } catch (error) {
       // undo the optimistic changes
       dispatch(setSuperLikeCount({ postId: post.id, count: count - 1 }))
@@ -108,11 +131,6 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
       dispatch(fetchAddressLikeCounts({ address: myAddress, postIds: [post.id], reload: true }))
       dispatch(fetchRewardReport({ address: myAddress, reload: true }))
     }
-
-    if (localStorage.getItem(FIRST_TIME_SUPERLIKE) !== 'false') {
-      setIsOpenActiveStakingModal(true)
-    }
-    localStorage.setItem(FIRST_TIME_SUPERLIKE, 'false')
   }
 
   const icon = (
@@ -125,14 +143,14 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
 
   const entity = isComment ? 'comment' : 'post'
 
-  let tooltipTitle =
-    "Sorry, the like functionality is currently disabled because we've detected a problem with its operation. We'll restore the like functionality once it's fixed."
+  let tooltipTitle = ''
   if (isMyPost) tooltipTitle = `You cannot like your own ${entity}`
   else if (!isExist)
     tooltipTitle = `This ${entity} is still being minted, please wait a few seconds`
   else if (!validByCreatorMinStake)
     tooltipTitle = `This ${entity} cannot be liked because its author has not yet locked at least 2,000 SUB`
   else if (!canBeSuperliked) tooltipTitle = `You cannot like ${entity}s that are older than 7 days`
+  else if (!superLikeMessage.message) tooltipTitle = 'Loading...'
 
   const button = (
     <div>
@@ -176,7 +194,19 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
             block
             type='primary'
             size='large'
-            onClick={() => setIsOpenActiveStakingModal(false)}
+            onClick={async () => {
+              const signer = await getSigner()
+              if (signer && myAddress) {
+                const message = superLikeMessage.message
+                const signature = await signer.signRaw?.({
+                  address: myAddress,
+                  data: stringToHex(message),
+                  type: 'bytes',
+                })
+                localStorage.setItem(CURRENT_WEEK_SIG, signature?.signature.toString() ?? '')
+              }
+              setIsOpenActiveStakingModal(false)
+            }}
           >
             Confirm
           </Button>
