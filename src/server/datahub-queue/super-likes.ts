@@ -61,7 +61,6 @@ export async function createSuperLikeServer(input: SocialEventDataApiInput) {
     },
   })
   if (!res.activeStakingCreateSuperLike.processed) {
-    console.log('throw error', res.activeStakingCreateSuperLike.message)
     throw new Error(res.activeStakingCreateSuperLike.message)
   }
 }
