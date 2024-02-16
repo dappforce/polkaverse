@@ -1,4 +1,3 @@
-import { stringToHex } from '@polkadot/util'
 import { signatureVerify } from '@polkadot/util-crypto'
 import { PostStruct } from '@subsocial/api/types'
 import { Button, ButtonProps, Image, Tooltip } from 'antd'
@@ -213,7 +212,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
                   const message = superLikeMessage.message
                   const signature = await signer.signRaw?.({
                     address: myAddress,
-                    data: stringToHex(message),
+                    data: message,
                     type: 'bytes',
                   })
                   localStorage.setItem(CURRENT_WEEK_SIG, signature?.signature.toString() ?? '')
@@ -222,7 +221,8 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
               } catch (err) {
                 showErrorMessage({
                   message: 'Failed to sign the message',
-                  description: 'Please relogin to your account to continue',
+                  description:
+                    (err as any)?.message || 'Please relogin to your account to continue',
                 })
               } finally {
                 setIsSigning(false)
