@@ -222,7 +222,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
                 showErrorMessage({
                   message: 'Failed to sign the message',
                   description:
-                    (err as any)?.message || 'Please relogin to your account to continue',
+                    (err as any)?.message || 'Please try to refresh or relogin to your account',
                 })
               } finally {
                 setIsSigning(false)
