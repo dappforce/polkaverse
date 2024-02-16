@@ -37,6 +37,7 @@ import { IconWithLabel } from '../utils'
 import CustomModal from '../utils/CustomModal'
 import { createSuperLike } from '../utils/datahub/active-staking'
 import { useAmISpaceFollower } from '../utils/FollowSpaceButton'
+import { showErrorMessage } from '../utils/Message'
 import styles from './SuperLike.module.sass'
 
 export type SuperLikeProps = ButtonProps & {
@@ -117,7 +118,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
     try {
       // set optimistic changes
       dispatch(setSuperLikeCount({ postId: post.id, count: count + 1 }))
-      dispatch(setAddressLikeCount({ address: myAddress, postId: post.id, count: count + 1 }))
+      dispatch(setAddressLikeCount({ address: myAddress, postId: post.id, count: 1 }))
       dispatch(setOptimisticRewardReportChange({ address: myAddress, superLikeCountChange: 1 }))
 
       await createSuperLike({
@@ -126,8 +127,8 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
       })
     } catch (error) {
       // undo the optimistic changes
-      dispatch(setSuperLikeCount({ postId: post.id, count: count - 1 }))
-      dispatch(setAddressLikeCount({ address: myAddress, postId: post.id, count: count - 1 }))
+      dispatch(setSuperLikeCount({ postId: post.id, count }))
+      dispatch(setAddressLikeCount({ address: myAddress, postId: post.id, count: 0 }))
       dispatch(setOptimisticRewardReportChange({ address: myAddress, superLikeCountChange: -1 }))
 
       // refetch the real data
@@ -201,19 +202,27 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
             loading={isSigning}
             onClick={async () => {
               setIsSigning(true)
-              const signer = await getSigner()
-              if (signer && myAddress) {
-                const message = superLikeMessage.message
-                const signature = await signer.signRaw?.({
-                  address: myAddress,
-                  data: stringToHex(message),
-                  type: 'bytes',
+              try {
+                const signer = await getSigner()
+                if (signer && myAddress) {
+                  const message = superLikeMessage.message
+                  const signature = await signer.signRaw?.({
+                    address: myAddress,
+                    data: stringToHex(message),
+                    type: 'bytes',
+                  })
+                  localStorage.setItem(CURRENT_WEEK_SIG, signature?.signature.toString() ?? '')
+                  onClick()
+                }
+              } catch (err) {
+                showErrorMessage({
+                  message: 'Failed to sign the message',
+                  description: 'Please relogin to your account to continue',
                 })
-                localStorage.setItem(CURRENT_WEEK_SIG, signature?.signature.toString() ?? '')
+              } finally {
+                setIsSigning(false)
+                setIsOpenActiveStakingModal(false)
               }
-              setIsSigning(false)
-              setIsOpenActiveStakingModal(false)
-              onClick()
             }}
           >
             Confirm
