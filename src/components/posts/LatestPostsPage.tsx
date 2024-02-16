@@ -51,6 +51,8 @@ export const loadMorePostsFn = async (loadMoreValues: LoadMoreValues<PostFilterT
     postIds = posts.data.map(value => value.persistentPostId)
     if (offset === 0) {
       postIds = Array.from(new Set([PINNED_POST_ID, ...postIds]))
+    } else {
+      postIds = postIds.filter(id => id !== PINNED_POST_ID)
     }
   } else if (!isSuggested(filter.type) && client) {
     const data = await loadPostsByQuery({ client, kind, offset, filter })
