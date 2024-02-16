@@ -108,10 +108,12 @@ const TabsHomePage = ({
       type: typeFromUrl,
     } = router.query
 
-    if (!typeFromUrl && tabFromUrl === 'posts') {
-      typeFromUrl = 'hot'
-    } else {
-      typeFromUrl = 'suggested'
+    if (!typeFromUrl) {
+      if (tabFromUrl === 'posts') {
+        typeFromUrl = 'hot'
+      } else {
+        typeFromUrl = 'suggested'
+      }
     }
 
     const tabIndex = tabs.findIndex(tab => tab === tabFromUrl)
@@ -127,7 +129,7 @@ const TabsHomePage = ({
 
   const { tabIndex, typeFromUrl, dateFilterIndex } = getFiltersFromUrl()
   const tab = tabs[tabIndex] as TabKeys
-  let type = getFilterType(tab, typeFromUrl)
+  const type = getFilterType(tab, typeFromUrl)
   const date = dateFilterOpt[dateFilterIndex].value as DateFilterType
 
   const myAddress = useMyAddress() ?? ''

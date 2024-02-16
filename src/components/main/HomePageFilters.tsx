@@ -96,9 +96,9 @@ type Props = {
   isAffix?: boolean
 }
 
-export const PostFilterView = ({ filter: { type, date }, ...props }: PostFilterProps) => (
-  <LatestPostsPage filter={type} dateFilter={date} {...props} />
-)
+export const PostFilterView = ({ filter: { type, date }, ...props }: PostFilterProps) => {
+  return <LatestPostsPage filter={type} dateFilter={date} {...props} />
+}
 
 export const SpaceFilterView = ({ filter: { type, date }, ...props }: SpaceFilterProps) => {
   if (type === 'creators') return <CreatorsSpaces />
