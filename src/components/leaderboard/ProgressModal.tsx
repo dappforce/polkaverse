@@ -1,9 +1,8 @@
-import { Button, Tooltip } from 'antd'
+import { Button } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import html2canvas from 'html2canvas'
 import { useEffect, useState } from 'react'
-import { SlQuestion } from 'react-icons/sl'
 import { ReactNode } from 'react-markdown'
 import CustomModal from 'src/components/utils/CustomModal'
 import { resolveIpfsUrl } from 'src/ipfs'
@@ -15,7 +14,7 @@ import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import { useDefaultSpaceIdToPost } from '../posts/editor/ModalEditor'
 import Avatar from '../profiles/address-views/Avatar'
-import { useResponsiveSize } from '../responsive'
+import { useIsMobileWidthOrDevice, useResponsiveSize } from '../responsive'
 import { useSubsocialApi } from '../substrate'
 import { twitterShareUrl } from '../urls'
 import { fullUrl, openNewWindow } from '../urls/helpers'
@@ -42,7 +41,8 @@ export default function ProgressModal() {
   const myAddress = useMyAddress()
 
   useEffect(() => {
-    setShouldShowModal(!progressModalStorage.getIsClosed() && !!myAddress)
+    setShouldShowModal(true)
+    // setShouldShowModal(!progressModalStorage.getIsClosed() && !!myAddress)
   }, [myAddress])
 
   if (!shouldShowModal) return null
@@ -113,7 +113,7 @@ const contentMap: Record<
     full: {
       title: randomizeTitle('yesterday', 'full'),
       subtitle:
-        'Incredible work yesterday! You completed every task and went above and beyond. Your energy is unmatched!',
+        'Incredible work yesterday! You did 10 likes yesterday and went above and beyond. Your energy is unmatched!',
     },
     half: {
       title: randomizeTitle('yesterday', 'half'),
@@ -174,13 +174,9 @@ function InnerProgressModal() {
         <div
           id='progress-image'
           className={clsx(styles.ProgressModal, statusClassName[status], 'position-relative')}
-          style={{ width: '620px', display: 'none' }}
+          style={{ width: '575px', display: 'none' }}
         >
-          <div className='ant-modal-content p-3 pb-4'>
-            <img
-              src='/images/creators/diamonds/diamond-right.svg'
-              className={clsx(styles.OutsideDiamondRight)}
-            />
+          <div className='ant-modal-content p-5'>
             <img
               src='/images/creators/diamonds/diamond-top-left.svg'
               className={clsx(styles.OutsideDiamondLeft)}
@@ -210,6 +206,7 @@ function ProgressPanel({
 
   const myAddress = useMyAddress() ?? ''
   const profile = useSelectProfile(myAddress)
+  const isMobile = useIsMobileWidthOrDevice()
 
   const { data } = useFetchUserPrevReward(myAddress)
 
@@ -226,11 +223,6 @@ function ProgressPanel({
   }
 
   const usedContent = contentMap[isUsingLastWeekData ? 'lastWeek' : 'yesterday'][status]
-
-  let hasMissedReward = false
-  try {
-    hasMissedReward = BigInt(data?.missedReward || '0') > 0
-  } catch {}
 
   const generateImage = async (onSuccess: (image: string) => void) => {
     const element = document.getElementById('progress-image')
@@ -307,15 +299,42 @@ function ProgressPanel({
     })
   }
 
+  const rewardContents: RewardContent[] = [
+    {
+      title: "Staker's rewards",
+      content: (
+        <FormatBalance
+          withMutedDecimals={false}
+          value={data?.earned}
+          precision={2}
+          currency='SUB'
+          decimals={10}
+        />
+      ),
+    },
+    {
+      title: "Creator's rewards",
+      content: (
+        <FormatBalance
+          withMutedDecimals={false}
+          value={data?.earned}
+          precision={2}
+          currency='SUB'
+          decimals={10}
+        />
+      ),
+    },
+  ]
+
   return (
     <>
       {!forPostImage && <DiamondIcon className={styles.DiamondIcon} />}
-      <div className={clsx(styles.ProgressModalContent, 'mt-2')}>
-        <div className='d-flex flex-column align-items-center'>
-          <div className='mb-2'>
+      <div className={clsx(styles.ProgressModalContent)}>
+        <div className={clsx('d-flex', isMobile ? 'GapSmall' : 'GapNormal')}>
+          <div className='mt-2'>
             <Avatar
               noMargin
-              size={60}
+              size={isMobile ? 45 : 60}
               asLink={false}
               address={myAddress}
               avatar={hasAvatarLoaded || !forPostImage ? profile?.content?.image : undefined}
@@ -324,42 +343,13 @@ function ProgressPanel({
               }}
             />
           </div>
-          <span className='text-center FontLarge FontWeightBold mb-2'>{usedContent.title}</span>
-          <p className='text-center mb-0'>{usedContent.subtitle}</p>
+          <div className='d-flex flex-column'>
+            <span className='FontLarge FontWeightBold mb-1'>{usedContent.title}</span>
+            <p className={clsx('mb-0', styles.MutedText)}>{usedContent.subtitle}</p>
+          </div>
         </div>
         <div className='d-flex w-100 GapSmall'>
-          <RewardCard
-            forPostImage={forPostImage}
-            aligment={hasMissedReward ? 'left' : 'center'}
-            title={`${isUsingLastWeekData ? 'Last week' : 'Yesterday'}'s reward`}
-            content={
-              <FormatBalance
-                withMutedDecimals={false}
-                value={data?.earned}
-                precision={2}
-                currency='SUB'
-                decimals={10}
-              />
-            }
-            withDiamond
-          />
-          {hasMissedReward && (
-            <RewardCard
-              forPostImage={forPostImage}
-              aligment='left'
-              title='Missed rewards'
-              tooltip='How many SUB you could have received by liking at least 10 posts yesterday'
-              content={
-                <FormatBalance
-                  withMutedDecimals={false}
-                  value={data?.missedReward}
-                  precision={2}
-                  currency='SUB'
-                  decimals={10}
-                />
-              }
-            />
-          )}
+          <RewardCard forPostImage={forPostImage} contents={rewardContents} />
         </div>
       </div>
       {!forPostImage && (
@@ -398,49 +388,36 @@ function ProgressPanel({
   )
 }
 
+type RewardContent = { title: string; content: ReactNode }
 function RewardCard({
-  content,
-  title,
-  tooltip,
-  withDiamond,
-  aligment,
+  contents,
   forPostImage,
 }: {
-  aligment: 'center' | 'left'
-  withDiamond?: boolean
-  title: string
-  tooltip?: string
-  content: ReactNode
+  contents: RewardContent[]
   forPostImage?: boolean
 }) {
   return (
-    <div
-      className={clsx(
-        styles.RewardCard,
-        aligment === 'center' ? 'align-items-center' : 'align-items-start',
-      )}
-    >
-      {withDiamond && (
-        <DfImage
-          preview={false}
-          src='/images/creators/diamonds/diamond.png'
-          className={clsx(styles.Diamond, forPostImage && styles.DiamondRight)}
-        />
-      )}
-      <div className={clsx('d-flex GapTiny align-items-center')}>
-        <span className='FontSmall'>{title}</span>
-        {tooltip && (
-          <Tooltip title={tooltip}>
-            <SlQuestion className='FontTiny' />
-          </Tooltip>
-        )}
+    <div className={clsx(styles.RewardCard)}>
+      <DfImage
+        preview={false}
+        src='/images/creators/diamonds/diamond.png'
+        className={clsx(styles.Diamond, forPostImage && styles.DiamondRight)}
+      />
+      <div className={clsx('d-flex align-items-center w-100')}>
+        {contents.map(({ title, content }) => (
+          <div className={styles.RewardCardContent} style={{ flex: '1' }} key={title}>
+            <span className={clsx('FontSmall', styles.MutedText)}>{title}</span>
+            {/* If you use FontWeightSemibold forPostImage, it will cause the result of html2canvas has some strange letter spacing */}
+            <span
+              className={clsx(
+                forPostImage ? 'FontLarge FontWeightBold' : 'FontLarge FontWeightSemibold',
+              )}
+            >
+              {content}
+            </span>
+          </div>
+        ))}
       </div>
-      {/* If you use FontWeightSemibold forPostImage, it will cause the result of html2canvas has some strange letter spacing */}
-      <span
-        className={clsx(forPostImage ? 'FontBig FontWeightBold' : 'FontLarge FontWeightSemibold')}
-      >
-        {content}
-      </span>
     </div>
   )
 }
