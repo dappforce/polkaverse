@@ -6,10 +6,7 @@ const GET_HOT_POSTS = gql`
   query GetHotPosts($limit: Int!, $offset: Int!) {
     activeStakingRankedPostIdsByActiveStakingActivity(args: { limit: $limit, offset: $offset }) {
       data {
-        postId
         persistentPostId
-        rank
-        score
       }
       total
     }
@@ -20,10 +17,7 @@ export async function getHotPosts(variables: { offset: number; limit: number }) 
     {
       activeStakingRankedPostIdsByActiveStakingActivity: {
         data: {
-          postId: string
           persistentPostId: string
-          rank: number
-          score: number
         }[]
         total: number
       }

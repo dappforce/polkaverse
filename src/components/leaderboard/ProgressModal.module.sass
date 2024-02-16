@@ -12,10 +12,10 @@
     overflow: hidden
 
   .DiamondIcon
-    font-size: 170px
+    font-size: 140px
     position: absolute
-    top: -$space_big
-    left: -$space_huge
+    top: -15px
+    left: -30px
     transform: rotate(-35deg)
 
   &.Full
@@ -34,18 +34,11 @@
   .Content
     overflow: visible !important
 
-  .OutsideDiamondLeft, .OutsideDiamondRight
-    position: absolute
-
-  .OutsideDiamondLeft
-    top: 0px
-    left: -10px
-    width: 120px
-
   .OutsideDiamondRight
-    top: 15%
-    right: -10px
-    width: 75px
+    position: absolute
+    top: 0px
+    right: 0px
+    width: 80px
 
   .ProgressModalContent
     border-radius: $border_radius_huge
@@ -62,8 +55,17 @@
       border-radius: $border_radius_large
       background: rgba(248, 250, 252, 0.10)
       flex: 1
-      padding: $space_normal
+      padding: $space_normal 0
       position: relative
+
+      .RewardCardContent
+        display: flex
+        flex-direction: column
+        align-items: center
+        flex: 1
+
+        &:not(:last-child)
+          border-right: 1px solid rgba(255, 255, 255, .2)
 
       .Diamond
         overflow: visible !important
@@ -72,13 +74,18 @@
         position: absolute
         top: 0
         right: 0
-        transform: translate(35%, -50%) rotate(-30deg)
+        transform: translate(20%, -50%) rotate(-25deg)
         transform-origin: center
 
         &.DiamondRight
-          transform: translate(20%, -50%) rotate(30deg)
+          transform: translate(35%, -50%) rotate(20deg)
+
+.MutedText
+  color: rgba(255, 255, 255, 0.86)
 
 .GhostButton
+  border-color: rgba(255, 255, 255, .86)
+  color: rgba(255, 255, 255, .86)
   &:hover, &:focus
     border-color: white !important
     color: white !important

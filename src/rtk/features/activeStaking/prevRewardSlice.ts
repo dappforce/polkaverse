@@ -8,7 +8,10 @@ export type PrevReward = {
   address: string
   period: 'WEEK' | 'DAY'
   likedPosts: number
-  earned: string
+  earned: {
+    staker: string
+    creator: string
+  }
   rewardStatus: PrevRewardStatus
   missedReward?: string
 }
