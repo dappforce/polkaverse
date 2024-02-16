@@ -65,7 +65,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
 
   const isActive = hasILiked
   const canBeSuperliked = clientCanPostSuperLiked && canPostSuperLiked
-  const isDisabled = !canBeSuperliked || isMyPost || loadingTotalStake
+  const isDisabled = !canBeSuperliked || isMyPost || loadingTotalStake || true
 
   const { openSignInModal } = useAuth()
 
@@ -125,7 +125,8 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
 
   const entity = isComment ? 'comment' : 'post'
 
-  let tooltipTitle = ''
+  let tooltipTitle =
+    "Sorry, the like functionality is currently disabled because we've detected a problem with its operation. We'll restore the like functionality once it's fixed."
   if (isMyPost) tooltipTitle = `You cannot like your own ${entity}`
   else if (!isExist)
     tooltipTitle = `This ${entity} is still being minted, please wait a few seconds`
