@@ -105,7 +105,7 @@ const TabsHomePage = ({
     let {
       tab: tabFromUrl = isSignedIn ? 'feed' : 'posts',
       date: dateFromUrl = 'week',
-      type: typeFromUrl = 'suggested',
+      type: typeFromUrl,
     } = router.query
 
     if (!typeFromUrl && tabFromUrl === 'posts') {
