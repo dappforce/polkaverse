@@ -42,8 +42,7 @@ export default function ProgressModal() {
   const myAddress = useMyAddress()
 
   useEffect(() => {
-    setShouldShowModal(true)
-    // setShouldShowModal(!progressModalStorage.getIsClosed() && !!myAddress)
+    setShouldShowModal(!progressModalStorage.getIsClosed() && !!myAddress)
   }, [myAddress])
 
   if (!shouldShowModal) return null
