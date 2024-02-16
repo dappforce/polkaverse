@@ -101,7 +101,6 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
       if (!result.isValid) {
         localStorage.removeItem(CURRENT_WEEK_SIG)
         setIsOpenActiveStakingModal(true)
-        dispatch(fetchSuperLikeMessage({ reload: true }))
         return
       }
     }
@@ -135,6 +134,12 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
       dispatch(fetchSuperLikeCounts({ postIds: [post.id], reload: true }))
       dispatch(fetchAddressLikeCounts({ address: myAddress, postIds: [post.id], reload: true }))
       dispatch(fetchRewardReport({ address: myAddress, reload: true }))
+
+      dispatch(fetchSuperLikeMessage({ reload: true }))
+      showErrorMessage({
+        message: 'Failed to like the post',
+        description: 'Please try again or refresh the page if the problem persists.',
+      })
     }
   }
 
