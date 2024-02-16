@@ -3,7 +3,7 @@ import {
   SocialCallDataArgs,
   socialCallName,
 } from '@subsocial/data-hub-sdk'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import dayjs from 'dayjs'
 import { gql as gqlRequest } from 'graphql-request'
 import gql from 'graphql-tag'
@@ -535,35 +535,18 @@ export async function getUserPrevReward({ address }: { address: string }): Promi
   }
 }
 
-const GET_SUPER_LIKE_MESSAGE = gql`
-  query GetSuperLikeMessage {
-    activeStakingSuperLikeMessage {
-      message
-    }
-  }
-`
 export async function getSuperLikeMessage(): Promise<SuperLikeMessage> {
-  const res = await datahubQueryRequest<
-    {
-      activeStakingSuperLikeMessage: {
-        message: string
-      }
-    },
-    {}
-  >({
-    query: GET_SUPER_LIKE_MESSAGE,
-    variables: {},
-  })
-
+  const res = await axios.get<any, AxiosResponse<{ data?: { message?: string } }>>(
+    '/api/datahub/super-likes',
+  )
   return {
-    message: res.data.activeStakingSuperLikeMessage.message ?? '',
+    message: res.data.data?.message ?? '',
   }
 }
+
 // MUTATIONS
 export async function createSuperLike(
-  params: DatahubParams<
-    SocialCallDataArgs<'synth_active_staking_create_super_like'> & { sig: string }
-  >,
+  params: DatahubParams<SocialCallDataArgs<'synth_active_staking_create_super_like'>>,
 ) {
   const input = createSocialDataEventPayload(
     socialCallName.synth_active_staking_create_super_like,

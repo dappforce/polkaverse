@@ -120,7 +120,10 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
       dispatch(setAddressLikeCount({ address: myAddress, postId: post.id, count: count + 1 }))
       dispatch(setOptimisticRewardReportChange({ address: myAddress, superLikeCountChange: 1 }))
 
-      await createSuperLike({ address: myAddress, args: { postId: post.id, sig: signature } })
+      await createSuperLike({
+        address: myAddress,
+        args: { postId: post.id, confirmation: { msg: superLikeMessage.message, sig: signature } },
+      })
     } catch (error) {
       // undo the optimistic changes
       dispatch(setSuperLikeCount({ postId: post.id, count: count - 1 }))

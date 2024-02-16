@@ -4,6 +4,7 @@ import { isEmptyArray } from '@subsocial/utils'
 import config from 'src/config'
 import store from 'store'
 import { useIsMobileWidthOrDevice } from '../responsive'
+import { showErrorMessage } from '../utils/Message'
 import { getWalletBySource } from '../wallets/supportedWallets/index'
 import { Status, useMyAddress } from './MyAccountsContext'
 
@@ -139,22 +140,28 @@ export function useGetCurrentSigner() {
   const isMobile = useIsMobileWidthOrDevice()
 
   return async () => {
-    if (!myAddress) return undefined
+    try {
+      if (!myAddress) throw new Error('You need to login first')
+      let signer: Signer | undefined
+      if (isMobile) {
+        const { web3Enable, web3FromAddress } = await import('@polkadot/extension-dapp')
+        const extensions = await web3Enable(appName)
 
-    let signer: Signer | undefined
-    if (isMobile) {
-      const { web3Enable, web3FromAddress } = await import('@polkadot/extension-dapp')
-      const extensions = await web3Enable(appName)
-
-      if (extensions.length === 0) {
-        return
+        if (extensions.length === 0) {
+          return
+        }
+        signer = (await web3FromAddress(myAddress)).signer
+      } else {
+        const currentWallet = getCurrentWallet()
+        const wallet = getWalletBySource(currentWallet)
+        signer = wallet?.signer
       }
-      signer = (await web3FromAddress(myAddress)).signer
-    } else {
-      const currentWallet = getCurrentWallet()
-      const wallet = getWalletBySource(currentWallet)
-      signer = wallet?.signer
+
+      if (!signer) throw new Error('Signer not found, please relogin your account to continue')
+      return signer
+    } catch (err) {
+      showErrorMessage((err as Error)?.message ?? 'Failed to get signer')
+      return undefined
     }
-    return signer
   }
 }
