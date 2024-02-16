@@ -3,6 +3,33 @@ import { gql } from 'graphql-request'
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect'
 import { backendSigWrapper, datahubQueueRequest } from './utils'
 
+const GET_SUPER_LIKE_CONFIRMATION_MSG = gql`
+  query GetSuperLikeConfirmationMsg {
+    activeStakingConfirmationMessage {
+      message
+      week
+    }
+  }
+`
+
+export async function getSuperLikeConfirmationMsg() {
+  const res = await datahubQueueRequest<
+    {
+      activeStakingConfirmationMessage: {
+        message: string
+      }
+    },
+    {}
+  >({
+    document: GET_SUPER_LIKE_CONFIRMATION_MSG,
+    variables: {},
+  })
+
+  return {
+    message: res.activeStakingConfirmationMessage.message ?? '',
+  }
+}
+
 const CREATE_SUPER_LIKE = gql`
   mutation CreateSuperLike($createSuperLikeInput: CreateMutateActiveStakingSuperLikeInput!) {
     activeStakingCreateSuperLike(args: $createSuperLikeInput) {

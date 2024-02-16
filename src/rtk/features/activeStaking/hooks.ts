@@ -12,6 +12,7 @@ import { fetchPrevReward, selectUserPrevReward } from './prevRewardSlice'
 import { fetchRewardHistory, selectUserRewardHistory } from './rewardHistorySlice'
 import { fetchRewardReport, selectUserRewardReport } from './rewardReportSlice'
 import { selectPostSuperLikeCount } from './superLikeCountsSlice'
+import { fetchSuperLikeMessage, selectSuperLikeMessage } from './superLikeMessageSlice'
 
 export function useSuperLikeCount(postId: string) {
   return useAppSelector(state => selectPostSuperLikeCount(state, postId)?.count ?? 0)
@@ -101,6 +102,16 @@ export function useFetchUserPrevReward(address?: string) {
     { address: usedAddress },
     { enabled: !!usedAddress },
   )
+
+  return {
+    ...fetchData,
+    data,
+  }
+}
+
+export function useFetchSuperLikeMessage() {
+  const data = useAppSelector(state => selectSuperLikeMessage(state))
+  const fetchData = useFetchWithoutApi(fetchSuperLikeMessage, {})
 
   return {
     ...fetchData,

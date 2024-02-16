@@ -3,7 +3,7 @@ import {
   SocialCallDataArgs,
   socialCallName,
 } from '@subsocial/data-hub-sdk'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import dayjs from 'dayjs'
 import { gql as gqlRequest } from 'graphql-request'
 import gql from 'graphql-tag'
@@ -22,6 +22,7 @@ import {
   invalidateSuperLikeCounts,
   SuperLikeCount,
 } from 'src/rtk/features/activeStaking/superLikeCountsSlice'
+import { SuperLikeMessage } from 'src/rtk/features/activeStaking/superLikeMessageSlice'
 import {
   createSocialDataEventPayload,
   DatahubParams,
@@ -531,6 +532,15 @@ export async function getUserPrevReward({ address }: { address: string }): Promi
       rewardStatus,
       missedReward,
     }
+  }
+}
+
+export async function getSuperLikeMessage(): Promise<SuperLikeMessage> {
+  const res = await axios.get<any, AxiosResponse<{ data?: { message?: string } }>>(
+    '/api/datahub/super-likes',
+  )
+  return {
+    message: res.data.data?.message ?? '',
   }
 }
 

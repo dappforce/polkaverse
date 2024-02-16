@@ -8,6 +8,7 @@ import prevReward from '../features/activeStaking/prevRewardSlice'
 import rewardHistory from '../features/activeStaking/rewardHistorySlice'
 import rewardReport from '../features/activeStaking/rewardReportSlice'
 import superLikeCounts from '../features/activeStaking/superLikeCountsSlice'
+import superLikeMessage from '../features/activeStaking/superLikeMessageSlice'
 import chainsInfo from '../features/chainsInfo/chainsInfoSlice'
 import chat from '../features/chat/chatSlice'
 import enableConfirmation from '../features/confirmationPopup/enableConfirmationSlice'
@@ -27,7 +28,6 @@ import onBoarding from '../features/onBoarding/onBoardingSlice'
 import mySpacePermissions from '../features/permissions/mySpacePermissionsSlice'
 import myFeed from '../features/posts/myFeedSlice'
 import ownPostIds from '../features/posts/ownPostIdsSlice'
-import postScores from '../features/posts/postScoreSlice'
 import posts from '../features/posts/postsSlice'
 import followedAccountIds from '../features/profiles/followedAccountIdsSlice'
 import profileSpaces from '../features/profiles/profilesSlice'
@@ -77,8 +77,8 @@ const rootReducer = combineReducers({
   userStatistics,
   generalStatistics,
   leaderboard,
-  postScores,
   prevReward,
+  superLikeMessage,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

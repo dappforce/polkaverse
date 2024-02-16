@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import { MdVerified } from 'react-icons/md'
 import { ReactNode } from 'react-markdown'
 import config from 'src/config'
-import { useIsMyAddressWhitelisted } from 'src/config/constants'
 import LatestPostsPage from '../posts/LatestPostsPage'
 import { useShowLikeablePostsContext } from '../posts/ShowLikeablePostsContext'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
@@ -39,12 +38,12 @@ const verifiedIcon = (
 )
 
 export const postFilterOpt: Filter[] = [
+  { label: 'Hot Posts', icon: '🔥', value: 'hot' },
   {
     label: 'Featured Posts',
     icon: verifiedIcon,
     value: 'suggested',
   },
-  { label: 'Hot Posts', icon: '🔥', value: 'hot' },
   { label: 'All Posts', value: 'latest' },
   // removed most liked and commented
   // ...offchainPostFilterOpt,
@@ -111,7 +110,6 @@ const onChangeWrap = (onChange: OnChangeFn) => (e: RadioChangeEvent) => onChange
 export const Filters = (props: Props) => {
   const { tabKey, isAffix } = props
   const { isMobile } = useResponsiveSize()
-  const isWhitelisted = useIsMyAddressWhitelisted()
 
   const { setValue, value } = useShowLikeablePostsContext()
 
@@ -121,7 +119,7 @@ export const Filters = (props: Props) => {
 
   if (tabKey === 'feed' || !enableGraphQl) return null
 
-  const onFilterChange: any = (value: PostFilterType = 'suggested') =>
+  const onFilterChange: any = (value: PostFilterType = 'hot') =>
     setFiltersInUrl(router, tabKey, { type: value, date: date as DateFilterType })
 
   const onDateChange: any = (value: DateFilterType = 'week') =>
@@ -135,10 +133,7 @@ export const Filters = (props: Props) => {
 
   if (!needDateFilter && !filterByKey[tabKey]?.length) return null
 
-  let filters = filterByKey[tabKey]
-  if (!isWhitelisted && tabKey === 'posts') {
-    filters = filters.filter(({ value }) => value !== 'hot')
-  }
+  const filters = filterByKey[tabKey]
 
   if (isAffix && showLikablePostsCheckbox) {
     return (

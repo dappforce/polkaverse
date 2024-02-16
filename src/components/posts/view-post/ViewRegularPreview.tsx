@@ -1,7 +1,5 @@
 import { FC, useState } from 'react'
 import { CommentSection } from 'src/components/comments/CommentsSection'
-import { useAppSelector } from 'src/rtk/app/store'
-import { selectPostScore } from 'src/rtk/features/posts/postScoreSlice'
 import { SpaceData } from 'src/types'
 import { InfoPostPreview, PostActionsPanel } from './helpers'
 import { PreviewProps } from './PostPreview'
@@ -17,8 +15,6 @@ export const RegularPreview: ComponentType = props => {
   const { postDetails, space, withImage, replies, withTags, withActions } = props
   const [commentsSection, setCommentsSection] = useState(false)
 
-  const score = useAppSelector(state => selectPostScore(state, postDetails.post.id))
-
   return (
     <>
       <InfoPostPreview
@@ -28,7 +24,6 @@ export const RegularPreview: ComponentType = props => {
         withTags={withTags}
         withMarginForCardType={!withActions}
       />
-      {score?.score}
       {withActions && (
         <PostActionsPanel
           postDetails={postDetails}
