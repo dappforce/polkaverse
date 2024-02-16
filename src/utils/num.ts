@@ -14,3 +14,8 @@ export const tryParseInt = (maybeNum: string | number, def: number): number => {
 
 export const descSortBns = (ids: BN[]) => ids.sort((a, b) => b.sub(a).toNumber())
 export const descSort = (ids: string[]) => ids.sort((a, b) => new BN(b).sub(new BN(a)).toNumber())
+
+export function parseToBigInt(value: string | undefined) {
+  if (!value) return BigInt(0)
+  return BigInt(value.split('.')[0])
+}

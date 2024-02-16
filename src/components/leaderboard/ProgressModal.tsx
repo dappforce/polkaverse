@@ -9,6 +9,7 @@ import { resolveIpfsUrl } from 'src/ipfs'
 import { useFetchProfileSpace, useSelectProfile } from 'src/rtk/app/hooks'
 import { useFetchUserPrevReward } from 'src/rtk/features/activeStaking/hooks'
 import { PrevRewardStatus } from 'src/rtk/features/activeStaking/prevRewardSlice'
+import { parseToBigInt } from 'src/utils'
 import { resizeImage } from 'src/utils/image'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
@@ -159,7 +160,11 @@ function InnerProgressModal() {
           setVisible(false)
           progressModalStorage.close()
         }}
-        title={`Your progress ${isUsingLastWeekData ? 'last week' : 'yesterday'}`}
+        title={
+          <span className={clsx('FontLarge')}>
+            Your progress {isUsingLastWeekData ? 'last week' : 'yesterday'}
+          </span>
+        }
         closable
         className={clsx(styles.ProgressModal, statusClassName[status])}
         contentClassName={styles.Content}
@@ -174,14 +179,17 @@ function InnerProgressModal() {
         <div
           id='progress-image'
           className={clsx(styles.ProgressModal, statusClassName[status], 'position-relative')}
-          style={{ width: '575px', display: 'none' }}
+          style={{ width: '550px', display: 'none' }}
         >
-          <div className='ant-modal-content p-5'>
+          <div
+            className='ant-modal-content px-4'
+            style={{ paddingTop: '2.6rem', paddingBottom: '3rem' }}
+          >
             <img
               src='/images/creators/diamonds/diamond-top-left.svg'
               className={clsx(styles.OutsideDiamondLeft)}
             />
-            <div style={{ maxWidth: '350px', margin: '0 auto' }}>
+            <div style={{ maxWidth: '410px', margin: '0 auto' }}>
               <ProgressPanel forPostImage hasAvatarLoaded={hasAvatarLoaded} />
             </div>
           </div>
@@ -268,7 +276,8 @@ function ProgressPanel({
   }
 
   const shareOnPolkaverse = () => {
-    const { isZero, value } = formatSUB(data?.earned)
+    const total = parseToBigInt(data?.earned.staker) + parseToBigInt(data?.earned.creator)
+    const { isZero, value } = formatSUB(total.toString())
     const title = `I earned ${isZero ? '' : `${value} `}SUB ${
       isUsingLastWeekData ? 'last week for my activity' : 'yesterday'
     } on Subsocial!`
@@ -286,7 +295,8 @@ function ProgressPanel({
   }
 
   const shareOnX = () => {
-    const { isZero, value } = formatSUB(data?.earned)
+    const total = parseToBigInt(data?.earned.staker) + parseToBigInt(data?.earned.creator)
+    const { isZero, value } = formatSUB(total.toString())
     generateImage(image => {
       openNewWindow(
         twitterShareUrl(
@@ -305,19 +315,7 @@ function ProgressPanel({
       content: (
         <FormatBalance
           withMutedDecimals={false}
-          value={data?.earned}
-          precision={2}
-          currency='SUB'
-          decimals={10}
-        />
-      ),
-    },
-    {
-      title: "Creator's rewards",
-      content: (
-        <FormatBalance
-          withMutedDecimals={false}
-          value={data?.earned}
+          value={data?.earned.staker}
           precision={2}
           currency='SUB'
           decimals={10}
@@ -325,6 +323,20 @@ function ProgressPanel({
       ),
     },
   ]
+  if (data?.earned.creator && data?.earned.creator !== '0') {
+    rewardContents.push({
+      title: "Creator's rewards",
+      content: (
+        <FormatBalance
+          withMutedDecimals={false}
+          value={data?.earned.creator}
+          precision={2}
+          currency='SUB'
+          decimals={10}
+        />
+      ),
+    })
+  }
 
   return (
     <>
@@ -344,7 +356,7 @@ function ProgressPanel({
             />
           </div>
           <div className='d-flex flex-column'>
-            <span className='FontLarge FontWeightBold mb-1'>{usedContent.title}</span>
+            <span className='FontLarge FontWeightSemibold mb-1'>{usedContent.title}</span>
             <p className={clsx('mb-0', styles.MutedText)}>{usedContent.subtitle}</p>
           </div>
         </div>

@@ -23,6 +23,7 @@ import {
   SuperLikeCount,
 } from 'src/rtk/features/activeStaking/superLikeCountsSlice'
 import { SuperLikeMessage } from 'src/rtk/features/activeStaking/superLikeMessageSlice'
+import { parseToBigInt } from 'src/utils'
 import {
   createSocialDataEventPayload,
   DatahubParams,
@@ -85,10 +86,6 @@ const GET_POST_REWARDS = gql`
     }
   }
 `
-function parseToBigInt(value: string | undefined) {
-  if (!value) return BigInt(0)
-  return BigInt(value.split('.')[0])
-}
 export async function getPostRewards(postIds: string[]): Promise<PostRewards[]> {
   const res = await datahubQueryRequest<
     {
@@ -418,8 +415,12 @@ const GET_USER_YESTERDAY_REWARD = gql`
         period: DAY
         periodValue: $timestamp
         staker: { likedPosts: true, earnedByPeriod: true }
+        creator: { earnedByPeriod: true }
       }
     ) {
+      creator {
+        earnedByPeriod
+      }
       staker {
         likedPosts
         earnedByPeriod
@@ -435,8 +436,12 @@ const GET_USER_LAST_WEEK_REWARD = gql`
         period: WEEK
         periodValue: $timestamp
         staker: { earnedByPeriod: true, likedPostsByDay: true, likedPosts: true }
+        creator: { earnedByPeriod: true }
       }
     ) {
+      creator {
+        earnedByPeriod
+      }
       staker {
         earnedByPeriod
         likedPostsByDay {
@@ -456,6 +461,9 @@ export async function getUserPrevReward({ address }: { address: string }): Promi
     const res = await datahubQueryRequest<
       {
         activeStakingAccountActivityMetricsForFixedPeriod: {
+          creator: {
+            earnedByPeriod: string
+          }
           staker: {
             earnedByPeriod: string
             likedPostsByDay: {
@@ -490,7 +498,10 @@ export async function getUserPrevReward({ address }: { address: string }): Promi
     return {
       address,
       period: 'WEEK',
-      earned: data.staker.earnedByPeriod,
+      earned: {
+        staker: data.staker.earnedByPeriod,
+        creator: data.creator.earnedByPeriod,
+      },
       likedPosts: totalLikes,
       rewardStatus,
     }
@@ -500,6 +511,9 @@ export async function getUserPrevReward({ address }: { address: string }): Promi
         activeStakingAccountActivityMetricsForFixedPeriod: {
           staker: {
             likedPosts: number
+            earnedByPeriod: string
+          }
+          creator: {
             earnedByPeriod: string
           }
         }
@@ -527,7 +541,10 @@ export async function getUserPrevReward({ address }: { address: string }): Promi
     return {
       address,
       period: 'DAY',
-      earned: data.staker.earnedByPeriod,
+      earned: {
+        creator: data.creator.earnedByPeriod,
+        staker: data.staker.earnedByPeriod,
+      },
       likedPosts: data.staker.likedPosts,
       rewardStatus,
       missedReward,
