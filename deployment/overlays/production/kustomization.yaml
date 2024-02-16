@@ -2,8 +2,5 @@
 bases:
   - ../../base
 
-resources:
-  - ingress.yaml
-
 patchesStrategicMerge:
   - deployment.yaml
