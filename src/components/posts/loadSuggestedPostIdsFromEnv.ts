@@ -1,6 +1,6 @@
 import { SubsocialApi } from '@subsocial/api'
 import config from 'src/config'
-import { PINNED_POST_IDS } from 'src/config/constants'
+import { PINNED_POST_ID } from 'src/config/constants'
 import { getPostIdsBySpaces } from 'src/graphql/apis'
 import { GqlClient } from 'src/graphql/ApolloProvider'
 import { AnySpaceId, PostId } from 'src/types'
@@ -30,7 +30,7 @@ export const loadSuggestedPostIds = async ({
     return descSort(suggestedPostIds)
   } else if (client) {
     const postIds = await getPostIdsBySpaces(client, { spaceIds: recommendedIds })
-    return Array.from(new Set([...PINNED_POST_IDS, ...postIds]))
+    return Array.from(new Set([PINNED_POST_ID, ...postIds]))
   }
   return []
 }
