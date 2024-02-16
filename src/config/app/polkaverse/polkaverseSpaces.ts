@@ -68,4 +68,21 @@ export default [
   '12332',
   // WagMedia Weekly Newsletter
   '6111',
+
+  // Yugocean
+  '12743',
+  // PVM
+  '12744',
+  // Crypto Wealth
+  '12704',
+  // Evergenius
+  '12735',
+  // alberdioni8406
+  '12733',
+  // Making Digital
+  '12755',
+  // Ticktalker
+  '12774',
+  // Reiniscouple
+  '12784'
 ]

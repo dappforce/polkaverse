@@ -23,7 +23,7 @@ export const CREATORS_CONSTANTS = {
   },
 }
 
-const PINNED_POST_IDS = ['62208', '62345']
+const PINNED_POST_IDS = ['64687']
 export const PINNED_POST_ID = PINNED_POST_IDS[Math.floor(Math.random() * PINNED_POST_IDS.length)]
 export function isPinnedPost(postId: string) {
   return PINNED_POST_ID === postId
