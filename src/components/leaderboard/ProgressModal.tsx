@@ -185,8 +185,8 @@ function InnerProgressModal() {
             style={{ paddingTop: '2.6rem', paddingBottom: '3rem' }}
           >
             <img
-              src='/images/creators/diamonds/diamond-top-left.svg'
-              className={clsx(styles.OutsideDiamondLeft)}
+              src='/images/creators/diamonds/diamond-right.svg'
+              className={clsx(styles.OutsideDiamondRight)}
             />
             <div style={{ maxWidth: '410px', margin: '0 auto' }}>
               <ProgressPanel forPostImage hasAvatarLoaded={hasAvatarLoaded} />
@@ -409,11 +409,13 @@ function RewardCard({
 }) {
   return (
     <div className={clsx(styles.RewardCard)}>
-      <DfImage
-        preview={false}
-        src='/images/creators/diamonds/diamond.png'
-        className={clsx(styles.Diamond, forPostImage && styles.DiamondRight)}
-      />
+      {!forPostImage && (
+        <DfImage
+          preview={false}
+          src='/images/creators/diamonds/diamond.png'
+          className={clsx(styles.Diamond)}
+        />
+      )}
       <div className={clsx('d-flex align-items-center w-100')}>
         {contents.map(({ title, content }) => (
           <div className={styles.RewardCardContent} style={{ flex: '1' }} key={title}>
