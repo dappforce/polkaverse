@@ -149,6 +149,9 @@ const TabsHomePage = ({
   }, [setCurrentTabVariant, tab])
 
   const onChangeKey = (key: string) => {
+    let type = 'suggested'
+    if (key === 'posts') type = 'hot'
+
     const typeValue = getFilterType(key, type)
     const filterType =
       key !== 'feed' ? ({ type: typeValue, date } as FilterType<EntityFilter>) : undefined
