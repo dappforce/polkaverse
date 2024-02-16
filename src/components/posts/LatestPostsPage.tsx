@@ -152,7 +152,10 @@ const InfiniteListOfPublicPosts = (props: Props) => {
         noDataDesc={`No ${entity} yet`}
         getKey={postId => postId}
         renderItem={postId => (
-          <PublicPostPreviewById showPinnedIcon={isSuggested(filter)} postId={postId} />
+          <PublicPostPreviewById
+            showPinnedIcon={isSuggested(filter) || filter === 'hot'}
+            postId={postId}
+          />
         )}
       />
     ) : null
