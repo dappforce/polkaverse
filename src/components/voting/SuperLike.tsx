@@ -52,6 +52,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const myAddress = useMyAddress()
   const sendEvent = useSendEvent()
   const getSigner = useGetCurrentSigner()
+  const [isSigning, setIsSigning] = useState(false)
 
   const { data: superLikeMessage } = useFetchSuperLikeMessage()
 
@@ -194,7 +195,9 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
             block
             type='primary'
             size='large'
+            loading={isSigning}
             onClick={async () => {
+              setIsSigning(true)
               const signer = await getSigner()
               if (signer && myAddress) {
                 const message = superLikeMessage.message
@@ -205,7 +208,9 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
                 })
                 localStorage.setItem(CURRENT_WEEK_SIG, signature?.signature.toString() ?? '')
               }
+              setIsSigning(false)
               setIsOpenActiveStakingModal(false)
+              onClick()
             }}
           >
             Confirm
