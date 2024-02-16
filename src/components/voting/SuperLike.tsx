@@ -189,8 +189,8 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
         visible={isOpenActiveStakingModal}
         destroyOnClose
         onCancel={() => setIsOpenActiveStakingModal(false)}
-        title='Join the Content Staking Program!'
-        subtitle='By confirming, you agree to participate in the Content Staking Program, where you may get SUB tokens, NFTs, or other tokens, based on your active engagement.'
+        title='Join a new week of Content Staking!'
+        subtitle='By confirming, you agree to participate in the Content Staking Program this week, where you may get SUB tokens, NFTs, or other tokens, based on your active engagement.'
       >
         <div className='d-flex flex-column align-items-center GapLarge'>
           <Image
