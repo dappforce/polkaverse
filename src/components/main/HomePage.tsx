@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import config from 'src/config'
-import { useIsMyAddressWhitelisted } from 'src/config/constants'
 import { GET_TOTAL_COUNTS } from 'src/graphql/queries'
 import { GetHomePageData } from 'src/graphql/__generated__/GetHomePageData'
 import { useSendEvent } from 'src/providers/AnalyticContext'
@@ -103,11 +102,17 @@ const TabsHomePage = ({
   const [hidden, setHidden] = useState(false)
 
   const getFiltersFromUrl = () => {
-    const {
+    let {
       tab: tabFromUrl = isSignedIn ? 'feed' : 'posts',
       date: dateFromUrl = 'week',
       type: typeFromUrl = 'suggested',
     } = router.query
+
+    if (!typeFromUrl && tabFromUrl === 'posts') {
+      typeFromUrl = 'hot'
+    } else {
+      typeFromUrl = 'suggested'
+    }
 
     const tabIndex = tabs.findIndex(tab => tab === tabFromUrl)
 
@@ -127,11 +132,6 @@ const TabsHomePage = ({
 
   const myAddress = useMyAddress() ?? ''
   const { data: totalStake } = useFetchTotalStake(myAddress)
-
-  const isWhitelisted = useIsMyAddressWhitelisted()
-  if (!isWhitelisted && type === 'hot') {
-    type = 'suggested'
-  }
 
   const sendEvent = useSendEvent()
   useEffect(() => {
@@ -156,7 +156,9 @@ const TabsHomePage = ({
     setFiltersInUrl(router, key, filterType)
   }
 
-  useEffect(() => onChangeKey(tab), [isSignedIn])
+  useEffect(() => {
+    onChangeKey(tab)
+  }, [isSignedIn])
 
   const handleScroll = () => {
     const currentScrollPos = window.pageYOffset
