@@ -105,7 +105,6 @@ export const createCheckSpacePermission =
 export const useCreateCheckSpacePermission = (props: Omit<HookProps, 'permission'>) => {
   const checkProps = usePreparePropsForPermissionChecker(props.space)
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   if (!checkProps) return () => false
 
   return createCheckSpacePermission({ ...props, ...checkProps })
