@@ -79,10 +79,9 @@ export default [
   '12735',
   // alberdioni8406
   '12733',
-  // Making Digital
-  '12755',
-  // Ticktalker
-  '12774',
   // Reiniscouple
-  '12784'
+  '12784',
+
+  // dappforce.polka
+  '12814',
 ]
