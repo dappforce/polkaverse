@@ -15,7 +15,7 @@ import {
 } from 'src/rtk/app/hooks'
 import { IpfsCid, PostId, SharedPostContent, SpaceId } from 'src/types'
 import { CreateSpaceButton } from '../../../spaces/helpers'
-import { getTxParams } from '../../../substrate'
+import { getNewIdFromEvent, getTxParams } from '../../../substrate'
 import { useSubsocialApi } from '../../../substrate/SubstrateContext'
 import DfMdEditor from '../../../utils/DfMdEditor'
 import { MyAccountProps } from '../../../utils/MyAccount'
@@ -92,7 +92,27 @@ const InnerSharePostModal = (props: Props) => {
       tx={'posts.createPost'}
       onFailed={onTxFailed}
       onSuccess={onTxSuccess}
-      successMessage='Shared to your space'
+      successMessage={res => {
+        const newId = getNewIdFromEvent(res)
+        if (newId)
+          return (
+            <div className='d-flex flex-column'>
+              <span>Shared to your space</span>
+              <a href={`/${spaceId}/${newId.toString()}`} target='_blank' rel='noreferrer'>
+                Open post
+              </a>
+            </div>
+          )
+        else
+          return (
+            <div className='d-flex flex-column'>
+              <span>Shared to your space</span>
+              <a href={`/${spaceId}`} target='_blank' rel='noreferrer'>
+                Open post
+              </a>
+            </div>
+          )
+      }}
       failedMessage='Failed to share'
     />
   )
