@@ -154,7 +154,7 @@ export default function OnBoardingModal({
 
     if (openState === 'full-on-boarding') {
       if (router.pathname === '/') {
-        setFiltersInUrl(router, 'posts', { type: 'hot', date: 'week' })
+        setFiltersInUrl(router, 'posts', { type: 'suggested', date: 'week' })
       }
 
       setIsFinishedOnBoarding(true)

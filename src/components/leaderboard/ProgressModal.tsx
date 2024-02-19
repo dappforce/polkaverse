@@ -20,7 +20,6 @@ import { useSubsocialApi } from '../substrate'
 import { twitterShareUrl } from '../urls'
 import { fullUrl, openNewWindow } from '../urls/helpers'
 import { DfImage } from '../utils/DfImage'
-import DiamondIcon from '../utils/icons/Diamond'
 import { controlledMessage } from '../utils/Message'
 import styles from './ProgressModal.module.sass'
 
@@ -339,7 +338,6 @@ function ProgressPanel({
 
   return (
     <>
-      {!forPostImage && <DiamondIcon className={styles.DiamondIcon} />}
       <div className={clsx(styles.ProgressModalContent)}>
         <div className={clsx('d-flex', isMobile ? 'GapSmall' : 'GapNormal')}>
           <div className='mt-2'>
@@ -355,8 +353,10 @@ function ProgressPanel({
             />
           </div>
           <div className='d-flex flex-column'>
-            <span className='FontLarge FontWeightSemibold mb-1'>{usedContent.title}</span>
-            <p className={clsx('mb-0', styles.MutedText)}>{usedContent.subtitle}</p>
+            <span className='FontLarge FontWeightSemibold'>{usedContent.title}</span>
+            <p className={clsx('mb-0', styles.MutedText)} style={{ lineHeight: 1.4 }}>
+              {usedContent.subtitle}
+            </p>
           </div>
         </div>
         <div className='d-flex w-100 GapSmall'>
