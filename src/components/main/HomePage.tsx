@@ -151,10 +151,12 @@ const TabsHomePage = ({
   }, [setCurrentTabVariant, tab])
 
   const onChangeKey = (key: string) => {
-    let type = 'suggested'
-    if (key === 'posts') type = 'hot'
+    let usedType = type
+    // prevTab is spaces, and new tab is posts, so this happens if user clicks on posts tab while before he's on the spaces tab
+    // set the default filter to hot posts
+    if (tab === 'spaces' && key === 'posts') usedType = 'hot'
 
-    const typeValue = getFilterType(key, type)
+    const typeValue = getFilterType(key, usedType)
     const filterType =
       key !== 'feed' ? ({ type: typeValue, date } as FilterType<EntityFilter>) : undefined
 
