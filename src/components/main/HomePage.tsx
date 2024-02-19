@@ -105,16 +105,8 @@ const TabsHomePage = ({
     let {
       tab: tabFromUrl = isSignedIn ? 'feed' : 'posts',
       date: dateFromUrl = 'week',
-      type: typeFromUrl,
+      type: typeFromUrl = 'suggested',
     } = router.query
-
-    if (!typeFromUrl) {
-      if (tabFromUrl === 'posts') {
-        typeFromUrl = 'hot'
-      } else {
-        typeFromUrl = 'suggested'
-      }
-    }
 
     const tabIndex = tabs.findIndex(tab => tab === tabFromUrl)
 
@@ -151,12 +143,7 @@ const TabsHomePage = ({
   }, [setCurrentTabVariant, tab])
 
   const onChangeKey = (key: string) => {
-    let usedType = type
-    // prevTab is spaces, and new tab is posts, so this happens if user clicks on posts tab while before he's on the spaces tab
-    // set the default filter to hot posts
-    if (tab === 'spaces' && key === 'posts') usedType = 'hot'
-
-    const typeValue = getFilterType(key, usedType)
+    const typeValue = getFilterType(key, type)
     const filterType =
       key !== 'feed' ? ({ type: typeValue, date } as FilterType<EntityFilter>) : undefined
 
