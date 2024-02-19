@@ -21,9 +21,11 @@ import config from 'src/config'
 
 const { enableSubnetMode, enableDomains } = config
 
-const suggestFeatureUrl = 'https://subnet.hellonext.co/'
+const suggestFeatureUrl =
+  'https://github.com/dappforce/polkaverse/issues/new?assignees=&labels=enhancement&projects=&template=feature-request.md'
 
-const issuesUrl = 'https://forms.clickup.com/9008022125/f/8ceq0kd-7261/7PAH62P0XTHM9UIV4Q'
+const issuesUrl =
+  'https://github.com/dappforce/polkaverse/issues/new?assignees=&labels=bug&projects=&template=bug-report.md'
 
 export type Divider = 'Divider'
 
