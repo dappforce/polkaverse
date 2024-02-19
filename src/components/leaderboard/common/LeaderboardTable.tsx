@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import Link from 'next/link'
 import { ComponentProps, useEffect, useMemo, useRef, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { DfImage } from 'src/components/utils/DfImage'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchProfileSpaces, useSelectProfile } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
@@ -71,6 +72,7 @@ export default function LeaderboardTable({
   }, [data, currentUserRank])
 
   const { loading } = useFetchProfileSpaces({ ids: addresses })
+  const isLoading = loading || page === 0
 
   return (
     <>
@@ -84,7 +86,21 @@ export default function LeaderboardTable({
           <span style={{ textAlign: 'right' }}>Rewards</span>
         </div>
         {slicedData.length === 0 &&
-          Array.from({ length: 3 }).map((_, idx) => <UserRowSkeleton key={idx} />)}
+          (isLoading ? (
+            Array.from({ length: 3 }).map((_, idx) => <UserRowSkeleton key={idx} />)
+          ) : (
+            <div
+              className='d-flex flex-column justify-content-center align-items-center text-center pb-3'
+              style={{ gridColumn: '1/4' }}
+            >
+              <DfImage src='/images/medals.png' preview={false} size={70} />
+              <span className='FontSmall' style={{ color: '#64748B' }}>
+                {role === 'creator'
+                  ? 'Create great content and get the most likes to show up here!'
+                  : 'Like the most posts to reach the top!'}
+              </span>
+            </div>
+          ))}
         {slicedData.map(row => (
           <UserRow
             currentAddress={currentUserRank?.address}
@@ -94,9 +110,11 @@ export default function LeaderboardTable({
             loading={!!loading}
           />
         ))}
-        <Button onClick={() => setIsOpenModal(true)} type='link' className={styles.ViewMore}>
-          View more
-        </Button>
+        {slicedData.length !== 0 && (
+          <Button onClick={() => setIsOpenModal(true)} type='link' className={styles.ViewMore}>
+            View more
+          </Button>
+        )}
       </div>
       <LeaderboardTableModal
         isLoadingFirstBatchOfData={!!loading}
