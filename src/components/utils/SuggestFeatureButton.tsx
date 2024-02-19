@@ -22,5 +22,5 @@ export const ExternalButtonWithBulb = ({ url }: ButtonWithBulbProps) => (
 )
 
 export const SugestFeature = () => (
-  <ExternalButtonWithBulb url='https://forms.gle/sdmMJN3n4sxyNTWW7' />
+  <ExternalButtonWithBulb url='https://github.com/dappforce/polkaverse/issues/new?assignees=&labels=enhancement&projects=&template=feature-request.md' />
 )
