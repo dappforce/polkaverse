@@ -101,7 +101,11 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
       parentPost && (
         <>
           In response to{' '}
-          <ViewPostLink space={spaceStruct} post={parentPost} title={title || smallSummary} />
+          <ViewPostLink
+            space={spaceStruct}
+            post={parentPost}
+            title={title || smallSummary || 'the post'}
+          />
         </>
       )
     )
