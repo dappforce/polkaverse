@@ -9,7 +9,6 @@ import {
   useGetCommentActivities,
   useGetFollowActivities,
   useGetPostActivities,
-  useGetReactionActivities,
   useGetTweetActivities,
 } from 'src/graphql/hooks'
 import { useIsMyAddress } from '../auth/MyAccountsContext'
@@ -33,6 +32,7 @@ const AllActivities = (props: BaseActivityProps) => {
   return (
     <NotifActivities
       {...props}
+      showMuted
       type='activities'
       loadMore={loadMoreActivities}
       noDataDesc='No activities yet'
@@ -41,19 +41,19 @@ const AllActivities = (props: BaseActivityProps) => {
   )
 }
 
-const ReactionActivities = (props: BaseActivityProps) => {
-  const getReactionActivities = useGetReactionActivities()
-  const loadMoreReactions = createLoadMoreActivities(getReactionActivities)
-  return (
-    <NotifActivities
-      {...props}
-      type='activities'
-      loadMore={loadMoreReactions}
-      noDataDesc='No reactions yet'
-      loadingLabel='Loading reactions...'
-    />
-  )
-}
+// const ReactionActivities = (props: BaseActivityProps) => {
+//   const getReactionActivities = useGetReactionActivities()
+//   const loadMoreReactions = createLoadMoreActivities(getReactionActivities)
+//   return (
+//     <NotifActivities
+//       {...props}
+//       type='activities'
+//       loadMore={loadMoreReactions}
+//       noDataDesc='No reactions yet'
+//       loadingLabel='Loading reactions...'
+//     />
+//   )
+// }
 
 const FollowActivities = (props: BaseActivityProps) => {
   const getFollowActivities = useGetFollowActivities()
@@ -61,6 +61,7 @@ const FollowActivities = (props: BaseActivityProps) => {
   return (
     <NotifActivities
       {...props}
+      showMuted
       type='activities'
       loadMore={loadMoreFollows}
       noDataDesc='No follows yet'
@@ -75,6 +76,7 @@ const CommentActivities = (props: BaseActivityProps) => {
   return (
     <FeedActivities
       {...props}
+      showMuted
       loadMore={loadMoreComments}
       noDataDesc='No comments yet'
       loadingLabel='Loading comments...'
@@ -88,6 +90,7 @@ const PostActivities = (props: BaseActivityProps) => {
   return (
     <FeedActivities
       {...props}
+      showMuted
       loadMore={loadMorePosts}
       noDataDesc='No posts yet'
       loadingLabel='Loading posts...'
@@ -101,6 +104,7 @@ const TweetActivities = (props: BaseActivityProps) => {
   return (
     <FeedActivities
       {...props}
+      showMuted
       loadMore={loadMorePosts}
       noDataDesc='No tweets yet'
       loadingLabel='Loading tweets...'
@@ -156,7 +160,7 @@ const OffchainAccountActivity = ({ address }: ActivitiesByAddressProps) => {
   const {
     postsCount,
     commentsCount,
-    reactionsCount,
+    // reactionsCount,
     followsCount,
     activitiesCount,
     spacesCount,
@@ -192,13 +196,13 @@ const OffchainAccountActivity = ({ address }: ActivitiesByAddressProps) => {
       <TabPane tab={getTabTitle('Comments', commentsCount)} key={getTab('comments')}>
         <CommentActivities address={address} totalCount={commentsCount} />
       </TabPane>
-      <TabPane
+      {/* <TabPane
         tab={getTabTitle('Reactions', reactionsCount)}
         key={getTab('reactions')}
         className={panePaddingClass}
       >
         <ReactionActivities address={address} totalCount={reactionsCount} />
-      </TabPane>
+      </TabPane> */}
       <TabPane
         tab={getTabTitle('Follows', followsCount)}
         key={getTab('follows')}

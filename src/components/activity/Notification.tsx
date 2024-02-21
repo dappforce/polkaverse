@@ -75,6 +75,7 @@ const NotificationMessage = ({
 
 type NotificationProps = Activity & {
   type: NotifActivitiesType
+  showMuted?: boolean
 }
 
 type InnerNotificationProps = NotificationProps &
@@ -208,8 +209,8 @@ const AccountNotification = (props: NotificationProps) => {
 }
 
 const PostNotification = (props: NotificationProps) => {
-  const { postId, event } = props
-  const postDetails = useSelectPost(postId)
+  const { postId, event, showMuted } = props
+  const postDetails = useSelectPost(postId, showMuted)
 
   let originalPostId = ''
   if (postDetails && postDetails.post.struct.isSharedPost) {
@@ -259,8 +260,8 @@ const PostNotification = (props: NotificationProps) => {
 }
 
 const CommentNotification = (props: NotificationProps) => {
-  const { commentId, event } = props
-  const commentDetails = useSelectPost(commentId)
+  const { commentId, event, showMuted } = props
+  const commentDetails = useSelectPost(commentId, showMuted)
 
   const rootPostId = commentDetails
     ? asCommentData(commentDetails.post)?.struct?.rootPostId
@@ -336,8 +337,8 @@ function getReactionType(
   }
 }
 const PostReactionNotification = (props: NotificationProps) => {
-  const { postId, reactionKind, event, type } = props
-  const postDetails = useSelectPost(postId)
+  const { postId, reactionKind, event, type, showMuted } = props
+  const postDetails = useSelectPost(postId, showMuted)
 
   if (!postDetails) return null
 
@@ -373,8 +374,8 @@ const PostReactionNotification = (props: NotificationProps) => {
 }
 
 const CommentReactionNotification = (props: NotificationProps) => {
-  const { commentId, event, reactionKind, type } = props
-  const commentDetails = useSelectPost(commentId)
+  const { commentId, event, reactionKind, type, showMuted } = props
+  const commentDetails = useSelectPost(commentId, showMuted)
 
   const rootPostId = commentDetails
     ? asCommentData(commentDetails.post)?.struct?.rootPostId

@@ -1,7 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { AccountId } from '@polkadot/types/interfaces'
 import { isEmptyStr } from '@subsocial/utils'
-import { Button } from 'antd'
+import { Alert, Button } from 'antd'
 import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
@@ -31,7 +31,7 @@ import { CopyAddress } from './address-views/utils'
 import router from 'next/router'
 import { Donate } from 'src/components/donate'
 import { isBlockedAccount } from 'src/moderation'
-import { useFetchSpaceIdsByFollower } from 'src/rtk/app/hooks'
+import { useFetchSpaceIdsByFollower, useIsMuted } from 'src/rtk/app/hooks'
 import { fetchEntityOfSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
 import { convertToSubsocialAddress } from 'src/utils/address'
 import { useAppSelector } from '../../rtk/app/store'
@@ -51,6 +51,8 @@ export type Props = {
 
 const Component = (props: Props) => {
   const { address, size = LARGE_AVATAR_SIZE } = props
+
+  const isMuted = useIsMuted(props.address.toString())
 
   const owner = useSelectProfile(address.toString()) || props.owner
   const profileSpaceByAccount = useAppSelector(state =>
@@ -105,8 +107,9 @@ const Component = (props: Props) => {
     )
 
   return (
-    <Section outerClassName='d-flex mb-2'>
-      <div className='d-flex'>
+    <Section outerClassName='mb-2'>
+      <div className='d-flex flex-column w-100'>
+        {isMuted && <Alert message='⚠️ You muted this account' type='warning' className='mb-3' />}
         <div className='d-flex mb-3'>
           <Avatar
             size={size || LARGE_AVATAR_SIZE}
