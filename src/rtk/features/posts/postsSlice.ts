@@ -3,6 +3,7 @@ import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@r
 import { SubsocialApi } from '@subsocial/api'
 import { FindPostsQuery } from '@subsocial/api/filters'
 import { getFirstOrUndefined } from '@subsocial/utils'
+import { isServerSide } from 'src/components/utils'
 import { getPostsData } from 'src/graphql/apis'
 import { PostFragmentMapped, PostFragmentWithParent } from 'src/graphql/apis/types'
 import {
@@ -244,11 +245,16 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
         entities,
       )
 
+      // no need to wait for posts rewards fetch in client side
+      const postsRewardPromise = dispatch(fetchPostRewards({ postIds: newIds as string[] }))
       const fetches: Promise<any>[] = [
         dispatch(fetchSuperLikeCounts({ postIds: newIds as string[] })),
-        dispatch(fetchPostRewards({ postIds: newIds as string[] })),
         dispatch(fetchCanPostsSuperLiked({ postIds: newIds as string[] })),
       ]
+      // need to wait for posts rewards in server side because if not waited, the data won't get passed to fe
+      if (isServerSide()) {
+        fetches.push(postsRewardPromise)
+      }
 
       if (withOwner) {
         const ids = getUniqueOwnerIds(entities)

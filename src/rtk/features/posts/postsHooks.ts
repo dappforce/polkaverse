@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import config from 'src/config'
 import { useActions } from 'src/rtk/app/helpers'
 import { useAppSelector } from 'src/rtk/app/store'
 import { asCommentStruct, PostId, PostStruct, PostWithSomeDetails } from 'src/types'
@@ -15,8 +16,15 @@ import {
   upsertPost,
 } from './postsSlice'
 
+export function useIsMuted(address: string) {
+  const myAddress = useMyAddress() ?? ''
+  const mutedAccounts = config.mutedAccounts?.[myAddress]
+  return mutedAccounts?.includes(address) ?? false
+}
+
 export const useSelectPost = (postId?: PostId): PostWithSomeDetails | undefined => {
   const struct = useAppSelector(state => (postId ? selectPostStructById(state, postId) : undefined))
+  const isMuted = useIsMuted(struct?.ownerId || '')
 
   const cid = struct?.contentId
   const content = useAppSelector(state => (cid ? selectPostContentById(state, cid) : undefined))
@@ -30,7 +38,7 @@ export const useSelectPost = (postId?: PostId): PostWithSomeDetails | undefined 
   const spaceId = struct?.spaceId || rootPostStruct?.spaceId
   const space = useSelectSpace(spaceId)
 
-  if (!struct || !content) return undefined
+  if (!struct || !content || isMuted) return undefined
 
   const id = struct.id
 

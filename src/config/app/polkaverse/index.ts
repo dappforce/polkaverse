@@ -23,6 +23,14 @@ const index: AppConfig = {
   claimedSpaceIds: ['1', '2', '3', '4', '5'],
   recommendedSpaceIds: polkaverseSpaces,
   suggestedTlds: ['sub', 'polka'],
+  mutedAccounts: {
+    '3tPAVaHYAFRfUVpNP1DAq4E3BxTPanzkGN4uukn3b4ZAefkj': [
+      '3qz2AHix42fKyfdhenuVou9wCefVcGSMCQo9YzQDHqFyU2RF',
+    ],
+    '3qz2AHix42fKyfdhenuVou9wCefVcGSMCQo9YzQDHqFyU2RF': [
+      '3tPAVaHYAFRfUVpNP1DAq4E3BxTPanzkGN4uukn3b4ZAefkj',
+    ],
+  },
 }
 
 export default index
