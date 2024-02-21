@@ -1,16 +1,15 @@
 import { isEmptyArray, nonEmptyArr } from '@subsocial/utils'
+import { Button } from 'antd'
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import { REGULAR_MODAL_HEIGHT } from 'src/config/Size.config'
 import { tryParseInt } from 'src/utils'
 import { isClientSide, isServerSide, Loading } from '../utils'
 import DataList, { DataListProps } from './DataList'
 import { CanHaveMoreDataFn, DataListItemProps, InnerLoadMoreFn } from './types'
-import { useLinkParams } from './utils'
 
 export const DEFAULT_THRESHOLD = isClientSide() ? window.innerHeight / 2 : undefined
 export const DEFAULT_MODAL_THRESHOLD = isClientSide()
@@ -23,7 +22,6 @@ type InnerInfiniteListProps<T> = Partial<DataListProps<T>> &
     totalCount?: number
     loadingLabel?: string
     scrollableTarget?: string
-    withLoadMoreLink?: boolean // Helpful for SEO
     canHaveMoreData: CanHaveMoreDataFn<T>
   }
 
@@ -67,7 +65,6 @@ export const InfiniteListByData = <T extends any>(props: InfiniteListPropsByData
 const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
   const {
     loadingLabel = 'Loading data...',
-    withLoadMoreLink = false,
     dataSource,
     getKey,
     renderItem,
@@ -97,11 +94,6 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
 
   const [hasMore, setHasMore] = useState(canHaveMoreData(dataSource, page))
 
-  const getLinksParams = useLinkParams({
-    defaultSize: DEFAULT_PAGE_SIZE,
-    triggers: [page],
-  })
-
   const handleInfiniteOnLoad = useCallback(async (page: number) => {
     setLoading(true)
     const newData = await loadMore(page, DEFAULT_PAGE_SIZE)
@@ -122,8 +114,6 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
 
   if (!hasInitialData && isEmptyArray(data) && loading) return <Loading label={loadingLabel} />
 
-  const linkProps = getLinksParams(page + 1)
-
   // Default height for modals is set to 300, hence threshold for them is 150.
   return (
     <InfiniteScroll
@@ -143,15 +133,15 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
         getKey={getKey}
         renderItem={renderItem}
       />
-      {withLoadMoreLink && !loading && hasMore && (
-        <ButtonLink
+      {!loading && hasMore && (
+        <Button
+          onClick={() => handleInfiniteOnLoad(page)}
           block
-          {...linkProps}
           className='mb-2'
           style={{ opacity: isServerSide() ? 0 : 1 }}
         >
           Load more
-        </ButtonLink>
+        </Button>
       )}
     </InfiniteScroll>
   )
