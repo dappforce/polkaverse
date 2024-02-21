@@ -87,7 +87,9 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
     : _initialPage || DEFAULT_FIRST_PAGE
 
   const [page, setPage] = useState(initialPage)
-  const [data, setData] = useState(dataSource || [])
+  const [data, setData] = useState(() => {
+    return Array.from(new Set(dataSource || []))
+  })
 
   const loadingInitialState = !hasInitialData
   const [loading, setLoading] = useState(loadingInitialState)
@@ -99,7 +101,7 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
     const newData = await loadMore(page, DEFAULT_PAGE_SIZE)
     data.push(...newData)
 
-    setData([...data])
+    setData(Array.from(new Set(data)))
 
     setHasMore(canHaveMoreData(newData, page))
     setPage(page + 1)
