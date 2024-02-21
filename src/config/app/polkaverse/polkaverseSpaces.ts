@@ -84,4 +84,6 @@ export default [
 
   // dappforce.polka
   '12814',
+  // jam10o
+  '9599',
 ]
