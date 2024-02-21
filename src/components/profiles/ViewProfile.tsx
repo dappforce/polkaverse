@@ -1,4 +1,4 @@
-import { PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined, WarningFilled } from '@ant-design/icons'
 import { AccountId } from '@polkadot/types/interfaces'
 import { isEmptyStr } from '@subsocial/utils'
 import { Alert, Button } from 'antd'
@@ -109,7 +109,18 @@ const Component = (props: Props) => {
   return (
     <Section outerClassName='mb-2'>
       <div className='d-flex flex-column w-100'>
-        {isMuted && <Alert message='⚠️ You muted this account' type='warning' className='mb-3' />}
+        {isMuted && (
+          <Alert
+            message={
+              <div className='d-flex align-items-center GapTiny'>
+                <WarningFilled style={{ color: 'orange' }} />
+                <span>You muted this account</span>
+              </div>
+            }
+            type='warning'
+            className='mb-3'
+          />
+        )}
         <div className='d-flex mb-3'>
           <Avatar
             size={size || LARGE_AVATAR_SIZE}
