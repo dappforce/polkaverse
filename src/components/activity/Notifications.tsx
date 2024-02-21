@@ -15,14 +15,15 @@ export type NotifActivitiesType = 'notifications' | 'activities'
 
 type NotifActivitiesProps = ActivityProps<Activity> & {
   type: NotifActivitiesType
+  showMuted?: boolean
 }
 
-export const NotifActivities = ({ loadMore, type, ...props }: NotifActivitiesProps) => {
+export const NotifActivities = ({ loadMore, type, showMuted, ...props }: NotifActivitiesProps) => {
   return (
     <InnerActivities
       {...props}
       getKey={({ blockNumber, eventIndex }) => `${blockNumber}-${eventIndex}`}
-      renderItem={activity => <Notification type={type} {...activity} />}
+      renderItem={activity => <Notification type={type} showMuted={showMuted} {...activity} />}
       loadMore={loadMore}
     />
   )

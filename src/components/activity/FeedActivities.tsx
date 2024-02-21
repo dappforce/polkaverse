@@ -41,12 +41,17 @@ export const createLoadMorePosts =
     return ids
   }
 
-export const FeedActivities = (props: ActivityProps<PostId>) => {
+export const FeedActivities = ({
+  showMuted,
+  ...props
+}: ActivityProps<PostId> & { showMuted?: boolean }) => {
   return (
     <InnerActivities
       {...props}
       getKey={postId => postId}
-      renderItem={(postId: PostId) => <PublicPostPreviewById postId={postId} />}
+      renderItem={(postId: PostId) => (
+        <PublicPostPreviewById postId={postId} showMuted={showMuted} />
+      )}
     />
   )
 }

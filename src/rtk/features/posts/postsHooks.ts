@@ -22,9 +22,12 @@ export function useIsMuted(address: string) {
   return mutedAccounts?.includes(address) ?? false
 }
 
-export const useSelectPost = (postId?: PostId): PostWithSomeDetails | undefined => {
+export const useSelectPost = (
+  postId?: PostId,
+  showMuted?: boolean,
+): PostWithSomeDetails | undefined => {
   const struct = useAppSelector(state => (postId ? selectPostStructById(state, postId) : undefined))
-  const isMuted = useIsMuted(struct?.ownerId || '')
+  const isMuted = useIsMuted(struct?.ownerId || '') && !showMuted
 
   const cid = struct?.contentId
   const content = useAppSelector(state => (cid ? selectPostContentById(state, cid) : undefined))
