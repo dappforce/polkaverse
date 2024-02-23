@@ -86,4 +86,6 @@ export default [
   '12814',
   // jam10o
   '9599',
+  // Makoto Takahiro
+  '12816'
 ]
