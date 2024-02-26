@@ -14,7 +14,7 @@ export const periodOpt = [
 const Statistics = dynamic(() => import('./Statistics'), { ssr: false })
 
 export default function StatisticsPage(props: StatisticsProps) {
-  const [period, setPeriod] = useState<string>('30')
+  const [period, setPeriod] = useState<string>('7')
 
   const onRadioChange = (e: any) => {
     setPeriod(e.target.value)
