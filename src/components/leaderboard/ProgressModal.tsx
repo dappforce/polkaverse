@@ -62,7 +62,7 @@ const titles: Record<'lastWeek' | 'yesterday', Record<DisplayedStatus, string[]>
       'Marathoner',
       'Week Wizard',
       'Praise Pirate',
-      'Like Legend',
+      'Legendary Liker',
       'Consistent Champion',
       'Weeklong Warrior',
       'Praise Pioneer',
