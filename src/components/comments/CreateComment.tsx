@@ -21,7 +21,8 @@ const TxButton = dynamic(() => import('../utils/TxButton'), { ssr: false })
 
 type NewCommentProps = {
   post: PostStruct
-  callback?: (id?: BN) => void
+  onSuccess?: (id?: BN) => void
+  onCancel?: () => void
   withCancel?: boolean
   asStub?: boolean
   className?: string
@@ -31,7 +32,8 @@ type NewCommentProps = {
 
 export const NewComment: FC<NewCommentProps> = ({
   post,
-  callback,
+  onSuccess,
+  onCancel,
   withCancel,
   asStub,
   className,
@@ -154,7 +156,8 @@ export const NewComment: FC<NewCommentProps> = ({
     <CommentEditor
       eventProps={eventProps}
       autoFocus={autoFocus}
-      callback={callback}
+      onSuccess={onSuccess}
+      onCancel={onCancel}
       CommentTxButton={buildTxButton}
       withCancel={withCancel}
       asStub={asStub}

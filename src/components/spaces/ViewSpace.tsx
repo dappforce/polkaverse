@@ -16,6 +16,7 @@ import { SpaceContent, SpaceId, SpaceStruct, SpaceWithSomeDetails } from 'src/ty
 import { getAmountRange } from 'src/utils/analytics'
 import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks'
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
+import { AccountActivity } from '../activity/AccountActivity'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
 import WriteSomething from '../posts/WriteSomething'
@@ -116,6 +117,9 @@ export const InnerViewSpace = (props: Props) => {
     permission: 'CreatePosts',
   })
   const canCreatePostAndIsNotHidden = address && canCreatePost && !isHidden(spaceData?.struct)
+
+  const { spaceId: ownerProfileSpaceId } = useSelectProfileSpace(spaceData?.struct.ownerId) || {}
+  const isProfileSpace = ownerProfileSpaceId === spaceData?.id
 
   const Avatar = useCallback(() => {
     if (!spaceData) return null
@@ -340,12 +344,16 @@ export const InnerViewSpace = (props: Props) => {
         <WriteSomething className='mt-3' defaultSpaceId={spaceData.id} />
       )}
       <Section className='DfContentPage mt-4'>
-        <PostPreviewsOnSpace
-          key={spaceData.id}
-          spaceData={spaceData}
-          posts={posts}
-          postIds={postIds}
-        />
+        {isProfileSpace ? (
+          <AccountActivity withWriteSomethingBlock={false} address={spaceData.struct.ownerId} />
+        ) : (
+          <PostPreviewsOnSpace
+            key={spaceData.id}
+            spaceData={spaceData}
+            posts={posts}
+            postIds={postIds}
+          />
+        )}
       </Section>
       <MakeAsProfileModal isMySpace={isMy} />
     </Section>

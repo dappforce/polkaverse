@@ -24,6 +24,7 @@ const { TabPane } = Tabs
 
 type ActivitiesByAddressProps = {
   address: string
+  withWriteSomethingBlock?: boolean
 }
 
 const AllActivities = (props: BaseActivityProps) => {
@@ -123,7 +124,10 @@ const activityTabs = [
 ] as const
 type ActivityTab = (typeof activityTabs)[number]
 const getTab = (tab: ActivityTab) => tab
-const OffchainAccountActivity = ({ address }: ActivitiesByAddressProps) => {
+const OffchainAccountActivity = ({
+  address,
+  withWriteSomethingBlock = true,
+}: ActivitiesByAddressProps) => {
   const isMyAddress = useIsMyAddress(address)
   const getActivityCounts = useGetActivityCounts()
   const router = useRouter()
@@ -181,7 +185,7 @@ const OffchainAccountActivity = ({ address }: ActivitiesByAddressProps) => {
       <TabPane tab={getTabTitle('Posts', postsCount)} key={getTab('posts')}>
         {isMyAddress ? (
           <div className='d-flex flex-column mt-3'>
-            <WriteSomething />
+            {withWriteSomethingBlock && <WriteSomething />}
             <PostActivities address={address} totalCount={postsCount} />
           </div>
         ) : (

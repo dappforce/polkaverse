@@ -119,9 +119,8 @@ export const InnerViewComment: FC<Props> = props => {
       eventProps={eventProps}
       autoFocus
       post={commentStruct}
-      callback={() => {
-        setShowReplyForm(false)
-      }}
+      onCancel={() => setShowReplyForm(false)}
+      onSuccess={() => setShowReplyForm(false)}
       withCancel
     />
   )
@@ -179,7 +178,8 @@ export const InnerViewComment: FC<Props> = props => {
                 eventProps={eventProps}
                 struct={commentStruct}
                 content={commentContent}
-                callback={() => setShowEditForm(false)}
+                onCancel={() => setShowEditForm(false)}
+                onSuccess={() => setShowEditForm(false)}
               />
             ) : (
               <CommentBody comment={asCommentData(comment)} />

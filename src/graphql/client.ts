@@ -12,9 +12,12 @@ export function getApolloClient() {
   return apolloClient
 }
 
-export const createApolloClient = (graphqlUrl: string): ApolloClient<NormalizedCacheObject> => {
+export const createApolloClient = (
+  graphqlUrl: string,
+  withServerCache = false,
+): ApolloClient<NormalizedCacheObject> => {
   let config: DefaultOptions = {}
-  if (isServerSide()) {
+  if (isServerSide() && !withServerCache) {
     config = {
       query: {
         fetchPolicy: 'no-cache',
@@ -29,8 +32,9 @@ export const createApolloClient = (graphqlUrl: string): ApolloClient<NormalizedC
   })
 }
 
-export const initializeApollo = (initialState: any = null) => {
+export const initializeApollo = (initialState: any = null, withServerCache = false) => {
   if (!enableGraphQl || !graphqlUrl) return undefined
+  if (isServerSide()) return createApolloClient(graphqlUrl, withServerCache)
 
   const _apolloClient = apolloClient ?? createApolloClient(graphqlUrl)
 
