@@ -37,7 +37,8 @@ export type CommentEventProps = {
 type Props = MyAccountProps & {
   content?: CommentContent
   withCancel?: boolean
-  callback?: (id?: BN) => void
+  onCancel?: () => void
+  onSuccess?: (id?: BN) => void
   CommentTxButton: (props: CommentTxButtonType) => JSX.Element
   asStub?: boolean
   className?: string
@@ -50,7 +51,16 @@ const Fields = {
 }
 
 export const CommentEditor = (props: Props) => {
-  const { content, withCancel, callback, CommentTxButton, asStub, autoFocus, eventProps } = props
+  const {
+    content,
+    withCancel,
+    onCancel: onCancelCallback,
+    onSuccess,
+    CommentTxButton,
+    asStub,
+    autoFocus,
+    eventProps,
+  } = props
   const { ipfs } = useSubsocialApi()
   const [ipfsCid, setIpfsCid] = useState<IpfsCid>()
   const [fakeId] = useState(tmpClientId())
@@ -82,19 +92,18 @@ export const CommentEditor = (props: Props) => {
   }
 
   const onCancel = () => {
-    callback && callback()
+    onCancelCallback?.()
     resetForm()
   }
 
   const onTxFailed: TxFailedCallback = () => {
     ipfsCid && ipfs.removeContent(ipfsCid).catch(err => new Error(err))
-    callback && callback()
     setIsLoading(false)
   }
 
   const onTxSuccess: TxCallback = txResult => {
     const id = getNewIdFromEvent(txResult)
-    callback && callback(id)
+    onSuccess && onSuccess(id)
     resetForm()
     setIsLoading(false)
   }

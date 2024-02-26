@@ -17,11 +17,18 @@ type FCallback = (id?: BN) => void
 type EditCommentProps = {
   struct: PostStruct
   content: CommentContent
-  callback?: FCallback
+  onSuccess?: FCallback
+  onCancel?: FCallback
   eventProps: CommentEventProps
 }
 
-export const EditComment: FC<EditCommentProps> = ({ struct, content, callback, eventProps }) => {
+export const EditComment: FC<EditCommentProps> = ({
+  struct,
+  content,
+  onSuccess: onSuccess,
+  onCancel,
+  eventProps,
+}) => {
   const upsertReply = useCreateUpsertReply()
   const reloadPost = useCreateReloadPost()
   const id = struct.id
@@ -83,7 +90,8 @@ export const EditComment: FC<EditCommentProps> = ({ struct, content, callback, e
   return (
     <CommentEditor
       eventProps={{ ...eventProps, isEditing: true }}
-      callback={callback}
+      onSuccess={onSuccess}
+      onCancel={onCancel}
       content={content}
       CommentTxButton={buildTxButton}
       withCancel
