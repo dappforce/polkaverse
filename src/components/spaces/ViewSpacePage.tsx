@@ -1,7 +1,11 @@
 import { FC } from 'react'
+import { DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
+import { getActivityCounts, getPostActivities } from 'src/graphql/apis'
+import { initializeApollo } from 'src/graphql/client'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { useFetchMyPermissionsBySpaceId } from 'src/rtk/features/permissions/mySpacePermissionsHooks'
 import { fetchPosts, selectPosts } from 'src/rtk/features/posts/postsSlice'
+import { fetchProfileSpace, selectProfileSpace } from 'src/rtk/features/profiles/profilesSlice'
 import { DataSourceTypes, HasStatusCode, idToBn, SpaceContent } from 'src/types'
 import { descSort, isPolkaProject, isUnclaimedSpace } from 'src/utils'
 import { useMyAddress } from '../auth/MyAccountsContext'
@@ -94,19 +98,42 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
   const pageIds = getPageOfIds(sortedPostIds, query)
   const customImage = query.customImage as string | undefined
 
-  await dispatch(
-    fetchPosts({
-      api: subsocial,
-      ids: pageIds,
-      reload: true,
-      eagerLoadHandles: true,
-      dataSource: DataSourceTypes.SQUID,
-    }),
-  )
+  await dispatch(fetchProfileSpace({ id: data.struct.ownerId, api: subsocial }))
+  const profile = selectProfileSpace(reduxStore.getState(), data.struct.ownerId)
+  const isProfileSpace = profile?.spaceId === data.id
+
+  let initialApolloState: any = undefined
+  const client = initializeApollo(null, true)
+  if (isProfileSpace && client) {
+    const [, postIdsPromise] = await Promise.allSettled([
+      getActivityCounts(client, { address: data.struct.ownerId }),
+      getPostActivities(client, {
+        address: data.struct.ownerId,
+        limit: DEFAULT_PAGE_SIZE,
+        offset: 0,
+      }),
+    ] as const)
+    if (postIdsPromise.status === 'fulfilled') {
+      const postIds = postIdsPromise.value
+      await dispatch(fetchPosts({ api: subsocial, ids: postIds, reload: true }))
+    }
+    initialApolloState = client.extract()
+  } else {
+    await dispatch(
+      fetchPosts({
+        api: subsocial,
+        ids: pageIds,
+        reload: true,
+        eagerLoadHandles: true,
+        dataSource: DataSourceTypes.SQUID,
+      }),
+    )
+  }
 
   const posts = selectPosts(reduxStore.getState(), { ids: pageIds })
 
   return {
+    initialApolloState,
     spaceData: data,
     posts,
     postIds: sortedPostIds,
