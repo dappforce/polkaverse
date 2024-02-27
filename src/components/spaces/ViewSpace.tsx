@@ -119,7 +119,7 @@ export const InnerViewSpace = (props: Props) => {
   const canCreatePostAndIsNotHidden = address && canCreatePost && !isHidden(spaceData?.struct)
 
   const { spaceId: ownerProfileSpaceId } = useSelectProfileSpace(spaceData?.struct.ownerId) || {}
-  const isProfileSpace = ownerProfileSpaceId === spaceData?.id && false
+  const isProfileSpace = ownerProfileSpaceId === spaceData?.id
 
   const Avatar = useCallback(() => {
     if (!spaceData) return null

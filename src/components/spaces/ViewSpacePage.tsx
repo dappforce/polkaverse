@@ -100,7 +100,7 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
 
   await dispatch(fetchProfileSpace({ id: data.struct.ownerId, api: subsocial }))
   const profile = selectProfileSpace(reduxStore.getState(), data.struct.ownerId)
-  const isProfileSpace = profile?.spaceId === data.id && false
+  const isProfileSpace = profile?.spaceId === data.id
 
   let initialApolloState: any = undefined
   const client = initializeApollo(null, true)
