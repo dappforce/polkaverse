@@ -3,7 +3,7 @@ import { isEmptyStr, newLogger, nonEmptyStr } from '@subsocial/utils'
 import { Button } from 'antd'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
-import React, { MouseEvent, useCallback, useState } from 'react'
+import React, { MouseEvent, useCallback, useMemo, useState } from 'react'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
@@ -119,7 +119,7 @@ export const InnerViewSpace = (props: Props) => {
   const canCreatePostAndIsNotHidden = address && canCreatePost && !isHidden(spaceData?.struct)
 
   const { spaceId: ownerProfileSpaceId } = useSelectProfileSpace(spaceData?.struct.ownerId) || {}
-  const isProfileSpace = ownerProfileSpaceId === spaceData?.id
+  const isProfileSpace = ownerProfileSpaceId === spaceData?.id && false
 
   const Avatar = useCallback(() => {
     if (!spaceData) return null
@@ -139,6 +139,21 @@ export const InnerViewSpace = (props: Props) => {
   const setChatOpen = useSetChatOpen()
 
   const { isCreatorSpace } = useIsCreatorSpace(spaceData?.id)
+
+  const isMySpace = useIsMySpace(spaceData?.struct)
+  const { filteredPostIds, filteredPosts } = useMemo(() => {
+    if (isMySpace) return { filteredPosts: posts, filteredPostIds: postIds }
+    const hiddenPosts = new Set()
+    const filteredPosts = posts.filter(post => {
+      if (isHidden(post.post.struct)) {
+        hiddenPosts.add(post.post.id)
+        return false
+      }
+      return true
+    })
+    const filteredPostIds = postIds.filter(id => !hiddenPosts.has(id))
+    return { filteredPosts, filteredPostIds }
+  }, [posts, postIds])
 
   // We do not return 404 page here, because this component could be used to render a space in list.
   if (!spaceData) return null
@@ -346,7 +361,7 @@ export const InnerViewSpace = (props: Props) => {
       <Section className='DfContentPage mt-4'>
         {isProfileSpace ? (
           <AccountActivity
-            withSpacePosts={{ spaceData, postIds, posts }}
+            withSpacePosts={{ spaceData, postIds: filteredPostIds, posts: filteredPosts }}
             withWriteSomethingBlock={false}
             address={spaceData.struct.ownerId}
           />
