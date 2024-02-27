@@ -38,6 +38,7 @@ import { GoogleAnalytics } from 'nextjs-google-analytics'
 import { DatahubSubscriber } from 'src/components/utils/datahub/subscriber'
 import Script from 'next/script'
 import { initAllStores } from 'src/stores/registry'
+import { ReferralUrlChanger } from 'src/components/referral'
 
 dayjs.extend(relativeTime)
 dayjs.extend(localizedFormat)
@@ -92,6 +93,7 @@ function MyApp(props) {
           <DfApolloProvider initialApolloState={pageProps.initialApolloState}>
             <ThemeProvider defaultTheme={config.themeName}>
               <MainPage>
+                <ReferralUrlChanger />
                 <AppLaunchedEventSender />
                 <Component {...pageProps} />
               </MainPage>

@@ -17,6 +17,7 @@ import {
 } from './types'
 
 import config from 'src/config'
+import { createQueryFromSearchParams, getCurrentSearchParams } from 'src/utils/url'
 
 const { enableGraphQl } = config
 
@@ -147,12 +148,18 @@ export const setTabInUrl = (router: NextRouter, tab: string, queries?: Record<st
     ...queries,
   }
 
+  const current = getCurrentSearchParams()
+  Object.entries(query).forEach(([key, value]) => {
+    current.set(key, value)
+  })
+  const updatedQuery = createQueryFromSearchParams(current)
+
   const newPath = {
     pathname: router.pathname,
-    query,
+    query: updatedQuery,
   }
 
-  const queryStr = Object.entries(query)
+  const queryStr = Object.entries(updatedQuery)
     .map(([key, value]) => !!value && `${key}=${value}`)
     .filter(Boolean)
     .join('&')
@@ -165,7 +172,8 @@ export const setFiltersInUrl = (
   router: NextRouter,
   key: string,
   filterType?: FilterType<EntityFilter> | undefined,
-) => setTabInUrl(router, key, filterType)
+  additionalQueries?: Record<string, string>,
+) => setTabInUrl(router, key, { ...filterType, ...additionalQueries })
 
 export const isSuggested = (filterType: EntityFilter) =>
   filterType === 'suggested' || !enableGraphQl
