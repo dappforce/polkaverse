@@ -19,7 +19,7 @@ export const FollowerCanPostAlert = ({ space }: Props) => {
 
   return (
     <Alert
-      className='FollowerCanPostAlert'
+      className='FollowerCanPostAlert mt-3'
       message='Follow this space if you want to post here.'
       type='info'
       showIcon

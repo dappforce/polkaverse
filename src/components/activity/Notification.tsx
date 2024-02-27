@@ -418,10 +418,10 @@ export const Notification = React.memo((props: NotificationProps) => {
 
   switch (eventName) {
     case 'AccountFollowed':
-    case 'AccountUnfollowed':
+      // case 'AccountUnfollowed':
       return <AccountNotification {...props} />
     case 'SpaceFollowed':
-    case 'SpaceUnfollowed':
+      // case 'SpaceUnfollowed':
       return <SpaceNotification {...props} />
     case 'SpaceCreated':
       return <SpaceNotification {...props} />
