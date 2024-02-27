@@ -14,7 +14,7 @@ export const CommentBody = ({ comment: { struct, content }, className }: Comment
   return (
     <div className={clsx(styles.BumbleContent, className)}>
       <HiddenPostAlert post={struct} className={styles.DfCommentAlert} preview />
-      <DfMd source={content?.body} />
+      <DfMd withSmallerParagraphMargin source={content?.body} />
     </div>
   )
 }
