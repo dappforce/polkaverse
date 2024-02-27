@@ -113,7 +113,7 @@ export const CommentEditor = (props: Props) => {
       loading={isLoading}
       ipfs={ipfs}
       setIpfsCid={setIpfsCid}
-      json={{ body } as CommentContent}
+      json={{ body: body.replace(/\n/g, '\n\n') } as CommentContent}
       fakeId={fakeId}
       disabled={isSubmitting || !dirty}
       onFailed={onTxFailed}

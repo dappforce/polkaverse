@@ -677,6 +677,11 @@ a {
     margin-top: $space_small;
   }
 }
+.markdown-body.markdown-body-smaller-p-margin {
+  p {
+    margin-bottom: 0;
+  }
+}
 
 .DfPostName {
   @extend .DfUnboundedTitle;

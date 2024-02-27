@@ -7,12 +7,22 @@ interface Props {
   source?: string
   className?: string
   omitDefaultClassName?: boolean
+  withSmallerParagraphMargin?: boolean
 }
 
-export const DfMd = ({ source, omitDefaultClassName, className = '' }: Props) => (
+export const DfMd = ({
+  source,
+  omitDefaultClassName,
+  withSmallerParagraphMargin,
+  className = '',
+}: Props) => (
   <ReactMarkdown
     remarkPlugins={[remarkGfm]}
-    className={clsx(!omitDefaultClassName && 'markdown-body', className)}
+    className={clsx(
+      !omitDefaultClassName && 'markdown-body',
+      withSmallerParagraphMargin && 'markdown-body-smaller-p-margin',
+      className,
+    )}
     linkTarget='_blank'
     components={{
       // @ts-expect-error - the props type is not correctly inferred
