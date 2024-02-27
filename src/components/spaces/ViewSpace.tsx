@@ -345,7 +345,11 @@ export const InnerViewSpace = (props: Props) => {
       )}
       <Section className='DfContentPage mt-4'>
         {isProfileSpace ? (
-          <AccountActivity withWriteSomethingBlock={false} address={spaceData.struct.ownerId} />
+          <AccountActivity
+            withSpacePosts={{ spaceData, postIds, posts }}
+            withWriteSomethingBlock={false}
+            address={spaceData.struct.ownerId}
+          />
         ) : (
           <PostPreviewsOnSpace
             key={spaceData.id}

@@ -112,6 +112,15 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
         limit: DEFAULT_PAGE_SIZE,
         offset: 0,
       }),
+      dispatch(
+        fetchPosts({
+          api: subsocial,
+          ids: pageIds,
+          reload: true,
+          eagerLoadHandles: true,
+          dataSource: DataSourceTypes.SQUID,
+        }),
+      ),
     ] as const)
     if (postIdsPromise.status === 'fulfilled') {
       const postIds = postIdsPromise.value

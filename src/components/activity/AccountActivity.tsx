@@ -1,4 +1,6 @@
+import { PostWithSomeDetails, SpaceData } from '@subsocial/api/types'
 import { Tabs } from 'antd'
+import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import config from 'src/config'
@@ -13,6 +15,7 @@ import {
 } from 'src/graphql/hooks'
 import { useIsMyAddress } from '../auth/MyAccountsContext'
 import WriteSomething from '../posts/WriteSomething'
+import { PostPreviewsOnSpace } from '../spaces/helpers'
 import { Loading } from '../utils'
 import { createLoadMorePosts, FeedActivities } from './FeedActivities'
 import { createLoadMoreActivities, NotifActivities } from './Notifications'
@@ -22,8 +25,14 @@ import { BaseActivityProps } from './types'
 
 const { TabPane } = Tabs
 
+type WithSpacePosts = {
+  spaceData: SpaceData
+  postIds: string[]
+  posts: PostWithSomeDetails[]
+}
 type ActivitiesByAddressProps = {
   address: string
+  withSpacePosts?: WithSpacePosts
   withWriteSomethingBlock?: boolean
 }
 
@@ -99,6 +108,10 @@ const PostActivities = (props: BaseActivityProps) => {
   )
 }
 
+const SpacePostsContent = (props: WithSpacePosts) => {
+  return <PostPreviewsOnSpace {...props} />
+}
+
 const TweetActivities = (props: BaseActivityProps) => {
   const getTweetActivities = useGetTweetActivities()
   const loadMorePosts = createLoadMorePosts(getTweetActivities)
@@ -114,6 +127,7 @@ const TweetActivities = (props: BaseActivityProps) => {
 }
 
 const activityTabs = [
+  'space-posts',
   'posts',
   'tweets',
   'comments',
@@ -127,17 +141,20 @@ const getTab = (tab: ActivityTab) => tab
 const OffchainAccountActivity = ({
   address,
   withWriteSomethingBlock = true,
+  withSpacePosts,
 }: ActivitiesByAddressProps) => {
+  const initialActiveTab = withSpacePosts ? 'space-posts' : 'posts'
+
   const isMyAddress = useIsMyAddress(address)
   const getActivityCounts = useGetActivityCounts()
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<ActivityTab>('posts')
+  const [activeTab, setActiveTab] = useState<ActivityTab>(initialActiveTab)
   const [counts, setCounts] = useState<ActivityCounts>()
   // to make tweets tab doesn't disappear until the address is changed.
   const [haveDisplayedTweetsTab, setHaveDisplayedTweetsTab] = useState(false)
 
   useEffect(() => {
-    setActiveTab('posts')
+    setActiveTab(initialActiveTab)
     setCounts(undefined)
     setHaveDisplayedTweetsTab(false)
     ;(async () => {
@@ -182,9 +199,20 @@ const OffchainAccountActivity = ({
 
   return (
     <Tabs activeKey={activeTab} onChange={onChangeTab}>
-      <TabPane tab={getTabTitle('Posts', postsCount)} key={getTab('posts')}>
+      {withSpacePosts && (
+        <TabPane
+          tab={getTabTitle('Space Posts', withSpacePosts.postIds.length)}
+          key={getTab('space-posts')}
+        >
+          <SpacePostsContent {...withSpacePosts} />
+        </TabPane>
+      )}
+      <TabPane
+        tab={getTabTitle(withSpacePosts ? 'Owner Posts' : 'Posts', postsCount)}
+        key={getTab('posts')}
+      >
         {isMyAddress ? (
-          <div className='d-flex flex-column mt-3'>
+          <div className={clsx('d-flex flex-column', withWriteSomethingBlock && 'mt-3')}>
             {withWriteSomethingBlock && <WriteSomething />}
             <PostActivities address={address} totalCount={postsCount} />
           </div>
