@@ -4,7 +4,6 @@ import { isEmptyStr } from '@subsocial/utils'
 import { Alert, Button } from 'antd'
 import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
-import Link from 'next/link'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import {
@@ -38,6 +37,7 @@ import { useAppSelector } from '../../rtk/app/store'
 import { useSelectProfile } from '../../rtk/features/profiles/profilesHooks'
 import { fetchSpaceIdsOwnedByAccount } from '../../rtk/features/spaceIds/ownSpaceIdsSlice'
 import { selectSpace } from '../../rtk/features/spaces/spacesSlice'
+import CustomLink from '../referral/CustomLink'
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false })
 
@@ -76,12 +76,12 @@ const Component = (props: Props) => {
   const { image, about } = owner?.content || ({} as ProfileContent)
 
   const createProfileButton = noProfile && isMyAccount && (
-    <Link href={newSpaceUrl(true)}>
+    <CustomLink href={newSpaceUrl(true)}>
       <Button type='primary' ghost>
         <PlusOutlined />
         Create profile
       </Button>
-    </Link>
+    </CustomLink>
   )
 
   const followersText = <Pluralize count={followers} singularText='Follower' />

@@ -9,7 +9,6 @@ import {
 } from '@ant-design/icons'
 import { isEmptyArray } from '@subsocial/utils'
 import { Menu } from 'antd'
-import Link from 'next/link'
 import { BiUserPin } from 'react-icons/bi'
 import { BsCaretRight } from 'react-icons/bs'
 import { LuActivity } from 'react-icons/lu'
@@ -27,6 +26,7 @@ import { AccountFollowersModal, AccountFollowingModal } from '../profiles/Accoun
 import { CreateOrEditProfileSpace, SettingsLink } from '../profiles/address-views/utils/index'
 import { SwitchProfileSpaceButton } from '../profiles/address-views/utils/SwitchProfileSpaceModal'
 import ViewProfileLink from '../profiles/ViewProfileLink'
+import CustomLink from '../referral/CustomLink'
 import { SpacesWithRolesByAccountModal } from '../spaces/AccountSpaces'
 import ViewSpaceLink from '../spaces/ViewSpaceLink'
 import { SubIcon } from '../utils'
@@ -125,9 +125,9 @@ export const ActionMenu = () => {
 
         {hasDomains && (
           <Menu.Item key='domains' icon={MyDomainsIcon}>
-            <Link href='/dd' as='/dd'>
+            <CustomLink href='/dd' as='/dd'>
               <a onClick={close}>My Domains</a>
-            </Link>
+            </CustomLink>
           </Menu.Item>
         )}
 

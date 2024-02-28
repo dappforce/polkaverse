@@ -1,11 +1,11 @@
 import { SpaceData } from '@subsocial/api/types'
 import { Button, Skeleton, Tooltip } from 'antd'
 import clsx from 'clsx'
-import Link from 'next/link'
 import { BsBoxArrowUpRight } from 'react-icons/bs'
 import { SlQuestion } from 'react-icons/sl'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { FormatBalance } from 'src/components/common/balances'
+import CustomLink from 'src/components/referral/CustomLink'
 import { useResponsiveSize } from 'src/components/responsive'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
@@ -32,7 +32,7 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
       {!isMobile && (
         <div className={styles.TopSection}>
           <p className={clsx(styles.Title, 'mb-0')}>Creator Staking</p>
-          <Link href='https://docs.subsocial.network/docs/basics/creator-staking' passHref>
+          <CustomLink href='https://docs.subsocial.network/docs/basics/creator-staking' passHref>
             <a
               target='_blank'
               className={styles.Link}
@@ -40,7 +40,7 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
             >
               How does it work?
             </a>
-          </Link>
+          </CustomLink>
           <DfImage preview={false} src='/images/databases.svg' className={styles.Image} />
         </div>
       )}

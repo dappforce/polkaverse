@@ -2,7 +2,6 @@ import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons'
 import { Alert, Button, Tag, Tooltip } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import Link from 'next/link'
 import { FC, useEffect, useState } from 'react'
 import { TbCoins, TbMessageCircle2 } from 'react-icons/tb'
 import { getNeededLock } from 'src/config/constants'
@@ -25,6 +24,7 @@ import { PostDropDownMenu } from '../posts/view-post/PostDropDownMenu'
 import PostRewardStat from '../posts/view-post/PostRewardStat'
 import AuthorSpaceAvatar from '../profiles/address-views/AuthorSpaceAvatar'
 import Name from '../profiles/address-views/Name'
+import CustomLink from '../referral/CustomLink'
 import { equalAddresses } from '../substrate'
 import { postUrl } from '../urls'
 import { formatDate, IconWithLabel, useIsHidden } from '../utils'
@@ -97,7 +97,7 @@ export const InnerViewComment: FC<Props> = props => {
 
     return (
       <>
-        <Link href={commentLink}>
+        <CustomLink href={commentLink}>
           <a
             onClick={event => {
               event.preventDefault()
@@ -107,7 +107,7 @@ export const InnerViewComment: FC<Props> = props => {
             {viewActionMessage}{' '}
             <Pluralize count={replyCountWithFake || 0} singularText='reply' pluralText='replies' />
           </a>
-        </Link>
+        </CustomLink>
       </>
     )
   }
@@ -146,11 +146,11 @@ export const InnerViewComment: FC<Props> = props => {
                 )}
               </div>
               <MutedSpan>&middot;</MutedSpan>
-              <Link href='/[spaceId]/[slug]' as={commentLink}>
+              <CustomLink href='/[spaceId]/[slug]' as={commentLink}>
                 <a className='DfGreyLink FontTiny' title={formatDate(createdAtTime)}>
                   {dayjs(createdAtTime).fromNow()}
                 </a>
-              </Link>
+              </CustomLink>
             </div>
             <div className='d-flex align-items-center GapTiny'>
               {!isFake && (
@@ -227,7 +227,7 @@ export const InnerViewComment: FC<Props> = props => {
                           />{' '}
                           more in order to earn rewards for this comment.
                         </span>
-                        <Link href={activeStakingLinks.learnMore}>
+                        <CustomLink href={activeStakingLinks.learnMore}>
                           <a
                             target='_blank'
                             className='FontWeightMedium ml-1'
@@ -235,7 +235,7 @@ export const InnerViewComment: FC<Props> = props => {
                           >
                             Learn How
                           </a>
-                        </Link>
+                        </CustomLink>
                       </span>
                     }
                   >

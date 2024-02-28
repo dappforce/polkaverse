@@ -1,6 +1,6 @@
 import clsx from 'clsx'
-import Link from 'next/link'
 import { HTMLProps } from 'react'
+import CustomLink from '../referral/CustomLink'
 
 type TextGenerator = (links: { terms: JSX.Element; privacy: JSX.Element }) => JSX.Element
 export interface PrivacyPolicyTextProps extends HTMLProps<HTMLSpanElement> {
@@ -16,14 +16,14 @@ export default function PrivacyPolicyText({
     <span className={clsx('m-0', className)} {...props}>
       {textGenerator({
         terms: (
-          <Link href='https://subsocial.network/legal/terms' passHref>
+          <CustomLink href='https://subsocial.network/legal/terms' passHref>
             <a target='_blank'>Terms of Use</a>
-          </Link>
+          </CustomLink>
         ),
         privacy: (
-          <Link href='https://subsocial.network/legal/privacy' passHref>
+          <CustomLink href='https://subsocial.network/legal/privacy' passHref>
             <a target='_blank'>Privacy Policy</a>
-          </Link>
+          </CustomLink>
         ),
       })}
     </span>

@@ -1,9 +1,9 @@
 import { PostData, SpaceStruct } from '@subsocial/api/types'
 import { createTwitterURL, parseTwitterTextToMarkdown } from '@subsocial/utils'
 import clsx from 'clsx'
-import Link from 'next/link'
 import { HTMLProps } from 'react'
 import { BsQuestionCircle, BsTwitter } from 'react-icons/bs'
+import CustomLink from 'src/components/referral/CustomLink'
 import { DfMd } from 'src/components/utils/DfMd'
 import ViewPostLink from '../ViewPostLink'
 import { PostImage } from './helpers'
@@ -32,7 +32,7 @@ export default function TwitterPost({
   return (
     <div {...props} className={clsx(styles.TwitterPost, props.className)}>
       <div className={styles.TwitterPostHeader}>
-        <Link passHref href={originalTweetUrl}>
+        <CustomLink passHref href={originalTweetUrl}>
           <a
             target='_blank'
             rel='noreferrer noopener'
@@ -41,13 +41,13 @@ export default function TwitterPost({
             <BsTwitter className='mr-2 FontLarge CursorPointer' />
             <span className='CursorPointer'>{content.tweet.username || 'Saved Tweet'}</span>
           </a>
-        </Link>
-        <Link href='https://post4ever.app/' passHref>
+        </CustomLink>
+        <CustomLink href='https://post4ever.app/' passHref>
           <a className='d-flex align-items-center' target='_blank' rel='noreferrer noopener'>
             <span className='mr-2'>Saved from Twitter</span>
             <BsQuestionCircle className='position-relative' style={{ top: 1 }} />
           </a>
-        </Link>
+        </CustomLink>
       </div>
       <div className={clsx(styles.TwitterPostContent, withLargeFont ? 'FontLarge' : 'FontNormal')}>
         <PostImage className='mb-0 BorderNone RoundedNone' content={content} />

@@ -1,7 +1,7 @@
 import { Tabs } from 'antd'
-import Link from 'next/link'
 import router from 'next/router'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import CustomLink from 'src/components/referral/CustomLink'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getAmountRange } from 'src/utils/analytics'
@@ -47,26 +47,26 @@ export default function LeaderboardTabs({
         {myAddress && (
           <Tabs.TabPane
             tab={
-              <Link href={`/leaderboard/${myAddress}?role=staker`} shallow passHref>
+              <CustomLink href={`/leaderboard/${myAddress}?role=staker`} shallow passHref>
                 <a style={{ color: 'inherit' }}>My Staking Stats</a>
-              </Link>
+              </CustomLink>
             }
             key='user'
           />
         )}
         <Tabs.TabPane
           tab={
-            <Link href='/leaderboard' shallow passHref>
+            <CustomLink href='/leaderboard' shallow passHref>
               <a style={{ color: 'inherit' }}>Global Staking Stats</a>
-            </Link>
+            </CustomLink>
           }
           key='general'
         />
         <Tabs.TabPane
           tab={
-            <Link href='/stats' shallow passHref>
+            <CustomLink href='/stats' shallow passHref>
               <a style={{ color: 'inherit' }}>Polkaverse Stats</a>
-            </Link>
+            </CustomLink>
           }
           key='stats'
         />
@@ -84,26 +84,26 @@ export default function LeaderboardTabs({
         {myAddress && (
           <Tabs.TabPane
             tab={
-              <Link href={`/leaderboard/${myAddress}?role=staker`} shallow passHref>
+              <CustomLink href={`/leaderboard/${myAddress}?role=staker`} shallow passHref>
                 <a style={{ color: 'inherit' }}>My Activity</a>
-              </Link>
+              </CustomLink>
             }
             key='user'
           />
         )}
         <Tabs.TabPane
           tab={
-            <Link href='/leaderboard' shallow passHref>
+            <CustomLink href='/leaderboard' shallow passHref>
               <a style={{ color: 'inherit' }}>Total Activity</a>
-            </Link>
+            </CustomLink>
           }
           key='general'
         />
         <Tabs.TabPane
           tab={
-            <Link href='/stats' shallow passHref>
+            <CustomLink href='/stats' shallow passHref>
               <a style={{ color: 'inherit' }}>App Stats</a>
-            </Link>
+            </CustomLink>
           }
           key='stats'
         />

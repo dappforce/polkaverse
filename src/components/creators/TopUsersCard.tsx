@@ -1,6 +1,5 @@
 import { Button, Skeleton } from 'antd'
 import clsx from 'clsx'
-import Link from 'next/link'
 import { ComponentProps, CSSProperties, useMemo } from 'react'
 import { IoChevronForward } from 'react-icons/io5'
 import { useSendEvent } from 'src/providers/AnalyticContext'
@@ -12,6 +11,7 @@ import { truncateAddress } from 'src/utils/storage'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import Avatar from '../profiles/address-views/Avatar'
+import CustomLink from '../referral/CustomLink'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { DfImage } from '../utils/DfImage'
 import { MutedSpan } from '../utils/MutedText'
@@ -162,7 +162,7 @@ function UserInfo({
   return (
     <div className='d-flex align-items-center'>
       <div className='position-relative'>
-        <Link href={`/leaderboard/${user.address}?role=${type}`}>{avatar}</Link>
+        <CustomLink href={`/leaderboard/${user.address}?role=${type}`}>{avatar}</CustomLink>
         {[1, 2, 3].includes(rank) && (
           <Medal
             className='position-absolute FontTiny'
@@ -172,9 +172,9 @@ function UserInfo({
         )}
       </div>
       <div className='d-flex flex-column' style={{ minWidth: 0 }}>
-        <Link href={`/leaderboard/${user.address}?role=${type}`} passHref>
+        <CustomLink href={`/leaderboard/${user.address}?role=${type}`} passHref>
           <a className='ColorNormal'>{name}</a>
-        </Link>
+        </CustomLink>
         <div className='d-flex align-items-center ColorMuted GapMini'>
           {type === 'creator' ? (
             <FormatBalance value={user.reward} currency='SUB' decimals={10} precision={2} />

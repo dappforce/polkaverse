@@ -1,7 +1,7 @@
 import { EditOutlined, EllipsisOutlined } from '@ant-design/icons'
 import { Menu } from 'antd'
-import Link from 'next/link'
 import { FC, useCallback, useState } from 'react'
+import CustomLink from 'src/components/referral/CustomLink'
 import { useCheckCanEditAndHideSpacePermission } from 'src/components/spaces/roles/utils'
 import { editPostUrl } from 'src/components/urls'
 import { ViewOnIpfs } from 'src/components/utils'
@@ -48,9 +48,9 @@ const InnerPostDropDownMenu: FC<DropdownProps> = props => {
                 {'Edit comment'}
               </a>
             ) : (
-              <Link {...editPostProps}>
+              <CustomLink {...editPostProps}>
                 <a className='item'>{'Edit post'}</a>
-              </Link>
+              </CustomLink>
             )}
           </Menu.Item>
         )}

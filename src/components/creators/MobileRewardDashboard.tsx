@@ -1,6 +1,5 @@
 import { Button, Tooltip } from 'antd'
 import clsx from 'clsx'
-import Link from 'next/link'
 import { ComponentProps, useState } from 'react'
 import { HiChevronRight } from 'react-icons/hi2'
 import { SlQuestion } from 'react-icons/sl'
@@ -11,6 +10,7 @@ import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getAmountRange } from 'src/utils/analytics'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import CustomLink from '../referral/CustomLink'
 import styles from './MobileRewardDashboard.module.sass'
 import RewardInfo, { StakerSuperLikeCount } from './rewards/RewardInfo'
 import StakerRewardProgressBar from './rewards/StakerRewardProgressBar'
@@ -42,7 +42,7 @@ function StakeSubBanner(props: MobileRewardDashboardProps) {
             <span className='FontWeightSemibold'>Lock SUB and earn more</span>
           </span>
           <div className={clsx('d-flex align-items-center GapTiny')}>
-            <Link passHref href={getSubIdCreatorsLink()}>
+            <CustomLink passHref href={getSubIdCreatorsLink()}>
               <Button
                 type='primary'
                 className='FontWeightSemibold'
@@ -53,7 +53,7 @@ function StakeSubBanner(props: MobileRewardDashboardProps) {
               >
                 Lock SUB
               </Button>
-            </Link>
+            </CustomLink>
           </div>
         </div>
         <div className={clsx(styles.Gradient)} />

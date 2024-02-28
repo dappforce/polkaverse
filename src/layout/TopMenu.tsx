@@ -1,6 +1,5 @@
 import { CloseCircleOutlined, MenuOutlined, SearchOutlined } from '@ant-design/icons'
 import { Tooltip } from 'antd'
-import Link from 'next/link'
 import { useState } from 'react'
 import { useResponsiveSize } from 'src/components/responsive'
 import config from 'src/config'
@@ -12,6 +11,7 @@ const { enableSearch, appLogo, mobileAppLogo, appName } = config
 
 // import { useTheme } from 'next-themes'
 import clsx from 'clsx'
+import CustomLink from 'src/components/referral/CustomLink'
 
 // const ThemeChanger = () => {
 //   const { setTheme } = useTheme()
@@ -44,11 +44,11 @@ const InnerMenu = () => {
           onClick={toggle}
           className={clsx('DfBurgerIcon mx-3', isMobile && 'mr-2')}
         />
-        <Link href='/' as='/'>
+        <CustomLink href='/' as='/'>
           <a className='DfBrand'>
             <img className='d-block' src={isMobile ? mobileAppLogo : appLogo} alt={appName} />
           </a>
-        </Link>
+        </CustomLink>
       </div>
       {isNotMobile && enableSearch && <SearchInput />}
       <div className='DfTopBar--rightContent'>

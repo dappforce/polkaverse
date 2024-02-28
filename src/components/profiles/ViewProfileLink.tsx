@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import React, { CSSProperties } from 'react'
+import CustomLink from '../referral/CustomLink'
 import { accountUrl, HasAddress } from '../urls'
 
 type Props = {
@@ -16,11 +16,11 @@ export const ViewProfileLink = React.memo(({ account, title, hint, className, st
   if (!address) return null
 
   return (
-    <Link href='/accounts/[address]' as={accountUrl(account)}>
+    <CustomLink href='/accounts/[address]' as={accountUrl(account)}>
       <a className={className} title={hint} style={style}>
         {title || address.toString()}
       </a>
-    </Link>
+    </CustomLink>
   )
 })
 

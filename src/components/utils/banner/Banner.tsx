@@ -1,7 +1,7 @@
 import { CloseOutlined } from '@ant-design/icons'
 import { Col, Row } from 'antd'
-import Link from 'next/link'
 import React, { CSSProperties, useState } from 'react'
+import CustomLink from 'src/components/referral/CustomLink'
 import store from 'store'
 import { useIsMobileWidthOrDevice } from '../../responsive/ResponsiveContext'
 import { ButtonLink } from '../CustomLinks'
@@ -84,7 +84,7 @@ export const Banner = (props: BannerProps) => {
   )
 
   return (
-    <Link href={targetLink} as={targetLink}>
+    <CustomLink href={targetLink} as={targetLink}>
       {isMobile ? (
         <section className={styles.DfBanner} style={styleObj}>
           {closeButton}
@@ -108,6 +108,6 @@ export const Banner = (props: BannerProps) => {
           </Row>
         </section>
       )}
-    </Link>
+    </CustomLink>
   )
 }

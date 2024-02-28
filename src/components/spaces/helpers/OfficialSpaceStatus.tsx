@@ -1,8 +1,8 @@
 import { HourglassOutlined } from '@ant-design/icons'
 import { Tag, Tooltip } from 'antd'
 import clsx from 'clsx'
-import Link from 'next/link'
 import { MdVerified } from 'react-icons/md'
+import CustomLink from 'src/components/referral/CustomLink'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import messages from 'src/messages'
 import { SpaceStruct } from 'src/types'
@@ -37,11 +37,11 @@ const unclaimedSpaceProps: InnerIconProps = {
 const claimSpaceUrl = '/spaces/claim'
 
 const claimSpaceLink = (
-  <Link href={claimSpaceUrl} as={claimSpaceUrl}>
+  <CustomLink href={claimSpaceUrl} as={claimSpaceUrl}>
     <Tag color='gold' className='DfClaimSpaceTag'>
       Claim space
     </Tag>
-  </Link>
+  </CustomLink>
 )
 
 export const OfficialSpaceStatus = ({

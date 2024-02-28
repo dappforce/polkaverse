@@ -1,6 +1,6 @@
 import { Menu } from 'antd'
-import Link from 'next/link'
 import { Donate } from 'src/components/donate'
+import CustomLink from 'src/components/referral/CustomLink'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { editSpaceUrl } from 'src/components/urls'
 import { isHidden, ViewOnIpfs } from 'src/components/utils'
@@ -72,9 +72,9 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
         )}
         {isMySpace && (
           <Menu.Item key={`edit-space-${spaceKey}`}>
-            <Link href={'/[spaceId]/edit'} as={editSpaceUrl(struct)}>
+            <CustomLink href={'/[spaceId]/edit'} as={editSpaceUrl(struct)}>
               <a className='item'>Edit space</a>
-            </Link>
+            </CustomLink>
           </Menu.Item>
         )}
         {!isMySpace && (
@@ -91,9 +91,9 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
         )}
         {!canCreatePost || isHidden(struct) ? null : (
           <Menu.Item key={`create-post-${spaceKey}`}>
-            <Link {...createNewPostLinkProps(struct)}>
+            <CustomLink {...createNewPostLinkProps(struct)}>
               <a className='item'>Write post</a>
-            </Link>
+            </CustomLink>
           </Menu.Item>
         )}
 
