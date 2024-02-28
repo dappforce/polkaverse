@@ -18,6 +18,7 @@ import { ButtonLink } from './CustomLinks'
 import { BareProps } from './types'
 
 export * from './IconWithLabel'
+export * from './server-client'
 
 const { appBaseUrl, ipfsNodeUrl } = config
 
@@ -26,6 +27,7 @@ import Avatar from 'antd/lib/avatar/avatar'
 import { AvatarSize } from 'antd/lib/avatar/SizeContext'
 import { InstallUrl, Urls } from '../wallets/types'
 import * as offchain from './OffchainUtils'
+import { isClientSide } from './server-client'
 
 export const offchainApi = { ...offchain }
 
@@ -49,14 +51,6 @@ export function getUrlParam(
 
 // Next.js utils
 // --------------------------------------
-
-export function isServerSide(): boolean {
-  return typeof window === 'undefined'
-}
-
-export function isClientSide(): boolean {
-  return !isServerSide()
-}
 
 export const isHomePage = (): boolean => isClientSide() && window.location.pathname === '/'
 

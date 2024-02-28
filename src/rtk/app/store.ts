@@ -2,7 +2,7 @@ import { Action, configureStore } from '@reduxjs/toolkit'
 import { useMemo } from 'react'
 import { createSelectorHook, useDispatch } from 'react-redux'
 import { ThunkAction } from 'redux-thunk'
-import { isServerSide } from 'src/components/utils'
+import { isServerSide } from 'src/components/utils/server-client'
 import { isDevMode } from 'src/config/env'
 import rootReducer, { RootState } from './rootReducer'
 
