@@ -18,7 +18,7 @@ import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar
 import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
 import { ShowLikeablePostsProvider } from '../posts/ShowLikeablePostsContext'
 import WriteSomething from '../posts/WriteSomething'
-import { useReferralId } from '../referral'
+import { useReferralId } from '../referral/ReferralUrlChanger'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
 import Section from '../utils/Section'

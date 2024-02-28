@@ -38,7 +38,7 @@ import { GoogleAnalytics } from 'nextjs-google-analytics'
 import { DatahubSubscriber } from 'src/components/utils/datahub/subscriber'
 import Script from 'next/script'
 import { initAllStores } from 'src/stores/registry'
-import { ReferralUrlChanger } from 'src/components/referral'
+import { ReferralUrlChanger } from 'src/components/referral/ReferralUrlChanger'
 
 dayjs.extend(relativeTime)
 dayjs.extend(localizedFormat)

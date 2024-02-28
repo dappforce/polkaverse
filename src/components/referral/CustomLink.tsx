@@ -1,15 +1,14 @@
 import Link, { LinkProps } from 'next/link'
-import urlJoin from 'url-join'
-import { useReferralId } from '.'
+import urlJoin from 'src/utils/url-join'
+import { useReferralId } from './ReferralUrlChanger'
 
 export default function CustomLink(props: React.PropsWithChildren<LinkProps>) {
   const refId = useReferralId()
   if (refId) {
-    const { href, as } = props
     props = {
       ...props,
-      href: augmentLink(href, refId),
-      as: as && augmentLink(as, refId),
+      href: augmentLink(props.href, refId),
+      as: props.as && augmentLink(props.as, refId),
     }
   }
 
