@@ -787,9 +787,9 @@ export const GET_SEARCH_RESULTS = gql`
 // Community Highlights
 // ------------------------------------------------------------------------------------
 
-export const GET_LAST_3_COMMUNITY_HIGHLIGHTS = gql`
-  query GetLast3CommunityHighlights($spaceId: String!) {
-    posts(limit: 3, orderBy: createdAtTime_DESC, where: { space: { id_eq: $spaceId } }) {
+export const GET_LASTEST_POST_IDS_IN_SPACE = gql`
+  query GetLatestPostIdsInSpace($spaceId: String!, $limit: Int!) {
+    posts(limit: $limit, orderBy: createdAtTime_DESC, where: { space: { id_eq: $spaceId } }) {
       id
     }
   }
