@@ -1,11 +1,14 @@
-import { getLast3CommunityHighlights } from 'src/graphql/apis'
+import { getLastestPostIdsInSpace } from 'src/graphql/apis'
 import { GqlClient } from 'src/graphql/ApolloProvider'
 
 const PINNED_POST_IDS: string[] = []
 const PINNED_POST_ID = PINNED_POST_IDS[Math.floor(Math.random() * PINNED_POST_IDS.length)]
 
+const COMMUNITY_SPACE_ID = '1244'
+const LATEST_LIMIT = 7
+
 // precalculate the randomized index to avoid having different pinned post on multiple calls
-const randomizedIndex = Math.floor(Math.random() * 3)
+const randomizedIndex = Math.floor(Math.random() * LATEST_LIMIT)
 let randomizedPostId: string | null = null
 export async function getPinnedPost(client: GqlClient | undefined) {
   if (PINNED_POST_ID) return PINNED_POST_ID
@@ -13,7 +16,10 @@ export async function getPinnedPost(client: GqlClient | undefined) {
   if (!client) return null
 
   try {
-    const postIds = await getLast3CommunityHighlights(client)
+    const postIds = await getLastestPostIdsInSpace(client, {
+      limit: LATEST_LIMIT,
+      spaceId: COMMUNITY_SPACE_ID,
+    })
     const randomIndex = Math.min(randomizedIndex, postIds.length - 1)
     randomizedPostId = postIds[randomIndex]
     return randomizedPostId

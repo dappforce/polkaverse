@@ -395,11 +395,13 @@ export async function searchResults(client: GqlClient, variables: GetSearchResul
   return hits
 }
 
-const COMMUNITY_SPACE_ID = '1244'
-export async function getLast3CommunityHighlights(client: GqlClient) {
+export async function getLastestPostIdsInSpace(
+  client: GqlClient,
+  variables: { spaceId: string; limit: number },
+) {
   const res = await client.query<{ posts: { id: string }[] }, { spaceId: string }>({
-    query: q.GET_LAST_3_COMMUNITY_HIGHLIGHTS,
-    variables: { spaceId: COMMUNITY_SPACE_ID },
+    query: q.GET_LASTEST_POST_IDS_IN_SPACE,
+    variables,
   })
 
   const posts = res.data.posts ?? []
