@@ -23,12 +23,6 @@ export const CREATORS_CONSTANTS = {
   },
 }
 
-const PINNED_POST_IDS = ['']
-export const PINNED_POST_ID = PINNED_POST_IDS[Math.floor(Math.random() * PINNED_POST_IDS.length)]
-export function isPinnedPost(postId: string) {
-  return PINNED_POST_ID === postId
-}
-
 const WHITELISTED_FOR_NEW_FEATURES = [
   '3tJYxJN55FtVeZgX4WdwieZXDp4HF62TRVj11tY2aXHdrYus',
   '3rzZpUCan9uAA9VSH12zX552Y6rfemGR3hWeeLmhNT1EGosL',

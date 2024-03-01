@@ -2,7 +2,6 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import config from 'src/config'
-import { PINNED_POST_ID } from 'src/config/constants'
 import { DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import { useDfApolloClient } from 'src/graphql/ApolloProvider'
 import { GetLatestPostIds } from 'src/graphql/__generated__/GetLatestPostIds'
@@ -17,6 +16,7 @@ import { DateFilterType, LoadMoreValues, PostFilterType } from '../main/types'
 import { isSuggested, loadPostsByQuery } from '../main/utils'
 import { getHotPosts } from '../utils/datahub/posts'
 import { getSuggestedPostIdsByPage, loadSuggestedPostIds } from './loadSuggestedPostIdsFromEnv'
+import { getPinnedPost } from './pinned-post'
 import { PublicPostPreviewById } from './PublicPostPreview'
 
 type Props = {
@@ -49,10 +49,12 @@ export const loadMorePostsFn = async (loadMoreValues: LoadMoreValues<PostFilterT
   if (filter.type === 'hot') {
     const posts = await getHotPosts({ offset, limit: DEFAULT_PAGE_SIZE })
     postIds = posts.data.map(value => value.persistentPostId)
+    const pinnedPostId = await getPinnedPost(client)
+    console.log('pinnedPostId', pinnedPostId)
     if (offset === 0) {
-      postIds = Array.from(new Set([PINNED_POST_ID, ...postIds]))
+      postIds = Array.from(new Set([pinnedPostId, ...postIds].filter(Boolean) as string[]))
     } else {
-      postIds = postIds.filter(id => id !== PINNED_POST_ID)
+      postIds = postIds.filter(id => id !== pinnedPostId)
     }
   } else if (!isSuggested(filter.type) && client) {
     const data = await loadPostsByQuery({ client, kind, offset, filter })
