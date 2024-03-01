@@ -33,7 +33,6 @@ export const loadSuggestedPostIds = async ({
       getPostIdsBySpaces(client, { spaceIds: recommendedIds }),
       getPinnedPost(client),
     ] as const)
-    console.log('pinnedPostId suggested', pinnedPostId)
 
     return Array.from(new Set([pinnedPostId, ...postIds].filter(Boolean) as string[]))
   }

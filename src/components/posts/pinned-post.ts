@@ -15,7 +15,6 @@ export async function getPinnedPost(client: GqlClient | undefined) {
   try {
     const postIds = await getLast3CommunityHighlights(client)
     const randomIndex = Math.min(randomizedIndex, postIds.length - 1)
-    console.log(postIds, randomIndex, postIds[randomIndex])
     randomizedPostId = postIds[randomIndex]
     return randomizedPostId
   } catch (err) {

@@ -50,7 +50,6 @@ export const loadMorePostsFn = async (loadMoreValues: LoadMoreValues<PostFilterT
     const posts = await getHotPosts({ offset, limit: DEFAULT_PAGE_SIZE })
     postIds = posts.data.map(value => value.persistentPostId)
     const pinnedPostId = await getPinnedPost(client)
-    console.log('pinnedPostId', pinnedPostId)
     if (offset === 0) {
       postIds = Array.from(new Set([pinnedPostId, ...postIds].filter(Boolean) as string[]))
     } else {
