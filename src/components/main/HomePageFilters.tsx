@@ -7,7 +7,7 @@ import config from 'src/config'
 import LatestPostsPage from '../posts/LatestPostsPage'
 import { useShowLikeablePostsContext } from '../posts/ShowLikeablePostsContext'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
-import LatestSpacesPage, { CreatorsSpaces } from '../spaces/LatestSpacesPage'
+import LatestSpacesPage from '../spaces/LatestSpacesPage'
 import style from './HomePage.module.sass'
 import {
   DateFilterType,
@@ -71,6 +71,7 @@ export const spaceFilterOpt: Filter[] = [
     icon: verifiedIcon,
     value: 'suggested',
   },
+  ...commonFilterOption,
   // { label: 'Creators Staking', value: 'creators' },
   // ...offchainSpaceFilterOpt,
 ]
@@ -101,7 +102,6 @@ export const PostFilterView = ({ filter: { type, date }, ...props }: PostFilterP
 }
 
 export const SpaceFilterView = ({ filter: { type, date }, ...props }: SpaceFilterProps) => {
-  if (type === 'creators') return <CreatorsSpaces />
   return <LatestSpacesPage filter={type} dateFilter={date} {...props} />
 }
 

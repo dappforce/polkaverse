@@ -59,18 +59,12 @@ const getPostsByFilter: GetEntityFilter<PostFilterType> = {
 }
 
 const getSpacesByFilter: GetEntityFilter<Exclude<SpaceFilterType, 'suggested'>> = {
-  creators: {
+  latest: {
     day: q.GET_LATEST_SPACE_IDS,
     week: q.GET_LATEST_SPACE_IDS,
     month: q.GET_LATEST_SPACE_IDS,
     allTime: q.GET_LATEST_SPACE_IDS,
   },
-  // latest: {
-  //   day: q.GET_LATEST_SPACE_IDS,
-  //   week: q.GET_LATEST_SPACE_IDS,
-  //   month: q.GET_LATEST_SPACE_IDS,
-  //   allTime: q.GET_LATEST_SPACE_IDS,
-  // },
   // sortByFollowers: {
   //   day: q.GET_MOST_FOLLOWED_SPACE_IDS_IN_DATE_RANGE,
   //   week: q.GET_MOST_FOLLOWED_SPACE_IDS_IN_DATE_RANGE,
