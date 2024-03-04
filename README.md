@@ -1,4 +1,5 @@
 # Example dapp on the Subsocial blockchain by [DappForce](https://github.com/dappforce)
+
 ![Production Deploy](https://github.com/dappforce/polkaverse/actions/workflows/build-deploy.yml/badge.svg)
 
 PolkaVerse is a niche social site built on the Subsocial network. It focuses on the Polkadot and Kusama ecosystem. You can use this this code to help you in the development of your own dapps running on or integrated with Subsocial.
@@ -20,9 +21,13 @@ Create an `.env` file with settings that allow the app to connect to Subsocial's
 cp dev.env .env.local
 ```
 
+Install a compatible version of Node.js. The compatible versions are specified in the `package.json` file.
+If you have installed NVM simply run `nvm install && nvm use` to use the Node.js version specified in the .nvmrc file.
+
 Install project dependencies:
 
 ```sh
+npm install --global yarn
 yarn
 ```
 
@@ -31,7 +36,7 @@ yarn
 Dev mode supports hot reloads – this is very helpful when developing UI because you can see changes in your browser without restarting the app. But it takes some time (in seconds) to compile the updated parts of the app, after you made changes to the source code.
 
 ```sh
-yar dev
+yarn dev
 ```
 
 ### Option B: Run in a PROD mode

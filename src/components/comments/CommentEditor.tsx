@@ -141,7 +141,7 @@ export const CommentEditor = (props: Props) => {
             <Input.TextArea
               disabled={isLoading}
               placeholder='Write a comment...'
-              autoSize={{ minRows: 1, maxRows: 5 }}
+              autoSize={{ minRows: 1 }}
               autoFocus={autoFocus}
               size='large'
             />

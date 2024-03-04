@@ -394,3 +394,16 @@ export async function searchResults(client: GqlClient, variables: GetSearchResul
 
   return hits
 }
+
+export async function getLastestPostIdsInSpace(
+  client: GqlClient,
+  variables: { spaceId: string; limit: number },
+) {
+  const res = await client.query<{ posts: { id: string }[] }, { spaceId: string }>({
+    query: q.GET_LASTEST_POST_IDS_IN_SPACE,
+    variables,
+  })
+
+  const posts = res.data.posts ?? []
+  return posts.map(post => post.id)
+}

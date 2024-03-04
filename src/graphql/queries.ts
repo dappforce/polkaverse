@@ -783,3 +783,14 @@ export const GET_SEARCH_RESULTS = gql`
     }
   }
 `
+
+// Community Highlights
+// ------------------------------------------------------------------------------------
+
+export const GET_LASTEST_POST_IDS_IN_SPACE = gql`
+  query GetLatestPostIdsInSpace($spaceId: String!, $limit: Int!) {
+    posts(limit: $limit, orderBy: createdAtTime_DESC, where: { space: { id_eq: $spaceId } }) {
+      id
+    }
+  }
+`

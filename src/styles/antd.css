@@ -24143,7 +24143,7 @@ textarea.ant-mentions {
   width: 100%;
   border: none;
   outline: none;
-  resize: none;
+  resize: vertical !important;
 }
 .ant-mentions > textarea::-moz-placeholder {
   opacity: 1;
