@@ -1,6 +1,7 @@
 /**
  * Code taken from url-join@5.0.0 package
  * If its used via node_modules, it causes some issues with the build
+ * Its also modified a bit to fix issue where /?any=... becomes /any=...
  */
 
 function normalize(strArray: string[]) {
@@ -83,8 +84,14 @@ function normalize(strArray: string[]) {
   }
   // Each input component is now separated by a single slash except the possible first plain protocol part.
 
+  const prevStr = str
   // remove trailing slash before parameters or hash
   str = str.replace(/\/(\?|&|#[^!])/g, '$1')
+
+  // the previous step may have removed the first slash, so we need to add it back
+  if (prevStr.startsWith('/') && str.startsWith('?')) {
+    str = '/' + str
+  }
 
   // replace ? and & in parameters with &
   const [beforeHash, afterHash] = str.split('#')
