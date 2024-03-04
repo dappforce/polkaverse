@@ -39,7 +39,7 @@ const verifiedIcon = (
 
 export const postFilterOpt: Filter[] = [
   { label: 'Hot Posts', icon: '🔥', value: 'hot' },
-  { label: 'All Posts', value: 'latest' },
+  { label: 'Latest', value: 'latest' },
   // removed most liked and commented
   // ...offchainPostFilterOpt,
 ]
