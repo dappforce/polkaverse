@@ -1189,12 +1189,6 @@ hr {
   }
 }
 
-.container {
-  max-width: $max_width_page;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .DfSectionOuterContainer {
   display: flex;
   justify-content: center;
@@ -2379,4 +2373,12 @@ hr {
   top: 0;
   right: 0;
   transform: translateY(10px);
+}
+
+.container {
+  max-width: $max_width_page;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: $space_normal;
+  padding-right: $space_normal;
 }

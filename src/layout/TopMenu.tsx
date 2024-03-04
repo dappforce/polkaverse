@@ -37,12 +37,12 @@ const InnerMenu = () => {
       </Tooltip>
     </div>
   ) : (
-    <div className='DfTopBar'>
+    <div className='DfTopBar container'>
       <div className='DfTopBar--leftContent'>
         <MenuOutlined
           style={{ fontSize: '1rem', paddingLeft: '0.4rem', paddingRight: '0.4rem' }}
           onClick={toggle}
-          className={clsx('DfBurgerIcon mx-3', isMobile && 'mr-2')}
+          className={clsx('DfBurgerIcon mr-3', isMobile && 'mr-2')}
         />
         <CustomLink href='/' as='/'>
           <a className='DfBrand'>

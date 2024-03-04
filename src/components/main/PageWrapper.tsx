@@ -153,7 +153,7 @@ export const PageContent: FC<Props> = ({
           {/* {showOnBoarding && <Affix offsetBottom={5}><OnBoardingMobileCard /></Affix>} */}
         </section>
       ) : (
-        <div className={clsx('DfSectionOuterContainer')}>
+        <div className={clsx('DfSectionOuterContainer container')}>
           {creatorDashboardSidebarType && (
             <div {...sidebarStyles} className='xl-only'>
               <div>
