@@ -143,9 +143,9 @@ export const PageContent: FC<Props> = ({
         maxHeight: `calc(100vh - ${topOffset - boxShadowOffset}px)`,
         zIndex: 10,
         width: width + boxShadowOffset * 2,
+        top: topOffset - boxShadowOffset,
         ...(boxShadowOffset
           ? {
-              top: topOffset - boxShadowOffset,
               margin: -boxShadowOffset,
               padding: boxShadowOffset,
             }
