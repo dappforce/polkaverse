@@ -76,7 +76,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
       </div>
       <div
         className={clsx('mt-2', isMobile && 'GapNormal')}
-        style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr' }}
+        style={{ display: 'grid', gridTemplateColumns: '1fr' }}
       >
         <div className={clsx('d-flex flex-column FontSmall')}>
           {data.creators.length < 3 ? (

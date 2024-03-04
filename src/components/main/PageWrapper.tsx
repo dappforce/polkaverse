@@ -148,7 +148,7 @@ export const PageContent: FC<Props> = ({
 
       <ProgressModal />
       {isMobile ? (
-        <section className={className}>
+        <section className={clsx(className, 'container')}>
           {children}
           {/* {showOnBoarding && <Affix offsetBottom={5}><OnBoardingMobileCard /></Affix>} */}
         </section>
