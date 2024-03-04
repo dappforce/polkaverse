@@ -1,7 +1,7 @@
-import { BellOutlined } from '@ant-design/icons'
 import { Badge } from 'antd'
 import clsx from 'clsx'
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import { FaRegBell } from 'react-icons/fa'
 import config from 'src/config'
 import { useGetNotificationsCount } from 'src/graphql/hooks'
 import useExternalStorage from 'src/hooks/useExternalStorage'
@@ -74,7 +74,7 @@ export const useNotifCounterContext = () => {
 const notificationItem = {
   name: 'My notifications',
   page: ['/notifications', '/notifications'],
-  icon: <BellOutlined className='bell d-block' />,
+  icon: <FaRegBell className='bell d-block' />,
 }
 
 type NotificationsProps = {

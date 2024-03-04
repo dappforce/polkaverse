@@ -14,7 +14,7 @@ export type CommonEnergyProps = {
 
 const energyColors: { [key in EnergyStatus]: string } = {
   low: '#E89C29',
-  normal: '#8C8C8C',
+  normal: '#94A3B8',
   zero: '#F5222D',
 }
 

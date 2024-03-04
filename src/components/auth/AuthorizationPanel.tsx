@@ -1,5 +1,4 @@
 import { NotificationsBell, useNotifCounterContext } from '../activity/NotifCounter'
-import EnergyDropdown from '../energy/index'
 import { NewPostButtonInTopMenu } from '../posts/NewPostButtonInTopMenu'
 import { MyAccountPopup } from '../profiles/address-views'
 import { SignInButton } from './AuthButtons'
@@ -15,7 +14,6 @@ export const AuthorizationPanel = () => {
         <>
           <NewPostButtonInTopMenu />
           <NotificationsBell unreadCount={unreadCount} />
-          <EnergyDropdown />
           <MyAccountPopup className='profileName' />
         </>
       ) : (
