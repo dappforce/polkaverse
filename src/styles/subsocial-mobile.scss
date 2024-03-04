@@ -64,11 +64,8 @@
 
   .DfSideBar {
     .ant-drawer-content {
-      padding-top: 4rem;
-    }
-
-    .ant-drawer-content-wrapper {
-      width: 225px !important;
+      padding-top: 4.25rem;
+      background-color: $color_page_bg;
     }
   }
 
