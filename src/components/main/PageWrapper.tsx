@@ -168,20 +168,18 @@ export const PageContent: FC<Props> = ({
         </section>
       ) : (
         <div className={clsx('DfSectionOuterContainer container')}>
-          {creatorDashboardSidebarType && (
-            <div
-              {...sideMenuStyles}
-              className='xl-only DfSideBar pt-2'
-              style={{
-                ...sideMenuStyles.style,
-                height: `calc(100vh - ${76 - BOX_SHADOW_OFFSET}px)`,
-                borderRight: '1px solid #CBD5E1',
-                marginTop: -12,
-              }}
-            >
-              <SideMenu noOffset />
-            </div>
-          )}
+          <div
+            {...sideMenuStyles}
+            className='xl-only DfSideBar pt-2'
+            style={{
+              ...sideMenuStyles.style,
+              height: `calc(100vh - ${76 - BOX_SHADOW_OFFSET}px)`,
+              borderRight: '1px solid #CBD5E1',
+              marginTop: -12,
+            }}
+          >
+            <SideMenu noOffset />
+          </div>
           <section
             className={clsx(
               'DfSectionOuter',

@@ -1,18 +1,11 @@
-import { newLogger } from '@subsocial/utils'
 import { Menu } from 'antd'
 import clsx from 'clsx'
-import Router, { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import { HTMLProps } from 'react'
 import CustomLink from 'src/components/referral/CustomLink'
 import { useMyAddress } from '../components/auth/MyAccountsContext'
 import { buildAuthorizedMenu, isDivider, PageLink } from './SideMenuItems'
 import styles from './Sider.module.sass'
-
-const log = newLogger('SideMenu')
-
-const goToPage = ([url, as]: string[]) => {
-  Router.push(url, as).catch(err => log.error(`Failed to navigate to a selected page. ${err}`))
-}
 
 const renderPageLink = (item: PageLink) => {
   const { icon, openInNewTab } = item
@@ -30,12 +23,8 @@ const renderPageLink = (item: PageLink) => {
   }
 
   return (
-    <Menu.Item
-      className='DfMenuItem'
-      key={item.page[1] || item.page[0]}
-      onClick={() => !openInNewTab && goToPage(item.page)}
-    >
-      <CustomLink href={item.page[0]} as={item.page[1]} passHref>
+    <Menu.Item className='DfMenuItem' key={item.href[1] || item.href[0]}>
+      <CustomLink href={item.href[0]} passHref>
         <a {...anchorProps}>
           <span className='MenuItemIcon'>{icon}</span>
           <span className='MenuItemName'>{item.name}</span>

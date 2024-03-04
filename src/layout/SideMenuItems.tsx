@@ -13,7 +13,7 @@ export const Divider: Divider = 'Divider'
 
 export type PageLink = {
   name: string
-  page: string[]
+  href: string
   icon: React.ReactNode
   hidden?: boolean
   openInNewTab?: boolean
@@ -30,26 +30,22 @@ export const isPageLink = (item: MenuItem): item is PageLink => !isDivider(item)
 
 export const buildAuthorizedMenu = (myAddress?: string): MenuItem[] => {
   return [
-    ...(myAddress
-      ? [
-          {
-            name: 'Feed',
-            icon: <SubIcon Icon={BiNews} />,
-            page: ['/'],
-          },
-        ]
-      : []),
+    {
+      name: 'Feed',
+      icon: <SubIcon Icon={BiNews} />,
+      href: '/',
+    },
     {
       name: 'Chat',
       icon: <SubIcon Icon={BiChat} />,
-      page: ['/c/chats'],
+      href: '/c/chats',
     },
     ...(myAddress
       ? [
           {
             name: 'My Spaces',
             icon: <SubIcon Icon={LuCompass} />,
-            page: ['/my-spaces'],
+            href: '/my-spaces',
           },
         ]
       : []),
@@ -57,28 +53,28 @@ export const buildAuthorizedMenu = (myAddress?: string): MenuItem[] => {
     {
       name: 'Content Staking',
       icon: <SubIcon Icon={TbCoins} />,
-      page: ['/c/staking'],
+      href: '/c/staking',
     },
     {
       name: 'Leaderboard',
       icon: <SubIcon Icon={MdOutlineLeaderboard} />,
-      page: ['/leaderboard'],
+      href: '/leaderboard',
     },
     {
       name: 'Statistics',
       icon: <SubIcon Icon={RiLineChartLine} />,
-      page: ['/stats'],
+      href: '/stats',
     },
     Divider,
     {
       name: 'Usernames',
       icon: <SubIcon Icon={TbWorld} />,
-      page: ['/dd'],
+      href: '/dd',
     },
     {
       name: 'Energy Station',
       icon: <SubIcon Icon={TiFlashOutline} />,
-      page: ['/energy'],
+      href: '/energy',
     },
   ]
 }
