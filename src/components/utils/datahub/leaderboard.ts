@@ -7,13 +7,7 @@ import { UserStatistics } from 'src/rtk/features/leaderboard/userStatisticsSlice
 import { datahubQueryRequest, getDayAndWeekTimestamp } from './utils'
 
 const GET_TOP_USERS = gql`
-  query GetTopUsers($from: String!, $fromTimestamp: String!) {
-    staker: activeStakingStakersRankedBySuperLikesForPeriod(
-      args: { fromTime: $fromTimestamp, limit: 3 }
-    ) {
-      address
-      count
-    }
+  query GetTopUsers($from: String!) {
     creator: activeStakingAddressesRankedByRewardsForPeriod(
       args: {
         filter: { period: WEEK, role: CREATOR, timestamp: $from }
@@ -40,10 +34,6 @@ export async function getTopUsers(): Promise<TopUsers> {
 
   const res = await datahubQueryRequest<
     {
-      staker: {
-        address: string
-        count: number
-      }[]
       creator: {
         data: {
           address: string
@@ -51,23 +41,16 @@ export async function getTopUsers(): Promise<TopUsers> {
         }[]
       }
     },
-    { from: string; fromTimestamp: string }
+    { from: string }
   >({
     query: GET_TOP_USERS,
-    variables: {
-      from: week.toString(),
-      fromTimestamp: startOfWeekTimestamp.valueOf().toString(),
-    },
+    variables: { from: week.toString() },
   })
 
   return {
     creators: res.data.creator.data.map(({ address, reward }) => ({
       address,
       reward,
-    })),
-    stakers: res.data.staker.map(({ address, count }) => ({
-      address,
-      count,
     })),
   }
 }

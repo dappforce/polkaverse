@@ -14,7 +14,6 @@ import Avatar from '../profiles/address-views/Avatar'
 import CustomLink from '../referral/CustomLink'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { DfImage } from '../utils/DfImage'
-import { MutedSpan } from '../utils/MutedText'
 import { Pluralize } from '../utils/Plularize'
 import Segment from '../utils/Segment'
 
@@ -29,7 +28,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
 
   const args = useMemo(
     () => ({
-      ids: [...(data?.stakers ?? []), ...(data?.creators ?? [])].map(({ address }) => address),
+      ids: [...(data?.creators ?? [])].map(({ address }) => address),
     }),
     [data],
   )
@@ -71,7 +70,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
     <>
       <div className='d-flex justify-content-between align-items-center'>
         <div className='d-flex align-items-center FontWeightSemibold GapMini'>
-          <span className='FontSemilarge'>Weekly Top Users</span>
+          <span className='FontSemilarge'>Weekly Top Creators</span>
         </div>
         {isMobile && seeMoreButton}
       </div>
@@ -79,23 +78,7 @@ export default function TopUsersCard({ ...props }: TopUsersCardProps) {
         className={clsx('mt-2', isMobile && 'GapNormal')}
         style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr' }}
       >
-        <div className='d-flex flex-column FontSmall' style={{ minWidth: 0 }}>
-          <MutedSpan className='FontWeightMedium mb-1'>Likers</MutedSpan>
-          {data.stakers.length < 3 ? (
-            <NoUsersContent text='Like the most posts to reach the top!' />
-          ) : (
-            <div className='d-flex flex-column GapTiny'>
-              {data.stakers.map((staker, i) => (
-                <UserInfo type='staker' rank={i + 1} key={i} user={staker} />
-              ))}
-            </div>
-          )}
-        </div>
-        <div
-          className={clsx('d-flex flex-column FontSmall', !isMobile && 'mt-3 pt-2')}
-          style={{ borderTop: !isMobile ? '1px solid #E2E8F0' : 'none', minWidth: 0 }}
-        >
-          <MutedSpan className='FontWeightMedium mb-1'>Creators</MutedSpan>
+        <div className={clsx('d-flex flex-column FontSmall')}>
           {data.creators.length < 3 ? (
             <NoUsersContent text='Create great content and get the most likes to show up here!' />
           ) : (

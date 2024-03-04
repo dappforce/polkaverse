@@ -201,7 +201,7 @@ export const PageContent: FC<Props> = ({
           {rightPanel === undefined && creatorDashboardSidebarType && (
             <div {...sidebarStyles}>
               <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
-              <div className='mt-3 xl-hidden'>
+              <div className='mt-3'>
                 <TopUsersCard />
               </div>
               {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}
