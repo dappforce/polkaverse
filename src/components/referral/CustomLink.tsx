@@ -2,6 +2,11 @@ import Link, { LinkProps } from 'next/link'
 import urlJoin from 'src/utils/url-join'
 import { useReferralId } from './ReferralUrlChanger'
 
+function getCurrentUrlOrigin() {
+  if (typeof window === 'undefined') return ''
+  return window.location.origin
+}
+
 export default function CustomLink(props: React.PropsWithChildren<LinkProps>) {
   const refId = useReferralId()
   if (refId) {
@@ -10,6 +15,11 @@ export default function CustomLink(props: React.PropsWithChildren<LinkProps>) {
       href: augmentLink(props.href, refId),
       as: props.as && augmentLink(props.as, refId),
     }
+  }
+
+  // If url starts with /c, it will be in a separate app (grill app), so need to give full url
+  if (typeof props.href === 'string' && props.href.match(/\/c(\/.*|(\?.*|#.*)?)$/)) {
+    return <a {...props} href={urlJoin(getCurrentUrlOrigin(), props.href, `?ref=${refId}`)} />
   }
 
   return <Link {...props} />
