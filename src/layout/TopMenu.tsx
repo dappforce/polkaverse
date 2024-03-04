@@ -43,7 +43,7 @@ const InnerMenu = () => {
           onClick={toggle}
           className={clsx('DfBurgerIcon mr-2.5 xl-hidden FontLarge')}
         />
-        <CustomLink href='/' as='/'>
+        <CustomLink href='/'>
           <a className='DfBrand'>
             <img className='d-block' src={isMobile ? mobileAppLogo : appLogo} alt={appName} />
           </a>
