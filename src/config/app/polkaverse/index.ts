@@ -4,8 +4,8 @@ import polkaverseSpaces from './polkaverseSpaces'
 const index: AppConfig = {
   // App settings
   appName: 'PolkaVerse',
-  appLogo: '/polkaverse-logo.svg',
-  mobileAppLogo: '/polkaverse-sign.svg',
+  appLogo: '/grill.svg',
+  mobileAppLogo: '/grill.svg',
   appBaseUrl: 'https://polkaverse.com',
   themeName: undefined,
   metaTags: {
