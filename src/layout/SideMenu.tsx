@@ -4,8 +4,8 @@ import clsx from 'clsx'
 import Router, { useRouter } from 'next/router'
 import { HTMLProps } from 'react'
 import CustomLink from 'src/components/referral/CustomLink'
-import { useIsSignedIn, useIsUsingEmail, useMyAddress } from '../components/auth/MyAccountsContext'
-import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMenuItems'
+import { useMyAddress } from '../components/auth/MyAccountsContext'
+import { buildAuthorizedMenu, isDivider, PageLink } from './SideMenuItems'
 import styles from './Sider.module.sass'
 
 const log = newLogger('SideMenu')
@@ -48,12 +48,8 @@ const renderPageLink = (item: PageLink) => {
 function SideMenu() {
   const { asPath } = useRouter()
   const myAddress = useMyAddress()
-  const isLoggedIn = useIsSignedIn()
 
-  const isUsingEmail = useIsUsingEmail()
-
-  const menuItems =
-    isLoggedIn && myAddress ? buildAuthorizedMenu(myAddress, isUsingEmail) : DefaultMenu
+  const menuItems = buildAuthorizedMenu(myAddress)
 
   return (
     <div
