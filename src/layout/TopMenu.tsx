@@ -42,7 +42,7 @@ const InnerMenu = () => {
         <MenuOutlined
           style={{ fontSize: '1rem', paddingLeft: '0.4rem', paddingRight: '0.4rem' }}
           onClick={toggle}
-          className={clsx('DfBurgerIcon mr-2', isMobile && 'mr-2')}
+          className={clsx('DfBurgerIcon mr-2 xl-hidden', isMobile && 'mr-2')}
         />
         <CustomLink href='/' as='/'>
           <a className='DfBrand'>

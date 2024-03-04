@@ -68,7 +68,7 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
   // TODO: open profile account
   return (
     <span className='DfCurrentAddress icon'>
-      <Avatar address={address} avatar={owner?.content?.image} asLink={false} size={30} />
+      <Avatar address={address} avatar={owner?.content?.image} asLink={false} size={30} noMargin />
     </span>
   )
 }

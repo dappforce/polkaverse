@@ -9,7 +9,7 @@ const enableGraphQl = getOrTrue(env.enableGraphQl) && nonEmptyStr(connections.gr
 const isSquidGraphQLEnabled = getOrTrue(env.enableSquidDataSource) && enableGraphQl
 
 const commonFeatures: CommonSubsocialFeatures = {
-  enableSearch: isSquidGraphQLEnabled && getOrTrue(env.enableSearch),
+  enableSearch: isSquidGraphQLEnabled && getOrFalse(env.enableSearch),
   enableFeed: getOrTrue(env.enableFeed),
   enableNotifications: getOrTrue(env.enableNotifications),
   enableActivity: getOrTrue(env.enableActivity),
