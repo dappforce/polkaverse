@@ -23,8 +23,8 @@ const renderPageLink = (item: PageLink) => {
   }
 
   return (
-    <Menu.Item className='DfMenuItem' key={item.href[1] || item.href[0]}>
-      <CustomLink href={item.href[0]} passHref>
+    <Menu.Item className='DfMenuItem' key={item.href}>
+      <CustomLink href={item.href} passHref>
         <a {...anchorProps}>
           <span className='MenuItemIcon'>{icon}</span>
           <span className='MenuItemName'>{item.name}</span>
@@ -35,7 +35,7 @@ const renderPageLink = (item: PageLink) => {
 }
 
 function SideMenu({ noOffset }: { noOffset?: boolean }) {
-  const { asPath } = useRouter()
+  const { pathname } = useRouter()
   const myAddress = useMyAddress()
 
   const menuItems = buildAuthorizedMenu(myAddress)
@@ -48,7 +48,7 @@ function SideMenu({ noOffset }: { noOffset?: boolean }) {
       )}
     >
       <Menu
-        selectedKeys={[asPath]}
+        selectedKeys={[pathname]}
         mode='inline'
         theme='light'
         className={clsx(styles.Menu, noOffset && styles.MenuNoOffset)}

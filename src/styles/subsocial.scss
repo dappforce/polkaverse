@@ -2400,3 +2400,10 @@ hr {
   padding-left: $space_normal;
   padding-right: $space_normal;
 }
+
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  background-color: transparent !important;
+}
+.ant-menu-item::after {
+  display: none !important;
+}
