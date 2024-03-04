@@ -523,7 +523,6 @@ a {
 }
 
 .DfPageContent {
-  padding: $space_small $space_normal;
   overflow-wrap: break-word;
   margin: 0 auto;
   color: $color_font_normal;
@@ -1190,18 +1189,26 @@ hr {
   }
 }
 
+.container {
+  max-width: $max_width_page;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .DfSectionOuterContainer {
   display: flex;
   justify-content: center;
   align-items: flex-start;
   gap: $space_normal;
+  max-width: $max_width_page;
+  padding: 0 $space_normal;
+  margin: 0 auto;
 }
 
 @media (min-width: 767px) {
   .DfSectionOuter {
     min-width: $min_width_content;
-    max-width: $max_width_content;
-    width: $max_width_content;
+    flex: 1;
     padding-bottom: 0;
     position: relative;
     z-index: 0;
