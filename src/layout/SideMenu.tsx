@@ -37,7 +37,7 @@ const renderPageLink = (item: PageLink) => {
     >
       <CustomLink href={item.page[0]} as={item.page[1]} passHref>
         <a {...anchorProps}>
-          {icon}
+          <span className='MenuItemIcon'>{icon}</span>
           <span className='MenuItemName'>{item.name}</span>
         </a>
       </CustomLink>

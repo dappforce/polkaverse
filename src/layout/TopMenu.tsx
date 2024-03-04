@@ -40,9 +40,8 @@ const InnerMenu = () => {
     <div className='DfTopBar container'>
       <div className='DfTopBar--leftContent'>
         <MenuOutlined
-          style={{ fontSize: '1rem' }}
           onClick={toggle}
-          className={clsx('DfBurgerIcon mr-2.5 xl-hidden')}
+          className={clsx('DfBurgerIcon mr-2.5 xl-hidden FontLarge')}
         />
         <CustomLink href='/' as='/'>
           <a className='DfBrand'>

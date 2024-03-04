@@ -3,6 +3,9 @@
 .Menu
   color: $color_muted
   padding-top: 4rem
+  display: flex
+  flex-direction: column
+  background-color: $color_page_bg
 
 .PagePadding
   padding-top: 76px
@@ -14,6 +17,7 @@
 .SiderOverflow
   overflow-x: hidden
   overflow-y: auto
+  background-color: $color_page_bg
 
   &::-webkit-scrollbar
     display: none
@@ -23,7 +27,7 @@
 
 @media (max-width: 991px)
   .Menu
-    padding-top: 4remrem
+    padding-top: 4rem
 
 @media (max-width: $max_mobile_width)
   .Menu
