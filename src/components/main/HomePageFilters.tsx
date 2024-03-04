@@ -38,13 +38,8 @@ const verifiedIcon = (
 )
 
 export const postFilterOpt: Filter[] = [
-  {
-    label: 'Featured Posts',
-    icon: verifiedIcon,
-    value: 'suggested',
-  },
   { label: 'Hot Posts', icon: '🔥', value: 'hot' },
-  { label: 'All Posts', value: 'latest' },
+  { label: 'Latest', value: 'latest' },
   // removed most liked and commented
   // ...offchainPostFilterOpt,
 ]
@@ -119,7 +114,7 @@ export const Filters = (props: Props) => {
 
   if (tabKey === 'feed' || !enableGraphQl) return null
 
-  const onFilterChange: any = (value: PostFilterType = 'suggested') =>
+  const onFilterChange: any = (value: PostFilterType = 'hot') =>
     setFiltersInUrl(router, tabKey, { type: value, date: date as DateFilterType })
 
   const onDateChange: any = (value: DateFilterType = 'week') =>
