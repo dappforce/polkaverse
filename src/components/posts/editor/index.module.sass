@@ -1,6 +1,6 @@
 @import 'src/styles/subsocial-vars.scss'
 
-.SectionOverride 
+.SectionOverride
   max-width: 100% !important
 
 .EditorFormItem
@@ -16,10 +16,10 @@
     &:first-of-type
       margin-bottom: $space_normal
 
-.EditorBodyContent 
+.EditorBodyContent
   width: $max_width_content
 
-  .TitleInput 
+  .TitleInput
     border: none
     box-shadow: none
     font-size: $font_huge
@@ -31,10 +31,10 @@
       &:focus
         box-shadow: none
 
-  \:global .ant-tabs-nav 
+  \:global .ant-tabs-nav
     margin: 0
 
-.AdvancedBody 
+.AdvancedBody
   width: 350px
 
 .UploadHint
@@ -64,7 +64,7 @@
     min-width: 220px
     &:focus
       box-shadow: none !important
-  
+
 .SwitchEditorButton
   height: 40px
   display: flex
@@ -110,11 +110,11 @@
 
 .FastEditor
   min-height: 120px
-  max-height: 120px
   overflow: auto
   padding-top: 0 !important
   display: flex
   flex-direction: column
+  resize: vertical !important
 
   &:focus-within
     border-color: #f759ab
@@ -127,7 +127,7 @@
     padding: 0
 
 @media screen and ( max-width: 1165px)
-  .AdvancedBody 
+  .AdvancedBody
     width: $max_width_content
 
   .ToolsSection
@@ -140,12 +140,12 @@
 @media screen and ( max-width: 755px)
   .EditorBodyContent
     max-width: 100%
-  
-  .AdvancedBody 
+
+  .AdvancedBody
     width: 100%
 
-  .EditorBodyContent 
-    \:global .editor-toolbar 
+  .EditorBodyContent
+    \:global .editor-toolbar
       display: none
 
 @media screen and ( max-width: 455px)
@@ -155,8 +155,8 @@
     box-shadow: none
     height: 64px
     margin-left: -$space_normal
-  
-  .HeaderSafeArea 
+
+  .HeaderSafeArea
     margin-top: 0
     margin-bottom: 64px
 
