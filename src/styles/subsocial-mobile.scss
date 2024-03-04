@@ -72,14 +72,6 @@
     }
   }
 
-  .DfBrand {
-    img {
-      max-width: 50px;
-      height: auto;
-      top: 0;
-    }
-  }
-
   .DfNotificationItem {
     .DfNotificationContent {
       word-break: break-word;
@@ -175,11 +167,6 @@
   .DfPageContent {
     min-width: 100% !important;
     max-width: 100% !important;
-  }
-
-  .DfBurgerIcon {
-    padding-left: 0;
-    padding-right: $space_tiny;
   }
 
   .DfSection {
