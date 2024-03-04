@@ -137,15 +137,19 @@ export const PageContent: FC<Props> = ({
     return {
       className: 'HideScrollbar sm-hidden',
       style: {
-        width: width + boxShadowOffset * 2,
         flexShrink: 0.2,
         position: 'sticky',
-        top: topOffset - boxShadowOffset,
         overflowY: 'auto',
         maxHeight: `calc(100vh - ${topOffset - boxShadowOffset}px)`,
-        margin: -boxShadowOffset,
-        padding: boxShadowOffset,
         zIndex: 10,
+        ...(boxShadowOffset
+          ? {
+              width: width + boxShadowOffset * 2,
+              top: topOffset - boxShadowOffset,
+              margin: -boxShadowOffset,
+              padding: boxShadowOffset,
+            }
+          : {}),
       },
     }
   }
@@ -169,10 +173,10 @@ export const PageContent: FC<Props> = ({
               {...sideMenuStyles}
               className='xl-only DfSideBar pt-2'
               style={{
+                ...sideMenuStyles.style,
                 height: `calc(100vh - ${76 - BOX_SHADOW_OFFSET}px)`,
                 borderRight: '1px solid #CBD5E1',
-                marginTop: '-12px',
-                ...sideMenuStyles.style,
+                marginTop: -12,
               }}
             >
               <SideMenu noOffset />
