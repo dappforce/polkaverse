@@ -45,7 +45,7 @@ const renderPageLink = (item: PageLink) => {
   )
 }
 
-function SideMenu() {
+function SideMenu({ noOffset }: { noOffset?: boolean }) {
   const { asPath } = useRouter()
   const myAddress = useMyAddress()
 
@@ -62,7 +62,7 @@ function SideMenu() {
         selectedKeys={[asPath]}
         mode='inline'
         theme='light'
-        className={styles.Menu}
+        className={clsx(styles.Menu, noOffset && styles.MenuNoOffset)}
         style={{ borderRight: 0, borderBottom: 0 }}
       >
         {menuItems.map((item, i) =>

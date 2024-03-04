@@ -6,6 +6,7 @@ import Head from 'next/head'
 import React, { ComponentProps, FC } from 'react'
 import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
+import SideMenu from 'src/layout/SideMenu'
 import CreatorDashboardSidebar, {
   CreatorDashboardSidebarType,
 } from '../creators/CreatorDashboardSidebar'
@@ -102,7 +103,6 @@ type Props = {
   creatorDashboardSidebarType?: CreatorDashboardSidebarType
 }
 
-const SIDEBAR_WIDTH = 300
 // offset for making box shadow of content still visible while having the scrollbar
 const BOX_SHADOW_OFFSET = 24
 
@@ -127,20 +127,30 @@ export const PageContent: FC<Props> = ({
   const isMobile = useIsMobileWidthOrDevice()
   // const isPanels = leftPanel || rightPanel
 
-  const sidebarStyles: ComponentProps<'div'> = {
-    className: 'HideScrollbar sm-hidden',
-    style: {
-      width: SIDEBAR_WIDTH + BOX_SHADOW_OFFSET * 2,
-      flexShrink: 0.2,
-      position: 'sticky',
-      top: 76 - BOX_SHADOW_OFFSET,
-      overflowY: 'auto',
-      maxHeight: `calc(100vh - ${76 - BOX_SHADOW_OFFSET}px)`,
-      margin: -BOX_SHADOW_OFFSET,
-      padding: BOX_SHADOW_OFFSET,
-      zIndex: 10,
-    },
+  const sidebarStyles = (config?: {
+    withBoxShadowOffset?: boolean
+    topOffset?: number
+    width?: number
+  }): ComponentProps<'div'> => {
+    const { topOffset = 76, withBoxShadowOffset = true, width = 275 } = config || {}
+    const boxShadowOffset = withBoxShadowOffset ? BOX_SHADOW_OFFSET : 0
+    return {
+      className: 'HideScrollbar sm-hidden',
+      style: {
+        width: width + boxShadowOffset * 2,
+        flexShrink: 0.2,
+        position: 'sticky',
+        top: topOffset - boxShadowOffset,
+        overflowY: 'auto',
+        maxHeight: `calc(100vh - ${topOffset - boxShadowOffset}px)`,
+        margin: -boxShadowOffset,
+        padding: boxShadowOffset,
+        zIndex: 10,
+      },
+    }
   }
+
+  const sideMenuStyles = sidebarStyles({ topOffset: 64, withBoxShadowOffset: false, width: 225 })
 
   return (
     <>
@@ -155,10 +165,17 @@ export const PageContent: FC<Props> = ({
       ) : (
         <div className={clsx('DfSectionOuterContainer container')}>
           {creatorDashboardSidebarType && (
-            <div {...sidebarStyles} className='xl-only'>
-              <div>
-                <TopUsersCard />
-              </div>
+            <div
+              {...sideMenuStyles}
+              className='xl-only DfSideBar pt-2'
+              style={{
+                height: `calc(100vh - ${76 - BOX_SHADOW_OFFSET}px)`,
+                borderRight: '1px solid #CBD5E1',
+                marginTop: '-12px',
+                ...sideMenuStyles.style,
+              }}
+            >
+              <SideMenu noOffset />
             </div>
           )}
           <section
@@ -199,7 +216,7 @@ export const PageContent: FC<Props> = ({
           </section>
           {rightPanel}
           {rightPanel === undefined && creatorDashboardSidebarType && (
-            <div {...sidebarStyles}>
+            <div {...sidebarStyles()}>
               <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
               <div className='mt-3'>
                 <TopUsersCard />
