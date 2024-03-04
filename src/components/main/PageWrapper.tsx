@@ -142,9 +142,9 @@ export const PageContent: FC<Props> = ({
         overflowY: 'auto',
         maxHeight: `calc(100vh - ${topOffset - boxShadowOffset}px)`,
         zIndex: 10,
+        width: width + boxShadowOffset * 2,
         ...(boxShadowOffset
           ? {
-              width: width + boxShadowOffset * 2,
               top: topOffset - boxShadowOffset,
               margin: -boxShadowOffset,
               padding: boxShadowOffset,
