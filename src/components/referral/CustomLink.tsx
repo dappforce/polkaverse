@@ -1,4 +1,5 @@
 import Link, { LinkProps } from 'next/link'
+import { ComponentProps } from 'react'
 import urlJoin from 'src/utils/url-join'
 import { useReferralId } from './ReferralUrlChanger'
 
@@ -7,7 +8,7 @@ function getCurrentUrlOrigin() {
   return window.location.origin
 }
 
-export default function CustomLink(props: React.PropsWithChildren<LinkProps>) {
+export default function CustomLink(props: ComponentProps<typeof Link>) {
   const refId = useReferralId()
   if (refId) {
     props = {

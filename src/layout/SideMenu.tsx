@@ -8,7 +8,7 @@ import { buildAuthorizedMenu, isDivider, PageLink } from './SideMenuItems'
 import styles from './Sider.module.sass'
 
 const renderPageLink = (item: PageLink) => {
-  const { icon, openInNewTab, toExternalLink } = item
+  const { icon, openInNewTab, forceHardNavigation } = item
 
   if (item.hidden) {
     return null
@@ -24,7 +24,7 @@ const renderPageLink = (item: PageLink) => {
 
   return (
     <Menu.Item className='DfMenuItem' key={item.href}>
-      {toExternalLink ? (
+      {forceHardNavigation ? (
         <a {...anchorProps} href={item.href}>
           <span className='MenuItemIcon'>{icon}</span>
           <span className='MenuItemName'>{item.name}</span>

@@ -17,7 +17,7 @@ export type PageLink = {
   icon: React.ReactNode
   hidden?: boolean
   openInNewTab?: boolean
-  toExternalLink?: boolean
+  forceHardNavigation?: boolean
 
   // Helpers
   isNotifications?: boolean
@@ -40,7 +40,7 @@ export const buildAuthorizedMenu = (myAddress?: string): MenuItem[] => {
       name: 'Chat',
       icon: <SubIcon Icon={BiChat} />,
       href: '/c/chats',
-      toExternalLink: true,
+      forceHardNavigation: true,
     },
     ...(myAddress
       ? [
@@ -56,7 +56,7 @@ export const buildAuthorizedMenu = (myAddress?: string): MenuItem[] => {
       name: 'Content Staking',
       icon: <SubIcon Icon={TbCoins} />,
       href: '/c/staking',
-      toExternalLink: true,
+      forceHardNavigation: true,
     },
     {
       name: 'Leaderboard',
