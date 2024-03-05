@@ -124,7 +124,7 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
     accountAddressStorage.remove()
     parentProxyAddressStorage.remove()
 
-    set({ ...initialState })
+    set({ ...initialState, isInitialized: true })
   },
   init: async () => {
     const { isInitialized, login } = get()
@@ -175,6 +175,16 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
         console.error('Failed to fetch proxies', err)
       }
     }
+
+    window.addEventListener(
+      'storage',
+      function (event) {
+        if (event.key === 'account' && !event.newValue) {
+          get().logout()
+        }
+      },
+      false,
+    )
   },
 }))
 
