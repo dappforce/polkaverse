@@ -1,7 +1,7 @@
+import { Button } from 'antd'
 import { NotificationsBell, useNotifCounterContext } from '../activity/NotifCounter'
 import { NewPostButtonInTopMenu } from '../posts/NewPostButtonInTopMenu'
 import { MyAccountPopup } from '../profiles/address-views'
-import { SignInButton } from './AuthButtons'
 import { useMyAddress } from './MyAccountsContext'
 
 export const AuthorizationPanel = () => {
@@ -17,7 +17,9 @@ export const AuthorizationPanel = () => {
           <MyAccountPopup className='profileName' />
         </>
       ) : (
-        <SignInButton className={'mr-2'} />
+        <a href='/c/widget/login'>
+          <Button type='default'>Sign in</Button>
+        </a>
       )}
     </>
   )

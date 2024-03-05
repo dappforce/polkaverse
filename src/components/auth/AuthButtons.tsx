@@ -50,9 +50,7 @@ export const SignInButton = ({
   title = 'Sign in',
   ...props
 }: SignInButtonProps) => (
-  <a href='/c/widget/login'>
-    <Button type={isPrimary ? 'primary' : 'default'} size={size} title={title} {...props} />
-  </a>
+  <OpenAuthButton type={isPrimary ? 'primary' : 'default'} size={size} title={title} {...props} />
 )
 
 type SwitchAccountButtonProps = InnerAuthButtonProps
