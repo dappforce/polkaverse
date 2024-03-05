@@ -2,6 +2,7 @@ import { Tabs } from 'antd'
 import router from 'next/router'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import CustomLink from 'src/components/referral/CustomLink'
+import config from 'src/config'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getAmountRange } from 'src/utils/analytics'
@@ -65,7 +66,7 @@ export default function LeaderboardTabs({
         <Tabs.TabPane
           tab={
             <CustomLink href='/stats' shallow passHref>
-              <a style={{ color: 'inherit' }}>Polkaverse Stats</a>
+              <a style={{ color: 'inherit' }}>{config.appName} Stats</a>
             </CustomLink>
           }
           key='stats'
