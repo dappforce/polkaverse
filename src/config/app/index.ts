@@ -1,8 +1,10 @@
 import { appKind, appOverrides } from '../env'
+import grill from './grill'
 import polkaverse from './polkaverse'
 import staging from './staging'
 
 const apps = {
+  grill,
   polkaverse,
   staging,
 }

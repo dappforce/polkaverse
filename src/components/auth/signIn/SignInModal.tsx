@@ -306,7 +306,7 @@ function SignInDesc() {
   const isMobile = useIsMobileWidthOrDevice()
   if (isMobile) {
     if (hasInjectedWallet()) {
-      return <>To use Polkaverse, you need to connect your wallet</>
+      return <>To use {config.appName}, you need to connect your wallet</>
     }
     return (
       <>To use PolkaVerse, you need a wallet to manage your account. We recommend Nova Wallet.</>

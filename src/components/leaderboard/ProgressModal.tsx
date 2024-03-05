@@ -5,6 +5,7 @@ import html2canvas from 'html2canvas'
 import { useEffect, useState } from 'react'
 import { ReactNode } from 'react-markdown'
 import CustomModal from 'src/components/utils/CustomModal'
+import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { useFetchProfileSpace, useSelectProfile } from 'src/rtk/app/hooks'
 import { useFetchUserPrevReward } from 'src/rtk/features/activeStaking/hooks'
@@ -273,7 +274,7 @@ function ProgressPanel({
     })
   }
 
-  const shareOnPolkaverse = () => {
+  const shareOnPlatform = () => {
     const total = parseToBigInt(data?.earned.staker) + parseToBigInt(data?.earned.creator)
     const { isZero, value } = formatSUB(total.toString())
     const title = `I earned ${isZero ? '' : `${value} `}SUB ${
@@ -387,10 +388,10 @@ function ProgressPanel({
               type='default'
               ghost
               size='large'
-              onClick={() => shareOnPolkaverse()}
+              onClick={() => shareOnPlatform()}
               loading={loading}
             >
-              Share on Polkaverse
+              Share on {config.appName}
             </Button>
           )}
         </div>
