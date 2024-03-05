@@ -21,7 +21,6 @@ import { useIsSubstrateConnected } from '../substrate'
 import { Loading, LoadingSpaces, toShortAddress } from '../utils'
 import { getPageOfIds } from '../utils/getIds'
 import { Pluralize } from '../utils/Plularize'
-import Section from '../utils/Section'
 import { CreateSpaceButton } from './helpers'
 import { ViewSpaceById } from './ViewSpace'
 import { ViewSpaceProps } from './ViewSpaceProps'
@@ -82,11 +81,10 @@ const SpacesListBySpaceIds = (props: SpacesListBySpaceIdsProps) => {
   )
 }
 
-type AccountSpacesProps = BaseProps & {
-  withTabs?: boolean
-}
+type AccountSpacesProps = BaseProps
 
-export const OwnedSpacesList = ({ withTabs = false, withTitle, ...props }: AccountSpacesProps) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const OwnedSpacesList = ({ ...props }: Omit<AccountSpacesProps, 'withTitle'>) => {
   const address = props.address.toString()
   const {
     query: { page = DEFAULT_FIRST_PAGE, size = DEFAULT_PAGE_SIZE },
@@ -98,6 +96,9 @@ export const OwnedSpacesList = ({ withTabs = false, withTitle, ...props }: Accou
   const [newUnlistedSpaces] = partition(spaces, isUnlisted)
   const connected = useIsSubstrateConnected()
   const isMy = useIsMyAddress(address)
+
+  const spaceIdsImEditorOf =
+    useAppSelector(state => (address ? selectSpaceIdsWithRolesByAccount(state, address) : [])) || []
 
   const totalCount = spaceIds.length
   const unlistedCount = unlistedSpaceIds.length
@@ -129,54 +130,31 @@ export const OwnedSpacesList = ({ withTabs = false, withTitle, ...props }: Accou
 
   if (loading) return <LoadingSpaces />
 
-  const title = withTitle ? (
-    <span className='d-flex justify-content-between align-items-center w-100 my-2'>
-      <span>{isMy ? 'My spaces' : `Spaces of ${toShortAddress(address)}`}</span>
-      {!!totalCount && isMy && <CreateSpaceButton />}
-    </span>
-  ) : null
-
   const hasUnlistedSpaces = unlistedSpaceIds.length > 0
 
   return (
-    <Section className='m-0' title={title}>
-      {newUnlistedSpaces.length && withTabs && isMy ? (
-        <Tabs>
-          <TabPane tab={`All (${totalCount})`} key='all'>
-            {PublicSpaces}
-          </TabPane>
-          {hasUnlistedSpaces && (
-            <TabPane tab={`Unlisted (${unlistedSpaceIds.length})`} key='unlisted'>
-              <SpacesListBySpaceIds
-                spaceIds={unlistedSpaceIds}
-                totalCount={unlistedCount}
-                {...props}
-              />
-            </TabPane>
-          )}
-        </Tabs>
-      ) : (
-        PublicSpaces
+    <Tabs style={{ marginTop: '-8px' }}>
+      <TabPane tab={`All (${totalCount})`} key='all'>
+        {PublicSpaces}
+      </TabPane>
+      <TabPane tab={`Created (${totalCount})`} key='created'>
+        {PublicSpaces}
+      </TabPane>
+      {spaceIdsImEditorOf.length > 0 && (
+        <TabPane tab={`My Roles (${spaceIdsImEditorOf.length})`} key='editor'>
+          <SpacesListBySpaceIds
+            spaceIds={spaceIdsImEditorOf}
+            totalCount={spaceIdsImEditorOf.length}
+            {...props}
+          />
+        </TabPane>
       )}
-    </Section>
-  )
-}
-
-export const OwnedSpacesPage = () => {
-  const { address } = useRouter().query
-
-  if (!address) return null
-
-  return (
-    <PageContent
-      meta={{
-        title: 'Account spaces',
-        desc: `Subsocial spaces owned by ${address}`,
-      }}
-      withSidebar
-    >
-      <OwnedSpacesList address={address as string} withTabs withTitle />
-    </PageContent>
+      {hasUnlistedSpaces && (
+        <TabPane tab={`Hidden (${unlistedSpaceIds.length})`} key='hidden'>
+          <SpacesListBySpaceIds spaceIds={unlistedSpaceIds} totalCount={unlistedCount} {...props} />
+        </TabPane>
+      )}
+    </Tabs>
   )
 }
 
