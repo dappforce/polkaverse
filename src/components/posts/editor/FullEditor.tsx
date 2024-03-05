@@ -29,7 +29,7 @@ const ENABLE_MARKDOWN_MODE_KEY = 'df.enableMarkdownMode'
 const getMarkdownModeFromLocalStore = () =>
   localStorage.getItem(ENABLE_MARKDOWN_MODE_KEY) === 'true'
 
-const AFFIX_OFFSET = 85
+const AFFIX_OFFSET = 76
 const TITLE_MIN_LEN = 3
 const TITLE_MAX_LEN = 500
 
@@ -189,7 +189,7 @@ const FullEditor = ({
 
   return (
     <Form form={form} layout='vertical' initialValues={initialValues} onFieldsChange={handleChange}>
-      <Row gutter={[16, 16]} justify='center'>
+      <Row className={styles.EditorContainer} gutter={[16, 16]} justify='center'>
         <Col>
           <Card className={clsx(styles.EditorBodyContent, 'mb-3')}>
             <Form.Item
