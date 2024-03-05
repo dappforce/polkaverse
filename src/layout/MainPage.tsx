@@ -4,7 +4,7 @@ import { MaintenancePage } from 'src/components/posts/view-post'
 import { enableMaintenancePage } from 'src/config/env'
 import ClientLayout from './ClientLayout'
 
-const Page: React.FunctionComponent = ({ children }) => <div className='mb-3'>{children}</div>
+const Page: React.FunctionComponent = ({ children }) => <div>{children}</div>
 
 const SKIP_LAYOUT_PAGES = 'generators-for-promo'
 
