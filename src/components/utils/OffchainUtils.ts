@@ -175,8 +175,6 @@ export const updatePendingOrder = async ({
 }
 
 export async function requestToken({ address }: { address: string }) {
-  // make request token as pending transaction so websocket won't disconnect for 10 secs after request token
-  // this is to make energy subscription work
   const res = await axios.post('/c/api/request-token', {
     address,
   })

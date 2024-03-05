@@ -70,6 +70,7 @@ export type TxButtonProps = BaseTxButtonProps & {
   onValidate?: () => boolean | Promise<boolean>
   onClick?: () => Promise<any | undefined> | void
   onSuccess?: TxCallback
+  onSend?: () => void
   onCancel?: () => void
   isFreeTx?: boolean
   onFailed?: TxFailedCallback
@@ -90,6 +91,7 @@ function TxButton({
   unsigned,
   onValidate,
   onClick,
+  onSend,
   onSuccess,
   onFailed,
   onCancel,
@@ -339,6 +341,7 @@ function TxButton({
       }
 
       tx = await extrinsic.signAsync(account as any, { signer, nonce: -1 })
+      onSend?.()
 
       if (hideRememberMePopup) {
         setSignerProxyAdded('enabled', accountId as string)
@@ -446,9 +449,9 @@ function TxButton({
     <Component
       {...antdProps}
       onClick={() => {
-        if (!customNodeApi && !isFreeTx) {
+        if (!customNodeApi && !isFreeTx && !getIsUsingKeypairSigner(accountId ?? '')) {
+          openSignInModal(false)
           if (!accountId) {
-            openSignInModal(false)
             return setIsSending(false)
           }
           if (!hasTokens) {
@@ -466,6 +469,10 @@ function TxButton({
       {buttonLabel}
     </Component>
   )
+}
+
+function getIsUsingKeypairSigner(accountId: AnyAccountId) {
+  return accountId === useMyAccount.getState().address
 }
 
 export default React.memo(TxButton)

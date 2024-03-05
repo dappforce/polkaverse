@@ -5,8 +5,8 @@ import config from 'src/config'
 import { useBooleanExternalStorage } from 'src/hooks/useExternalStorage'
 import SpacesSuggestedForOnBoarding from '../spaces/SpacesSuggestedForOnBoarding'
 import { useSubsocialApi } from '../substrate'
-import SubstrateTxButton from '../substrate/SubstrateTxButton'
 import CustomModal from '../utils/CustomModal'
+import ResolvedTxButton from '../utils/TxButton'
 import { useIsOnBoardingSkippedContext } from './contexts/IsOnBoardingSkippedContext'
 import styles from './OnBoardingModal/OnBoardingModal.module.sass'
 
@@ -82,18 +82,18 @@ export default function RecommendedSpacesOnboarding() {
           maxItems={12}
         />
       </div>
-      <SubstrateTxButton
+      <ResolvedTxButton
         tx='utility.batch'
         className='mt-4'
         block
         size='large'
         type='primary'
-        params={() => selectedSpaces.map(id => api.tx.spaceFollows.followSpace(id))}
+        params={() => [selectedSpaces.map(id => api.tx.spaceFollows.followSpace(id))]}
         disabled={selectedSpaces.length === 0}
-        onClick={() => closeModal()}
+        onSend={() => closeModal()}
       >
         Finish
-      </SubstrateTxButton>
+      </ResolvedTxButton>
     </CustomModal>
   )
 }
