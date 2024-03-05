@@ -4,22 +4,15 @@ import { isStr } from '@subsocial/utils'
 import BN from 'bn.js'
 import { useRouter } from 'next/router'
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import {
-  useIsSignedIn,
-  useMyAccountsContext,
-  useMyAddress,
-} from 'src/components/auth/MyAccountsContext'
+import { useIsSignedIn, useMyAddress } from 'src/components/auth/MyAccountsContext'
 import useExternalStorage from 'src/hooks/useExternalStorage'
-import { useAppDispatch } from 'src/rtk/app/store'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
-import { resetOnBoardingData } from 'src/rtk/features/onBoarding/onBoardingSlice'
 import store from 'store'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import ConfirmationModal from '../confirmation-modal/ConfirmationModal'
 import { calculateEnergyState, EnergyState, getEnergyCoef } from '../energy/utils'
-import OnBoardingModal, {
-  ON_BOARDING_MODAL_KEY,
-} from '../onboarding/OnBoardingModal/OnBoardingModal'
+import { ON_BOARDING_MODAL_KEY } from '../onboarding/OnBoardingModal/OnBoardingModal'
+import RecommendedSpacesOnboarding from '../onboarding/RecommendedSpacesOnboarding'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { useSubstrate } from '../substrate'
 import { getCurrentEmailAddress } from '../utils/OffchainSigner/ExternalStorage'
@@ -127,9 +120,9 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
   const { getDataForAddress: getIsFinishedOnBoarding } = useExternalStorage(ON_BOARDING_MODAL_KEY, {
     parseStorageToState: data => data === '1',
   })
-  const dispatch = useAppDispatch()
+  // const dispatch = useAppDispatch()
 
-  const { signOut } = useMyAccountsContext()
+  // const { signOut } = useMyAccountsContext()
 
   const address = useMyAddress()
   const isSignedIn = useIsSignedIn()
@@ -266,13 +259,13 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
 
     openCloseOnBoardingModal('open')
   }
-  const onBackClickInFirstOnBoardingStep = () => {
-    setCurrentStep(StepsEnum.SelectAccount)
-    setShowModal(true)
-    dispatch(resetOnBoardingData())
-    openCloseOnBoardingModal('close')
-    signOut()
-  }
+  // const onBackClickInFirstOnBoardingStep = () => {
+  //   setCurrentStep(StepsEnum.SelectAccount)
+  //   setShowModal(true)
+  //   dispatch(resetOnBoardingData())
+  //   openCloseOnBoardingModal('close')
+  //   signOut()
+  // }
 
   return (
     <AuthContext.Provider value={contextValue}>
@@ -282,7 +275,8 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
         open={showModal}
         hide={() => setShowModal(false)}
       />
-      <OnBoardingModal onBackClickInFirstStep={onBackClickInFirstOnBoardingStep} />
+      <RecommendedSpacesOnboarding />
+      {/* <OnBoardingModal onBackClickInFirstStep={onBackClickInFirstOnBoardingStep} /> */}
       <ConfirmationModal />
     </AuthContext.Provider>
   )

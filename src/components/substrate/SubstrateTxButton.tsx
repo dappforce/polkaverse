@@ -421,6 +421,7 @@ function TxButton({
             return setIsSending(false)
           }
           if (!hasTokens) {
+            // TODO: create independent energy modal
             openOnBoardingModal('open', { toStep: 'energy', type: 'partial' })
             return setIsSending(false)
           }
