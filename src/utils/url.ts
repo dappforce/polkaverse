@@ -28,3 +28,10 @@ export function getCurrentUrlOrigin() {
   if (typeof window === 'undefined') return ''
   return window.location.origin
 }
+
+export function getUrlQuery(queryName: string) {
+  if (isServerSide()) return ''
+  const query = window.location.search
+  const searchParams = new URLSearchParams(query)
+  return searchParams.get(queryName) ?? ''
+}
