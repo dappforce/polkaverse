@@ -31,3 +31,30 @@
   svg
     color: #FAAD14
     font-size: $font_normal
+
+.PotentialRewardsIcon
+  position: relative
+  display: flex
+  margin-right: $space_mini
+
+  svg
+    color: #F8963A
+
+.closeIcon 
+  position: absolute
+  right: 2px
+  top: 0
+
+.closeIcon:before, .closeIcon:after
+  position: absolute
+  content: ' '
+  height: 7px
+  width: 2px
+  border-radius: 1px
+  background-color: #F8963A
+
+.closeIcon:before
+  transform: rotate(45deg)
+
+.closeIcon:after
+  transform: rotate(-45deg)
