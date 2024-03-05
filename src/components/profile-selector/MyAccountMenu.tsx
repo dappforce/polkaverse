@@ -1,4 +1,5 @@
 import React, { createContext, FC, useContext, useEffect, useRef, useState } from 'react'
+import { getCurrentUrlOrigin } from 'src/utils/url'
 import { InfoDetails } from '../profiles/address-views'
 import Avatar from '../profiles/address-views/Avatar'
 import Address from '../profiles/address-views/Name'
@@ -104,7 +105,7 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
       <Avatar address={address} avatar={owner?.content?.image} asLink={false} size={30} noMargin />
       <iframe
         ref={iframeRef}
-        src='http://localhost:3000/c/widget/profile'
+        src={`${getCurrentUrlOrigin()}/c/widget/profile`}
         style={{
           opacity: isOpenProfileModal ? 1 : 0,
           pointerEvents: isOpenProfileModal ? 'auto' : 'none',
