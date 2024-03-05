@@ -312,8 +312,8 @@ function TxButton({
         account = keypairSigner
 
         if (!hasEnoughEnergy) {
-          await requestToken({ address: accountId })
           waitHasEnergyMessage.open()
+          await requestToken({ address: accountId })
           await waitHasEnergy()
           waitHasEnergyMessage.close()
         }
