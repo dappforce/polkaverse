@@ -19,7 +19,9 @@ import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
 import messages from 'src/messages'
 import { useBuildSendEvent } from 'src/providers/AnalyticContext'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
+import { useMyAccount } from 'src/stores/my-account'
 import { AnyAccountId } from 'src/types'
+import { KeyringSigner } from 'src/utils/account'
 import { useSubstrate } from '.'
 import { useAuth } from '../auth/AuthContext'
 import { useMyAddress, useMyEmailAddress } from '../auth/MyAccountsContext'
@@ -55,6 +57,7 @@ export type FailedMessage = Message | FailedMessageFn
 export type BaseTxButtonProps = Omit<ButtonProps, 'onClick' | 'form'>
 
 export type TxButtonProps = BaseTxButtonProps & {
+  canUseProxy?: boolean
   accountId?: AnyAccountId
   tx?: string
   params?: any[] | GetTxParamsFn | GetTxParamsAsyncFn
@@ -287,27 +290,37 @@ function TxButton({
   ) => {
     let signer: Signer | undefined
     let tx: SubmittableExtrinsic
+    let account: AnyAccountId | KeyringSigner = accountId
 
     try {
-      if (isMobile) {
-        const { web3Enable, web3FromAddress } = await import('@polkadot/extension-dapp')
-        const extensions = await web3Enable(appName)
-
-        if (extensions.length === 0) {
-          return
-        }
-        signer = await (await web3FromAddress(accountId.toString())).signer
+      if (accountId === useMyAccount.getState().address) {
+        // use proxy signer
+        signer = undefined
+        const keypairSigner = useMyAccount.getState().signer
+        if (!keypairSigner) throw new Error('No account signer provided')
+        account = keypairSigner
       } else {
-        const currentWallet = getCurrentWallet()
-        const wallet = getWalletBySource(currentWallet)
-        signer = wallet?.signer
+        // use extension signer
+        if (isMobile) {
+          const { web3Enable, web3FromAddress } = await import('@polkadot/extension-dapp')
+          const extensions = await web3Enable(appName)
+
+          if (extensions.length === 0) {
+            return
+          }
+          signer = await (await web3FromAddress(accountId.toString())).signer
+        } else {
+          const currentWallet = getCurrentWallet()
+          const wallet = getWalletBySource(currentWallet)
+          signer = wallet?.signer
+        }
+
+        if (!signer) {
+          throw new Error('No signer provided')
+        }
       }
 
-      if (!signer) {
-        throw new Error('No signer provided')
-      }
-
-      tx = await extrinsic.signAsync(accountId, { signer, nonce: -1 })
+      tx = await extrinsic.signAsync(account as any, { signer, nonce: -1 })
 
       if (hideRememberMePopup) {
         setSignerProxyAdded('enabled', accountId as string)

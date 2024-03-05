@@ -11,8 +11,8 @@ import {
   encodeSecretKey,
   generateAccount,
   isSecretKeyUsingMiniSecret,
+  KeyringSigner,
   loginWithSecretKey,
-  Signer,
 } from '../utils/account'
 import { create } from './utils'
 
@@ -23,7 +23,7 @@ type State = {
   connectedWallet:
     | {
         address: string
-        signer: Signer | null
+        signer: KeyringSigner | null
         energy?: number
         _unsubscribeEnergy?: () => void
       }
@@ -31,7 +31,7 @@ type State = {
   parentProxyAddress: string | undefined
 
   address: string | null
-  signer: Signer | null
+  signer: KeyringSigner | null
   energy: number | null
   encodedSecretKey: string | null
   _unsubscribeEnergy: () => void

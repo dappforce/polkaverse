@@ -1,8 +1,8 @@
 import { newLogger } from '@subsocial/utils'
 import AntdButton from 'antd/lib/button'
+import { useMyAccount } from 'src/stores/my-account'
 
 import { isClientSide } from '.'
-import { useMyAddress } from '../auth/MyAccountsContext'
 import SubstrateTxButton, { TxButtonProps } from '../substrate/SubstrateTxButton'
 import { useStorybookContext } from './StorybookContext'
 
@@ -19,12 +19,15 @@ const mockSendTx = () => {
 
 function ResolvedTxButton(props: TxButtonProps) {
   const { isStorybook = false } = useStorybookContext()
-  const myAddress = useMyAddress()
+  const parentProxyAddress = useMyAccount(state => state.parentProxyAddress)
+  const address = useMyAccount(state => state.address)
+
+  const usedAddress = props.canUseProxy ? address : parentProxyAddress || address
 
   return isStorybook ? (
     <AntdButton {...props} onClick={mockSendTx} />
   ) : (
-    <SubstrateTxButton {...props} accountId={props.accountId || myAddress} />
+    <SubstrateTxButton {...props} accountId={props.accountId || usedAddress || ''} />
   )
 }
 
