@@ -14,8 +14,10 @@ import { isFunction } from '@polkadot/util'
 import type { Signer } from '@polkadot/api/types'
 import { VoidFn } from '@polkadot/api/types'
 import { isEmptyStr, newLogger } from '@subsocial/utils'
+import { ESTIMATED_ENERGY_FOR_ONE_TX } from 'src/config/constants'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
+import useWaitHasEnergy from 'src/hooks/useWaitHasEnergy'
 import messages from 'src/messages'
 import { useBuildSendEvent } from 'src/providers/AnalyticContext'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
@@ -35,6 +37,7 @@ import {
   SIGNER_REFRESH_TOKEN_KEY,
   SIGNER_TOKEN_KEY,
 } from '../utils/OffchainSigner/ExternalStorage'
+import { requestToken } from '../utils/OffchainUtils'
 import { getWalletBySource } from '../wallets/supportedWallets'
 import styles from './SubstrateTxButton.module.sass'
 import useToggle from './useToggle'
@@ -102,6 +105,8 @@ function TxButton({
   const { api: subsocialApi } = useSubstrate()
   const openOnBoardingModal = useOpenCloseOnBoardingModal()
   const [isSending, , setIsSending] = useToggle(false)
+  const hasEnoughEnergy = useMyAccount(state => (state.energy ?? 0) >= ESTIMATED_ENERGY_FOR_ONE_TX)
+  const waitHasEnergy = useWaitHasEnergy()
 
   const { isMobile } = useResponsiveSize()
   const {
@@ -299,6 +304,12 @@ function TxButton({
         const keypairSigner = useMyAccount.getState().signer
         if (!keypairSigner) throw new Error('No account signer provided')
         account = keypairSigner
+
+        if (!hasEnoughEnergy) {
+          await requestToken({ address: accountId })
+          console.log('Waiting energy...')
+          await waitHasEnergy()
+        }
       } else {
         // use extension signer
         if (isMobile) {
