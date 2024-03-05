@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import config from 'src/config'
 import { DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import { getActivityCounts, getPostActivities } from 'src/graphql/apis'
 import { initializeApollo } from 'src/graphql/client'
@@ -51,7 +52,7 @@ const InnerViewSpacePage: FC<Props> = props => {
       <PageContent
         meta={{
           title,
-          desc: `Latest news and updates from ${name} on Polkaverse.`,
+          desc: `Latest news and updates from ${name} on ${config.appName}`,
           image: customImage || image,
           canonical: spaceUrl(spaceData.struct),
         }}
