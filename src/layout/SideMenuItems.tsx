@@ -47,7 +47,7 @@ export const buildAuthorizedMenu = (myAddress?: string): MenuItem[] => {
           {
             name: 'My Spaces',
             icon: <SubIcon Icon={LuCompass} />,
-            href: '/my-spaces',
+            href: `/accounts/${myAddress}/spaces`,
           },
         ]
       : []),
