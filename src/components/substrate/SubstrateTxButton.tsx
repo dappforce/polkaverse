@@ -167,6 +167,12 @@ function TxButton({
     duration: 0,
     className: isMobile ? styles.NotificationProgressMobile : styles.NotificationProgress,
   })
+  const waitHasEnergyMessage = controlledMessage({
+    message: 'Requesting energy...',
+    type: 'info',
+    duration: 0,
+    className: isMobile ? styles.NotificationProgressMobile : styles.NotificationProgress,
+  })
 
   let unsub: VoidFn | undefined
 
@@ -307,8 +313,9 @@ function TxButton({
 
         if (!hasEnoughEnergy) {
           await requestToken({ address: accountId })
-          console.log('Waiting energy...')
+          waitHasEnergyMessage.open()
           await waitHasEnergy()
+          waitHasEnergyMessage.close()
         }
       } else {
         // use extension signer
