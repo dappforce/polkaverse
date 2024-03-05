@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import React, { createContext, FC, useContext, useEffect, useRef, useState } from 'react'
 import { getCurrentUrlOrigin } from 'src/utils/url'
 import { InfoDetails } from '../profiles/address-views'
@@ -73,6 +74,7 @@ function parseMessage(data: string) {
 export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, owner }) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [isOpenProfileModal, setIsOpenProfileModal] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     window.onmessage = event => {
@@ -82,6 +84,8 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
       const { name, value } = message
       if (name === 'profile' && value === 'close') {
         setIsOpenProfileModal(false)
+      } else if (name === 'redirect') {
+        router.push(value)
       }
     }
   }, [])
