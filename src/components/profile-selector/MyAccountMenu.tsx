@@ -86,6 +86,9 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
     }
   }, [])
 
+  const origin = getCurrentUrlOrigin()
+  const isDevMode = origin.includes('localhost')
+
   return (
     <span
       onClick={() => {
@@ -101,21 +104,23 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
       className='DfCurrentAddress icon CursorPointer'
     >
       <Avatar address={address} avatar={owner?.content?.image} asLink={false} size={30} noMargin />
-      <iframe
-        ref={iframeRef}
-        src={`${getCurrentUrlOrigin()}/c/widget/profile`}
-        style={{
-          opacity: isOpenProfileModal ? 1 : 0,
-          pointerEvents: isOpenProfileModal ? 'auto' : 'none',
-          transition: 'opacity 0.3s ease-in-out',
-          colorScheme: 'none',
-          background: 'transparent',
-          position: 'fixed',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-        }}
-      />
+      {!isDevMode && (
+        <iframe
+          ref={iframeRef}
+          src={`${getCurrentUrlOrigin()}/c/widget/profile`}
+          style={{
+            opacity: isOpenProfileModal ? 1 : 0,
+            pointerEvents: isOpenProfileModal ? 'auto' : 'none',
+            transition: 'opacity 0.3s ease-in-out',
+            colorScheme: 'none',
+            background: 'transparent',
+            position: 'fixed',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+          }}
+        />
+      )}
     </span>
   )
 }

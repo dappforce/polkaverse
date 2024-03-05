@@ -3,7 +3,7 @@ import { getCurrentUrlOrigin } from 'src/utils/url'
 import urlJoin from 'src/utils/url-join'
 import { NotificationsBell, useNotifCounterContext } from '../activity/NotifCounter'
 import { NewPostButtonInTopMenu } from '../posts/NewPostButtonInTopMenu'
-import { MyAccountPopup } from '../profiles/address-views'
+import { MyAccountPopup } from '../profile-selector/MyAccountMenu'
 import { isServerSide } from '../utils'
 import { useMyAddress } from './MyAccountsContext'
 
