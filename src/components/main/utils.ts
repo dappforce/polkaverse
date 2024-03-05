@@ -32,12 +32,12 @@ const getPostsByFilter: GetEntityFilter<PostFilterType> = {
     month: q.GET_LATEST_POST_IDS,
     allTime: q.GET_LATEST_POST_IDS,
   },
-  suggested: {
-    day: q.GET_LATEST_POST_IDS,
-    week: q.GET_LATEST_POST_IDS,
-    month: q.GET_LATEST_POST_IDS,
-    allTime: q.GET_LATEST_POST_IDS,
-  },
+  // suggested: {
+  //   day: q.GET_LATEST_POST_IDS,
+  //   week: q.GET_LATEST_POST_IDS,
+  //   month: q.GET_LATEST_POST_IDS,
+  //   allTime: q.GET_LATEST_POST_IDS,
+  // },
   hot: {
     day: q.GET_LATEST_POST_IDS,
     week: q.GET_LATEST_POST_IDS,
