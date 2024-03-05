@@ -11,7 +11,6 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { getSubstrateApi, newSubsocialApi } from 'src/components/utils/SubsocialConnect'
 import config from 'src/config'
 import { useAppDispatch } from 'src/rtk/app/store'
-import { loadMyAddress, loadMyEmailAddress } from 'src/rtk/features/accounts/myAccountSlice'
 import { flattenPermissions, SpacePermissions } from 'src/types'
 import { controlledMessage } from '../utils/Message'
 
@@ -145,8 +144,8 @@ export const SubstrateProvider = (props: SubstrateProviderProps) => {
 
   useEffect(() => {
     connect()
-    reduxDispatch(loadMyAddress())
-    reduxDispatch(loadMyEmailAddress())
+    // reduxDispatch(loadMyAddress())
+    // reduxDispatch(loadMyEmailAddress())
   }, [])
 
   return <SubstrateContext.Provider value={state}>{props.children}</SubstrateContext.Provider>

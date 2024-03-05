@@ -2,8 +2,6 @@ import { WarningOutlined } from '@ant-design/icons'
 import { toSubsocialAddress } from '@subsocial/utils'
 import { controlledMessage } from 'src/components/utils/Message'
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect'
-import { getStoreDispatcher } from 'src/rtk/app/store'
-import { setMyAddress } from 'src/rtk/features/accounts/myAccountSlice'
 import { LocalStorage } from 'src/utils/storage'
 import {
   decodeSecretKey,
@@ -130,12 +128,6 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
       } catch (err) {
         console.error('Failed to fetch proxies', err)
       }
-    }
-
-    const dispatch = getStoreDispatcher()
-    const finalAddress = parentProxyAddress || get().address
-    if (finalAddress) {
-      dispatch?.(setMyAddress(finalAddress))
     }
   },
 }))
