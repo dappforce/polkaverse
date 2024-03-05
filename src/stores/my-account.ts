@@ -2,6 +2,9 @@ import { WarningOutlined } from '@ant-design/icons'
 import { toSubsocialAddress } from '@subsocial/utils'
 import { controlledMessage } from 'src/components/utils/Message'
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect'
+import { ESTIMATED_ENERGY_FOR_ONE_TX } from 'src/config/constants'
+import { waitNewBlock } from 'src/utils/blockchain'
+import { wait } from 'src/utils/promise'
 import { LocalStorage } from 'src/utils/storage'
 import {
   decodeSecretKey,
@@ -15,26 +18,41 @@ import { create } from './utils'
 
 type State = {
   isInitialized?: boolean
-  isInitializedAddress?: boolean
 
+  preferredWallet: any | null
+  connectedWallet:
+    | {
+        address: string
+        signer: Signer | null
+        energy?: number
+        _unsubscribeEnergy?: () => void
+      }
+    | undefined
   parentProxyAddress: string | undefined
 
   address: string | null
   signer: Signer | null
+  energy: number | null
   encodedSecretKey: string | null
+  _unsubscribeEnergy: () => void
 }
 
 type Actions = {
   login: (secretKey?: string, config?: { isInitialization?: boolean }) => Promise<string | false>
   logout: () => void
+  _subscribeEnergy: () => void
+  _subscribeConnectedWalletEnergy: () => void
 }
 
 const initialState: State = {
-  isInitializedAddress: true,
+  connectedWallet: undefined,
+  preferredWallet: null,
   parentProxyAddress: undefined,
   address: null,
   signer: null,
+  energy: null,
   encodedSecretKey: null,
+  _unsubscribeEnergy: () => undefined,
 }
 
 export const accountAddressStorage = new LocalStorage(() => 'accountPublicKey')
@@ -43,8 +61,24 @@ const parentProxyAddressStorage = new LocalStorage(() => 'connectedWalletAddress
 
 export const useMyAccount = create<State & Actions>()((set, get) => ({
   ...initialState,
-  login: async (secretKey, config) => {
-    const { isInitialization } = config || {}
+  _subscribeConnectedWalletEnergy: () => {
+    const { connectedWallet } = get()
+    if (!connectedWallet) return
+
+    const { address } = connectedWallet
+    const unsub = subscribeEnergy(address, energy => {
+      const wallet = get().connectedWallet
+      if (!wallet) return
+      set({ connectedWallet: { ...wallet, energy } })
+    })
+    set({
+      connectedWallet: {
+        ...connectedWallet,
+        _unsubscribeEnergy: () => unsub.then(unsub => unsub?.()),
+      },
+    })
+  },
+  login: async secretKey => {
     const { toSubsocialAddress } = await import('@subsocial/utils')
     let address = ''
     try {
@@ -65,15 +99,27 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
         address,
         signer,
         encodedSecretKey,
-        isInitializedAddress: !!isInitialization,
       })
+      get()._subscribeEnergy()
     } catch (e) {
       console.error('Failed to login', e)
       return false
     }
     return address
   },
+  _subscribeEnergy: () => {
+    const { address, _unsubscribeEnergy } = get()
+    _unsubscribeEnergy()
+
+    const unsub = subscribeEnergy(address, energy => {
+      set({ energy })
+    })
+    set({ _unsubscribeEnergy: () => unsub.then(unsub => unsub?.()) })
+  },
   logout: () => {
+    const { _unsubscribeEnergy } = get()
+    _unsubscribeEnergy()
+
     accountStorage.remove()
     accountAddressStorage.remove()
     parentProxyAddressStorage.remove()
@@ -145,4 +191,44 @@ async function getProxies(address: string) {
       return null
     })
     .filter(Boolean) as string[]
+}
+
+async function subscribeEnergy(
+  address: string | null,
+  onEnergyUpdate: (energy: number) => void,
+  isRetrying?: boolean,
+): Promise<undefined | (() => void)> {
+  if (!address) return
+
+  const subsocialApi = await getSubsocialApi()
+  const substrateApi = await subsocialApi.substrateApi
+  if (!substrateApi.isConnected && !isRetrying) {
+    await substrateApi.disconnect()
+    await substrateApi.connect()
+  }
+
+  if (!substrateApi.isConnected) {
+    // If energy subscription is run when the api is not connected, even after some more ms it connect, the subscription won't work
+    // Here we wait for some delay because the api is not connected immediately even after awaiting the connect() method.
+    // And we retry it recursively after 500ms delay until it's connected (without reconnecting the api again)
+    await wait(500)
+    return subscribeEnergy(address, onEnergyUpdate, true)
+  }
+
+  let prev: null | number = null
+  const unsub = substrateApi.query.energy.energyBalance(address, async energyAmount => {
+    let parsedEnergy: unknown = energyAmount
+    if (typeof energyAmount.toPrimitive === 'function') {
+      parsedEnergy = energyAmount.toPrimitive()
+    }
+
+    const energy = parseFloat(parsedEnergy + '')
+    if (prev !== null && prev < ESTIMATED_ENERGY_FOR_ONE_TX) await waitNewBlock()
+
+    prev = energy
+
+    console.log('Current energy: ', address, energy)
+    onEnergyUpdate(energy)
+  })
+  return unsub
 }
