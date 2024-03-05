@@ -86,8 +86,6 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
     }
   }, [])
 
-  console.log(isOpenProfileModal)
-
   return (
     <span
       onClick={() => {
@@ -100,7 +98,7 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
         )
         setIsOpenProfileModal(true)
       }}
-      className='DfCurrentAddress icon'
+      className='DfCurrentAddress icon CursorPointer'
     >
       <Avatar address={address} avatar={owner?.content?.image} asLink={false} size={30} noMargin />
       <iframe
