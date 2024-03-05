@@ -1,4 +1,4 @@
-import React, { createContext, FC, useContext } from 'react'
+import React, { createContext, FC, useContext, useEffect, useRef, useState } from 'react'
 import { InfoDetails } from '../profiles/address-views'
 import Avatar from '../profiles/address-views/Avatar'
 import Address from '../profiles/address-views/Name'
@@ -64,11 +64,59 @@ const MyAccountDrawerContext = createContext<MyAccountSectionContextState>(initV
 
 export const useMyAccountDrawer = () => useContext(MyAccountDrawerContext)
 
+function parseMessage(data: string) {
+  const [origin, name, value] = data.split(':')
+  if (origin !== 'grill') return null
+  return { name: name ?? '', value: value ?? '' }
+}
 export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, owner }) => {
-  // TODO: open profile account
+  const iframeRef = useRef<HTMLIFrameElement | null>(null)
+  const [isOpenProfileModal, setIsOpenProfileModal] = useState(false)
+
+  useEffect(() => {
+    window.onmessage = event => {
+      const message = parseMessage(event.data + '')
+      if (!message) return
+
+      const { name, value } = message
+      if (name === 'profile' && value === 'close') {
+        setIsOpenProfileModal(false)
+      }
+    }
+  }, [])
+
+  console.log(isOpenProfileModal)
+
   return (
-    <span className='DfCurrentAddress icon'>
+    <span
+      onClick={() => {
+        iframeRef.current?.contentWindow?.postMessage(
+          {
+            type: 'grill:profile',
+            payload: 'open',
+          },
+          '*',
+        )
+        setIsOpenProfileModal(true)
+      }}
+      className='DfCurrentAddress icon'
+    >
       <Avatar address={address} avatar={owner?.content?.image} asLink={false} size={30} noMargin />
+      <iframe
+        ref={iframeRef}
+        src='http://localhost:3000/c/widget/profile'
+        style={{
+          opacity: isOpenProfileModal ? 1 : 0,
+          pointerEvents: isOpenProfileModal ? 'auto' : 'none',
+          transition: 'opacity 0.3s ease-in-out',
+          colorScheme: 'none',
+          background: 'transparent',
+          position: 'fixed',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+        }}
+      />
     </span>
   )
 }
