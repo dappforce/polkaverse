@@ -1,4 +1,6 @@
+import { WarningOutlined } from '@ant-design/icons'
 import { toSubsocialAddress } from '@subsocial/utils'
+import { controlledMessage } from 'src/components/utils/Message'
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect'
 import { getStoreDispatcher } from 'src/rtk/app/store'
 import { setMyAddress } from 'src/rtk/features/accounts/myAccountSlice'
@@ -114,6 +116,16 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
         if (!isProxyValid) {
           parentProxyAddressStorage.remove()
           set({ parentProxyAddress: undefined })
+          get().logout()
+          const message = controlledMessage({
+            message: 'Logged out',
+            description:
+              'You seem to have logged in to your wallet in another device, please relogin to use it here',
+            type: 'warning',
+            duration: 3,
+            icon: WarningOutlined,
+          })
+          message.open()
         }
       } catch (err) {
         console.error('Failed to fetch proxies', err)
