@@ -2,11 +2,13 @@ import { Button, Divider, Modal, Tabs } from 'antd'
 import partition from 'lodash.partition'
 import { useRouter } from 'next/router'
 import React, { useEffect, useMemo, useState } from 'react'
+import { shallowEqual } from 'react-redux'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import messages from 'src/messages'
 import { useFetchSpaces, useSelectSpaces } from 'src/rtk/app/hooks'
 import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
+import { selectSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
 import {
   useFetchSpaceIdsByFollower,
   useFetchSpaceIdsByOwner,
@@ -91,16 +93,22 @@ export const OwnedSpacesList = ({ ...props }: Omit<AccountSpacesProps, 'withTitl
   } = useRouter()
 
   const [unlistedSpaceIds, setUnistedSpaceIds] = useState<SpaceId[]>([])
-  const { spaceIds, error, loading } = useFetchSpaceIdsByOwner(address)
-  const spaces = useSelectSpaces(spaceIds)
+  const { spaceIds: ownedSpaceIds, error, loading } = useFetchSpaceIdsByOwner(address)
+  const spaces = useSelectSpaces(ownedSpaceIds)
   const [newUnlistedSpaces] = partition(spaces, isUnlisted)
   const connected = useIsSubstrateConnected()
   const isMy = useIsMyAddress(address)
 
+  const followedSpaceIds =
+    useAppSelector(
+      state => (address ? selectSpaceIdsByFollower(state, address) : []),
+      shallowEqual,
+    ) || []
+
   const spaceIdsImEditorOf =
     useAppSelector(state => (address ? selectSpaceIdsWithRolesByAccount(state, address) : [])) || []
 
-  const totalCount = spaceIds.length
+  const totalCount = ownedSpaceIds.length
   const unlistedCount = unlistedSpaceIds.length
 
   useEffect(() => {
@@ -117,12 +125,11 @@ export const OwnedSpacesList = ({ ...props }: Omit<AccountSpacesProps, 'withTitl
     setUnistedSpaceIds(unlistedSpaceIds.concat(newIds))
   }, [newUnlistedSpaces.length, page, size])
 
-  const PublicSpaces = useMemo(
-    () => (
-      <SpacesListBySpaceIds spaceIds={spaceIds} totalCount={totalCount} isMy={isMy} {...props} />
-    ),
-    [spaceIds.length],
-  )
+  const allIds = useMemo(() => {
+    const ids = ownedSpaceIds.concat(followedSpaceIds, spaceIdsImEditorOf, unlistedSpaceIds)
+    console.log(ownedSpaceIds, followedSpaceIds, spaceIdsImEditorOf, unlistedSpaceIds, ids)
+    return Array.from(new Set(ids))
+  }, [ownedSpaceIds, followedSpaceIds, spaceIdsImEditorOf, unlistedSpaceIds])
 
   if (!connected) return <Loading label={messages.connectingToNetwork} />
 
@@ -134,11 +141,23 @@ export const OwnedSpacesList = ({ ...props }: Omit<AccountSpacesProps, 'withTitl
 
   return (
     <Tabs style={{ marginTop: '-8px' }}>
-      <TabPane tab={`All (${totalCount})`} key='all'>
-        {PublicSpaces}
+      <TabPane tab={`All (${allIds.length})`} key='all'>
+        <SpacesListBySpaceIds spaceIds={allIds} totalCount={allIds.length} isMy={isMy} {...props} />
       </TabPane>
       <TabPane tab={`Created (${totalCount})`} key='created'>
-        {PublicSpaces}
+        <SpacesListBySpaceIds
+          spaceIds={ownedSpaceIds}
+          totalCount={totalCount}
+          isMy={isMy}
+          {...props}
+        />
+      </TabPane>
+      <TabPane tab={`Followed (${followedSpaceIds.length})`} key='followed'>
+        <SpacesListBySpaceIds
+          spaceIds={followedSpaceIds}
+          totalCount={followedSpaceIds.length}
+          {...props}
+        />
       </TabPane>
       {spaceIdsImEditorOf.length > 0 && (
         <TabPane tab={`My Roles (${spaceIdsImEditorOf.length})`} key='editor'>

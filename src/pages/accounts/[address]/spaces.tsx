@@ -6,6 +6,7 @@ import { toShortAddress } from 'src/components/utils'
 import { return404 } from 'src/components/utils/next'
 import Section from 'src/components/utils/Section'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
+import { fetchEntityOfSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
 import { fetchSpaceIdsOwnedByAccount } from 'src/rtk/features/spaceIds/ownSpaceIdsSlice'
 import { fetchSpaceIdsWithRolesByAccount } from 'src/rtk/features/spaceIds/spaceIdsWithRolesByAccountSlice'
 
@@ -36,15 +37,15 @@ const OwnedSpacesPage = ({ address }: { address: string }) => {
     </PageContent>
   )
 }
+
 getInitialPropsWithRedux(OwnedSpacesPage, async ({ subsocial, dispatch, context }) => {
-  console.log(context)
   const address = context.query?.address as string | undefined
-  console.log(address)
   if (!address) return return404(context)
 
   await Promise.all([
-    dispatch(fetchSpaceIdsWithRolesByAccount({ id: address, reload: true, api: subsocial })),
-    dispatch(fetchSpaceIdsOwnedByAccount({ id: address, reload: true, api: subsocial })),
+    dispatch(fetchSpaceIdsWithRolesByAccount({ id: address, api: subsocial })),
+    dispatch(fetchSpaceIdsOwnedByAccount({ id: address, api: subsocial })),
+    dispatch(fetchEntityOfSpaceIdsByFollower({ id: address, api: subsocial })),
   ])
 
   return { address }
