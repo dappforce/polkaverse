@@ -23,6 +23,7 @@ const OwnedSpacesPage = ({ address }: { address: string }) => {
 
   return (
     <PageContent
+      creatorDashboardSidebarType={{ name: 'home-page', variant: 'posts' }}
       meta={{
         title: 'Account spaces',
         desc: `Subsocial spaces owned by ${address}`,
