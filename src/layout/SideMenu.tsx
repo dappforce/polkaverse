@@ -68,9 +68,6 @@ function SideMenu({ noOffset }: { noOffset?: boolean }) {
             renderPageLink(item)
           ),
         )}
-        {/* {isNotMobile && showOnBoarding && !collapsed && <OnBoardingCard />} */}
-        {/* {isLoggedIn && <Menu.Divider />} */}
-        {/* {isLoggedIn && <MySubscriptions />} */}
       </Menu>
     </div>
   )

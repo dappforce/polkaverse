@@ -489,7 +489,7 @@ a {
   }
 
   .MenuItemName {
-    color: $color_muted;
+    color: rgba(100, 116, 139, 0.8);
     line-height: normal;
     font-weight: $font_weight_medium;
   }
@@ -500,7 +500,7 @@ a {
       display: block;
       font-size: $font_large !important;
       margin-right: $space_normal;
-      color: $color_muted;
+      color: rgba(100, 116, 139, 0.8);
     }
   }
 }
@@ -1519,6 +1519,7 @@ hr {
 }
 
 .DfMenuItem {
+  margin: 0 !important;
   > a {
     display: flex;
     align-items: center;
