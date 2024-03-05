@@ -39,7 +39,7 @@ export const buildAuthorizedMenu = (myAddress?: string): MenuItem[] => {
     {
       name: 'Chat',
       icon: <SubIcon Icon={BiChat} />,
-      href: '/c/chats',
+      href: '/c',
       forceHardNavigation: true,
     },
     ...(myAddress
