@@ -174,7 +174,6 @@ export const PageContent: FC<Props> = ({
             style={{
               ...sideMenuStyles.style,
               height: `calc(100vh - ${76 - BOX_SHADOW_OFFSET}px)`,
-              borderRight: '1px solid #CBD5E1',
               marginTop: -12,
             }}
           >
