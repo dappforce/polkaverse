@@ -62,6 +62,7 @@ export type BaseTxButtonProps = Omit<ButtonProps, 'onClick' | 'form'>
 export type TxButtonProps = BaseTxButtonProps & {
   canUseProxy?: boolean
   accountId?: AnyAccountId
+  parentProxyAddress?: string
   tx?: string
   params?: any[] | GetTxParamsFn | GetTxParamsAsyncFn
   label?: React.ReactNode
@@ -101,6 +102,7 @@ function TxButton({
   withSpinner = true,
   component,
   children,
+  parentProxyAddress,
   customNodeApi,
   ...antdProps
 }: TxButtonProps) {
@@ -340,7 +342,11 @@ function TxButton({
         }
       }
 
-      tx = await extrinsic.signAsync(account as any, { signer, nonce: -1 })
+      let usedExtrinsic = extrinsic
+      if (parentProxyAddress) {
+        usedExtrinsic = api.tx.proxy.proxy(parentProxyAddress, null, extrinsic)
+      }
+      tx = await usedExtrinsic.signAsync(account as any, { signer, nonce: -1 })
       onSend?.()
 
       if (hideRememberMePopup) {
