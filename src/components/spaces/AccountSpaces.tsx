@@ -127,7 +127,6 @@ export const OwnedSpacesList = ({ ...props }: Omit<AccountSpacesProps, 'withTitl
 
   const allIds = useMemo(() => {
     const ids = ownedSpaceIds.concat(followedSpaceIds, spaceIdsImEditorOf, unlistedSpaceIds)
-    console.log(ownedSpaceIds, followedSpaceIds, spaceIdsImEditorOf, unlistedSpaceIds, ids)
     return Array.from(new Set(ids))
   }, [ownedSpaceIds, followedSpaceIds, spaceIdsImEditorOf, unlistedSpaceIds])
 
