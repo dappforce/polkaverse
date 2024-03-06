@@ -334,6 +334,7 @@ function TxButton({
         } else {
           const currentWallet = getCurrentWallet()
           const wallet = getWalletBySource(currentWallet)
+          await wallet?.enable(appName)
           signer = wallet?.signer
         }
 
