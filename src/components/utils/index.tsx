@@ -18,7 +18,6 @@ import { ButtonLink } from './CustomLinks'
 import { BareProps } from './types'
 
 export * from './IconWithLabel'
-export * from './server-client'
 
 const { appBaseUrl, ipfsNodeUrl } = config
 
@@ -27,7 +26,14 @@ import Avatar from 'antd/lib/avatar/avatar'
 import { AvatarSize } from 'antd/lib/avatar/SizeContext'
 import { InstallUrl, Urls } from '../wallets/types'
 import * as offchain from './OffchainUtils'
-import { isClientSide } from './server-client'
+
+export function isServerSide(): boolean {
+  return typeof window === 'undefined'
+}
+
+export function isClientSide(): boolean {
+  return !isServerSide()
+}
 
 export const offchainApi = { ...offchain }
 
@@ -247,8 +253,8 @@ type SubIconProps = IconBaseProps & {
   Icon: (props: IconBaseProps) => JSX.Element
 }
 
-export function SubIcon ({ Icon, className, ...props }: SubIconProps) {
-  return <Icon className={`anticon ${className}`} {...props} /> 
+export function SubIcon({ Icon, className, ...props }: SubIconProps) {
+  return <Icon className={`anticon ${className}`} {...props} />
 }
 
 type LocalIconProps = BareProps & {
