@@ -76,7 +76,7 @@ export const getTotalStake = async ({ address }: { address: string }) => {
     lockedBN = lockedBN.minus(amount)
   })
 
-  return { amount: lockedBN.toString(), hasStakedEnough: lockedBN.lte(MINIMUM_LOCK.toString()) }
+  return { amount: lockedBN.toString(), hasStakedEnough: lockedBN.gte(MINIMUM_LOCK.toString()) }
 }
 
 export const getStakeAmount = async ({
