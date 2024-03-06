@@ -34,7 +34,7 @@ import {
   SpaceStruct,
 } from 'src/types'
 import { getTimeRelativeToNow } from 'src/utils/date'
-import { getSubIdCreatorsLink } from 'src/utils/links'
+import { getContentStakingLink } from 'src/utils/links'
 import { RegularPreview } from '.'
 import { useSelectSpace } from '../../../rtk/features/spaces/spacesHooks'
 import { useIsMyAddress, useMyAddress } from '../../auth/MyAccountsContext'
@@ -526,7 +526,7 @@ export default function PostNotEnoughMinStakeAlert({ post }: { post: PostStruct 
           <TbCoins />
           <span>You need to lock SUB in order to receive rewards.</span>
         </div>
-        <CustomLink href={activeStakingLinks.learnMore}>
+        <CustomLink href={getContentStakingLink()}>
           <a target='_blank' className='DfLink'>
             Lock SUB
           </a>

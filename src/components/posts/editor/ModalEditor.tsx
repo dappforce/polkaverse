@@ -35,7 +35,7 @@ import {
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { AnyId, DataSourceTypes, IpfsCid, PostContent } from 'src/types'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
-import { activeStakingLinks, getSubIdCreatorsLink } from 'src/utils/links'
+import { activeStakingLinks, getContentStakingLink } from 'src/utils/links'
 import { RegularPostExt } from '.'
 import { fieldName, FormValues } from './Fileds'
 import styles from './index.module.sass'
@@ -290,7 +290,7 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
               <span>Post to Earn</span>
             </div>
             {neededStake > 0 && (
-              <Button shape='round' type='primary' href={getSubIdCreatorsLink()} target='_blank'>
+              <Button shape='round' type='primary' href={getContentStakingLink()} target='_blank'>
                 Lock SUB
               </Button>
             )}

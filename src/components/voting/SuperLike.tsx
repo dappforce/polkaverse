@@ -28,7 +28,7 @@ import {
 import { fetchSuperLikeMessage } from 'src/rtk/features/activeStaking/superLikeMessageSlice'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getAmountRange } from 'src/utils/analytics'
-import { getSubIdCreatorsLink } from 'src/utils/links'
+import { getContentStakingLink } from 'src/utils/links'
 import { useAuth } from '../auth/AuthContext'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { useGetCurrentSigner } from '../auth/utils'
@@ -304,7 +304,7 @@ function ShouldStakeModal({ onCancel, visible }: { visible: boolean; onCancel: (
           style={{ maxWidth: '250px' }}
           preview={{ mask: null }}
         />
-        <Button block type='primary' size='large' href={getSubIdCreatorsLink()} target='_blank'>
+        <Button block type='primary' size='large' href={getContentStakingLink()} target='_blank'>
           Start Locking SUB
         </Button>
       </div>

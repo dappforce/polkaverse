@@ -8,7 +8,7 @@ import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchUserRewardReport } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getAmountRange } from 'src/utils/analytics'
-import { getSubIdCreatorsLink } from 'src/utils/links'
+import { getContentStakingLink } from 'src/utils/links'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import CustomLink from '../referral/CustomLink'
 import styles from './MobileRewardDashboard.module.sass'
@@ -42,7 +42,7 @@ function StakeSubBanner(props: MobileRewardDashboardProps) {
             <span className='FontWeightSemibold'>Lock SUB and earn more</span>
           </span>
           <div className={clsx('d-flex align-items-center GapTiny')}>
-            <CustomLink passHref href={getSubIdCreatorsLink()}>
+            <CustomLink passHref href={getContentStakingLink()}>
               <Button
                 type='primary'
                 className='FontWeightSemibold'

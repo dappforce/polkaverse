@@ -13,7 +13,7 @@ import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchStakeData } from 'src/rtk/features/creators/stakesHooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getAmountRange } from 'src/utils/analytics'
-import { getSubIdCreatorsLink } from 'src/utils/links'
+import { getContentStakingLink } from 'src/utils/links'
 import styles from './MyStakeCard.module.sass'
 
 export type MyStakeCardProps = {
@@ -73,7 +73,7 @@ export default function MyStakeCard({ space }: MyStakeCardProps) {
           type='primary'
           ghost
           block={!isMobile}
-          href={getSubIdCreatorsLink()}
+          href={getContentStakingLink()}
           onClick={() =>
             sendEvent('astake_dashboard_manage_stake', {
               spaceId: space.id,

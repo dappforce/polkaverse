@@ -2,7 +2,7 @@ import { Button } from 'antd'
 import clsx from 'clsx'
 import { DfImage } from 'src/components/utils/DfImage'
 import { useSendEvent } from 'src/providers/AnalyticContext'
-import { getSubIdCreatorsLink } from 'src/utils/links'
+import { getContentStakingLink } from 'src/utils/links'
 import styles from './SupportCreatorsCard.module.sass'
 
 export default function SupportCreatorsCard() {
@@ -24,7 +24,7 @@ export default function SupportCreatorsCard() {
           Lock tokens and like posts to generate rewards for you and creators
         </p>
         <Button
-          href={getSubIdCreatorsLink()}
+          href={getContentStakingLink()}
           block
           target='_blank'
           onClick={() =>
