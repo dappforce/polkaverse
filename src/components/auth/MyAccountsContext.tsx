@@ -28,14 +28,13 @@ import { fetchAddressLikeCounts } from 'src/rtk/features/activeStaking/addressLi
 import { fetchChainsInfo } from 'src/rtk/features/chainsInfo/chainsInfoSlice'
 import { fetchProfileSpace } from 'src/rtk/features/profiles/profilesSlice'
 import { fetchEntityOfSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
+import { useMyAccount } from 'src/stores/my-account'
 import { AnyAccountId, EmailAccount } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { useAccountSelector } from '../profile-selector/AccountSelector'
-import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { reloadSpaceIdsFollowedByAccount } from '../spaces/helpers/reloadSpaceIdsFollowedByAccount'
 import { equalAddresses } from '../substrate'
 import { getSignerToken, isProxyAdded } from '../utils/OffchainSigner/ExternalStorage'
-import { desktopWalletConnect, mobileWalletConection } from './utils'
 //
 // Types
 //
@@ -98,11 +97,10 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
   const reloadAccountIdsByFollower = useCreateReloadAccountIdsByFollower()
   const reloadSpaceIdsRelatedToAccount = useCreateReloadSpaceIdsRelatedToAccount()
   const address = useMyAddress()
-  const { isMobile } = useResponsiveSize()
   const { getAllEmailAccounts } = useEmailAccount()
-  const [recheckId, recheck] = useReducer(x => (x + 1) % 16384, 0)
+  const [, recheck] = useReducer(x => (x + 1) % 16384, 0)
 
-  const [status, setStatus] = useState<Status>('LOADING')
+  const [status] = useState<Status>('LOADING')
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([])
 
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([])
@@ -115,16 +113,6 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
   useEffect(() => {
     resetEmailAccounts()
   }, [])
-
-  const params = { setAccounts, setStatus }
-
-  useEffect(() => {
-    isMobile ? mobileWalletConection(params) : desktopWalletConnect(params)
-  }, [recheckId])
-
-  useEffect(() => {
-    if (isMobile) mobileWalletConection(params)
-  }, [isMobile])
 
   useEffect(() => {
     if (!recheckStatuses.includes(status)) return
@@ -209,7 +197,7 @@ export function useIsUsingEmailOrSigner() {
 }
 
 export function useMyAddress() {
-  return useAppSelector(state => state.myAccount.address)
+  return useMyAccount(state => state.parentProxyAddress || state.address || '')
 }
 
 export function useAmIBlocked() {

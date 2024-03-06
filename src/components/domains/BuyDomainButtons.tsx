@@ -333,6 +333,7 @@ export const BuyDomainSection = ({
     <div className={styles.TxButtonSection}>
       {notEnoughTokens && <WarningPanel desc={'You do not have enough tokens to buy a domain'} />}
       <TxButton
+        canUseProxy={false}
         type='primary'
         customNodeApi={api}
         accountId={purchaser}

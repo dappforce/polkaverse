@@ -6,6 +6,7 @@ import Head from 'next/head'
 import React, { ComponentProps, FC } from 'react'
 import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
+import SideMenu from 'src/layout/SideMenu'
 import CreatorDashboardSidebar, {
   CreatorDashboardSidebarType,
 } from '../creators/CreatorDashboardSidebar'
@@ -102,7 +103,6 @@ type Props = {
   creatorDashboardSidebarType?: CreatorDashboardSidebarType
 }
 
-const SIDEBAR_WIDTH = 300
 // offset for making box shadow of content still visible while having the scrollbar
 const BOX_SHADOW_OFFSET = 24
 
@@ -113,7 +113,7 @@ export const PageContent: FC<Props> = ({
   title,
   className,
   outerClassName,
-  // withSidebar,
+  withSidebar = true,
   children,
   withLargerMaxWidth,
   creatorDashboardSidebarType,
@@ -127,20 +127,34 @@ export const PageContent: FC<Props> = ({
   const isMobile = useIsMobileWidthOrDevice()
   // const isPanels = leftPanel || rightPanel
 
-  const sidebarStyles: ComponentProps<'div'> = {
-    className: 'HideScrollbar sm-hidden',
-    style: {
-      width: SIDEBAR_WIDTH + BOX_SHADOW_OFFSET * 2,
-      flexShrink: 0.2,
-      position: 'sticky',
-      top: 76 - BOX_SHADOW_OFFSET,
-      overflowY: 'auto',
-      maxHeight: `calc(100vh - ${76 - BOX_SHADOW_OFFSET}px)`,
-      margin: -BOX_SHADOW_OFFSET,
-      padding: BOX_SHADOW_OFFSET,
-      zIndex: 10,
-    },
+  const sidebarStyles = (config?: {
+    withBoxShadowOffset?: boolean
+    topOffset?: number
+    width?: number
+  }): ComponentProps<'div'> => {
+    const { topOffset = 76, withBoxShadowOffset = true, width = 275 } = config || {}
+    const boxShadowOffset = withBoxShadowOffset ? BOX_SHADOW_OFFSET : 0
+    return {
+      className: 'HideScrollbar sm-hidden',
+      style: {
+        flexShrink: 0.2,
+        position: 'sticky',
+        overflowY: 'auto',
+        maxHeight: `calc(100vh - ${topOffset - boxShadowOffset}px)`,
+        zIndex: 10,
+        width: width + boxShadowOffset * 2,
+        top: topOffset - boxShadowOffset,
+        ...(boxShadowOffset
+          ? {
+              margin: -boxShadowOffset,
+              padding: boxShadowOffset,
+            }
+          : {}),
+      },
+    }
   }
+
+  const sideMenuStyles = sidebarStyles({ topOffset: 64, withBoxShadowOffset: false, width: 225 })
 
   return (
     <>
@@ -148,17 +162,23 @@ export const PageContent: FC<Props> = ({
 
       <ProgressModal />
       {isMobile ? (
-        <section className={className}>
+        <section className={clsx(className, 'container')}>
           {children}
           {/* {showOnBoarding && <Affix offsetBottom={5}><OnBoardingMobileCard /></Affix>} */}
         </section>
       ) : (
-        <div className={clsx('DfSectionOuterContainer')}>
-          {creatorDashboardSidebarType && (
-            <div {...sidebarStyles} className='xl-only'>
-              <div>
-                <TopUsersCard />
-              </div>
+        <div className={clsx('DfSectionOuterContainer container')}>
+          {withSidebar && (
+            <div
+              {...sideMenuStyles}
+              className='xl-only DfSideBar pt-2'
+              style={{
+                ...sideMenuStyles.style,
+                height: `calc(100vh - ${76 - BOX_SHADOW_OFFSET}px)`,
+                marginTop: -12,
+              }}
+            >
+              <SideMenu noOffset />
             </div>
           )}
           <section
@@ -199,9 +219,9 @@ export const PageContent: FC<Props> = ({
           </section>
           {rightPanel}
           {rightPanel === undefined && creatorDashboardSidebarType && (
-            <div {...sidebarStyles}>
+            <div {...sidebarStyles()}>
               <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
-              <div className='mt-3 xl-hidden'>
+              <div className='mt-3'>
                 <TopUsersCard />
               </div>
               {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}

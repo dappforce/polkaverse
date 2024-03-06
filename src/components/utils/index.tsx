@@ -8,7 +8,6 @@ import dayjs from 'dayjs'
 import { CID } from 'ipfs-http-client'
 import isbot from 'isbot'
 import NextError from 'next/error'
-import queryString from 'query-string'
 import React, { useEffect, useMemo } from 'react'
 import { IconBaseProps } from 'react-icons'
 import config from 'src/config'
@@ -39,21 +38,6 @@ export const offchainApi = { ...offchain }
 
 export const ZERO = new BN(0)
 export const ONE = new BN(1)
-
-// Substrate/Polkadot API utils
-// --------------------------------------
-
-// Parse URLs
-// --------------------------------------
-
-export function getUrlParam(
-  location: Location,
-  paramName: string,
-  deflt?: string,
-): string | undefined {
-  const params = queryString.parse(location.search)
-  return params[paramName] ? (params[paramName] as string) : deflt
-}
 
 // Next.js utils
 // --------------------------------------

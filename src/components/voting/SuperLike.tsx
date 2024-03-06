@@ -1,3 +1,4 @@
+import { u8aToHex } from '@polkadot/util'
 import { signatureVerify } from '@polkadot/util-crypto'
 import { PostStruct } from '@subsocial/api/types'
 import { Button, ButtonProps, Image, Tooltip } from 'antd'
@@ -27,11 +28,11 @@ import {
 } from 'src/rtk/features/activeStaking/superLikeCountsSlice'
 import { fetchSuperLikeMessage } from 'src/rtk/features/activeStaking/superLikeMessageSlice'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { useMyAccount } from 'src/stores/my-account'
 import { getAmountRange } from 'src/utils/analytics'
 import { getContentStakingLink } from 'src/utils/links'
-import { useAuth } from '../auth/AuthContext'
+import { redirectToLogin } from 'src/utils/url'
 import { useMyAddress } from '../auth/MyAccountsContext'
-import { useGetCurrentSigner } from '../auth/utils'
 import { IconWithLabel } from '../utils'
 import CustomModal from '../utils/CustomModal'
 import { createSuperLike } from '../utils/datahub/active-staking'
@@ -49,10 +50,10 @@ const CURRENT_WEEK_SIG = 'df.current-week-sig'
 
 export default function SuperLike({ post, iconClassName, isComment, ...props }: SuperLikeProps) {
   const dispatch = useAppDispatch()
+  const myGrillAddress = useMyAccount(state => state.address)
   const myAddress = useMyAddress()
   const sendEvent = useSendEvent()
-  const getSigner = useGetCurrentSigner()
-  const [isSigning, setIsSigning] = useState(false)
+  // const [isSigning, setIsSigning] = useState(false)
 
   const { data: superLikeMessage } = useFetchSuperLikeMessage()
 
@@ -63,7 +64,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const { isExist, canPostSuperLiked, validByCreatorMinStake } = useCanPostSuperLiked(post.id)
 
   const [isOpenShouldStakeModal, setIsOpenShouldStakeModal] = useState(false)
-  const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
+  // const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
 
   const { data: totalStake, loading: loadingTotalStake } = useFetchTotalStake(myAddress ?? '')
   const { data: userReport } = useFetchUserRewardReport()
@@ -76,13 +77,11 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const canBeSuperliked = clientCanPostSuperLiked && canPostSuperLiked
   const isDisabled = !canBeSuperliked || isMyPost || loadingTotalStake || !superLikeMessage.message
 
-  const { openSignInModal } = useAuth()
-
   const onClick = async () => {
     if (isActive || isDisabled) return
 
-    if (!myAddress) {
-      openSignInModal()
+    if (!myAddress || !myGrillAddress) {
+      redirectToLogin()
       return
     }
     if (!totalStake?.hasStakedEnough) {
@@ -90,18 +89,30 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
       return
     }
 
-    const signature = localStorage.getItem(CURRENT_WEEK_SIG)
+    let signature = localStorage.getItem(CURRENT_WEEK_SIG)
     if (!signature) {
-      setIsOpenActiveStakingModal(true)
-      return
-    } else {
-      const message = superLikeMessage.message
-      const result = signatureVerify(message, signature, myAddress)
-      if (!result.isValid) {
-        localStorage.removeItem(CURRENT_WEEK_SIG)
-        setIsOpenActiveStakingModal(true)
+      const signer = useMyAccount.getState().signer
+      if (signer && myGrillAddress) {
+        const message = superLikeMessage.message
+        signature = u8aToHex(signer.sign?.(message))
+        localStorage.setItem(CURRENT_WEEK_SIG, signature ?? '')
+      } else {
+        showErrorMessage({
+          message: 'No signer provided',
+          description: 'Please try to refresh or relogin to your account',
+        })
         return
       }
+    }
+
+    if (!signature) return
+
+    const message = superLikeMessage.message
+    const result = signatureVerify(message, signature, myGrillAddress)
+    if (!result.isValid) {
+      localStorage.removeItem(CURRENT_WEEK_SIG)
+      onClick()
+      return
     }
 
     sendEvent('like', {
@@ -120,7 +131,8 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
       dispatch(setOptimisticRewardReportChange({ address: myAddress, superLikeCountChange: 1 }))
 
       await createSuperLike({
-        address: myAddress,
+        address: myGrillAddress,
+        proxyToAddress: myGrillAddress === myAddress ? undefined : myAddress,
         args: { postId: post.id, confirmation: { msg: superLikeMessage.message, sig: signature } },
       })
     } catch (error) {
@@ -185,7 +197,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
         visible={isOpenShouldStakeModal}
         onCancel={() => setIsOpenShouldStakeModal(false)}
       />
-      <CustomModal
+      {/* <CustomModal
         visible={isOpenActiveStakingModal}
         destroyOnClose
         onCancel={() => setIsOpenActiveStakingModal(false)}
@@ -207,15 +219,11 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
             onClick={async () => {
               setIsSigning(true)
               try {
-                const signer = await getSigner()
-                if (signer && myAddress) {
+                const signer = useMyAccount.getState().signer
+                if (signer && myGrillAddress) {
                   const message = superLikeMessage.message
-                  const signature = await signer.signRaw?.({
-                    address: myAddress,
-                    data: message,
-                    type: 'bytes',
-                  })
-                  localStorage.setItem(CURRENT_WEEK_SIG, signature?.signature.toString() ?? '')
+                  const signature = signer.sign?.(message)
+                  localStorage.setItem(CURRENT_WEEK_SIG, signature.toString() ?? '')
                   onClick()
                 }
               } catch (err) {
@@ -233,7 +241,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
             Confirm
           </Button>
         </div>
-      </CustomModal>
+      </CustomModal> */}
     </>
   )
 }

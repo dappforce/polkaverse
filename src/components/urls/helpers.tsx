@@ -5,8 +5,6 @@ import config from 'src/config'
 import { showInfoMessage } from '../utils/Message'
 import { BareProps } from '../utils/types'
 
-const { appBaseUrl } = config
-
 export const openNewWindow = (url: string) => {
   const biggerWindow = window.innerWidth > 650
   window.open(
@@ -98,5 +96,6 @@ export const innerFullUrl = (appBaseUrl: string, relative: string) => {
   return base + pathname
 }
 
-export const fullUrl = (relative: string, externalBaseUrl?: string) =>
-  innerFullUrl(externalBaseUrl || appBaseUrl, relative)
+export const fullUrl = (relative: string, externalBaseUrl?: string) => {
+  return innerFullUrl(externalBaseUrl || config.appBaseUrl, relative)
+}

@@ -1,31 +1,12 @@
-import {
-  BookOutlined,
-  BugOutlined,
-  BulbOutlined,
-  GlobalOutlined,
-  LineChartOutlined,
-  // LineChartOutlined,
-  LinkOutlined,
-  NotificationOutlined,
-  PlusOutlined,
-  StarOutlined,
-} from '@ant-design/icons'
 import React from 'react'
-import { FaDiscord } from 'react-icons/fa'
-import { FiTwitter } from 'react-icons/fi'
-import { IoFlashOutline } from 'react-icons/io5'
+import { BiChat, BiNews } from 'react-icons/bi'
+import { LuCompass } from 'react-icons/lu'
 import { MdOutlineLeaderboard } from 'react-icons/md'
-import { accountUrl } from 'src/components/urls'
+import { RiLineChartLine } from 'react-icons/ri'
+import { TbCoins, TbWorld } from 'react-icons/tb'
+import { TiFlashOutline } from 'react-icons/ti'
 import { SubIcon } from 'src/components/utils'
-import config from 'src/config'
-
-const { enableSubnetMode, enableDomains } = config
-
-const suggestFeatureUrl =
-  'https://github.com/dappforce/polkaverse/issues/new?assignees=&labels=enhancement&projects=&template=feature-request.md'
-
-const issuesUrl =
-  'https://github.com/dappforce/polkaverse/issues/new?assignees=&labels=bug&projects=&template=bug-report.md'
+import { getIsLoggedIn } from 'src/stores/my-account'
 
 export type Divider = 'Divider'
 
@@ -33,10 +14,11 @@ export const Divider: Divider = 'Divider'
 
 export type PageLink = {
   name: string
-  page: string[]
+  href: string
   icon: React.ReactNode
   hidden?: boolean
   openInNewTab?: boolean
+  forceHardNavigation?: boolean
 
   // Helpers
   isNotifications?: boolean
@@ -48,104 +30,55 @@ export const isDivider = (item: MenuItem): item is Divider => item === Divider
 
 export const isPageLink = (item: MenuItem): item is PageLink => !isDivider(item)
 
-export const DefaultMenu: MenuItem[] = [
-  // {
-  //   name: 'Polkadot Apps',
-  //   page: [ polkadotAppsUrl ],
-  //   icon: <BlockOutlined />,
-  // },
-  // {
-  //   name: 'PolkaStats explorer',
-  //   page: [ polkaStatsUrl ],
-  //   icon: <BlockOutlined />,
-  // },
-  {
-    name: 'Leaderboard',
-    page: ['/leaderboard'],
-    icon: <SubIcon Icon={MdOutlineLeaderboard} />,
-  },
-  {
-    name: 'Statistics',
-    page: ['/stats'],
-    icon: <LineChartOutlined />,
-  },
-  Divider,
-  {
-    name: config.appName,
-    page: [config.appBaseUrl],
-    icon: <LinkOutlined />,
-    hidden: !enableSubnetMode,
-  },
-  {
-    name: 'Subsocial Twitter',
-    page: ['https://twitter.com/subsocialchain'],
-    icon: <SubIcon Icon={FiTwitter} />,
-    openInNewTab: true,
-  },
-  // {
-  //   name: 'Official Telegram chat',
-  //   page: ['https://t.me/Subsocial'],
-  //   icon: <CommentOutlined />,
-  // },
-  {
-    name: 'Subsocial Announcements',
-    page: ['https://t.me/SubsocialNetwork'],
-    icon: <NotificationOutlined />,
-    openInNewTab: true,
-  },
-  {
-    name: 'Subsocial Discord',
-    page: ['https://discord.gg/yU8tgHN'],
-    icon: <SubIcon Icon={FaDiscord} />,
-    openInNewTab: true,
-  },
-  Divider,
-  {
-    name: 'Energy Station',
-    page: ['/energy'],
-    icon: <SubIcon Icon={IoFlashOutline} />,
-  },
-  Divider,
-  {
-    name: 'Suggest Feature',
-    page: [suggestFeatureUrl],
-    icon: <BulbOutlined />,
-    openInNewTab: true,
-  },
-  {
-    name: 'Report bug',
-    page: [issuesUrl],
-    icon: <BugOutlined />,
-    openInNewTab: true,
-  },
-]
-
-export const buildAuthorizedMenu = (myAddress: string, isUsingEmail?: boolean): MenuItem[] => {
-  const account = { address: myAddress }
-
+export const buildAuthorizedMenu = (myAddress?: string): MenuItem[] => {
   return [
     {
-      name: 'My subscriptions',
-      page: ['/accounts/[address]/following', accountUrl(account, 'following')],
-      icon: <StarOutlined />,
+      name: 'Feed',
+      icon: <SubIcon Icon={BiNews} />,
+      href: '/',
     },
     {
-      name: 'My spaces',
-      page: ['/accounts/[address]/spaces', accountUrl(account, 'spaces')],
-      icon: <BookOutlined />,
+      name: 'Chat',
+      icon: <SubIcon Icon={BiChat} />,
+      href: '/c',
+      forceHardNavigation: true,
+    },
+    ...(getIsLoggedIn()
+      ? [
+          {
+            name: 'My Spaces',
+            icon: <SubIcon Icon={LuCompass} />,
+            href: `/accounts/${myAddress}/spaces`,
+          },
+        ]
+      : []),
+    Divider,
+    {
+      name: 'Content Staking',
+      icon: <SubIcon Icon={TbCoins} />,
+      href: '/c/staking',
+      forceHardNavigation: true,
     },
     {
-      name: 'New space',
-      page: ['/spaces/new', '/spaces/new'],
-      icon: <PlusOutlined />,
+      name: 'Leaderboard',
+      icon: <SubIcon Icon={MdOutlineLeaderboard} />,
+      href: '/leaderboard',
     },
     {
-      name: 'Subsocial Usernames',
-      page: ['/dd', '/dd'],
-      icon: <GlobalOutlined />,
-      hidden: !enableDomains || isUsingEmail,
+      name: 'Statistics',
+      icon: <SubIcon Icon={RiLineChartLine} />,
+      href: '/stats',
     },
     Divider,
-    ...DefaultMenu,
+    {
+      name: 'Usernames',
+      icon: <SubIcon Icon={TbWorld} />,
+      href: '/dd',
+    },
+    {
+      name: 'Energy Station',
+      icon: <SubIcon Icon={TiFlashOutline} />,
+      href: '/energy',
+    },
   ]
 }

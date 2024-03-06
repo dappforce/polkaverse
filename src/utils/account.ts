@@ -1,6 +1,6 @@
 import type { Keyring } from '@polkadot/keyring'
 
-export type Signer = ReturnType<Keyring['addFromSeed']>
+export type KeyringSigner = ReturnType<Keyring['addFromSeed']>
 
 async function getKeyring() {
   const { Keyring } = await import('@polkadot/keyring')
@@ -25,7 +25,7 @@ export function isSecretKeyUsingMiniSecret(secretKey: string) {
   return secretKey.length === 64
 }
 
-export async function loginWithSecretKey(secretKey: string): Promise<Signer> {
+export async function loginWithSecretKey(secretKey: string): Promise<KeyringSigner> {
   const keyring = await getKeyring()
 
   if (isSecretKeyUsingMiniSecret(secretKey)) {

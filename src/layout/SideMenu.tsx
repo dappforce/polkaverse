@@ -1,21 +1,15 @@
-import { newLogger } from '@subsocial/utils'
 import { Menu } from 'antd'
 import clsx from 'clsx'
-import Router, { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import { HTMLProps } from 'react'
 import CustomLink from 'src/components/referral/CustomLink'
-import { useIsSignedIn, useIsUsingEmail, useMyAddress } from '../components/auth/MyAccountsContext'
-import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMenuItems'
+import useIsMounted from 'src/hooks/useIsMounted'
+import { useMyAddress } from '../components/auth/MyAccountsContext'
+import { buildAuthorizedMenu, isDivider, PageLink } from './SideMenuItems'
 import styles from './Sider.module.sass'
 
-const log = newLogger('SideMenu')
-
-const goToPage = ([url, as]: string[]) => {
-  Router.push(url, as).catch(err => log.error(`Failed to navigate to a selected page. ${err}`))
-}
-
 const renderPageLink = (item: PageLink) => {
-  const { icon, openInNewTab } = item
+  const { icon, openInNewTab, forceHardNavigation } = item
 
   if (item.hidden) {
     return null
@@ -30,30 +24,32 @@ const renderPageLink = (item: PageLink) => {
   }
 
   return (
-    <Menu.Item
-      className='DfMenuItem'
-      key={item.page[1] || item.page[0]}
-      onClick={() => !openInNewTab && goToPage(item.page)}
-    >
-      <CustomLink href={item.page[0]} as={item.page[1]} passHref>
-        <a {...anchorProps}>
-          {icon}
+    <Menu.Item className='DfMenuItem' key={item.href}>
+      {forceHardNavigation ? (
+        <a {...anchorProps} href={item.href}>
+          <span className='MenuItemIcon'>{icon}</span>
           <span className='MenuItemName'>{item.name}</span>
         </a>
-      </CustomLink>
+      ) : (
+        <CustomLink href={item.href} passHref>
+          <a {...anchorProps} href={item.href}>
+            <span className='MenuItemIcon'>{icon}</span>
+            <span className='MenuItemName'>{item.name}</span>
+          </a>
+        </CustomLink>
+      )}
     </Menu.Item>
   )
 }
 
-function SideMenu() {
-  const { asPath } = useRouter()
+function SideMenu({ noOffset }: { noOffset?: boolean }) {
+  const { pathname } = useRouter()
   const myAddress = useMyAddress()
-  const isLoggedIn = useIsSignedIn()
 
-  const isUsingEmail = useIsUsingEmail()
+  const isMounted = useIsMounted()
+  if (!isMounted) return null
 
-  const menuItems =
-    isLoggedIn && myAddress ? buildAuthorizedMenu(myAddress, isUsingEmail) : DefaultMenu
+  const menuItems = buildAuthorizedMenu(myAddress)
 
   return (
     <div
@@ -63,10 +59,10 @@ function SideMenu() {
       )}
     >
       <Menu
-        selectedKeys={[asPath]}
+        selectedKeys={[pathname]}
         mode='inline'
         theme='light'
-        className={styles.Menu}
+        className={clsx(styles.Menu, noOffset && styles.MenuNoOffset)}
         style={{ borderRight: 0, borderBottom: 0 }}
       >
         {menuItems.map((item, i) =>
@@ -76,9 +72,6 @@ function SideMenu() {
             renderPageLink(item)
           ),
         )}
-        {/* {isNotMobile && showOnBoarding && !collapsed && <OnBoardingCard />} */}
-        {/* {isLoggedIn && <Menu.Divider />} */}
-        {/* {isLoggedIn && <MySubscriptions />} */}
       </Menu>
     </div>
   )

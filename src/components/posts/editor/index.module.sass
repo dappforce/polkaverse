@@ -16,9 +16,10 @@
     &:first-of-type
       margin-bottom: $space_normal
 
-.EditorBodyContent
-  width: $max_width_content
+.EditorContainer
+  flex-wrap: nowrap
 
+.EditorBodyContent
   .TitleInput
     border: none
     box-shadow: none
@@ -35,9 +36,11 @@
     margin: 0
 
 .AdvancedBody
-  width: 350px
+  width: 325px
 
 .UploadHint
+  padding: 0 $space_normal
+
   \:global .anticon
     font-size: 40px
   \:global .ant-upload-text
@@ -127,7 +130,10 @@
     padding: 0
 
 @media screen and ( max-width: 1165px)
-  .AdvancedBody
+  .EditorContainer
+    flex-wrap: wrap
+
+  .EditorBodyContent, .AdvancedBody
     width: $max_width_content
 
   .ToolsSection
@@ -204,3 +210,11 @@
 
         span
           font-weight: bold
+
+.PostToEarnCard
+  align-items: flex-start
+  border-radius: $border_radius_large
+  background: #EEF2FF
+  display: flex
+  flex-direction: column
+  padding: $space_normal

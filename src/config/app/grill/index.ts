@@ -1,27 +1,27 @@
 import { AppConfig } from '../../types'
-import polkaverseSpaces from './polkaverseSpaces'
+import featuredCreators from './featuredCreators'
 
 const index: AppConfig = {
   // App settings
-  appName: 'PolkaVerse',
+  appName: 'Grill',
   appLogo: '/grill.svg',
   mobileAppLogo: '/grill.svg',
-  appBaseUrl: 'https://polkaverse.com',
+  appBaseUrl: 'https://grillapp.net',
   themeName: undefined,
   metaTags: {
-    siteName: 'PolkaVerse',
-    title: "PolkaVerse – Polkadot's Premier Social Network",
-    desc: 'The #1 decentralized social network for Polkadot and Kusama. Build and own your Web3 network and track the latest updates from the Dotsama ecosystem today!',
-    defaultImage: '/polkaverse.png',
+    siteName: 'Grill',
+    title: 'Grill: Monetize Every Like, Comment, Post | Web3 Social',
+    desc: 'Revolutionary Web3 social finance platform where bloggers and their followers earn together. Blockchain, NFT, and crypto content.',
+    defaultImage: '/images/grill-default-cover.png',
   },
   subnetId: undefined,
-  canonicalUrl: 'https://polkaverse.com',
+  canonicalUrl: 'https://grillapp.net',
   // app specific features
   resolvedDomain: 'sub',
   // Reserved spaces
   lastReservedSpaceId: '1000',
   claimedSpaceIds: ['1', '2', '3', '4', '5'],
-  recommendedSpaceIds: polkaverseSpaces,
+  recommendedSpaceIds: featuredCreators,
   suggestedTlds: ['sub', 'polka'],
   mutedAccounts: {
     '3tPAVaHYAFRfUVpNP1DAq4E3BxTPanzkGN4uukn3b4ZAefkj': [

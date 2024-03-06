@@ -7,10 +7,8 @@ import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 import { fetchProfileSpaces } from '../profiles/profilesSlice'
 
 type User = { address: string; reward: string }
-type UserByLike = { address: string; count: number }
 export type TopUsers = {
   creators: User[]
-  stakers: UserByLike[]
 }
 
 const sliceName = 'topUsers'
@@ -38,9 +36,8 @@ export async function fetchTopUsersWithSpaces(
 
   const parsedState = state as TopUsers
   const creators = parsedState.creators.map(user => user.address)
-  const stakers = parsedState.stakers.map(user => user.address)
 
-  await dispatch(fetchProfileSpaces({ ids: [...creators, ...stakers], api }))
+  await dispatch(fetchProfileSpaces({ ids: creators, api }))
 }
 
 const initialState = null as TopUsers | null

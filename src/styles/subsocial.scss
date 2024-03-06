@@ -475,19 +475,33 @@ a {
   -webkit-overflow-scrolling: touch;
 
   .ant-menu-item-active {
-    .MenuItemName {
+    .MenuItemName,
+    .MenuItemIcon .anticon {
       color: $color_primary !important;
     }
   }
 
   .ant-menu-item-selected {
-    .MenuItemName {
+    .MenuItemName,
+    .MenuItemIcon .anticon {
       color: $color_primary !important;
     }
   }
 
   .MenuItemName {
-    color: $color_muted;
+    color: rgba(100, 116, 139, 0.8);
+    line-height: normal;
+    font-weight: $font_weight_medium;
+  }
+
+  .MenuItemIcon {
+    line-height: normal;
+    .anticon {
+      display: block;
+      font-size: $font_large !important;
+      margin-right: $space_normal;
+      color: rgba(100, 116, 139, 0.8);
+    }
   }
 }
 
@@ -523,7 +537,6 @@ a {
 }
 
 .DfPageContent {
-  padding: $space_small $space_normal;
   overflow-wrap: break-word;
   margin: 0 auto;
   color: $color_font_normal;
@@ -580,8 +593,7 @@ a {
 
   img {
     max-width: 150px;
-    position: relative;
-    top: 4px;
+    height: $font_big;
   }
 }
 
@@ -1195,20 +1207,18 @@ hr {
   justify-content: center;
   align-items: flex-start;
   gap: $space_normal;
+  max-width: $max_width_page;
+  padding: 0 $space_normal;
+  margin: 0 auto;
 }
 
 @media (min-width: 767px) {
   .DfSectionOuter {
     min-width: $min_width_content;
-    max-width: $max_width_content;
-    width: $max_width_content;
+    flex: 1;
     padding-bottom: 0;
     position: relative;
     z-index: 0;
-
-    &.DfSectionLarger {
-      max-width: calc(890px + #{$space_normal} * 2);
-    }
 
     .DfSectionOuter {
       width: 100%;
@@ -1380,7 +1390,7 @@ hr {
 
 .DfHeader {
   background: #fff;
-  padding: 0 $space_normal;
+  padding: 0;
   border-bottom: 1px solid $color_light_border;
   position: fixed;
   z-index: 12;
@@ -1391,7 +1401,6 @@ hr {
   /* Fix black background of top menu in prod mode: */
   &.ant-layout-header {
     line-height: normal;
-    padding: 0 0.5rem !important;
     background-color: #fff;
   }
 }
@@ -1506,14 +1515,19 @@ hr {
 }
 
 .DfMenuItem {
-  padding-left: $space_huge !important;
+  margin: 0 !important;
+  > a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+
+  padding-left: $space_normal !important;
   img {
     transition: filter 0.3s;
-    filter: grayscale(1) opacity(0.7);
   }
   svg {
     transition: filter 0.3s;
-    filter: grayscale(1) opacity(0.7);
   }
   &.ant-menu-item-only-child:hover,
   .ant-menu-submenu-title:hover,
@@ -1521,11 +1535,9 @@ hr {
   &.ant-menu-item-selected {
     img {
       transition: filter 0.3s;
-      filter: grayscale(0) opacity(1);
     }
     svg {
       transition: filter 0.3s;
-      filter: grayscale(0) opacity(1);
     }
   }
 }
@@ -2164,7 +2176,7 @@ hr {
     &:hover {
       color: $color_link_hover !important;
     }
-    font-size: $font_big;
+    font-size: $font_large;
     color: $color_muted;
   }
 
@@ -2196,6 +2208,7 @@ hr {
   .DfFilters {
     @extend .DfFiltersCommon;
     opacity: 0;
+    margin-top: 0 !important;
     padding: $space_small 22px $space_small 22px;
   }
   &:hover {
@@ -2372,4 +2385,19 @@ hr {
   top: 0;
   right: 0;
   transform: translateY(10px);
+}
+
+.container {
+  max-width: $max_width_page;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: $space_normal;
+  padding-right: $space_normal;
+}
+
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  background-color: transparent !important;
+}
+.ant-menu-item::after {
+  display: none !important;
 }

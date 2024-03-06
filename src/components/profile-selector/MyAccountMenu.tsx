@@ -1,8 +1,6 @@
-import { Drawer } from 'antd'
-import dynamic from 'next/dynamic'
-import React, { createContext, FC, useContext, useState } from 'react'
-import { isMobileDevice } from 'src/config/Size.config'
-import { useMyEmailAddress } from '../auth/MyAccountsContext'
+import { useRouter } from 'next/router'
+import React, { createContext, FC, useContext, useEffect, useRef, useState } from 'react'
+import { getCurrentUrlOrigin } from 'src/utils/url'
 import { InfoDetails } from '../profiles/address-views'
 import Avatar from '../profiles/address-views/Avatar'
 import Address from '../profiles/address-views/Name'
@@ -11,7 +9,6 @@ import {
   withMyProfile,
   withProfileByAccountId,
 } from '../profiles/address-views/utils/withLoadedOwner'
-import { useResponsiveSize } from '../responsive'
 
 type SelectAddressType = AddressProps & {
   onClick?: () => void
@@ -69,41 +66,67 @@ const MyAccountDrawerContext = createContext<MyAccountSectionContextState>(initV
 
 export const useMyAccountDrawer = () => useContext(MyAccountDrawerContext)
 
+function parseMessage(data: string) {
+  const [origin, name, value] = data.split(':')
+  if (origin !== 'grill') return null
+  return { name: name ?? '', value: value ?? '' }
+}
 export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, owner }) => {
-  const MyAccountSection = dynamic(
-    () => import('src/components/profile-selector/MyAccountSection'),
-    { ssr: false },
-  )
-  const { isMobile } = useResponsiveSize()
-  const [visible, setVisible] = useState(false)
+  const iframeRef = useRef<HTMLIFrameElement | null>(null)
+  const [isOpenProfileModal, setIsOpenProfileModal] = useState(false)
+  const router = useRouter()
 
-  const open = () => setVisible(true)
-  const close = () => setVisible(false)
+  useEffect(() => {
+    window.onmessage = event => {
+      const message = parseMessage(event.data + '')
+      if (!message) return
 
-  const emailAddress = useMyEmailAddress()
+      const { name, value } = message
+      if (name === 'profile' && value === 'close') {
+        setIsOpenProfileModal(false)
+      } else if (name === 'redirect') {
+        router.push(value)
+        setIsOpenProfileModal(false)
+      }
+    }
+  }, [])
+
+  const origin = getCurrentUrlOrigin()
+  const isDevMode = origin.includes('localhost')
 
   return (
-    <>
-      <span className='DfCurrentAddress icon' onClick={open}>
-        {isMobile ? (
-          <Avatar address={address} avatar={owner?.content?.image} asLink={false} />
-        ) : (
-          <SelectAddressPreview address={address} owner={owner} emailAddress={emailAddress} />
-        )}
-      </span>
-      <Drawer
-        placement='right'
-        className='DfAccountMenu'
-        width={isMobileDevice ? 320 : 365}
-        closable={true}
-        onClose={close}
-        visible={visible || false}
-      >
-        <MyAccountDrawerContext.Provider value={{ visible, open, close }}>
-          <MyAccountSection />
-        </MyAccountDrawerContext.Provider>
-      </Drawer>
-    </>
+    <span
+      onClick={() => {
+        iframeRef.current?.contentWindow?.postMessage(
+          {
+            type: 'grill:profile',
+            payload: 'open',
+          },
+          '*',
+        )
+        setIsOpenProfileModal(true)
+      }}
+      className='DfCurrentAddress icon CursorPointer'
+    >
+      <Avatar address={address} avatar={owner?.content?.image} asLink={false} size={30} noMargin />
+      {!isDevMode && (
+        <iframe
+          ref={iframeRef}
+          src={`${getCurrentUrlOrigin()}/c/widget/profile`}
+          style={{
+            opacity: isOpenProfileModal ? 1 : 0,
+            pointerEvents: isOpenProfileModal ? 'auto' : 'none',
+            transition: 'opacity 0.3s ease-in-out',
+            colorScheme: 'none',
+            background: 'transparent',
+            position: 'fixed',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+          }}
+        />
+      )}
+    </span>
   )
 }
 

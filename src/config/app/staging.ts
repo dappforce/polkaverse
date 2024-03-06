@@ -3,8 +3,8 @@ import { AppConfig } from '../types'
 const staging: AppConfig = {
   // App settings
   appName: 'Staging',
-  appLogo: '/polkaverse-logo.svg',
-  mobileAppLogo: '/polkaverse-sign.svg',
+  appLogo: '/grill.svg',
+  mobileAppLogo: '/grill.svg',
   appBaseUrl: 'https://staging.subsocial.network',
   themeName: undefined,
   metaTags: {

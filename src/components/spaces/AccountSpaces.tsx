@@ -2,11 +2,13 @@ import { Button, Divider, Modal, Tabs } from 'antd'
 import partition from 'lodash.partition'
 import { useRouter } from 'next/router'
 import React, { useEffect, useMemo, useState } from 'react'
+import { shallowEqual } from 'react-redux'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import messages from 'src/messages'
 import { useFetchSpaces, useSelectSpaces } from 'src/rtk/app/hooks'
 import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
+import { selectSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
 import {
   useFetchSpaceIdsByFollower,
   useFetchSpaceIdsByOwner,
@@ -21,7 +23,6 @@ import { useIsSubstrateConnected } from '../substrate'
 import { Loading, LoadingSpaces, toShortAddress } from '../utils'
 import { getPageOfIds } from '../utils/getIds'
 import { Pluralize } from '../utils/Plularize'
-import Section from '../utils/Section'
 import { CreateSpaceButton } from './helpers'
 import { ViewSpaceById } from './ViewSpace'
 import { ViewSpaceProps } from './ViewSpaceProps'
@@ -82,24 +83,32 @@ const SpacesListBySpaceIds = (props: SpacesListBySpaceIdsProps) => {
   )
 }
 
-type AccountSpacesProps = BaseProps & {
-  withTabs?: boolean
-}
+type AccountSpacesProps = BaseProps
 
-export const OwnedSpacesList = ({ withTabs = false, withTitle, ...props }: AccountSpacesProps) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const OwnedSpacesList = ({ ...props }: Omit<AccountSpacesProps, 'withTitle'>) => {
   const address = props.address.toString()
   const {
     query: { page = DEFAULT_FIRST_PAGE, size = DEFAULT_PAGE_SIZE },
   } = useRouter()
 
   const [unlistedSpaceIds, setUnistedSpaceIds] = useState<SpaceId[]>([])
-  const { spaceIds, error, loading } = useFetchSpaceIdsByOwner(address)
-  const spaces = useSelectSpaces(spaceIds)
+  const { spaceIds: ownedSpaceIds, error, loading } = useFetchSpaceIdsByOwner(address)
+  const spaces = useSelectSpaces(ownedSpaceIds)
   const [newUnlistedSpaces] = partition(spaces, isUnlisted)
   const connected = useIsSubstrateConnected()
   const isMy = useIsMyAddress(address)
 
-  const totalCount = spaceIds.length
+  const followedSpaceIds =
+    useAppSelector(
+      state => (address ? selectSpaceIdsByFollower(state, address) : []),
+      shallowEqual,
+    ) || []
+
+  const spaceIdsImEditorOf =
+    useAppSelector(state => (address ? selectSpaceIdsWithRolesByAccount(state, address) : [])) || []
+
+  const totalCount = ownedSpaceIds.length
   const unlistedCount = unlistedSpaceIds.length
 
   useEffect(() => {
@@ -116,12 +125,10 @@ export const OwnedSpacesList = ({ withTabs = false, withTitle, ...props }: Accou
     setUnistedSpaceIds(unlistedSpaceIds.concat(newIds))
   }, [newUnlistedSpaces.length, page, size])
 
-  const PublicSpaces = useMemo(
-    () => (
-      <SpacesListBySpaceIds spaceIds={spaceIds} totalCount={totalCount} isMy={isMy} {...props} />
-    ),
-    [spaceIds.length],
-  )
+  const allIds = useMemo(() => {
+    const ids = ownedSpaceIds.concat(followedSpaceIds, spaceIdsImEditorOf, unlistedSpaceIds)
+    return Array.from(new Set(ids))
+  }, [ownedSpaceIds, followedSpaceIds, spaceIdsImEditorOf, unlistedSpaceIds])
 
   if (!connected) return <Loading label={messages.connectingToNetwork} />
 
@@ -129,54 +136,43 @@ export const OwnedSpacesList = ({ withTabs = false, withTitle, ...props }: Accou
 
   if (loading) return <LoadingSpaces />
 
-  const title = withTitle ? (
-    <span className='d-flex justify-content-between align-items-center w-100 my-2'>
-      <span>{isMy ? 'My spaces' : `Spaces of ${toShortAddress(address)}`}</span>
-      {!!totalCount && isMy && <CreateSpaceButton />}
-    </span>
-  ) : null
-
   const hasUnlistedSpaces = unlistedSpaceIds.length > 0
 
   return (
-    <Section className='m-0' title={title}>
-      {newUnlistedSpaces.length && withTabs && isMy ? (
-        <Tabs>
-          <TabPane tab={`All (${totalCount})`} key='all'>
-            {PublicSpaces}
-          </TabPane>
-          {hasUnlistedSpaces && (
-            <TabPane tab={`Unlisted (${unlistedSpaceIds.length})`} key='unlisted'>
-              <SpacesListBySpaceIds
-                spaceIds={unlistedSpaceIds}
-                totalCount={unlistedCount}
-                {...props}
-              />
-            </TabPane>
-          )}
-        </Tabs>
-      ) : (
-        PublicSpaces
+    <Tabs style={{ marginTop: '-8px' }}>
+      <TabPane tab={`All (${allIds.length})`} key='all'>
+        <SpacesListBySpaceIds spaceIds={allIds} totalCount={allIds.length} isMy={isMy} {...props} />
+      </TabPane>
+      <TabPane tab={`Created (${totalCount})`} key='created'>
+        <SpacesListBySpaceIds
+          spaceIds={ownedSpaceIds}
+          totalCount={totalCount}
+          isMy={isMy}
+          {...props}
+        />
+      </TabPane>
+      <TabPane tab={`Followed (${followedSpaceIds.length})`} key='followed'>
+        <SpacesListBySpaceIds
+          spaceIds={followedSpaceIds}
+          totalCount={followedSpaceIds.length}
+          {...props}
+        />
+      </TabPane>
+      {spaceIdsImEditorOf.length > 0 && (
+        <TabPane tab={`My Roles (${spaceIdsImEditorOf.length})`} key='editor'>
+          <SpacesListBySpaceIds
+            spaceIds={spaceIdsImEditorOf}
+            totalCount={spaceIdsImEditorOf.length}
+            {...props}
+          />
+        </TabPane>
       )}
-    </Section>
-  )
-}
-
-export const OwnedSpacesPage = () => {
-  const { address } = useRouter().query
-
-  if (!address) return null
-
-  return (
-    <PageContent
-      meta={{
-        title: 'Account spaces',
-        desc: `Subsocial spaces owned by ${address}`,
-      }}
-      withSidebar
-    >
-      <OwnedSpacesList address={address as string} withTabs withTitle />
-    </PageContent>
+      {hasUnlistedSpaces && (
+        <TabPane tab={`Hidden (${unlistedSpaceIds.length})`} key='hidden'>
+          <SpacesListBySpaceIds spaceIds={unlistedSpaceIds} totalCount={unlistedCount} {...props} />
+        </TabPane>
+      )}
+    </Tabs>
   )
 }
 

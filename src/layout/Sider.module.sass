@@ -1,19 +1,26 @@
 @import 'src/styles/subsocial-vars.scss'
 
 .Menu
-  color: $color_muted
-  padding-top: 4rem
+  padding-top: 4.25rem
+  display: flex
+  flex-direction: column
+  background-color: $color_page_bg
+
+  &.MenuNoOffset
+    padding-top: 0 !important
 
 .PagePadding
   padding-top: 76px
 
 .SiderDivider
-  margin: 0 $space_big !important
-  background-color: #E5E5E5 !important
+  height: 0.5px !important
+  margin: $space_tiny $space_normal !important
+  background-color: #CBD5E1 !important
 
 .SiderOverflow
   overflow-x: hidden
   overflow-y: auto
+  background-color: $color_page_bg
 
   &::-webkit-scrollbar
     display: none
@@ -23,7 +30,7 @@
 
 @media (max-width: 991px)
   .Menu
-    padding-top: 4remrem
+    padding-top: 4.25rem
 
 @media (max-width: $max_mobile_width)
   .Menu

@@ -115,18 +115,19 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   let metaTitle = title
   const defaultMetaTitle = config.metaTags.title
 
-  // should forceTitle only when its using the space/owner name, to not include double Polkaverse name
+  // should forceTitle only when its using the space/owner name, to not include double app name
   let forceTitle = false
   if (!metaTitle) {
     const owner = initialPostData.owner
     const ownerName = owner?.content?.name.trim()
     const ownerHandle = owner?.struct.handle?.trim()
     const spaceName = initialPostData.space?.content?.name?.trim()
+    const onApp = `on ${config.appName}`
     if (ownerName) {
-      metaTitle = `${ownerName} ` + (ownerHandle ? `@${ownerHandle} ` : '') + 'on Polkaverse'
+      metaTitle = `${ownerName} ` + (ownerHandle ? `@${ownerHandle} ` : '') + onApp
       forceTitle = true
     } else if (spaceName) {
-      metaTitle = `${spaceName} on Polkaverse`
+      metaTitle = `${spaceName} ${onApp}`
       forceTitle = true
     }
   }

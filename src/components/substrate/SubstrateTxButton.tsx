@@ -14,12 +14,16 @@ import { isFunction } from '@polkadot/util'
 import type { Signer } from '@polkadot/api/types'
 import { VoidFn } from '@polkadot/api/types'
 import { isEmptyStr, newLogger } from '@subsocial/utils'
+import { ESTIMATED_ENERGY_FOR_ONE_TX } from 'src/config/constants'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
+import useWaitHasEnergy from 'src/hooks/useWaitHasEnergy'
 import messages from 'src/messages'
 import { useBuildSendEvent } from 'src/providers/AnalyticContext'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
+import { useMyAccount } from 'src/stores/my-account'
 import { AnyAccountId } from 'src/types'
+import { KeyringSigner } from 'src/utils/account'
 import { useSubstrate } from '.'
 import { useAuth } from '../auth/AuthContext'
 import { useMyAddress, useMyEmailAddress } from '../auth/MyAccountsContext'
@@ -33,6 +37,7 @@ import {
   SIGNER_REFRESH_TOKEN_KEY,
   SIGNER_TOKEN_KEY,
 } from '../utils/OffchainSigner/ExternalStorage'
+import { requestToken } from '../utils/OffchainUtils'
 import { getWalletBySource } from '../wallets/supportedWallets'
 import styles from './SubstrateTxButton.module.sass'
 import useToggle from './useToggle'
@@ -55,7 +60,9 @@ export type FailedMessage = Message | FailedMessageFn
 export type BaseTxButtonProps = Omit<ButtonProps, 'onClick' | 'form'>
 
 export type TxButtonProps = BaseTxButtonProps & {
+  canUseProxy?: boolean
   accountId?: AnyAccountId
+  parentProxyAddress?: string
   tx?: string
   params?: any[] | GetTxParamsFn | GetTxParamsAsyncFn
   label?: React.ReactNode
@@ -64,6 +71,7 @@ export type TxButtonProps = BaseTxButtonProps & {
   onValidate?: () => boolean | Promise<boolean>
   onClick?: () => Promise<any | undefined> | void
   onSuccess?: TxCallback
+  onSend?: () => void
   onCancel?: () => void
   isFreeTx?: boolean
   onFailed?: TxFailedCallback
@@ -84,6 +92,7 @@ function TxButton({
   unsigned,
   onValidate,
   onClick,
+  onSend,
   onSuccess,
   onFailed,
   onCancel,
@@ -93,12 +102,15 @@ function TxButton({
   withSpinner = true,
   component,
   children,
+  parentProxyAddress,
   customNodeApi,
   ...antdProps
 }: TxButtonProps) {
   const { api: subsocialApi } = useSubstrate()
   const openOnBoardingModal = useOpenCloseOnBoardingModal()
   const [isSending, , setIsSending] = useToggle(false)
+  const hasEnoughEnergy = useMyAccount(state => (state.energy ?? 0) >= ESTIMATED_ENERGY_FOR_ONE_TX)
+  const waitHasEnergy = useWaitHasEnergy()
 
   const { isMobile } = useResponsiveSize()
   const {
@@ -155,6 +167,12 @@ function TxButton({
 
   const waitMessage = controlledMessage({
     message: messages.waitingForTx,
+    type: 'info',
+    duration: 0,
+    className: isMobile ? styles.NotificationProgressMobile : styles.NotificationProgress,
+  })
+  const waitHasEnergyMessage = controlledMessage({
+    message: 'Requesting energy...',
     type: 'info',
     duration: 0,
     className: isMobile ? styles.NotificationProgressMobile : styles.NotificationProgress,
@@ -287,27 +305,49 @@ function TxButton({
   ) => {
     let signer: Signer | undefined
     let tx: SubmittableExtrinsic
+    let account: AnyAccountId | KeyringSigner = accountId
 
     try {
-      if (isMobile) {
-        const { web3Enable, web3FromAddress } = await import('@polkadot/extension-dapp')
-        const extensions = await web3Enable(appName)
+      if (accountId === useMyAccount.getState().address) {
+        // use proxy signer
+        signer = undefined
+        const keypairSigner = useMyAccount.getState().signer
+        if (!keypairSigner) throw new Error('No account signer provided')
+        account = keypairSigner
 
-        if (extensions.length === 0) {
-          return
+        if (!hasEnoughEnergy) {
+          waitHasEnergyMessage.open()
+          await requestToken({ address: accountId })
+          await waitHasEnergy()
+          waitHasEnergyMessage.close()
         }
-        signer = await (await web3FromAddress(accountId.toString())).signer
       } else {
-        const currentWallet = getCurrentWallet()
-        const wallet = getWalletBySource(currentWallet)
-        signer = wallet?.signer
+        // use extension signer
+        if (isMobile) {
+          const { web3Enable, web3FromAddress } = await import('@polkadot/extension-dapp')
+          const extensions = await web3Enable(appName)
+
+          if (extensions.length === 0) {
+            return
+          }
+          signer = await (await web3FromAddress(accountId.toString())).signer
+        } else {
+          const currentWallet = getCurrentWallet()
+          const wallet = getWalletBySource(currentWallet)
+          signer = wallet?.signer
+        }
+
+        if (!signer) {
+          throw new Error('No signer provided')
+        }
       }
 
-      if (!signer) {
-        throw new Error('No signer provided')
+      let usedExtrinsic = extrinsic
+      if (parentProxyAddress) {
+        usedExtrinsic = api.tx.proxy.proxy(parentProxyAddress, null, extrinsic)
       }
-
-      tx = await extrinsic.signAsync(accountId, { signer, nonce: -1 })
+      tx = await usedExtrinsic.signAsync(account as any, { signer, nonce: -1 })
+      onSend?.()
 
       if (hideRememberMePopup) {
         setSignerProxyAdded('enabled', accountId as string)
@@ -415,12 +455,13 @@ function TxButton({
     <Component
       {...antdProps}
       onClick={() => {
-        if (!customNodeApi && !isFreeTx) {
+        if (!customNodeApi && !isFreeTx && !getIsUsingKeypairSigner(accountId ?? '')) {
+          openSignInModal(false)
           if (!accountId) {
-            openSignInModal(false)
             return setIsSending(false)
           }
           if (!hasTokens) {
+            // TODO: create independent energy modal
             openOnBoardingModal('open', { toStep: 'energy', type: 'partial' })
             return setIsSending(false)
           }
@@ -434,6 +475,10 @@ function TxButton({
       {buttonLabel}
     </Component>
   )
+}
+
+function getIsUsingKeypairSigner(accountId: AnyAccountId) {
+  return accountId === useMyAccount.getState().address
 }
 
 export default React.memo(TxButton)

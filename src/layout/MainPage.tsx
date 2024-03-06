@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import React from 'react'
 import ClientLayout from './ClientLayout'
 
-const Page: React.FunctionComponent = ({ children }) => <div className='mb-3'>{children}</div>
+const Page: React.FunctionComponent = ({ children }) => <div>{children}</div>
 
 const SKIP_LAYOUT_PAGES = 'generators-for-promo'
 

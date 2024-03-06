@@ -1,13 +1,13 @@
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { useSelectProfileSpace } from 'src/rtk/app/hooks'
-import { getCurrentSearchParams, getCurrentUrlWithoutQuery } from 'src/utils/url'
+import { getCurrentSearchParams, getCurrentUrlWithoutQuery, getUrlQuery } from 'src/utils/url'
 import { useMyAddress } from '../auth/MyAccountsContext'
 
 export function useReferralId() {
   const myAddress = useMyAddress()
   const profileSpace = useSelectProfileSpace(myAddress)
-  return profileSpace?.spaceId ?? ''
+  return profileSpace?.spaceId || getUrlQuery('ref')
 }
 
 export function ReferralUrlChanger() {

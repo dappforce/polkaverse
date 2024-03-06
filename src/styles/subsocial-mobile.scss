@@ -64,19 +64,8 @@
 
   .DfSideBar {
     .ant-drawer-content {
-      padding-top: 4rem;
-    }
-
-    .ant-drawer-content-wrapper {
-      width: 225px !important;
-    }
-  }
-
-  .DfBrand {
-    img {
-      max-width: 50px;
-      height: auto;
-      top: 0;
+      padding-top: 4.25rem;
+      background-color: $color_page_bg;
     }
   }
 
@@ -175,12 +164,6 @@
   .DfPageContent {
     min-width: 100% !important;
     max-width: 100% !important;
-    padding: $space_normal;
-  }
-
-  .DfBurgerIcon {
-    padding-left: 0;
-    padding-right: $space_tiny;
   }
 
   .DfSection {

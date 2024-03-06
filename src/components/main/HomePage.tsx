@@ -79,10 +79,8 @@ const HomeTabs = (props: TabsProps) => {
 }
 
 const AffixTabs = (props: AffixTabsProps) => {
-  const { visible = false } = props
-
   return (
-    <Affix offsetTop={64} className={`h-0 ${visible ? 'visible' : 'invisible'}`}>
+    <Affix offsetTop={64} className={'visible'}>
       <HomeTabs className={style.AffixTabs} isAffix {...props} />
     </Affix>
   )
@@ -190,7 +188,6 @@ const TabsHomePage = ({
       return <CreatorsSpaces />
     }
   }, [tab, type, date, myAddress])
-
   const isMobile = useIsMobileWidthOrDevice()
 
   return (
@@ -200,12 +197,11 @@ const TabsHomePage = ({
         <CommentBanner />
       </div> */}
       <ShowLikeablePostsProvider tab={tab} filter={type}>
-        <span>
-          {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
-        </span>
-
+        {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
         <Section className='m-0'>
-          <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} {...props} />
+          {isMobile && (
+            <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} {...props} />
+          )}
           <TabsContent />
           <Tooltip title={'Back to top'} placement={'right'}>
             <BackTop className={style.DfBackToTop}>

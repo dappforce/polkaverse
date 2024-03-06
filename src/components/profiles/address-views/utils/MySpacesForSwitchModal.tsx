@@ -1,7 +1,7 @@
 import { isEmptyArray } from '@subsocial/utils'
 import { Tooltip } from 'antd'
 import React from 'react'
-import SubstrateTxButton from 'src/components/substrate/SubstrateTxButton'
+import ResolvedTxButton from 'src/components/utils/TxButton'
 import { DataSourceTypes } from 'src/types'
 import { useAppDispatch, useAppSelector } from '../../../../rtk/app/store'
 import { useSelectProfile } from '../../../../rtk/features/profiles/profilesHooks'
@@ -56,7 +56,7 @@ const SpaceItem = ({ address, spaceId, profileSpaceId, hide }: SpaceItemProps) =
     <Component className={styles.PrevieWithoutHover} />
   ) : (
     <Tooltip className={styles.DfSpacePreview} title='Click to change current profile'>
-      <SubstrateTxButton
+      <ResolvedTxButton
         tx='profiles.setProfile'
         size='middle'
         accountId={address}

@@ -11,7 +11,7 @@ require('dotenv').config()
 const nextConfig = {
   target: 'server',
   images: {
-    domains: ['app.subsocial.network', 'polkaverse.com', 'localhost', 'ipfs.io'],
+    domains: ['app.subsocial.network', 'polkaverse.com', 'localhost', 'ipfs.io', 'grillapp.net'],
   },
   webpack: (config, { isServer }) => {
     // This code for webpack 4

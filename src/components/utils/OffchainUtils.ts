@@ -178,3 +178,12 @@ export const updatePendingOrder = async ({
 
   return res.data
 }
+
+export async function requestToken({ address }: { address: string }) {
+  const res = await axios.post('/c/api/request-token', {
+    address,
+  })
+  const data = res.data
+  if (!data.success) throw new Error(data.message)
+  return res
+}

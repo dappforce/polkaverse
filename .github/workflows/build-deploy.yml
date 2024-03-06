@@ -70,7 +70,7 @@ jobs:
           push: true
           build-args: |
             GH_GA_ID=G-TP1XEFNHQD
-            GH_APP_KIND=polkaverse
+            GH_APP_KIND=grill
             GH_HCAPTCHA_SITE_KEY=${{ secrets.PROD_HCAPTCHA_SITE_KEY }}
             GH_AMP_ID=2eeca0e8a0163c89e3f023c971e426a6
             GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
@@ -82,6 +82,7 @@ jobs:
             GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://sub-data-hub.subsocial.network/graphql-ws
             GH_DATAHUB_QUEUE_URL=https://sub-queue-data-hub.subsocial.network/graphql
             GH_DATAHUB_QUEUE_TOKEN=${{ secrets.DATAHUB_QUEUE_TOKEN }}
+            GH_NEXT_PUBLIC_ENABLE_MAINTENANCE_PAGE=true
 
           tags: |
             ${{ env.image }}

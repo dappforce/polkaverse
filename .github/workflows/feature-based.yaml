@@ -60,7 +60,7 @@ jobs:
           push: true
           build-args: |
             GH_GA_ID=fake
-            GH_APP_KIND=polkaverse
+            GH_APP_KIND=grill
             GH_HCAPTCHA_SITE_KEY=3beeddac-2dce-41cc-8e18-338118426c38
             GH_AMP_ID=71bf5a46800fedba5e9a01243b988164
             GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
@@ -68,10 +68,11 @@ jobs:
             GH_SELLER_CLIENT_ID=5DYm3Wk4aa1BbfhH1ajmY6MNEELXoicmKRnP4tzHYjSKnD9K
             GH_SELLER_TOKEN_SIGNER=retire strong pole intact cool music high path salt praise stadium spatial
             GH_SERVER_MNEMONIC=plunge pumpkin penalty segment cattle more print below fat lemon clap uniform
-            GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=https://leaderboards-data-hub.subsocial.network/graphql
-            GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://leaderboards-data-hub.subsocial.network/graphql-ws
-            GH_DATAHUB_QUEUE_URL=https://leaderboards-queue-data-hub.subsocial.network/graphql
+            GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=https://notifications-data-hub.subsocial.network/graphql
+            GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://notifications-data-hub.subsocial.network/graphql-ws
+            GH_DATAHUB_QUEUE_URL=https://notifications-queue-data-hub.subsocial.network/graphql
             GH_DATAHUB_QUEUE_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZX0.jpXwkIJ4DpV4IvSI3eWVVXE6x89qr_GIq7IlbBv5YE0
+            GH_NEXT_PUBLIC_ENABLE_MAINTENANCE_PAGE=true
           tags: |
             ${{ env.image }}
           cache-from: type=local,src=/tmp/.buildx-cache
