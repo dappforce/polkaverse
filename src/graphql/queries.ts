@@ -278,7 +278,7 @@ export const GET_LATEST_SPACE_ID = gql`
 
 export const GET_LATEST_SPACE_IDS = gql`
   query GetLatestSpaceIds($offset: Int = 0, $limit: Int!) {
-    spaces(offset: $offset, limit: $limit, orderBy: id_DESC) {
+    spaces(offset: $offset, limit: $limit, orderBy: createdOnDay_DESC) {
       id
     }
   }

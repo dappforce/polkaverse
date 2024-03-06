@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { useResponsiveSize } from 'src/components/responsive'
 import { DfImage } from 'src/components/utils/DfImage'
 import { useSendEvent } from 'src/providers/AnalyticContext'
-import { getSubIdCreatorsLink } from 'src/utils/links'
+import { getContentStakingLink } from 'src/utils/links'
 import styles from './StakeSubCard.module.sass'
 
 export type StakeSubCardProps = {
@@ -28,7 +28,7 @@ export default function StakeSubCard({ space }: StakeSubCardProps) {
           Generate rewards for both you and this creator by staking towards them
         </p>
         <Button
-          href={getSubIdCreatorsLink()}
+          href={getContentStakingLink()}
           target='_blank'
           type='primary'
           block={isSmallMobile || isNotMobile}

@@ -2,13 +2,13 @@ import { getCurrentWallet } from 'src/components/auth/utils'
 
 export const getSubsocialDiscordLink = () => 'https://discord.com/invite/w2Rqy2M'
 
-export const getSubIdCreatorsLink = () => 'https://sub.id/creators'
+export const getContentStakingLink = () => 'https://grillapp.net/c/staking'
 
 export const activeStakingLinks = {
   learnMore: 'https://docs.subsocial.network/docs/basics/creator-staking/active-staking',
   discuss: () => {
     const currentWallet = getCurrentWallet()
-    const link = 'https://grill.chat/creators/stakers-20132'
+    const link = 'https://grillapp.net/c/subsocial/grill-official-54469'
     if (!currentWallet) return link
     return `${link}?wallet=${currentWallet}`
   },

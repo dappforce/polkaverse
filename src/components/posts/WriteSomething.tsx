@@ -1,8 +1,9 @@
 import { InfoCircleFilled } from '@ant-design/icons'
 import { Alert, Button } from 'antd'
+import BN from 'bignumber.js'
 import clsx from 'clsx'
 import { ComponentProps, useState } from 'react'
-import { getNeededLock } from 'src/config/constants'
+import { getNeededLock, MINIMUM_LOCK } from 'src/config/constants'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import {
   useSelectProfile,
@@ -10,7 +11,7 @@ import {
 } from 'src/rtk/app/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
-import { getSubIdCreatorsLink } from 'src/utils/links'
+import { getContentStakingLink } from 'src/utils/links'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import Avatar from '../profiles/address-views/Avatar'
@@ -29,7 +30,7 @@ export default function WriteSomething({ defaultSpaceId, ...props }: WriteSometh
   const [visible, setVisible] = useState(false)
   const myAddress = useMyAddress() ?? ''
   const profileData = useSelectProfile(myAddress)
-  const { data: totalStake, loading: loadingTotalStake } = useFetchTotalStake(myAddress)
+  const { data: totalStake } = useFetchTotalStake(myAddress)
   const neededLock = getNeededLock(totalStake?.amount)
 
   const { isSmallMobile } = useResponsiveSize()
@@ -75,44 +76,68 @@ export default function WriteSomething({ defaultSpaceId, ...props }: WriteSometh
             </a>
           )}
         </div>
-        {!loadingTotalStake && neededLock > 0 && anySpace && (
-          <Alert
-            className={clsx(styles.Alert, 'mt-3')}
-            message={
-              <div
-                className={clsx(
-                  'd-flex align-items-center GapNormal justify-content-between',
-                  isSmallMobile && 'flex-column align-items-stretch',
-                )}
-              >
-                <div className='d-flex flex-column GapMini'>
-                  <div className='d-flex align-items-center justify-content-between GapNormal'>
-                    <div className='d-flex align-items-center'>
-                      <InfoCircleFilled className='FontSmall' style={{ color: '#FAAD14' }} />
-                      <span className='ml-2 FontWeightBold'>Post to Earn</span>
+        {/* {!loadingTotalStake && neededLock > 0 && anySpace && ( */}
+        {totalStake?.amount &&
+          new BN(totalStake?.amount).lt(new BN(MINIMUM_LOCK.toString())) &&
+          anySpace && (
+            <Alert
+              className={clsx(styles.Alert, 'mt-3')}
+              message={
+                <div
+                  className={clsx(
+                    'd-flex align-items-center GapNormal justify-content-between',
+                    isSmallMobile && 'flex-column align-items-stretch',
+                  )}
+                >
+                  <div className='d-flex flex-column GapMini'>
+                    <div className='d-flex align-items-center justify-content-between GapNormal'>
+                      <div className='d-flex align-items-center'>
+                        <InfoCircleFilled className='FontSmall' style={{ color: '#FAAD14' }} />
+                        <span className='ml-2 FontWeightBold'>Post to Earn</span>
+                      </div>
+                    </div>
+                    <div className='d-flex flex-column GapSmall align-items-start'>
+                      <span style={{ color: '#262425CC' }}>
+                        {neededLock > 0 && !new BN(totalStake.amount).isZero() ? (
+                          <>
+                            To start earning SUB rewards, increase your lock by at least{' '}
+                            <FormatBalance
+                              value={neededLock.toString()}
+                              decimals={10}
+                              currency='SUB'
+                              precision={2}
+                            />
+                            .
+                          </>
+                        ) : (
+                          <>
+                            To start earning SUB rewards, lock at least{' '}
+                            <FormatBalance
+                              value={neededLock.toString()}
+                              decimals={10}
+                              currency='SUB'
+                              precision={2}
+                            />
+                          </>
+                        )}
+                      </span>
                     </div>
                   </div>
-                  <div className='d-flex flex-column GapSmall align-items-start'>
-                    <span style={{ color: '#262425CC' }}>
-                      To start earning SUB rewards, increase your lock by at least{' '}
-                      <FormatBalance
-                        value={neededLock.toString()}
-                        decimals={10}
-                        currency='SUB'
-                        precision={2}
-                      />
-                      .
-                    </span>
-                  </div>
+                  <Button
+                    type='primary'
+                    shape='round'
+                    href={getContentStakingLink()}
+                    target='_blank'
+                  >
+                    {neededLock > 0 && !new BN(totalStake.amount).isZero()
+                      ? 'Increase Lock'
+                      : 'Lock SUB'}
+                  </Button>
                 </div>
-                <Button type='primary' shape='round' href={getSubIdCreatorsLink()} target='_blank'>
-                  Increase Lock
-                </Button>
-              </div>
-            }
-            type='warning'
-          />
-        )}
+              }
+              type='warning'
+            />
+          )}
       </Segment>
       <PostEditorModal
         defaultSpaceId={defaultSpaceId}

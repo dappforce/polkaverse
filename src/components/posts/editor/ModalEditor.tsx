@@ -3,6 +3,7 @@ import { IpfsContent } from '@subsocial/api/substrate/wrappers'
 import { newLogger } from '@subsocial/utils'
 import { Button, Col, Form, Modal, ModalProps, Row } from 'antd'
 import { LabeledValue } from 'antd/lib/select'
+import BN from 'bignumber.js'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
@@ -23,7 +24,7 @@ import { getNonEmptyPostContent } from 'src/components/utils/content'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import SelectSpacePreview from 'src/components/utils/SelectSpacePreview'
 import TxButton from 'src/components/utils/TxButton'
-import { getNeededLock } from 'src/config/constants'
+import { getNeededLock, MINIMUM_LOCK } from 'src/config/constants'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import {
@@ -34,7 +35,7 @@ import {
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { AnyId, DataSourceTypes, IpfsCid, PostContent } from 'src/types'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
-import { activeStakingLinks, getSubIdCreatorsLink } from 'src/utils/links'
+import { activeStakingLinks, getContentStakingLink } from 'src/utils/links'
 import { RegularPostExt } from '.'
 import { fieldName, FormValues } from './Fileds'
 import styles from './index.module.sass'
@@ -261,6 +262,7 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
   const myAddress = useMyAddress()
   const { data } = useFetchTotalStake(myAddress ?? '')
   const hasStaked = data?.hasStakedEnough
+  const totalStake = new BN(data?.amount || 0)
 
   const neededStake = getNeededLock(data?.amount)
 
@@ -288,7 +290,7 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
               <span>Post to Earn</span>
             </div>
             {neededStake > 0 && (
-              <Button shape='round' type='primary' href={getSubIdCreatorsLink()} target='_blank'>
+              <Button shape='round' type='primary' href={getContentStakingLink()} target='_blank'>
                 Lock SUB
               </Button>
             )}
@@ -298,7 +300,29 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
               return (
                 <p>
                   You can receive extra SUB when others like your posts or comments. However, you
-                  need to first lock at least 2,000 SUB to become eligible.
+                  need to first lock at least{' '}
+                  <FormatBalance
+                    value={MINIMUM_LOCK.toString()}
+                    decimals={10}
+                    currency='SUB'
+                    precision={2}
+                  />{' '}
+                  SUB to become eligible.
+                </p>
+              )
+            }
+
+            if (totalStake.isZero()) {
+              return (
+                <p>
+                  To start earning SUB rewards, lock by at least{' '}
+                  <FormatBalance
+                    value={neededStake.toString()}
+                    decimals={10}
+                    currency='SUB'
+                    precision={2}
+                  />
+                  .
                 </p>
               )
             }
