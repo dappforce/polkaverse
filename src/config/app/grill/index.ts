@@ -12,7 +12,7 @@ const index: AppConfig = {
     siteName: 'Grill',
     title: 'Grill: Monetize Every Like, Comment, Post | Web3 Social',
     desc: 'Revolutionary Web3 social finance platform where bloggers and their followers earn together. Blockchain, NFT, and crypto content.',
-    defaultImage: '/grill-default-cover.png',
+    defaultImage: '/images/grill-default-cover.png',
   },
   subnetId: undefined,
   canonicalUrl: 'https://grillapp.net',
