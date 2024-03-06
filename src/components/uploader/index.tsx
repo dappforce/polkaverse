@@ -139,7 +139,7 @@ type InnerUploadProps = BaseUploadProps & {
 
 export const PreviewUploadedImage = ({ imgUrl, onRemove, className, style }: ImagePreviewProps) => {
   return (
-    <div className='d-flex'>
+    <div>
       <img
         src={resolveIpfsUrl(imgUrl)}
         style={style}
