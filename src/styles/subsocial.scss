@@ -2208,6 +2208,7 @@ hr {
   .DfFilters {
     @extend .DfFiltersCommon;
     opacity: 0;
+    margin-top: 0 !important;
     padding: $space_small 22px $space_small 22px;
   }
   &:hover {
