@@ -154,9 +154,24 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
     if (parentProxyAddress) {
       set({ parentProxyAddress })
       try {
-        const proxy = await getProxies(parentProxyAddress)
-        const isProxyValid = proxy.includes(get().address ?? '')
-        if (!isProxyValid) {
+        // Remove proxy with type 'Any'
+        const proxies = await getProxies(parentProxyAddress)
+        const currentProxy = proxies.find(({ address }) => address === get().address)
+        if (currentProxy?.proxyType === 'Any') {
+          async function removeProxy() {
+            const api = getSubsocialApi()
+            const substrateApi = await api.substrateApi
+            await substrateApi.tx.proxy
+              .proxy(parentProxyAddress!, null, substrateApi.tx.proxy.removeProxies())
+              .signAndSend(get().signer!)
+          }
+          removeProxy()
+
+          parentProxyAddressStorage.remove()
+          set({ parentProxyAddress: undefined })
+          get().logout()
+          alert('Sorry we had to remove your proxy, please relogin to use your account again.')
+        } else if (!currentProxy) {
           parentProxyAddressStorage.remove()
           set({ parentProxyAddress: undefined })
           get().logout()
@@ -192,11 +207,15 @@ async function getProxies(address: string) {
     .map(proxy => {
       const proxyData = proxy.toPrimitive()
       if (Array.isArray(proxyData)) {
-        return toSubsocialAddress((proxyData[0] as any)?.delegate)!
+        const data = proxyData[0] as any
+        return {
+          address: toSubsocialAddress(data?.delegate)!,
+          proxyType: data?.proxyType,
+        }
       }
       return null
     })
-    .filter(Boolean) as string[]
+    .filter(Boolean) as { address: string; proxyType: string }[]
 }
 
 async function subscribeEnergy(

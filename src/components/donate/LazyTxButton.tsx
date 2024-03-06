@@ -19,6 +19,7 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from 'src/components/utils/Message'
+import config from 'src/config'
 import { AnyAccountId } from 'src/types'
 import { getCurrentWallet } from '../auth/utils'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
@@ -38,6 +39,8 @@ type SuccessMessage = Message | SuccessMessageFn
 type FailedMessage = Message | FailedMessageFn
 
 export type BaseTxButtonProps = Omit<ButtonProps, 'onClick' | 'form'>
+
+const { appName } = config
 
 export type TxButtonProps = BaseTxButtonProps & {
   accountId?: AnyAccountId
@@ -202,6 +205,7 @@ function LazyTxButton({
     } else {
       const currentWallet = getCurrentWallet()
       const wallet = getWalletBySource(currentWallet)
+      await wallet?.enable(appName)
       signer = wallet?.signer
     }
 
