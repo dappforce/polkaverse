@@ -1,6 +1,5 @@
 import { EditOutlined } from '@ant-design/icons'
 import { isEmptyStr, newLogger, nonEmptyStr } from '@subsocial/utils'
-import { Button } from 'antd'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
 import React, { MouseEvent, useCallback, useMemo, useState } from 'react'
@@ -9,7 +8,7 @@ import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
 import { useSendEvent } from 'src/providers/AnalyticContext'
-import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
+// import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
 import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { SpaceContent, SpaceId, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
@@ -135,10 +134,10 @@ export const InnerViewSpace = (props: Props) => {
     )
   }, [spaceData, imageSize])
 
-  const setChatConfig = useSetChatEntityConfig()
-  const setChatOpen = useSetChatOpen()
+  // const setChatConfig = useSetChatEntityConfig()
+  // const setChatOpen = useSetChatOpen()
 
-  const { isCreatorSpace } = useIsCreatorSpace(spaceData?.id)
+  // const { isCreatorSpace } = useIsCreatorSpace(spaceData?.id)
 
   const isMySpace = useIsMySpace(spaceData?.struct)
   const { filteredPostIds, filteredPosts } = useMemo(() => {
@@ -217,11 +216,11 @@ export const InnerViewSpace = (props: Props) => {
     e.stopPropagation()
     setCollapseAbout(prev => !prev)
   }
-  const toggleCreatorChat = () => {
-    sendEvent('creator_chat_opened', { spaceId: space.id })
-    setChatConfig({ entity: { data: spaceData, type: 'space' }, withFloatingButton: false })
-    setChatOpen(true)
-  }
+  // const toggleCreatorChat = () => {
+  //   sendEvent('creator_chat_opened', { spaceId: space.id })
+  //   setChatConfig({ entity: { data: spaceData, type: 'space' }, withFloatingButton: false })
+  //   setChatOpen(true)
+  // }
 
   const previewButtons = (size: 'small' | 'middle' = 'middle') => (
     <div className='d-flex align-items-center GapTiny'>
@@ -236,11 +235,11 @@ export const InnerViewSpace = (props: Props) => {
         </ButtonLink>
       )}
 
-      {!isMobile && isCreatorSpace && (
+      {/* {!isMobile && isCreatorSpace && (
         <Button size={size} type='primary' ghost onClick={toggleCreatorChat}>
           Creator Chat
         </Button>
-      )}
+      )} */}
 
       {withFollowButton && (
         <div
