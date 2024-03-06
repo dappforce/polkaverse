@@ -190,7 +190,7 @@ const FullEditor = ({
   return (
     <Form form={form} layout='vertical' initialValues={initialValues} onFieldsChange={handleChange}>
       <Row className={styles.EditorContainer} gutter={[16, 16]} justify='center'>
-        <Col>
+        <Col style={{ flex: '1' }}>
           <Card className={clsx(styles.EditorBodyContent, 'mb-3')}>
             <Form.Item
               name={fieldName('title')}
