@@ -18,6 +18,7 @@ import { create } from './utils'
 
 type State = {
   isInitialized?: boolean
+  isInitializedProxy?: boolean
 
   preferredWallet: any | null
   connectedWallet:
@@ -124,14 +125,14 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
     accountAddressStorage.remove()
     parentProxyAddressStorage.remove()
 
-    set({ ...initialState, isInitialized: true })
+    set({ ...initialState, isInitialized: true, isInitializedProxy: true })
   },
   init: async () => {
     const { isInitialized, login } = get()
 
     // Prevent multiple initialization
     if (isInitialized !== undefined) return
-    set({ isInitialized: false })
+    set({ isInitialized: false, isInitializedProxy: false })
 
     const encodedSecretKey = accountStorage.get()
     const parentProxyAddress = parentProxyAddressStorage.get()
@@ -175,6 +176,8 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
         console.error('Failed to fetch proxies', err)
       }
     }
+
+    set({ isInitializedProxy: true })
 
     window.addEventListener(
       'storage',

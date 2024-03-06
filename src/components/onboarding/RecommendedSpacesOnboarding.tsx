@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import config from 'src/config'
 import { useBooleanExternalStorage } from 'src/hooks/useExternalStorage'
+import { useMyAccount } from 'src/stores/my-account'
 import SpacesSuggestedForOnBoarding from '../spaces/SpacesSuggestedForOnBoarding'
 import { useSubsocialApi } from '../substrate'
 import CustomModal from '../utils/CustomModal'
@@ -16,6 +17,7 @@ const shuffledRecommendedSpaceIds = recommendedSpaceIds.sort(() => Math.random()
 
 export default function RecommendedSpacesOnboarding() {
   const myAddress = useMyAddress()
+  const isInitializedProxy = useMyAccount(state => state.isInitializedProxy)
   const { data: isFinishedOnBoarding, setData: setIsFinishedOnBoarding } =
     useBooleanExternalStorage(ON_BOARDING_MODAL_KEY, {
       storageKeyType: 'user',
@@ -32,8 +34,8 @@ export default function RecommendedSpacesOnboarding() {
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
-    if (isFinishedOnBoarding === false && myAddress) setIsOpen(true)
-  }, [isFinishedOnBoarding, myAddress])
+    if (isInitializedProxy && !isFinishedOnBoarding && myAddress) setIsOpen(true)
+  }, [myAddress, isInitializedProxy, isFinishedOnBoarding])
 
   const closeModal = () => {
     setIsOpen(false)
