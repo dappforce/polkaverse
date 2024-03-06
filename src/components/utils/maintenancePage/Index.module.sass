@@ -1,0 +1,77 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.PageWrapper
+  display: flex
+  justify-content: center
+  align-items: center
+
+  height: 100vh
+
+.PageInnerWrapper
+  max-width: 565px
+  display: flex
+  flex-direction: column
+  gap: 70px
+  align-items: center
+  align-self: center
+
+.PageTitleWrapper
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: $space_normal
+
+.PageTitle
+  color: black
+  font-size: $font_large
+  font-weight: 600
+  line-height: 28px
+  text-align: center
+
+.FormSection
+  display: flex
+  gap: $space_normal
+  align-items: center
+  flex-direction: column
+  width: 100%
+
+.FormWrapper
+  display: flex
+  gap: $space_normal
+  padding: $space_normal
+  width: 100%
+  border-radius: 10px
+  background-color: white
+  box-shadow: 0px 4px 14.9px 0px rgba(17, 69, 120, 0.06)
+
+.FormTitle
+  font-size: $font_normal
+  font-weight: 4000
+  color: #475569
+  line-height: none
+  text-align: center
+
+.EmailForm
+  display: flex
+  align-items: flex-start
+  gap: $space_normal
+  width: 100%
+
+  \:global .ant-form-item
+    margin-bottom: 0
+
+.EmailInput
+  width: 100%
+
+  input
+    height: 40px
+    border-radius: 10px
+
+@media (max-width: 767px)
+  .PageWrapper
+    padding: 0 $space_normal
+
+  .EmailForm
+    flex-direction: column
+    align-items: center
+    gap: $space_normal

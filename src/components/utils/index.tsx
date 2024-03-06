@@ -253,9 +253,9 @@ type SubIconProps = IconBaseProps & {
   Icon: (props: IconBaseProps) => JSX.Element
 }
 
-export const SubIcon = ({ Icon, className, ...props }: SubIconProps) => (
-  <Icon className={`anticon ${className}`} {...props} />
-)
+export function SubIcon ({ Icon, className, ...props }: SubIconProps) {
+  return <Icon className={`anticon ${className}`} {...props} /> 
+}
 
 type LocalIconProps = BareProps & {
   path: string

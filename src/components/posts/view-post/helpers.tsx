@@ -497,9 +497,6 @@ export const OriginalPostPanel = ({ canonicalUrl }: OriginalPostPanelProps) => {
 
 export const PostNotFound = () => <NoData description='Post not found' />
 export const PostNotFoundPage = () => <Error statusCode={404} title='Post not found' />
-export const MaintenancePage = () => (
-  <Error statusCode={503} title={maintenanceMsg || messages.errors.maintenance} />
-)
 
 export function useShouldRenderMinStakeAlert(post: PostStruct) {
   const { isExist, validByCreatorMinStake, validByCreationDate } = useCanPostSuperLiked(post.id)
