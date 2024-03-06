@@ -1,7 +1,7 @@
 import { Button, Divider, Modal, Tabs } from 'antd'
 import partition from 'lodash.partition'
 import { useRouter } from 'next/router'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { shallowEqual } from 'react-redux'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
@@ -125,11 +125,6 @@ export const OwnedSpacesList = ({ ...props }: Omit<AccountSpacesProps, 'withTitl
     setUnistedSpaceIds(unlistedSpaceIds.concat(newIds))
   }, [newUnlistedSpaces.length, page, size])
 
-  const allIds = useMemo(() => {
-    const ids = ownedSpaceIds.concat(followedSpaceIds, spaceIdsImEditorOf, unlistedSpaceIds)
-    return Array.from(new Set(ids))
-  }, [ownedSpaceIds, followedSpaceIds, spaceIdsImEditorOf, unlistedSpaceIds])
-
   if (!connected) return <Loading label={messages.connectingToNetwork} />
 
   if (error) return null
@@ -140,10 +135,7 @@ export const OwnedSpacesList = ({ ...props }: Omit<AccountSpacesProps, 'withTitl
 
   return (
     <Tabs style={{ marginTop: '-8px' }}>
-      <TabPane tab={`All (${allIds.length})`} key='all'>
-        <SpacesListBySpaceIds spaceIds={allIds} totalCount={allIds.length} isMy={isMy} {...props} />
-      </TabPane>
-      <TabPane tab={`Created (${totalCount})`} key='created'>
+      <TabPane tab={`Owned (${totalCount})`} key='owned'>
         <SpacesListBySpaceIds
           spaceIds={ownedSpaceIds}
           totalCount={totalCount}
