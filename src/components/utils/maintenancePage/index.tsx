@@ -65,7 +65,11 @@ const MaintenancePage = () => {
   }
 
   return (
-    <PageContent meta={{ title: 'Maintenance page' }} className={styles.PageWrapper}>
+    <PageContent
+      meta={{ title: 'Maintenance page' }}
+      className={styles.PageWrapper}
+      withSidebar={false}
+    >
       <div className={styles.PageInnerWrapper}>
         <div className={styles.PageTitleWrapper}>
           <MaintenanceAnimation height={180} width={180} />
