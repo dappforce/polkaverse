@@ -1,3 +1,4 @@
+import { u8aToHex } from '@polkadot/util'
 import { signatureVerify } from '@polkadot/util-crypto'
 import { PostStruct } from '@subsocial/api/types'
 import { Button, ButtonProps, Image, Tooltip } from 'antd'
@@ -49,6 +50,7 @@ const CURRENT_WEEK_SIG = 'df.current-week-sig'
 
 export default function SuperLike({ post, iconClassName, isComment, ...props }: SuperLikeProps) {
   const dispatch = useAppDispatch()
+  const myGrillAddress = useMyAccount(state => state.address)
   const myAddress = useMyAddress()
   const sendEvent = useSendEvent()
   const [isSigning, setIsSigning] = useState(false)
@@ -80,7 +82,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const onClick = async () => {
     if (isActive || isDisabled) return
 
-    if (!myAddress) {
+    if (!myGrillAddress) {
       openSignInModal()
       return
     }
@@ -89,18 +91,30 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
       return
     }
 
-    const signature = localStorage.getItem(CURRENT_WEEK_SIG)
+    let signature = localStorage.getItem(CURRENT_WEEK_SIG)
     if (!signature) {
-      setIsOpenActiveStakingModal(true)
-      return
-    } else {
-      const message = superLikeMessage.message
-      const result = signatureVerify(message, signature, myAddress)
-      if (!result.isValid) {
-        localStorage.removeItem(CURRENT_WEEK_SIG)
-        setIsOpenActiveStakingModal(true)
+      const signer = useMyAccount.getState().signer
+      if (signer && myGrillAddress) {
+        const message = superLikeMessage.message
+        signature = u8aToHex(signer.sign?.(message))
+        localStorage.setItem(CURRENT_WEEK_SIG, signature ?? '')
+      } else {
+        showErrorMessage({
+          message: 'No signer provided',
+          description: 'Please try to refresh or relogin to your account',
+        })
         return
       }
+    }
+
+    if (!signature) return
+
+    const message = superLikeMessage.message
+    const result = signatureVerify(message, signature, myGrillAddress)
+    if (!result.isValid) {
+      localStorage.removeItem(CURRENT_WEEK_SIG)
+      setIsOpenActiveStakingModal(true)
+      return
     }
 
     sendEvent('like', {
@@ -119,7 +133,8 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
       dispatch(setOptimisticRewardReportChange({ address: myAddress, superLikeCountChange: 1 }))
 
       await createSuperLike({
-        address: myAddress,
+        address: myGrillAddress,
+        proxyToAddress: myGrillAddress === myAddress ? undefined : myAddress,
         args: { postId: post.id, confirmation: { msg: superLikeMessage.message, sig: signature } },
       })
     } catch (error) {
@@ -207,7 +222,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
               setIsSigning(true)
               try {
                 const signer = useMyAccount.getState().signer
-                if (signer && myAddress) {
+                if (signer && myGrillAddress) {
                   const message = superLikeMessage.message
                   const signature = signer.sign?.(message)
                   localStorage.setItem(CURRENT_WEEK_SIG, signature.toString() ?? '')

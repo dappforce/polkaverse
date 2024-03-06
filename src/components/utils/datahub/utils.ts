@@ -66,23 +66,27 @@ export type DatahubParams<T> = {
 
   uuid?: string
   timestamp?: number
+  proxyToAddress?: string
 
   args: T
 }
 
 export function createSocialDataEventPayload<T extends keyof typeof socialCallName>(
   callName: T,
-  { timestamp, address, uuid, args }: DatahubParams<SocialCallDataArgs<T>>,
+  { timestamp, address, uuid, args, proxyToAddress }: DatahubParams<SocialCallDataArgs<T>>,
 ) {
+  const owner = proxyToAddress || address
+
   const payload: SocialEventDataApiInput = {
     protVersion: socialEventProtVersion['0.1'],
     dataType: SocialEventDataType.offChain,
     callData: {
       name: callName,
-      signer: address || '',
+      signer: owner || '',
       args: JSON.stringify(args),
       timestamp: timestamp || Date.now(),
       uuid: uuid || crypto.randomUUID(),
+      proxy: proxyToAddress ? address : undefined,
     },
     providerAddr: address,
     sig: '',
