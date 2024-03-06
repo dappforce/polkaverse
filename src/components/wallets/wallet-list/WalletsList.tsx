@@ -14,7 +14,7 @@ import { supportedWallets } from '../supportedWallets/index'
 import { Wallet } from '../types'
 import styles from './WalletList.module.sass'
 
-export const CURRENT_WALLET = 'CurrentWalletName'
+export const CURRENT_WALLET = 'preferred-wallet'
 
 const { appName } = config
 
