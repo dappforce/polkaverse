@@ -35,3 +35,8 @@ export function getUrlQuery(queryName: string) {
   const searchParams = new URLSearchParams(query)
   return searchParams.get(queryName) ?? ''
 }
+
+export function redirectToLogin() {
+  if (isServerSide()) return
+  window.location.href = '/c/widget/login'
+}

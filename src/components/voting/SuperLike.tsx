@@ -31,7 +31,7 @@ import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { useMyAccount } from 'src/stores/my-account'
 import { getAmountRange } from 'src/utils/analytics'
 import { getSubIdCreatorsLink } from 'src/utils/links'
-import { useAuth } from '../auth/AuthContext'
+import { redirectToLogin } from 'src/utils/url'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { IconWithLabel } from '../utils'
 import CustomModal from '../utils/CustomModal'
@@ -77,13 +77,11 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const canBeSuperliked = clientCanPostSuperLiked && canPostSuperLiked
   const isDisabled = !canBeSuperliked || isMyPost || loadingTotalStake || !superLikeMessage.message
 
-  const { openSignInModal } = useAuth()
-
   const onClick = async () => {
     if (isActive || isDisabled) return
 
-    if (!myGrillAddress) {
-      openSignInModal()
+    if (!myAddress || !myGrillAddress) {
+      redirectToLogin()
       return
     }
     if (!totalStake?.hasStakedEnough) {

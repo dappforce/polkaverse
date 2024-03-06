@@ -1,6 +1,7 @@
 import { EditOutlined } from '@ant-design/icons'
 import React, { useState } from 'react'
 import { PostWithSomeDetails } from 'src/types'
+import { redirectToLogin } from 'src/utils/url'
 import { useAuth } from '../../auth/AuthContext'
 import { IconWithLabel } from '../../utils'
 import { SharePostModal } from './ShareModal'
@@ -22,7 +23,6 @@ export const SharePostLink = ({
   },
 }: Props) => {
   const {
-    openSignInModal,
     state: {
       completedSteps: { isSignedIn },
     },
@@ -35,7 +35,7 @@ export const SharePostLink = ({
     <>
       <a
         className='DfBlackLink'
-        onClick={() => (isSignedIn ? setOpen(true) : openSignInModal())}
+        onClick={() => (isSignedIn ? setOpen(true) : redirectToLogin())}
         title={title}
       >
         <IconWithLabel icon={EditIcon} label={title} />
