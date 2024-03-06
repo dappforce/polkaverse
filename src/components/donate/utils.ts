@@ -4,7 +4,7 @@ import BN from 'bignumber.js'
 import { AccountId } from 'src/types'
 
 type FormFields = {
-  sender: string
+  // sender: string
   amount: string
   currency: string
 }

@@ -3,9 +3,7 @@ import { Avatar, Col, Form, FormInstance, Row, Select } from 'antd'
 import BN from 'bignumber.js'
 import clsx from 'clsx'
 import { capitalize } from 'lodash'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
-import { useMyAccountsContext } from 'src/components/auth/MyAccountsContext'
+import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import Name from 'src/components/profiles/address-views/Name'
 import { useResponsiveSize } from 'src/components/responsive'
 import { toShortAddress } from 'src/components/utils'
@@ -13,45 +11,12 @@ import BaseAvatar from 'src/components/utils/DfAvatar'
 import { showSuccessMessage } from 'src/components/utils/Message'
 import { MutedDiv, MutedSpan } from 'src/components/utils/MutedText'
 import { useChainInfo } from 'src/rtk/features/chainsInfo/chainsInfoHooks'
-import { convertToSubsocialAddress } from 'src/utils/address'
 import { useSelectProfile } from '../../rtk/features/profiles/profilesHooks'
 import { TipAmountInput } from './AmountInput'
 import { useTipContext } from './DonateModalContext'
 import LazyTxButton from './LazyTxButton'
 import { currencyNetworks } from './SupportedTokens'
-import {
-  BigN_ZERO,
-  convertAddressToChainFormat,
-  DonateProps,
-  fieldName,
-  getIconUrlFromSubId,
-} from './utils'
-
-type SelectAccountProps = {
-  address: string
-  ss58Format?: number
-}
-
-const SelectAccount = ({ address, ss58Format }: SelectAccountProps) => {
-  const profileData = useSelectProfile(address)
-
-  return (
-    <div className='d-flex justify-content-between align-items-center'>
-      <div className='d-flex justify-content-center align-items-center'>
-        <BaseAvatar size={24} identityValue={address} avatar={profileData?.content?.image} />
-        <Name
-          containerClassName='position-relative'
-          style={{ top: '-1px' }}
-          address={address}
-          asLink={false}
-        />
-      </div>
-      <div className='position-relative' style={{ top: '-1px' }}>
-        {toShortAddress(convertAddressToChainFormat(address, ss58Format)!)}
-      </div>
-    </div>
-  )
-}
+import { BigN_ZERO, DonateProps, fieldName, getIconUrlFromSubId } from './utils'
 
 type TransferButtonProps = {
   form: FormInstance
@@ -59,7 +24,8 @@ type TransferButtonProps = {
 }
 
 const TransferButton = ({ form, recipient }: TransferButtonProps) => {
-  const { sender, infoByNetwork, network, amount, setSuccess } = useTipContext()
+  const { infoByNetwork, network, amount, setSuccess } = useTipContext()
+  const sender = useMyAddress()
 
   const decimals = infoByNetwork?.tokenDecimals[0]
 
@@ -93,35 +59,11 @@ const TransferButton = ({ form, recipient }: TransferButtonProps) => {
 export const DonateCard = ({ recipientAddress }: DonateProps) => {
   const [form] = Form.useForm()
   const profileData = useSelectProfile(recipientAddress)
-  const {
-    query: { address },
-  } = useRouter()
-  const addressFromUrl = address?.toString()
 
   const { isMobile } = useResponsiveSize()
   const chainInfo = useChainInfo()
 
-  const { setCurrency, setSender, currency, infoByNetwork } = useTipContext()
-
-  const {
-    state: { accounts },
-  } = useMyAccountsContext()
-
-  const mySubsocialAddress = convertToSubsocialAddress(addressFromUrl)
-
-  const accountsForChoosing = accounts
-    .filter(x => convertToSubsocialAddress(x.address) !== mySubsocialAddress)
-    .map(x => x.address)
-
-  const ss58Format = infoByNetwork?.ss58Format
-
-  const defaultSender = accountsForChoosing[0]
-
-  useEffect(() => {
-    if (!defaultSender) return
-
-    setSender(defaultSender)
-  }, [defaultSender])
+  const { setCurrency, currency } = useTipContext()
 
   return (
     <Form form={form} layout='vertical' className='mt-0 p-3'>
@@ -141,21 +83,6 @@ export const DonateCard = ({ recipientAddress }: DonateProps) => {
           </MutedDiv>
         </div>
       </div>
-
-      <Form.Item name={fieldName('sender')} label={'Sender'} required>
-        <Select
-          size='large'
-          defaultValue={defaultSender}
-          style={{ width: '100%' }}
-          onChange={setSender}
-        >
-          {accountsForChoosing?.map(account => (
-            <Select.Option key={account} value={account}>
-              <SelectAccount address={account} ss58Format={ss58Format} />
-            </Select.Option>
-          ))}
-        </Select>
-      </Form.Item>
 
       <Row>
         <Col span={isMobile ? 24 : 10}>
