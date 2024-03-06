@@ -53,7 +53,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const myGrillAddress = useMyAccount(state => state.address)
   const myAddress = useMyAddress()
   const sendEvent = useSendEvent()
-  const [isSigning, setIsSigning] = useState(false)
+  // const [isSigning, setIsSigning] = useState(false)
 
   const { data: superLikeMessage } = useFetchSuperLikeMessage()
 
@@ -64,7 +64,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const { isExist, canPostSuperLiked, validByCreatorMinStake } = useCanPostSuperLiked(post.id)
 
   const [isOpenShouldStakeModal, setIsOpenShouldStakeModal] = useState(false)
-  const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
+  // const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
 
   const { data: totalStake, loading: loadingTotalStake } = useFetchTotalStake(myAddress ?? '')
   const { data: userReport } = useFetchUserRewardReport()
@@ -111,7 +111,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
     const result = signatureVerify(message, signature, myGrillAddress)
     if (!result.isValid) {
       localStorage.removeItem(CURRENT_WEEK_SIG)
-      setIsOpenActiveStakingModal(true)
+      onClick()
       return
     }
 
@@ -197,7 +197,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
         visible={isOpenShouldStakeModal}
         onCancel={() => setIsOpenShouldStakeModal(false)}
       />
-      <CustomModal
+      {/* <CustomModal
         visible={isOpenActiveStakingModal}
         destroyOnClose
         onCancel={() => setIsOpenActiveStakingModal(false)}
@@ -241,7 +241,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
             Confirm
           </Button>
         </div>
-      </CustomModal>
+      </CustomModal> */}
     </>
   )
 }
