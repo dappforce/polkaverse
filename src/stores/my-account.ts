@@ -1,6 +1,4 @@
-import { WarningOutlined } from '@ant-design/icons'
 import { toSubsocialAddress } from '@subsocial/utils'
-import { controlledMessage } from 'src/components/utils/Message'
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect'
 import { ESTIMATED_ENERGY_FOR_ONE_TX } from 'src/config/constants'
 import { waitNewBlock } from 'src/utils/blockchain'
@@ -162,15 +160,10 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
           parentProxyAddressStorage.remove()
           set({ parentProxyAddress: undefined })
           get().logout()
-          const message = controlledMessage({
-            message: 'Logged out',
-            description:
-              'You seem to have logged in to your wallet in another device, please relogin to use it here',
-            type: 'warning',
-            duration: 3,
-            icon: WarningOutlined,
-          })
-          message.open()
+          // TODO: change to a proper notification
+          alert(
+            'You seem to have logged in to your wallet in another device, please relogin to use it here',
+          )
         }
       } catch (err) {
         console.error('Failed to fetch proxies', err)
