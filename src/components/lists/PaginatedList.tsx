@@ -1,7 +1,6 @@
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { newLogger, nonEmptyStr } from '@subsocial/utils'
 import { PaginationConfig } from 'antd/lib/pagination'
-import Link from 'next/link'
 import { NextRouter, useRouter } from 'next/router'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import {
@@ -11,6 +10,7 @@ import {
   PAGE_SIZE_OPTIONS,
 } from '../../config/ListData.config'
 import { tryParseInt } from '../../utils'
+import CustomLink from '../referral/CustomLink'
 import DataList, { DataListProps } from './DataList'
 import { useLinkParams } from './utils'
 
@@ -83,9 +83,9 @@ export function PaginatedList<T extends any>(props: PaginatedListProps<T>) {
         switch (type) {
           case 'page':
             return (
-              <Link {...getLinksParams(page)}>
+              <CustomLink {...getLinksParams(page)}>
                 <a>{page}</a>
-              </Link>
+              </CustomLink>
             )
           case 'next':
             return (

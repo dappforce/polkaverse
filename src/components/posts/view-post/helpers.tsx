@@ -5,10 +5,10 @@ import { Alert, Button, Image, Tooltip } from 'antd'
 import clsx from 'clsx'
 import isEmpty from 'lodash.isempty'
 import Error from 'next/error'
-import Link from 'next/link'
 import React, { FC, useState } from 'react'
 import { RiPushpin2Fill } from 'react-icons/ri'
 import { TbCoins, TbMessageCircle2 } from 'react-icons/tb'
+import CustomLink from 'src/components/referral/CustomLink'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
 import SpacePreviewPopup from 'src/components/spaces/SpacePreviewPopup'
@@ -526,11 +526,11 @@ export default function PostNotEnoughMinStakeAlert({ post }: { post: PostStruct 
           <TbCoins />
           <span>You need to lock SUB in order to receive rewards.</span>
         </div>
-        <Link href={getSubIdCreatorsLink()}>
+        <CustomLink href={activeStakingLinks.learnMore}>
           <a target='_blank' className='DfLink'>
             Lock SUB
           </a>
-        </Link>
+        </CustomLink>
       </div>
     )
   }

@@ -1,6 +1,6 @@
-import Link from 'next/link'
 import React, { CSSProperties } from 'react'
 import { SpaceStruct } from 'src/types'
+import CustomLink from '../referral/CustomLink'
 import { spaceUrl } from '../urls'
 
 type Props = {
@@ -26,11 +26,11 @@ export const ViewSpaceLink = React.memo(
           e.preventDefault()
         }}
       >
-        <Link href='/[spaceId]' as={spaceUrl(space)}>
+        <CustomLink href='/[spaceId]' as={spaceUrl(space)}>
           <a className={'DfBlackLink ' + className} style={style} title={hint}>
             {title}
           </a>
-        </Link>
+        </CustomLink>
       </span>
     )
   },

@@ -1,9 +1,9 @@
 import { Button, Skeleton } from 'antd'
 import clsx from 'clsx'
-import Link from 'next/link'
 import { HiArrowUpRight } from 'react-icons/hi2'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { CreatePostButtonAndModal } from 'src/components/posts/NewPostButtonInTopMenu'
+import CustomLink from 'src/components/referral/CustomLink'
 import { CreateSpaceButton } from 'src/components/spaces/helpers'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
@@ -41,7 +41,7 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
       </div>
       <span className='FontSmall'>
         When users with locked SUB like your posts, you will receive SUB as a reward.{' '}
-        <Link href={activeStakingLinks.learnMore}>
+        <CustomLink href={activeStakingLinks.learnMore}>
           <a
             target='_blank'
             onClick={() =>
@@ -53,7 +53,7 @@ export default function CreatePostCard({ variant }: CreatePostCardProps) {
             Learn more{' '}
             <HiArrowUpRight className='d-inline position-relative' style={{ top: '2px' }} />
           </a>
-        </Link>
+        </CustomLink>
       </span>
       <div className='mt-3 GapSmall flex-column d-flex'>
         {isLoading ? (

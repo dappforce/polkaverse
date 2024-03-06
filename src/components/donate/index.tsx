@@ -1,6 +1,5 @@
 import { Button, Modal, Row } from 'antd'
 import clsx from 'clsx'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
@@ -13,6 +12,7 @@ import Segment from 'src/components/utils/Segment'
 import { TextWithEmoji } from 'src/components/utils/TextWithEmoji'
 import { useSelectProfile } from '../../rtk/features/profiles/profilesHooks'
 import { useIsUsingEmail } from '../auth/MyAccountsContext'
+import CustomLink from '../referral/CustomLink'
 import { DonateCard } from './DonateModal'
 import { TipContextWrapper, useTipContext } from './DonateModalContext'
 import styles from './index.module.sass'
@@ -118,7 +118,7 @@ export const DonationSection = ({ recipientAddress }: DonateProps) => {
     >
       <Row justify='center' className={styles.DonationContainer}>
         <Row justify='center'>
-          <Link passHref href={`/accounts/${recipientAddress}`}>
+          <CustomLink passHref href={`/accounts/${recipientAddress}`}>
             <a>
               <BaseAvatar
                 identityValue={recipientAddress}
@@ -126,14 +126,14 @@ export const DonationSection = ({ recipientAddress }: DonateProps) => {
                 size={64}
               />
             </a>
-          </Link>
+          </CustomLink>
         </Row>
         <Row justify='center' className='my-2'>
           <MutedSpan>
             Enjoy this post? Support{' '}
-            <Link href={`/accounts/${recipientAddress}`}>
+            <CustomLink href={`/accounts/${recipientAddress}`}>
               {profileData?.content?.name || toShortAddress(recipientAddress)}
-            </Link>
+            </CustomLink>
             .
           </MutedSpan>
         </Row>

@@ -1,7 +1,7 @@
 import { Tooltip } from 'antd'
 import Button, { ButtonProps } from 'antd/lib/button'
-import Link from 'next/link'
 import React from 'react'
+import CustomLink from '../referral/CustomLink'
 
 type LinkProps = {
   href: string
@@ -13,9 +13,9 @@ type ButtonLinkProps = LinkProps & ButtonProps
 
 export const ButtonLink = ({ as, href, target, children, ...buttonProps }: ButtonLinkProps) => (
   <Button {...buttonProps}>
-    <Link href={href} as={as}>
+    <CustomLink href={href} as={as}>
       <a target={target}>{children}</a>
-    </Link>
+    </CustomLink>
   </Button>
 )
 
@@ -25,9 +25,9 @@ type IconLinksProps = LinkProps & {
 }
 
 export const IconLink = ({ title, icon, ...linkProps }: IconLinksProps) => (
-  <Link {...linkProps}>
+  <CustomLink {...linkProps}>
     <a className='DfHoverIcon'>
       <Tooltip title={title}>{icon}</Tooltip>
     </a>
-  </Link>
+  </CustomLink>
 )

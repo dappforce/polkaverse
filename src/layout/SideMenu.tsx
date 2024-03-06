@@ -1,9 +1,9 @@
 import { newLogger } from '@subsocial/utils'
 import { Menu } from 'antd'
 import clsx from 'clsx'
-import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
 import { HTMLProps } from 'react'
+import CustomLink from 'src/components/referral/CustomLink'
 import { useIsSignedIn, useIsUsingEmail, useMyAddress } from '../components/auth/MyAccountsContext'
 import { buildAuthorizedMenu, DefaultMenu, isDivider, PageLink } from './SideMenuItems'
 import styles from './Sider.module.sass'
@@ -35,12 +35,12 @@ const renderPageLink = (item: PageLink) => {
       key={item.page[1] || item.page[0]}
       onClick={() => !openInNewTab && goToPage(item.page)}
     >
-      <Link href={item.page[0]} as={item.page[1]} passHref>
+      <CustomLink href={item.page[0]} as={item.page[1]} passHref>
         <a {...anchorProps}>
           {icon}
           <span className='MenuItemName'>{item.name}</span>
         </a>
-      </Link>
+      </CustomLink>
     </Menu.Item>
   )
 }

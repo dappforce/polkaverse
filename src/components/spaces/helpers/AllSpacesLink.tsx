@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import React from 'react'
+import CustomLink from 'src/components/referral/CustomLink'
 import { BareProps } from 'src/components/utils/types'
 
 type Props = BareProps & {
@@ -7,9 +7,9 @@ type Props = BareProps & {
 }
 
 export const AllSpacesLink = ({ title = 'See all', ...otherProps }: Props) => (
-  <Link href='/spaces' as='/spaces'>
+  <CustomLink href='/spaces' as='/spaces'>
     <a className='DfGreyLink text-uppercase' style={{ fontSize: '1rem' }} {...otherProps}>
       {title}
     </a>
-  </Link>
+  </CustomLink>
 )

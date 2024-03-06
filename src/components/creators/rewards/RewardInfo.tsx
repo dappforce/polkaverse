@@ -2,12 +2,12 @@ import { LineChartOutlined } from '@ant-design/icons'
 import { Skeleton, Tooltip } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import Link from 'next/link'
 import { ComponentProps, useState } from 'react'
 import { RiHistoryFill } from 'react-icons/ri'
 import { SlQuestion } from 'react-icons/sl'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { FormatBalance, formatBalanceToJsx } from 'src/components/common/balances'
+import CustomLink from 'src/components/referral/CustomLink'
 import { MutedSpan } from 'src/components/utils/MutedText'
 import { Pluralize } from 'src/components/utils/Plularize'
 import { CREATORS_CONSTANTS } from 'src/config/constants'
@@ -80,7 +80,7 @@ export default function RewardInfo({ size, ...props }: RewardInfoProps) {
           <span className='FontSmall'>History</span>
         </div>
 
-        <Link href={`/leaderboard/${myAddress}?role=staker`} passHref>
+        <CustomLink href={`/leaderboard/${myAddress}?role=staker`} passHref>
           <a
             className='py-2.5 px-3 d-flex justify-content-center align-items-center ColorPrimary FontWeightMedium GapTiny'
             onClick={() => {
@@ -96,7 +96,7 @@ export default function RewardInfo({ size, ...props }: RewardInfoProps) {
             <LineChartOutlined />
             <span className='FontSmall'>My Stats</span>
           </a>
-        </Link>
+        </CustomLink>
       </div>
 
       <RewardHistoryModal

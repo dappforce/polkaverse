@@ -1,7 +1,6 @@
 import { Alert, Button, Input } from 'antd'
 import BN from 'bn.js'
 import clsx from 'clsx'
-import Link from 'next/link'
 import { useState } from 'react'
 import { Controller, ErrorMessage, useForm } from 'react-hook-form'
 import { TbCoins } from 'react-icons/tb'
@@ -13,6 +12,7 @@ import { CommentContent, IpfsCid } from 'src/types'
 import { activeStakingLinks } from 'src/utils/links'
 import { useAmIBlocked, useMyAddress } from '../auth/MyAccountsContext'
 import { buildSharePostValidationSchema } from '../posts/PostValidation'
+import CustomLink from '../referral/CustomLink'
 import { getNewIdFromEvent } from '../substrate'
 import { tmpClientId } from '../utils'
 import { MyAccountProps } from '../utils/MyAccount'
@@ -162,9 +162,9 @@ export const CommentEditor = (props: Props) => {
               <TbCoins className='FontNormal' style={{ flexShrink: '0' }} />
               <span>
                 <span>This comment could earn SUB rewards.</span>
-                <Link passHref href={activeStakingLinks.learnMore}>
+                <CustomLink passHref href={activeStakingLinks.learnMore}>
                   <a className='FontWeightMedium ml-1'>Learn How</a>
-                </Link>
+                </CustomLink>
               </span>
             </div>
           }

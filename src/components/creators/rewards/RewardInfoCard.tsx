@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import Link from 'next/link'
+import CustomLink from 'src/components/referral/CustomLink'
 import { DfImage } from 'src/components/utils/DfImage'
 import Segment from 'src/components/utils/Segment'
 import { useSendEvent } from 'src/providers/AnalyticContext'
@@ -16,7 +16,7 @@ export default function RewardInfoCard() {
         <div className='d-flex align-items-center GapNormal justify-content-between'>
           <p className={clsx(styles.Title, 'mb-0')}>My Weekly Rewards</p>
         </div>
-        <Link href={activeStakingLinks.learnMore} passHref>
+        <CustomLink href={activeStakingLinks.learnMore} passHref>
           <a
             target='_blank'
             className={styles.Link}
@@ -24,7 +24,7 @@ export default function RewardInfoCard() {
           >
             How does this work?
           </a>
-        </Link>
+        </CustomLink>
         <DfImage preview={false} src='/images/diamond.svg' className={styles.Image} />
       </div>
       <div className={clsx(styles.BottomSection)}>

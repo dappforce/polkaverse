@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { FC } from 'react'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { useFetchSpacesWithMyPermissions } from 'src/rtk/features/spaces/spacesHooks'
@@ -7,6 +6,7 @@ import { SpaceId } from 'src/types'
 import { isUnclaimedSpace, reservedPolkadotSpaceIds } from 'src/utils'
 import { PaginatedList } from '../lists/PaginatedList'
 import { PageContent } from '../main/PageWrapper'
+import CustomLink from '../referral/CustomLink'
 import { LoadingSpaces } from '../utils'
 import { getPageOfIds } from '../utils/getIds'
 import { PublicSpacePreviewById } from './SpacePreview'
@@ -61,9 +61,9 @@ const UnclaimedSpacesListPage: FC<Props> = props => {
           </a>{' '}
           a DM from your project&apos;s official Twitter account. Otherwise, you can create your own
           space{' '}
-          <Link href='/spaces/new' as='/spaces/new'>
+          <CustomLink href='/spaces/new' as='/spaces/new'>
             here
-          </Link>
+          </CustomLink>
           .
         </p>
         <UnclaimedSpacesList {...props} />

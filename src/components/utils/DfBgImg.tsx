@@ -1,7 +1,8 @@
 import { Image } from 'antd'
-import Link, { LinkProps } from 'next/link'
+import { LinkProps } from 'next/link'
 import React, { CSSProperties, ReactNode } from 'react'
 import { resolveIpfsUrl } from 'src/ipfs'
+import CustomLink from '../referral/CustomLink'
 
 export type PreviewType = {
   mask?: ReactNode
@@ -63,10 +64,10 @@ type DfBgImageLinkProps = BgImgProps & LinkProps
 
 export const DfBgImageLink = React.memo(({ href, as, ...props }: DfBgImageLinkProps) => (
   <div>
-    <Link href={href} as={as}>
+    <CustomLink href={href} as={as}>
       <a>
         <DfBgImg {...props} />
       </a>
-    </Link>
+    </CustomLink>
   </div>
 ))

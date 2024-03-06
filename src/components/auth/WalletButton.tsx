@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import { hasInjectedWallet } from 'src/utils/window'
+import CustomLink from '../referral/CustomLink'
 import { AvatarOrSkeleton, isClientSide } from '../utils'
 import { StepsEnum } from './AuthContext'
 import styles from './WalletButton.module.sass'
@@ -16,7 +16,7 @@ const WalletButton = ({ setCurrentStep }: Props) => {
   const isInMobileWalletBrowser = isClientSide() && hasInjectedWallet()
   if (!isInMobileWalletBrowser) {
     return (
-      <Link passHref href='https://novawallet.io/'>
+      <CustomLink passHref href='https://novawallet.io/'>
         <a className={styles.WalletButton} target='_blank'>
           <div className='d-flex align-items-center'>
             <AvatarOrSkeleton
@@ -30,7 +30,7 @@ const WalletButton = ({ setCurrentStep }: Props) => {
             </div>
           </div>
         </a>
-      </Link>
+      </CustomLink>
     )
   }
 

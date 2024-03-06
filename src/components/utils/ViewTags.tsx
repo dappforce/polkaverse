@@ -1,8 +1,8 @@
 import { TagOutlined } from '@ant-design/icons'
 import { isEmptyArray, isEmptyStr, nonEmptyStr } from '@subsocial/utils'
 import { Tag } from 'antd'
-import Link from 'next/link'
 import React from 'react'
+import CustomLink from '../referral/CustomLink'
 import { BareProps } from './types'
 
 type ViewTagProps = {
@@ -14,12 +14,12 @@ const ViewTag = React.memo(({ tag }: ViewTagProps) => {
 
   return isEmptyStr(tag) ? null : (
     <Tag key={tag} className='mt-2'>
-      <Link href={searchLink} as={searchLink}>
+      <CustomLink href={searchLink} as={searchLink}>
         <a className='DfGreyLink'>
           <TagOutlined />
           {tag}
         </a>
-      </Link>
+      </CustomLink>
     </Tag>
   )
 })

@@ -1,8 +1,8 @@
 import { Button, Skeleton, Tag } from 'antd'
 import clsx from 'clsx'
-import Link from 'next/link'
 import { ComponentProps, useEffect, useMemo, useRef, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import CustomLink from 'src/components/referral/CustomLink'
 import { DfImage } from 'src/components/utils/DfImage'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchProfileSpaces, useSelectProfile } from 'src/rtk/app/hooks'
@@ -162,7 +162,7 @@ function UserRow({
   const isMyAddress = myAddress === data.address
 
   return (
-    <Link href={`/leaderboard/${data.address}?role=${role}`} passHref>
+    <CustomLink href={`/leaderboard/${data.address}?role=${role}`} passHref>
       <a
         onClick={() => {
           sendEvent('leaderboard_my_stats_opened', {
@@ -234,7 +234,7 @@ function UserRow({
           />
         </span>
       </a>
-    </Link>
+    </CustomLink>
   )
 }
 

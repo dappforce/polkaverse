@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import { useIsMyAddress, useMyAccounts } from 'src/components/auth/MyAccountsContext'
+import CustomLink from 'src/components/referral/CustomLink'
 import { equalAddresses } from 'src/components/substrate'
 import { Copy } from 'src/components/urls/helpers'
 import TxButton from 'src/components/utils/TxButton'
@@ -34,17 +34,17 @@ export const CreateOrEditProfileSpace = ({ address, onClick, ...props }: Profile
   const profileSpace = useSelectProfile(address.toString())
 
   const actionButton = profileSpace ? (
-    <Link href={editSpaceUrl(profileSpace.struct, true)}>
+    <CustomLink href={editSpaceUrl(profileSpace.struct, true)}>
       <a className='item' onClick={onClick} {...props}>
         Edit profile
       </a>
-    </Link>
+    </CustomLink>
   ) : (
-    <Link href={newSpaceUrl(true)}>
+    <CustomLink href={newSpaceUrl(true)}>
       <a className='item' onClick={onClick} {...props}>
         Create profile
       </a>
-    </Link>
+    </CustomLink>
   )
 
   return useIsMyAddress(address) ? actionButton : null
@@ -104,11 +104,11 @@ export const ResetProfileButton = () => {
 
 export const SettingsLink = ({ address, title = 'Settings', onClick, ...props }: ProfileLink) =>
   useIsMyAddress(address) ? (
-    <Link href='/settings/email' as='/settings/email'>
+    <CustomLink href='/settings/email' as='/settings/email'>
       <a onClick={onClick} {...props}>
         {title}
       </a>
-    </Link>
+    </CustomLink>
   ) : null
 
 type CopyAddressProps = {

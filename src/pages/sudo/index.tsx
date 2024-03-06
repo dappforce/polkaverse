@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import { PageContent } from 'src/components/main/PageWrapper'
+import CustomLink from 'src/components/referral/CustomLink'
 
 const TITLE = 'Sudo'
 
@@ -7,9 +7,9 @@ const SudoPage = () => (
   <PageContent meta={{ title: TITLE }} title={TITLE}>
     <ul>
       <li>
-        <Link href='/sudo/forceTransfer' as='/sudo/forceTransfer'>
+        <CustomLink href='/sudo/forceTransfer' as='/sudo/forceTransfer'>
           forceTransfer
-        </Link>
+        </CustomLink>
       </li>
     </ul>
   </PageContent>

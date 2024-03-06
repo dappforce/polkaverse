@@ -1,7 +1,6 @@
-import Link from 'next/link'
-
 import { SpaceStruct } from 'src/types'
 import { SpaceEditorsModal, SpaceFollowersModal } from '../profiles/AccountsListModal'
+import CustomLink from '../referral/CustomLink'
 import { useResponsiveSize } from '../responsive'
 import { spaceUrl } from '../urls'
 import { MutedSpan } from '../utils/MutedText'
@@ -21,11 +20,11 @@ export const SpaceStatsRow = ({ space }: Props) => {
 
   return (
     <div className={`${useIsMySpace(space) && 'MySpace DfStatItem'}`}>
-      <Link href='/[spaceId]' as={spaceUrl(space)}>
+      <CustomLink href='/[spaceId]' as={spaceUrl(space)}>
         <a className={statLinkCss}>
           <Pluralize count={postsCount || 0} singularText='Post' />
         </a>
-      </Link>
+      </CustomLink>
 
       <SpaceFollowersModal
         address={id}

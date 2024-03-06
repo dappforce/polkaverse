@@ -1,12 +1,12 @@
 import { BellOutlined } from '@ant-design/icons'
 import { Badge } from 'antd'
 import clsx from 'clsx'
-import Link from 'next/link'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import config from 'src/config'
 import { useGetNotificationsCount } from 'src/graphql/hooks'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import CustomLink from '../referral/CustomLink'
 import styles from './style.module.sass'
 
 const { enableNotifications } = config
@@ -82,11 +82,11 @@ type NotificationsProps = {
 }
 
 const Bell = ({ unreadCount }: NotificationsProps) => (
-  <Link href={notificationItem.page[0]} as={notificationItem.page[1]}>
+  <CustomLink href={notificationItem.page[0]} as={notificationItem.page[1]}>
     <a className={clsx('DfNotificationsCounter d-block', unreadCount > 9 && 'mr-1')}>
       {notificationItem.icon}
     </a>
-  </Link>
+  </CustomLink>
 )
 
 export const NotificationsBell = ({ unreadCount }: NotificationsProps) => {

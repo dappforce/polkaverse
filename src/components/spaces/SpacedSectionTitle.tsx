@@ -1,6 +1,6 @@
-import Link from 'next/link'
 import React from 'react'
 import { SpaceData } from 'src/types'
+import CustomLink from '../referral/CustomLink'
 import { spaceUrl } from '../urls'
 import { useStorybookContext } from '../utils/StorybookContext'
 
@@ -17,9 +17,9 @@ export const SpacedSectionTitle = ({ space, subtitle }: Props) => {
     <>
       {!isStorybook && space && name && (
         <>
-          <Link href='/[spaceId]' as={spaceUrl(space.struct)}>
+          <CustomLink href='/[spaceId]' as={spaceUrl(space.struct)}>
             <a>{name}</a>
-          </Link>
+          </CustomLink>
           <span style={{ margin: '0 .75rem' }}>/</span>
         </>
       )}

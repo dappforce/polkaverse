@@ -1,5 +1,5 @@
 import { Result } from 'antd'
-import Link from 'next/link'
+import CustomLink from '../referral/CustomLink'
 
 export const NoWriteAccess = () => (
   <Result
@@ -10,7 +10,7 @@ export const NoWriteAccess = () => (
           {
             'Your account has been restricted from creating new spaces, posts, and comments, on this particular website due to a violation in our '
           }
-          <Link href='https://subsocial.network/legal/terms'>Terms of Use</Link>
+          <CustomLink href='https://subsocial.network/legal/terms'>Terms of Use</CustomLink>
           {'.'}
         </p>
         <p>

@@ -10,7 +10,6 @@ import {
 import { ReactionType } from '@subsocial/api/types'
 import { nonEmptyStr } from '@subsocial/utils'
 import { summarize } from '@subsocial/utils/summarize'
-import Link from 'next/link'
 import React, { ReactNode } from 'react'
 import { NAME_MAX_LEN } from 'src/config/ValidationsConfig'
 import messages from 'src/messages'
@@ -21,6 +20,7 @@ import { useMyAddress } from '../auth/MyAccountsContext'
 import ViewPostLink from '../posts/ViewPostLink'
 import Avatar from '../profiles/address-views/Avatar'
 import Name from '../profiles/address-views/Name'
+import CustomLink from '../referral/CustomLink'
 import { ViewSpace } from '../spaces/ViewSpace'
 import { equalAddresses } from '../substrate'
 import { accountUrl, postUrl, spaceUrl } from '../urls'
@@ -138,7 +138,7 @@ export function InnerNotification(props: InnerNotificationProps) {
   const icon = _icon ?? iconByEvent[event]
 
   return (
-    <Link {...links}>
+    <CustomLink {...links}>
       <div className='DfNotificationItem'>
         <div className='DfNotificationIcons'>
           <div className='position-relative'>
@@ -163,7 +163,7 @@ export function InnerNotification(props: InnerNotificationProps) {
         </div>
         {nonEmptyStr(image) && <DfBgImageLink {...links} src={image} size={80} />}
       </div>
-    </Link>
+    </CustomLink>
   )
 }
 

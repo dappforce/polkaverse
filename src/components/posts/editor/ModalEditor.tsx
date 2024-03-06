@@ -6,7 +6,6 @@ import { LabeledValue } from 'antd/lib/select'
 import BN from 'bignumber.js'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AiFillInfoCircle } from 'react-icons/ai'
@@ -14,6 +13,7 @@ import { BiImage } from 'react-icons/bi'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { FormatBalance } from 'src/components/common/balances'
 import { htmlToMd } from 'src/components/editor/tiptap'
+import CustomLink from 'src/components/referral/CustomLink'
 import { getNewIdFromEvent, getTxParams } from 'src/components/substrate'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import { TxCallback, TxFailedCallback } from 'src/components/substrate/SubstrateTxButton'
@@ -346,7 +346,7 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
               <p>
                 You can receive extra SUB when others like your content. Share your posts around the
                 internet to get more exposure and rewards.{' '}
-                <Link href={activeStakingLinks.learnMore}>
+                <CustomLink href={activeStakingLinks.learnMore}>
                   <a
                     className='FontWeightMedium'
                     target='_blank'
@@ -356,7 +356,7 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
                   >
                     How does it work?
                   </a>
-                </Link>
+                </CustomLink>
               </p>
             )
           })()}

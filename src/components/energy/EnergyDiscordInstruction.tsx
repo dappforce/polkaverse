@@ -1,8 +1,8 @@
 import clsx from 'clsx'
-import Link from 'next/link'
 import { HTMLProps } from 'react'
 import { getSubsocialDiscordLink } from 'src/utils/links'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import CustomLink from '../referral/CustomLink'
 import CopyText from '../utils/CopyText'
 import styles from './EnergyDiscordInstruction.module.sass'
 
@@ -29,12 +29,12 @@ export default function EnergyDiscordInstruction({
         <span>
           2. Paste the text into the energy-bot channel in our
           <strong>
-            <Link passHref href={getSubsocialDiscordLink()}>
+            <CustomLink passHref href={getSubsocialDiscordLink()}>
               <a target='_blank' onClick={onDiscordLinkClick}>
                 {' '}
                 Discord
               </a>
-            </Link>
+            </CustomLink>
           </strong>
           .
         </span>

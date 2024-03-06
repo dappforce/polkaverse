@@ -1,7 +1,7 @@
 import { CloseOutlined } from '@ant-design/icons'
 import clsx from 'clsx'
-import Link from 'next/link'
 import React, { useState } from 'react'
+import CustomLink from 'src/components/referral/CustomLink'
 import { useResponsiveSize } from 'src/components/responsive'
 import { isServerSide } from 'src/components/utils/index'
 import store from 'store'
@@ -64,11 +64,11 @@ export const MultiBanner = ({
   if (!href) return content
 
   return (
-    <Link href={href}>
+    <CustomLink href={href}>
       <a target='_blank' rel='noreferrer'>
         {content}
       </a>
-    </Link>
+    </CustomLink>
   )
 }
 

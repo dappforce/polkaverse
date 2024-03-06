@@ -18,6 +18,7 @@ import { CreatorDashboardHomeVariant } from '../creators/CreatorDashboardSidebar
 import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
 import { ShowLikeablePostsProvider } from '../posts/ShowLikeablePostsContext'
 import WriteSomething from '../posts/WriteSomething'
+import { useReferralId } from '../referral/ReferralUrlChanger'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
 import Section from '../utils/Section'
@@ -95,6 +96,7 @@ const TabsHomePage = ({
 }: Props & {
   setCurrentTabVariant: (variant: CreatorDashboardHomeVariant) => void
 }) => {
+  const refId = useReferralId()
   const isSignedIn = useIsSignedIn()
   const router = useRouter()
   let prevScrollpos = 0
@@ -147,7 +149,7 @@ const TabsHomePage = ({
     const filterType =
       key !== 'feed' ? ({ type: typeValue, date } as FilterType<EntityFilter>) : undefined
 
-    setFiltersInUrl(router, key, filterType)
+    setFiltersInUrl(router, key, filterType, { ref: refId })
   }
 
   useEffect(() => {
