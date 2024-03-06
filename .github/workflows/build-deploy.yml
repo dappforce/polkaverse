@@ -150,7 +150,7 @@ jobs:
         run: TAG=${{ env.name }}-$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|dappforce/subsocial-web-app:'${TAG}'|' $GITHUB_WORKSPACE/deployment/base/deployment.yaml
 
       - name: Remove HPA
-        run: kubectl delete hpa -n sub-back web-app
+        run: kubectl delete hpa -n sub-back web-app --ignore-not-found=true
 
       - name: Deploy to DigitalOcean Kubernetes
         run: kubectl apply -k $GITHUB_WORKSPACE/deployment/overlays/production/
