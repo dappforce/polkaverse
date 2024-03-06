@@ -103,7 +103,7 @@ export const SpaceFilterView = ({ filter: { type, date }, ...props }: SpaceFilte
 const onChangeWrap = (onChange: OnChangeFn) => (e: RadioChangeEvent) => onChange(e.target.value)
 
 export const Filters = (props: Props) => {
-  const { tabKey, isAffix } = props
+  const { tabKey } = props
   const { isMobile } = useResponsiveSize()
 
   const { setValue, value } = useShowLikeablePostsContext()
@@ -129,18 +129,6 @@ export const Filters = (props: Props) => {
   if (!needDateFilter && !filterByKey[tabKey]?.length) return null
 
   const filters = filterByKey[tabKey]
-
-  if (isAffix && showLikablePostsCheckbox) {
-    return (
-      <div className={clsx('AffixCheckbox')}>
-        <Checkbox checked={value} onChange={e => setValue(e.target.checked)}>
-          <span className='ColorMuted' style={{ userSelect: 'none' }}>
-            Show likeable posts only
-          </span>
-        </Checkbox>
-      </div>
-    )
-  }
 
   return (
     <div className='DfFilters mt-3'>

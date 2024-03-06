@@ -2198,10 +2198,10 @@ hr {
 }
 
 .DfFiltersCommon {
-  max-width: 748px;
   margin: 0 -18px 0 -18px;
   background-color: $color_page_bg;
   box-shadow: 0px 21px 12px -19px #ddd;
+  width: calc(100% + 36px);
 }
 
 .ant-affix {
