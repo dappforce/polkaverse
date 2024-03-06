@@ -1,11 +1,9 @@
 import { nonEmptyArr, nonEmptyStr } from '@subsocial/utils'
 import copy from 'copy-to-clipboard'
 import { CSSProperties } from 'react'
-import config from 'src/config'
+import { getCurrentUrlOrigin } from 'src/utils/url'
 import { showInfoMessage } from '../utils/Message'
 import { BareProps } from '../utils/types'
-
-const { appBaseUrl } = config
 
 export const openNewWindow = (url: string) => {
   const biggerWindow = window.innerWidth > 650
@@ -98,5 +96,6 @@ export const innerFullUrl = (appBaseUrl: string, relative: string) => {
   return base + pathname
 }
 
-export const fullUrl = (relative: string, externalBaseUrl?: string) =>
-  innerFullUrl(externalBaseUrl || appBaseUrl, relative)
+export const fullUrl = (relative: string, externalBaseUrl?: string) => {
+  return innerFullUrl(externalBaseUrl || getCurrentUrlOrigin(), relative)
+}
