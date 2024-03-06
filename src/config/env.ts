@@ -13,8 +13,13 @@ export const connectionKind = (process.env['NEXT_PUBLIC_CONNECTION_KIND'] ||
   'main') as unknown as ConnectionKind
 
 export const enableMaintenancePage = process.env['NEXT_PUBLIC_ENABLE_MAINTENANCE_PAGE'] as
-  | boolean
+  | string
   | undefined
+
+export const isEnabledMaintenancePage = () => {
+  return enableMaintenancePage === 'true'
+}
+
 export const maintenanceMsg = process.env['NEXT_PUBLIC_MAINTENANCE_TEXT']
 
 export const gaId = process.env['NEXT_PUBLIC_GA_ID'] || ''

@@ -38,7 +38,7 @@ export default function Spaces(props: OnBoardingContentProps) {
             },
             isFollowed: spaceId => spacesSet.has(spaceId),
           }}
-          maxItems={12}
+          maxItems={20}
         />
       </div>
     </OnBoardingContentContainer>

@@ -1,4 +1,9 @@
+@import 'src/styles/subsocial-vars.scss'
+
 .DfCommentEditor
 
   \:global .CodeMirror-scroll
     min-height: auto !important
+
+  @media screen and ( min-width: $max_mobile_width)
+    resize: vertical !important

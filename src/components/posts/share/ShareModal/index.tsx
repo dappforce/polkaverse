@@ -63,7 +63,6 @@ const InnerSharePostModal = (props: Props) => {
 
   const onTxFailed: TxFailedCallback = () => {
     IpfsCid && ipfs.removeContent(IpfsCid).catch(err => new Error(err))
-    onClose()
   }
 
   const onTxSuccess: TxCallback = () => {

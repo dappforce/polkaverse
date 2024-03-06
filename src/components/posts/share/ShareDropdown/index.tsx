@@ -89,9 +89,11 @@ const ShareMenu = (props: ShareMenuProps) => {
   return (
     <Menu selectable={false} mode='horizontal' className={styles.DfShareDropdown} onClick={onClick}>
       <Menu.ItemGroup title='Share to:'>
-        <Menu.Item>
-          <SharePostLink {...props} />
-        </Menu.Item>
+        {!post.struct.isSharedPost && (
+          <Menu.Item>
+            <SharePostLink {...props} />
+          </Menu.Item>
+        )}
         <Menu.Item>
           <FacebookShareLink url={currentPostUrl} />
         </Menu.Item>

@@ -1,3 +1,4 @@
+import shuffle from 'lodash.shuffle'
 import config from 'src/config'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { fetchSpaces } from 'src/rtk/features/spaces/spacesSlice'
@@ -23,7 +24,7 @@ export const SpacesSuggestedForOnBoarding = ({
   isSmallPreview = false,
   maxItems = 6,
 }: Props) => {
-  const usedSpaceIds = spaceIds.slice(0, maxItems)
+  const usedSpaceIds = shuffle(spaceIds).slice(0, maxItems)
   const { loading } = useFetchSpaces({ ids: usedSpaceIds })
 
   if (loading) return <LoadingSpaces />

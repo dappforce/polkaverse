@@ -278,7 +278,7 @@ export const GET_LATEST_SPACE_ID = gql`
 
 export const GET_LATEST_SPACE_IDS = gql`
   query GetLatestSpaceIds($offset: Int = 0, $limit: Int!) {
-    spaces(offset: $offset, limit: $limit, orderBy: id_DESC) {
+    spaces(offset: $offset, limit: $limit, orderBy: createdOnDay_DESC) {
       id
     }
   }
@@ -780,6 +780,17 @@ export const GET_SEARCH_RESULTS = gql`
         _id
         _index
       }
+    }
+  }
+`
+
+// Community Highlights
+// ------------------------------------------------------------------------------------
+
+export const GET_LASTEST_POST_IDS_IN_SPACE = gql`
+  query GetLatestPostIdsInSpace($spaceId: String!, $limit: Int!) {
+    posts(limit: $limit, orderBy: createdAtTime_DESC, where: { space: { id_eq: $spaceId } }) {
+      id
     }
   }
 `

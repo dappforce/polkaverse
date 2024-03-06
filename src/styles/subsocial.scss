@@ -1290,6 +1290,10 @@ hr {
   .CodeMirror {
     font-size: 1rem;
     padding: 6.5px 11px; /* padding from ant design input */
+
+    @media screen and (min-width: $max_mobile_width) {
+      resize: vertical !important;
+    }
   }
 
   .CodeMirror-scroll {

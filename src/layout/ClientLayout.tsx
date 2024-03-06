@@ -4,7 +4,10 @@ import { NotifCounterProvider } from 'src/components/activity/NotifCounter'
 import { LazyConnectionsProvider } from 'src/components/lazy-connection/LazyConnectionContext'
 import OnBoardingContextsWrapper from 'src/components/onboarding/contexts/OnBoardingContextsWrapper'
 import { ResponsiveSizeProvider } from 'src/components/responsive'
+import MaintenancePage from 'src/components/utils/maintenancePage'
 import config from 'src/config'
+import { useIsMyAddressWhitelisted } from 'src/config/constants'
+import { isEnabledMaintenancePage } from 'src/config/env'
 import { AuthProvider } from '../components/auth/AuthContext'
 import { MyAccountsProvider } from '../components/auth/MyAccountsContext'
 import { SubstrateProvider, SubstrateWebConsole } from '../components/substrate'
@@ -25,10 +28,12 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
               <SubstrateWebConsole />
               <MyAccountsProvider>
                 <AuthProvider>
-                  <NotifCounterProvider>
-                    <Navigation>{children}</Navigation>
-                    <ChatFloatingModal />
-                  </NotifCounterProvider>
+                  <MaintenancePageWrapper>
+                    <NotifCounterProvider>
+                      <Navigation>{children}</Navigation>
+                      <ChatFloatingModal />
+                    </NotifCounterProvider>
+                  </MaintenancePageWrapper>
                 </AuthProvider>
               </MyAccountsProvider>
             </LazyConnectionsProvider>
@@ -37,6 +42,14 @@ const ClientLayout: React.FunctionComponent = ({ children }) => {
       </SidebarCollapsedProvider>
     </ResponsiveSizeProvider>
   )
+}
+
+const MaintenancePageWrapper: React.FunctionComponent = ({ children }) => {
+  const isWhitelisted = useIsMyAddressWhitelisted()
+
+  if (isEnabledMaintenancePage() && !isWhitelisted) return <MaintenancePage />
+
+  return <>{children}</>
 }
 
 export default ClientLayout

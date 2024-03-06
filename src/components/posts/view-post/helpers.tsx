@@ -19,8 +19,6 @@ import FollowSpaceButton from 'src/components/utils/FollowSpaceButton'
 import Segment from 'src/components/utils/Segment'
 import { ActiveVoters, PostVoters } from 'src/components/voting/ListVoters'
 import SuperLike from 'src/components/voting/SuperLike'
-import { isPinnedPost } from 'src/config/constants'
-import { maintenanceMsg } from 'src/config/env'
 import { resolveIpfsUrl } from 'src/ipfs'
 import messages from 'src/messages'
 import { isBlockedPost } from 'src/moderation'
@@ -36,7 +34,7 @@ import {
   SpaceStruct,
 } from 'src/types'
 import { getTimeRelativeToNow } from 'src/utils/date'
-import { activeStakingLinks } from 'src/utils/links'
+import { getSubIdCreatorsLink } from 'src/utils/links'
 import { RegularPreview } from '.'
 import { useSelectSpace } from '../../../rtk/features/spaces/spacesHooks'
 import { useIsMyAddress, useMyAddress } from '../../auth/MyAccountsContext'
@@ -46,6 +44,7 @@ import { formatDate, isHidden, toShortUrl, useIsVisible } from '../../utils'
 import { SummarizeMd } from '../../utils/md/SummarizeMd'
 import ViewTags from '../../utils/ViewTags'
 import Embed, { getEmbedLinkType } from '../embed/Embed'
+import { isPinnedPost } from '../pinned-post'
 import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
 import styles from './helpers.module.sass'
@@ -430,7 +429,7 @@ export const PostPreviewCreatorInfo = (props: Pick<PostPreviewProps, 'postDetail
             withUnfollowButton={false}
           />
         )}
-        {space && !postDetails.post.struct.isSharedPost && (
+        {space && (
           <ShareDropdown postDetails={postDetails} space={space.struct} className='DfAction p-0' />
         )}
         <PostDropDownMenu
@@ -497,9 +496,6 @@ export const OriginalPostPanel = ({ canonicalUrl }: OriginalPostPanelProps) => {
 
 export const PostNotFound = () => <NoData description='Post not found' />
 export const PostNotFoundPage = () => <Error statusCode={404} title='Post not found' />
-export const MaintenancePage = () => (
-  <Error statusCode={503} title={maintenanceMsg || messages.errors.maintenance} />
-)
 
 export function useShouldRenderMinStakeAlert(post: PostStruct) {
   const { isExist, validByCreatorMinStake, validByCreationDate } = useCanPostSuperLiked(post.id)
@@ -528,11 +524,11 @@ export default function PostNotEnoughMinStakeAlert({ post }: { post: PostStruct 
       <div className={styles.PostNotEnoughMinStakeAlert}>
         <div className='d-flex align-items-center GapTiny'>
           <TbCoins />
-          <span>This post could earn SUB rewards.</span>
+          <span>You need to lock SUB in order to receive rewards.</span>
         </div>
         <CustomLink href={activeStakingLinks.learnMore}>
           <a target='_blank' className='DfLink'>
-            Learn How
+            Lock SUB
           </a>
         </CustomLink>
       </div>

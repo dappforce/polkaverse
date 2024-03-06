@@ -1,11 +1,11 @@
 import { SubsocialApi } from '@subsocial/api'
 import config from 'src/config'
-import { PINNED_POST_ID } from 'src/config/constants'
 import { getPostIdsBySpaces } from 'src/graphql/apis'
 import { GqlClient } from 'src/graphql/ApolloProvider'
 import { AnySpaceId, PostId } from 'src/types'
 import { descSort } from 'src/utils'
 import { getPageOfIds } from '../utils/getIds'
+import { getPinnedPost } from './pinned-post'
 
 let suggestedPostIds: string[] | undefined = undefined
 
@@ -29,8 +29,12 @@ export const loadSuggestedPostIds = async ({
     suggestedPostIds = suggestedPostIdsArray.flat()
     return descSort(suggestedPostIds)
   } else if (client) {
-    const postIds = await getPostIdsBySpaces(client, { spaceIds: recommendedIds })
-    return Array.from(new Set([PINNED_POST_ID, ...postIds]))
+    const [postIds, pinnedPostId] = await Promise.all([
+      getPostIdsBySpaces(client, { spaceIds: recommendedIds }),
+      getPinnedPost(client),
+    ] as const)
+
+    return Array.from(new Set([pinnedPostId, ...postIds].filter(Boolean) as string[]))
   }
   return []
 }

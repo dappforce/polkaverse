@@ -7,7 +7,7 @@ import config from 'src/config'
 import LatestPostsPage from '../posts/LatestPostsPage'
 import { useShowLikeablePostsContext } from '../posts/ShowLikeablePostsContext'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
-import LatestSpacesPage, { CreatorsSpaces } from '../spaces/LatestSpacesPage'
+import LatestSpacesPage from '../spaces/LatestSpacesPage'
 import style from './HomePage.module.sass'
 import {
   DateFilterType,
@@ -38,13 +38,8 @@ const verifiedIcon = (
 )
 
 export const postFilterOpt: Filter[] = [
-  {
-    label: 'Featured Posts',
-    icon: verifiedIcon,
-    value: 'suggested',
-  },
   { label: 'Hot Posts', icon: '🔥', value: 'hot' },
-  { label: 'All Posts', value: 'latest' },
+  { label: 'Latest', value: 'latest' },
   // removed most liked and commented
   // ...offchainPostFilterOpt,
 ]
@@ -71,6 +66,7 @@ export const spaceFilterOpt: Filter[] = [
     icon: verifiedIcon,
     value: 'suggested',
   },
+  ...commonFilterOption,
   // { label: 'Creators Staking', value: 'creators' },
   // ...offchainSpaceFilterOpt,
 ]
@@ -101,7 +97,6 @@ export const PostFilterView = ({ filter: { type, date }, ...props }: PostFilterP
 }
 
 export const SpaceFilterView = ({ filter: { type, date }, ...props }: SpaceFilterProps) => {
-  if (type === 'creators') return <CreatorsSpaces />
   return <LatestSpacesPage filter={type} dateFilter={date} {...props} />
 }
 
@@ -119,7 +114,7 @@ export const Filters = (props: Props) => {
 
   if (tabKey === 'feed' || !enableGraphQl) return null
 
-  const onFilterChange: any = (value: PostFilterType = 'suggested') =>
+  const onFilterChange: any = (value: PostFilterType = 'hot') =>
     setFiltersInUrl(router, tabKey, { type: value, date: date as DateFilterType })
 
   const onDateChange: any = (value: DateFilterType = 'week') =>

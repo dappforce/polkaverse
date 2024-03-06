@@ -61,9 +61,9 @@ export const UploadImg = ({
     if (!isJpgOrPng) {
       setError('You can only upload JPG/PNG/GIF/WEBP file.')
     }
-    const isLt2M = file.size / 1024 / 1024 < 2
+    const isLt2M = file.size / 1024 / 1024 < 30
     if (!isLt2M) {
-      setError('Image must smaller than 2MB.')
+      setError('Image must smaller than 30MB.')
     }
     return isJpgOrPng && isLt2M
   }, [])

@@ -4,10 +4,10 @@ import { Dispatch } from 'react'
 import { AccountId } from 'src/types'
 import { PostKind } from '../../types/graphql-global-types'
 
-export type PostFilterType = 'latest' | 'suggested' | 'hot'
+export type PostFilterType = 'latest' | 'hot'
 // | 'liked' | 'commented' // removed most liked and commented
 
-export type SpaceFilterType = 'suggested' | 'creators'
+export type SpaceFilterType = 'suggested' | 'latest'
 // 'latest' |  'sortByPosts' | 'sortByFollowers'
 
 export type DateFilterType = 'day' | 'week' | 'month' | 'allTime'
