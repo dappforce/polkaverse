@@ -19,7 +19,6 @@ import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
 import { ShowLikeablePostsProvider } from '../posts/ShowLikeablePostsContext'
 import WriteSomething from '../posts/WriteSomething'
 import { useReferralId } from '../referral/ReferralUrlChanger'
-import { useIsMobileWidthOrDevice } from '../responsive'
 import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
 import Section from '../utils/Section'
 import style from './HomePage.module.sass'
@@ -79,10 +78,8 @@ const HomeTabs = (props: TabsProps) => {
 }
 
 const AffixTabs = (props: AffixTabsProps) => {
-  const { visible = false } = props
-
   return (
-    <Affix offsetTop={64} className={`h-0 ${visible ? 'visible' : 'invisible'}`}>
+    <Affix offsetTop={64} className={'visible'}>
       <HomeTabs className={style.AffixTabs} isAffix {...props} />
     </Affix>
   )
@@ -191,8 +188,6 @@ const TabsHomePage = ({
     }
   }, [tab, type, date, myAddress])
 
-  const isMobile = useIsMobileWidthOrDevice()
-
   return (
     <>
       <MobileActiveStakingSection />
@@ -200,12 +195,8 @@ const TabsHomePage = ({
         <CommentBanner />
       </div> */}
       <ShowLikeablePostsProvider tab={tab} filter={type}>
-        <span>
-          {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
-        </span>
-
+        <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />
         <Section className='m-0'>
-          <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} {...props} />
           <TabsContent />
           <Tooltip title={'Back to top'} placement={'right'}>
             <BackTop className={style.DfBackToTop}>

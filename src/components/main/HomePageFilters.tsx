@@ -143,7 +143,7 @@ export const Filters = (props: Props) => {
   }
 
   return (
-    <div className={`DfFilters ${!isAffix ? 'mt-3' : ''}`}>
+    <div className='DfFilters mt-3'>
       <Row className={style.DfGridParams}>
         {!isMobile ? (
           <Col className={hasRightElement ? style.DfCol : 'ant-col-24'}>
