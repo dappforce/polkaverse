@@ -1,7 +1,7 @@
 import { nonEmptyArr, nonEmptyStr } from '@subsocial/utils'
 import copy from 'copy-to-clipboard'
 import { CSSProperties } from 'react'
-import { getCurrentUrlOrigin } from 'src/utils/url'
+import config from 'src/config'
 import { showInfoMessage } from '../utils/Message'
 import { BareProps } from '../utils/types'
 
@@ -97,5 +97,5 @@ export const innerFullUrl = (appBaseUrl: string, relative: string) => {
 }
 
 export const fullUrl = (relative: string, externalBaseUrl?: string) => {
-  return innerFullUrl(externalBaseUrl || getCurrentUrlOrigin(), relative)
+  return innerFullUrl(externalBaseUrl || config.appBaseUrl, relative)
 }
