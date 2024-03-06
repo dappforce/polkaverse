@@ -19,6 +19,7 @@ import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
 import { ShowLikeablePostsProvider } from '../posts/ShowLikeablePostsContext'
 import WriteSomething from '../posts/WriteSomething'
 import { useReferralId } from '../referral/ReferralUrlChanger'
+import { useIsMobileWidthOrDevice } from '../responsive'
 import { CreatorsSpaces } from '../spaces/LatestSpacesPage'
 import Section from '../utils/Section'
 import style from './HomePage.module.sass'
@@ -187,6 +188,7 @@ const TabsHomePage = ({
       return <CreatorsSpaces />
     }
   }, [tab, type, date, myAddress])
+  const isMobile = useIsMobileWidthOrDevice()
 
   return (
     <>
@@ -195,8 +197,11 @@ const TabsHomePage = ({
         <CommentBanner />
       </div> */}
       <ShowLikeablePostsProvider tab={tab} filter={type}>
-        <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />
+        {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
         <Section className='m-0'>
+          {isMobile && (
+            <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} {...props} />
+          )}
           <TabsContent />
           <Tooltip title={'Back to top'} placement={'right'}>
             <BackTop className={style.DfBackToTop}>
