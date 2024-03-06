@@ -1,9 +1,10 @@
 import { isEmptyArray } from '@subsocial/utils'
-import { Affix, Card, Col, Form, FormInstance, Input, Row, Switch, Tabs } from 'antd'
+import { Affix, Button, Card, Col, Form, FormInstance, Input, Row, Switch, Tabs } from 'antd'
 import { LabeledValue } from 'antd/lib/select'
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { IoInformationCircle } from 'react-icons/io5'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { htmlToMd } from 'src/components/editor/tiptap'
 import { maxLenError, minLenError } from 'src/components/forms'
@@ -14,6 +15,7 @@ import NoData from 'src/components/utils/EmptyList'
 import SelectSpacePreview from 'src/components/utils/SelectSpacePreview'
 import TxButton from 'src/components/utils/TxButton'
 import { useSendEvent } from 'src/providers/AnalyticContext'
+import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { useSelectSpaceIdsWhereAccountCanPost } from 'src/rtk/features/spaceIds/spaceIdsHooks'
 import { PostContent, SpaceId } from 'src/types'
 import { PostType } from '.'
@@ -134,6 +136,7 @@ const FullEditor = ({
   const myAddress = useMyAddress()
   const allowedSpaceIds = useSelectSpaceIdsWhereAccountCanPost(myAddress as string)
   const router = useRouter()
+  const { data: totalStake } = useFetchTotalStake(myAddress)
   const {
     query: { tab = 'article', ...queries },
   } = router
@@ -286,6 +289,26 @@ const FullEditor = ({
                   {...txProps}
                 />
               </Card>
+              {!totalStake?.hasStakedEnough && (
+                <div className={clsx('mb-3', styles.PostToEarnCard, styles.AdvancedBody)}>
+                  <div className='d-flex align-items-center GapTiny FontNormal mb-2'>
+                    <IoInformationCircle
+                      className='FontLarge'
+                      style={{ color: 'rgb(96, 165, 250)' }}
+                    />
+                    <span className='FontWeightBold'>Post to Earn</span>
+                  </div>
+                  <p className='FontSmall mb-3'>
+                    You can receive extra SUB when others like your posts or comments. However, you
+                    need to first lock at least 2,000 SUB to become eligible.
+                  </p>
+                  <a href='/c/staking'>
+                    <Button type='primary' ghost className='RoundedHuge'>
+                      Lock SUB
+                    </Button>
+                  </a>
+                </div>
+              )}
               <Card className={clsx(styles.AdvancedBody)}>
                 <TagField tags={tags} />
                 {canonicalField}
