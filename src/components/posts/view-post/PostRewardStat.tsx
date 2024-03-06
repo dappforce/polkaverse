@@ -5,12 +5,12 @@ import capitalize from 'lodash/capitalize'
 import { ComponentProps } from 'react'
 import { TbCoins } from 'react-icons/tb'
 import { FormatBalance, formatBalanceToJsx } from 'src/components/common/balances'
+import { MINIMUM_LOCK } from 'src/config/constants'
 import { useSelectPost } from 'src/rtk/app/hooks'
 import { useSelectPostReward } from 'src/rtk/features/activeStaking/hooks'
 import { PostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import styles from './helpers.module.sass'
-import { MINIMUM_LOCK } from 'src/config/constants'
 
 export type PostRewardStatProps = ComponentProps<'div'> & { postId: string }
 
