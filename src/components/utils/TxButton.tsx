@@ -17,17 +17,21 @@ const mockSendTx = () => {
   }
 }
 
-function ResolvedTxButton(props: TxButtonProps) {
+function ResolvedTxButton({ canUseProxy = true, ...props }: TxButtonProps) {
   const { isStorybook = false } = useStorybookContext()
   const parentProxyAddress = useMyAccount(state => state.parentProxyAddress)
   const address = useMyAccount(state => state.address)
 
-  const usedAddress = props.canUseProxy ? address : parentProxyAddress || address
+  const usedAddress = canUseProxy ? address : parentProxyAddress || address
 
   return isStorybook ? (
     <AntdButton {...props} onClick={mockSendTx} />
   ) : (
-    <SubstrateTxButton {...props} accountId={props.accountId || usedAddress || ''} />
+    <SubstrateTxButton
+      {...props}
+      canUseProxy={canUseProxy}
+      accountId={props.accountId || usedAddress || ''}
+    />
   )
 }
 

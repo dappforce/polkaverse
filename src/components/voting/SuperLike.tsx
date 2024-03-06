@@ -27,11 +27,11 @@ import {
 } from 'src/rtk/features/activeStaking/superLikeCountsSlice'
 import { fetchSuperLikeMessage } from 'src/rtk/features/activeStaking/superLikeMessageSlice'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { useMyAccount } from 'src/stores/my-account'
 import { getAmountRange } from 'src/utils/analytics'
 import { getSubIdCreatorsLink } from 'src/utils/links'
 import { useAuth } from '../auth/AuthContext'
 import { useMyAddress } from '../auth/MyAccountsContext'
-import { useGetCurrentSigner } from '../auth/utils'
 import { IconWithLabel } from '../utils'
 import CustomModal from '../utils/CustomModal'
 import { createSuperLike } from '../utils/datahub/active-staking'
@@ -51,7 +51,6 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const dispatch = useAppDispatch()
   const myAddress = useMyAddress()
   const sendEvent = useSendEvent()
-  const getSigner = useGetCurrentSigner()
   const [isSigning, setIsSigning] = useState(false)
 
   const { data: superLikeMessage } = useFetchSuperLikeMessage()
@@ -207,15 +206,11 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
             onClick={async () => {
               setIsSigning(true)
               try {
-                const signer = await getSigner()
+                const signer = useMyAccount.getState().signer
                 if (signer && myAddress) {
                   const message = superLikeMessage.message
-                  const signature = await signer.signRaw?.({
-                    address: myAddress,
-                    data: message,
-                    type: 'bytes',
-                  })
-                  localStorage.setItem(CURRENT_WEEK_SIG, signature?.signature.toString() ?? '')
+                  const signature = signer.sign?.(message)
+                  localStorage.setItem(CURRENT_WEEK_SIG, signature.toString() ?? '')
                   onClick()
                 }
               } catch (err) {
