@@ -1,5 +1,6 @@
 import { newLogger } from '@subsocial/utils'
 import axios from 'axios'
+import BN from 'bignumber.js'
 import config from 'src/config'
 import { MINIMUM_LOCK } from 'src/config/constants'
 import { AccountId, ElasticQueryParams } from 'src/types'
@@ -68,10 +69,14 @@ export const getCreatorList = async () => {
 
 export const getTotalStake = async ({ address }: { address: string }) => {
   const res = await axiosRequest(`${subIdApiUrl}/staking/creator/backer/ledger?account=${address}`)
-  const totalStake = (res?.data?.totalLocked as string) || ''
-  const stakeAmount = BigInt(totalStake)
 
-  return { amount: stakeAmount.toString(), hasStakedEnough: stakeAmount >= MINIMUM_LOCK }
+  let lockedBN = new BN(res?.data?.totalLocked || '0')
+
+  res?.data.unbondingInfo.unbondingChunks?.forEach(({ amount }: any) => {
+    lockedBN = lockedBN.minus(amount)
+  })
+
+  return { amount: lockedBN.toString(), hasStakedEnough: lockedBN.lte(MINIMUM_LOCK.toString()) }
 }
 
 export const getStakeAmount = async ({
