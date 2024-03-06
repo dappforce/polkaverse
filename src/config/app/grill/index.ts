@@ -9,7 +9,7 @@ const index: AppConfig = {
   appBaseUrl: 'https://grillapp.net',
   themeName: undefined,
   metaTags: {
-    siteName: 'Grill',
+    siteName: 'Grill: Grill: Monetize Every Like, Comment, Post | Web3 Social',
     title: 'Grill: Monetize Every Like, Comment, Post | Web3 Social',
     desc: 'Revolutionary Web3 social finance platform where bloggers and their followers earn together. Blockchain, NFT, and crypto content.',
     defaultImage: '/images/grill-default-cover.png',
