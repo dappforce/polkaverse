@@ -43,6 +43,9 @@ type InnerUploadImgProps = {
   UploadButton: FC<UploadButtonProps>
 }
 
+const SOURCE_IMAGE_MAX_SIZE = 50 * 1024 * 1024 // 50MB
+const COMPRESSED_IMAGE_MAX_SIZE = 1 * 1024 * 1024 // 1MB
+
 export const UploadImg = ({
   onChange,
   UploadButton,
@@ -52,20 +55,40 @@ export const UploadImg = ({
   const [loading, setLoading] = useState(false)
   const { ipfs } = useSubsocialApi()
 
-  const validateImage = useCallback((file: File | Blob) => {
+  const validateImage = useCallback(async (file: File) => {
     const isJpgOrPng =
       file.type === 'image/jpeg' ||
       file.type === 'image/png' ||
       file.type === 'image/gif' ||
       file.type === 'image/webp'
     if (!isJpgOrPng) {
-      setError('You can only upload JPG/PNG/GIF/WEBP file.')
+      const error = 'You can only upload JPG/PNG/GIF/WEBP file.'
+      setError(error)
+      throw new Error(error)
     }
-    const isLt2M = file.size / 1024 / 1024 < 2
-    if (!isLt2M) {
-      setError('Image must smaller than 2MB.')
+    const isLtMaxSize = file.size < SOURCE_IMAGE_MAX_SIZE
+    if (!isLtMaxSize) {
+      const error = `Your image is too big. Try to upload smaller version less than ${
+        SOURCE_IMAGE_MAX_SIZE / 1024 / 1024
+      } MB`
+      setError(error)
+      throw new Error(error)
     }
-    return isJpgOrPng && isLt2M
+
+    const compressedImage = await resizeImage(file)
+    if (!compressedImage) {
+      const error = 'Failed to compress image'
+      setError(error)
+      throw new Error(error)
+    }
+
+    const isLtMaxCompressedSize = compressedImage.size > COMPRESSED_IMAGE_MAX_SIZE
+    if (isLtMaxCompressedSize) {
+      const error = 'Your image is too big. Try to upload smaller version'
+      setError(error)
+      throw new Error(error)
+    }
+    return compressedImage
   }, [])
 
   return (
@@ -73,21 +96,18 @@ export const UploadImg = ({
       <Upload
         accept='.gif, .png, .jpeg, .jpg, .webp'
         action={async file => {
-          const compressedImage = await resizeImage(file)
-          if (compressedImage) {
-            try {
-              setLoading(true)
-              const cid = await ipfs.saveFileToOffchain(compressedImage)
-              onChange(cid)
-              setLoading(false)
-              return cid
-            } catch (err: any) {
-              const error = err?.response?.data?.message
-              error && setError(err.response.data.message)
-              log.error('Failed upload image:', err)
-              setLoading(false)
-              return undefined
-            }
+          try {
+            setLoading(true)
+            const cid = await ipfs.saveFileToOffchain(file)
+            onChange(cid)
+            setLoading(false)
+            return cid
+          } catch (err: any) {
+            const error = err?.response?.data?.message
+            error && setError(err.response.data.message)
+            log.error('Failed upload image:', err)
+            setLoading(false)
+            return undefined
           }
         }}
         listType={listType}
