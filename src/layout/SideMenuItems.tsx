@@ -6,6 +6,7 @@ import { RiLineChartLine } from 'react-icons/ri'
 import { TbCoins, TbWorld } from 'react-icons/tb'
 import { TiFlashOutline } from 'react-icons/ti'
 import { SubIcon } from 'src/components/utils'
+import { getIsLoggedIn } from 'src/stores/my-account'
 
 export type Divider = 'Divider'
 
@@ -42,7 +43,7 @@ export const buildAuthorizedMenu = (myAddress?: string): MenuItem[] => {
       href: '/c',
       forceHardNavigation: true,
     },
-    ...(myAddress
+    ...(getIsLoggedIn()
       ? [
           {
             name: 'My Spaces',

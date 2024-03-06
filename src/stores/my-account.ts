@@ -238,3 +238,7 @@ async function subscribeEnergy(
   })
   return unsub
 }
+
+export function getIsLoggedIn() {
+  return !!accountStorage.get()
+}

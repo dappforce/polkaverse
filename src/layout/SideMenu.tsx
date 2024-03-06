@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { HTMLProps } from 'react'
 import CustomLink from 'src/components/referral/CustomLink'
+import useIsMounted from 'src/hooks/useIsMounted'
 import { useMyAddress } from '../components/auth/MyAccountsContext'
 import { buildAuthorizedMenu, isDivider, PageLink } from './SideMenuItems'
 import styles from './Sider.module.sass'
@@ -44,6 +45,9 @@ const renderPageLink = (item: PageLink) => {
 function SideMenu({ noOffset }: { noOffset?: boolean }) {
   const { pathname } = useRouter()
   const myAddress = useMyAddress()
+
+  const isMounted = useIsMounted()
+  if (!isMounted) return null
 
   const menuItems = buildAuthorizedMenu(myAddress)
 
