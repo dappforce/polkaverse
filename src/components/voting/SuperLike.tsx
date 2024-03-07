@@ -81,6 +81,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
     if (isActive || isDisabled) return
 
     if (!myAddress || !myGrillAddress) {
+      sendEvent('login_button_clicked', { eventSource: 'polkaverse-ui-super-like' })
       redirectToLogin()
       return
     }
