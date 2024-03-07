@@ -1,9 +1,10 @@
+import { Button } from 'antd'
+import { redirectToLogin } from 'src/utils/url'
 import NoData from '../utils/EmptyList'
-import { SignInButton } from './AuthButtons'
 
 export const NotAuthorized = () => (
   <NoData description='Only signed in users can access this page'>
-    <SignInButton />
+    <Button onClick={() => redirectToLogin()}>Sign in</Button>
   </NoData>
 )
 
