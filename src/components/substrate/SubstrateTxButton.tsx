@@ -104,6 +104,7 @@ function TxButton({
   children,
   parentProxyAddress,
   customNodeApi,
+  canUseProxy,
   ...antdProps
 }: TxButtonProps) {
   const { api: subsocialApi } = useSubstrate()
@@ -308,7 +309,7 @@ function TxButton({
     let account: AnyAccountId | KeyringSigner = accountId
 
     try {
-      if (accountId === useMyAccount.getState().address) {
+      if (accountId === useMyAccount.getState().address && canUseProxy) {
         // use proxy signer
         signer = undefined
         const keypairSigner = useMyAccount.getState().signer
@@ -457,8 +458,8 @@ function TxButton({
       {...antdProps}
       onClick={() => {
         if (!customNodeApi && !isFreeTx && !getIsUsingKeypairSigner(accountId ?? '')) {
-          openSignInModal(false)
           if (!accountId) {
+            openSignInModal(false)
             return setIsSending(false)
           }
           if (!hasTokens) {

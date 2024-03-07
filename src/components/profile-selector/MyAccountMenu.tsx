@@ -112,7 +112,7 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
       {!isDevMode && (
         <iframe
           ref={iframeRef}
-          src={`${getCurrentUrlOrigin()}/c/widget/profile`}
+          src={`${getCurrentUrlOrigin()}/c/widget/profile?theme=light`}
           style={{
             opacity: isOpenProfileModal ? 1 : 0,
             pointerEvents: isOpenProfileModal ? 'auto' : 'none',
