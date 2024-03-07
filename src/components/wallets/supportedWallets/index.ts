@@ -3,8 +3,9 @@ import { getWallets, Wallet } from '@talismn/connect-wallets'
 export const supportedWallets = getWallets()
 
 export const getWalletBySource = (source: string | unknown): Wallet | undefined => {
+  if (typeof source !== 'string') return undefined
   return getWallets().find(wallet => {
-    return wallet.title === source
+    return wallet.title.toLowerCase() === source.toLowerCase()
   })
 }
 

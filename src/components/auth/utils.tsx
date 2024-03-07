@@ -72,7 +72,7 @@ export const desktopWalletConnect = ({ setAccounts, setStatus }: ConnectWalletPr
   let cancelled = false
 
   ;(async () => {
-    const currentWallet = getCurrentWallet() || 'polkadot-js'
+    const currentWallet = getCurrentWallet() || 'Polkadot.js'
     const wallet = getWalletBySource(currentWallet as string)
 
     if ((window as Window & InjectedWindow)?.injectedWeb3) {

@@ -5,7 +5,7 @@ import clsx from 'clsx'
 import { capitalize } from 'lodash'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { useMyAccountsContext } from 'src/components/auth/MyAccountsContext'
+import { useMyAccountsContext, useMyAddress } from 'src/components/auth/MyAccountsContext'
 import Name from 'src/components/profiles/address-views/Name'
 import { useResponsiveSize } from 'src/components/responsive'
 import { toShortAddress } from 'src/components/utils'
@@ -71,10 +71,15 @@ const TransferButton = ({ form, recipient }: TransferButtonProps) => {
     return [recipient, balanceWithDecimal(amount.toString(), decimals).toString()]
   }
 
+  let extrinsic = 'balances.transfer'
+  if (network === 'kusama' || network === 'polkadot') {
+    extrinsic = 'balances.transferAllowDeath'
+  }
+
   return (
     <LazyTxButton
       accountId={sender}
-      tx='balances.transfer'
+      tx={extrinsic}
       network={network!}
       disabled={!network || !sender || !amount}
       params={buildTxParams}
@@ -100,6 +105,7 @@ export const DonateCard = ({ recipientAddress }: DonateProps) => {
 
   const { isMobile } = useResponsiveSize()
   const chainInfo = useChainInfo()
+  const myAddress = useMyAddress()
 
   const { setCurrency, setSender, currency, infoByNetwork } = useTipContext()
 
@@ -109,17 +115,19 @@ export const DonateCard = ({ recipientAddress }: DonateProps) => {
 
   const mySubsocialAddress = convertToSubsocialAddress(addressFromUrl)
 
-  const accountsForChoosing = accounts
+  const ss58Format = infoByNetwork?.ss58Format
+
+  const accountsForChoosing = Array.from(
+    new Set([{ address: convertAddressToChainFormat(myAddress, ss58Format)! }, ...accounts]),
+  )
     .filter(x => convertToSubsocialAddress(x.address) !== mySubsocialAddress)
     .map(x => x.address)
-
-  const ss58Format = infoByNetwork?.ss58Format
+    .filter(Boolean)
 
   const defaultSender = accountsForChoosing[0]
 
   useEffect(() => {
     if (!defaultSender) return
-
     setSender(defaultSender)
   }, [defaultSender])
 
@@ -144,6 +152,7 @@ export const DonateCard = ({ recipientAddress }: DonateProps) => {
 
       <Form.Item name={fieldName('sender')} label={'Sender'} required>
         <Select
+          key={defaultSender}
           size='large'
           defaultValue={defaultSender}
           style={{ width: '100%' }}
