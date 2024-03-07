@@ -69,16 +69,16 @@ export const SpacePreview = ({
 
   return (
     <div className='d-flex align-items-center justify-content-between'>
-      <div className='d-flex align-items-center'>
+      <div className='d-flex align-items-center' style={{ minWidth: 0 }}>
         <div>
           <Avatar />
         </div>
-        <div className='text-left'>
-          <div className='font-weight-bold'>
+        <div className='text-left d-flex flex-column' style={{ minWidth: 0 }}>
+          <div className='font-weight-bold' style={{ minWidth: 0 }}>
             {' '}
             {noLink ? spaceName : <ViewSpaceLink space={space} title={spaceName} />}
           </div>
-          <MutedDiv>
+          <MutedDiv style={{ minWidth: 0 }} className='d-flex'>
             <SummarizeMd
               className={clsx(styles.About, { [styles.WithoutButton]: !withFollowButton })}
               content={content}
