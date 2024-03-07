@@ -73,7 +73,7 @@ class SignerKeyringManager {
     return u8aToString(decrypted)
   }
 
-  public generateKeypairBySecret(secret: string) {
+  public generateKeypairBySecret(secret: string): ReturnType<Keyring['addFromUri']> {
     const keypair = this.keyring.addFromUri(secret, {}, 'sr25519')
     return keypair
   }
