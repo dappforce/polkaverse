@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import capitalize from 'lodash/capitalize'
 import { ComponentProps } from 'react'
 import { TbCoins } from 'react-icons/tb'
+import { useIsMyAddress } from 'src/components/auth/MyAccountsContext'
 import { FormatBalance, formatBalanceToJsx } from 'src/components/common/balances'
 import { MINIMUM_LOCK } from 'src/config/constants'
 import { useSelectPost } from 'src/rtk/app/hooks'
@@ -57,16 +58,19 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
   const post = useSelectPost(postId)
   const isComment = post?.post.struct.isComment
   const owner = post?.post.struct.ownerId
+  const isMyPost = useIsMyAddress(post?.post.struct.ownerId)
 
   const { data: totalStake } = useFetchTotalStake(owner || '')
   if (!reward?.isNotZero) return null
 
   const totalStakeAmount = new BN(totalStake?.amount || '0')
 
+  console.log(totalStakeAmount.toString())
+
   return (
     <div {...props} className={clsx(props.className)}>
       <div className='d-flex align-items-center GapMini FontWeightMedium ColorMuted'>
-        {totalStakeAmount.isZero() ? (
+        {totalStakeAmount.isZero() && isMyPost ? (
           <Tooltip
             className='d-flex align-items-center GapMini'
             title={
@@ -162,7 +166,9 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
                   value={reward.reward}
                 />
               </span>
-              <span className='d-flex align-items-center GapMini'>earned</span>
+              <span className='d-flex align-items-center GapMini'>
+                {totalStakeAmount.isZero() ? 'could earn' : 'earned'}
+              </span>
             </Tooltip>
           </>
         )}
