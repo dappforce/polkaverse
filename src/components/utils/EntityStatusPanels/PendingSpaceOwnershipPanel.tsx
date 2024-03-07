@@ -70,6 +70,7 @@ export const PendingSpaceOwnershipPanel = ({ space, ...otherProps }: Props) => {
     <TxButton
       size='small'
       tx={'spaceOwnership.acceptPendingOwnership'}
+      canUseProxy={false}
       params={getTxParams}
       onSuccess={status => {
         onSuccess(status)
@@ -86,6 +87,7 @@ export const PendingSpaceOwnershipPanel = ({ space, ...otherProps }: Props) => {
       size='small'
       tx={'spaceOwnership.rejectPendingOwnership'}
       params={getTxParams}
+      canUseProxy={false}
       onSuccess={onSuccess}
       label={iAmCurrentOwner ? 'Cancel transfer' : 'Reject'}
       successMessage={

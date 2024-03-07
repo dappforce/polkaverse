@@ -87,6 +87,7 @@ const TransferOwnershipModal = (props: ModalProps) => {
       label={'Transfer ownership'}
       disabled={!hasValidNewOwner()}
       params={getTxParams}
+      canUseProxy={false}
       tx={'spaceOwnership.transferSpaceOwnership'}
       onSuccess={onTxSuccess}
       onFailed={onTxFailed}
