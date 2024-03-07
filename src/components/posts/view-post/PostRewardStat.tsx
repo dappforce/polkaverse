@@ -65,8 +65,6 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
 
   const totalStakeAmount = new BN(totalStake?.amount || '0')
 
-  console.log(totalStakeAmount.toString())
-
   return (
     <div {...props} className={clsx(props.className)}>
       <div className='d-flex align-items-center GapMini FontWeightMedium ColorMuted'>
