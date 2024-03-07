@@ -44,7 +44,7 @@ Content related to prohibited substances or weapons is not allowed.
 
 Content with the intention to harm the community, project, or other users is prohibited.
 
-➕ **Report Violations**
+### Report Violations
 
 If you’ve seen a post, message or comment which violates this code of conduct, please report it to the Grill moderators or administrators as soon as possible. We rely on our community to help keep the discussions respectful and productive.
 
