@@ -4,6 +4,7 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import config from 'src/config'
 import { useBooleanExternalStorage } from 'src/hooks/useExternalStorage'
 import { useMyAccount } from 'src/stores/my-account'
+import { useIsMobileWidthOrDevice } from '../responsive'
 import SpacesSuggestedForOnBoarding from '../spaces/SpacesSuggestedForOnBoarding'
 import { useSubsocialApi } from '../substrate'
 import CustomModal from '../utils/CustomModal'
@@ -17,6 +18,7 @@ const shuffledRecommendedSpaceIds = recommendedSpaceIds.sort(() => Math.random()
 
 export default function RecommendedSpacesOnboarding() {
   const myAddress = useMyAddress()
+  const isMobile = useIsMobileWidthOrDevice()
   const isInitializedProxy = useMyAccount(state => state.isInitializedProxy)
   const { data: isFinishedOnBoarding, setData: setIsFinishedOnBoarding } =
     useBooleanExternalStorage(ON_BOARDING_MODAL_KEY, {
@@ -58,7 +60,7 @@ export default function RecommendedSpacesOnboarding() {
       <div
         className='d-flex flex-column scrollbar pr-2'
         style={{
-          height: '480px',
+          maxHeight: isMobile ? '435px' : '480px',
           overflow: 'auto',
         }}
       >
@@ -84,18 +86,20 @@ export default function RecommendedSpacesOnboarding() {
           maxItems={12}
         />
       </div>
-      <ResolvedTxButton
-        tx='utility.batch'
-        className='mt-4'
-        block
-        size='large'
-        type='primary'
-        params={() => [selectedSpaces.map(id => api.tx.spaceFollows.followSpace(id))]}
-        disabled={selectedSpaces.length === 0}
-        onSend={() => closeModal()}
-      >
-        Finish
-      </ResolvedTxButton>
+      <div style={{ marginTop: 'auto' }}>
+        <ResolvedTxButton
+          tx='utility.batch'
+          className='mt-4'
+          block
+          size='large'
+          type='primary'
+          params={() => [selectedSpaces.map(id => api.tx.spaceFollows.followSpace(id))]}
+          disabled={selectedSpaces.length === 0}
+          onSend={() => closeModal()}
+        >
+          Finish
+        </ResolvedTxButton>
+      </div>
     </CustomModal>
   )
 }

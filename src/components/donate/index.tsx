@@ -1,7 +1,7 @@
 import { Button, Modal, Row } from 'antd'
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { twitterShareUrl } from 'src/components/urls'
 import { ShareLink } from 'src/components/urls/helpers'
@@ -11,7 +11,7 @@ import { MutedSpan } from 'src/components/utils/MutedText'
 import Segment from 'src/components/utils/Segment'
 import { TextWithEmoji } from 'src/components/utils/TextWithEmoji'
 import { useSelectProfile } from '../../rtk/features/profiles/profilesHooks'
-import { useIsUsingEmail } from '../auth/MyAccountsContext'
+import { useIsUsingEmail, useMyAccountsContext } from '../auth/MyAccountsContext'
 import CustomLink from '../referral/CustomLink'
 import { DonateCard } from './DonateModal'
 import { TipContextWrapper, useTipContext } from './DonateModalContext'
@@ -62,6 +62,10 @@ export const Donate = ({ recipientAddress, renderButtonElement }: DonateProps) =
   const [showModal, setShowModal] = useState(false)
 
   const isUsingEmail = useIsUsingEmail()
+  const { connectWallet } = useMyAccountsContext()
+  useEffect(() => {
+    if (opened) connectWallet()
+  }, [opened])
 
   const open = () => {
     setOpened(true)
@@ -72,26 +76,11 @@ export const Donate = ({ recipientAddress, renderButtonElement }: DonateProps) =
     setShowModal(false)
   }
 
-  const InnerModal = () => {
-    const { setSuccess } = useTipContext()
-
-    const hideAndReset = () => {
-      hide()
-      setSuccess(false)
-    }
-
-    return (
-      <Modal visible={showModal} footer={null} width={600} onCancel={hideAndReset}>
-        <DonationModalBody recipientAddress={recipientAddress} />
-      </Modal>
-    )
-  }
-
   return (
     <>
       {opened && (
         <TipContextWrapper>
-          <InnerModal />
+          <InnerModal hide={hide} recipientAddress={recipientAddress} showModal={showModal} />
         </TipContextWrapper>
       )}
       {renderButtonElement ? (
@@ -102,6 +91,29 @@ export const Donate = ({ recipientAddress, renderButtonElement }: DonateProps) =
         </Button>
       )}
     </>
+  )
+}
+
+const InnerModal = ({
+  hide,
+  recipientAddress,
+  showModal,
+}: {
+  hide: () => void
+  showModal: boolean
+  recipientAddress: string
+}) => {
+  const { setSuccess } = useTipContext()
+
+  const hideAndReset = () => {
+    hide()
+    setSuccess(false)
+  }
+
+  return (
+    <Modal visible={showModal} footer={null} width={600} onCancel={hideAndReset}>
+      <DonationModalBody recipientAddress={recipientAddress} />
+    </Modal>
   )
 }
 

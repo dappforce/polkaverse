@@ -23,7 +23,6 @@ const { appBaseUrl, ipfsNodeUrl } = config
 import { Skeleton } from 'antd'
 import Avatar from 'antd/lib/avatar/avatar'
 import { AvatarSize } from 'antd/lib/avatar/SizeContext'
-import { InstallUrl, Urls } from '../wallets/types'
 import * as offchain from './OffchainUtils'
 
 export function isServerSide(): boolean {
@@ -300,8 +299,6 @@ export const detectBrowser = () => {
   return browser
 }
 
-export const getInstallUrl = (instalUrls: InstallUrl) => {
-  const browser = detectBrowser()
-
-  return instalUrls[browser as Urls]
+export const getInstallUrl = (instalUrls: string) => {
+  return instalUrls
 }

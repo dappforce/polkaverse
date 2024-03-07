@@ -32,9 +32,11 @@ import { useMyAccount } from 'src/stores/my-account'
 import { AnyAccountId, EmailAccount } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { useAccountSelector } from '../profile-selector/AccountSelector'
+import { useIsMobileWidthOrDevice } from '../responsive'
 import { reloadSpaceIdsFollowedByAccount } from '../spaces/helpers/reloadSpaceIdsFollowedByAccount'
 import { equalAddresses } from '../substrate'
 import { getSignerToken, isProxyAdded } from '../utils/OffchainSigner/ExternalStorage'
+import { desktopWalletConnect, mobileWalletConection } from './utils'
 //
 // Types
 //
@@ -68,6 +70,7 @@ export type MyAccountsContextProps = {
   setAccounts: (account: InjectedAccountWithMeta[]) => void
   setEmailAccounts: (emailAccounts: EmailAccount[]) => void
   resetEmailAccounts: () => void
+  connectWallet: () => void
 }
 
 const contextStub: MyAccountsContextProps = {
@@ -83,6 +86,7 @@ const contextStub: MyAccountsContextProps = {
     emailAccounts: [],
     status: 'LOADING',
   },
+  connectWallet: functionStub,
 }
 
 type UnsubscribeFn = {
@@ -99,8 +103,9 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
   const address = useMyAddress()
   const { getAllEmailAccounts } = useEmailAccount()
   const [, recheck] = useReducer(x => (x + 1) % 16384, 0)
+  const isMobile = useIsMobileWidthOrDevice()
 
-  const [status] = useState<Status>('LOADING')
+  const [status, setStatus] = useState<Status>('LOADING')
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([])
 
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([])
@@ -112,6 +117,11 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
 
   useEffect(() => {
     resetEmailAccounts()
+  }, [])
+
+  const params = { setAccounts, setStatus }
+  const connectWallet = useCallback(() => {
+    isMobile ? mobileWalletConection(params) : desktopWalletConnect(params)
   }, [])
 
   useEffect(() => {
@@ -172,6 +182,7 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
       setEmailAccounts,
       resetEmailAccounts,
       state,
+      connectWallet,
     }
   }, [state])
 

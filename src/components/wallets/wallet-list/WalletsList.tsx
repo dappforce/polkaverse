@@ -1,4 +1,5 @@
 import { DownloadOutlined } from '@ant-design/icons'
+import { Wallet } from '@talismn/connect-wallets'
 import { Tooltip } from 'antd'
 import clsx from 'clsx'
 import { useEffect, useMemo, useState } from 'react'
@@ -11,7 +12,6 @@ import { ButtonLink } from '../../utils/CustomLinks'
 import { AvatarOrSkeleton, detectBrowser, getInstallUrl } from '../../utils/index'
 import { showWarnMessage } from '../../utils/Message'
 import { supportedWallets } from '../supportedWallets/index'
-import { Wallet } from '../types'
 import styles from './WalletList.module.sass'
 
 export const CURRENT_WALLET = 'preferred-wallet'
@@ -40,17 +40,15 @@ const WalletList = ({ setCurrentStep }: GetWalletPorps) => {
     if (wallet.installed) {
       await wallet.enable(appName)
 
-      if (wallet.enabled) {
-        const unsub: any = await wallet.subscribeAccounts(async accounts => {
-          if (accounts) {
-            setAccountsToState(accounts, setAccounts)
-            setCurrentStep(StepsEnum.SelectAccount)
-            setCurrentWallet(wallet.extensionName)
-          }
-        })
+      const unsub: any = await wallet.subscribeAccounts(async accounts => {
+        if (accounts) {
+          setAccountsToState(accounts, setAccounts)
+          setCurrentStep(StepsEnum.SelectAccount)
+          setCurrentWallet(wallet.extensionName)
+        }
+      })
 
-        setUnsubscribe(unsub)
-      }
+      setUnsubscribe(unsub)
     } else {
       showWarnMessage(
         `${wallet.title} extension is not installed or refresh the browser if ${wallet.title} is already installed`,
@@ -69,7 +67,7 @@ const WalletList = ({ setCurrentStep }: GetWalletPorps) => {
   }, [supportedWallets])
 
   const wallets = sortedSupportedWallets.map(wallet => {
-    const { title, logo, installed, installUrls } = wallet
+    const { title, logo, installed, installUrl } = wallet
 
     const onInstallButtonClick = (e: React.MouseEvent<HTMLElement>) => {
       e.stopPropagation()
@@ -95,7 +93,7 @@ const WalletList = ({ setCurrentStep }: GetWalletPorps) => {
             title={`Install ${title} or refresh the browser if ${title} is already installed`}
           >
             <ButtonLink
-              href={getInstallUrl(installUrls)}
+              href={getInstallUrl(installUrl)}
               target='_blank'
               className={styles.InstallButton}
               onClick={onInstallButtonClick}

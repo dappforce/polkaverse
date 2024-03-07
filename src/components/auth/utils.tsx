@@ -9,7 +9,7 @@ export const recheckStatuses = ['UNAVAILABLE', 'UNAUTHORIZED']
 
 const { appName } = config
 
-export const CURRENT_WALLET = 'CurrentWalletName'
+export const CURRENT_WALLET = 'preferred-wallet'
 
 export const getCurrentWallet = (): string => store.get(CURRENT_WALLET)
 
@@ -72,7 +72,7 @@ export const desktopWalletConnect = ({ setAccounts, setStatus }: ConnectWalletPr
   let cancelled = false
 
   ;(async () => {
-    const currentWallet = getCurrentWallet() || 'polkadot-js'
+    const currentWallet = getCurrentWallet() || 'Polkadot.js'
     const wallet = getWalletBySource(currentWallet as string)
 
     if ((window as Window & InjectedWindow)?.injectedWeb3) {
