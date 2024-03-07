@@ -154,9 +154,9 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
     if (parentProxyAddress) {
       set({ parentProxyAddress })
       try {
-        // Remove proxy with type 'Any'
         const proxies = await getProxies(parentProxyAddress)
         const currentProxy = proxies.find(({ address }) => address === get().address)
+        // Remove proxy with type 'Any'
         if (currentProxy?.proxyType === 'Any') {
           async function removeProxy() {
             const api = getSubsocialApi()
