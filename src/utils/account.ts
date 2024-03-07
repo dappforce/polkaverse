@@ -5,7 +5,8 @@ export type KeyringSigner = ReturnType<Keyring['addFromSeed']>
 async function getKeyring() {
   const { Keyring } = await import('@polkadot/keyring')
   const { waitReady } = await import('@polkadot/wasm-crypto')
-  await waitReady()
+  const { cryptoWaitReady } = await import('@polkadot/util-crypto')
+  await Promise.all([cryptoWaitReady(), waitReady()])
 
   const keyring = new Keyring({ type: 'sr25519' })
   return keyring
