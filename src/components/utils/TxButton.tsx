@@ -22,8 +22,10 @@ function ResolvedTxButton({ canUseProxy = true, ...props }: TxButtonProps) {
   const parentProxyAddress = useMyAccount(state => state.parentProxyAddress)
   const address = useMyAccount(state => state.address)
   let usedAddress = props.accountId || address || ''
-  if (props.accountId === parentProxyAddress) {
+  if (props.accountId === parentProxyAddress && canUseProxy) {
     usedAddress = address || ''
+  } else if (!canUseProxy) {
+    usedAddress = parentProxyAddress || address || ''
   }
 
   return isStorybook ? (
