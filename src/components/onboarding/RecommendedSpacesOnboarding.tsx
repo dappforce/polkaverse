@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import config from 'src/config'
 import { useBooleanExternalStorage } from 'src/hooks/useExternalStorage'
+import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useMyAccount } from 'src/stores/my-account'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import SpacesSuggestedForOnBoarding from '../spaces/SpacesSuggestedForOnBoarding'
@@ -19,6 +20,7 @@ const shuffledRecommendedSpaceIds = recommendedSpaceIds.sort(() => Math.random()
 export default function RecommendedSpacesOnboarding() {
   const myAddress = useMyAddress()
   const isMobile = useIsMobileWidthOrDevice()
+  const sendEvent = useSendEvent()
   const isInitializedProxy = useMyAccount(state => state.isInitializedProxy)
   const { data: isFinishedOnBoarding, setData: setIsFinishedOnBoarding } =
     useBooleanExternalStorage(ON_BOARDING_MODAL_KEY, {
@@ -40,6 +42,7 @@ export default function RecommendedSpacesOnboarding() {
   }, [myAddress, isInitializedProxy, isFinishedOnBoarding])
 
   const closeModal = () => {
+    sendEvent('login_space_suggestion_skipped')
     setIsOpen(false)
     setIsFinishedOnBoarding(true)
     setIsOnBoardingSkipped(true)
@@ -75,6 +78,7 @@ export default function RecommendedSpacesOnboarding() {
             onClick: (space, type) => {
               const currentSpaces = new Set(spacesSet)
               if (type === 'follow') {
+                sendEvent('login_space_suggestion_followed', { value: space.id })
                 currentSpaces.add(space.id)
               } else {
                 currentSpaces.delete(space.id)
@@ -95,7 +99,10 @@ export default function RecommendedSpacesOnboarding() {
           type='primary'
           params={() => [selectedSpaces.map(id => api.tx.spaceFollows.followSpace(id))]}
           disabled={selectedSpaces.length === 0}
-          onSend={() => closeModal()}
+          onSend={() => {
+            sendEvent('login_space_suggestion_finished')
+            closeModal()
+          }}
         >
           Finish
         </ResolvedTxButton>
