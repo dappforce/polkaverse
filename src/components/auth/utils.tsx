@@ -9,7 +9,7 @@ export const recheckStatuses = ['UNAVAILABLE', 'UNAUTHORIZED']
 
 const { appName } = config
 
-export const CURRENT_WALLET = 'CurrentWalletName'
+export const CURRENT_WALLET = 'preferred-wallet'
 
 export const getCurrentWallet = (): string => store.get(CURRENT_WALLET)
 

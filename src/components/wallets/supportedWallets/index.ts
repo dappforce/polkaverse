@@ -1,13 +1,10 @@
-import { Wallet } from '../types'
-import { PolkadotjsWallet } from './polkadot-wallet'
-import { SubWallet } from './subwallet-wallet'
-import { TalismanWallet } from './talisaman-wallet'
+import { getWallets, Wallet } from '@talismn/connect-wallets'
 
-export const supportedWallets = [new TalismanWallet(), new SubWallet(), new PolkadotjsWallet()]
+export const supportedWallets = getWallets()
 
 export const getWalletBySource = (source: string | unknown): Wallet | undefined => {
-  return supportedWallets.find(wallet => {
-    return wallet.extensionName === source
+  return getWallets().find(wallet => {
+    return wallet.title === source
   })
 }
 

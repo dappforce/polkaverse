@@ -96,6 +96,7 @@
     "@subsocial/grill-widget": "^0.0.13",
     "@subsocial/resource-discussions": "^0.0.4",
     "@subsocial/utils": "0.8.10",
+    "@talismn/connect-wallets": "^1.2.5",
     "@tiptap/extension-highlight": "^2.0.0-beta.33",
     "@tiptap/extension-image": "^2.0.0-beta.27",
     "@tiptap/extension-link": "^2.0.0-beta.37",
