@@ -106,7 +106,7 @@ export const OwnedSpacesList = ({ ...props }: Omit<AccountSpacesProps, 'withTitl
     ) || []
 
   const reversedFollowedSpaceIds = useMemo(() => {
-    const reversed = [...ownedSpaceIds]
+    const reversed = [...followedSpaceIds]
     reversed.reverse()
     return reversed
   }, [followedSpaceIds])
