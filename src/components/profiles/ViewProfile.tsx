@@ -214,6 +214,7 @@ const ProfilePage: NextPage<Props> = props => {
         canonical: accountUrl({ address }),
       }}
       withSidebar
+      creatorDashboardSidebarType={{ name: 'home-page', variant: 'posts' }}
     >
       <Component {...props} />
       {!shouldHideContent && <AccountActivity address={address.toString()} />}
