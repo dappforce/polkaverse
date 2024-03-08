@@ -34,13 +34,7 @@ export type InnerLoadMoreFn<T = GetSearchResults_searchQuery_hits> = (
 
 const { TabPane } = Tabs
 
-const AllTabKey = 'all'
-
 const panes = [
-  {
-    key: AllTabKey,
-    title: 'All',
-  },
   {
     key: 'spaces',
     title: 'Spaces',

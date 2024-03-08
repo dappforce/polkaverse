@@ -80,9 +80,9 @@ const SearchInput = () => {
   }, [spaceId?.toString()])
 
   useEffect(() => {
-    if (isSearchPage) return
-
-    setSearchValue(undefined)
+    if (!isSearchPage) {
+      setSearchValue(undefined)
+    }
   }, [isSearchPage])
 
   const onSearch = (value: string) => {
