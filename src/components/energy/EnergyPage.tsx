@@ -16,7 +16,11 @@ const meta: HeadMetaProps = {
 
 export const EnergyPage = () => {
   return (
-    <PageContent className='mx-5 mt-4' meta={meta}>
+    <PageContent
+      className='mt-4'
+      meta={meta}
+      creatorDashboardSidebarType={{ name: 'home-page', variant: 'posts' }}
+    >
       <div className='d-flex justify-content-center'>
         <div className={clsx('SubsocialGradient mb-3', styles.Title)}>Energy Station</div>
       </div>

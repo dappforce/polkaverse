@@ -23,7 +23,7 @@ export default function Energy({ ...props }: OnBoardingContentProps) {
   } = useAuth()
   const openState = useOnBoardingModalOpenState()
   const [selectedTab] = useState<Tabs>(
-    'burn-sub' // !balance.isZero() ? 'burn-sub' : 'free-energy',
+    'burn-sub', // !balance.isZero() ? 'burn-sub' : 'free-energy',
   )
   const [isDisabled, setIsDisabled] = useState(false)
   // const [isDiscordLinkClicked, setIsDiscordLinkClicked] = useState(false)
@@ -54,24 +54,24 @@ export default function Energy({ ...props }: OnBoardingContentProps) {
         {/*  activeKey={selectedTab}*/}
         {/*  onChange={tab => setSelectedTab(tab as Tabs)}*/}
         {/*>*/}
-          <EnergyForm
-            bordered={false}
-            className={styles.EnergyForm}
-            forSelfOnly
-            subscribeValues={{
-              setIsDisabled,
-              setAmount: amount => saveInputtedSubAmt(amount ?? 0),
-              amount: inputtedSubAmt,
-              noButton: true,
-            }}
-          />
-          {/*<TabPane tab='Get Free Energy' key={getTabKey('free-energy')}>*/}
-          {/*  <EnergyDiscordInstruction*/}
-          {/*    withWaitStep*/}
-          {/*    className='FontNormal'*/}
-          {/*    onDiscordLinkClick={() => setIsDiscordLinkClicked(true)}*/}
-          {/*  />*/}
-          {/*</TabPane>*/}
+        <EnergyForm
+          bordered={false}
+          className={styles.EnergyForm}
+          forSelfOnly
+          subscribeValues={{
+            setIsDisabled,
+            setAmount: amount => saveInputtedSubAmt(amount ?? 0),
+            amount: inputtedSubAmt,
+            noButton: true,
+          }}
+        />
+        {/*<TabPane tab='Get Free Energy' key={getTabKey('free-energy')}>*/}
+        {/*  <EnergyDiscordInstruction*/}
+        {/*    withWaitStep*/}
+        {/*    className='FontNormal'*/}
+        {/*    onDiscordLinkClick={() => setIsDiscordLinkClicked(true)}*/}
+        {/*  />*/}
+        {/*</TabPane>*/}
         {/*</Tabs>*/}
       </div>
     </OnBoardingContentContainer>
