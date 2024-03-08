@@ -99,7 +99,9 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
                   value={reward.reward || '0'}
                 />
               </span>
-              <span className='d-flex align-items-center GapMini'>could earn</span>
+              <span className='d-flex align-items-center GapMini' style={{ whiteSpace: 'nowrap' }}>
+                could earn
+              </span>
             </div>
           </Tooltip>
         ) : (
