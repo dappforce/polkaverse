@@ -38,10 +38,12 @@ const InnerViewSpacePage: FC<Props> = props => {
   // if (loading && isClientSide()) return <Loading label='Loading space...' center />.
 
   const id = idToBn(spaceData.struct.id)
-  const { name, image } = spaceData.content as SpaceContent
+  const { name, image } = (spaceData.content as SpaceContent | undefined) || {}
 
   // We add this to a title to improve SEO of Polkadot projects.
-  const title = name + (isPolkaProject(id) ? ' - Polkadot ecosystem projects' : '')
+  const title = name
+    ? name + (isPolkaProject(id) ? ' - Polkadot ecosystem projects' : '')
+    : config.metaTags.title
 
   const { ownerId } = spaceData.struct
 
