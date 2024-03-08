@@ -1,7 +1,7 @@
 import { Button, Divider, Modal, Tabs } from 'antd'
 import partition from 'lodash.partition'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { shallowEqual } from 'react-redux'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
@@ -105,6 +105,12 @@ export const OwnedSpacesList = ({ ...props }: Omit<AccountSpacesProps, 'withTitl
       shallowEqual,
     ) || []
 
+  const reversedFollowedSpaceIds = useMemo(() => {
+    const reversed = [...ownedSpaceIds]
+    reversed.reverse()
+    return reversed
+  }, [followedSpaceIds])
+
   const spaceIdsImEditorOf =
     useAppSelector(state => (address ? selectSpaceIdsWithRolesByAccount(state, address) : [])) || []
 
@@ -143,10 +149,10 @@ export const OwnedSpacesList = ({ ...props }: Omit<AccountSpacesProps, 'withTitl
           {...props}
         />
       </TabPane>
-      <TabPane tab={`Followed (${followedSpaceIds.length})`} key='followed'>
+      <TabPane tab={`Following (${reversedFollowedSpaceIds.length})`} key='followed'>
         <SpacesListBySpaceIds
-          spaceIds={followedSpaceIds}
-          totalCount={followedSpaceIds.length}
+          spaceIds={reversedFollowedSpaceIds}
+          totalCount={reversedFollowedSpaceIds.length}
           {...props}
         />
       </TabPane>
