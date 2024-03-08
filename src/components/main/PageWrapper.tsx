@@ -3,8 +3,9 @@ import { summarize } from '@subsocial/utils/summarize'
 import clsx from 'clsx'
 import { CID } from 'ipfs-http-client'
 import Head from 'next/head'
-import React, { ComponentProps, FC } from 'react'
+import React, { ComponentProps, FC, useRef } from 'react'
 import config from 'src/config'
+import { useStickyElement } from 'src/hooks/useStickyElement'
 import { resolveIpfsUrl } from 'src/ipfs'
 import SideMenu from 'src/layout/SideMenu'
 import CreatorDashboardSidebar, {
@@ -219,16 +220,42 @@ export const PageContent: FC<Props> = ({
           </section>
           {rightPanel}
           {rightPanel === undefined && creatorDashboardSidebarType && (
-            <div {...sidebarStyles()}>
-              <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
-              <div className='mt-3'>
-                <TopUsersCard />
-              </div>
-              {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}
-            </div>
+            <CreatorSidebar
+              {...sidebarStyles()}
+              creatorDashboardSidebarType={creatorDashboardSidebarType}
+            />
           )}
         </div>
       )}
     </>
+  )
+}
+
+function CreatorSidebar({
+  creatorDashboardSidebarType,
+  ...props
+}: ComponentProps<'div'> & { creatorDashboardSidebarType: CreatorDashboardSidebarType }) {
+  const ref = useRef<HTMLDivElement | null>(null)
+  const { position, top: _top } = useStickyElement({ elRef: ref, top: 76 - BOX_SHADOW_OFFSET })
+
+  return (
+    <div
+      {...props}
+      style={{
+        ...props.style,
+        top: _top,
+        position,
+        height: 'fit-content',
+        maxHeight: 'none',
+        overflow: 'visible',
+      }}
+      ref={ref}
+    >
+      <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
+      <div className='mt-3'>
+        <TopUsersCard />
+      </div>
+      {/* <OnBoardingSidebar hideOnBoardingSidebar={() => setShowOnBoardingSidebar(false)} /> */}
+    </div>
   )
 }
