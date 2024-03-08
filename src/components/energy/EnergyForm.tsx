@@ -5,12 +5,24 @@ import {
   isDefined,
   nonEmptyStr,
 } from '@subsocial/utils'
-import { Button, Card, CardProps, Checkbox, Col, Divider, Form, Input, Row, Tooltip } from 'antd'
+import {
+  Alert,
+  Button,
+  Card,
+  CardProps,
+  Checkbox,
+  Col,
+  Divider,
+  Form,
+  Input,
+  Row,
+  Tooltip,
+} from 'antd'
 import { FormInstance } from 'antd/es/form/Form'
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
+import { useMyAccount } from 'src/stores/my-account'
 import { useAuth } from '../auth/AuthContext'
-import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import { useSubstrate } from '../substrate'
 import { AccountInputField } from '../utils/forms/AccountInputField'
@@ -188,18 +200,20 @@ export interface EnergyFormProps extends CardProps {
 }
 const EnergyForm = ({ forSelfOnly, subscribeValues, ...props }: EnergyFormProps) => {
   const [form] = Form.useForm()
-  const myAddress = useMyAddress()
   const [amount, setAmount] = useState<BigNumber>()
   const [amountWithoutValidation, setAmountWithoutValidation] = useState<BigNumber>()
   const [isAnotherRecipient, setIsAnotherRecipient] = useState(false)
   const [success, setSuccess] = useState(false)
+
+  const address = useMyAccount(state => state.address)
+  const hasProxy = useMyAccount(state => !!state.parentProxyAddress)
 
   const buildTxParams = () => {
     if (!amount) return []
 
     const recipient = form.getFieldValue(fieldName('recipient'))
 
-    return [recipient || myAddress, amount.toString()]
+    return [recipient || address, amount.toString()]
   }
 
   useEffect(() => {
@@ -249,6 +263,12 @@ const EnergyForm = ({ forSelfOnly, subscribeValues, ...props }: EnergyFormProps)
             </Tooltip>
           </div>
         )}
+        {!isAnotherRecipient && hasProxy && (
+          <Alert
+            className='my-3'
+            message='Energy will be generated for your current Grill proxy key. To generate energy for a different account, click the checkmark above'
+          />
+        )}
         {isAnotherRecipient && (
           <AccountInputField
             name={fieldName('recipient')}
@@ -268,6 +288,7 @@ const EnergyForm = ({ forSelfOnly, subscribeValues, ...props }: EnergyFormProps)
           type='primary'
           block
           label='Generate energy'
+          canUseProxy={false}
           tx='energy.generateEnergy'
           params={buildTxParams}
           onSuccess={() => setSuccess(true)}
