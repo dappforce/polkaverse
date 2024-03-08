@@ -84,6 +84,4 @@ Posts and comments which have broken the code of conduct and Grill’s polices a
 
 Please refer to the list below for your go-to contact points regarding the Grill.
 
-Grill Moderators Chat (will create)
-
-Google Form
+[Official Chat](https://grillapp.net/c/ask)

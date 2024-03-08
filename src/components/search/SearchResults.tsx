@@ -133,7 +133,7 @@ const InnerSearchResultList = <T extends SearchResultsType>(
     const offset = (page - 1) * size
 
     let usedTab: ElasticSearchIndexType[] = []
-    const validTab = (!tab || tab === 'feed' ? 'all' : tab) as
+    const validTab = (!tab || tab === 'feed' ? 'posts' : tab) as
       | ElasticSearchIndexType
       | ElasticSearchIndexType[]
     if (Array.isArray(validTab)) usedTab = validTab

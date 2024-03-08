@@ -5,7 +5,7 @@ export const getSubsocialDiscordLink = () => 'https://discord.com/invite/w2Rqy2M
 export const getContentStakingLink = () => 'https://grillapp.net/c/staking'
 
 export const activeStakingLinks = {
-  learnMore: 'https://docs.subsocial.network/docs/basics/creator-staking/active-staking',
+  learnMore: 'https://docs.subsocial.network/docs/basics/content-staking/content-staking',
   discuss: () => {
     const currentWallet = getCurrentWallet()
     const link = 'https://grillapp.net/c/subsocial/grill-official-54469'
