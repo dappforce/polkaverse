@@ -127,7 +127,14 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
     ] as const)
     if (postIdsPromise.status === 'fulfilled') {
       const postIds = postIdsPromise.value
-      await dispatch(fetchPosts({ api: subsocial, ids: postIds, reload: true }))
+      await dispatch(
+        fetchPosts({
+          api: subsocial,
+          ids: postIds,
+          reload: true,
+          dataSource: DataSourceTypes.SQUID,
+        }),
+      )
     }
     initialApolloState = client.extract()
   } else {
