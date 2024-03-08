@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import React, { createContext, FC, useContext, useEffect, useRef, useState } from 'react'
 import { getCurrentUrlOrigin } from 'src/utils/url'
 import { InfoDetails } from '../profiles/address-views'
@@ -67,14 +66,18 @@ const MyAccountDrawerContext = createContext<MyAccountSectionContextState>(initV
 export const useMyAccountDrawer = () => useContext(MyAccountDrawerContext)
 
 function parseMessage(data: string) {
-  const [origin, name, value] = data.split(':')
+  const match = data.match(/^([^:]+):([^:]+):(.+)$/)
+  if (!match) return null
+
+  const origin = match[1]
+  const name = match[2]
+  const value = match[3]
   if (origin !== 'grill') return null
   return { name: name ?? '', value: value ?? '' }
 }
 export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, owner }) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [isOpenProfileModal, setIsOpenProfileModal] = useState(false)
-  const router = useRouter()
 
   useEffect(() => {
     window.onmessage = event => {
@@ -84,8 +87,9 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
       const { name, value } = message
       if (name === 'profile' && value === 'close') {
         setIsOpenProfileModal(false)
-      } else if (name === 'redirect') {
-        router.push(value)
+      } else if (name === 'redirect' || name === 'redirect-hard') {
+        // Using router push for redirect don't redirect properly, it just have loading for a bit and changes the url much later
+        window.location.href = value
         setIsOpenProfileModal(false)
       }
     }
