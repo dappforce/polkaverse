@@ -8,7 +8,7 @@ import {
   ThunkApiConfig,
 } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
-import { AccountId, PostId, PostWithSomeDetails } from 'src/types'
+import { AccountId, DataSourceTypes, PostId, PostWithSomeDetails } from 'src/types'
 import { fetchPosts } from '../posts/postsSlice'
 
 export type ReplyIdsByPostId = {
@@ -91,7 +91,13 @@ export const fetchPostReplyIds = createAsyncThunk<
 
   await Promise.allSettled([
     dispatch(
-      fetchPosts({ api, withReactionByAccount: myAddress, ids: replyIds, withSpace: false }),
+      fetchPosts({
+        api,
+        withReactionByAccount: myAddress,
+        ids: replyIds,
+        withSpace: false,
+        dataSource: DataSourceTypes.SQUID,
+      }),
     ),
   ])
 
