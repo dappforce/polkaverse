@@ -1,7 +1,7 @@
 import { IpfsContent, PostUpdate } from '@subsocial/api/substrate/wrappers'
 import { newLogger } from '@subsocial/utils'
 import { getPostIdFromSlug } from '@subsocial/utils/slugify'
-import { Form } from 'antd'
+import { Button, Form } from 'antd'
 import BN from 'bn.js'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
@@ -232,7 +232,13 @@ function LoadPostThenEdit(props: PostFormProps) {
 
   if (!post) return <PostNotFound />
 
-  if (!canEditPost) return <NoData description='You do not have permission to edit this post' />
+  if (!canEditPost)
+    return (
+      <div className='d-flex flex-column align-items-center'>
+        <NoData description='You do not have permission to edit this post' />
+        <Button href={postUrl(space, post)}>Go to post</Button>
+      </div>
+    )
 
   return <FormInSection {...props} post={post} />
 }
