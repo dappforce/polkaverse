@@ -87,6 +87,9 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
       } else if (name === 'redirect') {
         router.push(value)
         setIsOpenProfileModal(false)
+      } else if (name === 'redirect-hard') {
+        window.location.href = value
+        setIsOpenProfileModal(false)
       }
     }
   }, [])
