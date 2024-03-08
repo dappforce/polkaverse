@@ -82,9 +82,7 @@ export const Notifications = ({ address, title }: BaseActivityProps) => {
   const { updateLastReadNotification } = useNotifCounterContext()
 
   useEffect(() => {
-    return () => {
-      updateLastReadNotification(new Date().toISOString())
-    }
+    updateLastReadNotification(new Date().toISOString())
   }, [])
 
   const getAllNotifications = useGetAllNotifications()

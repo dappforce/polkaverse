@@ -5,6 +5,7 @@ import { FaRegBell } from 'react-icons/fa'
 import config from 'src/config'
 import { useGetNotificationsCount } from 'src/graphql/hooks'
 import useExternalStorage from 'src/hooks/useExternalStorage'
+import { useMyAccount } from 'src/stores/my-account'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import CustomLink from '../referral/CustomLink'
 import styles from './style.module.sass'
@@ -14,49 +15,56 @@ const { enableNotifications } = config
 export type UpdateLastReadNotificationFn = (lastReadDate: string) => void
 export type NotifCounterContextProps = {
   unreadCount: number
-  lastReadNotif: string | undefined
+  getLastReadNotif: (address: string) => string | undefined
   updateLastReadNotification: UpdateLastReadNotificationFn
+  previousLastRead: string | null
 }
 
 export const NotifCounterContext = createContext<NotifCounterContextProps>({
   unreadCount: 0,
-  lastReadNotif: undefined,
+  getLastReadNotif: () => undefined,
   updateLastReadNotification: {} as any,
+  previousLastRead: null,
 })
 
 const LAST_READ_NOTIFICATION_KEY = 'lastReadNotification'
 
 function InnerNotifCounterProvider(props: React.PropsWithChildren<{}>) {
-  const { data: lastReadNotif, setData: setLastReadNotif } = useExternalStorage(
-    LAST_READ_NOTIFICATION_KEY,
-    { storageKeyType: 'user' },
-  )
+  const { getDataForAddress, setData } = useExternalStorage(LAST_READ_NOTIFICATION_KEY, {
+    storageKeyType: 'user',
+  })
   const myAddress = useMyAddress()
+  const isInitializedProxy = useMyAccount(state => state.isInitializedProxy)
 
   const [unreadCount, setUnreadCount] = useState(0)
+  const [previousLastRead, setPreviousLastRead] = useState<string | null>(null)
   const getNotificationsCount = useGetNotificationsCount()
   const updateLastReadNotification = (newLastRead: string) => {
     if (!myAddress) return
+    setPreviousLastRead(getDataForAddress(myAddress))
     setUnreadCount(0)
-    if (!lastReadNotif || new Date(lastReadNotif) < new Date(newLastRead)) {
-      setLastReadNotif(newLastRead)
-    }
+    setData(newLastRead)
   }
 
   useEffect(() => {
+    if (!isInitializedProxy || !myAddress) return
     ;(async () => {
-      if (!myAddress || lastReadNotif === undefined) return
       const unreadCount = await getNotificationsCount({
         address: myAddress,
-        afterDate: lastReadNotif || undefined,
+        afterDate: getDataForAddress(myAddress) || undefined,
       })
       setUnreadCount(unreadCount)
     })()
-  }, [lastReadNotif, myAddress])
+  }, [myAddress, isInitializedProxy])
 
   return (
     <NotifCounterContext.Provider
-      value={{ unreadCount, lastReadNotif, updateLastReadNotification }}
+      value={{
+        unreadCount,
+        getLastReadNotif: getDataForAddress,
+        updateLastReadNotification,
+        previousLastRead,
+      }}
     >
       {props.children}
     </NotifCounterContext.Provider>
@@ -90,12 +98,15 @@ const Bell = ({ unreadCount }: NotificationsProps) => (
 )
 
 export const NotificationsBell = ({ unreadCount }: NotificationsProps) => {
-  const { lastReadNotif } = useNotifCounterContext()
+  const myAddress = useMyAddress()
+  const isInitializedProxy = useMyAccount(state => state.isInitializedProxy)
+  const { getLastReadNotif } = useNotifCounterContext()
 
   if (!enableNotifications) return null
-  if (!unreadCount || unreadCount <= 0) return <Bell unreadCount={unreadCount} />
+  if (!unreadCount || unreadCount <= 0 || !isInitializedProxy)
+    return <Bell unreadCount={unreadCount} />
 
-  const showWithoutCount = !lastReadNotif
+  const showWithoutCount = !getLastReadNotif(myAddress)
 
   return (
     <Badge

@@ -111,8 +111,8 @@ const iconByEvent: Record<string, React.ReactNode> = {
 export function InnerNotification(props: InnerNotificationProps) {
   const myAddress = useMyAddress()
 
-  const { lastReadNotif } = useNotifCounterContext()
-  const showUnreadBadge = new Date(lastReadNotif ?? new Date()) < new Date(props.date)
+  const { previousLastRead } = useNotifCounterContext()
+  const showUnreadBadge = new Date(previousLastRead ?? new Date()) < new Date(props.date)
 
   const {
     preview,
