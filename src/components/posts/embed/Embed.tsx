@@ -56,7 +56,20 @@ const getEmbedUrl = (url: string, embed: string | undefined) => {
 
 export function getEmbedLinkType(link: string | undefined) {
   if (!link) return undefined
-  return allowEmbedList.find(embed => link.includes(embed))
+  const foundEmbed = allowEmbedList.find(embed => link.includes(embed))
+  if (!foundEmbed) return undefined
+
+  if (foundEmbed === 'youtu.be' || foundEmbed === 'youtube') {
+    return getYoutubeVideoId(link) ? foundEmbed : undefined
+  }
+  if (foundEmbed === 'gleev') {
+    return getGleevVideoId(link) ? foundEmbed : undefined
+  }
+  if (foundEmbed === 'vimeo') {
+    return getVimeoVideoId(link) ? foundEmbed : undefined
+  }
+
+  return foundEmbed
 }
 
 const Embed = ({ link, className }: EmbedProps) => {
