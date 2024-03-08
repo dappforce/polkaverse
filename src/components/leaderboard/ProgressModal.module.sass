@@ -3,13 +3,74 @@
 .ProgressModal
   color: white
 
+  :global(.ant-modal-content)
+    background: transparent
+    box-shadow: none
+
+  :global(.ant-modal-body)
+    padding: 0
+
+  .InfoPanel
+    background: #EEF2FF
+    padding: $space_normal
+    border-radius: 20px
+    margin-top: $space_normal
+    display: flex
+    align-items: center
+    overflow: hidden
+    gap: $space_normal
+    position: relative
+
+    p
+      margin: 0
+      font-size: $font_small
+      color: #4C4D51
+      line-height: 140%
+
+    .InfoPanelContent
+      width: 100%
+      display: flex
+      flex-direction: column
+      gap: $space_normal
+      max-width: 65%
+
+      a
+        width: fit-content
+
+      .Title
+        color: #242426
+        display: flex
+        align-items: center
+        justify-content: space-between
+        gap: $space_tiny
+
+        span
+          line-height: normal
+          font-weight: bold
+
+    .Image
+      position: absolute
+      top: 27px
+      right: -5px
+
   &:global(#progress-image)
-    :global(.ant-modal-content)
+    // :global(.ant-modal-content)
+    .ModalContent
       border-radius: 0
       box-shadow: none
 
-  :global(.ant-modal-content)
+  // :global(.ant-modal-content)
+  .ModalContent
     overflow: hidden
+
+    border-radius: 20px
+    padding: $space_normal
+    box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)
+
+  .ModalTitle
+    font-size: 24px
+    font-weight: 700
+    margin-bottom: $space_small
 
   .DiamondIcon
     font-size: 140px
@@ -19,13 +80,15 @@
     transform: rotate(-35deg)
 
   &.Full
-    :global(.ant-modal-content)
+    // :global(.ant-modal-content)
+    .ModalContent
       background: linear-gradient(180deg, #9340E6 0%, #7534A9 100%)
 
   &.Halfway
-    :global(.ant-modal-content)
+    // :global(.ant-modal-content)
+    .ModalContent
       background: linear-gradient(180deg, #F77400 0%, #F57F00 100%)
-  
+
   :global(.ant-modal-close)
     color: white
     top: 8px
@@ -33,6 +96,7 @@
 
   .Content
     overflow: visible !important
+    padding: 0
 
   .OutsideDiamondRight
     position: absolute
@@ -90,3 +154,29 @@
     border-color: white !important
     color: white !important
     filter: brightness(0.90)
+
+.ButtonsGroup
+  display: flex
+  width: 100%
+  gap: $space_normal
+  align-items: center
+  justify-content: center
+
+  button
+    padding: 0 !important
+    height: 40px
+    width: 40px
+    display: flex
+    align-items: center
+    justify-content: center
+    background: #00000033 !important
+    border: 1px solid #ffffff33 !important
+
+    &:hover
+      background: rgba(0, 0, 0, 0.30) !important
+      border-color: #ffffff !important
+
+@media screen and ( max-width: 755px)
+  .InfoPanel
+    .Image
+      top: 32px !important

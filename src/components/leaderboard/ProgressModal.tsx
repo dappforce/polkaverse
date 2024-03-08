@@ -5,21 +5,22 @@ import html2canvas from 'html2canvas'
 import { useEffect, useState } from 'react'
 import { ReactNode } from 'react-markdown'
 import CustomModal from 'src/components/utils/CustomModal'
-import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { useFetchProfileSpace, useSelectProfile } from 'src/rtk/app/hooks'
 import { useFetchUserPrevReward } from 'src/rtk/features/activeStaking/hooks'
 import { PrevRewardStatus } from 'src/rtk/features/activeStaking/prevRewardSlice'
 import { parseToBigInt } from 'src/utils'
 import { resizeImage } from 'src/utils/image'
+import { getContentStakingLink } from 'src/utils/links'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import { useDefaultSpaceIdToPost } from '../posts/editor/ModalEditor'
 import Avatar from '../profiles/address-views/Avatar'
-import { useIsMobileWidthOrDevice, useResponsiveSize } from '../responsive'
+import { useIsMobileWidthOrDevice } from '../responsive'
 import { useSubsocialApi } from '../substrate'
 import { twitterShareUrl } from '../urls'
 import { fullUrl, openNewWindow } from '../urls/helpers'
+import { LocalIcon } from '../utils'
 import { DfImage } from '../utils/DfImage'
 import { controlledMessage } from '../utils/Message'
 import styles from './ProgressModal.module.sass'
@@ -159,39 +160,55 @@ function InnerProgressModal() {
           setVisible(false)
           progressModalStorage.close()
         }}
-        title={
-          <span className={clsx('FontLarge')}>
-            Your progress {isUsingLastWeekData ? 'last week' : 'yesterday'}
-          </span>
-        }
+        width={520}
         closable
         className={clsx(styles.ProgressModal, statusClassName[status])}
         contentClassName={styles.Content}
       >
-        <div id='progress-modal-content'>
-          <ProgressPanel
-            hasAvatarLoaded={hasAvatarLoaded}
-            setHasAvatarLoaded={setHasAvatarLoaded}
-            disableButtons={isWaitingAvatar && !hasAvatarLoaded}
-          />
-        </div>
-        <div
-          id='progress-image'
-          className={clsx(styles.ProgressModal, statusClassName[status], 'position-relative')}
-          style={{ width: '550px', display: 'none' }}
-        >
-          <div
-            className='ant-modal-content px-4'
-            style={{ paddingTop: '2.6rem', paddingBottom: '3rem' }}
-          >
-            <img
-              src='/images/creators/diamonds/diamond-right.svg'
-              className={clsx(styles.OutsideDiamondRight)}
+        <div className={styles.ModalContent}>
+          <div className={styles.ModalTitle}>
+            <span className={clsx('FontLarge')}>
+              Your progress {isUsingLastWeekData ? 'last week' : 'yesterday'}
+            </span>
+          </div>
+          <div id='progress-modal-content'>
+            <ProgressPanel
+              hasAvatarLoaded={hasAvatarLoaded}
+              setHasAvatarLoaded={setHasAvatarLoaded}
+              disableButtons={isWaitingAvatar && !hasAvatarLoaded}
             />
-            <div style={{ maxWidth: '410px', margin: '0 auto' }}>
-              <ProgressPanel forPostImage hasAvatarLoaded={hasAvatarLoaded} />
+          </div>
+          <div
+            id='progress-image'
+            className={clsx(styles.ProgressModal, statusClassName[status], 'position-relative')}
+            style={{ width: '550px', display: 'none' }}
+          >
+            <div
+              className='ant-modal-content px-4'
+              style={{ paddingTop: '2.6rem', paddingBottom: '3rem' }}
+            >
+              <img
+                src='/images/creators/diamonds/diamond-right.svg'
+                className={clsx(styles.OutsideDiamondRight)}
+              />
+              <div style={{ maxWidth: '410px', margin: '0 auto' }}>
+                <ProgressPanel forPostImage hasAvatarLoaded={hasAvatarLoaded} />
+              </div>
             </div>
           </div>
+        </div>
+        <div className={styles.InfoPanel}>
+          <div className={styles.InfoPanelContent}>
+            <div className={styles.Title}>
+              <span>Increase your SUB rewards</span>
+            </div>
+
+            <p>Lock the rewards you just received to increase your rewards tomorrow.</p>
+            <Button size='large' type='primary' href={getContentStakingLink()} target='_blank'>
+              Lock my rewards
+            </Button>
+          </div>
+          <DfImage preview={false} src='/images/coins.png' className={styles.Image} />
         </div>
       </CustomModal>
     </>
@@ -219,7 +236,6 @@ function ProgressPanel({
 
   const { defaultSpaceIdToPost } = useDefaultSpaceIdToPost()
 
-  const { isSmallMobile } = useResponsiveSize()
   const [loading, setLoading] = useState(false)
 
   const isUsingLastWeekData = data?.period === 'WEEK'
@@ -365,33 +381,30 @@ function ProgressPanel({
         </div>
       </div>
       {!forPostImage && (
-        <div
-          className='GapNormal mt-4'
-          style={{
-            display: 'grid',
-            gridTemplateColumns: defaultSpaceIdToPost && !isSmallMobile ? '1fr 1fr' : '1fr',
-          }}
-        >
+        <div className={clsx('GapNormal mt-4', styles.ButtonsGroup)}>
+          <div>Share on:</div>
           <Button
             loading={loading}
             disabled={disableButtons}
+            shape='round'
             type='default'
+            ghost
             size='large'
             onClick={() => shareOnX()}
           >
-            Share on X
+            <LocalIcon path={'/icons/x-icon.svg'} />
           </Button>
           {defaultSpaceIdToPost && (
             <Button
-              className={styles.GhostButton}
               disabled={disableButtons}
               type='default'
+              shape='round'
               ghost
               size='large'
               onClick={() => shareOnPlatform()}
               loading={loading}
             >
-              Share on {config.appName}
+              <LocalIcon path={'/icons/grill-icon.svg'} />
             </Button>
           )}
         </div>
