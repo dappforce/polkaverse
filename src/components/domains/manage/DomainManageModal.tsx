@@ -220,6 +220,7 @@ const SpaceUsername: FC<ManageDomainStepProps> = ({ domainStruct }) => {
           Back
         </ActionButton>
         <TxButton
+          canUseProxy={false}
           tx='domains.setInnerValue'
           size='large'
           type='primary'
@@ -307,6 +308,7 @@ const SiteAlias: FC<ManageDomainStepProps> = ({ domainStruct }) => {
           Back
         </ActionButton>
         <TxButton
+          canUseProxy={false}
           tx='domains.setOuterValue'
           size='large'
           type='primary'
