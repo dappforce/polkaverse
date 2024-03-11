@@ -108,7 +108,7 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
   let initialApolloState: any = undefined
   const client = initializeApollo(null, true)
   if (isProfileSpace && client) {
-    const [, postIdsPromise] = await Promise.allSettled([
+    await Promise.allSettled([
       getActivityCounts(client, { address: data.struct.ownerId }),
       getPostActivities(client, {
         address: data.struct.ownerId,
@@ -125,17 +125,6 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
         }),
       ),
     ] as const)
-    if (postIdsPromise.status === 'fulfilled') {
-      const postIds = postIdsPromise.value
-      await dispatch(
-        fetchPosts({
-          api: subsocial,
-          ids: postIds,
-          reload: true,
-          dataSource: DataSourceTypes.SQUID,
-        }),
-      )
-    }
     initialApolloState = client.extract()
   } else {
     await dispatch(
