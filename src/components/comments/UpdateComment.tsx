@@ -54,6 +54,7 @@ export const EditComment: FC<EditCommentProps> = ({
     disabled,
     json,
     ipfs,
+    loading,
     setIpfsCid,
     onClick,
     onFailed,
@@ -63,6 +64,7 @@ export const EditComment: FC<EditCommentProps> = ({
       type='primary'
       label='Update'
       disabled={disabled}
+      loading={loading}
       params={() =>
         getTxParams({
           json: json,
