@@ -3,7 +3,7 @@ import { getPostIdFromSlug } from '@subsocial/utils/slugify'
 import clsx from 'clsx'
 import { NextPage } from 'next'
 import router from 'next/router'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { CommentSection } from 'src/components/comments/CommentsSection'
 import MobileActiveStakingSection from 'src/components/creators/MobileActiveStakingSection'
 import TopUsersCard from 'src/components/creators/TopUsersCard'
@@ -22,7 +22,8 @@ import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { getInitialPropsWithRedux, NextContextWithRedux } from 'src/rtk/app'
 import { useSelectProfile } from 'src/rtk/app/hooks'
-import { useAppSelector } from 'src/rtk/app/store'
+import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
+import { fetchPostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { fetchTopUsersWithSpaces } from 'src/rtk/features/leaderboard/topUsersSlice'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
@@ -308,7 +309,11 @@ export async function loadPostOnNextReq({
 }
 
 const PostPage: FC<PostDetailsProps & HasStatusCode> = props => {
-  const { statusCode } = props
+  const { statusCode, postData } = props
+  const dispatch = useAppDispatch()
+  useEffect(() => {
+    dispatch(fetchPostRewards({ postIds: [postData.id] as string[] }))
+  }, [dispatch])
 
   if (statusCode === 404) {
     return <PostNotFoundPage />

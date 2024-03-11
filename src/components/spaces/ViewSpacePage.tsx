@@ -1,9 +1,11 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import config from 'src/config'
 import { DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
 import { getActivityCounts, getPostActivities } from 'src/graphql/apis'
 import { initializeApollo } from 'src/graphql/client'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
+import { useAppDispatch } from 'src/rtk/app/store'
+import { fetchPostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { useFetchMyPermissionsBySpaceId } from 'src/rtk/features/permissions/mySpacePermissionsHooks'
 import { fetchPosts, selectPosts } from 'src/rtk/features/posts/postsSlice'
 import { fetchProfileSpace, selectProfileSpace } from 'src/rtk/features/profiles/profilesSlice'
@@ -74,8 +76,14 @@ const InnerViewSpacePage: FC<Props> = props => {
   )
 }
 
-const ViewSpacePage: FC<Props> = props => {
-  const { statusCode } = props
+const ViewSpacePage: FC<Props & { prefetchedIds: string[] }> = props => {
+  const { statusCode, prefetchedIds } = props
+
+  const dispatch = useAppDispatch()
+  useEffect(() => {
+    dispatch(fetchPostRewards({ postIds: prefetchedIds as string[] }))
+  }, [dispatch])
+
   if (statusCode === 404) {
     return <SpaceNotFountPage />
   }
@@ -145,6 +153,7 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
     spaceData: data,
     posts,
     postIds: sortedPostIds,
+    prefetchedIds: pageIds,
     customImage,
   }
 })
