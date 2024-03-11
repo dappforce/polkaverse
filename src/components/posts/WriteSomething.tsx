@@ -100,7 +100,8 @@ export default function WriteSomething({ defaultSpaceId, ...props }: WriteSometh
                       <span style={{ color: '#262425CC' }}>
                         {neededLock > 0 && !new BN(totalStake.amount).isZero() ? (
                           <>
-                            To start earning SUB rewards, increase your lock by at least{' '}
+                            You aren’t monetising your activity yet! To start earning SUB rewards,
+                            increase your lock by at least{' '}
                             <FormatBalance
                               value={neededLock.toString()}
                               decimals={10}
@@ -111,7 +112,8 @@ export default function WriteSomething({ defaultSpaceId, ...props }: WriteSometh
                           </>
                         ) : (
                           <>
-                            To start earning SUB rewards, lock at least{' '}
+                            You aren’t monetising your activity yet! To start earning SUB rewards,
+                            lock at least{' '}
                             <FormatBalance
                               value={neededLock.toString()}
                               decimals={10}
