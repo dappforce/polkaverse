@@ -54,7 +54,7 @@ const DefaultNav: FunctionComponent = () => {
   return (
     <Drawer
       className='DfSideBar'
-      bodyStyle={{ padding: 0 }}
+      bodyStyle={{ padding: 0, paddingLeft: '12px' }}
       placement='left'
       closable={false}
       onClose={hide}
