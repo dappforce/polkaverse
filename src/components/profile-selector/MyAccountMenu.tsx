@@ -91,6 +91,7 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
         setIsOpenProfileModal(false)
       } else if (name === 'redirect') {
         router.push(value)
+        setIsOpenProfileModal(false)
       } else if (name === 'redirect-hard') {
         // Using router push for redirect don't redirect properly, it just have loading for a bit and changes the url much later
         window.location.href = value
