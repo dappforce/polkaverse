@@ -31,9 +31,7 @@ export const useCheckCanEditAndHideSpacePermission = ({ post: { struct }, space 
     (isMyPost && checkSpacePermission(hideOwn)) ||
     (!isComment && checkSpacePermission('HideAnyPost'))
 
-  const canEditPost =
-    (isMyPost && checkSpacePermission(updateOwn)) ||
-    (!isComment && checkSpacePermission('UpdateAnyPost'))
+  const canEditPost = isMyPost && checkSpacePermission(updateOwn)
 
   const canMovePost = isMyPost && !isComment
 
