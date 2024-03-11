@@ -140,6 +140,7 @@ const InnerInfiniteList = <T extends any>(props: InnerInfiniteListProps<T>) => {
           onClick={() => handleInfiniteOnLoad(page)}
           block
           className='mb-2'
+          href={isServerSide() ? `?page=${page + 1}` : undefined}
           style={{ opacity: isServerSide() ? 0 : 1 }}
         >
           Load more
