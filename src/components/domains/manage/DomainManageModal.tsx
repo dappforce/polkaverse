@@ -103,7 +103,7 @@ const ChooseStep = ({ title, action }: ChooseStepProps) => {
 
 const ActionButton = ({ children, ...props }: ButtonProps) => {
   return (
-    <Button size='large' type='primary' className='mr-3' {...props}>
+    <Button size='large' type='primary' className='w-100' {...props}>
       {children}
     </Button>
   )
@@ -128,14 +128,23 @@ const UsernameOnSubId: FC<ManageDomainStepProps> = ({ domainStruct }) => {
           <div className={clsx('SubsocialGradient')}>{truncatedDomain}</div>
         </Row>
       </Copy>
-      <Row justify='center' className='mt-3'>
+      <div
+        className='mt-3 GapSmall justify-content-center'
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          maxWidth: '420px',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
+      >
         <ActionButton ghost onClick={() => openManageModal('menu')}>
           Back
         </ActionButton>
         <Copy text={`${subIdLink}${domainStruct?.id}`} message='Your SubId link copied'>
           <ActionButton>Copy</ActionButton>
         </Copy>
-      </Row>
+      </div>
     </>
   )
 }
@@ -215,7 +224,16 @@ const SpaceUsername: FC<ManageDomainStepProps> = ({ domainStruct }) => {
           <div className={clsx('SubsocialGradient')}>{truncatedDomain}</div>
         </Row>
       </Copy>
-      <Row justify='center' className='mt-3'>
+      <div
+        className='mt-3 GapSmall justify-content-center'
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          maxWidth: '420px',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
+      >
         <ActionButton ghost onClick={() => openManageModal('menu')}>
           Back
         </ActionButton>
@@ -224,7 +242,6 @@ const SpaceUsername: FC<ManageDomainStepProps> = ({ domainStruct }) => {
           tx='domains.setInnerValue'
           size='large'
           type='primary'
-          className='mr-2'
           params={getTxParams}
           customNodeApi={api}
           disabled={!!defaultInnerSpace && defaultInnerSpace === innerValue}
@@ -232,7 +249,7 @@ const SpaceUsername: FC<ManageDomainStepProps> = ({ domainStruct }) => {
           successMessage='Username for your space updated'
           onSuccess={onSuccess}
         />
-      </Row>
+      </div>
     </>
   )
 }
@@ -303,7 +320,16 @@ const SiteAlias: FC<ManageDomainStepProps> = ({ domainStruct }) => {
           <MutedDiv>{'.sub.id'}</MutedDiv>
         </Row>
       </Copy>
-      <Row justify='center' className='mt-3'>
+      <div
+        className='mt-3 GapSmall justify-content-center'
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          maxWidth: '420px',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
+      >
         <ActionButton ghost onClick={() => openManageModal('menu')}>
           Back
         </ActionButton>
@@ -312,7 +338,6 @@ const SiteAlias: FC<ManageDomainStepProps> = ({ domainStruct }) => {
           tx='domains.setOuterValue'
           size='large'
           type='primary'
-          className='mr-2'
           params={getTxParams}
           customNodeApi={api}
           disabled={defaultOuterValue === outerLink}
@@ -320,7 +345,7 @@ const SiteAlias: FC<ManageDomainStepProps> = ({ domainStruct }) => {
           successMessage='Alias for your site updated'
           onSuccess={onSuccess}
         />
-      </Row>
+      </div>
     </>
   )
 }
@@ -344,7 +369,16 @@ const Success: FC<ManageDomainStepProps> = ({ domainStruct }) => {
       <Row justify='center'>
         <div className={clsx('SubsocialGradient', styles.ModalDomainTitle)}>{domain}</div>
       </Row>
-      <Row justify='center' className={styles.ActionButtons}>
+      <div
+        className='mt-3 GapSmall justify-content-center'
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          maxWidth: '420px',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
+      >
         <ActionButton type='default' onClick={() => openManageModal('menu')}>
           What is next?
         </ActionButton>
@@ -356,7 +390,7 @@ const Success: FC<ManageDomainStepProps> = ({ domainStruct }) => {
         >
           <ActionButton>Tweet about this</ActionButton>
         </ShareLink>
-      </Row>
+      </div>
     </>
   )
 }
