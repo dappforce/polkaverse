@@ -315,7 +315,8 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
             if (totalStake.isZero()) {
               return (
                 <p>
-                  To start earning SUB rewards, lock by at least{' '}
+                  You aren’t monetising your activity yet! To start earning SUB rewards, lock by at
+                  least{' '}
                   <FormatBalance
                     value={neededStake.toString()}
                     decimals={10}
@@ -330,7 +331,8 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
             if (neededStake > 0) {
               return (
                 <p>
-                  To start earning SUB rewards, increase your lock by at least{' '}
+                  You aren’t monetising your activity yet! To start earning SUB rewards, increase
+                  your lock by at least{' '}
                   <FormatBalance
                     value={neededStake.toString()}
                     decimals={10}
