@@ -345,7 +345,7 @@ function TxButton({
       }
 
       let usedExtrinsic = extrinsic
-      if (parentProxyAddress) {
+      if (parentProxyAddress && canUseProxy) {
         usedExtrinsic = api.tx.proxy.proxy(parentProxyAddress, null, extrinsic)
       }
       tx = await usedExtrinsic.signAsync(account as any, { signer, nonce: -1 })
@@ -358,7 +358,7 @@ function TxButton({
       unsub = await tx.send(onSuccessHandler)
 
       waitMessage.open()
-      sendTxEvent({ tx })
+      sendTxEvent({ tx: tx })
     } catch (err: any) {
       onFailedHandler(err instanceof Error ? err.message : err)
     }
