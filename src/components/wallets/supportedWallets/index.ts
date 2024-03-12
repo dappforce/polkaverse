@@ -9,6 +9,10 @@ export const getWalletBySource = (source: string | unknown): Wallet | undefined 
   })
 }
 
+export const getFirstInstalledWallet = (): Wallet | undefined => {
+  return getWallets().find(wallet => wallet.installed)
+}
+
 export const isWalletInstalled = (source: string | unknown): boolean => {
   const wallet = getWalletBySource(source)
   return wallet?.installed as boolean
