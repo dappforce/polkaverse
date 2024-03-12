@@ -380,7 +380,7 @@ function ProgressPanel({
           <RewardCard forPostImage={forPostImage} contents={rewardContents} />
         </div>
       </div>
-      {!forPostImage && (
+      {!forPostImage && isUsingLastWeekData && (
         <div className={clsx('GapNormal mt-4', styles.ButtonsGroup)}>
           <div>Share on:</div>
           <Button
