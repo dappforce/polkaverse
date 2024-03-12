@@ -1,6 +1,5 @@
 import { createInstance } from '@amplitude/analytics-browser'
 import { BaseEvent, BrowserClient } from '@amplitude/analytics-types'
-import { toSubsocialAddress } from '@subsocial/utils'
 import Router from 'next/router'
 import { createUserId } from 'src/components/utils/OffchainUtils'
 import { ampId } from 'src/config/env'
@@ -67,7 +66,7 @@ export const useAnalytics = create<State & Actions>()((set, get) => {
       const { amp } = get()
       if (address) {
         try {
-          const userId = await createUserId(toSubsocialAddress(address)!)
+          const userId = await createUserId(address)
           amp?.setUserId(userId)
           set({ userId })
         } catch (err) {
