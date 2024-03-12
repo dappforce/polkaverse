@@ -11,6 +11,7 @@ import React, {
 } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { getReferralIdInUrl } from 'src/components/referral/utils'
+import { getReferrerId } from 'src/components/utils/datahub/referral'
 import { ampId } from 'src/config/env'
 import { useFetchProfileSpace } from 'src/rtk/app/hooks'
 import { useFetchUserRewardReport } from 'src/rtk/features/activeStaking/hooks'
@@ -140,21 +141,32 @@ export function AppLaunchedEventSender() {
   useEffect(() => {
     if (isLoading || sentInitRef.current) return
     sentInitRef.current = true
-    if (!myAddress) {
-      state.sendEvent('app_launched', { signIn: false })
-      return
+    sendLaunchedEvent()
+
+    async function sendLaunchedEvent() {
+      if (!myAddress) {
+        state.sendEvent('app_launched', { signIn: false }, { ref: getReferralIdInUrl() })
+        return
+      }
+      let refId = getReferralIdInUrl()
+      try {
+        const referrerId = await getReferrerId(myAddress)
+        if (referrerId) {
+          refId = referrerId
+        }
+      } catch {}
+      state.sendEvent(
+        'app_launched',
+        { signIn: true },
+        {
+          hasProfile,
+          stakeAmountRange: getAmountRange(totalStake?.amount),
+          device_id: amp?.getDeviceId(),
+          hasCreatorRewards,
+          ref: refId,
+        },
+      )
     }
-    state.sendEvent(
-      'app_launched',
-      { signIn: true },
-      {
-        hasProfile,
-        stakeAmountRange: getAmountRange(totalStake?.amount),
-        device_id: amp?.getDeviceId(),
-        hasCreatorRewards,
-        ref: getReferralIdInUrl(),
-      },
-    )
   }, [hasProfile, isLoading, hasCreatorRewards, amp])
 
   return null
