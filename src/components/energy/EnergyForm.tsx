@@ -20,6 +20,7 @@ import {
 } from 'antd'
 import { FormInstance } from 'antd/es/form/Form'
 import BigNumber from 'bignumber.js'
+import clsx from 'clsx'
 import React, { useEffect, useState } from 'react'
 import { useMyAccount } from 'src/stores/my-account'
 import { useAuth } from '../auth/AuthContext'
@@ -245,7 +246,7 @@ const EnergyForm = ({ forSelfOnly, subscribeValues, ...props }: EnergyFormProps)
   }, [disableSubscriber, amount])
 
   return (
-    <Card {...props}>
+    <Card bordered={false} className={clsx(styles.EnergyFormCard)} {...props}>
       <Form form={form} layout='vertical'>
         <AmountInput
           setAmountWithoutValidation={setAmountWithoutValidation}

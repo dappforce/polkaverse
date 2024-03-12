@@ -10,9 +10,10 @@ export const FaqSection = () => {
     <CardWithTitle
       title={'FAQ'}
       cardClassName={styles.Faq}
+      className={styles.FAQWrapper}
       icon={<LocalIcon path={'/icons/faq.svg'} />}
     >
-      <Collapse defaultActiveKey={['1']} ghost expandIconPosition='right'>
+      <Collapse ghost expandIconPosition='right'>
         <Panel header={<b>What is energy?</b>} key='1'>
           <p>
             Energy can be used to perform actions on the network, instead of SUB tokens. Energy can

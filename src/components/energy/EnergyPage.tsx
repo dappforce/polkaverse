@@ -3,6 +3,7 @@ import { HeadMetaProps, PageContent } from '../main/PageWrapper'
 import { MutedDiv } from '../utils/MutedText'
 import styles from './Energy.module.sass'
 import EnergyForm from './EnergyForm'
+import EnergyStats from './EnergyStats'
 import { FaqSection } from './Faq'
 
 const desc =
@@ -16,18 +17,15 @@ const meta: HeadMetaProps = {
 
 export const EnergyPage = () => {
   return (
-    <PageContent
-      className='mt-4'
-      meta={meta}
-      creatorDashboardSidebarType={{ name: 'home-page', variant: 'posts' }}
-    >
-      <div className='d-flex justify-content-center'>
-        <div className={clsx('SubsocialGradient mb-3', styles.Title)}>Energy Station</div>
+    <PageContent className={clsx(styles.EnergyStationLayout)} meta={meta}>
+      <div className={styles.LeftSideLayout}>
+        <div className={styles.TitleSection}>
+          <div className={clsx(styles.Title)}>Energy Station</div>
+          <MutedDiv>{desc}</MutedDiv>
+        </div>
+        <EnergyStats />
+        <EnergyForm />
       </div>
-      <section className={styles.Intro}>
-        <MutedDiv>{desc}</MutedDiv>
-      </section>
-      <EnergyForm />
       <FaqSection />
     </PageContent>
   )

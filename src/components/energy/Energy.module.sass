@@ -1,5 +1,83 @@
 @import 'src/styles/subsocial-vars.scss'
 
+.EnergyStationLayout
+  display: flex
+  gap: $space_normal
+
+.LeftSideLayout
+  display: flex
+  flex-direction: column
+  gap: $space_normal
+
+.TitleSection
+  display: flex
+  flex-direction: column
+  gap: $space_small
+
+  .Title
+    font-size: $font_big
+    line-height: 26px
+    font-weight: 700
+    color: $color_font_normal
+
+  .Description
+    font-size: $font_small
+    line-height: 22px
+    color: #64748B
+
+.FAQWrapper
+  margin: 0 !important
+
+.EnergyStatsSection
+  display: flex
+  gap: $space_normal
+  align-items: center
+
+.StatsCard
+  display: flex
+  gap: $space_tiny
+  flex-direction: column
+  width: 100%
+  border-radius: 20px
+  padding: $space_normal
+  background: white
+
+  .StatsTitle
+    color: #64748B
+    font-size: $font_small
+    font-weight: 400
+    line-height: 22px
+
+  .StatsValue
+    display: flex
+    gap: $space_mini
+    align-items: center
+
+    svg
+      color: rgba(100, 116, 139, 0.8)
+      font-size: 20px
+
+    span
+      color: #0F172A
+      font-size: $space_large
+      font-weight: 600
+      line-height: 32px
+
+.EnergyFormCard
+  border-radius: 20px
+
+  :global(.ant-card-body)
+    padding: $space_normal
+
+
+
+
+
+
+
+
+
+
 .DropdownOverlay
   background-color: #fff
   width: 250px
@@ -45,13 +123,6 @@
 .EnergyIndicator
   display: flex
 
-.Title
-  font-size: 44px
-
-.Intro
-  text-align: center
-  margin-bottom: 32px
-
 .InfoSection
   border: 1px solid $color_light_border
   border-radius: $border_radius_normal
@@ -61,7 +132,7 @@
 .AmountFormInput
   label
     width: 100%
-  margin-bottom: $space_normal
+    margin-bottom: $space_normal
 
 .Faq
   \:global .ant-card-body
