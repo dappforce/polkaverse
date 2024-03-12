@@ -203,6 +203,8 @@ function TxButton({
 
   const [pallet, _] = (tx || '').split('.')
   const isSigningAllowedPallets = allowedPalletsForSocialActions.includes(pallet)
+  const isUsingProxy = accountId === useMyAccount.getState().address && canUseProxy
+  const isBatchCall = tx === 'utility.batch'
 
   const getExtrinsic = async (): Promise<SubmittableExtrinsic> => {
     const [pallet, method] = (tx || '').split('.')
@@ -216,6 +218,15 @@ function TxButton({
     let resultParams = (params || []) as any[]
     if (isFunction(params)) {
       resultParams = await params()
+    }
+
+    if (isBatchCall && isUsingProxy && parentProxyAddress) {
+      const firstParam = resultParams[0]
+      if (Array.isArray(firstParam)) {
+        resultParams[0] = firstParam.map(param => {
+          return api.tx.proxy.proxy(parentProxyAddress, null, param)
+        })
+      }
     }
 
     return api.tx[pallet][method](...resultParams)
@@ -309,7 +320,7 @@ function TxButton({
     let account: AnyAccountId | KeyringSigner = accountId
 
     try {
-      if (accountId === useMyAccount.getState().address && canUseProxy) {
+      if (isUsingProxy) {
         // use proxy signer
         signer = undefined
         const keypairSigner = useMyAccount.getState().signer
@@ -318,7 +329,7 @@ function TxButton({
 
         if (!hasEnoughEnergy) {
           waitHasEnergyMessage.open()
-          await requestToken({ address: accountId })
+          await requestToken({ address: accountId.toString() })
           await waitHasEnergy()
           waitHasEnergyMessage.close()
         }
@@ -345,7 +356,7 @@ function TxButton({
       }
 
       let usedExtrinsic = extrinsic
-      if (parentProxyAddress && canUseProxy) {
+      if (!isBatchCall && parentProxyAddress && isUsingProxy) {
         usedExtrinsic = api.tx.proxy.proxy(parentProxyAddress, null, extrinsic)
       }
       tx = await usedExtrinsic.signAsync(account as any, { signer, nonce: -1 })
