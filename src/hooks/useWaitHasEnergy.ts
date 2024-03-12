@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react'
+import { ESTIMATED_ENERGY_FOR_ONE_TX } from 'src/config/constants'
 import { useMyAccount } from 'src/stores/my-account'
 import useWrapInRef from './useWrapInRef'
 
@@ -25,7 +26,8 @@ export default function useWaitHasEnergy(
   }, [timeout, resubscribeEnergy])
 
   useEffect(() => {
-    if (!energy || energy <= 0 || hasEnergyResolvers.current.length === 0) return
+    if (!energy || energy < ESTIMATED_ENERGY_FOR_ONE_TX || hasEnergyResolvers.current.length === 0)
+      return
     function resolveAllPending() {
       hasEnergyResolvers.current.forEach(resolve => resolve())
       hasEnergyResolvers.current = []

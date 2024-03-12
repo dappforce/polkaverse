@@ -75,6 +75,7 @@ export const AddEditorsModal = (props: ModalProps) => {
       label={'Update editors'}
       params={getTxParams}
       disabled={noChangedEditors}
+      canUseProxy={false}
       tx={'utility.batch'}
       onSuccess={onSuccess}
       successMessage='Editors updated'

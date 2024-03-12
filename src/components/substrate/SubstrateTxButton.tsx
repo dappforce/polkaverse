@@ -38,7 +38,7 @@ import {
   SIGNER_TOKEN_KEY,
 } from '../utils/OffchainSigner/ExternalStorage'
 import { requestToken } from '../utils/OffchainUtils'
-import { getWalletBySource } from '../wallets/supportedWallets'
+import { getFirstInstalledWallet, getWalletBySource } from '../wallets/supportedWallets'
 import styles from './SubstrateTxButton.module.sass'
 import useToggle from './useToggle'
 const log = newLogger('TxButton')
@@ -204,6 +204,10 @@ function TxButton({
   const [pallet, _] = (tx || '').split('.')
   const isSigningAllowedPallets = allowedPalletsForSocialActions.includes(pallet)
 
+  const isSignableUsingSigner = accountId === useMyAccount.getState().address
+  const isUsingProxy = isSignableUsingSigner && canUseProxy && !!parentProxyAddress
+  const isBatchCall = tx === 'utility.batch'
+
   const getExtrinsic = async (): Promise<SubmittableExtrinsic> => {
     const [pallet, method] = (tx || '').split('.')
 
@@ -216,6 +220,15 @@ function TxButton({
     let resultParams = (params || []) as any[]
     if (isFunction(params)) {
       resultParams = await params()
+    }
+
+    if (isBatchCall && isUsingProxy) {
+      const firstParam = resultParams[0]
+      if (Array.isArray(firstParam)) {
+        resultParams[0] = firstParam.map(param => {
+          return api.tx.proxy.proxy(parentProxyAddress, null, param)
+        })
+      }
     }
 
     return api.tx[pallet][method](...resultParams)
@@ -309,8 +322,8 @@ function TxButton({
     let account: AnyAccountId | KeyringSigner = accountId
 
     try {
-      if (accountId === useMyAccount.getState().address && canUseProxy) {
-        // use proxy signer
+      if (isSignableUsingSigner) {
+        // use signer from keypair
         signer = undefined
         const keypairSigner = useMyAccount.getState().signer
         if (!keypairSigner) throw new Error('No account signer provided')
@@ -318,7 +331,7 @@ function TxButton({
 
         if (!hasEnoughEnergy) {
           waitHasEnergyMessage.open()
-          await requestToken({ address: accountId })
+          await requestToken({ address: accountId.toString() })
           await waitHasEnergy()
           waitHasEnergyMessage.close()
         }
@@ -334,8 +347,10 @@ function TxButton({
           signer = await (await web3FromAddress(accountId.toString())).signer
         } else {
           const currentWallet = getCurrentWallet()
-          const wallet = getWalletBySource(currentWallet)
-          await wallet?.enable(appName)
+          const wallet = getWalletBySource(currentWallet) ?? getFirstInstalledWallet()
+          if (!wallet) throw new Error('No supported wallet found, please relogin to your account')
+
+          await wallet.enable(appName)
           signer = wallet?.signer
         }
 
@@ -345,7 +360,7 @@ function TxButton({
       }
 
       let usedExtrinsic = extrinsic
-      if (parentProxyAddress) {
+      if (!isBatchCall && isUsingProxy) {
         usedExtrinsic = api.tx.proxy.proxy(parentProxyAddress, null, extrinsic)
       }
       tx = await usedExtrinsic.signAsync(account as any, { signer, nonce: -1 })
@@ -358,7 +373,7 @@ function TxButton({
       unsub = await tx.send(onSuccessHandler)
 
       waitMessage.open()
-      sendTxEvent({ tx })
+      sendTxEvent({ tx: tx })
     } catch (err: any) {
       onFailedHandler(err instanceof Error ? err.message : err)
     }

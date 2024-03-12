@@ -13,6 +13,7 @@ export const EnableEditorsButton = ({ spaceId, openModal }: EnableEditorsButtonP
     <TxDiv
       label='Enable editors'
       tx={'roles.createRole'}
+      canUseProxy={false}
       params={buildCreateEditorRoleArgs(spaceId)}
       onSuccess={openModal}
       successMessage='Great! Editors enabled!'
