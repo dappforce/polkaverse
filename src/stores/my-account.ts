@@ -100,7 +100,7 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
         signer,
         encodedSecretKey,
       })
-      useAnalytics.getState().setUserId(address)
+      useAnalytics.getState().setUserId(signer.address)
       get()._subscribeEnergy()
     } catch (e) {
       console.error('Failed to login', e)
