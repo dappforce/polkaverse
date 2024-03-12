@@ -50,6 +50,7 @@ import ViewPostLink from '../ViewPostLink'
 import styles from './helpers.module.sass'
 import { PostDropDownMenu } from './PostDropDownMenu'
 import PostRewardStat from './PostRewardStat'
+import PostViewCount from './PostViewCount'
 import TwitterPost from './TwitterPost'
 
 type IsUnlistedPostProps = {
@@ -336,11 +337,12 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
 
   return (
     <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'} ${className ?? ''}`}>
-      <div className={clsx('d-flex align-items-center GapHuge', styles.PostActions)}>
+      <div className={clsx(styles.PostActions)}>
         <SuperLike post={struct} />
         {preview && <CommentAction {...props} />}
+        <PostViewCount postId={struct.id} />
+        <PostRewardStat postId={postDetails.id} />
       </div>
-      <PostRewardStat postId={postDetails.id} />
       {/* <ShareDropdown postDetails={postDetails} space={space} className='DfAction' /> */}
     </div>
   )

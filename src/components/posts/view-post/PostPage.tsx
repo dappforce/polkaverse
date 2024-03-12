@@ -29,6 +29,7 @@ import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
 import { fetchPostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { fetchTopUsersWithSpaces } from 'src/rtk/features/leaderboard/topUsersSlice'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
+import { fetchPostsViewCount } from 'src/rtk/features/posts/postsViewCountSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
 import { asCommentStruct, HasStatusCode, idToBn, PostData, PostWithSomeDetails } from 'src/types'
 import { DfImage } from '../../utils/DfImage'
@@ -336,7 +337,8 @@ const PostPage: FC<PostDetailsProps & HasStatusCode> = props => {
   const { statusCode, postData } = props
   const dispatch = useAppDispatch()
   useEffect(() => {
-    dispatch(fetchPostRewards({ postIds: [postData.id] as string[] }))
+    dispatch(fetchPostRewards({ postIds: [postData.id] }))
+    dispatch(fetchPostsViewCount({ postIds: [postData.id] }))
   }, [dispatch])
 
   if (statusCode === 404) {
