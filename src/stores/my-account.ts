@@ -12,6 +12,7 @@ import {
   KeyringSigner,
   loginWithSecretKey,
 } from '../utils/account'
+import { useAnalytics } from './analytics'
 import { create } from './utils'
 
 type State = {
@@ -99,6 +100,7 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
         signer,
         encodedSecretKey,
       })
+      useAnalytics.getState().setUserId(address)
       get()._subscribeEnergy()
     } catch (e) {
       console.error('Failed to login', e)
