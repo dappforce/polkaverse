@@ -1,7 +1,7 @@
 import { SocialCallDataArgs, SocialEventDataApiInput } from '@subsocial/data-hub-sdk'
 import { gql } from 'graphql-request'
 import { getSubsocialApi } from 'src/components/utils/SubsocialConnect'
-import { backendSigWrapper, datahubQueueRequest } from './utils'
+import { backendSigWrapper, datahubQueueRequest, throwErrorIfNotProcessed } from './utils'
 
 const GET_SUPER_LIKE_CONFIRMATION_MSG = gql`
   query GetSuperLikeConfirmationMsg {
@@ -60,7 +60,6 @@ export async function createSuperLikeServer(input: SocialEventDataApiInput) {
       createSuperLikeInput: signedPayload,
     },
   })
-  if (!res.activeStakingCreateSuperLike.processed) {
-    throw new Error(res.activeStakingCreateSuperLike.message)
-  }
+
+  throwErrorIfNotProcessed(res.activeStakingCreateSuperLike, 'Failed to create super like')
 }
