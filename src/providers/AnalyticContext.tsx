@@ -10,6 +10,7 @@ import React, {
   useState,
 } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import { getReferralIdInUrl } from 'src/components/referral/utils'
 import { ampId } from 'src/config/env'
 import { useFetchProfileSpace } from 'src/rtk/app/hooks'
 import { useFetchUserRewardReport } from 'src/rtk/features/activeStaking/hooks'
@@ -151,6 +152,7 @@ export function AppLaunchedEventSender() {
         stakeAmountRange: getAmountRange(totalStake?.amount),
         device_id: amp?.getDeviceId(),
         hasCreatorRewards,
+        ref: getReferralIdInUrl(),
       },
     )
   }, [hasProfile, isLoading, hasCreatorRewards, amp])
