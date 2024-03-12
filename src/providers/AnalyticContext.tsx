@@ -1,32 +1,13 @@
-import { createInstance } from '@amplitude/analytics-browser'
-import { BaseEvent, BrowserClient } from '@amplitude/analytics-types'
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { BrowserClient } from '@amplitude/analytics-types'
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { getReferralIdInUrl } from 'src/components/referral/utils'
 import { getReferrerId } from 'src/components/utils/datahub/referral'
-import { ampId } from 'src/config/env'
 import { useFetchProfileSpace } from 'src/rtk/app/hooks'
 import { useFetchUserRewardReport } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { useAnalytics } from 'src/stores/analytics'
 import { getAmountRange } from 'src/utils/analytics'
-
-type AnalyticContextState = {
-  amp: BrowserClient | null
-  deviceId?: string
-}
-
-const initialState: AnalyticContextState = {
-  amp: null,
-  deviceId: undefined,
-}
 
 export type AnalyticContextProps = {
   amp: BrowserClient | null
@@ -40,70 +21,16 @@ export type AnalyticContextProps = {
 const propsStub = { sendEvent: () => undefined, amp: null }
 export const AnalyticContext = createContext<AnalyticContextProps>(propsStub)
 
-export async function createAmplitudeInstance() {
-  if (typeof window === 'undefined') return null
-  if (!ampId) return null
-
-  try {
-    const amp = createInstance()
-    await amp.init(ampId, undefined, { identityStorage: 'localStorage' }).promise
-    return amp
-  } catch (e) {
-    console.error('Error initializing amplitude', e)
-    return null
-  }
-}
-
 export function AnalyticProvider(props: React.PropsWithChildren<{}>) {
-  const [state, setState] = useState(initialState)
-  const [queuedEvents, setQueuedEvents] = useState<BaseEvent[]>([])
-  const isInited = useRef(false)
-
-  useEffect(() => {
-    if (isInited.current) return
-    isInited.current = true
-
-    async function initAmp() {
-      const amp = await createAmplitudeInstance()
-
-      let deviceId = localStorage.getItem('device_id') || undefined
-      if (!deviceId) {
-        deviceId = amp?.getDeviceId()
-      }
-
-      setState({ amp, deviceId })
-      queuedEvents.forEach(props => {
-        amp?.logEvent({
-          ...props,
-          device_id: deviceId,
-        })
-      })
-    }
-    initAmp()
-  }, [])
+  const amp = useAnalytics(state => state.amp)
+  const sendEvent = useAnalytics(state => state.sendEvent)
 
   const contextValue: AnalyticContextProps = useMemo(() => {
     return {
-      amp: state.amp,
-      sendEvent: (
-        name: string,
-        properties?: Record<string, any>,
-        userProperties?: Record<string, any>,
-      ) => {
-        const eventProps = {
-          event_type: name,
-          device_id: state.deviceId,
-          event_properties: properties,
-          user_properties: userProperties,
-        }
-        if (!state.amp) {
-          setQueuedEvents(prev => [...prev, eventProps])
-          return
-        }
-        state.amp.logEvent(eventProps)
-      },
+      amp,
+      sendEvent,
     }
-  }, [state])
+  }, [amp, sendEvent])
 
   return <AnalyticContext.Provider value={contextValue}>{props.children}</AnalyticContext.Provider>
 }

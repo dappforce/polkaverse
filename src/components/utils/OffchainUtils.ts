@@ -187,3 +187,10 @@ export async function requestToken({ address }: { address: string }) {
   if (!data.success) throw new Error(data.message)
   return res
 }
+
+export async function createUserId(address: string) {
+  const res = await axios.post('/c/api/create-user-id', { address })
+  const data = res.data
+  if (!data.success || !data.userId) throw new Error(data.errors)
+  return data.userId
+}

@@ -1,7 +1,8 @@
+import { useAnalytics } from './analytics'
 import { useMyAccount } from './my-account'
 
 // order of the registry can be important if you have dependencies between stores in the init function.
-const storesRegistry = [useMyAccount]
+const storesRegistry = [useAnalytics, useMyAccount]
 
 export const initAllStores = () => {
   storesRegistry.forEach(store => {
