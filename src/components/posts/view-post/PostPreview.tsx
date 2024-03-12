@@ -26,8 +26,11 @@ export type PreviewProps = BarePreviewProps & {
   showPinnedIcon?: boolean
 }
 
-// grill admin account
-const HIDE_PREVIEW_FROM_ACCOUNT = ['3rPYmfYVHG7NtuGDivDNZdMMRHgrwtVuswY9TWUaHQCU8tAo']
+// grill admin account and grill memes admin
+const HIDE_PREVIEW_FROM_ACCOUNT = [
+  '3rPYmfYVHG7NtuGDivDNZdMMRHgrwtVuswY9TWUaHQCU8tAo',
+  '3oGjkULuNKRqi513BbohWiSgA2oKMrbSnPrcddpXYC4mtW1G',
+]
 export function PostPreview(props: PreviewProps) {
   const { postDetails, space: externalSpace, showPinnedIcon } = props
   const {
