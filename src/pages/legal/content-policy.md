@@ -84,4 +84,4 @@ Posts and comments which have broken the code of conduct and Grill’s polices a
 
 Please refer to the list below for your go-to contact points regarding the Grill.
 
-[Official Chat](https://grillapp.net/c/ask)
+#### [Report](https://grillapp.net/c/report) | [Appeal](https://grillapp.net/c/appeal) | [Discuss in official chat](https://grillapp.net/c/ask)
