@@ -1,7 +1,7 @@
 import { SocialEventDataApiInput } from '@subsocial/data-hub-sdk'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { handlerWrapper } from 'src/server/common'
-import { addPostView } from 'src/server/datahub-queue/view'
+import { addPostView } from 'src/server/datahub-queue/post-view'
 import { z } from 'zod'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
