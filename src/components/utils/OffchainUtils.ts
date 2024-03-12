@@ -8,6 +8,7 @@ import { AccountId, ElasticQueryParams } from 'src/types'
 const { offchainUrl, subIdApiUrl } = config
 
 const log = newLogger('OffchainRequests')
+const grillBackendApi = axios.create({ baseURL: '/c' })
 
 function getOffchainUrl(subUrl: string): string {
   return `${offchainUrl}/v1/offchain${subUrl}`
@@ -180,7 +181,7 @@ export const updatePendingOrder = async ({
 }
 
 export async function requestToken({ address }: { address: string }) {
-  const res = await axios.post('/c/api/request-token', {
+  const res = await grillBackendApi.post('/api/request-token', {
     address,
   })
   const data = res.data
@@ -189,7 +190,7 @@ export async function requestToken({ address }: { address: string }) {
 }
 
 export async function createUserId(address: string) {
-  const res = await axios.post('/c/api/create-user-id', { address })
+  const res = await grillBackendApi.post('/api/create-user-id', { address })
   const data = res.data
   if (!data.success || !data.userId) throw new Error(data.errors)
   return data.userId
