@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import { NextPage } from 'next'
 import router from 'next/router'
 import { FC, useEffect } from 'react'
+import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { CommentSection } from 'src/components/comments/CommentsSection'
 import MobileActiveStakingSection from 'src/components/creators/MobileActiveStakingSection'
 import TopUsersCard from 'src/components/creators/TopUsersCard'
@@ -15,10 +16,12 @@ import SpaceCard from 'src/components/spaces/SpaceCard'
 import { postUrl } from 'src/components/urls'
 import { Loading, useIsVisible } from 'src/components/utils'
 import DfCard from 'src/components/utils/cards/DfCard'
+import { addPostView } from 'src/components/utils/datahub/post-view'
 import NoData from 'src/components/utils/EmptyList'
 import { return404 } from 'src/components/utils/next'
 import Segment from 'src/components/utils/Segment'
 import config from 'src/config'
+import { POST_VIEW_DURATION } from 'src/config/constants'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { getInitialPropsWithRedux, NextContextWithRedux } from 'src/rtk/app'
 import { useSelectProfile } from 'src/rtk/app/hooks'
@@ -160,6 +163,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
       withVoteBanner
       creatorDashboardSidebarType={{ name: 'post-page', space }}
     >
+      <PostViewChecker postId={post.id} />
       <MobileActiveStakingSection showTopUsers={false} />
       <HiddenPostAlert post={post.struct} />
       <Section>
@@ -257,6 +261,26 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
       </Section>
     </PageContent>
   )
+}
+
+function PostViewChecker({ postId }: { postId: string }) {
+  const myAddress = useMyAddress()
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      try {
+        await addPostView({
+          args: { viewerId: myAddress, duration: POST_VIEW_DURATION, postPersistentId: postId },
+        })
+      } catch (err) {
+        console.error('Failed to add view', err)
+      }
+    }, POST_VIEW_DURATION)
+
+    return () => {
+      clearTimeout(timeoutId)
+    }
+  }, [postId])
+  return null
 }
 
 export async function loadPostOnNextReq({
