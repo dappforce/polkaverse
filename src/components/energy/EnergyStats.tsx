@@ -23,12 +23,19 @@ const EnergyStats = () => {
   const transactionsLeft = <TokenBalance value={transactionsCount.toString()} />
 
   const data = [
-    { title: 'Energy left', value: energyLeft, withEnergyIcon: true, tooltipText: 'blabla' },
+    {
+      title: 'Energy left',
+      value: energyLeft,
+      withEnergyIcon: true,
+      tooltipText:
+        'The amount of energy you have left. Please generate more energy before this reaches 0.',
+    },
     {
       title: 'Transactions left',
       value: transactionsLeft,
       withEnergyIcon: false,
-      tooltipText: 'blabla',
+      tooltipText:
+        'How many transactions you can do with your remaining energy. Please generate more energy before this reaches 0.',
     },
   ]
 

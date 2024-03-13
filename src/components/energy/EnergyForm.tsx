@@ -149,7 +149,7 @@ const EnergyInfoSection = ({ amount }: EnergyInfoSectionProps) => {
               'The approximate number of transactions you can complete by using this many SUB tokens'
             }
           >
-            <QuestionCircleOutlined />
+            <QuestionCircleOutlined style={{ color: '#94A3B8' }} />
           </Tooltip>
         </div>
         <div className={styles.ItemValue}>
@@ -166,7 +166,7 @@ const EnergyInfoSection = ({ amount }: EnergyInfoSectionProps) => {
               'The approximate number of transactions you can complete by using energy, which will be created by burning this many SUB tokens'
             }
           >
-            <QuestionCircleOutlined />
+            <QuestionCircleOutlined style={{ color: '#94A3B8' }} />
           </Tooltip>
         </div>
         <div className={styles.ItemValue}>~ {<TokenBalance value={txsCount.toString()} />}</div>

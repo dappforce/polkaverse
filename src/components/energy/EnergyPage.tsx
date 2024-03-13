@@ -1,6 +1,5 @@
-import clsx from 'clsx'
+import { useMyAddress } from '../auth/MyAccountsContext'
 import { HeadMetaProps, PageContent } from '../main/PageWrapper'
-import { MutedDiv } from '../utils/MutedText'
 import styles from './Energy.module.sass'
 import EnergyForm from './EnergyForm'
 import EnergyStats from './EnergyStats'
@@ -17,14 +16,16 @@ const meta: HeadMetaProps = {
 }
 
 export const EnergyPage = () => {
+  const myAddress = useMyAddress()
+
   return (
-    <PageContent className={clsx(styles.EnergyStationLayout)} meta={meta}>
+    <PageContent className={styles.EnergyStationLayout} meta={meta}>
       <div className={styles.LeftSideLayout}>
         <div className={styles.TitleSection}>
-          <div className={clsx(styles.Title)}>Energy Station</div>
-          <MutedDiv>{desc}</MutedDiv>
+          <div className={styles.Title}>Energy Station</div>
+          <div className={styles.Description}>{desc}</div>
         </div>
-        <EnergyStats />
+        {myAddress && <EnergyStats />}
         <EnergyForm />
       </div>
       <div className={styles.RightSideLayout}>
