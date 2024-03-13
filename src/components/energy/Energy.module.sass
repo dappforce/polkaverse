@@ -9,6 +9,15 @@
   flex-direction: column
   gap: $space_normal
 
+  width: 70%
+
+.RightSideLayout
+  display: flex
+  flex-direction: column
+  gap: $space_normal
+
+  width: 30%
+
 .TitleSection
   display: flex
   flex-direction: column
@@ -24,9 +33,6 @@
     font-size: $font_small
     line-height: 22px
     color: #64748B
-
-.FAQWrapper
-  margin: 0 !important
 
 .EnergyStatsSection
   display: flex
@@ -66,17 +72,173 @@
 .EnergyFormCard
   border-radius: 20px
 
-  :global(.ant-card-body)
+  background-color: #fff
+  box-shadow: 0px 4px 10.9px 0px #edf2f6a1
+
+  padding: $space_normal
+  display: flex
+  flex-direction: column
+  gap: $space_normal
+
+.EnergyFormTitle
+  font-size: $font_large
+  font-weight: 700
+  line-height: 26px
+  color: $color_font_normal
+
+.EnergyForm
+  display: flex
+  flex-direction: column
+  gap: $space_normal
+
+  :global(.ant-form-item)
+    margin-bottom: 0
+
+.AmountFormInput
+  :global(.ant-form-item-label)
+    padding: 0
+
+  label
+    width: 100%
+    margin-bottom: 0
+    line-height: 26px
+
+.InfoSection
+  display: flex
+  gap: $space_small
+  align-items: center
+
+  .Divider
+    color: #64748B
+
+  .InfoSectionItem
+    width: 100%
+    background: #F8FAFC
+    border-radius: 20px
     padding: $space_normal
 
+    display: flex
+    flex-direction: column
+    gap: $space_tiny
 
+    .ItemTitle
+      font-size: $font_small
+      font-weight: 400
+      line-height: 22px
+      color: #64748B
 
+    .ItemValue
+      font-size: $font_large
+      font-weight: 600
+      line-height: 32px
+      color: #0F172A
 
+.EnergyFormButton
+  height: 46px !important
 
+  &:disabled
+    background-color: rgba(235, 47, 149, 0.5) !important
+    color: white
 
+    &:hover
+      color: white
 
+.FAQWrapper
+  background: white
+  border-radius: 20px
+  padding: $space_normal
 
+  display: flex
+  flex-direction: column
+  gap: $space_normal
 
+  .FAQTitleSection
+    display: flex
+    align-items: center
+    justify-content: space-between
+    gap: $space_tiny
+
+    .Title
+      font-size: $font_large
+      font-weight: 700
+      line-height: 26px
+      color: $color_font_normal
+
+  :global(.ant-collapse)
+    display: flex
+    flex-direction: column
+    gap: $space_normal
+
+    :global(.ant-collapse-content-box)
+      padding: $space_small $space_big 0 $space_big !important
+
+      p
+        color: #64748B
+        margin-bottom: 0
+
+  :global(.ant-collapse-header)
+    padding: 0 !important
+    padding-left: $space_large !important
+
+    color: $color_font_normal !important
+    font-size: $font_small !important
+    line-height: 22px !important
+    b
+      font-weight: 500 !important
+
+    :global(.ant-collapse-arrow)
+      left: 0 !important
+      top: 11px !important
+
+.QuestionWrapper
+  display: flex
+  flex-direction: column
+  gap: $space_normal
+
+  background: white
+  border-radius: 20px
+  padding: $space_normal
+
+  margin-bottom: $space_normal
+
+  button
+    width: fit-content
+
+  .QuestionTitle
+    font-size: $font_large
+    font-weight: 700
+    line-height: 26px
+    color: $color_font_normal
+
+@media (max-width: 875px)
+  .EnergyStationLayout
+    flex-direction: column
+
+  .LeftSideLayout
+    width: 100%
+
+  .RightSideLayout
+
+    width: 100%
+
+@media (max-width: 560px)
+  .InfoSection
+    flex-direction: column
+
+  .EnergyStatsSection
+    flex-direction: column
+
+.FormAlert
+  border-radius: 12px
+
+.RecipientInput
+  :global(.ant-form-item-label)
+    padding: 0
+
+  label
+    width: 100%
+    margin-bottom: 0
+    line-height: 26px
 
 .DropdownOverlay
   background-color: #fff
@@ -122,17 +284,6 @@
 
 .EnergyIndicator
   display: flex
-
-.InfoSection
-  border: 1px solid $color_light_border
-  border-radius: $border_radius_normal
-  padding: $space_normal
-  margin-top: $space_normal
-
-.AmountFormInput
-  label
-    width: 100%
-    margin-bottom: $space_normal
 
 .Faq
   \:global .ant-card-body

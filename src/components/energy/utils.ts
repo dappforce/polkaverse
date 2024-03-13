@@ -8,6 +8,7 @@ export type EnergyState = {
   status: EnergyStatus
   transactionsCount: number
   coefficient: number
+  energyBalance: BN
 }
 
 export const getEnergyCoef = async (api: ApiPromise) => {
@@ -51,5 +52,6 @@ export const calculateEnergyState = (
     coefficient,
     transactionsCount,
     status,
+    energyBalance,
   }
 }

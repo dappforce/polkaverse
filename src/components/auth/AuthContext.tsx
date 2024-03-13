@@ -1,6 +1,7 @@
 import { u128 } from '@polkadot/types'
 import { CodecMap } from '@polkadot/types/codec'
 import { isStr } from '@subsocial/utils'
+import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
 import { useRouter } from 'next/router'
 import React, { createContext, useContext, useEffect, useState } from 'react'
@@ -55,7 +56,12 @@ export type AuthContextProps = {
   setEmail: React.Dispatch<React.SetStateAction<string | null>>
 }
 
-const energyStub: EnergyState = { status: 'normal', transactionsCount: 0, coefficient: 1 }
+const energyStub: EnergyState = {
+  energyBalance: new BigNumber(0),
+  status: 'normal',
+  transactionsCount: 0,
+  coefficient: 1,
+}
 
 const contextStub: AuthContextProps = {
   state: {

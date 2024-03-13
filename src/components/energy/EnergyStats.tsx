@@ -1,15 +1,40 @@
+import { QuestionCircleOutlined } from '@ant-design/icons'
+import { convertToBalanceWithDecimal } from '@subsocial/utils'
+import { Tooltip } from 'antd'
+import BN from 'bignumber.js'
 import { TiFlashOutline } from 'react-icons/ti'
+import { useAuth } from '../auth/AuthContext'
+import { useSubstrate } from '../substrate'
+import TokenBalance from '../utils/TokenBalance'
 import styles from './Energy.module.sass'
 
 const EnergyStats = () => {
-  const mockedData = [
-    { title: 'Energy left', value: '1,240', withEnergyIcon: true },
-    { title: 'Transactions left', value: '3,130', withEnergyIcon: false },
+  const {
+    energy: { transactionsCount, energyBalance },
+  } = useAuth()
+  const { tokenDecimal } = useSubstrate()
+
+  const energyBalanceWithDecimal =
+    energyBalance && tokenDecimal
+      ? convertToBalanceWithDecimal(energyBalance.toString(), tokenDecimal)
+      : new BN(0)
+
+  const energyLeft = <TokenBalance value={energyBalanceWithDecimal.toString()} />
+  const transactionsLeft = <TokenBalance value={transactionsCount.toString()} />
+
+  const data = [
+    { title: 'Energy left', value: energyLeft, withEnergyIcon: true, tooltipText: 'blabla' },
+    {
+      title: 'Transactions left',
+      value: transactionsLeft,
+      withEnergyIcon: false,
+      tooltipText: 'blabla',
+    },
   ]
 
   return (
     <div className={styles.EnergyStatsSection}>
-      {mockedData.map((props, i) => (
+      {data.map((props, i) => (
         <StatsCard key={i} {...props} />
       ))}
     </div>
@@ -18,14 +43,20 @@ const EnergyStats = () => {
 
 type StatsCardProps = {
   title: string
-  value: string
+  value: React.ReactNode
   withEnergyIcon: boolean
+  tooltipText: string
 }
 
-const StatsCard = ({ title, value, withEnergyIcon }: StatsCardProps) => {
+const StatsCard = ({ title, value, withEnergyIcon, tooltipText }: StatsCardProps) => {
   return (
     <div className={styles.StatsCard}>
-      <div className={styles.StatsTitle}>{title}</div>
+      <div className={styles.StatsTitle}>
+        {title}{' '}
+        <Tooltip className='ml-2' title={tooltipText}>
+          <QuestionCircleOutlined style={{ color: '#94A3B8' }} />
+        </Tooltip>
+      </div>
       <div className={styles.StatsValue}>
         {withEnergyIcon && <TiFlashOutline />}
         <span>{value}</span>

@@ -5,6 +5,7 @@ import styles from './Energy.module.sass'
 import EnergyForm from './EnergyForm'
 import EnergyStats from './EnergyStats'
 import { FaqSection } from './Faq'
+import QuestionSection from './QuestionSection'
 
 const desc =
   'Energy allows you to use Subsocial. You can create energy here by burning SUB, and see the approximate number of transactions it will allow you to complete.'
@@ -26,7 +27,10 @@ export const EnergyPage = () => {
         <EnergyStats />
         <EnergyForm />
       </div>
-      <FaqSection />
+      <div className={styles.RightSideLayout}>
+        <FaqSection />
+        <QuestionSection />
+      </div>
     </PageContent>
   )
 }
