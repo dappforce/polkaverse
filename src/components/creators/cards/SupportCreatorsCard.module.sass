@@ -19,6 +19,7 @@
     .Subtitle
       opacity: 0.8
       font-size: $font_small
+      line-height: 22px
 
     .Image
       display: block
@@ -38,22 +39,84 @@
     background: #A897FA
     filter: blur(300px)
 
-  .Gradient1
-    position: absolute
-    width: 1000px
-    height: 1000px
-    border-radius: 100%
-    left: 50%
-    top: 0
-    background: #A897FA
-    filter: blur(300px)
+.Gradient1
+  position: absolute
+  width: 1000px
+  height: 1000px
+  border-radius: 100%
+  left: 50%
+  top: 0
+  background: #A897FA
+  filter: blur(300px)
 
-  .Gradient2
-    position: absolute
-    width: 300px
-    height: 300px
-    border-radius: 100%
-    top: 50%
-    left: 0
-    background: rgba(198, 193, 252, 0.69)
-    filter: blur(135px)
+.Gradient2
+  position: absolute
+  width: 300px
+  height: 300px
+  border-radius: 100%
+  top: 50%
+  left: 0
+  background: rgba(198, 193, 252, 0.69)
+  filter: blur(135px)
+
+  .List
+    padding: 0
+    list-style-type: none
+
+    li
+      span
+        opacity: 0.8
+        font-size: $font_small
+        line-height: 22px
+
+        display: flex
+        flex-direction: column
+        gap: $space_small
+
+.CarouselWrapper
+  border-radius: $border_radius_big
+  position: relative
+  z-index: 0
+  overflow: clip
+
+  :global(.slick-dots)
+    li 
+      width: 9px !important
+      height: 9px !important
+
+      button
+        height: 9px !important
+        border-radius: 50% !important
+
+  .ItemContent
+    background-color: #2D81FF
+    padding: $space_normal
+    overflow: hidden
+    position: relative
+
+  .ContentInner
+    color: white
+    z-index: 1
+    position: relative
+
+    .Title
+      line-height: normal
+      max-width: 66%
+
+    .Subtitle
+      opacity: 0.8
+      font-size: $font_small
+      line-height: 22px
+      max-width: 98%
+
+    .Image
+      position: absolute
+      display: block
+      float: right
+      width: 115px
+      right: -36px
+      top: -17px
+  
+  .DotsSection
+    padding-top: 20px
+    padding-bottom: 20px
