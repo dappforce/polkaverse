@@ -1,5 +1,5 @@
 import { createInstance } from '@amplitude/analytics-browser'
-import type { BaseEvent, BrowserClient } from '@amplitude/analytics-types'
+import { BaseEvent, BrowserClient } from '@amplitude/analytics-types'
 import Router from 'next/router'
 import { createUserId } from 'src/components/utils/OffchainUtils'
 import { ampId } from 'src/config/env'
