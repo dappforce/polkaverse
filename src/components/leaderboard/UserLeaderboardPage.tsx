@@ -1,4 +1,4 @@
-import { Radio } from 'antd'
+import { Button, Radio } from 'antd'
 import clsx from 'clsx'
 import router, { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -7,6 +7,7 @@ import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useFetchUserRewardHistory } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchUserStatistics } from 'src/rtk/features/leaderboard/hooks'
 import { UserStatistics } from 'src/rtk/features/leaderboard/userStatisticsSlice'
+import { getContentStakingLink } from 'src/utils/links'
 import { truncateAddress } from 'src/utils/storage'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
@@ -15,6 +16,7 @@ import { PageContent } from '../main/PageWrapper'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import DfCard from '../utils/cards/DfCard'
 import { LeaderboardRole } from '../utils/datahub/leaderboard'
+import { DfImage } from '../utils/DfImage'
 import { MutedSpan } from '../utils/MutedText'
 import LeaderboardTable from './common/LeaderboardTable'
 import LeaderboardTabs from './common/LeaderboardTabs'
@@ -219,6 +221,19 @@ export default function UserLeaderboardPage({
           ))}
         </div>
       )}
+      <div className={styles.IncreaseRewardsAlert}>
+        <DfImage preview={false} src='/images/coins.png' className={styles.Image} />
+        <div className={styles.Title}>Increase your daily rewards by locking more SUB</div>
+        <Button
+          size='middle'
+          type='primary'
+          href={getContentStakingLink()}
+          shape='round'
+          target='_blank'
+        >
+          Lock SUB
+        </Button>
+      </div>
       <div className={clsx(styles.Leaderboard)}>
         <DfCard size='small' withShadow={false} className='sm-hidden'>
           <RewardHistoryPanel
