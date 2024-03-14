@@ -44,7 +44,7 @@ export function PostPreview(props: PreviewProps) {
 
   const { inView, ref } = useInView()
   useEffect(() => {
-    if (!inView) return
+    if (!inView || !myAddress) return
 
     const timeoutId = setTimeout(async () => {
       try {
