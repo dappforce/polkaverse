@@ -49,7 +49,6 @@ import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
 import styles from './helpers.module.sass'
 import { PostDropDownMenu } from './PostDropDownMenu'
-import PostRewardStat from './PostRewardStat'
 import PostViewCount from './PostViewCount'
 import TwitterPost from './TwitterPost'
 
@@ -337,11 +336,12 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
 
   return (
     <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'} ${className ?? ''}`}>
-      <div className={clsx(styles.PostActions)}>
-        <SuperLike post={struct} />
-        {preview && <CommentAction {...props} />}
+      <div className={clsx('d-flex align-items-center justify-content-between GapNormal w-100')}>
+        <div className='d-flex align-items-center GapNormal'>
+          <SuperLike post={struct} />
+          {preview && <CommentAction {...props} />}
+        </div>
         <PostViewCount postId={struct.id} />
-        <PostRewardStat postId={postDetails.id} />
       </div>
       {/* <ShareDropdown postDetails={postDetails} space={space} className='DfAction' /> */}
     </div>

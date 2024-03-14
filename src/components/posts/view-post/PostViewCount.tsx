@@ -1,6 +1,6 @@
+import clsx from 'clsx'
 import { ComponentProps } from 'react'
 import { FaRegEye } from 'react-icons/fa'
-import { IconWithLabel } from 'src/components/utils'
 import { usePostViewCount } from 'src/rtk/app/hooks'
 
 export default function PostViewCount({
@@ -10,8 +10,15 @@ export default function PostViewCount({
   const viewCount = usePostViewCount(postId)
 
   return (
-    <div {...props} className={props.className}>
-      <IconWithLabel renderZeroCount icon={<FaRegEye />} count={viewCount} />
+    <div
+      {...props}
+      className={clsx(
+        'd-flex align-items-center ColorMuted FontWeightMedium GapTiny',
+        props.className,
+      )}
+    >
+      <FaRegEye className='FontLarge' />
+      <span>{viewCount}</span>
     </div>
   )
 }
