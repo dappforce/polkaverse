@@ -33,6 +33,7 @@ import { getAmountRange } from 'src/utils/analytics'
 import { getContentStakingLink } from 'src/utils/links'
 import { redirectToLogin } from 'src/utils/url'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import { PostRewardStatWrapper } from '../posts/view-post/PostRewardStat'
 import { IconWithLabel } from '../utils'
 import CustomModal from '../utils/CustomModal'
 import { createSuperLike } from '../utils/datahub/active-staking'
@@ -187,6 +188,17 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
         disabled={isDisabled}
       >
         <IconWithLabel renderZeroCount icon={icon} count={count} />
+        <PostRewardStatWrapper postId={post.id}>
+          {({ reward, tooltip }) => (
+            <Tooltip title={tooltip} className='d-flex align-items-center'>
+              <div
+                className='mx-2.5'
+                style={{ height: '1em', width: '1px', background: '#CBD5E1' }}
+              />
+              <span className='ColorMuted d-flex align-items-center GapTiny'>{reward}</span>
+            </Tooltip>
+          )}
+        </PostRewardStatWrapper>
       </Button>
     </div>
   )

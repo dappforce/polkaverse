@@ -1,8 +1,7 @@
-import { Tooltip } from 'antd'
-import BN from 'bignumber.js'
+import { Skeleton, Tooltip } from 'antd'
 import clsx from 'clsx'
 import capitalize from 'lodash/capitalize'
-import { ComponentProps } from 'react'
+import { ComponentProps, ReactNode } from 'react'
 import { TbCoins } from 'react-icons/tb'
 import { useIsMyAddress } from 'src/components/auth/MyAccountsContext'
 import { FormatBalance, formatBalanceToJsx } from 'src/components/common/balances'
@@ -53,6 +52,59 @@ function generateTooltip(
   )
 }
 
+export function PostRewardStatWrapper({
+  postId,
+  children,
+}: {
+  postId: string
+  children: (props: { tooltip: ReactNode; reward: ReactNode }) => ReactNode
+}) {
+  const reward = useSelectPostReward(postId)
+  const post = useSelectPost(postId)
+  const isComment = post?.post.struct.isComment
+  const owner = post?.post.struct.ownerId
+  const isMyPost = useIsMyAddress(post?.post.struct.ownerId)
+
+  const { data: totalStake } = useFetchTotalStake(owner || '')
+
+  let tooltip = null
+  if (!reward) {
+    tooltip = null
+  } else if (!totalStake?.hasStakedEnough && isMyPost) {
+    tooltip = (
+      <>
+        These are your potential SUB rewards for the week. Lock at least{' '}
+        <FormatBalance value={MINIMUM_LOCK.toString()} decimals={10} currency='SUB' precision={2} />{' '}
+        this week to be eligible to receive them
+      </>
+    )
+  } else {
+    tooltip = generateTooltip(reward.rewardsBySource, isComment ? 'comment' : 'post')
+  }
+
+  return (
+    <>
+      {children({
+        tooltip: reward?.isNotZero ? tooltip : null,
+        reward: !reward ? (
+          <>
+            <Skeleton className={styles.Skeleton} paragraph={false} round /> SUB
+          </>
+        ) : (
+          <FormatBalance
+            style={{ whiteSpace: 'nowrap' }}
+            currency='SUB'
+            decimals={10}
+            precision={2}
+            withMutedDecimals={false}
+            value={reward.reward}
+          />
+        ),
+      })}
+    </>
+  )
+}
+
 export default function PostRewardStat({ postId, ...props }: PostRewardStatProps) {
   const reward = useSelectPostReward(postId)
   const post = useSelectPost(postId)
@@ -63,12 +115,10 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
   const { data: totalStake } = useFetchTotalStake(owner || '')
   if (!reward?.isNotZero) return null
 
-  const totalStakeAmount = new BN(totalStake?.amount || '0')
-
   return (
     <div {...props} className={clsx(props.className)}>
       <div className='d-flex align-items-center GapMini FontWeightMedium ColorMuted'>
-        {totalStakeAmount.isZero() && isMyPost ? (
+        {!totalStake?.hasStakedEnough && isMyPost ? (
           <Tooltip
             className='d-flex align-items-center GapMini'
             title={
@@ -167,7 +217,7 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
                 />
               </span>
               <span className='d-flex align-items-center GapMini'>
-                {totalStakeAmount.isZero() ? 'could earn' : 'earned'}
+                {totalStake?.hasStakedEnough ? 'could earn' : 'earned'}
               </span>
             </Tooltip>
           </>
