@@ -67,10 +67,12 @@ export function PostRewardStatWrapper({
 
   const { data: totalStake } = useFetchTotalStake(owner || '')
 
+  const showCouldEarn = !totalStake?.hasStakedEnough && isMyPost
+
   let tooltip = null
   if (!reward) {
     tooltip = null
-  } else if (!totalStake?.hasStakedEnough && isMyPost) {
+  } else if (showCouldEarn) {
     tooltip = (
       <>
         These are your potential SUB rewards for the week. Lock at least{' '}
@@ -91,14 +93,17 @@ export function PostRewardStatWrapper({
             <Skeleton className={styles.Skeleton} paragraph={false} round /> SUB
           </>
         ) : (
-          <FormatBalance
-            style={{ whiteSpace: 'nowrap' }}
-            currency='SUB'
-            decimals={10}
-            precision={2}
-            withMutedDecimals={false}
-            value={reward.reward}
-          />
+          <span style={{ color: showCouldEarn ? '#F89A42' : 'inherit' }}>
+            <FormatBalance
+              style={{ whiteSpace: 'nowrap' }}
+              currency='SUB'
+              decimals={10}
+              precision={2}
+              withMutedDecimals={false}
+              value={reward.reward}
+            />
+            {showCouldEarn ? ' could earn' : ''}
+          </span>
         ),
       })}
     </>
