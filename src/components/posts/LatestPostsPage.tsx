@@ -19,6 +19,8 @@ import { getSuggestedPostIdsByPage, loadSuggestedPostIds } from './loadSuggested
 import { getPinnedPost } from './pinned-post'
 import { PublicPostPreviewById } from './PublicPostPreview'
 
+const { promotedPosts } = config
+
 type Props = {
   initialPostIds?: PostId[]
   totalPostCount: number
@@ -27,6 +29,8 @@ type Props = {
   dateFilter?: DateFilterType
   shouldWaitApiReady?: boolean
 }
+
+const PROMOTED_POST_GAP = 10
 
 export const loadMorePostsFn = async (loadMoreValues: LoadMoreValues<PostFilterType>) => {
   const {
@@ -77,10 +81,42 @@ export const loadMorePostsFn = async (loadMoreValues: LoadMoreValues<PostFilterT
   return postIds
 }
 
+const getNewArrayWithPromotedPosts = (postIds: string[], lastPromotedPost: LastPromotedPost) => {
+  const postIdsChanks = postIds.length / PROMOTED_POST_GAP
+
+  const postIdsSlices = Array.from({ length: postIdsChanks }, (_, i) => {
+    return postIds.slice(i * PROMOTED_POST_GAP, (i + 1) * PROMOTED_POST_GAP)
+  })
+
+  let postIndex = lastPromotedPost.lastPromotedPostIndex
+  let circle = lastPromotedPost.circle
+
+  postIdsSlices.forEach(slice => {
+    if (promotedPosts[postIndex]) {
+      slice.splice(PROMOTED_POST_GAP, 0, `${promotedPosts[postIndex]}-promoted-${circle}`)
+
+      postIndex = promotedPosts.length - 1 === postIndex ? 0 : postIndex + 1
+      circle = postIndex === 0 ? circle + 1 : circle
+    }
+  })
+
+  return {
+    newPostIds: postIdsSlices.flat(),
+    newPromotedPostLastIndex: postIndex,
+    circle,
+  }
+}
+
 const sessionPageAndDataMap: Map<
   string,
-  { initialPage: number; dataSource: Record<number, string[]> }
+  {
+    initialPage: number
+    dataSource: Record<number, string[]>
+    lastPromotedPostIndex: number
+    circle: number
+  }
 > = new Map()
+
 const getSessionKey = ({
   dateFilter,
   filter,
@@ -90,6 +126,12 @@ const getSessionKey = ({
   dateFilter: string | undefined
   kind: string
 }) => `${filter}-${dateFilter}-${kind}`
+
+type LastPromotedPost = {
+  lastPromotedPostIndex: number
+  circle: number
+}
+
 const InfiniteListOfPublicPosts = (props: Props) => {
   const { totalPostCount, initialPostIds, kind, filter, dateFilter, shouldWaitApiReady } = props
   const client = useDfApolloClient()
@@ -129,15 +171,41 @@ const InfiniteListOfPublicPosts = (props: Props) => {
         date: dateFilter,
       },
     })
-    let { dataSource } = sessionPageAndDataMap.get(currentSessionKey) || {}
+    let {
+      dataSource,
+      initialPage = 1,
+      lastPromotedPostIndex = 0,
+      circle: promotedPostCircle = 0,
+    } = sessionPageAndDataMap.get(currentSessionKey) || {}
     if (!dataSource) dataSource = {}
-    dataSource[page] = res
+
+    const { newPostIds, newPromotedPostLastIndex, circle } = getNewArrayWithPromotedPosts(res, {
+      lastPromotedPostIndex,
+      circle: promotedPostCircle,
+    })
+
+    dataSource[page] = newPostIds
+
+    const newPage = page + 1
+
+    const newPromotedPostData =
+      newPage !== initialPage
+        ? {
+            lastPromotedPostIndex: newPromotedPostLastIndex,
+            circle,
+          }
+        : {
+            lastPromotedPostIndex: 0,
+            circle: 0,
+          }
 
     sessionPageAndDataMap.set(currentSessionKey, {
-      initialPage: page + 1,
+      initialPage: newPage,
       dataSource,
+      ...newPromotedPostData,
     })
-    return res
+
+    return newPostIds
   }
 
   const currentSessionData = sessionPageAndDataMap.get(currentSessionKey)
@@ -156,8 +224,11 @@ const InfiniteListOfPublicPosts = (props: Props) => {
         getKey={postId => postId}
         renderItem={postId => (
           <PublicPostPreviewById
-            showPinnedIcon={isSuggested(filter) || filter === 'hot'}
-            postId={postId}
+            showPinnedIcon={
+              (isSuggested(filter) || filter === 'hot') && !postId.includes('promoted')
+            }
+            postId={postId.split('-')[0]}
+            isPromoted={postId.includes('promoted')}
           />
         )}
       />

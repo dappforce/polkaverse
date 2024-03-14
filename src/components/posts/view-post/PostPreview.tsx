@@ -24,6 +24,7 @@ export type PreviewProps = BarePreviewProps & {
   postDetails: PostWithSomeDetails
   space?: SpaceData
   showPinnedIcon?: boolean
+  isPromoted?: boolean
 }
 
 // grill admin account and grill memes admin

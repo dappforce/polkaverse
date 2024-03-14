@@ -1,5 +1,6 @@
 import { AppConfig } from '../../types'
 import featuredCreators from './featuredCreators'
+import promotedPosts from './promotedPosts'
 
 const index: AppConfig = {
   // App settings
@@ -22,6 +23,7 @@ const index: AppConfig = {
   lastReservedSpaceId: '1000',
   claimedSpaceIds: ['1', '2', '3', '4', '5'],
   recommendedSpaceIds: featuredCreators,
+  promotedPosts: promotedPosts,
   suggestedTlds: ['sub', 'polka'],
   mutedAccounts: {
     '3tPAVaHYAFRfUVpNP1DAq4E3BxTPanzkGN4uukn3b4ZAefkj': [
