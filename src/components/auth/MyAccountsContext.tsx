@@ -28,7 +28,6 @@ import { fetchAddressLikeCounts } from 'src/rtk/features/activeStaking/addressLi
 import { fetchChainsInfo } from 'src/rtk/features/chainsInfo/chainsInfoSlice'
 import { fetchProfileSpace } from 'src/rtk/features/profiles/profilesSlice'
 import { fetchEntityOfSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
-import { useMyAccount } from 'src/stores/my-account'
 import { AnyAccountId, EmailAccount } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { useAccountSelector } from '../profile-selector/AccountSelector'
@@ -208,7 +207,7 @@ export function useIsUsingEmailOrSigner() {
 }
 
 export function useMyAddress() {
-  return useMyAccount(state => state.parentProxyAddress || state.address || '')
+  return '3sXsQXXF5WtiVBrBEe1yzRWgMEdNQAA3aqWwngvr6hibhUCE'
 }
 
 export function useAmIBlocked() {
