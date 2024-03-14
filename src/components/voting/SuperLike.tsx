@@ -195,7 +195,14 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
                 className='mx-2.5'
                 style={{ height: '1em', width: '1px', background: '#CBD5E1' }}
               />
-              <span className='ColorMuted d-flex align-items-center GapTiny'>{reward}</span>
+              <span
+                className={clsx(
+                  'd-flex align-items-center GapTiny',
+                  isActive ? 'ColorWhite' : 'ColorMuted',
+                )}
+              >
+                {reward}
+              </span>
             </Tooltip>
           )}
         </PostRewardStatWrapper>
