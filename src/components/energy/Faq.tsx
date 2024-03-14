@@ -1,18 +1,17 @@
 import { Collapse } from 'antd'
-import { LocalIcon } from 'src/components/utils'
-import { CardWithTitle } from '../utils/cards/WithTitle'
+import ExternalLink from '../spaces/helpers/ExternalLink'
 import styles from './Energy.module.sass'
 
 const { Panel } = Collapse
 
 export const FaqSection = () => {
   return (
-    <CardWithTitle
-      title={'FAQ'}
-      cardClassName={styles.Faq}
-      icon={<LocalIcon path={'/icons/faq.svg'} />}
-    >
-      <Collapse defaultActiveKey={['1']} ghost expandIconPosition='right'>
+    <div className={styles.FAQWrapper}>
+      <div className={styles.FAQTitleSection}>
+        <div className={styles.Title}>FAQ</div>
+        <ExternalLink url={''} value={'Learn more'} />
+      </div>
+      <Collapse ghost expandIconPosition='left'>
         <Panel header={<b>What is energy?</b>} key='1'>
           <p>
             Energy can be used to perform actions on the network, instead of SUB tokens. Energy can
@@ -39,6 +38,6 @@ export const FaqSection = () => {
           </p>
         </Panel>
       </Collapse>
-    </CardWithTitle>
+    </div>
   )
 }
