@@ -73,7 +73,7 @@ runs:
       run: |
         sed -i 's|<IMAGE>|'${{ env.image }}'|' $GITHUB_WORKSPACE/deployment/${{ inputs.app_input }}/deployment.yaml
         kubectl apply -f $GITHUB_WORKSPACE/deployment/${{ inputs.app_input }}/deployment.yaml
-        kubectl apply -f $GITHUB_WORKSPACE/deployment/${{ inputs.app_input }}/all.yaml || true
+        [[ "${{ inputs.app_input }}" == "deploy" ]] && kubectl apply -f $GITHUB_WORKSPACE/deployment/${{ inputs.app_input }}/all.yaml
 
     - name: add hpa
       if: github.ref == 'refs/heads/main'
