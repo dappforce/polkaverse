@@ -9,6 +9,10 @@ import { getContentStakingLink } from 'src/utils/links'
 import styles from './SupportCreatorsCard.module.sass'
 
 const EarnInChatCard = () => {
+  const sendEvent = useSendEvent()
+  const learnMoreHref =
+    'https://grillapp.net/@olehmell/after-migrating-grill-to-the-mainnet-chat-messages-can-now-95874'
+
   return (
     <>
       <div className={styles.ContentInner}>
@@ -24,7 +28,17 @@ const EarnInChatCard = () => {
           You can earn SUB rewards by chatting, offering helpful advice, and participating in
           engaging discussions
         </p>
-        <Button href={getContentStakingLink()} block shape='round' target='_blank'>
+        <Button
+          href={learnMoreHref}
+          onClick={() =>
+            sendEvent('learn_more_banner', {
+              value: learnMoreHref,
+            })
+          }
+          block
+          shape='round'
+          target='_blank'
+        >
           Learn more
         </Button>
       </div>
