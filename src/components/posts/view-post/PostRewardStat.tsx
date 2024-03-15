@@ -1,9 +1,9 @@
-import { Tooltip } from 'antd'
-import BN from 'bignumber.js'
+import { Skeleton, Tooltip } from 'antd'
+import BigNumber from 'bignumber.js'
 import clsx from 'clsx'
 import capitalize from 'lodash/capitalize'
-import { ComponentProps } from 'react'
-import { TbCoins } from 'react-icons/tb'
+import { ComponentProps, ReactNode } from 'react'
+import { TiWarningOutline } from 'react-icons/ti'
 import { useIsMyAddress } from 'src/components/auth/MyAccountsContext'
 import { FormatBalance, formatBalanceToJsx } from 'src/components/common/balances'
 import { MINIMUM_LOCK } from 'src/config/constants'
@@ -53,7 +53,13 @@ function generateTooltip(
   )
 }
 
-export default function PostRewardStat({ postId, ...props }: PostRewardStatProps) {
+export function PostRewardStatWrapper({
+  postId,
+  children,
+}: {
+  postId: string
+  children: (props: { tooltip: ReactNode; reward: ReactNode; isZeroReward: boolean }) => ReactNode
+}) {
   const reward = useSelectPostReward(postId)
   const post = useSelectPost(postId)
   const isComment = post?.post.struct.isComment
@@ -61,118 +67,86 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
   const isMyPost = useIsMyAddress(post?.post.struct.ownerId)
 
   const { data: totalStake } = useFetchTotalStake(owner || '')
-  if (!reward?.isNotZero) return null
 
-  const totalStakeAmount = new BN(totalStake?.amount || '0')
+  const showCouldEarn = !totalStake?.hasStakedEnough && isMyPost
+
+  let tooltip = null
+  if (!reward) {
+    tooltip = null
+  } else if (showCouldEarn) {
+    tooltip = (
+      <>
+        These are your potential SUB rewards for the week. Lock at least{' '}
+        <FormatBalance value={MINIMUM_LOCK.toString()} decimals={10} currency='SUB' precision={2} />{' '}
+        this week to be eligible to receive them
+      </>
+    )
+  } else {
+    tooltip = generateTooltip(reward.rewardsBySource, isComment ? 'comment' : 'post')
+  }
 
   return (
-    <div {...props} className={clsx(props.className)}>
-      <div className='d-flex align-items-center GapMini FontWeightMedium ColorMuted'>
-        {totalStakeAmount.isZero() && isMyPost ? (
-          <Tooltip
-            className='d-flex align-items-center GapMini'
-            title={
-              <>
-                These are your potential SUB rewards for the week. Lock at least{' '}
-                <FormatBalance
-                  value={MINIMUM_LOCK.toString()}
-                  decimals={10}
-                  currency='SUB'
-                  precision={2}
-                />{' '}
-                this week to be eligible to receive them
-              </>
-            }
-          >
-            <div className='d-flex align-items-center'>
-              <div className={styles.PotentialRewardsIcon}>
-                <div className={styles.closeIcon}></div>
-                <TbCoins className='FontNormal' />
-              </div>
-              <span className='FontWeightSemibold'>
-                <FormatBalance
-                  style={{ whiteSpace: 'nowrap' }}
-                  currency='SUB'
-                  decimals={10}
-                  precision={2}
-                  withMutedDecimals={false}
-                  value={reward.reward || '0'}
-                />
-              </span>
-              <span className='d-flex align-items-center GapMini' style={{ whiteSpace: 'nowrap' }}>
-                could earn
-              </span>
-            </div>
-          </Tooltip>
-        ) : (
+    <>
+      {children({
+        isZeroReward: !reward?.isNotZero,
+        tooltip: reward?.isNotZero ? tooltip : null,
+        reward: !reward ? (
           <>
-            <div className='position-relative d-flex align-items-center mr-1'>
-              {BigInt(reward.rewardDetail.draftReward || '0') > 0 ? (
-                <Tooltip
-                  className='d-flex align-items-center'
-                  title={
-                    <span>
-                      {BigInt(reward.rewardDetail.finalizedReward || '0') > 0 && (
-                        <>
-                          <FormatBalance
-                            withMutedDecimals={false}
-                            value={reward.rewardDetail.finalizedReward}
-                            currency='SUB'
-                            decimals={10}
-                            precision={2}
-                          />{' '}
-                          earned +{' '}
-                        </>
-                      )}
-                      <FormatBalance
-                        withMutedDecimals={false}
-                        value={reward.rewardDetail.draftReward}
-                        currency='SUB'
-                        decimals={10}
-                        precision={2}
-                      />{' '}
-                      approx. today
-                    </span>
-                  }
-                >
-                  <TbCoins className='FontNormal' />
-                  <div
-                    style={{
-                      width: '4px',
-                      height: '4px',
-                      background: '#F8963A',
-                      position: 'absolute',
-                      top: 0,
-                      right: 0,
-                      borderRadius: '50%',
-                    }}
-                  />
-                </Tooltip>
-              ) : (
-                <TbCoins className='FontNormal' />
-              )}
-            </div>
-            <Tooltip
-              className='d-flex align-items-center GapMini'
-              title={generateTooltip(reward.rewardsBySource, isComment ? 'comment' : 'post')}
-            >
-              <span className='FontWeightSemibold'>
-                <FormatBalance
-                  style={{ whiteSpace: 'nowrap' }}
-                  currency='SUB'
-                  decimals={10}
-                  precision={2}
-                  withMutedDecimals={false}
-                  value={reward.reward}
-                />
-              </span>
-              <span className='d-flex align-items-center GapMini'>
-                {totalStakeAmount.isZero() ? 'could earn' : 'earned'}
-              </span>
-            </Tooltip>
+            <Skeleton className={styles.Skeleton} paragraph={false} round /> SUB
           </>
-        )}
-      </div>
-    </div>
+        ) : (
+          <span
+            className='d-flex align-items-center GapMini FontWeightMedium'
+            style={{ color: showCouldEarn ? '#F89A42' : 'inherit' }}
+          >
+            {showCouldEarn && <TiWarningOutline className='FontNormal' />}
+            <span style={{ whiteSpace: 'nowrap' }}>{parseBalance(reward.reward)}</span>
+          </span>
+        ),
+      })}
+    </>
   )
+}
+
+export default function PostRewardStat({ postId, ...props }: PostRewardStatProps) {
+  return (
+    <PostRewardStatWrapper postId={postId}>
+      {({ reward, tooltip, isZeroReward }) =>
+        isZeroReward ? null : (
+          <div {...props} className={props.className}>
+            <Tooltip title={tooltip} className={clsx('d-flex align-items-center')}>
+              <span className={clsx('d-flex align-items-center GapTiny ColorMuted')}>{reward}</span>
+            </Tooltip>
+          </div>
+        )
+      }
+    </PostRewardStatWrapper>
+  )
+}
+
+function parseBalance(value: string) {
+  let parsedValue = BigNumber(value).div(1e10)
+  let roundings = ''
+  let precision = 2
+
+  if (parsedValue.gte(1000000)) {
+    parsedValue = parsedValue.div(1000000)
+    roundings = 'M'
+    precision = 0
+  } else if (parsedValue.gte(1000)) {
+    parsedValue = parsedValue.div(1000)
+    roundings = 'K'
+    precision = 0
+  }
+
+  const [prefix, postfix] = parsedValue.toString().split('.')
+  let decimals = ''
+  if (precision > 0) {
+    decimals = BigNumber(`0.${postfix}`).toPrecision(precision).substring(2)
+    if (prefix !== '0') {
+      decimals = decimals.substring(0, 2)
+    }
+  }
+
+  return `${prefix}${decimals ? `.${decimals}` : ''}${roundings} SUB`
 }

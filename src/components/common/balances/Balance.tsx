@@ -44,6 +44,8 @@ export function formatBalanceToJsx({
   const balanceValue = value.toString().split('.')[0]
 
   try {
+    if (balanceValue === '0') return <>0&nbsp;{currency}</>
+
     const [prefix, postfix] = formatBalance(balanceValue, {
       forceUnit: '-',
       decimals,
@@ -63,7 +65,9 @@ export function formatBalanceToJsx({
 
     let afterDecimalPoint =
       precision || fixedDecimalsLength
-        ? parseFloat(`0.${postfix}`).toPrecision(precision).substring(2)
+        ? postfix
+          ? parseFloat(`0.${postfix}`).toPrecision(precision).substring(2)
+          : '0'
         : postfix || '0000'
     if (fixedDecimalsLength) {
       afterDecimalPoint = afterDecimalPoint

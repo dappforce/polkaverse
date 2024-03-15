@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import { NextPage } from 'next'
 import router from 'next/router'
 import { FC, useEffect } from 'react'
+import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { CommentSection } from 'src/components/comments/CommentsSection'
 import MobileActiveStakingSection from 'src/components/creators/MobileActiveStakingSection'
 import TopUsersCard from 'src/components/creators/TopUsersCard'
@@ -15,10 +16,12 @@ import SpaceCard from 'src/components/spaces/SpaceCard'
 import { postUrl } from 'src/components/urls'
 import { Loading, useIsVisible } from 'src/components/utils'
 import DfCard from 'src/components/utils/cards/DfCard'
+import { addPostView } from 'src/components/utils/datahub/post-view'
 import NoData from 'src/components/utils/EmptyList'
 import { return404 } from 'src/components/utils/next'
 import Segment from 'src/components/utils/Segment'
 import config from 'src/config'
+import { POST_VIEW_DURATION } from 'src/config/constants'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { getInitialPropsWithRedux, NextContextWithRedux } from 'src/rtk/app'
 import { useSelectProfile } from 'src/rtk/app/hooks'
@@ -26,6 +29,7 @@ import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
 import { fetchPostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { fetchTopUsersWithSpaces } from 'src/rtk/features/leaderboard/topUsersSlice'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
+import { fetchPostsViewCount } from 'src/rtk/features/posts/postsViewCountSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
 import { asCommentStruct, HasStatusCode, idToBn, PostData, PostWithSomeDetails } from 'src/types'
 import { DfImage } from '../../utils/DfImage'
@@ -34,7 +38,6 @@ import Section from '../../utils/Section'
 import ViewTags from '../../utils/ViewTags'
 import Embed, { getEmbedLinkType, getGleevVideoId, getYoutubeVideoId } from '../embed/Embed'
 import { StatsPanel } from '../PostStats'
-import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
 import {
   HiddenPostAlert,
@@ -160,6 +163,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
       withVoteBanner
       creatorDashboardSidebarType={{ name: 'post-page', space }}
     >
+      <PostViewChecker postId={post.id} />
       <MobileActiveStakingSection showTopUsers={false} />
       <HiddenPostAlert post={post.struct} />
       <Section>
@@ -176,11 +180,6 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               {isNotMobile && (
                 <div className='d-flex justify-content-end align-items-center'>
                   <StatsPanel post={struct} goToCommentsId={goToCommentsId} />
-                  <ShareDropdown
-                    postDetails={postData}
-                    space={space.struct}
-                    className='DfAction p-0 ml-3'
-                  />
                   <div className='ml-2' style={{ position: 'relative', top: '2px' }}>
                     <PostDropDownMenu post={post} space={spaceStruct} withEditButton />
                   </div>
@@ -259,6 +258,26 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   )
 }
 
+function PostViewChecker({ postId }: { postId: string }) {
+  const myAddress = useMyAddress()
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      try {
+        await addPostView({
+          args: { viewerId: myAddress, duration: POST_VIEW_DURATION, postPersistentId: postId },
+        })
+      } catch (err) {
+        console.error('Failed to add view', err)
+      }
+    }, POST_VIEW_DURATION)
+
+    return () => {
+      clearTimeout(timeoutId)
+    }
+  }, [postId])
+  return null
+}
+
 export async function loadPostOnNextReq({
   context,
   dispatch,
@@ -312,7 +331,8 @@ const PostPage: FC<PostDetailsProps & HasStatusCode> = props => {
   const { statusCode, postData } = props
   const dispatch = useAppDispatch()
   useEffect(() => {
-    dispatch(fetchPostRewards({ postIds: [postData.id] as string[] }))
+    dispatch(fetchPostRewards({ postIds: [postData.id] }))
+    dispatch(fetchPostsViewCount({ postIds: [postData.id] }))
   }, [dispatch])
 
   if (statusCode === 404) {

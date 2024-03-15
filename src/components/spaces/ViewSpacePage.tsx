@@ -8,6 +8,7 @@ import { useAppDispatch } from 'src/rtk/app/store'
 import { fetchPostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { useFetchMyPermissionsBySpaceId } from 'src/rtk/features/permissions/mySpacePermissionsHooks'
 import { fetchPosts, selectPosts } from 'src/rtk/features/posts/postsSlice'
+import { fetchPostsViewCount } from 'src/rtk/features/posts/postsViewCountSlice'
 import { fetchProfileSpace, selectProfileSpace } from 'src/rtk/features/profiles/profilesSlice'
 import { DataSourceTypes, HasStatusCode, idToBn, SpaceContent } from 'src/types'
 import { descSort, isPolkaProject, isUnclaimedSpace } from 'src/utils'
@@ -81,7 +82,8 @@ const ViewSpacePage: FC<Props & { prefetchedIds: string[] }> = props => {
 
   const dispatch = useAppDispatch()
   useEffect(() => {
-    dispatch(fetchPostRewards({ postIds: prefetchedIds as string[] }))
+    dispatch(fetchPostRewards({ postIds: prefetchedIds }))
+    dispatch(fetchPostsViewCount({ postIds: prefetchedIds }))
   }, [dispatch])
 
   if (statusCode === 404) {

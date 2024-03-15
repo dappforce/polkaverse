@@ -123,20 +123,20 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: './.github/actions/common-cd-setup'
         with:
-          token_input:  ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_PROD }}
-          k8s_input:  ${{ secrets.K8S_PROD }}
+          token_input: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_PROD }}
+          k8s_input: ${{ secrets.K8S_PROD }}
           app_input: ${{ matrix.apps }}
-          zone_input:  ${{ secrets.CF_ZONE }}
-          mail_input:  ${{ secrets.CF_MAIL }}
-          tokens_input:  ${{ secrets.CF_TOKEN }}
+          zone_input: ${{ secrets.CF_ZONE }}
+          mail_input: ${{ secrets.CF_MAIL }}
+          tokens_input: ${{ secrets.CF_TOKEN }}
 
       - name: stage deploy ${{ matrix.apps }}
         if: startsWith(github.ref, 'refs/heads/deploy/')
         uses: './.github/actions/common-cd-setup'
         with:
-          token_input:  ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_STAGING }}
-          k8s_input:  ${{ secrets.K8S_STAGING }}
+          token_input: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_STAGING }}
+          k8s_input: ${{ secrets.K8S_STAGING }}
           app_input: ${{ matrix.apps }}
-          zone_input:  ${{ secrets.CF_ZONE }}
-          mail_input:  ${{ secrets.CF_MAIL }}
-          tokens_input:  ${{ secrets.CF_TOKEN }}
+          zone_input: ${{ secrets.CF_ZONE }}
+          mail_input: ${{ secrets.CF_MAIL }}
+          tokens_input: ${{ secrets.CF_TOKEN }}

@@ -50,6 +50,7 @@ import ViewPostLink from '../ViewPostLink'
 import styles from './helpers.module.sass'
 import { PostDropDownMenu } from './PostDropDownMenu'
 import PostRewardStat from './PostRewardStat'
+import PostViewCount from './PostViewCount'
 import TwitterPost from './TwitterPost'
 
 type IsUnlistedPostProps = {
@@ -336,18 +337,28 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
 
   return (
     <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'} ${className ?? ''}`}>
-      <div className={clsx('d-flex align-items-center GapHuge', styles.PostActions)}>
-        <SuperLike post={struct} />
-        {preview && <CommentAction {...props} />}
+      <div className={clsx('d-flex align-items-center justify-content-between GapNormal w-100')}>
+        <div className='d-flex align-items-center GapNormal'>
+          <SuperLike post={struct} />
+          <PostRewardStat postId={struct.id} />
+        </div>
+        <div className='d-flex align-items-center GapNormal'>
+          {preview && <CommentAction {...props} />}
+          <ShareDropdown
+            postDetails={props.postDetails}
+            space={postDetails.space?.struct}
+            className='p-0'
+          />
+          <PostViewCount postId={struct.id} />
+        </div>
       </div>
-      <PostRewardStat postId={postDetails.id} />
       {/* <ShareDropdown postDetails={postDetails} space={space} className='DfAction' /> */}
     </div>
   )
 }
 
-function CommentAction(props: PostActionsPanelProps) {
-  const { postDetails, toogleCommentSection } = props
+function CommentAction(props: PostActionsPanelProps & { iconClassName?: string }) {
+  const { postDetails, toogleCommentSection, iconClassName } = props
   const {
     post: {
       struct: { repliesCount },
@@ -357,13 +368,13 @@ function CommentAction(props: PostActionsPanelProps) {
   return (
     <Button
       type='default'
-      style={{ border: 'none', boxShadow: 'none', gap: '0.4rem' }}
+      style={{ border: 'none', boxShadow: 'none', gap: '0.5rem' }}
       className='p-0 d-flex align-items-center ColorMuted FontWeightMedium'
       onClick={() => {
         toogleCommentSection?.()
       }}
     >
-      <TbMessageCircle2 className='FontLarge' />
+      <TbMessageCircle2 className={clsx('FontSemilarge', iconClassName)} />
       {(repliesCount ?? 0) > 0 ? repliesCount : 'Comment'}
     </Button>
   )
@@ -428,9 +439,6 @@ export const PostPreviewCreatorInfo = (props: Pick<PostPreviewProps, 'postDetail
             space={space.struct}
             withUnfollowButton={false}
           />
-        )}
-        {space && (
-          <ShareDropdown postDetails={postDetails} space={space.struct} className='DfAction p-0' />
         )}
         <PostDropDownMenu
           post={postDetails.post}

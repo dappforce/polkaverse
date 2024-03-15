@@ -10,7 +10,7 @@ import {
 import { Button, Dropdown, Menu } from 'antd'
 import clsx from 'clsx'
 import { useState } from 'react'
-import { AiOutlineShareAlt } from 'react-icons/ai'
+import { LuShare2 } from 'react-icons/lu'
 import {
   copyUrl,
   facebookShareUrl,
@@ -31,7 +31,7 @@ type ShareMenuProps = {
   title?: string
   className?: string
   onClick?: FVoid
-  iconSize?: 'large' | 'normal'
+  iconSize?: 'semilarge' | 'normal'
 }
 
 export type SomeShareLink = {
@@ -115,7 +115,7 @@ const ShareMenu = (props: ShareMenuProps) => {
 }
 
 export const ShareDropdown = (props: ShareMenuProps) => {
-  const { title = 'Share', className, postDetails, iconSize = 'large' } = props
+  const { title = 'Share', className, postDetails, iconSize = 'semilarge' } = props
   const {
     post: {
       struct: { sharesCount },
@@ -132,11 +132,16 @@ export const ShareDropdown = (props: ShareMenuProps) => {
       placement='bottomCenter'
       overlay={<ShareMenu onClick={hide} {...props} />}
     >
-      <Button className={clsx(className, 'ColorMuted')} title={title}>
+      <Button
+        className={clsx('p-0 d-flex align-items-center', className, 'ColorMuted')}
+        style={{ border: 'none', boxShadow: 'none', background: 'transparent' }}
+        title={title}
+      >
         <IconWithLabel
+          renderZeroCount
           icon={
-            <AiOutlineShareAlt
-              className={clsx(iconSize === 'large' ? 'FontLarge' : 'FontNormal')}
+            <LuShare2
+              className={clsx(iconSize === 'semilarge' ? 'FontSemilarge' : 'FontNormal')}
               style={{ position: 'relative', top: '0.04em' }}
             />
           }

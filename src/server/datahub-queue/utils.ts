@@ -47,3 +47,12 @@ export const backendSigWrapper = async (input: SocialEventDataApiInput) => {
 
   return input
 }
+
+export function throwErrorIfNotProcessed(
+  data: { processed: boolean; message?: string | null },
+  defaultMessage?: string,
+) {
+  if (!data.processed) {
+    throw new Error(data.message ?? defaultMessage ?? 'Failed to process request')
+  }
+}
