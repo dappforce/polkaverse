@@ -2,66 +2,43 @@ name: build and deploy web app
 on:
   push:
     branches:
-      - staging
       - main
+      - deploy/**
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   front_build:
-    name: build & Push Docker image to Docker Hub
+    strategy:
+      matrix:
+        apps: [prod, deploy]
+        isMaster:
+          - ${{ contains(github.ref, 'main') }}
+        isDeploy:
+          - ${{ startsWith(github.ref, 'refs/heads/deploy/') }}
+        exclude:
+          - isMaster: false
+            apps: prod
+          - isMaster: true
+            apps: deploy
+
+    name: Build ${{ matrix.apps }} Docker image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Extract branch name
-        shell: bash
-        run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-        id: extract_branch
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Prepare
-        id: prep
-        run: |
-          echo "image=dappforce/subsocial-web-app:${{ env.name }}-$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
-
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@master
-
-      - name: Login to DockerHub
-        uses: docker/login-action@master
+      - name: Base ${{ matrix.apps }}
+        uses: './.github/actions/common-ci-setup'
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          username_input: ${{ secrets.DOCKER_USERNAME }}
+          password_input: ${{ secrets.DOCKER_PASSWORD }}
+          app_input: ${{ matrix.apps }}
 
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-single-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-single-buildx
-
-      - if: ${{ github.ref == 'refs/heads/staging' }}
-        name: Build staging image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          builder: ${{ steps.buildx.outputs.name }}
-          file: docker/Dockerfile
-          push: true
-          build-args: |
-            GH_GA_ID=fake
-            GH_APP_KIND=staging
-            GH_CONNECTION_KIND=staging
-
-          tags: |
-            ${{ env.image }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new
-
-      - if: ${{ github.ref == 'refs/heads/main' }}
-        name: Build production image
+      - name: Build production image
+        if: matrix.apps == 'prod'
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -83,10 +60,37 @@ jobs:
             GH_DATAHUB_QUEUE_URL=https://sub-queue-data-hub.subsocial.network/graphql
             GH_DATAHUB_QUEUE_TOKEN=${{ secrets.DATAHUB_QUEUE_TOKEN }}
             # GH_NEXT_PUBLIC_ENABLE_MAINTENANCE_PAGE=true
-
           tags: |
             ${{ env.image }}
             docker.io/dappforce/subsocial-web-app:master-latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+      - name: Build feature docker image
+        if: matrix.apps == 'deploy'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: docker/Dockerfile
+          push: true
+          build-args: |
+            GH_GA_ID=fake
+            GH_APP_KIND=grill
+            GH_HCAPTCHA_SITE_KEY=3beeddac-2dce-41cc-8e18-338118426c38
+            GH_AMP_ID=71bf5a46800fedba5e9a01243b988164
+            GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
+            GH_CONNECTION_KIND=dev
+            GH_SELLER_CLIENT_ID=5DYm3Wk4aa1BbfhH1ajmY6MNEELXoicmKRnP4tzHYjSKnD9K
+            GH_SELLER_TOKEN_SIGNER=retire strong pole intact cool music high path salt praise stadium spatial
+            GH_SERVER_MNEMONIC=plunge pumpkin penalty segment cattle more print below fat lemon clap uniform
+            GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=https://notifications-data-hub.subsocial.network/graphql
+            GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://notifications-data-hub.subsocial.network/graphql-ws
+            GH_DATAHUB_QUEUE_URL=https://notifications-queue-data-hub.subsocial.network/graphql
+            GH_DATAHUB_QUEUE_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZX0.jpXwkIJ4DpV4IvSI3eWVVXE6x89qr_GIq7IlbBv5YE0
+            # GH_NEXT_PUBLIC_ENABLE_MAINTENANCE_PAGE=true
+          tags: |
+            ${{ env.image }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
@@ -95,97 +99,44 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-  staging_deploy:
-    name: staging-deploy
-    needs: front_build
+  front_deploy:
+    strategy:
+      matrix:
+        apps: [prod, deploy]
+        isMaster:
+          - ${{ contains(github.ref, 'main') }}
+        isDeploy:
+          - ${{ startsWith(github.ref, 'refs/heads/deploy/') }}
+        exclude:
+          - isMaster: false
+            apps: prod
+          - isMaster: true
+            apps: deploy
+    name: deploy ${{ matrix.apps }}
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/staging' }}
+    needs: front_build
     steps:
-      - name: Checkout main
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract branch name
-        shell: bash
-        run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-        id: extract_branch
-
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
+      - name: prod deploy ${{ matrix.apps }}
+        if: github.ref == 'refs/heads/main'
+        uses: './.github/actions/common-cd-setup'
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_STAGING }}
+          token_input: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_PROD }}
+          k8s_input: ${{ secrets.K8S_PROD }}
+          app_input: ${{ matrix.apps }}
+          zone_input: ${{ secrets.CF_ZONE }}
+          mail_input: ${{ secrets.CF_MAIL }}
+          tokens_input: ${{ secrets.CF_TOKEN }}
 
-      - name: Save DigitalOcean kubeconfig with short-lived credentials
-        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.K8S_STAGING }}
-
-      - name: Update deploy file
-        run: TAG=${{ env.name }}-$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|dappforce/subsocial-web-app:'${TAG}'|' $GITHUB_WORKSPACE/deployment/base/deployment.yaml
-      - name: Deploy to DigitalOcean Kubernetes
-        run: kubectl apply -k $GITHUB_WORKSPACE/deployment/overlays/staging/
-
-      - name: Verify deployment
-        run: kubectl -n sub-back rollout status deployment/web-app
-
-  pro_deploy:
-    name: pro-deploy
-    needs: front_build
-    runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
-    steps:
-      - name: Checkout main
-        uses: actions/checkout@v4
-
-      - name: Extract branch name
-        shell: bash
-        run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-        id: extract_branch
-
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
+      - name: stage deploy ${{ matrix.apps }}
+        if: startsWith(github.ref, 'refs/heads/deploy/')
+        uses: './.github/actions/common-cd-setup'
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_PROD }}
-
-      - name: Save DigitalOcean kubeconfig with short-lived credentials
-        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.K8S_PROD }}
-
-      - name: Update deploy file
-        run: TAG=${{ env.name }}-$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|dappforce/subsocial-web-app:'${TAG}'|' $GITHUB_WORKSPACE/deployment/base/deployment.yaml
-
-      - name: Remove HPA
-        run: kubectl delete hpa -n sub-back web-app --ignore-not-found=true
-
-      - name: Deploy to DigitalOcean Kubernetes
-        run: kubectl apply -k $GITHUB_WORKSPACE/deployment/overlays/production/
-
-      - name: Verify deployment
-        run: kubectl -n sub-back rollout status deployment/web-app
-
-      - name: Verify deployment
-        run: kubectl -n sub-back rollout status deployment/web-app
-
-      - name: Recreate HPA
-        run: kubectl create -f $GITHUB_WORKSPACE/deployment/hpa/hpa.yaml
-
-  front-bk-prod-deploy:
-    name: bk-prod-deploy
-    needs: front_build
-    runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
-    steps:
-      - name: Checkout main
-        uses: actions/checkout@v4
-
-      - name: Extract branch name
-        shell: bash
-        run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-        id: extract_branch
-
-      - name: executing remote ssh commands
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.BACKUP_HOST }}
-          username: ${{ secrets.BACKUP_USERNAME }}
-          key: ${{ secrets.BACKUP_KEY }}
-          port: ${{ secrets.BACKUP_PORT }}
-          script: |
-            cd /root/webapp
-            ./update.sh
+          token_input: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_STAGING }}
+          k8s_input: ${{ secrets.K8S_STAGING }}
+          app_input: ${{ matrix.apps }}
+          zone_input: ${{ secrets.CF_ZONE }}
+          mail_input: ${{ secrets.CF_MAIL }}
+          tokens_input: ${{ secrets.CF_TOKEN }}

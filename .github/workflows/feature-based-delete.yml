@@ -32,9 +32,9 @@ jobs:
         continue-on-error: true
         run: |
           doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.K8S_STAGING }}
-          NAME=${{ env.name }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/features/all.yaml
-          NAME=${{ env.name }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/features/deployment.yaml
-          kubectl delete -f $GITHUB_WORKSPACE/deployment/features/
+          NAME=${{ env.name }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/deploy/all.yaml
+          NAME=${{ env.name }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/deploy/deployment.yaml
+          kubectl delete -f $GITHUB_WORKSPACE/deployment/deploy/
 
       - name: Get CF A record ID
         continue-on-error: true

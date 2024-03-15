@@ -31,6 +31,11 @@ export type PreviewProps = BarePreviewProps & {
   showPinnedIcon?: boolean
 }
 
+// grill admin account and grill memes admin
+const HIDE_PREVIEW_FROM_ACCOUNT = [
+  '3rPYmfYVHG7NtuGDivDNZdMMRHgrwtVuswY9TWUaHQCU8tAo',
+  '3oGjkULuNKRqi513BbohWiSgA2oKMrbSnPrcddpXYC4mtW1G',
+]
 export function PostPreview(props: PreviewProps) {
   const { postDetails, space: externalSpace, showPinnedIcon } = props
   const myAddress = useMyAddress()
@@ -41,6 +46,7 @@ export function PostPreview(props: PreviewProps) {
   const { isSharedPost } = post
   const space = externalSpace || globalSpace
   const isUnlisted = useIsUnlistedPost({ post, space: space?.struct })
+  const isHiddenPreview = HIDE_PREVIEW_FROM_ACCOUNT.includes(post.ownerId)
 
   const { inView, ref } = useInView()
   useEffect(() => {
@@ -61,7 +67,7 @@ export function PostPreview(props: PreviewProps) {
     }
   }, [inView, myAddress])
 
-  if (isUnlisted) return null
+  if (isUnlisted || isHiddenPreview) return null
 
   const postContent = postDetails.post.content
   const isEmptyContent = !isSharedPost && !postContent?.title && !postContent?.body
