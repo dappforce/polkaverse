@@ -1,4 +1,5 @@
 import { newLogger } from '@subsocial/utils'
+import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
@@ -37,6 +38,7 @@ const HIDE_PREVIEW_FROM_ACCOUNT = [
   '3oGjkULuNKRqi513BbohWiSgA2oKMrbSnPrcddpXYC4mtW1G',
 ]
 export function PostPreview(props: PreviewProps) {
+  const router = useRouter()
   const { postDetails, space: externalSpace, showPinnedIcon } = props
   const myAddress = useMyAddress()
   const {
@@ -87,6 +89,17 @@ export function PostPreview(props: PreviewProps) {
   const postContent = postDetails.post.content
   const isEmptyContent = !isSharedPost && !postContent?.title && !postContent?.body
   if (isEmptyContent) return null
+
+  // is home page latest posts tab
+  const hideEmptySharedPost =
+    router.pathname === '/' && router.query.tab === 'posts' && router.query.type === 'latest'
+  const isEmptySharedPost =
+    isSharedPost &&
+    !postContent?.title &&
+    !postContent?.body &&
+    !postContent?.link &&
+    !postContent?.image
+  if (hideEmptySharedPost && isEmptySharedPost) return null
 
   log.debug('Render a post w/ id:', post.id)
 
