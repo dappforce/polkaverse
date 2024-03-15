@@ -154,21 +154,13 @@ export const InnerViewComment: FC<Props> = props => {
             </div>
             <div className='d-flex align-items-center GapTiny'>
               {!isFake && (
-                <>
-                  <ShareDropdown
-                    postDetails={commentDetails}
-                    space={space}
-                    className='DfAction p-0'
-                    iconSize='normal'
-                  />
-                  <PostDropDownMenu
-                    className='d-flex align-items-center ColorMuted'
-                    style={{ position: 'relative', top: '1px' }}
-                    post={comment}
-                    space={space}
-                    onEditComment={onEditComment}
-                  />
-                </>
+                <PostDropDownMenu
+                  className='d-flex align-items-center ColorMuted'
+                  style={{ position: 'relative', top: '1px' }}
+                  post={comment}
+                  space={space}
+                  onEditComment={onEditComment}
+                />
               )}
             </div>
           </div>
@@ -186,68 +178,79 @@ export const InnerViewComment: FC<Props> = props => {
             )}
           </div>
           <div
-            className='d-flex align-items-center mt-1.5'
-            style={{ flexWrap: 'wrap-reverse', gap: '0 0.75rem' }}
+            className='d-flex align-items-center justify-content-between mt-1.5'
+            style={{ flexWrap: 'wrap', gap: '0 0.75rem' }}
           >
-            <div className='d-flex align-items-center GapSmall'>
+            <div className='d-flex align-items-center GapNormal'>
               <SuperLike
                 isComment
                 key={`voters-of-comments-${id}`}
-                className='!FontTiny'
+                className='!py-0.5'
                 iconClassName='!FontSmall'
                 post={commentStruct}
               />
+              <PostRewardStat postId={comment.id} />
+            </div>
+            <div className='d-flex align-items-center GapNormal ml-auto'>
+              {shouldRenderAlert && (
+                <Alert
+                  style={{ border: 'none', padding: '0.125rem 0.5rem' }}
+                  className='RoundedLarge'
+                  type='warning'
+                  message={
+                    <Tooltip
+                      title={
+                        <span>
+                          <span>
+                            Lock{' '}
+                            <FormatBalance
+                              currency='SUB'
+                              value={getNeededLock(totalStake?.amount).toString()}
+                              precision={2}
+                              withMutedDecimals={false}
+                            />{' '}
+                            more in order to earn rewards for this comment.
+                          </span>
+                          <CustomLink href={activeStakingLinks.learnMore}>
+                            <a
+                              target='_blank'
+                              className='FontWeightMedium ml-1'
+                              style={{ color: '#f759ab' }}
+                            >
+                              Learn How
+                            </a>
+                          </CustomLink>
+                        </span>
+                      }
+                    >
+                      <div
+                        className='d-flex align-items-center GapTiny'
+                        style={{ color: '#bd7d05' }}
+                      >
+                        <TbCoins />
+                        <span>Not monetized</span>
+                      </div>
+                    </Tooltip>
+                  }
+                />
+              )}
               <Button
                 key={`reply-comment-${id}`}
-                className='p-0'
+                className='p-0 ColorMuted'
                 style={{ border: 'none', boxShadow: 'none', background: 'transparent' }}
                 onClick={() => setShowReplyForm(true)}
               >
-                <span className='d-flex align-items-center ColorMuted'>
+                <span className='d-flex align-items-center'>
                   <IconWithLabel icon={<TbMessageCircle2 className='FontNormal' />} label='Reply' />
                 </span>
               </Button>
-            </div>
-            {shouldRenderAlert && (
-              <Alert
-                style={{ border: 'none', padding: '0.125rem 0.5rem' }}
-                className='RoundedLarge'
-                type='warning'
-                message={
-                  <Tooltip
-                    title={
-                      <span>
-                        <span>
-                          Lock{' '}
-                          <FormatBalance
-                            currency='SUB'
-                            value={getNeededLock(totalStake?.amount).toString()}
-                            precision={2}
-                            withMutedDecimals={false}
-                          />{' '}
-                          more in order to earn rewards for this comment.
-                        </span>
-                        <CustomLink href={activeStakingLinks.learnMore}>
-                          <a
-                            target='_blank'
-                            className='FontWeightMedium ml-1'
-                            style={{ color: '#f759ab' }}
-                          >
-                            Learn How
-                          </a>
-                        </CustomLink>
-                      </span>
-                    }
-                  >
-                    <div className='d-flex align-items-center GapTiny' style={{ color: '#bd7d05' }}>
-                      <TbCoins />
-                      <span>Not monetized</span>
-                    </div>
-                  </Tooltip>
-                }
+              <ShareDropdown
+                postDetails={commentDetails}
+                space={space}
+                className='p-0'
+                iconSize='normal'
               />
-            )}
-            <PostRewardStat postId={comment.id} style={{ marginLeft: 'auto' }} />
+            </div>
           </div>
           <div className='mt-1.5 d-flex flex-column'>
             {newCommentForm}

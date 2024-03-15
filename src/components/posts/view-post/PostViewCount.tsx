@@ -1,12 +1,13 @@
 import clsx from 'clsx'
 import { ComponentProps } from 'react'
-import { FaRegEye } from 'react-icons/fa6'
+import { MdOutlineRemoveRedEye } from 'react-icons/md'
 import { usePostViewCount } from 'src/rtk/app/hooks'
 
 export default function PostViewCount({
   postId,
+  iconSize = 'semilarge',
   ...props
-}: { postId: string } & ComponentProps<'div'>) {
+}: { postId: string; iconSize?: 'normal' | 'semilarge' } & ComponentProps<'div'>) {
   const viewCount = usePostViewCount(postId)
 
   return (
@@ -17,7 +18,9 @@ export default function PostViewCount({
         props.className,
       )}
     >
-      <FaRegEye className='FontLarge' />
+      <MdOutlineRemoveRedEye
+        className={iconSize === 'semilarge' ? 'FontSemilarge' : 'FontNormal'}
+      />
       <span>{viewCount}</span>
     </div>
   )

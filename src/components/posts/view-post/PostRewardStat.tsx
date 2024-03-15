@@ -2,7 +2,7 @@ import { Skeleton, Tooltip } from 'antd'
 import clsx from 'clsx'
 import capitalize from 'lodash/capitalize'
 import { ComponentProps, ReactNode } from 'react'
-import { TbCoins } from 'react-icons/tb'
+import { TiWarningOutline } from 'react-icons/ti'
 import { useIsMyAddress } from 'src/components/auth/MyAccountsContext'
 import { FormatBalance, formatBalanceToJsx } from 'src/components/common/balances'
 import { MINIMUM_LOCK } from 'src/config/constants'
@@ -57,7 +57,7 @@ export function PostRewardStatWrapper({
   children,
 }: {
   postId: string
-  children: (props: { tooltip: ReactNode; reward: ReactNode }) => ReactNode
+  children: (props: { tooltip: ReactNode; reward: ReactNode; isZeroReward: boolean }) => ReactNode
 }) {
   const reward = useSelectPostReward(postId)
   const post = useSelectPost(postId)
@@ -87,13 +87,18 @@ export function PostRewardStatWrapper({
   return (
     <>
       {children({
+        isZeroReward: !reward?.isNotZero,
         tooltip: reward?.isNotZero ? tooltip : null,
         reward: !reward ? (
           <>
             <Skeleton className={styles.Skeleton} paragraph={false} round /> SUB
           </>
         ) : (
-          <span style={{ color: showCouldEarn ? '#F89A42' : 'inherit' }}>
+          <span
+            className='d-flex align-items-center GapMini FontWeightMedium'
+            style={{ color: showCouldEarn ? '#F89A42' : 'inherit' }}
+          >
+            {showCouldEarn && <TiWarningOutline className='FontNormal' />}
             <FormatBalance
               style={{ whiteSpace: 'nowrap' }}
               currency='SUB'
@@ -102,7 +107,6 @@ export function PostRewardStatWrapper({
               withMutedDecimals={false}
               value={reward.reward}
             />
-            {showCouldEarn ? ' could earn' : ''}
           </span>
         ),
       })}
@@ -111,123 +115,17 @@ export function PostRewardStatWrapper({
 }
 
 export default function PostRewardStat({ postId, ...props }: PostRewardStatProps) {
-  const reward = useSelectPostReward(postId)
-  const post = useSelectPost(postId)
-  const isComment = post?.post.struct.isComment
-  const owner = post?.post.struct.ownerId
-  const isMyPost = useIsMyAddress(post?.post.struct.ownerId)
-
-  const { data: totalStake } = useFetchTotalStake(owner || '')
-  if (!reward?.isNotZero) return null
-
   return (
-    <div {...props} className={clsx(props.className)}>
-      <div className='d-flex align-items-center GapMini FontWeightMedium ColorMuted'>
-        {!totalStake?.hasStakedEnough && isMyPost ? (
-          <Tooltip
-            className='d-flex align-items-center GapMini'
-            title={
-              <>
-                These are your potential SUB rewards for the week. Lock at least{' '}
-                <FormatBalance
-                  value={MINIMUM_LOCK.toString()}
-                  decimals={10}
-                  currency='SUB'
-                  precision={2}
-                />{' '}
-                this week to be eligible to receive them
-              </>
-            }
-          >
-            <div className='d-flex align-items-center'>
-              <div className={styles.PotentialRewardsIcon}>
-                <div className={styles.closeIcon}></div>
-                <TbCoins className='FontNormal' />
-              </div>
-              <span className='FontWeightSemibold'>
-                <FormatBalance
-                  style={{ whiteSpace: 'nowrap' }}
-                  currency='SUB'
-                  decimals={10}
-                  precision={2}
-                  withMutedDecimals={false}
-                  value={reward.reward || '0'}
-                />
-              </span>
-              <span className='d-flex align-items-center GapMini' style={{ whiteSpace: 'nowrap' }}>
-                could earn
-              </span>
-            </div>
-          </Tooltip>
-        ) : (
-          <>
-            <div className='position-relative d-flex align-items-center mr-1'>
-              {BigInt(reward.rewardDetail.draftReward || '0') > 0 ? (
-                <Tooltip
-                  className='d-flex align-items-center'
-                  title={
-                    <span>
-                      {BigInt(reward.rewardDetail.finalizedReward || '0') > 0 && (
-                        <>
-                          <FormatBalance
-                            withMutedDecimals={false}
-                            value={reward.rewardDetail.finalizedReward}
-                            currency='SUB'
-                            decimals={10}
-                            precision={2}
-                          />{' '}
-                          earned +{' '}
-                        </>
-                      )}
-                      <FormatBalance
-                        withMutedDecimals={false}
-                        value={reward.rewardDetail.draftReward}
-                        currency='SUB'
-                        decimals={10}
-                        precision={2}
-                      />{' '}
-                      approx. today
-                    </span>
-                  }
-                >
-                  <TbCoins className='FontNormal' />
-                  <div
-                    style={{
-                      width: '4px',
-                      height: '4px',
-                      background: '#F8963A',
-                      position: 'absolute',
-                      top: 0,
-                      right: 0,
-                      borderRadius: '50%',
-                    }}
-                  />
-                </Tooltip>
-              ) : (
-                <TbCoins className='FontNormal' />
-              )}
-            </div>
-            <Tooltip
-              className='d-flex align-items-center GapMini'
-              title={generateTooltip(reward.rewardsBySource, isComment ? 'comment' : 'post')}
-            >
-              <span className='FontWeightSemibold'>
-                <FormatBalance
-                  style={{ whiteSpace: 'nowrap' }}
-                  currency='SUB'
-                  decimals={10}
-                  precision={2}
-                  withMutedDecimals={false}
-                  value={reward.reward}
-                />
-              </span>
-              <span className='d-flex align-items-center GapMini'>
-                {totalStake?.hasStakedEnough ? 'could earn' : 'earned'}
-              </span>
+    <PostRewardStatWrapper postId={postId}>
+      {({ reward, tooltip, isZeroReward }) =>
+        isZeroReward ? null : (
+          <div {...props} className={props.className}>
+            <Tooltip title={tooltip} className={clsx('d-flex align-items-center')}>
+              <span className={clsx('d-flex align-items-center GapTiny ColorMuted')}>{reward}</span>
             </Tooltip>
-          </>
-        )}
-      </div>
-    </div>
+          </div>
+        )
+      }
+    </PostRewardStatWrapper>
   )
 }

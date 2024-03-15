@@ -38,7 +38,6 @@ import Section from '../../utils/Section'
 import ViewTags from '../../utils/ViewTags'
 import Embed, { getEmbedLinkType, getGleevVideoId, getYoutubeVideoId } from '../embed/Embed'
 import { StatsPanel } from '../PostStats'
-import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
 import {
   HiddenPostAlert,
@@ -181,11 +180,6 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
               {isNotMobile && (
                 <div className='d-flex justify-content-end align-items-center'>
                   <StatsPanel post={struct} goToCommentsId={goToCommentsId} />
-                  <ShareDropdown
-                    postDetails={postData}
-                    space={space.struct}
-                    className='DfAction p-0 ml-3'
-                  />
                   <div className='ml-2' style={{ position: 'relative', top: '2px' }}>
                     <PostDropDownMenu post={post} space={spaceStruct} withEditButton />
                   </div>
