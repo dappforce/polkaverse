@@ -148,5 +148,5 @@ function parseBalance(value: string) {
     }
   }
 
-  return `${prefix}.${decimals}${roundings} SUB`
+  return `${prefix}${decimals ? `.${decimals}` : ''}${roundings} SUB`
 }
