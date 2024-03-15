@@ -5,7 +5,7 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { addPostView } from 'src/components/utils/datahub/post-view'
 import { Segment } from 'src/components/utils/Segment'
 import { POST_VIEW_DURATION } from 'src/config/constants'
-import { PostWithAllDetails, PostWithSomeDetails, SpaceData } from 'src/types'
+import { asSharedPostStruct, PostWithAllDetails, PostWithSomeDetails, SpaceData } from 'src/types'
 import {
   HiddenPostAlert,
   PinnedPostIcon,
@@ -54,9 +54,24 @@ export function PostPreview(props: PreviewProps) {
 
     const timeoutId = setTimeout(async () => {
       try {
-        await addPostView({
-          args: { viewerId: myAddress, duration: POST_VIEW_DURATION, postPersistentId: post.id },
-        })
+        const operations = [
+          addPostView({
+            args: { viewerId: myAddress, duration: POST_VIEW_DURATION, postPersistentId: post.id },
+          }),
+        ]
+        if (post.isSharedPost) {
+          const originalPostId = asSharedPostStruct(post).originalPostId
+          operations.push(
+            addPostView({
+              args: {
+                viewerId: myAddress,
+                duration: POST_VIEW_DURATION,
+                postPersistentId: originalPostId,
+              },
+            }),
+          )
+        }
+        await Promise.all(operations)
       } catch (err) {
         console.error('Failed to add view', err)
       }
