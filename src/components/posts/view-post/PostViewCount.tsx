@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { ComponentProps } from 'react'
-import { FaRegEye } from 'react-icons/fa'
+import { FaRegEye } from 'react-icons/fa6'
 import { usePostViewCount } from 'src/rtk/app/hooks'
 
 export default function PostViewCount({
