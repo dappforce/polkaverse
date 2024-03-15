@@ -440,9 +440,6 @@ export const PostPreviewCreatorInfo = (props: Pick<PostPreviewProps, 'postDetail
             withUnfollowButton={false}
           />
         )}
-        {space && (
-          <ShareDropdown postDetails={postDetails} space={space.struct} className='DfAction p-0' />
-        )}
         <PostDropDownMenu
           post={postDetails.post}
           space={space?.struct}
