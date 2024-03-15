@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { getGeneralStatistics } from 'src/components/utils/datahub/leaderboard'
+import config from 'src/config'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 
@@ -17,6 +18,7 @@ export const selectGeneralStatistics = (state: RootState) => state.generalStatis
 export const fetchGeneralStatistics = createSimpleFetchWrapper<{}, GeneralStatistics | null>({
   sliceName,
   fetchData: async function () {
+    if (!config.enableDatahub) return null
     const data = await getGeneralStatistics()
     return data
   },

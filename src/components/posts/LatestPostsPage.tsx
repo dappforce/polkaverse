@@ -46,7 +46,7 @@ export const loadMorePostsFn = async (loadMoreValues: LoadMoreValues<PostFilterT
 
   let postIds: string[] = []
 
-  if (filter.type === 'hot') {
+  if (filter.type === 'hot' && config.enableDatahub) {
     const posts = await getHotPosts({ offset, limit: DEFAULT_PAGE_SIZE })
     postIds = posts.data.map(value => value.persistentPostId)
     const pinnedPostId = await getPinnedPost(client)

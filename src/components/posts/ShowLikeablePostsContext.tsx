@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useContext, useMemo } from 'react'
+import config from 'src/config'
 import useLocalStorage from 'use-local-storage'
 import { TabKeys } from '../main/types'
 
@@ -24,7 +25,7 @@ export function ShowLikeablePostsProvider({
     true,
   )
 
-  if (tab !== 'posts' || filter !== 'latest') {
+  if (tab !== 'posts' || filter !== 'latest' || !config.enableDatahub) {
     showLikeablePostsOnly = false
   }
 

@@ -53,6 +53,7 @@ export const initializeDatahubApollo = (initialState: any = null) => {
 export function datahubQueryRequest<T, TVariables extends OperationVariables>(
   config: QueryOptions<TVariables, T>,
 ) {
+  console.trace('CALLED')
   const client = getApolloClient()
   if (isServerSide()) {
     config.fetchPolicy = 'no-cache'

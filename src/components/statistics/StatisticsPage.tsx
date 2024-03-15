@@ -1,6 +1,7 @@
 import { Col, Radio, Row } from 'antd'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
+import config from 'src/config'
 import LeaderboardTabs from '../leaderboard/common/LeaderboardTabs'
 import { PageContent } from '../main/PageWrapper'
 import { StatisticsProps } from './Statistics'
@@ -22,7 +23,7 @@ export default function StatisticsPage(props: StatisticsProps) {
 
   return (
     <PageContent meta={{ title: 'Statistics' }} withLargerMaxWidth>
-      <LeaderboardTabs activeKey='stats' />
+      {config.enableDatahub && <LeaderboardTabs activeKey='stats' />}
       <Row className={`${style.DfGridParams} my-3`}>
         <Col>
           <Radio.Group

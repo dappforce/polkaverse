@@ -1,5 +1,6 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { getUserPrevReward } from 'src/components/utils/datahub/active-staking'
+import config from 'src/config'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 
@@ -27,6 +28,17 @@ export const selectUserPrevReward = selectors.selectById
 
 export const fetchPrevReward = createSimpleFetchWrapper<{ address: string }, PrevReward>({
   fetchData: async function ({ address }) {
+    if (!config.enableDatahub)
+      return {
+        address,
+        earned: {
+          creator: '0',
+          staker: '0',
+        },
+        likedPosts: 0,
+        period: 'DAY',
+        rewardStatus: 'none',
+      }
     return await getUserPrevReward({ address })
   },
   saveToCacheAction: data => slice.actions.setPrevReward(data),

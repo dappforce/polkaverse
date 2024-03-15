@@ -1,5 +1,6 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { getAddressLikeCountToPosts } from 'src/components/utils/datahub/active-staking'
+import config from 'src/config'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createSimpleManyFetchWrapper } from 'src/rtk/app/wrappers'
 
@@ -34,6 +35,7 @@ export const fetchAddressLikeCounts = createSimpleManyFetchWrapper<
 >({
   sliceName,
   fetchData: async function ({ postIds, address }, state) {
+    if (!config.enableDatahub) return []
     if (postIds === null) {
       postIds = getAllPostIdsFromStore(state)
     }

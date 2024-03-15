@@ -1,5 +1,6 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { getPostRewards } from 'src/components/utils/datahub/active-staking'
+import config from 'src/config'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createSimpleManyFetchWrapper } from 'src/rtk/app/wrappers'
 
@@ -30,6 +31,7 @@ export const selectPostReward = selectors.selectById
 export const fetchPostRewards = createSimpleManyFetchWrapper<{ postIds: string[] }, PostRewards>({
   sliceName,
   fetchData: async function ({ postIds }) {
+    if (!config.enableDatahub) return []
     return await getPostRewards(postIds)
   },
   getCachedData: (state, id) => selectPostReward(state, id),

@@ -1,5 +1,6 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { getCanPostsSuperLiked } from 'src/components/utils/datahub/active-staking'
+import config from 'src/config'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createSimpleManyFetchWrapper } from 'src/rtk/app/wrappers'
 
@@ -28,6 +29,7 @@ export const fetchCanPostsSuperLiked = createSimpleManyFetchWrapper<
 >({
   sliceName,
   fetchData: async function ({ postIds }) {
+    if (!config.enableDatahub) return []
     return await getCanPostsSuperLiked(postIds)
   },
   getCachedData: (state, id) => selectCanPostSuperLiked(state, id),

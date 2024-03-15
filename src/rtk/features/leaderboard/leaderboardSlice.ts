@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { getLeaderboardData, LeaderboardRole } from 'src/components/utils/datahub/leaderboard'
+import config from 'src/config'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 
@@ -22,6 +23,8 @@ export const fetchLeaderboardData = createSimpleFetchWrapper<
 >({
   sliceName,
   fetchData: async function ({ role }, state) {
+    if (!config.enableDatahub)
+      return { data: [], hasMore: false, page: 1, role: 'creator', total: 0 }
     const currentData = selectLeaderboard(state)[role]
     const data = await getLeaderboardData({ role, page: currentData.page + 1 })
     return data
