@@ -132,7 +132,7 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
   // const { signOut } = useMyAccountsContext()
 
   const myAddress = useMyAddress()
-  const address = useMyAccount(state => state.address)
+  const address = useMyAccount(state => state.address) || myAddress
   const isSignedIn = useIsSignedIn()
   const { tokenDecimal } = useSubstrate()
 
