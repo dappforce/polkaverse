@@ -46,16 +46,14 @@ export default function SupportCreatorsCard() {
 }
 
 const StakedCard = () => {
+  // EDIT ME: manage banners in carousel
   const data = [
     {
       item: <EarnInChatCard />,
     },
-    {
-      item: <EarnInChatCard />,
-    },
-    {
-      item: <EarnInChatCard />,
-    },
+    // {
+    //   item: <EarnInChatCard />,
+    // },
   ]
 
   return (
@@ -91,7 +89,7 @@ const NotStakedCard = () => {
         <p className={clsx('FontWeightSemibold FontLarge mb-2', styles.Title)}>
           How To Earn SUB On The Grill
         </p>
-        <p className={clsx(styles.Subtitle, 'mb-3')}>Lock SUB tokens and get rewards when</p>
+        <p className={clsx(styles.Subtitle, 'mb-2')}>Lock SUB tokens and get rewards when</p>
         <ul className={styles.List}>
           <li className={clsx(styles.ListItem)}>
             {diamond} <span>You like</span>

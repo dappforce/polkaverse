@@ -1,9 +1,10 @@
+import { isEmptyArray } from '@subsocial/utils'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import config from 'src/config'
 import { DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
-import { useDfApolloClient } from 'src/graphql/ApolloProvider'
+import { GqlClient, useDfApolloClient } from 'src/graphql/ApolloProvider'
 import { GetLatestPostIds } from 'src/graphql/__generated__/GetLatestPostIds'
 import { fetchPosts } from 'src/rtk/features/posts/postsSlice'
 import { DataSourceTypes, PostId } from 'src/types'
@@ -16,7 +17,7 @@ import { DateFilterType, LoadMoreValues, PostFilterType } from '../main/types'
 import { isSuggested, loadPostsByQuery } from '../main/utils'
 import { getHotPosts } from '../utils/datahub/posts'
 import { getSuggestedPostIdsByPage, loadSuggestedPostIds } from './loadSuggestedPostIdsFromEnv'
-import { getPinnedPost } from './pinned-post'
+import { getLatestCommunityPostIds, getPinnedPost } from './pinned-post'
 import { PublicPostPreviewById } from './PublicPostPreview'
 
 const { promotedPosts } = config
@@ -32,7 +33,9 @@ type Props = {
 
 const PROMOTED_POST_GAP = 10
 
-export const loadMorePostsFn = async (loadMoreValues: LoadMoreValues<PostFilterType>) => {
+export const loadMorePostsFn = async (
+  loadMoreValues: LoadMoreValues<PostFilterType> & { currentSessionKey: string },
+) => {
   const {
     client,
     size,
@@ -42,6 +45,7 @@ export const loadMorePostsFn = async (loadMoreValues: LoadMoreValues<PostFilterT
     dispatch,
     kind = PostKind.RegularPost,
     filter,
+    currentSessionKey,
   } = loadMoreValues
 
   if (filter.type === undefined) return []
@@ -68,20 +72,63 @@ export const loadMorePostsFn = async (loadMoreValues: LoadMoreValues<PostFilterT
     postIds = getSuggestedPostIdsByPage(allSuggestedPotsIds, size, page)
   }
 
+  let {
+    lastPromotedPostIndex = 0,
+    circle: promotedPostCircle = 0,
+    initialPage = 1,
+    dataSource = {},
+  } = sessionPageAndDataMap.get(currentSessionKey) || {}
+
+  const { newPostIds, newPromotedPostLastIndex, circle } = await getNewArrayWithPromotedPosts(
+    postIds,
+    {
+      lastPromotedPostIndex,
+      circle: promotedPostCircle,
+    },
+    client,
+  )
+
+  const newPromotedPostData =
+    page + 1 !== initialPage
+      ? {
+          lastPromotedPostIndex: newPromotedPostLastIndex,
+          circle,
+        }
+      : {
+          lastPromotedPostIndex: 0,
+          circle: 0,
+        }
+
+  sessionPageAndDataMap.set(currentSessionKey, {
+    initialPage,
+    dataSource,
+    ...newPromotedPostData,
+  })
+
+  const postIdsWithoutPromotionPart = newPostIds.map(id => id.split('-')[0])
+
   await dispatch(
     fetchPosts({
       api: subsocial,
       withReactionByAccount: myAddress,
-      ids: postIds,
+      ids: postIdsWithoutPromotionPart,
       reload: true,
       dataSource: DataSourceTypes.SQUID,
     }),
   )
 
-  return postIds
+  return newPostIds
 }
 
-const getNewArrayWithPromotedPosts = (postIds: string[], lastPromotedPost: LastPromotedPost) => {
+const getNewArrayWithPromotedPosts = async (
+  postIds: string[],
+  lastPromotedPost: LastPromotedPost,
+  client: GqlClient | undefined,
+) => {
+  const promotedPostIds = isEmptyArray(promotedPosts)
+    ? (await getLatestCommunityPostIds(client)) || []
+    : promotedPosts
+
   const postIdsChanks = postIds.length / PROMOTED_POST_GAP
 
   const postIdsSlices = Array.from({ length: postIdsChanks }, (_, i) => {
@@ -92,10 +139,10 @@ const getNewArrayWithPromotedPosts = (postIds: string[], lastPromotedPost: LastP
   let circle = lastPromotedPost.circle
 
   postIdsSlices.forEach(slice => {
-    if (promotedPosts[postIndex]) {
-      slice.splice(PROMOTED_POST_GAP, 0, `${promotedPosts[postIndex]}-promoted-${circle}`)
+    if (promotedPostIds[postIndex]) {
+      slice.splice(PROMOTED_POST_GAP, 0, `${promotedPostIds[postIndex]}-promoted-${circle}`)
 
-      postIndex = promotedPosts.length - 1 === postIndex ? 0 : postIndex + 1
+      postIndex = promotedPostIds.length - 1 === postIndex ? 0 : postIndex + 1
       circle = postIndex === 0 ? circle + 1 : circle
     }
   })
@@ -170,42 +217,26 @@ const InfiniteListOfPublicPosts = (props: Props) => {
         type: filter,
         date: dateFilter,
       },
+      currentSessionKey,
     })
+
     let {
       dataSource,
-      initialPage = 1,
       lastPromotedPostIndex = 0,
-      circle: promotedPostCircle = 0,
+      circle = 0,
     } = sessionPageAndDataMap.get(currentSessionKey) || {}
     if (!dataSource) dataSource = {}
 
-    const { newPostIds, newPromotedPostLastIndex, circle } = getNewArrayWithPromotedPosts(res, {
-      lastPromotedPostIndex,
-      circle: promotedPostCircle,
-    })
-
-    dataSource[page] = newPostIds
-
-    const newPage = page + 1
-
-    const newPromotedPostData =
-      newPage !== initialPage
-        ? {
-            lastPromotedPostIndex: newPromotedPostLastIndex,
-            circle,
-          }
-        : {
-            lastPromotedPostIndex: 0,
-            circle: 0,
-          }
+    dataSource[page] = res
 
     sessionPageAndDataMap.set(currentSessionKey, {
-      initialPage: newPage,
+      initialPage: page + 1,
       dataSource,
-      ...newPromotedPostData,
+      lastPromotedPostIndex,
+      circle,
     })
 
-    return newPostIds
+    return res
   }
 
   const currentSessionData = sessionPageAndDataMap.get(currentSessionKey)

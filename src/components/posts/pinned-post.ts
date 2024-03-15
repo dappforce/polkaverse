@@ -29,6 +29,24 @@ export async function getPinnedPost(client: GqlClient | undefined) {
   }
 }
 
+const COMMUNITY_POSTS_LIMIT = 5
+
+export async function getLatestCommunityPostIds(client: GqlClient | undefined) {
+  if (!client) return null
+
+  try {
+    const postIds = await getLastestPostIdsInSpace(client, {
+      limit: COMMUNITY_POSTS_LIMIT,
+      spaceId: COMMUNITY_SPACE_ID,
+    })
+
+    return postIds
+  } catch (err) {
+    console.log('Error getting community highlights', err)
+    return null
+  }
+}
+
 export function isPinnedPost(postId: string) {
   return postId === PINNED_POST_ID || postId === randomizedPostId
 }

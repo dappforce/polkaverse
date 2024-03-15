@@ -39,7 +39,7 @@ function StakeSubBanner(props: MobileRewardDashboardProps) {
       <div className={clsx(styles.Summary, 'py-2')}>
         <div className={styles.Content}>
           <span className={clsx('d-flex GapTiny align-items-center')}>
-            <span className='FontWeightSemibold'>
+            <span className='FontWeightSemibold lh-sm'>
               Lock SUB to monetize likes, posts and comments
             </span>
           </span>
