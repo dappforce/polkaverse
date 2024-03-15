@@ -6,13 +6,14 @@ import { PreviewProps } from './PostPreview'
 
 export type InnerPreviewProps = PreviewProps & {
   space?: SpaceData
+  isPromoted?: boolean
 }
 
 type ComponentType = FC<InnerPreviewProps>
 
 /** Sloooooooow Regular Preview */
 export const RegularPreview: ComponentType = props => {
-  const { postDetails, space, withImage, replies, withTags, withActions } = props
+  const { postDetails, space, withImage, replies, withTags, withActions, isPromoted } = props
   const [commentsSection, setCommentsSection] = useState(false)
 
   return (
@@ -23,6 +24,7 @@ export const RegularPreview: ComponentType = props => {
         withImage={withImage}
         withTags={withTags}
         withMarginForCardType={!withActions}
+        isPromoted={isPromoted}
       />
       {withActions && (
         <PostActionsPanel

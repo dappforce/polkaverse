@@ -203,9 +203,9 @@ function InnerProgressModal() {
               <span>Increase your SUB rewards</span>
             </div>
 
-            <p>Lock the rewards you just received to increase your rewards tomorrow.</p>
+            <p>Lock more SUB tokens to increase your future rewards.</p>
             <Button size='large' type='primary' href={getContentStakingLink()} target='_blank'>
-              Lock my rewards
+              Lock more SUB
             </Button>
           </div>
           <DfImage preview={false} src='/images/coins.png' className={styles.Image} />

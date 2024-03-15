@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util'
 import { PostId } from '@subsocial/api/types/substrate'
 import { isEmptyObj, isEmptyStr } from '@subsocial/utils'
-import { Alert, Button, Image, Tooltip } from 'antd'
+import { Alert, Button, Image, Tag, Tooltip } from 'antd'
 import clsx from 'clsx'
 import isEmpty from 'lodash.isempty'
 import Error from 'next/error'
@@ -139,6 +139,7 @@ type PostCreatorProps = {
   withSpaceAvatar?: boolean
   space?: SpaceData
   size?: number
+  isPromoted?: boolean
 }
 
 export const PostCreator: FC<PostCreatorProps> = ({
@@ -147,6 +148,7 @@ export const PostCreator: FC<PostCreatorProps> = ({
   withSpaceName,
   withSpaceAvatar,
   space,
+  isPromoted,
 }) => {
   const { post } = postDetails || {}
   const {
@@ -166,6 +168,13 @@ export const PostCreator: FC<PostCreatorProps> = ({
       isShort={true}
       isPadded={false}
       size={size}
+      afterName={
+        isPromoted ? (
+          <Tag color='processing' className='ml-2'>
+            Promoted
+          </Tag>
+        ) : undefined
+      }
       details={
         <div>
           {withSpaceName && space && (
@@ -386,11 +395,13 @@ type PostPreviewProps = {
   withImage?: boolean
   withTags?: boolean
   withMarginForCardType?: boolean
+  isPromoted?: boolean
 }
 
 export const SharePostContent = (props: PostPreviewProps) => {
   const {
     postDetails: { ext },
+    isPromoted,
   } = props
 
   const OriginalPost = () => {
@@ -408,7 +419,12 @@ export const SharePostContent = (props: PostPreviewProps) => {
 
   return (
     <div className='DfSharedSummary'>
-      <RegularPreview postDetails={props.postDetails} space={props.space} withActions={false} />
+      <RegularPreview
+        postDetails={props.postDetails}
+        space={props.space}
+        isPromoted={isPromoted}
+        withActions={false}
+      />
       <Segment className={clsx('DfPostPreview')}>
         <OriginalPost />
       </Segment>
@@ -416,8 +432,10 @@ export const SharePostContent = (props: PostPreviewProps) => {
   )
 }
 
-export const PostPreviewCreatorInfo = (props: Pick<PostPreviewProps, 'postDetails' | 'space'>) => {
-  const { postDetails, space } = props
+export const PostPreviewCreatorInfo = (
+  props: Pick<PostPreviewProps, 'postDetails' | 'space' | 'isPromoted'>,
+) => {
+  const { postDetails, space, isPromoted } = props
   const {
     post: { struct, content },
   } = postDetails
@@ -427,7 +445,13 @@ export const PostPreviewCreatorInfo = (props: Pick<PostPreviewProps, 'postDetail
 
   return (
     <div className='DfRow'>
-      <PostCreator postDetails={postDetails} space={space} withSpaceName withSpaceAvatar />
+      <PostCreator
+        postDetails={postDetails}
+        space={space}
+        isPromoted={isPromoted}
+        withSpaceName
+        withSpaceAvatar
+      />
       <div className='d-flex align-items-center align-self-start GapTiny'>
         {space && !isMobile && (
           <FollowSpaceButton
@@ -453,7 +477,14 @@ export const PostPreviewCreatorInfo = (props: Pick<PostPreviewProps, 'postDetail
 }
 
 export const InfoPostPreview: FC<PostPreviewProps> = props => {
-  const { postDetails, space, withImage = true, withTags, withMarginForCardType } = props
+  const {
+    postDetails,
+    space,
+    withImage = true,
+    withTags,
+    withMarginForCardType,
+    isPromoted,
+  } = props
   const {
     post: { struct, content },
   } = postDetails
@@ -465,7 +496,7 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
     <div className='DfInfo'>
       <div className='DfRow'>
         <div className='w-100'>
-          <PostPreviewCreatorInfo postDetails={postDetails} space={space} />
+          <PostPreviewCreatorInfo postDetails={postDetails} space={space} isPromoted={isPromoted} />
           {content.link && <Embed link={content.link} className='mt-3' />}
           <PostContent
             withMarginForCardType={withMarginForCardType && !withTags}

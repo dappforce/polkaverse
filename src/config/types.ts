@@ -1,5 +1,5 @@
 import { GaProps } from 'src/ga'
-import { SpaceId } from 'src/types'
+import { PostId, SpaceId } from 'src/types'
 
 export type AppKind = 'polkaverse' | 'staging'
 
@@ -99,6 +99,7 @@ export type AppConfig = {
   lastReservedSpaceId: SpaceId
   claimedSpaceIds: SpaceId[]
   recommendedSpaceIds: SpaceId[]
+  promotedPosts: PostId[]
   suggestedTlds?: string[]
   mutedAccounts?: Record<string, string[]>
 }

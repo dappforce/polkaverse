@@ -21,6 +21,7 @@ const index: AppConfig = {
   // Reserved spaces
   lastReservedSpaceId: '1000',
   claimedSpaceIds: ['1', '2', '3', '4', '5'],
+  promotedPosts: [],
   recommendedSpaceIds: polkaverseSpaces,
   suggestedTlds: ['sub', 'polka'],
   mutedAccounts: {

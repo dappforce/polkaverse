@@ -16,7 +16,7 @@
   margin-top: $space_big
   display: grid
   grid-template-columns: 1fr 1fr 1fr
-  
+
   @media screen and (max-width: 768px)
     &
       grid-template-columns: 1fr 1fr
@@ -28,7 +28,59 @@
   display: grid
   grid-template-columns: 1fr 1fr 1fr
   align-items: start
-  
+
   @media screen and (max-width: 768px)
     &
       grid-template-columns: 1fr
+
+.IncreaseRewardsAlert
+  overflow: hidden
+  position: relative
+  padding: $space_normal
+  background: #EEF2FF
+  border-radius: 16px
+  backdrop-filter: blur(24.5px)
+
+  margin-top: $space_big
+
+  display: flex
+  align-items: center
+  justify-content: space-between
+  gap: $space_tiny
+
+  .Title
+    font-size: $font_semilarge
+    font-weight: 700
+    line-height: normal
+    margin-left: 45px
+
+  .Image
+    position: absolute
+    transform: rotateY(180deg)
+    left: -12px
+    top: 10px
+
+    img
+      height: 61px
+
+  @media screen and (max-width: 768px)
+    &
+      flex-direction: column
+      align-items: flex-start
+      gap: $space_normal
+
+      .Title
+        font-size: $font_normal
+        margin-left: 0px
+        max-width: 74%
+        line-height: 22px
+
+      .Image
+        transform: rotateY(0deg)
+        left: auto
+        top: auto
+        right: -17px
+        bottom: -26px
+
+        img
+          height: 135px

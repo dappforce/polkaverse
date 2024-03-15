@@ -39,7 +39,9 @@ function StakeSubBanner(props: MobileRewardDashboardProps) {
       <div className={clsx(styles.Summary, 'py-2')}>
         <div className={styles.Content}>
           <span className={clsx('d-flex GapTiny align-items-center')}>
-            <span className='FontWeightSemibold'>Lock SUB and earn more</span>
+            <span className='FontWeightSemibold lh-sm'>
+              Lock SUB to monetize likes, posts and comments
+            </span>
           </span>
           <div className={clsx('d-flex align-items-center GapTiny')}>
             <CustomLink passHref href={getContentStakingLink()}>
@@ -47,6 +49,7 @@ function StakeSubBanner(props: MobileRewardDashboardProps) {
                 type='primary'
                 className='FontWeightSemibold'
                 target='_blank'
+                shape='round'
                 onClick={() =>
                   sendEvent('astake_banner_add_stake', { eventSource: 'mobile-staker-banner' })
                 }

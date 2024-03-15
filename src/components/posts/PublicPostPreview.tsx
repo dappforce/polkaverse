@@ -8,15 +8,25 @@ import { useShowLikeablePostsContext } from './ShowLikeablePostsContext'
 type Props = {
   postId: PostId
   showPinnedIcon?: boolean
+  isPromoted?: boolean
   showMuted?: boolean
 }
 
-export const PublicPostPreviewById = React.memo(({ postId, showPinnedIcon, showMuted }: Props) => {
-  const post = useSelectPost(postId, showMuted)
-  const { value: showLikeablePostOnly } = useShowLikeablePostsContext()
-  const { validByCreatorMinStake } = useCanPostSuperLiked(postId)
+export const PublicPostPreviewById = React.memo(
+  ({ postId, showPinnedIcon, showMuted, isPromoted }: Props) => {
+    const post = useSelectPost(postId, showMuted)
+    const { value: showLikeablePostOnly } = useShowLikeablePostsContext()
+    const { validByCreatorMinStake } = useCanPostSuperLiked(postId)
 
-  if (!post || (showLikeablePostOnly && !validByCreatorMinStake)) return null
+    if (!post || (showLikeablePostOnly && !validByCreatorMinStake && !isPromoted)) return null
 
-  return <PostPreview postDetails={post} withActions showPinnedIcon={showPinnedIcon} />
-})
+    return (
+      <PostPreview
+        postDetails={post}
+        withActions
+        showPinnedIcon={showPinnedIcon}
+        isPromoted={isPromoted}
+      />
+    )
+  },
+)

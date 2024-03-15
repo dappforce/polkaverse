@@ -20,6 +20,7 @@ const staging: AppConfig = {
   // Reserved spaces
   lastReservedSpaceId: '1000',
   claimedSpaceIds: [],
+  promotedPosts: [],
   recommendedSpaceIds: ['1001', '1002', '1003'],
   suggestedTlds: ['sub', 'polka'],
 }
