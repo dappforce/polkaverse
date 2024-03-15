@@ -42,7 +42,7 @@ export default function SupportCreatorsCard() {
 
   const isStaked = !new BN(amount || '0').isZero()
 
-  return !isStaked ? <StakedCard /> : <NotStakedCard />
+  return isStaked ? <StakedCard /> : <NotStakedCard />
 }
 
 const data = [
@@ -63,7 +63,7 @@ const StakedCard = () => {
       {data.map((item, index) => (
         <div className={styles.ItemContent} key={index}>
           {item.item}
-          <div className={styles.DotsSection}></div>
+          {data.length > 1 && <div className={styles.DotsSection}></div>}
         </div>
       ))}
     </Carousel>

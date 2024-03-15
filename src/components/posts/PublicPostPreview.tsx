@@ -18,7 +18,7 @@ export const PublicPostPreviewById = React.memo(
     const { value: showLikeablePostOnly } = useShowLikeablePostsContext()
     const { validByCreatorMinStake } = useCanPostSuperLiked(postId)
 
-    if (!post || (showLikeablePostOnly && !validByCreatorMinStake)) return null
+    if (!post || (showLikeablePostOnly && !validByCreatorMinStake && !isPromoted)) return null
 
     return (
       <PostPreview

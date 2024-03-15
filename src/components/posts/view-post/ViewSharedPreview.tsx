@@ -8,7 +8,7 @@ import { PostActionsPanel, SharePostContent } from './helpers'
 type ComponentType = FC<InnerPreviewProps>
 
 export const SharedPreview: ComponentType = props => {
-  const { postDetails, space, withActions, replies } = props
+  const { postDetails, space, withActions, replies, isPromoted } = props
   const [commentsSection, setCommentsSection] = useState(false)
   const sharedPostId = asSharedPostStruct(postDetails.post.struct).originalPostId
   postDetails.ext = useSelectPost(sharedPostId)
@@ -16,7 +16,7 @@ export const SharedPreview: ComponentType = props => {
   return (
     <>
       <div className='mb-3'>
-        <SharePostContent postDetails={postDetails} space={space} />
+        <SharePostContent postDetails={postDetails} space={space} isPromoted={isPromoted} />
       </div>
       {withActions && (
         <PostActionsPanel

@@ -42,20 +42,15 @@ export default function CreatorDashboardSidebar({
 
 function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { name: 'home-page' }>) {
   const myAddress = useMyAddress() ?? ''
-  const { data, loading } = useFetchTotalStake(myAddress)
+  const { loading } = useFetchTotalStake(myAddress)
 
   if (loading) return null
 
   return (
     <>
-      {data?.hasStakedEnough ? (
-        <>
-          <CreatePostCard variant={variant} />
-          <RewardInfoCard />
-        </>
-      ) : (
-        <SupportCreatorsCard />
-      )}
+      <CreatePostCard variant={variant} />
+      <SupportCreatorsCard />
+      <RewardInfoCard />
     </>
   )
 }

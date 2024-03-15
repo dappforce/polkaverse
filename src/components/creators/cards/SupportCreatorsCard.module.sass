@@ -59,19 +59,29 @@
   background: rgba(198, 193, 252, 0.69)
   filter: blur(135px)
 
-  .List
-    padding: 0
-    list-style-type: none
+.List
+  padding: 0
+  list-style-type: none
+  display: flex
+  flex-direction: column
+  gap: $space_small
 
-    li
-      span
-        opacity: 0.8
-        font-size: $font_small
-        line-height: 22px
+  li
+    display: flex
+    align-items: flex-start
+    gap: $space_small
 
-        display: flex
-        flex-direction: column
-        gap: $space_small
+    img
+      margin-top: 5px
+
+    span
+      opacity: 0.8
+      font-size: $font_small
+      line-height: 22px
+
+      display: flex
+      flex-direction: column
+      gap: $space_small
 
 .CarouselWrapper
   border-radius: $border_radius_big

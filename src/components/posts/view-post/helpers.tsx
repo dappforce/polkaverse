@@ -390,6 +390,7 @@ type PostPreviewProps = {
 export const SharePostContent = (props: PostPreviewProps) => {
   const {
     postDetails: { ext },
+    isPromoted,
   } = props
 
   const OriginalPost = () => {
@@ -407,7 +408,12 @@ export const SharePostContent = (props: PostPreviewProps) => {
 
   return (
     <div className='DfSharedSummary'>
-      <RegularPreview postDetails={props.postDetails} space={props.space} withActions={false} />
+      <RegularPreview
+        postDetails={props.postDetails}
+        space={props.space}
+        isPromoted={isPromoted}
+        withActions={false}
+      />
       <Segment className={clsx('DfPostPreview')}>
         <OriginalPost />
       </Segment>
