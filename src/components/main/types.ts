@@ -13,7 +13,7 @@ export type SpaceFilterType = 'suggested' | 'latest'
 export type DateFilterType = 'day' | 'week' | 'month' | 'allTime'
 
 export type PostFilterProps = {
-  totalPostCount: number
+  totalPostCount?: number
   kind: PostKind
   filter: FilterType<PostFilterType>
 }
@@ -23,7 +23,7 @@ export type PostDateFilterProps = PostFilterProps & {
 }
 
 export type SpaceFilterProps = {
-  totalSpaceCount: number
+  totalSpaceCount?: number
   filter: FilterType<SpaceFilterType>
 }
 
