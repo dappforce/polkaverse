@@ -17,11 +17,11 @@ spec:
       name: web-app-<BRANCH>
     spec:
       containers:
-      - image: <IMAGE>
-        imagePullPolicy: IfNotPresent
-        name: web-app-<BRANCH>
-        ports:
-        - containerPort: 3003
+        - image: <IMAGE>
+          imagePullPolicy: IfNotPresent
+          name: web-app-<BRANCH>
+          ports:
+            - containerPort: 3003
       imagePullSecrets:
-      - name: dockerhub
+        - name: dockerhub
       restartPolicy: Always

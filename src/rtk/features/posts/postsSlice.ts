@@ -48,6 +48,7 @@ import { fetchSuperLikeCounts } from '../activeStaking/superLikeCountsSlice'
 import { Content, fetchContents, selectPostContentById } from '../contents/contentsSlice'
 import { fetchProfileSpaces } from '../profiles/profilesSlice'
 import { fetchSpaces } from '../spaces/spacesSlice'
+import { fetchPostsViewCount } from './postsViewCountSlice'
 export interface PostState extends PostStruct {
   isOverview?: boolean
 }
@@ -253,6 +254,7 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
       // will not be prefetched from server side because this query takes pretty long
       if (isClientSide()) {
         dispatch(fetchPostRewards({ postIds: newIds as string[] }))
+        dispatch(fetchPostsViewCount({ postIds: newIds as string[] }))
       }
       const fetches: Promise<any>[] = [
         dispatch(fetchSuperLikeCounts({ postIds: newIds as string[] })),

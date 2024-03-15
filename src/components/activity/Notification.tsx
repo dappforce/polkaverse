@@ -241,6 +241,8 @@ const PostNotification = (props: NotificationProps) => {
     links.as = postUrl(space, originalPost)
   }
 
+  const originalPost = sharedPostOriginal?.post
+
   return (
     <InnerNotification
       preview={
@@ -252,7 +254,27 @@ const PostNotification = (props: NotificationProps) => {
       }
       image={content?.image}
       entityOwner={post.struct.ownerId}
-      msg={msg}
+      msg={
+        event === 'PostShared' ? (
+          <>
+            shared your post{' '}
+            {originalPost && (
+              <ViewPostLink
+                post={originalPost}
+                space={space?.struct}
+                title={<PostTitleForActivity post={originalPost} />}
+              />
+            )}
+            <span>
+              {!(post.content?.title || post.content?.summary)
+                ? '. See reshared post:'
+                : ' with the following content'}
+            </span>
+          </>
+        ) : (
+          msg
+        )
+      }
       links={links}
       {...props}
     />

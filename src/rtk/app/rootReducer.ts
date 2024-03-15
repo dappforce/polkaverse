@@ -29,6 +29,7 @@ import mySpacePermissions from '../features/permissions/mySpacePermissionsSlice'
 import myFeed from '../features/posts/myFeedSlice'
 import ownPostIds from '../features/posts/ownPostIdsSlice'
 import posts from '../features/posts/postsSlice'
+import postsViewCount from '../features/posts/postsViewCountSlice'
 import followedAccountIds from '../features/profiles/followedAccountIdsSlice'
 import profileSpaces from '../features/profiles/profilesSlice'
 import myPostReactions from '../features/reactions/myPostReactionsSlice'
@@ -79,6 +80,7 @@ const rootReducer = combineReducers({
   leaderboard,
   prevReward,
   superLikeMessage,
+  postsViewCount,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

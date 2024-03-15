@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 
 export const ESTIMATED_ENERGY_FOR_ONE_TX = 350_000_000
+export const POST_VIEW_DURATION = 3_000 // 3s
 
 export const MINIMUM_LOCK = BigInt(2_000_00000_00000) // 2k SUB
 export function getNeededLock(currentLock: string | undefined) {

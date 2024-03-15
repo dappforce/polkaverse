@@ -15,6 +15,7 @@ import {
   selectPostStructById,
   upsertPost,
 } from './postsSlice'
+import { selectPostViewCount } from './postsViewCountSlice'
 
 export function useIsMuted(address: string) {
   const myAddress = useMyAddress() ?? ''
@@ -101,4 +102,8 @@ export function useFilterLowValuePosts(postIds: string[]) {
 
     return { filtered, filteredCount }
   }, [postIds.join(','), myAddress])
+}
+
+export function usePostViewCount(postId: string) {
+  return useAppSelector(state => selectPostViewCount(state, postId)?.viewsCount ?? 0)
 }

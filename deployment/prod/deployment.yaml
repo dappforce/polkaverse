@@ -20,44 +20,44 @@ spec:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - web-app
-            topologyKey: kubernetes.io/hostname
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - web-app
+              topologyKey: kubernetes.io/hostname
       containers:
-      - image: <IMAGE>
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /
-            port: 3003
-          initialDelaySeconds: 60
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 35
-        name: web-app
-        ports:
-        - containerPort: 3003
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /
-            port: 3003
-          initialDelaySeconds: 40
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 20
-        resources:
-          limits:
-            cpu: "3"
-            memory: 5000Mi
-          requests:
-            cpu: 500m
-            memory: 950Mi
+        - image: <IMAGE>
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 3003
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 35
+          name: web-app
+          ports:
+            - containerPort: 3003
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 3003
+            initialDelaySeconds: 40
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 20
+          resources:
+            limits:
+              cpu: '3'
+              memory: 5000Mi
+            requests:
+              cpu: 500m
+              memory: 950Mi
       imagePullSecrets:
-      - name: dockerhub
+        - name: dockerhub
       restartPolicy: Always

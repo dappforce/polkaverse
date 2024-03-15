@@ -174,26 +174,32 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   else if (!canBeSuperliked) tooltipTitle = `You cannot like ${entity}s that are older than 7 days`
   else if (!superLikeMessage.message) tooltipTitle = 'Loading...'
 
-  const button = (
-    <div>
-      <Button
-        className={clsx(
-          'FontSmall',
-          styles.SuperLike,
-          isActive && styles.SuperLikeActive,
-          props.className,
-        )}
-        onClick={onClick}
-        disabled={isDisabled}
-      >
-        <IconWithLabel renderZeroCount icon={icon} count={count} />
-      </Button>
-    </div>
-  )
-
   return (
     <>
-      {tooltipTitle ? <Tooltip title={tooltipTitle}>{button}</Tooltip> : button}
+      <div>
+        <Button
+          className={clsx(
+            'FontSmall',
+            styles.SuperLike,
+            isActive && styles.SuperLikeActive,
+            // Can't add disabled to the button itself because tooltip won't work if its disabled
+            isDisabled && styles.SuperLikeDisabled,
+            props.className,
+          )}
+          onClick={onClick}
+        >
+          {tooltipTitle ? (
+            <Tooltip title={tooltipTitle}>
+              <span className='d-flex align-items-center'>
+                <IconWithLabel renderZeroCount icon={icon} count={count} />
+              </span>
+            </Tooltip>
+          ) : (
+            <IconWithLabel renderZeroCount icon={icon} count={count} />
+          )}
+        </Button>
+      </div>
+
       <ShouldStakeModal
         visible={isOpenShouldStakeModal}
         onCancel={() => setIsOpenShouldStakeModal(false)}
