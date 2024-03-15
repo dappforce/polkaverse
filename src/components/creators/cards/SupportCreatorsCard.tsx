@@ -45,21 +45,21 @@ export default function SupportCreatorsCard() {
   return isStaked ? <StakedCard /> : <NotStakedCard />
 }
 
-const data = [
-  {
-    item: <EarnInChatCard />,
-  },
-  {
-    item: <EarnInChatCard />,
-  },
-  {
-    item: <EarnInChatCard />,
-  },
-]
-
 const StakedCard = () => {
+  const data = [
+    {
+      item: <EarnInChatCard />,
+    },
+    {
+      item: <EarnInChatCard />,
+    },
+    {
+      item: <EarnInChatCard />,
+    },
+  ]
+
   return (
-    <Carousel autoplay autoplaySpeed={5000} className={styles.CarouselWrapper} dots>
+    <Carousel autoplay autoplaySpeed={5000} className={styles.CarouselWrapper} pauseOnHover dots>
       {data.map((item, index) => (
         <div className={styles.ItemContent} key={index}>
           {item.item}
