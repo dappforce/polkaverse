@@ -112,6 +112,7 @@ export type CommonSubsocialFeatures = {
   enableEmailSettings?: boolean
   enableFaucet?: boolean
   enableGraphQl?: boolean
+  enableDatahub?: boolean
   enableSubnetMode?: boolean
   enableContributionPage?: boolean
   enableOnchainActivities?: boolean

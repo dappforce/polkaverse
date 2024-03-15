@@ -1,12 +1,13 @@
 import { nonEmptyStr } from '@subsocial/utils'
 import app from './app'
 import connections from './connections'
-import { featureOverrides as env } from './env'
+import { datahubQueryUrl, featureOverrides as env } from './env'
 import { CommonSubsocialFeatures, SubsocialFeatures } from './types'
 import { getOrFalse, getOrTrue } from './utils'
 
 const enableGraphQl = getOrTrue(env.enableGraphQl) && nonEmptyStr(connections.graphqlUrl)
 const isSquidGraphQLEnabled = getOrTrue(env.enableSquidDataSource) && enableGraphQl
+const isDatahubAvailable = !!nonEmptyStr(datahubQueryUrl)
 
 const commonFeatures: CommonSubsocialFeatures = {
   enableSearch: isSquidGraphQLEnabled && getOrTrue(env.enableSearch),
@@ -17,6 +18,7 @@ const commonFeatures: CommonSubsocialFeatures = {
   enableEmailSettings: getOrFalse(env.enableEmailSettings),
   enableFaucet: getOrFalse(env.enableFaucet),
   enableGraphQl,
+  enableDatahub: isDatahubAvailable,
   enableSubnetMode: nonEmptyStr(app.subnetId),
   enableContributionPage: getOrTrue(env.enableContributionPage),
   enableOnchainActivities: getOrFalse(!enableGraphQl),

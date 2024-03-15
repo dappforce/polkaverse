@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { FC, useEffect, useState } from 'react'
 import { TbCoins, TbMessageCircle2 } from 'react-icons/tb'
+import config from 'src/config'
 import { getNeededLock } from 'src/config/constants'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
@@ -31,6 +32,7 @@ import { formatDate, IconWithLabel, useIsHidden } from '../utils'
 import { MutedSpan } from '../utils/MutedText'
 import { Pluralize } from '../utils/Plularize'
 import SuperLike from '../voting/SuperLike'
+import { VoterButtons } from '../voting/VoterButtons'
 import { CommentEventProps } from './CommentEditor'
 import { ViewCommentsTree } from './CommentTree'
 import { NewComment } from './CreateComment'
@@ -190,13 +192,17 @@ export const InnerViewComment: FC<Props> = props => {
             style={{ flexWrap: 'wrap-reverse', gap: '0 0.75rem' }}
           >
             <div className='d-flex align-items-center GapSmall'>
-              <SuperLike
-                isComment
-                key={`voters-of-comments-${id}`}
-                className='!FontTiny'
-                iconClassName='!FontSmall'
-                post={commentStruct}
-              />
+              {config.enableDatahub ? (
+                <SuperLike
+                  isComment
+                  key={`voters-of-comments-${id}`}
+                  className='!FontTiny'
+                  iconClassName='!FontSmall'
+                  post={commentStruct}
+                />
+              ) : (
+                <VoterButtons post={commentStruct} />
+              )}
               <Button
                 key={`reply-comment-${id}`}
                 className='p-0'
