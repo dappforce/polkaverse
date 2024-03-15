@@ -8,6 +8,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useIsSignedIn, useMyAddress } from 'src/components/auth/MyAccountsContext'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
+import { useMyAccount } from 'src/stores/my-account'
 import store from 'store'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import ConfirmationModal from '../confirmation-modal/ConfirmationModal'
@@ -130,7 +131,8 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
 
   // const { signOut } = useMyAccountsContext()
 
-  const address = useMyAddress()
+  const myAddress = useMyAddress()
+  const address = useMyAccount(state => state.address)
   const isSignedIn = useIsSignedIn()
   const { tokenDecimal } = useSubstrate()
 
@@ -150,7 +152,7 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
 
   const [onBoardedAccounts] = useState<string[]>(accountsFromStorage?.split(',') || [])
 
-  const noOnBoarded = !address || !onBoardedAccounts.includes(address)
+  const noOnBoarded = !myAddress || !onBoardedAccounts.includes(myAddress)
 
   const [canReserveHandle /* setCanReserveHandle */] = useState(false)
   const [showModal, setShowModal] = useState<boolean>(false)
@@ -177,10 +179,10 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
       unsubBalance && unsubBalance()
 
       const subSpace = async () => {
-        if (!address) return
+        if (!myAddress) return
 
         const api = await substrate.api
-        unsubSpace = await api.query.spaces.spaceIdsByOwner(address, (data: CodecMap) => {
+        unsubSpace = await api.query.spaces.spaceIdsByOwner(myAddress, (data: CodecMap) => {
           unsubBalance && unsubBalance()
 
           if (data.isEmpty) {
@@ -188,7 +190,7 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
           } else {
             setSpaces(true)
             if (noOnBoarded) {
-              onBoardedAccounts.push(address)
+              onBoardedAccounts.push(myAddress)
               store.set(ONBOARDED_ACCS, onBoardedAccounts.join(','))
             }
           }
@@ -197,11 +199,11 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
       }
 
       const subBalance = async () => {
-        if (!address) return
+        if (!address || !myAddress) return
 
         const api = await substrate.api
 
-        unsubBalance = await api.derive.balances.all(address, async ({ freeBalance }) => {
+        unsubBalance = await api.derive.balances.all(myAddress, async ({ freeBalance }) => {
           unsubEnergy && unsubEnergy()
           setBalance(freeBalance)
 
@@ -226,7 +228,7 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
         unsubBalance && unsubBalance()
       }
     },
-    [address, isSignedIn],
+    [myAddress, address, isSignedIn],
   )
 
   useEffect(() => setShowModal(false), [asPath])
