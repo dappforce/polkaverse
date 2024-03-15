@@ -134,7 +134,7 @@ export const ShareDropdown = (props: ShareMenuProps) => {
     >
       <Button
         className={clsx('p-0 d-flex align-items-center', className, 'ColorMuted')}
-        style={{ border: 'none', boxShadow: 'none' }}
+        style={{ border: 'none', boxShadow: 'none', background: 'transparent' }}
         title={title}
       >
         <IconWithLabel
