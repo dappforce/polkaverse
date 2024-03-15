@@ -188,7 +188,6 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
             props.className,
           )}
           onClick={onClick}
-          title='test'
         >
           {tooltipTitle ? (
             <Tooltip title={tooltipTitle}>
