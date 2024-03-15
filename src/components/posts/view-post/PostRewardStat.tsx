@@ -1,4 +1,5 @@
 import { Skeleton, Tooltip } from 'antd'
+import BigNumber from 'bignumber.js'
 import clsx from 'clsx'
 import capitalize from 'lodash/capitalize'
 import { ComponentProps, ReactNode } from 'react'
@@ -99,14 +100,7 @@ export function PostRewardStatWrapper({
             style={{ color: showCouldEarn ? '#F89A42' : 'inherit' }}
           >
             {showCouldEarn && <TiWarningOutline className='FontNormal' />}
-            <FormatBalance
-              style={{ whiteSpace: 'nowrap' }}
-              currency='SUB'
-              decimals={10}
-              precision={2}
-              withMutedDecimals={false}
-              value={reward.reward}
-            />
+            <span style={{ whiteSpace: 'nowrap' }}>{parseBalance(reward.reward)}</span>
           </span>
         ),
       })}
@@ -128,4 +122,31 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
       }
     </PostRewardStatWrapper>
   )
+}
+
+function parseBalance(value: string) {
+  let parsedValue = BigNumber(value).div(1e10)
+  let roundings = ''
+  let precision = 2
+
+  if (parsedValue.gte(1000000)) {
+    parsedValue = parsedValue.div(1000000)
+    roundings = 'M'
+    precision = 0
+  } else if (parsedValue.gte(1000)) {
+    parsedValue = parsedValue.div(1000)
+    roundings = 'K'
+    precision = 0
+  }
+
+  const [prefix, postfix] = parsedValue.toString().split('.')
+  let decimals = ''
+  if (precision > 0) {
+    decimals = BigNumber(`0.${postfix}`).toPrecision(precision).substring(2)
+    if (prefix !== '0') {
+      decimals = decimals.substring(0, 2)
+    }
+  }
+
+  return `${prefix}.${decimals}${roundings} SUB`
 }
