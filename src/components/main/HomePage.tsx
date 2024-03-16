@@ -5,12 +5,9 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import config from 'src/config'
-import { GET_TOTAL_COUNTS } from 'src/graphql/queries'
-import { GetHomePageData } from 'src/graphql/__generated__/GetHomePageData'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
-import { fetchTopUsersWithSpaces } from 'src/rtk/features/leaderboard/topUsersSlice'
 import { PostKind } from 'src/types/graphql-global-types'
 import { getAmountRange } from 'src/utils/analytics'
 import { useIsSignedIn, useMyAddress } from '../auth/MyAccountsContext'
@@ -236,23 +233,11 @@ const HomePage: NextPage<Props> = props => {
   )
 }
 
-getInitialPropsWithRedux(HomePage, async ({ apolloClient, subsocial, dispatch, reduxStore }) => {
-  const apolloRes = await apolloClient?.query<GetHomePageData>({
-    query: GET_TOTAL_COUNTS,
-  })
-
-  let totalPostCount = 0
-  let totalSpaceCount = 0
-
-  if (apolloRes) {
-    const {
-      data: { postCount, spaceCount },
-    } = apolloRes
-    totalPostCount = postCount.totalCount
-    totalSpaceCount = spaceCount.totalCount
-  }
-
-  await fetchTopUsersWithSpaces(reduxStore, dispatch, subsocial)
+getInitialPropsWithRedux(HomePage, async () => {
+  // This query is made static, because its not really important to be precise, and want to avoid long fetching time
+  // Data queried at 16th March 2024
+  let totalPostCount = 43655
+  let totalSpaceCount = 22524
 
   return {
     totalPostCount,
