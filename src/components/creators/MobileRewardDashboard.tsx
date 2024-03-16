@@ -44,7 +44,7 @@ function StakeSubBanner(props: MobileRewardDashboardProps) {
             </span>
           </span>
           <div className={clsx('d-flex align-items-center GapTiny')}>
-            <CustomLink passHref href={getContentStakingLink()}>
+            <CustomLink href={getContentStakingLink()}>
               <Button
                 type='primary'
                 className='FontWeightSemibold'
