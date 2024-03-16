@@ -3,7 +3,6 @@ import clsx from 'clsx'
 import { ComponentProps } from 'react'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
-import CreatePostCard from './cards/CreatePostCard'
 import CreatorInfoCard from './cards/CreatorInfoCard'
 import SupportCreatorsCard from './cards/SupportCreatorsCard'
 import RewardInfoCard from './rewards/RewardInfoCard'
@@ -40,7 +39,7 @@ export default function CreatorDashboardSidebar({
   )
 }
 
-function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { name: 'home-page' }>) {
+function HomePageSidebar(_props: Extract<CreatorDashboardSidebarType, { name: 'home-page' }>) {
   const myAddress = useMyAddress() ?? ''
   const { loading, data: totalStake } = useFetchTotalStake(myAddress)
 
@@ -48,7 +47,6 @@ function HomePageSidebar({ variant }: Extract<CreatorDashboardSidebarType, { nam
 
   return (
     <>
-      {totalStake?.hasStakedEnough && <CreatePostCard variant={variant} />}
       <SupportCreatorsCard />
       {totalStake?.hasStakedEnough && <RewardInfoCard />}
     </>
