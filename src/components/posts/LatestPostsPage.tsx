@@ -24,7 +24,7 @@ const { promotedPosts } = config
 
 type Props = {
   initialPostIds?: PostId[]
-  totalPostCount?: number
+  totalPostCount: number
   kind: PostKind
   filter: PostFilterType
   dateFilter?: DateFilterType

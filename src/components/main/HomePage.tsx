@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import config from 'src/config'
 import { useSendEvent } from 'src/providers/AnalyticContext'
+import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { PostKind } from 'src/types/graphql-global-types'
 import { getAmountRange } from 'src/utils/analytics'
@@ -38,10 +39,15 @@ const { enableGraphQl, metaTags } = config
 
 const { TabPane } = Tabs
 
+type Props = {
+  totalPostCount: number
+  totalSpaceCount: number
+}
+
 type TabsProps = {
   tabKey: TabKeys
-  totalPostCount?: number
-  totalSpaceCount?: number
+  totalPostCount: number
+  totalSpaceCount: number
   setKey: OnChangeKeyFn
   className?: string
 
@@ -82,7 +88,7 @@ const ToTopIcon = <UpOutlined />
 const TabsHomePage = ({
   setCurrentTabVariant,
   ...props
-}: {
+}: Props & {
   setCurrentTabVariant: (variant: CreatorDashboardHomeVariant) => void
 }) => {
   const refId = useReferralId()
@@ -188,9 +194,11 @@ const TabsHomePage = ({
         <CommentBanner />
       </div> */}
       <ShowLikeablePostsProvider tab={tab} filter={type}>
-        {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} />}
+        {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
         <Section className='m-0'>
-          {isMobile && <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} />}
+          {isMobile && (
+            <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} {...props} />
+          )}
           <TabsContent />
           <Tooltip title={'Back to top'} placement={'right'}>
             <BackTop className={style.DfBackToTop}>
@@ -203,7 +211,7 @@ const TabsHomePage = ({
   )
 }
 
-const HomePage: NextPage = props => {
+const HomePage: NextPage<Props> = props => {
   const [currentTabVariant, setCurrentTabVariant] = useState<CreatorDashboardHomeVariant>('posts')
 
   return (
@@ -224,5 +232,17 @@ const HomePage: NextPage = props => {
     </>
   )
 }
+
+getInitialPropsWithRedux(HomePage, async () => {
+  // This query is made static, because its not really important to be precise, and want to avoid long fetching time
+  // Data queried at 16th March 2024
+  let totalPostCount = 43655
+  let totalSpaceCount = 22524
+
+  return {
+    totalPostCount,
+    totalSpaceCount,
+  }
+})
 
 export default HomePage
