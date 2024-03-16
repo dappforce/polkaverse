@@ -368,6 +368,7 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
 
 function CommentAction(props: PostActionsPanelProps & { iconClassName?: string }) {
   const { postDetails, toogleCommentSection, iconClassName } = props
+  const isMobile = useIsMobileWidthOrDevice()
   const {
     post: {
       struct: { repliesCount },
@@ -384,7 +385,7 @@ function CommentAction(props: PostActionsPanelProps & { iconClassName?: string }
       }}
     >
       <TbMessageCircle2 className={clsx('FontSemilarge', iconClassName)} />
-      {(repliesCount ?? 0) > 0 ? repliesCount : 'Comment'}
+      {(repliesCount ?? 0) > 0 || isMobile ? repliesCount : 'Comment'}
     </Button>
   )
 }
