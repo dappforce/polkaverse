@@ -17,7 +17,7 @@ import { DateFilterType, LoadMoreValues, PostFilterType } from '../main/types'
 import { isSuggested, loadPostsByQuery } from '../main/utils'
 import { getHotPosts } from '../utils/datahub/posts'
 import { getSuggestedPostIdsByPage, loadSuggestedPostIds } from './loadSuggestedPostIdsFromEnv'
-import { getLatestCommunityPostIds, getPinnedPost } from './pinned-post'
+import { getLatestCommunityPostIds, PINNED_POST_ID } from './pinned-post'
 import { PublicPostPreviewById } from './PublicPostPreview'
 
 const { promotedPosts } = config
@@ -57,11 +57,10 @@ export const loadMorePostsFn = async (
   if (filter.type === 'hot') {
     const posts = await getHotPosts({ offset, limit: DEFAULT_PAGE_SIZE })
     postIds = posts.data.map(value => value.persistentPostId)
-    const pinnedPostId = await getPinnedPost(client)
     if (offset === 0) {
-      postIds = Array.from(new Set([pinnedPostId, ...postIds].filter(Boolean) as string[]))
+      postIds = Array.from(new Set([PINNED_POST_ID, ...postIds].filter(Boolean) as string[]))
     } else {
-      postIds = postIds.filter(id => id !== pinnedPostId)
+      postIds = postIds.filter(id => id !== PINNED_POST_ID)
     }
   } else if (!isSuggested(filter.type) && client) {
     const data = await loadPostsByQuery({ client, kind, offset, filter })
