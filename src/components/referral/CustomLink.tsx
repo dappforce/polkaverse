@@ -19,7 +19,7 @@ export default function CustomLink(props: ComponentProps<typeof Link>) {
   }
 
   // If url starts with /c, it will be in a separate app (grill app), so need to give full url
-  if (typeof props.href === 'string' && props.href.match(/\/c(\/.*|(\?.*|#.*)?)$/)) {
+  if (typeof props.href === 'string' && props.href.match(/^\/c(\/.*|(\?.*|#.*)?)$/)) {
     return <a {...props} href={urlJoin(getCurrentUrlOrigin(), props.href, `?ref=${refId}`)} />
   }
 
