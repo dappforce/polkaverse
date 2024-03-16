@@ -25,7 +25,7 @@ type Props = {
   spaceIds?: SpaceId[]
   initialSpaceIds?: SpaceId[]
   customFetcher?: (config: LoadMoreValues<SpaceFilterType>) => Promise<string[]>
-  totalSpaceCount?: number
+  totalSpaceCount: number
   filter: SpaceFilterType
   dateFilter?: DateFilterType
   className?: string
@@ -99,7 +99,7 @@ const InfiniteListOfSpaces = (props: Props) => {
         loadingLabel='Loading more spaces...'
         dataSource={initialSpaceIds}
         loadMore={loadMore}
-        totalCount={totalSpaceCount || 0}
+        totalCount={totalSpaceCount}
         noDataDesc='No spaces yet'
         getKey={spaceId => spaceId}
         renderItem={spaceId => <PublicSpacePreviewById spaceId={spaceId} />}

@@ -5,8 +5,12 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import config from 'src/config'
+import { GET_TOTAL_COUNTS } from 'src/graphql/queries'
+import { GetHomePageData } from 'src/graphql/__generated__/GetHomePageData'
 import { useSendEvent } from 'src/providers/AnalyticContext'
+import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { fetchTopUsersWithSpaces } from 'src/rtk/features/leaderboard/topUsersSlice'
 import { PostKind } from 'src/types/graphql-global-types'
 import { getAmountRange } from 'src/utils/analytics'
 import { useIsSignedIn, useMyAddress } from '../auth/MyAccountsContext'
@@ -38,10 +42,15 @@ const { enableGraphQl, metaTags } = config
 
 const { TabPane } = Tabs
 
+type Props = {
+  totalPostCount: number
+  totalSpaceCount: number
+}
+
 type TabsProps = {
   tabKey: TabKeys
-  totalPostCount?: number
-  totalSpaceCount?: number
+  totalPostCount: number
+  totalSpaceCount: number
   setKey: OnChangeKeyFn
   className?: string
 
@@ -82,7 +91,7 @@ const ToTopIcon = <UpOutlined />
 const TabsHomePage = ({
   setCurrentTabVariant,
   ...props
-}: {
+}: Props & {
   setCurrentTabVariant: (variant: CreatorDashboardHomeVariant) => void
 }) => {
   const refId = useReferralId()
@@ -188,9 +197,11 @@ const TabsHomePage = ({
         <CommentBanner />
       </div> */}
       <ShowLikeablePostsProvider tab={tab} filter={type}>
-        {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} />}
+        {!isMobile && <AffixTabs tabKey={tab} setKey={onChangeKey} visible={hidden} {...props} />}
         <Section className='m-0'>
-          {isMobile && <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} />}
+          {isMobile && (
+            <HomeTabs tabKey={tab} className='DfHomeTab' setKey={onChangeKey} {...props} />
+          )}
           <TabsContent />
           <Tooltip title={'Back to top'} placement={'right'}>
             <BackTop className={style.DfBackToTop}>
@@ -203,7 +214,7 @@ const TabsHomePage = ({
   )
 }
 
-const HomePage: NextPage = props => {
+const HomePage: NextPage<Props> = props => {
   const [currentTabVariant, setCurrentTabVariant] = useState<CreatorDashboardHomeVariant>('posts')
 
   return (
@@ -224,5 +235,29 @@ const HomePage: NextPage = props => {
     </>
   )
 }
+
+getInitialPropsWithRedux(HomePage, async ({ apolloClient, subsocial, dispatch, reduxStore }) => {
+  const apolloRes = await apolloClient?.query<GetHomePageData>({
+    query: GET_TOTAL_COUNTS,
+  })
+
+  let totalPostCount = 0
+  let totalSpaceCount = 0
+
+  if (apolloRes) {
+    const {
+      data: { postCount, spaceCount },
+    } = apolloRes
+    totalPostCount = postCount.totalCount
+    totalSpaceCount = spaceCount.totalCount
+  }
+
+  await fetchTopUsersWithSpaces(reduxStore, dispatch, subsocial)
+
+  return {
+    totalPostCount,
+    totalSpaceCount,
+  }
+})
 
 export default HomePage
