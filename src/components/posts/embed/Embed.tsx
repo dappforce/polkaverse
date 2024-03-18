@@ -1,6 +1,8 @@
 import clsx from 'clsx'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import LiteYouTubeEmbed from 'react-lite-youtube-embed'
+import { InstagramEmbed, TikTokEmbed } from 'react-social-media-embed'
+import { Tweet } from 'react-tweet'
 import styles from './Embed.module.sass'
 
 type EmbedProps = {
@@ -8,12 +10,29 @@ type EmbedProps = {
   className?: string
 }
 
-const allowEmbedList = ['vimeo', 'youtube', 'youtu.be', 'soundcloud', 'gleev'] as const
+const allowEmbedList = [
+  'vimeo',
+  'youtube',
+  'youtu.be',
+  'soundcloud',
+  'gleev',
+  'twitter',
+  'instagram',
+  'tiktok',
+] as const
 const componentMap: {
   [key in (typeof allowEmbedList)[number]]?: (props: { src: string }) => JSX.Element | null
 } = {
   'youtu.be': YoutubeEmbed,
   youtube: YoutubeEmbed,
+  instagram: ({ src }) => <InstagramEmbed url={src} />,
+  tiktok: ({ src }) => <TikTokEmbed url={src} />,
+  twitter: ({ src }) => {
+    const urlWithoutQuery = src.split('?')[0]
+    const tweetId = urlWithoutQuery.split('/').pop()
+    if (!tweetId) return null
+    return <Tweet id='' />
+  },
 }
 
 const YOUTUBE_REGEX = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/
@@ -51,7 +70,7 @@ const getEmbedUrl = (url: string, embed: string | undefined) => {
     gleev: `https://gleev.xyz/embedded/video/${getGleevVideoId(url)}`,
   }
 
-  return urls[embed]
+  return urls[embed] || url
 }
 
 export function getEmbedLinkType(link: string | undefined) {
