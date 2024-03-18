@@ -51,8 +51,16 @@ const componentMap: {
       <YoutubeEmbed src={src} />
     </div>
   ),
-  instagram: ({ src }) => <InstagramEmbed url={src} />,
-  tiktok: ({ src }) => <TikTokEmbed url={src} />,
+  instagram: ({ src }) => (
+    <div className={styles.CustomEmbedWrapper}>
+      <InstagramEmbed url={src} />
+    </div>
+  ),
+  tiktok: ({ src }) => (
+    <div className={styles.CustomEmbedWrapper}>
+      <TikTokEmbed url={src} />
+    </div>
+  ),
   twitter: ({ src }) => {
     const urlWithoutQuery = src.split('?')[0]
     const tweetId = urlWithoutQuery.split('/').pop()
