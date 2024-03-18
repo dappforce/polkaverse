@@ -117,7 +117,7 @@ export const EmbeddedLinkField = ({
     <div>
       <Form.Item
         name={fieldName('link')}
-        label='Video URL:'
+        label='Link:'
         help={messages.formHints.embedded}
         rules={[
           { required: true, message: 'Link is required.' },

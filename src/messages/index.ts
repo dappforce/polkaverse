@@ -1,4 +1,11 @@
+import { allowEmbedList } from 'src/components/posts/embed/Embed'
 import config from 'src/config'
+
+const allowedEmbeds = allowEmbedList
+  .reduce((acc, embed, idx) => {
+    return `${acc}${embed.name}, ${idx === allowEmbedList.length - 2 ? 'and ' : ''}`
+  }, '')
+  .slice(0, -2)
 
 export default {
   imageShouldBeLessThanTwoMB: 'Image should be less than 2 MB',
@@ -9,7 +16,7 @@ export default {
       everyone: 'Everyone can create and edit their own posts in this space.',
       none: 'None can create or edit posts in this space.',
     },
-    embedded: 'You can embed links from YouTube, Vimeo, Gleev (Joystream) and SoundCloud.',
+    embedded: `You can embed links from ${allowedEmbeds}.`,
   },
   forms: {
     permissions: {

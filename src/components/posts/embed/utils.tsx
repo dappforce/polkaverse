@@ -15,7 +15,7 @@ export const isSupportedEmbeddedLink = (link?: string) => {
 const SupportedEmbeddedLinkPopup = () => (
   <div>
     {allowEmbedList.map(link => (
-      <div key={link.name}>{link.name}</div>
+      <div key={link.name}>{link.url}</div>
     ))}
   </div>
 )

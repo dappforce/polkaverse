@@ -231,7 +231,7 @@ const FullEditor = ({
                   className='mb-2'
                 >
                   <TabPane key='article' tab='Cover Image' />
-                  <TabPane key='link' tab='Video' />
+                  <TabPane key='link' tab='Link' />
                 </Tabs>
               )}
               {type === 'article' && (

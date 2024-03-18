@@ -35,40 +35,53 @@ export function getGleevVideoId(gleevLink: string) {
 
 export const allowEmbedList = [
   {
-    name: 'vimeo.com' as const,
-    checker: (link: string) => {
-      return VIMEO_REGEX.test(link) && !!getVimeoVideoId(link)
-    },
+    name: 'Youtube' as const,
+    checker: (link: string) => YOUTUBE_REGEX.test(link),
+    url: 'youtube.com',
   },
-  { name: 'youtube.com' as const, checker: (link: string) => YOUTUBE_REGEX.test(link) },
-  { name: 'soundcloud.com' as const, checker: (link: string) => link.includes('soundcloud.com') },
   {
-    name: 'gleev.xyz' as const,
+    name: 'Gleev (Joystream)' as const,
     checker: (link: string) => {
       return link.includes('gleev.xyz') && !!getGleevVideoId(link)
     },
+    url: 'gleev.xyz',
   },
   {
-    name: 'x.com' as const,
+    name: 'X' as const,
     checker: (link: string) =>
       (/(?:https?:\/\/)?(?:www\.)?(?:x\.com)\/(.+)/.test(link) ||
         /(?:https?:\/\/)?(?:www\.)?(?:twitter\.com)\/(.+)/.test(link)) &&
       /\/status\/\d+/.test(link),
+    url: 'x.com',
   },
   {
-    name: 'instagram.com' as const,
+    name: 'Instagram' as const,
     checker: (link: string) => /(?:https?:\/\/)?(?:www\.)?(?:instagram\.com)\/(.+)/.test(link),
+    url: 'instagram.com',
   },
   {
-    name: 'tiktok.com' as const,
+    name: 'Tiktok' as const,
     checker: (link: string) => /(?:https?:\/\/)?(?:www\.)?(?:tiktok\.com)\/(.+)/.test(link),
+    url: 'tiktok.com',
   },
-] satisfies { name: string; checker: (link: string) => boolean }[]
+  {
+    name: 'Vimeo' as const,
+    checker: (link: string) => {
+      return VIMEO_REGEX.test(link) && !!getVimeoVideoId(link)
+    },
+    url: 'vimeo.com',
+  },
+  {
+    name: 'SoundCloud' as const,
+    checker: (link: string) => link.includes('soundcloud.com'),
+    url: 'soundcloud.com',
+  },
+] satisfies { name: string; checker: (link: string) => boolean; url: string }[]
 type AllowedList = (typeof allowEmbedList)[number]['name']
 const componentMap: {
   [key in AllowedList]?: (props: { src: string }) => JSX.Element | null
 } = {
-  'youtube.com': ({ src }) => (
+  Youtube: ({ src }) => (
     <div
       className={clsx('RoundedLarge')}
       style={{
@@ -82,19 +95,19 @@ const componentMap: {
       <YoutubeEmbed src={src} />
     </div>
   ),
-  'instagram.com': ({ src }) => {
+  Instagram: ({ src }) => {
     return (
       <div className={styles.CustomEmbedWrapper}>
         <InstagramEmbed url={src} key={src} />
       </div>
     )
   },
-  'tiktok.com': ({ src }) => (
+  Tiktok: ({ src }) => (
     <div className={styles.CustomEmbedWrapper}>
       <TikTokEmbed key={src} url={src} />
     </div>
   ),
-  'x.com': ({ src }) => {
+  X: ({ src }) => {
     const urlWithoutQuery = src.split('?')[0]
     const tweetId = urlWithoutQuery.split('/').pop()
     if (!tweetId) return null
@@ -110,11 +123,11 @@ const getEmbedUrl = (url: string, embed: AllowedList | undefined) => {
   if (!embed) return
 
   const urls: { [key in AllowedList]?: string } = {
-    'vimeo.com': `https://player.vimeo.com/video/${getVimeoVideoId(url)}`,
-    'youtube.com': `https://www.youtube.com/embed/${getYoutubeVideoId(url)}`,
-    'soundcloud.com': `https://w.soundcloud.com/player/
+    Vimeo: `https://player.vimeo.com/video/${getVimeoVideoId(url)}`,
+    Youtube: `https://www.youtube.com/embed/${getYoutubeVideoId(url)}`,
+    SoundCloud: `https://w.soundcloud.com/player/
       ?url=${url}&amp;auto_play=false&amp;hide_related=true&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true`,
-    'gleev.xyz': `https://gleev.xyz/embedded/video/${getGleevVideoId(url)}`,
+    'Gleev (Joystream)': `https://gleev.xyz/embedded/video/${getGleevVideoId(url)}`,
   }
 
   return urls[embed] || url
