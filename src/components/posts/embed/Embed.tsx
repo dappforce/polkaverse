@@ -152,7 +152,7 @@ export function getEmbedLinkType(link: string | undefined) {
   return foundEmbed.name
 }
 
-const Embed = ({ link, className, post }: EmbedProps) => {
+const Embed = ({ link, className, post, isPreview }: EmbedProps) => {
   const embed = getEmbedLinkType(link)
   const src = getEmbedUrl(link, embed)
 
@@ -162,7 +162,7 @@ const Embed = ({ link, className, post }: EmbedProps) => {
   if (Component) {
     return (
       <div className={className}>
-        <Component src={src} post={post} />
+        <Component src={src} post={post} isPreview={isPreview} />
       </div>
     )
   }
@@ -292,8 +292,23 @@ function EmbedContainer({
   const ref = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
+    if (!isPreview) return
     if (ref.current) {
-      setIsClipped(ref.current.scrollHeight > ref.current.clientHeight)
+      const isClipped = ref.current.scrollHeight > ref.current.clientHeight
+      setIsClipped(isClipped)
+      if (!isClipped) {
+        // Try to check clip status every 300ms for 3 seconds
+        const intervalId = setInterval(() => {
+          if (ref.current) {
+            const isClipped = ref.current.scrollHeight > ref.current.clientHeight
+            setIsClipped(isClipped)
+            if (isClipped) clearInterval(intervalId)
+          }
+        }, 300)
+        setTimeout(() => {
+          clearInterval(intervalId)
+        }, 3000)
+      }
     }
   }, [])
 
