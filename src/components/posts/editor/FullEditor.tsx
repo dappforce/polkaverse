@@ -149,7 +149,6 @@ const FullEditor = ({
   const type: PostType = postType || (tab?.toString() as PostType)
 
   function onBodyChanged(text: string) {
-    console.log(text)
     form.setFieldsValue({ [fieldName('body')]: text })
     handleChange()
   }
