@@ -10,69 +10,6 @@ type EmbedProps = {
   className?: string
 }
 
-const allowEmbedList = [
-  'vimeo',
-  'youtube',
-  'youtu.be',
-  'soundcloud',
-  'gleev',
-  'twitter',
-  'instagram',
-  'tiktok',
-] as const
-const componentMap: {
-  [key in (typeof allowEmbedList)[number]]?: (props: { src: string }) => JSX.Element | null
-} = {
-  'youtu.be': ({ src }) => (
-    <div
-      className={clsx('RoundedLarge')}
-      style={{
-        paddingBottom: '56.25%',
-        position: 'relative',
-        display: 'block',
-        width: '100%',
-        overflow: 'hidden',
-      }}
-    >
-      <YoutubeEmbed src={src} />
-    </div>
-  ),
-  youtube: ({ src }) => (
-    <div
-      className={clsx('RoundedLarge')}
-      style={{
-        paddingBottom: '56.25%',
-        position: 'relative',
-        display: 'block',
-        width: '100%',
-        overflow: 'hidden',
-      }}
-    >
-      <YoutubeEmbed src={src} />
-    </div>
-  ),
-  instagram: ({ src }) => (
-    <div className={styles.CustomEmbedWrapper}>
-      <InstagramEmbed url={src} />
-    </div>
-  ),
-  tiktok: ({ src }) => (
-    <div className={styles.CustomEmbedWrapper}>
-      <TikTokEmbed url={src} />
-    </div>
-  ),
-  twitter: ({ src }) => {
-    const urlWithoutQuery = src.split('?')[0]
-    const tweetId = urlWithoutQuery.split('/').pop()
-    if (!tweetId) return null
-    return (
-      <div className={clsx('w-100', styles.Tweet)} data-theme='light'>
-        <Tweet id={tweetId} />
-      </div>
-    )
-  },
-}
-
 const YOUTUBE_REGEX = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/
 export function getYoutubeVideoId(youtubeLink: string) {
   const match = youtubeLink.match(YOUTUBE_REGEX)
@@ -96,16 +33,86 @@ export function getGleevVideoId(gleevLink: string) {
   return url.split('/').pop()
 }
 
-const getEmbedUrl = (url: string, embed: string | undefined) => {
+export const allowEmbedList = [
+  {
+    name: 'vimeo.com' as const,
+    checker: (link: string) => {
+      return VIMEO_REGEX.test(link) && !!getVimeoVideoId(link)
+    },
+  },
+  { name: 'youtube.com' as const, checker: (link: string) => YOUTUBE_REGEX.test(link) },
+  { name: 'soundcloud.com' as const, checker: (link: string) => link.includes('soundcloud.com') },
+  {
+    name: 'gleev.xyz' as const,
+    checker: (link: string) => {
+      return link.includes('gleev.xyz') && !!getGleevVideoId(link)
+    },
+  },
+  {
+    name: 'x.com' as const,
+    checker: (link: string) =>
+      (/(?:https?:\/\/)?(?:www\.)?(?:x\.com)\/(.+)/.test(link) ||
+        /(?:https?:\/\/)?(?:www\.)?(?:twitter\.com)\/(.+)/.test(link)) &&
+      /\/status\/\d+/.test(link),
+  },
+  {
+    name: 'instagram.com' as const,
+    checker: (link: string) => /(?:https?:\/\/)?(?:www\.)?(?:instagram\.com)\/(.+)/.test(link),
+  },
+  {
+    name: 'tiktok.com' as const,
+    checker: (link: string) => /(?:https?:\/\/)?(?:www\.)?(?:tiktok\.com)\/(.+)/.test(link),
+  },
+] satisfies { name: string; checker: (link: string) => boolean }[]
+type AllowedList = (typeof allowEmbedList)[number]['name']
+const componentMap: {
+  [key in AllowedList]?: (props: { src: string }) => JSX.Element | null
+} = {
+  'youtube.com': ({ src }) => (
+    <div
+      className={clsx('RoundedLarge')}
+      style={{
+        paddingBottom: '56.25%',
+        position: 'relative',
+        display: 'block',
+        width: '100%',
+        overflow: 'hidden',
+      }}
+    >
+      <YoutubeEmbed src={src} />
+    </div>
+  ),
+  'instagram.com': ({ src }) => (
+    <div className={styles.CustomEmbedWrapper}>
+      <InstagramEmbed url={src} />
+    </div>
+  ),
+  'tiktok.com': ({ src }) => (
+    <div className={styles.CustomEmbedWrapper}>
+      <TikTokEmbed url={src} />
+    </div>
+  ),
+  'x.com': ({ src }) => {
+    const urlWithoutQuery = src.split('?')[0]
+    const tweetId = urlWithoutQuery.split('/').pop()
+    if (!tweetId) return null
+    return (
+      <div className={clsx('w-100', styles.Tweet)} data-theme='light'>
+        <Tweet id={tweetId} />
+      </div>
+    )
+  },
+}
+
+const getEmbedUrl = (url: string, embed: AllowedList | undefined) => {
   if (!embed) return
 
-  const urls: Record<string, string> = {
-    vimeo: `https://player.vimeo.com/video/${getVimeoVideoId(url)}`,
-    youtube: `https://www.youtube.com/embed/${getYoutubeVideoId(url)}`,
-    'youtu.be': `https://www.youtube.com/embed/${getYoutubeVideoId(url)}`,
-    soundcloud: `https://w.soundcloud.com/player/
+  const urls: { [key in AllowedList]?: string } = {
+    'vimeo.com': `https://player.vimeo.com/video/${getVimeoVideoId(url)}`,
+    'youtube.com': `https://www.youtube.com/embed/${getYoutubeVideoId(url)}`,
+    'soundcloud.com': `https://w.soundcloud.com/player/
       ?url=${url}&amp;auto_play=false&amp;hide_related=true&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true`,
-    gleev: `https://gleev.xyz/embedded/video/${getGleevVideoId(url)}`,
+    'gleev.xyz': `https://gleev.xyz/embedded/video/${getGleevVideoId(url)}`,
   }
 
   return urls[embed] || url
@@ -113,28 +120,18 @@ const getEmbedUrl = (url: string, embed: string | undefined) => {
 
 export function getEmbedLinkType(link: string | undefined) {
   if (!link) return undefined
-  const foundEmbed = allowEmbedList.find(embed => link.includes(embed))
+  const foundEmbed = allowEmbedList.find(embed => embed.checker(link))
   if (!foundEmbed) return undefined
 
-  if (foundEmbed === 'youtu.be' || foundEmbed === 'youtube') {
-    return getYoutubeVideoId(link) ? foundEmbed : undefined
-  }
-  if (foundEmbed === 'gleev') {
-    return getGleevVideoId(link) ? foundEmbed : undefined
-  }
-  if (foundEmbed === 'vimeo') {
-    return getVimeoVideoId(link) ? foundEmbed : undefined
-  }
-
-  return foundEmbed
+  return foundEmbed.name
 }
 
 const Embed = ({ link, className }: EmbedProps) => {
   const embed = getEmbedLinkType(link)
   const src = getEmbedUrl(link, embed)
 
-  if (!src) return null
-  let Component = componentMap[embed as (typeof allowEmbedList)[number]]
+  if (!src || !embed) return null
+  let Component = componentMap[embed]
 
   if (Component) {
     return (

@@ -139,9 +139,9 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   let usedImage = image
   if (!usedImage && link) {
     const embedType = getEmbedLinkType(link)
-    if (embedType === 'youtube' || embedType === 'youtu.be') {
+    if (embedType === 'youtube.com') {
       usedImage = `https://i3.ytimg.com/vi/${getYoutubeVideoId(link)}/maxresdefault.jpg`
-    } else if (embedType === 'gleev') {
+    } else if (embedType === 'gleev.xyz') {
       usedImage = `https://assets.joyutils.org/video/${getGleevVideoId(link)}/thumbnail`
     }
   }
