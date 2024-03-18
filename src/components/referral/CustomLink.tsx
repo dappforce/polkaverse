@@ -23,7 +23,7 @@ export default function CustomLink(props: ComponentProps<typeof Link>) {
     return <a {...props} href={urlJoin(getCurrentUrlOrigin(), props.href, `?ref=${refId}`)} />
   }
 
-  return <Link {...props} />
+  return <Link {...props} legacyBehavior />
 }
 
 function augmentLink(link: LinkProps['href'], refId: string) {
