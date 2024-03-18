@@ -41,6 +41,7 @@ const HIDE_PREVIEW_FROM_SPACE: string[] = [
   '12661', // Grill Widgets
   '12455', // Community Chats
   '12410', // Sandbox Highlights
+  '12466', // Staging space
 ]
 export function PostPreview(props: PreviewProps) {
   const router = useRouter()
