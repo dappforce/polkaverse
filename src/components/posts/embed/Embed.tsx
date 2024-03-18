@@ -82,14 +82,16 @@ const componentMap: {
       <YoutubeEmbed src={src} />
     </div>
   ),
-  'instagram.com': ({ src }) => (
-    <div className={styles.CustomEmbedWrapper}>
-      <InstagramEmbed url={src} />
-    </div>
-  ),
+  'instagram.com': ({ src }) => {
+    return (
+      <div className={styles.CustomEmbedWrapper}>
+        <InstagramEmbed url={src} key={src} />
+      </div>
+    )
+  },
   'tiktok.com': ({ src }) => (
     <div className={styles.CustomEmbedWrapper}>
-      <TikTokEmbed url={src} />
+      <TikTokEmbed key={src} url={src} />
     </div>
   ),
   'x.com': ({ src }) => {
