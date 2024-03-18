@@ -57,6 +57,7 @@ const EditorCard = ({
   markdownMode,
   onChange,
   saveBodyDraft,
+  form,
 }: EditorCardProps) => {
   const [fixedToolbar, setFixedToolbar] = useState(false)
   const { isMobile } = useResponsiveSize()
@@ -68,6 +69,7 @@ const EditorCard = ({
   }
 
   const onChangeHtmlEditor = (text: string) => {
+    console.log('iudjfhgsuiydfgiuy', text)
     const mdText = htmlToMd(text) || ''
     onChange(mdText)
   }
@@ -92,12 +94,7 @@ const EditorCard = ({
         </Affix>
       )}
 
-      {/* trigger is removed because for body, we want to use the onChange only, where it also sets the form body data. By doing this, the form body data won't be changed twice */}
-      <Form.Item
-        name={fieldName('body')}
-        trigger=''
-        className={clsx('mb-0', styles.EditorFormItem)}
-      >
+      <Form.Item name={fieldName('body')} className={clsx('mb-0', styles.EditorFormItem)}>
         {markdownMode ? (
           <MdEditor
             onChange={onChange}
@@ -152,6 +149,7 @@ const FullEditor = ({
   const type: PostType = postType || (tab?.toString() as PostType)
 
   function onBodyChanged(text: string) {
+    console.log(text)
     form.setFieldsValue({ [fieldName('body')]: text })
     handleChange()
   }
