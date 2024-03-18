@@ -105,7 +105,7 @@ export const PostEditorModalBody = ({
   const [spaceId, setSpaceId] = useState<string>(defaultSpace)
 
   const { loading } = useFetchSpaces({ ids: spaceIds, dataSource: DataSourceTypes.SQUID })
-  const { saveContent } = useAutoSaveFromForm({ entity: 'post' })
+  const { savedData, saveContent } = useAutoSaveFromForm({ entity: 'post' })
 
   useEffect(() => {
     setSpaceId(defaultSpace)
@@ -201,7 +201,7 @@ export const PostEditorModalBody = ({
   )
 
   return (
-    <Form form={form} className='my-0' onFieldsChange={() => saveDraft()}>
+    <Form form={form} className='my-0' initialValues={savedData} onFieldsChange={() => saveDraft()}>
       <SpaceSelector />
       <Form.Item name={fieldName('body')} className='my-3'>
         {/* value and onChange are provided by Form.Item */}
