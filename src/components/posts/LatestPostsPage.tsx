@@ -254,6 +254,7 @@ const InfiniteListOfPublicPosts = (props: Props) => {
         getKey={postId => postId}
         renderItem={postId => (
           <PublicPostPreviewById
+            shouldHideChatRooms={filter === 'hot'}
             showPinnedIcon={
               (isSuggested(filter) || filter === 'hot') && !postId.includes('promoted')
             }

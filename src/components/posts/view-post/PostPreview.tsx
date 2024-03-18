@@ -27,20 +27,24 @@ export type BarePreviewProps = {
 }
 
 export type PreviewProps = BarePreviewProps & {
+  shouldHideChatRooms?: boolean
   postDetails: PostWithSomeDetails
   space?: SpaceData
   showPinnedIcon?: boolean
   isPromoted?: boolean
 }
 
-// grill admin account and grill memes admin
-const HIDE_PREVIEW_FROM_ACCOUNT = [
-  '3rPYmfYVHG7NtuGDivDNZdMMRHgrwtVuswY9TWUaHQCU8tAo',
-  '3oGjkULuNKRqi513BbohWiSgA2oKMrbSnPrcddpXYC4mtW1G',
+const HIDE_PREVIEW_FROM_SPACE: string[] = [
+  '12660', // Grill by Subsocial
+  '12659', // Grilled
+  '12662', // Offchain Chats
+  '12661', // Grill Widgets
+  '12455', // Community Chats
+  '12410', // Sandbox Highlights
 ]
 export function PostPreview(props: PreviewProps) {
   const router = useRouter()
-  const { postDetails, space: externalSpace, showPinnedIcon } = props
+  const { postDetails, space: externalSpace, showPinnedIcon, shouldHideChatRooms } = props
   const myAddress = useMyAddress()
   const {
     space: globalSpace,
@@ -49,7 +53,8 @@ export function PostPreview(props: PreviewProps) {
   const { isSharedPost } = post
   const space = externalSpace || globalSpace
   const isUnlisted = useIsUnlistedPost({ post, space: space?.struct })
-  const isHiddenPreview = HIDE_PREVIEW_FROM_ACCOUNT.includes(post.ownerId)
+  const isHiddenChatRoom =
+    shouldHideChatRooms && HIDE_PREVIEW_FROM_SPACE.includes(post.spaceId ?? '')
 
   const { inView, ref } = useInView()
   useEffect(() => {
@@ -85,7 +90,7 @@ export function PostPreview(props: PreviewProps) {
     }
   }, [inView, myAddress])
 
-  if (isUnlisted || isHiddenPreview) return null
+  if (isUnlisted || isHiddenChatRoom) return null
 
   const postContent = postDetails.post.content
   const isEmptyContent = !isSharedPost && !postContent?.title && !postContent?.body
