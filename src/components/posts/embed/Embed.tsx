@@ -112,7 +112,7 @@ const componentMap: {
     const tweetId = urlWithoutQuery.split('/').pop()
     if (!tweetId) return null
     return (
-      <div className={clsx('w-100', styles.Tweet, 'light')}>
+      <div className={clsx('w-100', styles.Tweet, styles.CustomEmbedWrapper, 'light RoundedLarge')}>
         <Tweet id={tweetId} />
       </div>
     )
