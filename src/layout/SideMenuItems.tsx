@@ -59,11 +59,15 @@ export const DefaultMenu: MenuItem[] = [
   //   page: [ polkaStatsUrl ],
   //   icon: <BlockOutlined />,
   // },
-  {
-    name: 'Leaderboard',
-    page: ['/leaderboard'],
-    icon: <SubIcon Icon={MdOutlineLeaderboard} />,
-  },
+  ...(config.enableDatahub
+    ? [
+        {
+          name: 'Leaderboard',
+          page: ['/leaderboard'],
+          icon: <SubIcon Icon={MdOutlineLeaderboard} />,
+        },
+      ]
+    : []),
   {
     name: 'Statistics',
     page: ['/stats'],

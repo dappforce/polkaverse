@@ -1,4 +1,5 @@
 import { ComponentProps } from 'react'
+import config from 'src/config'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import MobileRewardDashboard from './MobileRewardDashboard'
 import TopUsersCard from './TopUsersCard'
@@ -16,7 +17,7 @@ export default function MobileActiveStakingSection({
   ...props
 }: MobileActiveStakingSectionProps) {
   const isMobile = useIsMobileWidthOrDevice()
-  if (!isMobile) return null
+  if (!isMobile || !config.enableDatahub) return null
 
   return (
     <>

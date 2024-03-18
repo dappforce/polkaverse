@@ -1,5 +1,6 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import { getUserStatistics } from 'src/components/utils/datahub/leaderboard'
+import config from 'src/config'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 
@@ -33,6 +34,18 @@ export const selectUserStatistics = selectors.selectById
 export const fetchUserStatistics = createSimpleFetchWrapper<{ address: string }, UserStatistics>({
   sliceName,
   fetchData: async function ({ address }) {
+    if (!config.enableDatahub)
+      return {
+        address,
+        creator: {
+          likesCountByPeriod: 0,
+          earnedByPeriod: '0',
+          earnedTotal: '0',
+          rank: 0,
+          stakersWhoLiked: 0,
+        },
+        staker: { earnedByPeriod: '0', earnedTotal: '0', likedCreators: 0, likedPosts: 0, rank: 0 },
+      }
     const res = await getUserStatistics({ address })
     return res
   },

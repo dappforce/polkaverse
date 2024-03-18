@@ -19,6 +19,8 @@ import FollowSpaceButton from 'src/components/utils/FollowSpaceButton'
 import Segment from 'src/components/utils/Segment'
 import { ActiveVoters, PostVoters } from 'src/components/voting/ListVoters'
 import SuperLike from 'src/components/voting/SuperLike'
+import { VoterButtons } from 'src/components/voting/VoterButtons'
+import config from 'src/config'
 import { resolveIpfsUrl } from 'src/ipfs'
 import messages from 'src/messages'
 import { isBlockedPost } from 'src/moderation'
@@ -337,7 +339,7 @@ export const PostActionsPanel: FC<PostActionsPanelProps> = props => {
   return (
     <div className={`DfActionsPanel ${withBorder && 'DfActionBorder'} ${className ?? ''}`}>
       <div className={clsx('d-flex align-items-center GapHuge', styles.PostActions)}>
-        <SuperLike post={struct} />
+        {config.enableDatahub ? <SuperLike post={struct} /> : <VoterButtons post={struct} />}
         {preview && <CommentAction {...props} />}
       </div>
       <PostRewardStat postId={postDetails.id} />

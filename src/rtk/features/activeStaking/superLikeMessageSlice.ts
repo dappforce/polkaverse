@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { getSuperLikeMessage } from 'src/components/utils/datahub/active-staking'
+import config from 'src/config'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 
@@ -14,6 +15,7 @@ export const selectSuperLikeMessage = (state: RootState) => state.superLikeMessa
 export const fetchSuperLikeMessage = createSimpleFetchWrapper<{}, SuperLikeMessage>({
   sliceName,
   fetchData: async function () {
+    if (!config.enableDatahub) return { message: '' }
     const message = getSuperLikeMessage()
     return message
   },

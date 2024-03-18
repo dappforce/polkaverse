@@ -38,7 +38,7 @@ const verifiedIcon = (
 )
 
 export const postFilterOpt: Filter[] = [
-  { label: 'Hot Posts', icon: '🔥', value: 'hot' },
+  ...(config.enableDatahub ? [{ label: 'Hot Posts', icon: '🔥', value: 'hot' }] : []),
   { label: 'Latest', value: 'latest' },
   // removed most liked and commented
   // ...offchainPostFilterOpt,
@@ -123,7 +123,7 @@ export const Filters = (props: Props) => {
   const needDateFilter =
     !!type && type !== 'latest' && type !== 'suggested' && type !== 'creators' && type !== 'hot'
 
-  const showLikablePostsCheckbox = type === 'latest' && tabKey === 'posts'
+  const showLikablePostsCheckbox = type === 'latest' && tabKey === 'posts' && config.enableDatahub
   const hasRightElement = needDateFilter || showLikablePostsCheckbox
 
   if (!needDateFilter && !filterByKey[tabKey]?.length) return null

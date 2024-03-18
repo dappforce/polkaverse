@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { SubsocialApi } from '@subsocial/api'
 import { getTopUsers } from 'src/components/utils/datahub/leaderboard'
+import config from 'src/config'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { AppDispatch, AppStore } from 'src/rtk/app/store'
 import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
@@ -20,6 +21,7 @@ export const selectTopUsers = (state: RootState) => state.topUsers
 export const fetchTopUsers = createSimpleFetchWrapper<{}, TopUsers | null>({
   sliceName,
   fetchData: async function () {
+    if (!config.enableDatahub) return null
     const data = await getTopUsers()
     return data
   },

@@ -1,5 +1,6 @@
 import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { getRewardReport } from 'src/components/utils/datahub/active-staking'
+import config from 'src/config'
 import { CREATORS_CONSTANTS } from 'src/config/constants'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
@@ -31,6 +32,20 @@ export const selectUserRewardReport = selectors.selectById
 
 export const fetchRewardReport = createSimpleFetchWrapper<{ address: string }, RewardReport>({
   fetchData: async function ({ address }) {
+    if (!config.enableDatahub)
+      return {
+        address,
+        creatorReward: '0',
+        creatorRewardBySource: {
+          fromCommentSuperLikes: '0',
+          fromDirectSuperLikes: '0',
+          fromShareSuperLikes: '0',
+        },
+        currentRewardAmount: '0',
+        receivedLikes: 0,
+        superLikesCount: 0,
+        weeklyReward: '0',
+      }
     return await getRewardReport(address)
   },
   saveToCacheAction: data => slice.actions.setRewardReport(data),

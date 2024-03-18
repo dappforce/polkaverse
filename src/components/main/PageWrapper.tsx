@@ -154,7 +154,7 @@ export const PageContent: FC<Props> = ({
         </section>
       ) : (
         <div className={clsx('DfSectionOuterContainer')}>
-          {creatorDashboardSidebarType && (
+          {creatorDashboardSidebarType && config.enableDatahub && (
             <div {...sidebarStyles} className='xl-only'>
               <div>
                 <TopUsersCard />
@@ -198,7 +198,7 @@ export const PageContent: FC<Props> = ({
             {/* {isPanels && <div className='DfRightPanel DfPanel'>{rightPanel}</div>} */}
           </section>
           {rightPanel}
-          {rightPanel === undefined && creatorDashboardSidebarType && (
+          {rightPanel === undefined && creatorDashboardSidebarType && config.enableDatahub && (
             <div {...sidebarStyles}>
               <CreatorDashboardSidebar dashboardType={creatorDashboardSidebarType} />
               <div className='mt-3 xl-hidden'>

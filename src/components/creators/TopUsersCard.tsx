@@ -2,6 +2,7 @@ import { Button, Skeleton } from 'antd'
 import clsx from 'clsx'
 import { ComponentProps, CSSProperties, useMemo } from 'react'
 import { IoChevronForward } from 'react-icons/io5'
+import config from 'src/config'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchProfileSpaces, useSelectProfile } from 'src/rtk/app/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
@@ -20,7 +21,12 @@ import Segment from '../utils/Segment'
 
 export type TopUsersCardProps = ComponentProps<'div'>
 
-export default function TopUsersCard({ ...props }: TopUsersCardProps) {
+export default function TopUsers(props: TopUsersCardProps) {
+  if (!config.enableDatahub) return null
+  return <TopUsersCardInner {...props} />
+}
+
+function TopUsersCardInner({ ...props }: TopUsersCardProps) {
   const myAddress = useMyAddress() ?? ''
   const { data, loading } = useFetchTopUsers()
   const { data: totalStake } = useFetchTotalStake(myAddress)
