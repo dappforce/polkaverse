@@ -97,13 +97,13 @@ const componentMap: {
   ),
   Instagram: ({ src }) => {
     return (
-      <div className={styles.CustomEmbedWrapper}>
+      <div className={clsx(styles.CustomEmbedWrapper, 'RoundedLarge')}>
         <InstagramEmbed url={src} key={src} />
       </div>
     )
   },
   Tiktok: ({ src }) => (
-    <div className={styles.CustomEmbedWrapper}>
+    <div className={clsx(styles.CustomEmbedWrapper, 'RoundedLarge')}>
       <TikTokEmbed key={src} url={src} />
     </div>
   ),
