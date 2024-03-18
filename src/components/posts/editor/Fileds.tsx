@@ -100,12 +100,13 @@ type EmbeddedLinkFieldProps = {
 export const EmbeddedLinkField = ({
   initialValues,
   autoFocus,
+  form,
 }: CommonFieldsProps & EmbeddedLinkFieldProps) => {
   const [link, setLink] = useState(initialValues?.link)
 
   useEffect(() => {
-    setLink(initialValues?.link)
-  }, [initialValues?.link])
+    setLink(form.getFieldValue(fieldName('link')))
+  }, [])
 
   const onLinkChange = (e: React.FocusEvent<HTMLInputElement>) => {
     const link = e.target.value
