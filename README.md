@@ -43,8 +43,7 @@ services:
   web-ui:
     image: polkaverse-docker-image:latest
     ports:
-      - "3002:3002"
-      - "3003:3003"
+      - "3003:3003" # Application port
     container_name: polkaverse-web-app
     restart: on-failure
 ```
@@ -58,7 +57,6 @@ $ docker-compose logs
 ```
 3. Test to connect to the application.
 ```bash
-$ curl -I http://localhost:3002
 $ curl -I http://localhost:3003
 ```
 
