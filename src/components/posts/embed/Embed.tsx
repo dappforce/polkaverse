@@ -23,15 +23,45 @@ const allowEmbedList = [
 const componentMap: {
   [key in (typeof allowEmbedList)[number]]?: (props: { src: string }) => JSX.Element | null
 } = {
-  'youtu.be': YoutubeEmbed,
-  youtube: YoutubeEmbed,
+  'youtu.be': ({ src }) => (
+    <div
+      className={clsx('RoundedLarge')}
+      style={{
+        paddingBottom: '56.25%',
+        position: 'relative',
+        display: 'block',
+        width: '100%',
+        overflow: 'hidden',
+      }}
+    >
+      <YoutubeEmbed src={src} />
+    </div>
+  ),
+  youtube: ({ src }) => (
+    <div
+      className={clsx('RoundedLarge')}
+      style={{
+        paddingBottom: '56.25%',
+        position: 'relative',
+        display: 'block',
+        width: '100%',
+        overflow: 'hidden',
+      }}
+    >
+      <YoutubeEmbed src={src} />
+    </div>
+  ),
   instagram: ({ src }) => <InstagramEmbed url={src} />,
   tiktok: ({ src }) => <TikTokEmbed url={src} />,
   twitter: ({ src }) => {
     const urlWithoutQuery = src.split('?')[0]
     const tweetId = urlWithoutQuery.split('/').pop()
     if (!tweetId) return null
-    return <Tweet id='' />
+    return (
+      <div className={clsx('w-100', styles.Tweet)} data-theme='light'>
+        <Tweet id={tweetId} />
+      </div>
+    )
   },
 }
 
@@ -96,13 +126,21 @@ const Embed = ({ link, className }: EmbedProps) => {
   const src = getEmbedUrl(link, embed)
 
   if (!src) return null
-  let Component = componentMap[embed as (typeof allowEmbedList)[number]] || GeneralEmbed
+  let Component = componentMap[embed as (typeof allowEmbedList)[number]]
+
+  if (Component) {
+    return (
+      <div className={className}>
+        <Component src={src} />
+      </div>
+    )
+  }
 
   return (
-    <>
+    <div className={className}>
       {src && (
         <div
-          className={clsx('RoundedLarge', className)}
+          className={clsx('RoundedLarge')}
           style={{
             paddingBottom: '56.25%',
             position: 'relative',
@@ -111,10 +149,10 @@ const Embed = ({ link, className }: EmbedProps) => {
             overflow: 'hidden',
           }}
         >
-          <Component src={src} />
+          <GeneralEmbed src={src} />
         </div>
       )}
-    </>
+    </div>
   )
 }
 
