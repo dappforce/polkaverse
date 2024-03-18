@@ -34,8 +34,14 @@ export type PreviewProps = BarePreviewProps & {
   isPromoted?: boolean
 }
 
-// grill by subsocial and grilled space (spaces of chat room posts)
-const HIDE_PREVIEW_FROM_SPACE: string[] = ['12660', '12659']
+const HIDE_PREVIEW_FROM_SPACE: string[] = [
+  '12660', // Grill by Subsocial
+  '12659', // Grilled
+  '12662', // Offchain Chats
+  '12661', // Grill Widgets
+  '12455', // Community Chats
+  '12410', // Sandbox Highlights
+]
 export function PostPreview(props: PreviewProps) {
   const router = useRouter()
   const { postDetails, space: externalSpace, showPinnedIcon, shouldHideChatRooms } = props
