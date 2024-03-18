@@ -39,7 +39,7 @@ const verifiedIcon = (
 
 export const postFilterOpt: Filter[] = [
   ...(config.enableDatahub ? [{ label: 'Hot Posts', icon: '🔥', value: 'hot' }] : []),
-  { label: 'Latest', value: 'latest' },
+  { label: 'Latest', value: 'suggested' },
   // removed most liked and commented
   // ...offchainPostFilterOpt,
 ]
@@ -66,7 +66,7 @@ export const spaceFilterOpt: Filter[] = [
     icon: verifiedIcon,
     value: 'suggested',
   },
-  ...commonFilterOption,
+  // ...commonFilterOption,
   // { label: 'Creators Staking', value: 'creators' },
   // ...offchainSpaceFilterOpt,
 ]

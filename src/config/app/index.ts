@@ -1,8 +1,10 @@
 import { appKind, appOverrides } from '../env'
+import forklog from './forklog'
 import polkaverse from './polkaverse'
 import staging from './staging'
 
 const apps = {
+  forklog,
   polkaverse,
   staging,
 }

@@ -1,19 +1,15 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import { IpfsContent } from '@subsocial/api/substrate/wrappers'
 import { newLogger } from '@subsocial/utils'
-import { Button, Col, Form, Modal, ModalProps, Row } from 'antd'
+import { Col, Form, Modal, ModalProps, Row } from 'antd'
 import { LabeledValue } from 'antd/lib/select'
-import BN from 'bignumber.js'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { AiFillInfoCircle } from 'react-icons/ai'
 import { BiImage } from 'react-icons/bi'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
-import { FormatBalance } from 'src/components/common/balances'
 import { htmlToMd } from 'src/components/editor/tiptap'
-import CustomLink from 'src/components/referral/CustomLink'
 import { getNewIdFromEvent, getTxParams } from 'src/components/substrate'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import { TxCallback, TxFailedCallback } from 'src/components/substrate/SubstrateTxButton'
@@ -24,7 +20,6 @@ import { getNonEmptyPostContent } from 'src/components/utils/content'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import SelectSpacePreview from 'src/components/utils/SelectSpacePreview'
 import TxButton from 'src/components/utils/TxButton'
-import { getNeededLock, MINIMUM_LOCK } from 'src/config/constants'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import {
@@ -32,10 +27,8 @@ import {
   useSelectProfile,
   useSelectSpaceIdsWhereAccountCanPost,
 } from 'src/rtk/app/hooks'
-import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { AnyId, DataSourceTypes, IpfsCid, PostContent } from 'src/types'
 import { selectSpaceIdsThatCanSuggestIfSudo } from 'src/utils'
-import { activeStakingLinks, getContentStakingLink } from 'src/utils/links'
 import { RegularPostExt } from '.'
 import { fieldName, FormValues } from './Fileds'
 import styles from './index.module.sass'
@@ -259,15 +252,6 @@ export interface PostEditorModalProps extends Omit<ModalProps, 'onCancel'> {
   defaultSpaceId?: string
 }
 export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalProps) => {
-  const myAddress = useMyAddress()
-  const { data } = useFetchTotalStake(myAddress ?? '')
-  const hasStaked = data?.hasStakedEnough
-  const totalStake = new BN(data?.amount || 0)
-
-  const neededStake = getNeededLock(data?.amount)
-
-  const sendEvent = useSendEvent()
-
   return (
     <Modal
       className={styles.ModalEditor}
@@ -281,86 +265,6 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
           defaultSpaceId={defaultSpaceId}
           closeModal={() => props.onCancel && props.onCancel()}
         />
-      </div>
-      <div className={styles.InfoPanel}>
-        <div className={styles.InfoPanelContent}>
-          <div className={styles.Title}>
-            <div className='d-flex align-items-center GapTiny'>
-              <AiFillInfoCircle />
-              <span>Post to Earn</span>
-            </div>
-            {neededStake > 0 && (
-              <Button shape='round' type='primary' href={getContentStakingLink()} target='_blank'>
-                Lock SUB
-              </Button>
-            )}
-          </div>
-          {(() => {
-            if (!hasStaked) {
-              return (
-                <p>
-                  You can receive extra SUB when others like your posts or comments. However, you
-                  need to first lock at least{' '}
-                  <FormatBalance
-                    value={MINIMUM_LOCK.toString()}
-                    decimals={10}
-                    currency='SUB'
-                    precision={2}
-                  />{' '}
-                  SUB to become eligible.
-                </p>
-              )
-            }
-
-            if (totalStake.isZero()) {
-              return (
-                <p>
-                  To start earning SUB rewards, lock by at least{' '}
-                  <FormatBalance
-                    value={neededStake.toString()}
-                    decimals={10}
-                    currency='SUB'
-                    precision={2}
-                  />
-                  .
-                </p>
-              )
-            }
-
-            if (neededStake > 0) {
-              return (
-                <p>
-                  To start earning SUB rewards, increase your lock by at least{' '}
-                  <FormatBalance
-                    value={neededStake.toString()}
-                    decimals={10}
-                    currency='SUB'
-                    precision={2}
-                  />
-                  .
-                </p>
-              )
-            }
-
-            return (
-              <p>
-                You can receive extra SUB when others like your content. Share your posts around the
-                internet to get more exposure and rewards.{' '}
-                <CustomLink href={activeStakingLinks.learnMore}>
-                  <a
-                    className='FontWeightMedium'
-                    target='_blank'
-                    onClick={() =>
-                      sendEvent('astake_banner_learn_more', { eventSource: 'fastEditor' })
-                    }
-                  >
-                    How does it work?
-                  </a>
-                </CustomLink>
-              </p>
-            )
-          })()}
-        </div>
       </div>
     </Modal>
   )
