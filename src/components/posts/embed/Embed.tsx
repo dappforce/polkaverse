@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import LiteYouTubeEmbed from 'react-lite-youtube-embed'
 import { InstagramEmbed, TikTokEmbed } from 'react-social-media-embed'
 import { Tweet } from 'react-tweet'
@@ -97,24 +97,26 @@ const componentMap: {
   ),
   Instagram: ({ src }) => {
     return (
-      <div className={clsx(styles.CustomEmbedWrapper, 'RoundedLarge')}>
+      <EmbedContainer className={clsx('RoundedLarge')}>
         <InstagramEmbed url={src} key={src} />
-      </div>
+      </EmbedContainer>
     )
   },
   Tiktok: ({ src }) => (
-    <div className={clsx(styles.CustomEmbedWrapper, 'RoundedLarge')}>
+    <EmbedContainer className={clsx('RoundedLarge')}>
       <TikTokEmbed key={src} url={src} />
-    </div>
+    </EmbedContainer>
   ),
   X: ({ src }) => {
     const urlWithoutQuery = src.split('?')[0]
     const tweetId = urlWithoutQuery.split('/').pop()
     if (!tweetId) return null
     return (
-      <div className={clsx('w-100', styles.Tweet, styles.CustomEmbedWrapper, 'light RoundedLarge')}>
-        <Tweet id={tweetId} />
-      </div>
+      <EmbedContainer className={clsx('light RoundedLarge')}>
+        <div className={clsx('w-100', styles.Tweet)}>
+          <Tweet id={tweetId} />
+        </div>
+      </EmbedContainer>
     )
   },
 }
@@ -263,6 +265,32 @@ function GeneralEmbed({ src }: { src: string }) {
       title='Embedded'
       style={{ position: 'absolute', top: 0, left: 0 }}
     />
+  )
+}
+
+function EmbedContainer({
+  className,
+  isPreview = true,
+  children,
+}: {
+  isPreview?: boolean
+  className?: string
+  children: ReactNode
+}) {
+  const [isClipped, setIsClipped] = useState(false)
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (ref.current) {
+      setIsClipped(ref.current.scrollHeight > ref.current.clientHeight)
+    }
+  }, [])
+
+  return (
+    <div className={clsx(styles.CustomEmbedWrapper, className)}>
+      {isClipped && isPreview && <div className={styles.OverflowingGradient} />}
+      <div ref={ref}>{children}</div>
+    </div>
   )
 }
 
