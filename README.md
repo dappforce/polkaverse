@@ -6,40 +6,60 @@ PolkaVerse is a niche social site built on the Subsocial network. It focuses on 
 
 Visit Subsocial's [website](https://subsocial.network) to learn more about the project.
 
-## Guide to build and deploy polkaverse 
+## Guide to build and deploy polkaverse
 
-1. Prepare the dockerfile and adjust the config if needed.
+### Build the docker images
+1. Prepare the [dockerfile](./docker/Dockerfile) and adjust the config if needed.
 2. Build the image in local with this command and please ensure to add build argument.
 ```bash
-$ docker build --build-arg GH_GA_ID=valueREDACTED --build-arg GH_APP_KIND=valueREDACTED --build-arg GH_HCAPTCHA_SITE_KEY=valueREDACTED --build-arg GH_AMP_ID=valueREDACTED --build-arg GH_OFFCHAIN_SIGNER_URL=valueREDACTED --build-arg GH_CONNECTION_KIND=valueREDACTED --build-arg GH_SELLER_CLIENT_ID=valueREDACTED --build-arg GH_SERVER_MNEMONIC==valueREDACTED --build-arg GH_SELLER_TOKEN_SIGNER=valueREDACTED --build-arg GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=valueREDACTED --build-arg GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=valueREDACTED --build-arg GH_DATAHUB_QUEUE_URL=valueREDACTED --build-arg GH_DATAHUB_QUEUE_TOKEN=valueREDACTED -t polkaverse-docker-image:v1.0.0 .
+$ docker build --build-arg GH_GA_ID=valueREDACTED --build-arg GH_APP_KIND=valueREDACTED --build-arg GH_HCAPTCHA_SITE_KEY=valueREDACTED --build-arg GH_AMP_ID=valueREDACTED --build-arg GH_OFFCHAIN_SIGNER_URL=valueREDACTED --build-arg GH_CONNECTION_KIND=valueREDACTED --build-arg GH_SELLER_CLIENT_ID=valueREDACTED --build-arg GH_SERVER_MNEMONIC==valueREDACTED --build-arg GH_SELLER_TOKEN_SIGNER=valueREDACTED --build-arg GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=valueREDACTED --build-arg GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=valueREDACTED --build-arg GH_DATAHUB_QUEUE_URL=valueREDACTED --build-arg GH_DATAHUB_QUEUE_TOKEN=valueREDACTED -t polkaverse-docker-image:latest .
 ```
 Notes:
 Please execute the build process with theses build arguments, you need to specify the value.
-* [x] GH_GA_ID=valueREDACTED
-* [x] GH_APP_KIND=valueREDACTED
-* [x] GH_HCAPTCHA_SITE_KEY=valueREDACTED
-* [x] GH_AMP_ID=valueREDACTED
-* [x] GH_OFFCHAIN_SIGNER_URL=valueREDACTED
-* [x] GH_CONNECTION_KIND=valueREDACTED
-* [x] GH_SELLER_CLIENT_ID=valueREDACTED
-* [x] GH_SELLER_TOKEN_SIGNER=valueREDACTED
-* [x] GH_SERVER_MNEMONIC=valueREDACTED
-* [x] GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=valueREDACTED
-* [x] GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=valueREDACTED
-* [x] GH_DATAHUB_QUEUE_URL=valueREDACTED
-* [x] GH_DATAHUB_QUEUE_TOKEN=valueREDACTED
+* GH_GA_ID=valueREDACTED
+* GH_APP_KIND=valueREDACTED
+* GH_HCAPTCHA_SITE_KEY=valueREDACTED
+* GH_AMP_ID=valueREDACTED
+* GH_OFFCHAIN_SIGNER_URL=valueREDACTED
+* GH_CONNECTION_KIND=valueREDACTED
+* GH_SELLER_CLIENT_ID=valueREDACTED
+* GH_SELLER_TOKEN_SIGNER=valueREDACTED
+* GH_SERVER_MNEMONIC=valueREDACTED
+* GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=valueREDACTED
+* GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=valueREDACTED
+* GH_DATAHUB_QUEUE_URL=valueREDACTED
+* GH_DATAHUB_QUEUE_TOKEN=valueREDACTED
 3. Then check the docker images that has been builded.
 ```bash
-$ docker images
+$ docker images | grep "polkaverse"
 ```
-4. To run the docker images with docker-compose, please prepare the docker-compose.yaml config file at first.
+
+### Run the container with docker-compose
+1. To run the docker images with docker-compose, please prepare the docker-compose.yaml config file at first.
+```yaml
+# docker-compose.yml
+version: "3"
+services:
+  web-ui:
+    image: polkaverse-docker-image:latest
+    ports:
+      - "3002:3002"
+      - "3003:3003"
+    container_name: polkaverse-web-app
+    restart: on-failure
+```
 ```bash
 $ docker-compose -f docker-compose.yaml up -d
 ```
-5. Check the running container with this command.
+2. Check the running container with this command.
 ```bash
 $ docker-compose ps
 $ docker-compose logs
+```
+3. Test to connect to the application.
+```bash
+$ curl -I http://localhost:3002
+$ curl -I http://localhost:3003
 ```
 
 
