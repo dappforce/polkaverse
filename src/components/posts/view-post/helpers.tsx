@@ -498,9 +498,7 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
       <div className='DfRow'>
         <div className='w-100'>
           <PostPreviewCreatorInfo postDetails={postDetails} space={space} isPromoted={isPromoted} />
-          {content.link && (
-            <Embed isPreview post={postDetails.post} link={content.link} className='mt-3' />
-          )}
+          {content.link && <Embed link={content.link} className='mt-3' />}
           <PostContent
             withMarginForCardType={withMarginForCardType && !withTags}
             postDetails={postDetails}

@@ -1,18 +1,12 @@
-import { PostData } from '@subsocial/api/types'
-import { Button } from 'antd'
 import clsx from 'clsx'
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import LiteYouTubeEmbed from 'react-lite-youtube-embed'
-import { InstagramEmbed, TikTokEmbed } from 'react-social-media-embed'
 import { Tweet } from 'react-tweet'
-import ViewPostLink from '../ViewPostLink'
 import styles from './Embed.module.sass'
 
 type EmbedProps = {
-  post?: PostData
   link: string
   className?: string
-  isPreview?: boolean
 }
 
 const YOUTUBE_REGEX = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/
@@ -59,16 +53,16 @@ export const allowEmbedList = [
       /\/status\/\d+/.test(link),
     url: 'x.com',
   },
-  {
-    name: 'Instagram' as const,
-    checker: (link: string) => /(?:https?:\/\/)?(?:www\.)?(?:instagram\.com)\/(.+)/.test(link),
-    url: 'instagram.com',
-  },
-  {
-    name: 'Tiktok' as const,
-    checker: (link: string) => /(?:https?:\/\/)?(?:www\.)?(?:tiktok\.com)\/(.+)/.test(link),
-    url: 'tiktok.com',
-  },
+  // {
+  //   name: 'Instagram' as const,
+  //   checker: (link: string) => /(?:https?:\/\/)?(?:www\.)?(?:instagram\.com)\/(.+)/.test(link),
+  //   url: 'instagram.com',
+  // },
+  // {
+  //   name: 'Tiktok' as const,
+  //   checker: (link: string) => /(?:https?:\/\/)?(?:www\.)?(?:tiktok\.com)\/(.+)/.test(link),
+  //   url: 'tiktok.com',
+  // },
   {
     name: 'Vimeo' as const,
     checker: (link: string) => {
@@ -84,11 +78,7 @@ export const allowEmbedList = [
 ] satisfies { name: string; checker: (link: string) => boolean; url: string }[]
 type AllowedList = (typeof allowEmbedList)[number]['name']
 const componentMap: {
-  [key in AllowedList]?: (props: {
-    src: string
-    post?: PostData
-    isPreview?: boolean
-  }) => JSX.Element | null
+  [key in AllowedList]?: (props: { src: string }) => JSX.Element | null
 } = {
   Youtube: ({ src }) => (
     <div
@@ -104,24 +94,24 @@ const componentMap: {
       <YoutubeEmbed src={src} />
     </div>
   ),
-  Instagram: ({ src, post, isPreview }) => {
-    return (
-      <EmbedContainer className={clsx('RoundedLarge')} post={post} isPreview={isPreview}>
-        <InstagramEmbed url={src} key={src} />
-      </EmbedContainer>
-    )
-  },
-  Tiktok: ({ src, post, isPreview }) => (
-    <EmbedContainer className={clsx('RoundedLarge')} post={post} isPreview={isPreview}>
-      <TikTokEmbed key={src} url={src} />
-    </EmbedContainer>
-  ),
-  X: ({ src, post, isPreview }) => {
+  // Instagram: ({ src, post, isPreview }) => {
+  //   return (
+  //     <EmbedContainer className={clsx('RoundedLarge')} post={post} isPreview={isPreview}>
+  //       <InstagramEmbed url={src} key={src} />
+  //     </EmbedContainer>
+  //   )
+  // },
+  // Tiktok: ({ src, post, isPreview }) => (
+  //   <EmbedContainer className={clsx('RoundedLarge')} post={post} isPreview={isPreview}>
+  //     <TikTokEmbed key={src} url={src} />
+  //   </EmbedContainer>
+  // ),
+  X: ({ src }) => {
     const urlWithoutQuery = src.split('?')[0]
     const tweetId = urlWithoutQuery.split('/').pop()
     if (!tweetId) return null
     return (
-      <EmbedContainer className={clsx('light RoundedLarge')} post={post} isPreview={isPreview}>
+      <EmbedContainer className={clsx('light RoundedLarge')}>
         <div className={clsx('w-100', styles.Tweet)}>
           <Tweet id={tweetId} />
         </div>
@@ -152,7 +142,7 @@ export function getEmbedLinkType(link: string | undefined) {
   return foundEmbed.name
 }
 
-const Embed = ({ link, className, post, isPreview }: EmbedProps) => {
+const Embed = ({ link, className }: EmbedProps) => {
   const embed = getEmbedLinkType(link)
   const src = getEmbedUrl(link, embed)
 
@@ -162,7 +152,7 @@ const Embed = ({ link, className, post, isPreview }: EmbedProps) => {
   if (Component) {
     return (
       <div className={className}>
-        <Component src={src} post={post} isPreview={isPreview} />
+        <Component src={src} />
       </div>
     )
   }
@@ -277,49 +267,10 @@ function GeneralEmbed({ src }: { src: string }) {
   )
 }
 
-function EmbedContainer({
-  className,
-  isPreview = false,
-  children,
-  post,
-}: {
-  isPreview?: boolean
-  className?: string
-  children: ReactNode
-  post?: PostData
-}) {
-  const [isClipped, setIsClipped] = useState(false)
-  const ref = useRef<HTMLDivElement | null>(null)
-
-  useEffect(() => {
-    if (!isPreview) return
-    if (ref.current) {
-      const isClipped = ref.current.scrollHeight > ref.current.clientHeight
-      setIsClipped(isClipped)
-      if (!isClipped) {
-        // Try to check clip status every 300ms for 3 seconds
-        const intervalId = setInterval(() => {
-          if (ref.current) {
-            const isClipped = ref.current.scrollHeight > ref.current.clientHeight
-            setIsClipped(isClipped)
-            if (isClipped) clearInterval(intervalId)
-          }
-        }, 300)
-        setTimeout(() => {
-          clearInterval(intervalId)
-        }, 3000)
-      }
-    }
-  }, [])
-
+function EmbedContainer({ className, children }: { className?: string; children: ReactNode }) {
   return (
     <div className={clsx(styles.CustomEmbedWrapper, className)}>
-      {isClipped && isPreview && (
-        <div className={styles.OverflowingGradient}>
-          {post && <ViewPostLink title={<Button type='text'>See more</Button>} post={post} />}
-        </div>
-      )}
-      <div ref={ref}>{children}</div>
+      <div>{children}</div>
     </div>
   )
 }
