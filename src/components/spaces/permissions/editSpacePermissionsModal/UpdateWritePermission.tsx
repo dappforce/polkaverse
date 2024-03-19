@@ -2,8 +2,8 @@ import { TxButtonProps, TxCallback } from 'src/components/substrate/SubstrateTxB
 import TxButton from 'src/components/utils/TxButton'
 import { useCreateReloadSpace } from 'src/rtk/app/hooks'
 import { SpaceStruct } from 'src/types'
-import { newWritePermission } from './space-permissions'
-import { BuiltInRole } from './utils'
+import { newWritePermission } from '../space-permissions'
+import { BuiltInRole } from '../utils'
 
 type UpdateWritePermissionProps = TxButtonProps & {
   onSuccess?: () => void

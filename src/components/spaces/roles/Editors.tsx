@@ -1,7 +1,5 @@
 import { Button, Form, Modal } from 'antd'
-import BN from 'bn.js'
 import { useEffect, useState } from 'react'
-import useSubsocialEffect from 'src/components/api/useSubsocialEffect'
 import { DfForm } from 'src/components/forms'
 import { useSubsocialApi } from 'src/components/substrate'
 import { Loading } from 'src/components/utils'
@@ -9,8 +7,9 @@ import TxButton from 'src/components/utils/TxButton'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { useFetchSpaceEditors } from 'src/rtk/features/accounts/accountsHooks'
 import { upsertSpaceEditorsBySpaceId } from 'src/rtk/features/accounts/spaceEditorsSlice'
-import { AccountId, bnToId, RoleId, SpaceId, SpaceStruct } from 'src/types'
+import { AccountId, RoleId, SpaceId, SpaceStruct } from 'src/types'
 import { eqSet } from 'src/utils/set'
+import useGetRoleId from '../permissions/useRoleCreated'
 import { InputAccountsField } from './AccountInputsField'
 import { buildGrantOrRevokeRoleArgs } from './editor-role'
 import { EnableEditorsButton } from './EnableEditorsButton'
@@ -141,31 +140,7 @@ const InnerEditorsButton = ({ space, roleId }: EditEditorsButtonProps) => {
 
 export const EditorsLink = ({ space }: EditEditorsButtonProps) => {
   const spaceId = space?.id
-  const [roleId, setRoleId] = useState<RoleId>()
-  const [loaded, setLoaded] = useState(false)
-
-  useSubsocialEffect(
-    ({ substrate }) => {
-      if (!spaceId) return
-
-      let unsub: any
-
-      const loadRoleAndEditors = async () => {
-        const api = await (await substrate.api).isReady
-
-        unsub = await api.query.roles.roleIdsBySpaceId(spaceId, (data: any) => {
-          const editorRoleIdBn = (data as unknown as BN[])[0]
-          editorRoleIdBn && setRoleId(bnToId(editorRoleIdBn))
-          setLoaded(true)
-        })
-      }
-
-      loadRoleAndEditors().catch(err => console.error(err))
-
-      return () => unsub && unsub()
-    },
-    [spaceId],
-  )
+  const { roleId, loaded } = useGetRoleId(spaceId)
 
   if (!space || !loaded) return null
 

@@ -5,7 +5,7 @@ import { SpaceId } from 'src/types'
 
 type EnableEditorsButtonProps = {
   spaceId: SpaceId
-  openModal: VoidFn
+  openModal?: VoidFn
 }
 
 export const EnableEditorsButton = ({ spaceId, openModal }: EnableEditorsButtonProps) => {

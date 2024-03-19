@@ -3,9 +3,8 @@ import { useState } from 'react'
 import { DfForm } from 'src/components/forms'
 import messages from 'src/messages'
 import { SpaceStruct } from 'src/types'
-import { EditWritePermission } from './UpdateWritePermission'
+import { EditWritePermission } from './editSpacePermissionsModal/UpdateWritePermission'
 import { BuiltInRole, getWhoCanPost } from './utils'
-import { WhoCanPostSelector } from './WhoCanPostSelector'
 
 type InnerEditPermissions = {
   space: SpaceStruct
@@ -34,7 +33,7 @@ export const EditPermissionsModal = ({ space, open, close }: EditPermissionsModa
   const initialValues = getInitialValues(space)
   const initialWhoCanPost = initialValues.whoCanPost
 
-  const [whoCanPost, setWhoCanPost] = useState(initialWhoCanPost)
+  const [whoCanPost] = useState(initialWhoCanPost)
 
   return (
     <Modal
@@ -60,7 +59,7 @@ export const EditPermissionsModal = ({ space, open, close }: EditPermissionsModa
           help={messages.formHints.whoCanPost[whoCanPost]}
           className='mb-2'
         >
-          <WhoCanPostSelector space={space} onChange={setWhoCanPost} />
+          {/* <WhoCanPostSelector space={space} onChange={setWhoCanPost} /> */}
         </Form.Item>
       </DfForm>
     </Modal>

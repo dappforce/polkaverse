@@ -22,7 +22,6 @@ import Section from '../utils/Section'
 import styles from './EditSpace.module.sass'
 import { newWritePermission } from './permissions/space-permissions'
 import { BuiltInRole, getWhoCanPost } from './permissions/utils'
-import { WhoCanPostSelector } from './permissions/WhoCanPostSelector'
 import { NewSocialLinks } from './SocialLinks/NewSocialLinks'
 
 import {
@@ -119,13 +118,13 @@ export function InnerForm(props: FormProps) {
   const tags = initialValues.tags || []
   const links = initialValues.links
 
-  const [whoCanPostHint, setWhoCanPostHint] = useState(
-    messages.formHints.whoCanPost[initialValues.whoCanPost!],
-  )
+  // const [whoCanPostHint, setWhoCanPostHint] = useState(
+  //   messages.formHints.whoCanPost[initialValues.whoCanPost!],
+  // )
   const blocked = useAmIBlocked()
 
-  const changeWhoCanPost = (field: BuiltInRole) =>
-    setWhoCanPostHint(messages.formHints.whoCanPost[field])
+  // const changeWhoCanPost = (field: BuiltInRole) =>
+  //   setWhoCanPostHint(messages.formHints.whoCanPost[field])
 
   // Auto save a space's about only if we are on a "New Space" form.
   const autoSaveId: AutoSaveId | undefined = !space ? 'space' : undefined
@@ -241,9 +240,9 @@ export function InnerForm(props: FormProps) {
           <Input placeholder={`Name of your ${entityLabel}`} />
         </Form.Item>
 
-        <Form.Item name={fieldName('whoCanPost')} label='Who can post?' help={whoCanPostHint}>
+        {/* <Form.Item name={fieldName('whoCanPost')} label='Who can post?' help={whoCanPostHint}>
           <WhoCanPostSelector space={space?.struct} onChange={changeWhoCanPost} />
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item
           name={fieldName('about')}

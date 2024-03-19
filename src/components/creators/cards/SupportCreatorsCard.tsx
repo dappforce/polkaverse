@@ -65,6 +65,9 @@ const StakedCard = () => {
     {
       item: <EarnInChatCard />,
     },
+    {
+      item: <EarnInChatCard />,
+    },
     // {
     //   item: <EarnInChatCard />,
     // },
