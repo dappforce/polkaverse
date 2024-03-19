@@ -288,8 +288,8 @@ const FullEditor = ({
                   type='primary'
                   block
                   className='mt-3'
-                  disabled={publishIsDisable}
                   {...txProps}
+                  disabled={publishIsDisable || txProps.disabled}
                 />
               </Card>
               {!totalStake?.hasStakedEnough && (

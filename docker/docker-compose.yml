@@ -9,10 +9,3 @@ services:
     container_name: subsocial-web-ui
     restart: on-failure
     network_mode: "host"
-
-  nginx:
-    build: ./nginx
-    container_name: subsocial-proxy
-    image: dappforce/subsocial-proxy:latest
-    restart: on-failure
-    network_mode: "host"
