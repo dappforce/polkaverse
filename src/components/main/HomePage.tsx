@@ -7,7 +7,10 @@ import { useCallback, useEffect, useState } from 'react'
 import config from 'src/config'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
+import { useAppSelector } from 'src/rtk/app/store'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { selectSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
+import { useMyAccount } from 'src/stores/my-account'
 import { PostKind } from 'src/types/graphql-global-types'
 import { getAmountRange } from 'src/utils/analytics'
 import { useIsSignedIn, useMyAddress } from '../auth/MyAccountsContext'
@@ -147,9 +150,20 @@ const TabsHomePage = ({
     setFiltersInUrl(router, key, filterType, { ref: refId })
   }
 
+  const isInitialized = useMyAccount(state => state.isInitialized)
+  const followedIds = useAppSelector(state => {
+    return selectSpaceIdsByFollower(state, myAddress)
+  })
+
+  const isLoadingFollowedIds = followedIds === undefined
   useEffect(() => {
-    onChangeKey(tab)
-  }, [isSignedIn])
+    if (!isInitialized || !isSignedIn || isLoadingFollowedIds) return
+    if (followedIds.length === 0) {
+      setFiltersInUrl(router, 'posts', { type: 'hot' }, { ref: refId })
+    } else {
+      onChangeKey(tab)
+    }
+  }, [followedIds, isInitialized])
 
   const handleScroll = () => {
     const currentScrollPos = window.pageYOffset
