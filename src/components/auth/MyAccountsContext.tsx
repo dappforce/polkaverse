@@ -29,13 +29,14 @@ import { fetchChainsInfo } from 'src/rtk/features/chainsInfo/chainsInfoSlice'
 import { fetchProfileSpace } from 'src/rtk/features/profiles/profilesSlice'
 import { fetchEntityOfSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
 import { useMyAccount } from 'src/stores/my-account'
-import { AnyAccountId, EmailAccount } from 'src/types'
+import { AnyAccountId, DataSourceTypes, EmailAccount } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { useAccountSelector } from '../profile-selector/AccountSelector'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import { reloadSpaceIdsFollowedByAccount } from '../spaces/helpers/reloadSpaceIdsFollowedByAccount'
 import { equalAddresses } from '../substrate'
 import { getSignerToken, isProxyAdded } from '../utils/OffchainSigner/ExternalStorage'
+import { getSubsocialApi } from '../utils/SubsocialConnect'
 import { desktopWalletConnect, mobileWalletConection } from './utils'
 //
 // Types
@@ -132,7 +133,7 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
   }, [status])
 
   useSubsocialEffect(
-    ({ substrate, subsocial }) => {
+    ({ substrate }) => {
       if (!address) return
 
       let unsubAccountInfo: UnsubscribeFn
@@ -141,13 +142,10 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
         const readyApi = await substrate.api
 
         Promise.all([
-          reloadSpaceIdsFollowedByAccount({ substrate, dispatch: dispatch, account: address }),
+          reloadSpaceIdsFollowedByAccount({ substrate, dispatch, account: address }),
           reloadAccountIdsByFollower(address),
           reloadSpaceIdsRelatedToAccount(address),
-          dispatch(fetchProfileSpace({ id: address, api: subsocial })),
-          dispatch(fetchEntityOfSpaceIdsByFollower({ id: address, reload: true, api: subsocial })),
           dispatch(fetchChainsInfo({})),
-          dispatch(fetchAddressLikeCounts({ address, postIds: null })),
         ])
 
         unsubAccountInfo = await readyApi.query.system.account(
@@ -166,6 +164,19 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
     },
     [address],
   )
+  useEffect(() => {
+    dispatch(
+      fetchEntityOfSpaceIdsByFollower({
+        id: address,
+        dataSource: DataSourceTypes.SQUID,
+        api: getSubsocialApi(),
+      }),
+    )
+    dispatch(
+      fetchProfileSpace({ id: address, api: getSubsocialApi(), dataSource: DataSourceTypes.SQUID }),
+    )
+    dispatch(fetchAddressLikeCounts({ address, postIds: null }))
+  }, [address])
 
   const state = useMemo(
     () => ({ accounts, status, emailAccounts }),
