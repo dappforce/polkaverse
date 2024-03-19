@@ -148,6 +148,8 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
         accountStorage.remove()
         accountAddressStorage.remove()
         set({ address: null })
+      } else {
+        accountAddressStorage.set(address)
       }
     }
 
