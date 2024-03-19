@@ -16,7 +16,14 @@ import { useAnalytics } from './analytics'
 import { create } from './utils'
 
 type State = {
+  /**
+   * `isInitialized` is `true` when the addresses (address & parentProxyAddress) are all set
+   * but there is still a case where the proxy is invalid and user will be logged out after that
+   */
   isInitialized?: boolean
+  /**
+   * `isInitializedProxy` is `true` when the initialization process is all done, including checking the proxy
+   */
   isInitializedProxy?: boolean
 
   preferredWallet: any | null
