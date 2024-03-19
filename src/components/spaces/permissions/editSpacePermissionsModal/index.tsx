@@ -1,5 +1,6 @@
 import { AccountId, SpaceStruct } from '@subsocial/api/types'
 import { Form, Modal } from 'antd'
+import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { DfForm } from 'src/components/forms'
 import TxButton from 'src/components/utils/TxButton'
@@ -9,6 +10,7 @@ import { InputAccountsField } from '../../roles/AccountInputsField'
 import { buildCreateEditorRoleArgs } from '../../roles/editor-role'
 import useGetRoleId from '../useRoleCreated'
 import { BuiltInRole, useGetSpacePermissionsConfig } from '../utils'
+import styles from './Index.module.sass'
 import { EditEditorsTxButton } from './SaveChangesTxButton'
 import { EditWritePermission } from './UpdateWritePermission'
 import { WhoCanPostSelector } from './WhoCanPostSelector'
@@ -42,7 +44,13 @@ const EditSpacePermissionsModal = (props: Props) => {
 
   useEffect(() => {
     setNewEditors(editors)
-  }, [loading, whoCanPost])
+  }, [loading, whoCanPost, editors.join(','), loaded])
+
+  useEffect(() => {
+    if (!initialWhoCanPost) return
+
+    setWhoCanPost(initialWhoCanPost)
+  }, [initialWhoCanPost])
 
   return (
     <Modal
@@ -70,8 +78,9 @@ const EditSpacePermissionsModal = (props: Props) => {
         )
       }
       title={'Edit space permissions'}
+      className={clsx('DfSignInModal', styles.EditModal)}
     >
-      <div>
+      <div className={styles.ModalContent}>
         <DfForm
           layout='vertical'
           form={form}
@@ -81,7 +90,7 @@ const EditSpacePermissionsModal = (props: Props) => {
           <Form.Item
             name={fieldName('whoCanPost')}
             help={messages.formHints.whoCanPost[whoCanPost as BuiltInRole | 'editors']}
-            className='mb-2'
+            className='mb-0'
           >
             <WhoCanPostSelector space={space} onChange={setWhoCanPost} />
           </Form.Item>
@@ -92,7 +101,9 @@ const EditSpacePermissionsModal = (props: Props) => {
                   label='Enable support for editors'
                   tx={'roles.createRole'}
                   type='primary'
+                  size='large'
                   canUseProxy={false}
+                  withSpinner
                   params={buildCreateEditorRoleArgs(spaceId)}
                   successMessage='Great! Editors enabled!'
                 />

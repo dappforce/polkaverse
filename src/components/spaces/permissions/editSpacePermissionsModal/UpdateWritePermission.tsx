@@ -34,6 +34,8 @@ export function EditWritePermission(props: UpdateWritePermissionProps) {
       {...buttonProps}
       label={label || 'Update permissions'}
       type='primary'
+      block
+      size='large'
       params={newTxParams}
       tx={'spaces.updateSpace'}
       onSuccess={onTxSuccess}

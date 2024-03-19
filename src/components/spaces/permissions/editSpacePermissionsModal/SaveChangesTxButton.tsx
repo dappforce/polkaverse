@@ -76,6 +76,8 @@ export const EditEditorsTxButton = ({
   return (
     <TxButton
       type='primary'
+      block
+      size='large'
       label={label}
       params={getTxParams}
       disabled={noChangedEditors}
