@@ -150,20 +150,20 @@ const TabsHomePage = ({
     setFiltersInUrl(router, key, filterType, { ref: refId })
   }
 
-  const isInitializedProxy = useMyAccount(state => state.isInitializedProxy)
+  const isInitialized = useMyAccount(state => state.isInitialized)
   const followedIds = useAppSelector(state => {
     return selectSpaceIdsByFollower(state, myAddress)
   })
 
   const isLoadingFollowedIds = followedIds === undefined
   useEffect(() => {
-    if (!isInitializedProxy || !isSignedIn || isLoadingFollowedIds) return
+    if (!isInitialized || !isSignedIn || isLoadingFollowedIds) return
     if (followedIds.length === 0) {
       setFiltersInUrl(router, 'posts', { type: 'hot' }, { ref: refId })
     } else {
       onChangeKey(tab)
     }
-  }, [followedIds, isInitializedProxy])
+  }, [followedIds, isInitialized])
 
   const handleScroll = () => {
     const currentScrollPos = window.pageYOffset

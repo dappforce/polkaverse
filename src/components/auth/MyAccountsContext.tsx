@@ -102,6 +102,7 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
   const reloadAccountIdsByFollower = useCreateReloadAccountIdsByFollower()
   const reloadSpaceIdsRelatedToAccount = useCreateReloadSpaceIdsRelatedToAccount()
   const address = useMyAddress()
+  const isInitialized = useMyAccount(state => state.isInitialized)
   const { getAllEmailAccounts } = useEmailAccount()
   const [, recheck] = useReducer(x => (x + 1) % 16384, 0)
   const isMobile = useIsMobileWidthOrDevice()
@@ -165,6 +166,7 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
     [address],
   )
   useEffect(() => {
+    if (!isInitialized || !address) return
     dispatch(
       fetchEntityOfSpaceIdsByFollower({
         id: address,
@@ -176,7 +178,7 @@ export function MyAccountsProvider(props: React.PropsWithChildren<{}>) {
       fetchProfileSpace({ id: address, api: getSubsocialApi(), dataSource: DataSourceTypes.SQUID }),
     )
     dispatch(fetchAddressLikeCounts({ address, postIds: null }))
-  }, [address])
+  }, [address, isInitialized])
 
   const state = useMemo(
     () => ({ accounts, status, emailAccounts }),

@@ -153,10 +153,9 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
       }
     }
 
-    set({ isInitialized: true })
+    set({ isInitialized: true, parentProxyAddress: parentProxyAddress || undefined })
 
     if (parentProxyAddress) {
-      set({ parentProxyAddress })
       try {
         const proxies = await getProxies(parentProxyAddress)
         const currentProxy = proxies.find(({ address }) => address === get().address)
