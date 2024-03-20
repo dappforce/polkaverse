@@ -10,8 +10,8 @@ import { InputAccountsField } from '../../roles/AccountInputsField'
 import { buildCreateEditorRoleArgs } from '../../roles/editor-role'
 import useGetRoleId from '../useRoleCreated'
 import { BuiltInRole, useGetSpacePermissionsConfig } from '../utils'
+import { EditEditorsTxButton } from './EditEditorsTxButton'
 import styles from './Index.module.sass'
-import { EditEditorsTxButton } from './SaveChangesTxButton'
 import { EditWritePermission } from './UpdateWritePermission'
 import { WhoCanPostSelector } from './WhoCanPostSelector'
 
@@ -31,10 +31,10 @@ const fieldName = (name: FieldName): FieldName => name
 
 const EditSpacePermissionsModal = (props: Props) => {
   const { space, open, closeModal: close } = props
-
   const spaceId = space.id
-  const [form] = Form.useForm()
+  console.log(space)
 
+  const [form] = Form.useForm()
   const initialWhoCanPost = useGetSpacePermissionsConfig(space)
   const { roleId, loaded } = useGetRoleId(spaceId)
   const { spaceEditors: editors = [], loading } = useFetchSpaceEditors(spaceId)
@@ -49,8 +49,10 @@ const EditSpacePermissionsModal = (props: Props) => {
   useEffect(() => {
     if (!initialWhoCanPost) return
 
+    console.log()
+
     setWhoCanPost(initialWhoCanPost)
-  }, [initialWhoCanPost])
+  }, [initialWhoCanPost, open])
 
   return (
     <Modal
@@ -92,7 +94,11 @@ const EditSpacePermissionsModal = (props: Props) => {
             help={messages.formHints.whoCanPost[whoCanPost as BuiltInRole | 'editors']}
             className='mb-0'
           >
-            <WhoCanPostSelector space={space} onChange={setWhoCanPost} />
+            <WhoCanPostSelector
+              space={space}
+              whoCanPost={whoCanPost as BuiltInRole | 'editors'}
+              onChange={setWhoCanPost}
+            />
           </Form.Item>
           {whoCanPost === 'editors' && (
             <>
@@ -115,6 +121,31 @@ const EditSpacePermissionsModal = (props: Props) => {
         </DfForm>
       </div>
     </Modal>
+  )
+}
+
+type EditPermissionsButtonProps = {
+  space: SpaceStruct
+}
+
+export const EditPermissionsButton = ({ space }: EditPermissionsButtonProps) => {
+  const [open, setOpen] = useState(false)
+
+  const openModal = () => setOpen(true)
+
+  const button = (
+    <a className='item' onClick={openModal}>
+      Manage editors
+    </a>
+  )
+
+  return (
+    <>
+      {button}
+      {open && (
+        <EditSpacePermissionsModal open={open} closeModal={() => setOpen(false)} space={space} />
+      )}
+    </>
   )
 }
 

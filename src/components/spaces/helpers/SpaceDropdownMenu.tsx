@@ -16,8 +16,7 @@ import { useSelectProfile } from '../../../rtk/features/profiles/profilesHooks'
 import { useIsUsingEmail, useMyAddress } from '../../auth/MyAccountsContext'
 import { ProfileSpaceAction } from '../../profiles/address-views/utils/index'
 import HiddenSpaceButton from '../HiddenSpaceButton'
-import { OpenEditPermissions } from '../permissions/EditPermissionsModal'
-import EditorsLink from '../roles/Editors'
+import { EditPermissionsButton } from '../permissions/editSpacePermissionsModal'
 import { TransferOwnershipLink } from '../TransferSpaceOwnership'
 import { createNewPostLinkProps, useIsMySpace } from './common'
 
@@ -120,13 +119,10 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
               <HiddenSpaceButton space={struct} asLink />
             </Menu.Item>
             <Menu.Item key={`edit-permissions-${spaceKey}`}>
-              <OpenEditPermissions space={struct} />
+              <EditPermissionsButton space={struct} />
             </Menu.Item>
             {!isUsingEmail && (
               <>
-                <Menu.Item key={`edit-editors-${spaceKey}`}>
-                  <EditorsLink space={struct} />
-                </Menu.Item>
                 <Menu.Item key={`transfer-ownership-${spaceKey}`}>
                   <TransferOwnershipLink space={struct} />
                 </Menu.Item>
