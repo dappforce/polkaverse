@@ -10,13 +10,13 @@ const NOTIFICATION_TITLE = 'My notifications'
 
 export const MyNotifications = () => {
   const myAddress = useMyAddress()
-  const isInitializedProxy = useMyAccount(state => state.isInitializedProxy)
+  const isInitialized = useMyAccount(state => state.isInitialized)
 
   if (!myAddress) return <NotAuthorized />
 
   return (
     <PageContent meta={{ title: NOTIFICATION_TITLE }} className={styles.NotificationPage}>
-      {!isInitializedProxy ? (
+      {!isInitialized ? (
         <Loading center />
       ) : (
         <Notifications title={NOTIFICATION_TITLE} address={myAddress} />

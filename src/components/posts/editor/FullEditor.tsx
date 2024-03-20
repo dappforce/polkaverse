@@ -195,7 +195,10 @@ const FullEditor = ({
       <Row className={styles.EditorContainer} gutter={[16, 16]} justify='center'>
         <Col
           style={{ minWidth: 0 }}
-          className={clsx('d-flex align-items-stretch flex-column', styles.EditorBodyContent)}
+          className={clsx(
+            'd-flex align-items-stretch flex-column',
+            styles.EditorBodyContentContainer,
+          )}
         >
           <Card className={clsx(styles.EditorBodyContent, 'mb-3')}>
             <Form.Item
@@ -288,8 +291,8 @@ const FullEditor = ({
                   type='primary'
                   block
                   className='mt-3'
-                  disabled={publishIsDisable}
                   {...txProps}
+                  disabled={publishIsDisable || txProps.disabled}
                 />
               </Card>
               {!totalStake?.hasStakedEnough && (

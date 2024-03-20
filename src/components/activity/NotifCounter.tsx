@@ -34,7 +34,7 @@ function InnerNotifCounterProvider(props: React.PropsWithChildren<{}>) {
     storageKeyType: 'user',
   })
   const myAddress = useMyAddress()
-  const isInitializedProxy = useMyAccount(state => state.isInitializedProxy)
+  const isInitialized = useMyAccount(state => state.isInitialized)
 
   const [unreadCount, setUnreadCount] = useState(0)
   const [previousLastRead, setPreviousLastRead] = useState<string | null>(null)
@@ -47,7 +47,7 @@ function InnerNotifCounterProvider(props: React.PropsWithChildren<{}>) {
   }
 
   useEffect(() => {
-    if (!isInitializedProxy || !myAddress) return
+    if (!isInitialized || !myAddress) return
     ;(async () => {
       const unreadCount = await getNotificationsCount({
         address: myAddress,
@@ -55,7 +55,7 @@ function InnerNotifCounterProvider(props: React.PropsWithChildren<{}>) {
       })
       setUnreadCount(unreadCount)
     })()
-  }, [myAddress, isInitializedProxy])
+  }, [myAddress, isInitialized])
 
   return (
     <NotifCounterContext.Provider
@@ -99,12 +99,11 @@ const Bell = ({ unreadCount }: NotificationsProps) => (
 
 export const NotificationsBell = ({ unreadCount }: NotificationsProps) => {
   const myAddress = useMyAddress()
-  const isInitializedProxy = useMyAccount(state => state.isInitializedProxy)
+  const isInitialized = useMyAccount(state => state.isInitialized)
   const { getLastReadNotif } = useNotifCounterContext()
 
   if (!enableNotifications) return null
-  if (!unreadCount || unreadCount <= 0 || !isInitializedProxy)
-    return <Bell unreadCount={unreadCount} />
+  if (!unreadCount || unreadCount <= 0 || !isInitialized) return <Bell unreadCount={unreadCount} />
 
   const showWithoutCount = !getLastReadNotif(myAddress)
 
