@@ -15,17 +15,20 @@ import { BuiltInRole } from '../utils'
 
 type UpdateWritePermissionProps = TxButtonProps & {
   onSuccess?: () => void
-  space: SpaceStruct
+  space?: SpaceStruct
   whoCanPost: BuiltInRole
   label?: string
 }
 
 export function EditWritePermission(props: UpdateWritePermissionProps) {
   const { space, label, whoCanPost, onSuccess, ...buttonProps } = props
-  const { id } = space
+  const { id } = space || {}
+  const spaceId = id || ''
+
+  console.log(space)
   const reloadSpace = useCreateReloadSpace()
-  const { spaceEditors: editors = [], loading } = useFetchSpaceEditors(id)
-  const { roleId, loaded } = useGetRoleId(id)
+  const { spaceEditors: editors = [], loading } = useFetchSpaceEditors(spaceId)
+  const { roleId, loaded } = useGetRoleId(spaceId)
   const { api } = useSubsocialApi()
   const dispatch = useAppDispatch()
 
@@ -36,8 +39,6 @@ export function EditWritePermission(props: UpdateWritePermissionProps) {
       permissions: newWritePermission(whoCanPost),
     }
 
-    console.log(update, whoCanPost)
-
     return [id, update]
   }
 
@@ -45,7 +46,7 @@ export function EditWritePermission(props: UpdateWritePermissionProps) {
     if (!api || !roleId) return []
 
     const batchTxs = [
-      api.tx.spaces.updateSpace(id, {
+      api.tx.spaces.updateSpace(spaceId, {
         permissions: newWritePermission(whoCanPost),
       }),
     ]
@@ -58,10 +59,10 @@ export function EditWritePermission(props: UpdateWritePermissionProps) {
   }
 
   const onTxSuccess: TxCallback = () => {
-    reloadSpace({ id })
+    reloadSpace({ id: spaceId })
     dispatch(
       upsertSpaceEditorsBySpaceId({
-        id,
+        id: spaceId,
         spaceEditors: [],
       }),
     )

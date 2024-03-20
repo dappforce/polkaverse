@@ -1,19 +1,22 @@
-import { SpaceStruct } from '@subsocial/api/types'
 import { Alert, Button } from 'antd'
+import clsx from 'clsx'
 import { useState } from 'react'
+import { useSelectSpace } from 'src/rtk/app/hooks'
 import { useFetchSpaceEditors } from 'src/rtk/features/accounts/accountsHooks'
 import EditSpacePermissionsModal from './editSpacePermissionsModal'
 import styles from './SpacePermissionInfoSection.module.sass'
 import { permissionsState, useGetSpacePermissionsConfig } from './utils'
 
 type Props = {
-  space: SpaceStruct
+  spaceId: string
+  className?: string
 }
 
-const SpacePermissionInfoSection = ({ space }: Props) => {
+const SpacePermissionInfoSection = ({ spaceId, className }: Props) => {
   const [openModal, setOpenModal] = useState(false)
-  const whoCanPostKey = useGetSpacePermissionsConfig(space)
-  const { spaceEditors: editors = [] } = useFetchSpaceEditors(space?.id || '')
+  const space = useSelectSpace(spaceId)
+  const whoCanPostKey = useGetSpacePermissionsConfig(space?.struct)
+  const { spaceEditors: editors = [] } = useFetchSpaceEditors(spaceId || '')
 
   const whoCanPost =
     typeof permissionsState[whoCanPostKey] === 'function'
@@ -23,7 +26,7 @@ const SpacePermissionInfoSection = ({ space }: Props) => {
   return (
     <>
       <Alert
-        className={styles.InfoSectionWrapper}
+        className={clsx(styles.InfoSectionWrapper, className)}
         type='info'
         message={whoCanPost}
         showIcon
@@ -35,7 +38,7 @@ const SpacePermissionInfoSection = ({ space }: Props) => {
       />
 
       <EditSpacePermissionsModal
-        space={space}
+        space={space?.struct}
         open={openModal}
         closeModal={() => setOpenModal(false)}
       />

@@ -356,7 +356,7 @@ export const InnerViewSpace = (props: Props) => {
       <HiddenSpaceAlert space={space} />
       <Section className='pt-2'>{renderPreview()}</Section>
 
-      {isMySpace && <SpacePermissionInfoSection space={space} />}
+      {isMySpace && <SpacePermissionInfoSection spaceId={space.id} />}
 
       {canCreatePostAndIsNotHidden && (
         <WriteSomething className='mt-3' defaultSpaceId={spaceData.id} />

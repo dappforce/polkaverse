@@ -16,7 +16,7 @@ import { useSelectProfile } from '../../../rtk/features/profiles/profilesHooks'
 import { useIsUsingEmail, useMyAddress } from '../../auth/MyAccountsContext'
 import { ProfileSpaceAction } from '../../profiles/address-views/utils/index'
 import HiddenSpaceButton from '../HiddenSpaceButton'
-import { EditPermissionsButton } from '../permissions/editSpacePermissionsModal'
+import { EditPermissionsLink } from '../permissions/editSpacePermissionsModal'
 import { TransferOwnershipLink } from '../TransferSpaceOwnership'
 import { createNewPostLinkProps, useIsMySpace } from './common'
 
@@ -119,7 +119,7 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
               <HiddenSpaceButton space={struct} asLink />
             </Menu.Item>
             <Menu.Item key={`edit-permissions-${spaceKey}`}>
-              <EditPermissionsButton space={struct} />
+              <EditPermissionsLink space={struct} />
             </Menu.Item>
             {!isUsingEmail && (
               <>
@@ -130,9 +130,6 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
             )}
           </>
         )}
-        {/* {struct.createdAtBlock && <Menu.Item key={`view-on-block-${spaceKey}`}>
-        <ViewOnBlockchainLink createdAtBlock={struct.createdAtBlock} />
-      </Menu.Item>} */}
         <Menu.Item key={`view-on-ipfs-${spaceKey}`}>
           <ViewOnIpfs contentId={struct.contentId} />
         </Menu.Item>
@@ -146,7 +143,6 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
             Copy Space Id: {id}
           </span>
         </Menu.Item>
-        {/* <ViewOnDropDownMenuItems struct={struct} /> */}
       </>
     )
   }

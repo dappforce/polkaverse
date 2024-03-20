@@ -1,5 +1,5 @@
 import { AccountId, SpaceStruct } from '@subsocial/api/types'
-import { Form, Modal } from 'antd'
+import { Button, ButtonProps, Form, Modal } from 'antd'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { DfForm } from 'src/components/forms'
@@ -16,7 +16,7 @@ import { EditWritePermission } from './UpdateWritePermission'
 import { WhoCanPostSelector } from './WhoCanPostSelector'
 
 type Props = {
-  space: SpaceStruct
+  space?: SpaceStruct
   open: boolean
   closeModal: VoidFunction
 }
@@ -31,8 +31,7 @@ const fieldName = (name: FieldName): FieldName => name
 
 const EditSpacePermissionsModal = (props: Props) => {
   const { space, open, closeModal: close } = props
-  const spaceId = space.id
-  console.log(space)
+  const spaceId = space?.id || ''
 
   const [form] = Form.useForm()
   const initialWhoCanPost = useGetSpacePermissionsConfig(space)
@@ -48,8 +47,6 @@ const EditSpacePermissionsModal = (props: Props) => {
 
   useEffect(() => {
     if (!initialWhoCanPost) return
-
-    console.log()
 
     setWhoCanPost(initialWhoCanPost)
   }, [initialWhoCanPost, open])
@@ -124,29 +121,60 @@ const EditSpacePermissionsModal = (props: Props) => {
   )
 }
 
-type EditPermissionsButtonProps = {
+type EditPermissionsButtonWithModalProps = {
   space: SpaceStruct
+  button: (openModal: () => void) => React.ReactNode
 }
 
-export const EditPermissionsButton = ({ space }: EditPermissionsButtonProps) => {
+type EditPermissionsButtonProps = Omit<EditPermissionsButtonWithModalProps, 'button'>
+
+export const EditPermissionsButtonWithModal = ({
+  space,
+  button,
+}: EditPermissionsButtonWithModalProps) => {
   const [open, setOpen] = useState(false)
 
   const openModal = () => setOpen(true)
 
-  const button = (
-    <a className='item' onClick={openModal}>
-      Manage editors
-    </a>
-  )
-
   return (
     <>
-      {button}
+      {button(openModal)}
       {open && (
         <EditSpacePermissionsModal open={open} closeModal={() => setOpen(false)} space={space} />
       )}
     </>
   )
 }
+
+export const EditPermissionsLink = ({ space }: EditPermissionsButtonProps) => (
+  <EditPermissionsButtonWithModal
+    space={space}
+    button={openModal => (
+      <a className='item' onClick={openModal}>
+        Manage editors
+      </a>
+    )}
+  />
+)
+
+export const EditPermissionsButton = ({
+  space,
+  ...props
+}: EditPermissionsButtonProps & ButtonProps) => (
+  <EditPermissionsButtonWithModal
+    space={space}
+    button={openModal => (
+      <Button
+        {...props}
+        onClick={e => {
+          openModal()
+          props.onClick?.(e)
+        }}
+      >
+        Manage editors
+      </Button>
+    )}
+  />
+)
 
 export default EditSpacePermissionsModal

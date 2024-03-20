@@ -18,6 +18,8 @@ const FollowAccountButton = dynamic(() => import('../../utils/FollowAccountButto
 
 type ProfilePreviewProps = AddressProps & {
   withLabel?: boolean
+  showLabel?: (item: string) => boolean
+  label?: React.ReactNode
   withDetails?: boolean
   withFollowButton?: boolean
   size?: number
@@ -46,6 +48,8 @@ export const ProfilePreview: FC<ProfilePreviewProps> = ({
   spans,
   emailAddress = '',
   withAddress,
+  label,
+  showLabel,
 }) => {
   return (
     <Row className={clsx('flex-nowrap', 'align-items-center', className)}>
@@ -61,6 +65,8 @@ export const ProfilePreview: FC<ProfilePreviewProps> = ({
           withDetails={withDetails}
           emailAddress={emailAddress}
           withAddress={withAddress}
+          label={label}
+          showLabel={showLabel}
         />
         {bottom}
       </Col>
@@ -127,6 +133,8 @@ export const ProfilePreviewPopup: FC<ProfilePreviewProps> = props => {
 type ProfilePreviewByIdProps = ProfilePreviewProps & {
   withFollowButton?: boolean
   withProfileChip?: boolean
+  showLabel?: (item: string) => boolean
+  label?: React.ReactNode
 }
 
 export const ProfilePreviewById = (props: ProfilePreviewByIdProps) => {
