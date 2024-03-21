@@ -1,23 +1,12 @@
 import { isEmptyStr } from '@subsocial/utils'
 import { Popover } from 'antd'
-
-export const supportedEmbeddedLink = [
-  'youtube.com',
-  'youtu.be',
-  'vimeo.com',
-  'soundcloud.com',
-  'gleev.xyz',
-]
-
-const supportedEmbeddedLinkSet = new Set(supportedEmbeddedLink)
+import { allowEmbedList } from './Embed'
 
 export const isSupportedEmbeddedLink = (link?: string) => {
   if (!link || isEmptyStr(link)) return false
 
   try {
-    let { host } = new URL(link)
-    host = host.startsWith('www') ? host.slice(4) : host
-    return supportedEmbeddedLinkSet.has(host)
+    return allowEmbedList.find(embed => embed.checker(link))
   } catch {
     return false
   }
@@ -25,8 +14,8 @@ export const isSupportedEmbeddedLink = (link?: string) => {
 
 const SupportedEmbeddedLinkPopup = () => (
   <div>
-    {supportedEmbeddedLink.map(link => (
-      <div key={link}>{link}</div>
+    {allowEmbedList.map(link => (
+      <div key={link.name}>{link.url}</div>
     ))}
   </div>
 )

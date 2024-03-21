@@ -100,12 +100,13 @@ type EmbeddedLinkFieldProps = {
 export const EmbeddedLinkField = ({
   initialValues,
   autoFocus,
+  form,
 }: CommonFieldsProps & EmbeddedLinkFieldProps) => {
   const [link, setLink] = useState(initialValues?.link)
 
   useEffect(() => {
-    setLink(initialValues?.link)
-  }, [initialValues?.link])
+    setLink(form.getFieldValue(fieldName('link')))
+  }, [])
 
   const onLinkChange = (e: React.FocusEvent<HTMLInputElement>) => {
     const link = e.target.value
@@ -116,7 +117,7 @@ export const EmbeddedLinkField = ({
     <div>
       <Form.Item
         name={fieldName('link')}
-        label='Video URL:'
+        label='Link:'
         help={messages.formHints.embedded}
         rules={[
           { required: true, message: 'Link is required.' },

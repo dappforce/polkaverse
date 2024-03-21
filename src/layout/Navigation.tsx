@@ -6,6 +6,7 @@ import styles from './Sider.module.sass'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
+import useIsMounted from 'src/hooks/useIsMounted'
 
 const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false })
 const Menu = dynamic(() => import('./SideMenu'), { ssr: false })
@@ -45,11 +46,14 @@ const DefaultNav: FunctionComponent = () => {
     hide,
   } = useSidebarCollapsed()
   const { asPath } = useRouter()
+  const isMounted = useIsMounted()
 
   useEffect(() => hide(), [asPath])
   useEffect(() => {
     document.body.style.overflow = !collapsed ? 'hidden' : 'unset'
   }, [collapsed])
+
+  if (!isMounted) return null
 
   return (
     <Drawer

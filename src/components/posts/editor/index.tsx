@@ -182,7 +182,11 @@ export function FormInSection(props: PostFormProps) {
   )
 
   return (
-    <PageContent outerClassName={styles.SectionOverride} meta={{ title: pageTitle }}>
+    <PageContent
+      outerClassName={styles.SectionOverride}
+      className='pb-5'
+      meta={{ title: pageTitle }}
+    >
       <WriteAccessRequired>{form}</WriteAccessRequired>
     </PageContent>
   )

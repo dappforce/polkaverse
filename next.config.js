@@ -13,6 +13,7 @@ const nextConfig = {
   images: {
     domains: ['app.subsocial.network', 'polkaverse.com', 'localhost', 'ipfs.io', 'grillapp.net'],
   },
+  transpilePackages: ['react-tweet'],
   webpack: (config, { isServer }) => {
     // This code for webpack 4
     // if (!isServer) {

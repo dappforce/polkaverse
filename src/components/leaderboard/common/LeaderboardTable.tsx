@@ -82,7 +82,7 @@ export default function LeaderboardTable({
       >
         <div className={clsx(styles.LeaderboardTitles, 'ColorMuted')}>
           <span>#</span>
-          <span>Staker</span>
+          <span>{role === 'creator' ? 'Creator' : 'Staker'}</span>
           <span style={{ textAlign: 'right' }}>Rewards</span>
         </div>
         {slicedData.length === 0 &&

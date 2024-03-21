@@ -91,7 +91,7 @@ function MyApp(props) {
         <DatahubSubscriber />
         <AnalyticProvider>
           <DfApolloProvider initialApolloState={pageProps.initialApolloState}>
-            <ThemeProvider defaultTheme={config.themeName}>
+            <ThemeProvider defaultTheme='light'>
               <MainPage>
                 <ReferralUrlChanger />
                 <AppLaunchedEventSender />

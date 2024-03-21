@@ -1,6 +1,6 @@
 import { Modal, ModalProps } from 'antd'
 import clsx from 'clsx'
-import { CSSProperties } from 'react'
+import { CSSProperties, ReactNode } from 'react'
 import { MutedSpan } from 'src/components/utils/MutedText'
 import styles from './index.module.sass'
 
@@ -30,7 +30,7 @@ export default function CustomModal({
   noScroll,
   ...props
 }: CustomModalProps & {
-  children: any
+  children: ReactNode
 }) {
   return (
     <Modal

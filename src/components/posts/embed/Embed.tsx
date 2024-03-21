@@ -1,19 +1,12 @@
 import clsx from 'clsx'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import LiteYouTubeEmbed from 'react-lite-youtube-embed'
+import { Tweet } from 'react-tweet'
 import styles from './Embed.module.sass'
 
 type EmbedProps = {
   link: string
   className?: string
-}
-
-const allowEmbedList = ['vimeo', 'youtube', 'youtu.be', 'soundcloud', 'gleev'] as const
-const componentMap: {
-  [key in (typeof allowEmbedList)[number]]?: (props: { src: string }) => JSX.Element | null
-} = {
-  'youtu.be': YoutubeEmbed,
-  youtube: YoutubeEmbed,
 }
 
 const YOUTUBE_REGEX = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/
@@ -39,51 +32,136 @@ export function getGleevVideoId(gleevLink: string) {
   return url.split('/').pop()
 }
 
-const getEmbedUrl = (url: string, embed: string | undefined) => {
+export const allowEmbedList = [
+  {
+    name: 'Youtube' as const,
+    checker: (link: string) => YOUTUBE_REGEX.test(link),
+    url: 'youtube.com',
+  },
+  {
+    name: 'Gleev (Joystream)' as const,
+    checker: (link: string) => {
+      return link.includes('gleev.xyz') && !!getGleevVideoId(link)
+    },
+    url: 'gleev.xyz',
+  },
+  {
+    name: 'X' as const,
+    checker: (link: string) =>
+      (/(?:https?:\/\/)?(?:www\.)?(?:x\.com)\/(.+)/.test(link) ||
+        /(?:https?:\/\/)?(?:www\.)?(?:twitter\.com)\/(.+)/.test(link)) &&
+      /\/status\/\d+/.test(link),
+    url: 'x.com',
+  },
+  // {
+  //   name: 'Instagram' as const,
+  //   checker: (link: string) => /(?:https?:\/\/)?(?:www\.)?(?:instagram\.com)\/(.+)/.test(link),
+  //   url: 'instagram.com',
+  // },
+  // {
+  //   name: 'Tiktok' as const,
+  //   checker: (link: string) => /(?:https?:\/\/)?(?:www\.)?(?:tiktok\.com)\/(.+)/.test(link),
+  //   url: 'tiktok.com',
+  // },
+  {
+    name: 'Vimeo' as const,
+    checker: (link: string) => {
+      return VIMEO_REGEX.test(link) && !!getVimeoVideoId(link)
+    },
+    url: 'vimeo.com',
+  },
+  {
+    name: 'SoundCloud' as const,
+    checker: (link: string) => link.includes('soundcloud.com'),
+    url: 'soundcloud.com',
+  },
+] satisfies { name: string; checker: (link: string) => boolean; url: string }[]
+type AllowedList = (typeof allowEmbedList)[number]['name']
+const componentMap: {
+  [key in AllowedList]?: (props: { src: string }) => JSX.Element | null
+} = {
+  Youtube: ({ src }) => (
+    <div
+      className={clsx('RoundedLarge')}
+      style={{
+        paddingBottom: '56.25%',
+        position: 'relative',
+        display: 'block',
+        width: '100%',
+        overflow: 'hidden',
+      }}
+    >
+      <YoutubeEmbed src={src} />
+    </div>
+  ),
+  // Instagram: ({ src, post, isPreview }) => {
+  //   return (
+  //     <EmbedContainer className={clsx('RoundedLarge')} post={post} isPreview={isPreview}>
+  //       <InstagramEmbed url={src} key={src} />
+  //     </EmbedContainer>
+  //   )
+  // },
+  // Tiktok: ({ src, post, isPreview }) => (
+  //   <EmbedContainer className={clsx('RoundedLarge')} post={post} isPreview={isPreview}>
+  //     <TikTokEmbed key={src} url={src} />
+  //   </EmbedContainer>
+  // ),
+  X: ({ src }) => {
+    const urlWithoutQuery = src.split('?')[0]
+    const tweetId = urlWithoutQuery.split('/').pop()
+    if (!tweetId) return null
+    return (
+      <EmbedContainer className={clsx('light RoundedLarge')}>
+        <div className={clsx('w-100', styles.Tweet)}>
+          <Tweet id={tweetId} />
+        </div>
+      </EmbedContainer>
+    )
+  },
+}
+
+const getEmbedUrl = (url: string, embed: AllowedList | undefined) => {
   if (!embed) return
 
-  const urls: Record<string, string> = {
-    vimeo: `https://player.vimeo.com/video/${getVimeoVideoId(url)}`,
-    youtube: `https://www.youtube.com/embed/${getYoutubeVideoId(url)}`,
-    'youtu.be': `https://www.youtube.com/embed/${getYoutubeVideoId(url)}`,
-    soundcloud: `https://w.soundcloud.com/player/
+  const urls: { [key in AllowedList]?: string } = {
+    Vimeo: `https://player.vimeo.com/video/${getVimeoVideoId(url)}`,
+    Youtube: `https://www.youtube.com/embed/${getYoutubeVideoId(url)}`,
+    SoundCloud: `https://w.soundcloud.com/player/
       ?url=${url}&amp;auto_play=false&amp;hide_related=true&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true`,
-    gleev: `https://gleev.xyz/embedded/video/${getGleevVideoId(url)}`,
+    'Gleev (Joystream)': `https://gleev.xyz/embedded/video/${getGleevVideoId(url)}`,
   }
 
-  return urls[embed]
+  return urls[embed] || url
 }
 
 export function getEmbedLinkType(link: string | undefined) {
   if (!link) return undefined
-  const foundEmbed = allowEmbedList.find(embed => link.includes(embed))
+  const foundEmbed = allowEmbedList.find(embed => embed.checker(link))
   if (!foundEmbed) return undefined
 
-  if (foundEmbed === 'youtu.be' || foundEmbed === 'youtube') {
-    return getYoutubeVideoId(link) ? foundEmbed : undefined
-  }
-  if (foundEmbed === 'gleev') {
-    return getGleevVideoId(link) ? foundEmbed : undefined
-  }
-  if (foundEmbed === 'vimeo') {
-    return getVimeoVideoId(link) ? foundEmbed : undefined
-  }
-
-  return foundEmbed
+  return foundEmbed.name
 }
 
 const Embed = ({ link, className }: EmbedProps) => {
   const embed = getEmbedLinkType(link)
   const src = getEmbedUrl(link, embed)
 
-  if (!src) return null
-  let Component = componentMap[embed as (typeof allowEmbedList)[number]] || GeneralEmbed
+  if (!src || !embed) return null
+  let Component = componentMap[embed]
+
+  if (Component) {
+    return (
+      <div className={className}>
+        <Component src={src} />
+      </div>
+    )
+  }
 
   return (
-    <>
+    <div className={className}>
       {src && (
         <div
-          className={clsx('RoundedLarge', className)}
+          className={clsx('RoundedLarge')}
           style={{
             paddingBottom: '56.25%',
             position: 'relative',
@@ -92,10 +170,10 @@ const Embed = ({ link, className }: EmbedProps) => {
             overflow: 'hidden',
           }}
         >
-          <Component src={src} />
+          <GeneralEmbed src={src} />
         </div>
       )}
-    </>
+    </div>
   )
 }
 
@@ -186,6 +264,14 @@ function GeneralEmbed({ src }: { src: string }) {
       title='Embedded'
       style={{ position: 'absolute', top: 0, left: 0 }}
     />
+  )
+}
+
+function EmbedContainer({ className, children }: { className?: string; children: ReactNode }) {
+  return (
+    <div className={clsx(styles.CustomEmbedWrapper, className)}>
+      <div className='w-100'>{children}</div>
+    </div>
   )
 }
 
