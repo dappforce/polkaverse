@@ -270,7 +270,7 @@ function GeneralEmbed({ src }: { src: string }) {
 function EmbedContainer({ className, children }: { className?: string; children: ReactNode }) {
   return (
     <div className={clsx(styles.CustomEmbedWrapper, className)}>
-      <div>{children}</div>
+      <div className='w-100'>{children}</div>
     </div>
   )
 }
