@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import React, { createContext, FC, useContext, useEffect, useRef, useState } from 'react'
+import { parseGrillMessage } from 'src/utils/iframe'
 import { getCurrentUrlOrigin } from 'src/utils/url'
 import { InfoDetails } from '../profiles/address-views'
 import Avatar from '../profiles/address-views/Avatar'
@@ -66,16 +67,6 @@ const MyAccountDrawerContext = createContext<MyAccountSectionContextState>(initV
 
 export const useMyAccountDrawer = () => useContext(MyAccountDrawerContext)
 
-function parseMessage(data: string) {
-  const match = data.match(/^([^:]+):([^:]+):(.+)$/)
-  if (!match) return null
-
-  const origin = match[1]
-  const name = match[2]
-  const value = match[3]
-  if (origin !== 'grill') return null
-  return { name: name ?? '', value: value ?? '' }
-}
 export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, owner }) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [isOpenProfileModal, setIsOpenProfileModal] = useState(false)
@@ -83,7 +74,7 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
 
   useEffect(() => {
     window.onmessage = event => {
-      const message = parseMessage(event.data + '')
+      const message = parseGrillMessage(event.data + '')
       if (!message) return
 
       const { name, value } = message
@@ -126,6 +117,7 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
             opacity: isOpenProfileModal ? 1 : 0,
             pointerEvents: isOpenProfileModal ? 'auto' : 'none',
             transition: 'opacity 0.3s ease-in-out',
+            border: 'none',
             colorScheme: 'none',
             background: 'transparent',
             position: 'fixed',

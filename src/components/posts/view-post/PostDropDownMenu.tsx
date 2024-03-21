@@ -59,7 +59,7 @@ const InnerPostDropDownMenu: FC<DropdownProps> = props => {
         )}
         {isAdmin && (
           <Menu.Item key={`moderate-${postId}`}>
-            <ModerateButton />
+            <ModerateButton postId={postId} />
           </Menu.Item>
         )}
         {canHidePost && (
