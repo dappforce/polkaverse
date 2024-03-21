@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import React, { createContext, FC, useContext, useEffect, useRef, useState } from 'react'
+import { isDevMode } from 'src/config/env'
 import { parseGrillMessage } from 'src/utils/iframe'
 import { getCurrentUrlOrigin } from 'src/utils/url'
 import { InfoDetails } from '../profiles/address-views'
@@ -73,7 +74,7 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
   const router = useRouter()
 
   useEffect(() => {
-    window.onmessage = event => {
+    function listener(event: MessageEvent<any>) {
       const message = parseGrillMessage(event.data + '')
       if (!message) return
 
@@ -89,10 +90,9 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
         setIsOpenProfileModal(false)
       }
     }
+    window.addEventListener('message', listener)
+    return () => window.removeEventListener('message', listener)
   }, [])
-
-  const origin = getCurrentUrlOrigin()
-  const isDevMode = origin.includes('localhost')
 
   return (
     <span

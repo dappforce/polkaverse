@@ -14,7 +14,7 @@ export default function ModerationProvider({ children }: { children: ReactNode }
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
 
   useEffect(() => {
-    window.onmessage = event => {
+    const listener = (event: MessageEvent<any>) => {
       const message = parseGrillMessage(event.data + '')
       if (!message) return
 
@@ -23,6 +23,8 @@ export default function ModerationProvider({ children }: { children: ReactNode }
         setIsOpenModal(false)
       }
     }
+    window.addEventListener('message', listener)
+    return () => window.removeEventListener('message', listener)
   }, [])
 
   const value = useMemo(() => {
