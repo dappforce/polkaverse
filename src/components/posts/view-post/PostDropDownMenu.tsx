@@ -83,13 +83,15 @@ const InnerPostDropDownMenu: FC<DropdownProps> = props => {
         </Menu.Item>
       </>
     )
-  }, [myAddress, canEditPost, canHidePost, canMovePost])
+  }, [myAddress, canEditPost, canHidePost, canMovePost, isAdmin])
 
   return <DropdownMenu buildMenuItems={buildMenuItems} {...otherProps} />
 }
 
 const PostDropDown: FC<DropdownProps> = props => {
   const [stub, setStub] = useState(true)
+  // prefetch admin data
+  useIsAdmin()
 
   const closeStub = () => setStub(false)
 
