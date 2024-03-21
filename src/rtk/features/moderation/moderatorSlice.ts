@@ -11,7 +11,7 @@ export type Moderator = {
   organizationId: string | undefined
 }
 
-const sliceName = 'rewardHistory'
+const sliceName = 'moderator'
 
 const adapter = createEntityAdapter<Moderator>({
   selectId: data => data.address,

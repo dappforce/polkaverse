@@ -6,6 +6,7 @@ import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { addPostView } from 'src/components/utils/datahub/post-view'
 import { Segment } from 'src/components/utils/Segment'
 import { POST_VIEW_DURATION } from 'src/config/constants'
+import { useIsPostBlocked } from 'src/rtk/features/moderation/hooks'
 import { asSharedPostStruct, PostWithAllDetails, PostWithSomeDetails, SpaceData } from 'src/types'
 import {
   HiddenPostAlert,
@@ -56,6 +57,7 @@ export function PostPreview(props: PreviewProps) {
   const isUnlisted = useIsUnlistedPost({ post, space: space?.struct })
   const isHiddenChatRoom =
     shouldHideChatRooms && HIDE_PREVIEW_FROM_SPACE.includes(post.spaceId ?? '')
+  const isBlocked = useIsPostBlocked(post)
 
   const { inView, ref } = useInView()
   useEffect(() => {
@@ -91,7 +93,7 @@ export function PostPreview(props: PreviewProps) {
     }
   }, [inView, myAddress])
 
-  if (isUnlisted || isHiddenChatRoom) return null
+  if (isUnlisted || isHiddenChatRoom || isBlocked) return null
 
   const postContent = postDetails.post.content
   const isEmptyContent = !isSharedPost && !postContent?.title && !postContent?.body
