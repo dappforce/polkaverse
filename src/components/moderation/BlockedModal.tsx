@@ -1,7 +1,7 @@
 import { Button } from 'antd'
 import CustomLink from '../referral/CustomLink'
 import CustomModal from '../utils/CustomModal'
-import { CONTENT_POLICY_LINK } from './utils'
+import { APPEAL_LINK, CONTENT_POLICY_LINK } from './utils'
 
 export default function BlockedModal({ ...props }: { visible: boolean; onCancel: () => void }) {
   return (
@@ -21,7 +21,11 @@ export default function BlockedModal({ ...props }: { visible: boolean; onCancel:
             Manage SUB
           </Button>
         </CustomLink>
-        <Button size='large'>Appeal</Button>
+        <CustomLink href={APPEAL_LINK}>
+          <Button size='large' className='w-100'>
+            Appeal
+          </Button>
+        </CustomLink>
       </div>
     </CustomModal>
   )
