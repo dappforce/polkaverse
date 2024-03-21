@@ -125,6 +125,7 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
             width: '100%',
             height: '100%',
           }}
+          allow='clipboard-write'
         />
       )}
     </span>

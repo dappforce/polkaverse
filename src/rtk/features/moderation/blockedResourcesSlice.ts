@@ -32,7 +32,8 @@ const slice = createSlice({
   name: sliceName,
   initialState: adapter.getInitialState(),
   reducers: {
-    setBlockedResources: adapter.upsertOne,
+    // use addOne so its not updating the state if its already there, because the state will be up-to-date by the subscription
+    setBlockedResources: adapter.addOne,
     updateBlockedResources: (
       state,
       action: PayloadAction<{ id: string; type: 'remove' | 'add'; idToProcess: string }>,

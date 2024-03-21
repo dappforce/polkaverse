@@ -57,7 +57,8 @@ export function PostPreview(props: PreviewProps) {
   const isUnlisted = useIsUnlistedPost({ post, space: space?.struct })
   const isHiddenChatRoom =
     shouldHideChatRooms && HIDE_PREVIEW_FROM_SPACE.includes(post.spaceId ?? '')
-  const isBlocked = useIsPostBlocked(post)
+  // data is prefetched from the getPosts in postsSlice
+  const { isBlocked } = useIsPostBlocked(post)
 
   const { inView, ref } = useInView()
   useEffect(() => {

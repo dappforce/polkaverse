@@ -34,11 +34,11 @@ export function useFetchBlockedResourcesInApp() {
   }
 }
 
-export function useIsPostBlocked(post: PostStruct) {
+export function useIsPostBlocked(post: PostStruct | undefined) {
   const { data, loading } = useFetchBlockedResourcesInApp()
-  const ownerId = post.ownerId
-  const cid = post.contentId
-  const postId = post.id
+  const ownerId = post?.ownerId
+  const cid = post?.contentId
+  const postId = post?.id
 
   const isBlocked = useMemo(() => {
     return (
@@ -48,9 +48,9 @@ export function useIsPostBlocked(post: PostStruct) {
     )
   }, [data, ownerId, cid, postId])
 
-  if (loading) return true
+  if (!post) return { loading: false, isBlocked: false }
 
-  return isBlocked
+  return { loading, isBlocked }
 }
 
 export function useIsBlocked(address: string) {
@@ -60,7 +60,5 @@ export function useIsBlocked(address: string) {
     return data?.resources.address.includes(toSubsocialAddress(address ?? '') ?? '')
   }, [data, address])
 
-  if (loading) return true
-
-  return isBlocked
+  return { loading, isBlocked }
 }

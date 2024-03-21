@@ -4,6 +4,7 @@ import { SubsocialApi } from '@subsocial/api'
 import { FindPostsQuery } from '@subsocial/api/filters'
 import { getFirstOrUndefined } from '@subsocial/utils'
 import { isClientSide } from 'src/components/utils'
+import { appId } from 'src/config/env'
 import { getPostsData } from 'src/graphql/apis'
 import { PostFragmentMapped, PostFragmentWithParent } from 'src/graphql/apis/types'
 import {
@@ -46,6 +47,7 @@ import { fetchCanPostsSuperLiked } from '../activeStaking/canPostSuperLikedSlice
 import { fetchPostRewards } from '../activeStaking/postRewardSlice'
 import { fetchSuperLikeCounts } from '../activeStaking/superLikeCountsSlice'
 import { Content, fetchContents, selectPostContentById } from '../contents/contentsSlice'
+import { fetchBlockedResources } from '../moderation/blockedResourcesSlice'
 import { fetchProfileSpaces } from '../profiles/profilesSlice'
 import { fetchSpaces } from '../spaces/spacesSlice'
 import { fetchPostsViewCount } from './postsViewCountSlice'
@@ -259,6 +261,8 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
       const fetches: Promise<any>[] = [
         dispatch(fetchSuperLikeCounts({ postIds: newIds as string[] })),
         dispatch(fetchCanPostsSuperLiked({ postIds: newIds as string[] })),
+        // need to wait for this to be fetched before any post is rendered
+        dispatch(fetchBlockedResources({ appId })),
       ]
 
       if (withOwner) {
