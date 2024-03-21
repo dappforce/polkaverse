@@ -22,12 +22,14 @@ import { return404 } from 'src/components/utils/next'
 import Segment from 'src/components/utils/Segment'
 import config from 'src/config'
 import { POST_VIEW_DURATION } from 'src/config/constants'
+import { appId } from 'src/config/env'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { getInitialPropsWithRedux, NextContextWithRedux } from 'src/rtk/app'
 import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
 import { fetchPostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { fetchTopUsersWithSpaces } from 'src/rtk/features/leaderboard/topUsersSlice'
+import { fetchBlockedResources } from 'src/rtk/features/moderation/blockedResourcesSlice'
 import { useIsPostBlocked } from 'src/rtk/features/moderation/hooks'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { fetchPostsViewCount } from 'src/rtk/features/posts/postsViewCountSlice'
@@ -300,11 +302,12 @@ export async function loadPostOnNextReq({
 
   if (!postId) return return404(context)
 
-  const replyIds = await blockchain.getReplyIdsByPostId(idToBn(postId))
-
-  const ids = replyIds.concat(postId)
-
-  await dispatch(fetchPosts({ api: subsocial, ids, reload: true, eagerLoadHandles: true }))
+  async function getPost() {
+    const replyIds = await blockchain.getReplyIdsByPostId(idToBn(postId!))
+    const ids = replyIds.concat(postId!)
+    await dispatch(fetchPosts({ api: subsocial, ids, reload: true, eagerLoadHandles: true }))
+  }
+  await Promise.all([getPost(), dispatch(fetchBlockedResources({ appId }))])
   const postData = selectPost(reduxStore.getState(), { id: postId })
 
   if (!postData?.space) return return404(context)

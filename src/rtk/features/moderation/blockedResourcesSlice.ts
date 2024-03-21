@@ -20,6 +20,7 @@ export const selectBlockedResources = selectors.selectById
 
 export const fetchBlockedResources = createSimpleFetchWrapper<{ appId: string }, BlockedResources>({
   fetchData: async function ({ appId }) {
+    if (!appId) return { id: '', resources: { address: [], cid: [], postId: [] } }
     return await getBlockedResourcesInApp(appId)
   },
   saveToCacheAction: data => slice.actions.setBlockedResources(data),
