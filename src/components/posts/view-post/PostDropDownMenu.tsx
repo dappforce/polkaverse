@@ -8,9 +8,11 @@ import { ViewOnIpfs } from 'src/components/utils'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { DropdownMenu } from 'src/components/utils/DropDownMenu'
 import { useSendEvent } from 'src/providers/AnalyticContext'
+import { useIsAdmin } from 'src/rtk/features/moderation/hooks'
 import { PostData, SpaceStruct } from 'src/types'
 import { useIsMyAddress, useMyAddress } from '../../auth/MyAccountsContext'
 import HiddenPostButton from '../HiddenPostButton'
+import ModerateButton from '../ModerateButton'
 import MovePostLink from '../MovePostLink'
 
 type DropdownProps = {
@@ -28,6 +30,7 @@ const InnerPostDropDownMenu: FC<DropdownProps> = props => {
   const { struct } = post
   const postId = struct.id
   const sendEvent = useSendEvent()
+  const isAdmin = useIsAdmin()
 
   const { canEditPost, canHidePost, canMovePost } = useCheckCanEditAndHideSpacePermission(props)
 
@@ -52,6 +55,11 @@ const InnerPostDropDownMenu: FC<DropdownProps> = props => {
                 <a className='item'>{'Edit post'}</a>
               </CustomLink>
             )}
+          </Menu.Item>
+        )}
+        {isAdmin && (
+          <Menu.Item key={`moderate-${postId}`}>
+            <ModerateButton />
           </Menu.Item>
         )}
         {canHidePost && (

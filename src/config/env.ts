@@ -7,6 +7,7 @@ newLogger.setDefaultLevel(process.env['NEXT_PUBLIC_LOG_INFO'] as any)
 export const isProdMode = nodeEnv === 'production'
 export const isDevMode = !isProdMode
 
+export const appId = process.env['NEXT_PUBLIC_APP_ID'] || '1'
 export const appKind = (process.env['NEXT_PUBLIC_APP_KIND'] || 'polkaverse') as unknown as AppKind
 
 export const connectionKind = (process.env['NEXT_PUBLIC_CONNECTION_KIND'] ||
