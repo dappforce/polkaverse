@@ -29,8 +29,10 @@ import { CopyAddress } from './address-views/utils'
 
 import router from 'next/router'
 import { Donate } from 'src/components/donate'
+import { appId } from 'src/config/env'
 import { isBlockedAccount } from 'src/moderation'
 import { useFetchSpaceIdsByFollower, useIsMuted } from 'src/rtk/app/hooks'
+import { fetchBlockedResources } from 'src/rtk/features/moderation/blockedResourcesSlice'
 import { useIsBlocked } from 'src/rtk/features/moderation/hooks'
 import { fetchEntityOfSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
 import { convertToSubsocialAddress } from 'src/utils/address'
@@ -190,7 +192,8 @@ const Component = (props: Props) => {
 const ProfilePage: NextPage<Props> = props => {
   const { address, owner } = props
   const shouldHideContent = isBlockedAccount(address.toString())
-  const isBlocked = useIsBlocked(address.toString())
+  // data is prefetched
+  const { isBlocked } = useIsBlocked(address.toString())
 
   if (shouldHideContent && owner) {
     owner.content = undefined
@@ -255,18 +258,19 @@ getInitialPropsWithRedux(ProfilePage, async ({ context, subsocial, dispatch, red
     return { statusCode: 404 } as any
   }
 
-  await dispatch(
-    fetchProfileSpace({ api: subsocial, id: addressStr, reload: true, eagerLoadHandles: true }),
-  )
-  const spaceIdByAccount = selectProfileSpace(reduxStore.getState(), addressStr)
+  await Promise.all([
+    dispatch(
+      fetchProfileSpace({ api: subsocial, id: addressStr, reload: true, eagerLoadHandles: true }),
+    ),
+    dispatch(fetchSpaceIdsOwnedByAccount({ api: subsocial, id: addressStr, reload: true })),
+    dispatch(fetchEntityOfSpaceIdsByFollower({ api: subsocial, id: addressStr, reload: true })),
+    dispatch(fetchBlockedResources({ appId })),
+  ])
 
+  const spaceIdByAccount = selectProfileSpace(reduxStore.getState(), addressStr)
   const owner = spaceIdByAccount
     ? selectSpace(reduxStore.getState(), { id: spaceIdByAccount?.spaceId })
     : undefined
-
-  await dispatch(fetchSpaceIdsOwnedByAccount({ api: subsocial, id: addressStr, reload: true }))
-  await dispatch(fetchEntityOfSpaceIdsByFollower({ api: subsocial, id: addressStr, reload: true }))
-
   return {
     address: addressStr,
     owner,

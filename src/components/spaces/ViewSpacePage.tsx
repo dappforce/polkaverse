@@ -34,7 +34,7 @@ type Props = ViewSpaceProps &
 const InnerViewSpacePage: FC<Props> = props => {
   const myAddress = useMyAddress()
   const { spaceData, customImage, isProfileSpace } = props
-  const isOwnerBlocked = useIsBlocked(spaceData?.struct.ownerId ?? '')
+  const { isBlocked: isOwnerBlocked, loading } = useIsBlocked(spaceData?.struct.ownerId ?? '')
 
   useFetchMyPermissionsBySpaceId(spaceData?.id)
 
@@ -69,7 +69,7 @@ const InnerViewSpacePage: FC<Props> = props => {
         withVoteBanner
         creatorDashboardSidebarType={{ name: 'space-page' }}
       >
-        {isOwnerBlocked && isProfileSpace && (
+        {!loading && isOwnerBlocked && isProfileSpace && (
           <BlockedAlert customPrefix='The owner of this space' />
         )}
         {showBanner && (

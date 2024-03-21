@@ -65,7 +65,8 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const id = initialPostData.id
   const { isNotMobile } = useResponsiveSize()
   useFetchMyReactionsByPostId(id)
-  const isPostBlocked = useIsPostBlocked(initialPostData.post.struct)
+  // data prefetched
+  const { isBlocked } = useIsPostBlocked(initialPostData.post.struct)
 
   const postData = useAppSelector(state => selectPost(state, { id })) || initialPostData
 
@@ -83,8 +84,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
 
   const isUnlistedPost = useIsUnlistedPost({ post: struct, space: space?.struct })
 
-  if (useIsUnlistedSpace(postData.space) || isUnlistedPost || isPostBlocked)
-    return <PostNotFoundPage />
+  if (useIsUnlistedSpace(postData.space) || isUnlistedPost || isBlocked) return <PostNotFoundPage />
 
   if (!content) return null
 
