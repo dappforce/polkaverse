@@ -9,7 +9,7 @@ export const isDevMode = !isProdMode
 
 // TODO: change default to 1
 export const appId = process.env['NEXT_PUBLIC_APP_ID'] || '12364'
-console.log('APP ID', appId, process.env['NEXT_PUBLIC_APP_ID'])
+console.log('APP ID', appId, process.env['NEXT_PUBLIC_APP_ID'] || 'none', nodeEnv)
 export const appKind = (process.env['NEXT_PUBLIC_APP_KIND'] || 'polkaverse') as unknown as AppKind
 
 export const connectionKind = (process.env['NEXT_PUBLIC_CONNECTION_KIND'] ||

@@ -28,7 +28,6 @@ export default function ModerationProvider({ children }: { children: ReactNode }
   const value = useMemo(() => {
     return {
       openModal: (postId: string) => {
-        if (isDevMode) return
         iframeRef.current?.contentWindow?.postMessage(
           {
             type: 'grill:moderate',
@@ -43,14 +42,16 @@ export default function ModerationProvider({ children }: { children: ReactNode }
 
   return (
     <Context.Provider value={value}>
+      {children}
       {!isDevMode && (
         <iframe
           ref={iframeRef}
-          src={`${getCurrentUrlOrigin()}/c/widget/moderation`}
+          src={`${getCurrentUrlOrigin()}/c/widget/moderation?theme=light`}
           style={{
             opacity: isOpenModal ? 1 : 0,
             pointerEvents: isOpenModal ? 'auto' : 'none',
             border: 'none',
+            zIndex: 20,
             transition: 'opacity 0.3s ease-in-out',
             colorScheme: 'none',
             background: 'transparent',
@@ -61,7 +62,6 @@ export default function ModerationProvider({ children }: { children: ReactNode }
           }}
         />
       )}
-      {children}
     </Context.Provider>
   )
 }
