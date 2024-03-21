@@ -4,7 +4,7 @@ export const nodeEnv = process.env['NEXT_PUBLIC_NODE_ENV']
 
 newLogger.setDefaultLevel(process.env['NEXT_PUBLIC_LOG_INFO'] as any)
 
-export const isProdMode = nodeEnv === 'production'
+export const isProdMode = nodeEnv === 'production' || true
 export const isDevMode = !isProdMode
 
 // TODO: change default to 1

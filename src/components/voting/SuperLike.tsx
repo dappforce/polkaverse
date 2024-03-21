@@ -28,11 +28,13 @@ import {
 } from 'src/rtk/features/activeStaking/superLikeCountsSlice'
 import { fetchSuperLikeMessage } from 'src/rtk/features/activeStaking/superLikeMessageSlice'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { useIsBlocked } from 'src/rtk/features/moderation/hooks'
 import { useMyAccount } from 'src/stores/my-account'
 import { getAmountRange } from 'src/utils/analytics'
 import { getContentStakingLink } from 'src/utils/links'
 import { redirectToLogin } from 'src/utils/url'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import BlockedModal from '../moderation/BlockedModal'
 import { IconWithLabel } from '../utils'
 import CustomModal from '../utils/CustomModal'
 import { createSuperLike } from '../utils/datahub/active-staking'
@@ -53,6 +55,9 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const myGrillAddress = useMyAccount(state => state.address)
   const myAddress = useMyAddress()
   const sendEvent = useSendEvent()
+
+  const isBlocked = useIsBlocked(myAddress)
+  const [isOpenBlockedModal, setIsOpenBlockedModal] = useState(false)
   // const [isSigning, setIsSigning] = useState(false)
 
   const { data: superLikeMessage } = useFetchSuperLikeMessage()
@@ -79,6 +84,11 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
 
   const onClick = async () => {
     if (isActive || isDisabled) return
+
+    if (isBlocked) {
+      setIsOpenBlockedModal(true)
+      return
+    }
 
     if (!myAddress || !myGrillAddress) {
       sendEvent('login_button_clicked', { eventSource: 'polkaverse-ui-super-like' })
@@ -200,6 +210,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
         </Button>
       </div>
 
+      <BlockedModal visible={isOpenBlockedModal} onCancel={() => setIsOpenBlockedModal(false)} />
       <ShouldStakeModal
         visible={isOpenShouldStakeModal}
         onCancel={() => setIsOpenShouldStakeModal(false)}
