@@ -25,7 +25,6 @@ export function EditWritePermission(props: UpdateWritePermissionProps) {
   const { id } = space || {}
   const spaceId = id || ''
 
-  console.log(space)
   const reloadSpace = useCreateReloadSpace()
   const { spaceEditors: editors = [], loading } = useFetchSpaceEditors(spaceId)
   const { roleId, loaded } = useGetRoleId(spaceId)

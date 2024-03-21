@@ -199,7 +199,12 @@ export function InnerForm(props: FormProps) {
 
   return (
     <>
-      <DfForm form={form} validateTrigger={['onBlur']} initialValues={initialValues}>
+      <DfForm
+        form={form}
+        validateTrigger={['onBlur']}
+        className={styles.EditForm}
+        initialValues={initialValues}
+      >
         <Form.Item
           name={fieldName('image')}
           label='Avatar'
