@@ -48,6 +48,7 @@ jobs:
           build-args: |
             GH_GA_ID=G-TP1XEFNHQD
             GH_APP_KIND=grill
+            GH_APP_ID=1
             GH_HCAPTCHA_SITE_KEY=${{ secrets.PROD_HCAPTCHA_SITE_KEY }}
             GH_AMP_ID=2eeca0e8a0163c89e3f023c971e426a6
             GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
@@ -77,6 +78,7 @@ jobs:
           build-args: |
             GH_GA_ID=fake
             GH_APP_KIND=grill
+            GH_APP_ID=12364
             GH_HCAPTCHA_SITE_KEY=3beeddac-2dce-41cc-8e18-338118426c38
             GH_AMP_ID=71bf5a46800fedba5e9a01243b988164
             GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
