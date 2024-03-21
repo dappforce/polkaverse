@@ -6,6 +6,7 @@ import { initializeApollo } from 'src/graphql/client'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { fetchPostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
+import { useIsBlocked } from 'src/rtk/features/moderation/hooks'
 import { useFetchMyPermissionsBySpaceId } from 'src/rtk/features/permissions/mySpacePermissionsHooks'
 import { fetchPosts, selectPosts } from 'src/rtk/features/posts/postsSlice'
 import { fetchPostsViewCount } from 'src/rtk/features/posts/postsViewCountSlice'
@@ -14,6 +15,7 @@ import { DataSourceTypes, HasStatusCode, idToBn, SpaceContent } from 'src/types'
 import { descSort, isPolkaProject, isUnclaimedSpace } from 'src/utils'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { PageContent } from '../main/PageWrapper'
+import BlockedAlert from '../moderation/BlockedAlert'
 import { spaceUrl } from '../urls'
 import { ClaimSpaceBanner } from '../utils/banners/ClaimSpaceBanner'
 import { getPageOfIds } from '../utils/getIds'
@@ -26,11 +28,13 @@ import { ViewSpaceProps } from './ViewSpaceProps'
 type Props = ViewSpaceProps &
   HasStatusCode & {
     customImage?: string
+    isProfileSpace?: boolean
   }
 
 const InnerViewSpacePage: FC<Props> = props => {
   const myAddress = useMyAddress()
-  const { spaceData, customImage } = props
+  const { spaceData, customImage, isProfileSpace } = props
+  const isOwnerBlocked = useIsBlocked(spaceData?.struct.ownerId ?? '')
 
   useFetchMyPermissionsBySpaceId(spaceData?.id)
 
@@ -65,6 +69,9 @@ const InnerViewSpacePage: FC<Props> = props => {
         withVoteBanner
         creatorDashboardSidebarType={{ name: 'space-page' }}
       >
+        {isOwnerBlocked && isProfileSpace && (
+          <BlockedAlert customPrefix='The owner of this space' />
+        )}
         {showBanner && (
           <ClaimSpaceBanner
             title='Are you the owner of this project?'
@@ -157,6 +164,7 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
     postIds: sortedPostIds,
     prefetchedIds: pageIds,
     customImage,
+    isProfileSpace,
   }
 })
 

@@ -28,6 +28,7 @@ import { useSelectProfile } from 'src/rtk/app/hooks'
 import { useAppDispatch, useAppSelector } from 'src/rtk/app/store'
 import { fetchPostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { fetchTopUsersWithSpaces } from 'src/rtk/features/leaderboard/topUsersSlice'
+import { useIsPostBlocked } from 'src/rtk/features/moderation/hooks'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { fetchPostsViewCount } from 'src/rtk/features/posts/postsViewCountSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
@@ -62,6 +63,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
   const id = initialPostData.id
   const { isNotMobile } = useResponsiveSize()
   useFetchMyReactionsByPostId(id)
+  const isPostBlocked = useIsPostBlocked(initialPostData.post.struct)
 
   const postData = useAppSelector(state => selectPost(state, { id })) || initialPostData
 
@@ -79,7 +81,8 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
 
   const isUnlistedPost = useIsUnlistedPost({ post: struct, space: space?.struct })
 
-  if (useIsUnlistedSpace(postData.space) || isUnlistedPost) return <PostNotFoundPage />
+  if (useIsUnlistedSpace(postData.space) || isUnlistedPost || isPostBlocked)
+    return <PostNotFoundPage />
 
   if (!content) return null
 

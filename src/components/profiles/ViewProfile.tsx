@@ -31,12 +31,14 @@ import router from 'next/router'
 import { Donate } from 'src/components/donate'
 import { isBlockedAccount } from 'src/moderation'
 import { useFetchSpaceIdsByFollower, useIsMuted } from 'src/rtk/app/hooks'
+import { useIsBlocked } from 'src/rtk/features/moderation/hooks'
 import { fetchEntityOfSpaceIdsByFollower } from 'src/rtk/features/spaceIds/followedSpaceIdsSlice'
 import { convertToSubsocialAddress } from 'src/utils/address'
 import { useAppSelector } from '../../rtk/app/store'
 import { useSelectProfile } from '../../rtk/features/profiles/profilesHooks'
 import { fetchSpaceIdsOwnedByAccount } from '../../rtk/features/spaceIds/ownSpaceIdsSlice'
 import { selectSpace } from '../../rtk/features/spaces/spacesSlice'
+import BlockedAlert from '../moderation/BlockedAlert'
 import CustomLink from '../referral/CustomLink'
 
 const FollowAccountButton = dynamic(() => import('../utils/FollowAccountButton'), { ssr: false })
@@ -188,6 +190,7 @@ const Component = (props: Props) => {
 const ProfilePage: NextPage<Props> = props => {
   const { address, owner } = props
   const shouldHideContent = isBlockedAccount(address.toString())
+  const isBlocked = useIsBlocked(address.toString())
 
   if (shouldHideContent && owner) {
     owner.content = undefined
@@ -216,6 +219,7 @@ const ProfilePage: NextPage<Props> = props => {
       withSidebar
       creatorDashboardSidebarType={{ name: 'home-page', variant: 'posts' }}
     >
+      {isBlocked && <BlockedAlert />}
       <Component {...props} />
       {!shouldHideContent && <AccountActivity address={address.toString()} />}
     </PageContent>
