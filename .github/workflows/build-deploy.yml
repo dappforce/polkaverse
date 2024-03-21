@@ -48,7 +48,6 @@ jobs:
           build-args: |
             GH_GA_ID=G-TP1XEFNHQD
             GH_APP_KIND=grill
-            GH_APP_ID=1
             GH_HCAPTCHA_SITE_KEY=${{ secrets.PROD_HCAPTCHA_SITE_KEY }}
             GH_AMP_ID=2eeca0e8a0163c89e3f023c971e426a6
             GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
@@ -58,6 +57,7 @@ jobs:
             GH_SERVER_MNEMONIC=${{ secrets.SERVER_MNEMONIC }}
             GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=https://sub-data-hub.subsocial.network/graphql
             GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://sub-data-hub.subsocial.network/graphql-ws
+            GH_NEXT_PUBLIC_APP_ID=1
             GH_DATAHUB_QUEUE_URL=https://sub-queue-data-hub.subsocial.network/graphql
             GH_DATAHUB_QUEUE_TOKEN=${{ secrets.DATAHUB_QUEUE_TOKEN }}
             # GH_NEXT_PUBLIC_ENABLE_MAINTENANCE_PAGE=true
@@ -78,7 +78,6 @@ jobs:
           build-args: |
             GH_GA_ID=fake
             GH_APP_KIND=grill
-            GH_APP_ID=12364
             GH_HCAPTCHA_SITE_KEY=3beeddac-2dce-41cc-8e18-338118426c38
             GH_AMP_ID=71bf5a46800fedba5e9a01243b988164
             GH_OFFCHAIN_SIGNER_URL=https://signer.subsocial.network
@@ -88,6 +87,7 @@ jobs:
             GH_SERVER_MNEMONIC=plunge pumpkin penalty segment cattle more print below fat lemon clap uniform
             GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=https://notifications-data-hub.subsocial.network/graphql
             GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://notifications-data-hub.subsocial.network/graphql-ws
+            GH_NEXT_PUBLIC_APP_ID=12364
             GH_DATAHUB_QUEUE_URL=https://notifications-queue-data-hub.subsocial.network/graphql
             GH_DATAHUB_QUEUE_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZX0.jpXwkIJ4DpV4IvSI3eWVVXE6x89qr_GIq7IlbBv5YE0
             # GH_NEXT_PUBLIC_ENABLE_MAINTENANCE_PAGE=true
