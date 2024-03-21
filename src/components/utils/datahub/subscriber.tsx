@@ -1,18 +1,20 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { datahubSubscriptionUrl } from 'src/config/env'
 import { subscribeSuperLike } from './active-staking'
+import { subscribeModeration } from './moderation'
 
 function useDatahubSubscriber() {
-  const unsubRef = useRef<(() => void) | undefined>()
   const myAddress = useMyAddress()
 
   useEffect(() => {
     if (!datahubSubscriptionUrl) return
 
-    unsubRef.current = subscribeSuperLike(myAddress)
+    const unsubSuperLike = subscribeSuperLike(myAddress)
+    const unsubModeration = subscribeModeration()
     return () => {
-      unsubRef.current?.()
+      unsubSuperLike?.()
+      unsubModeration?.()
     }
   }, [myAddress])
 }

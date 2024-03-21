@@ -1,9 +1,16 @@
 import { isAddress } from '@polkadot/util-crypto'
+import { DataHubSubscriptionEventEnum } from '@subsocial/data-hub-sdk'
+import { gql as gqlRequest } from 'graphql-request'
 import gql from 'graphql-tag'
 import { CID } from 'ipfs-http-client'
-import { BlockedResources } from 'src/rtk/features/moderation/blockedResourcesSlice'
+import { appId } from 'src/config/env'
+import { getStoreDispatcher } from 'src/rtk/app/store'
+import {
+  BlockedResources,
+  updateBlockedResources,
+} from 'src/rtk/features/moderation/blockedResourcesSlice'
 import { Moderator } from 'src/rtk/features/moderation/moderatorSlice'
-import { datahubQueryRequest } from './utils'
+import { datahubQueryRequest, datahubSubscription } from './utils'
 
 export const GET_MODERATOR_DATA = gql`
   query GetModeratorData($address: String!) {
@@ -95,7 +102,7 @@ function mapBlockedResources<T>(resources: T[], getId: (t: T) => string) {
   })
   return data
 }
-function getBlockedResourceType(resourceId: string): ResourceTypes | null {
+export function getBlockedResourceType(resourceId: string): ResourceTypes | null {
   if (isPostId(resourceId) || resourceId.startsWith('0x')) return 'postId'
   if (isValidSubstrateAddress(resourceId)) return 'address'
   if (isValidCID(resourceId)) return 'cid'
@@ -123,4 +130,123 @@ function isPostId(maybePostId: string) {
   if (typeof maybePostId === 'string' && !/^\d+$/.test(maybePostId)) return false
 
   return true
+}
+
+// SUBSCRIPTION
+const SUBSCRIBE_BLOCKED_RESOURCES = gqlRequest`
+  subscription SubscribeBlockedResources {
+    moderationBlockedResource {
+      event
+      entity {
+        id
+        blocked
+        resourceId
+        ctxAppIds
+        organization {
+          ctxAppIds
+        }
+      }
+    }
+  }
+`
+export type SubscribeBlockedResourcesSubscription = {
+  moderationBlockedResource: {
+    event: DataHubSubscriptionEventEnum
+    entity: {
+      id: string
+      blocked: boolean
+      resourceId: string
+      ctxAppIds: Array<string>
+      rootPostId?: string | null
+      organization: {
+        ctxAppIds?: Array<string> | null
+      }
+    }
+  }
+}
+
+let isSubscribed = false
+export function subscribeModeration() {
+  if (isSubscribed) return
+  isSubscribed = true
+
+  const client = datahubSubscription()
+  let unsubBlockedResources = client.subscribe<SubscribeBlockedResourcesSubscription, null>(
+    {
+      query: SUBSCRIBE_BLOCKED_RESOURCES,
+    },
+    {
+      complete: () => undefined,
+      next: async data => {
+        const eventData = data.data?.moderationBlockedResource
+        if (!eventData) return
+
+        await processBlockedResourcesEvent(eventData)
+      },
+      error: err => {
+        console.error('error blocked resources subscription', err)
+      },
+    },
+  )
+
+  return () => {
+    unsubBlockedResources()
+    isSubscribed = false
+  }
+}
+
+const processedJustNowIds = new Set<string>()
+async function processBlockedResourcesEvent(
+  eventData: SubscribeBlockedResourcesSubscription['moderationBlockedResource'],
+) {
+  if (
+    eventData.event === DataHubSubscriptionEventEnum.MODERATION_BLOCKED_RESOURCE_STATE_UPDATED ||
+    eventData.event === DataHubSubscriptionEventEnum.MODERATION_BLOCKED_RESOURCE_CREATED
+  ) {
+    // prevent double processing of the same event
+    // because now if we block resource we get 2 events simultaneously
+    if (
+      eventData.event === DataHubSubscriptionEventEnum.MODERATION_BLOCKED_RESOURCE_CREATED &&
+      eventData.entity.blocked
+    ) {
+      processedJustNowIds.add(eventData.entity.id)
+      setTimeout(() => {
+        processedJustNowIds.delete(eventData.entity.id)
+      }, 1000)
+    } else if (
+      processedJustNowIds.has(eventData.entity.id) &&
+      eventData.event === DataHubSubscriptionEventEnum.MODERATION_BLOCKED_RESOURCE_STATE_UPDATED &&
+      eventData.entity.blocked
+    ) {
+      return
+    }
+    await processBlockedResources(eventData)
+  }
+}
+
+async function processBlockedResources(
+  eventData: SubscribeBlockedResourcesSubscription['moderationBlockedResource'],
+) {
+  const entity = eventData.entity
+  const { blocked: isNowBlocked, resourceId } = entity
+  const resourceType = getBlockedResourceType(resourceId)
+
+  if (!resourceType) return
+
+  const ctxAppIds = entity.organization.ctxAppIds
+  const entityAppId = entity.ctxAppIds
+
+  const isBlockedInAppContext = entityAppId.some(id => id === appId || id === '*')
+  const isAppContextRelated = appId && ctxAppIds?.includes(appId) && isBlockedInAppContext
+
+  if (!isAppContextRelated) return
+
+  const dispatch = getStoreDispatcher()
+  dispatch?.(
+    updateBlockedResources({
+      id: appId,
+      type: isNowBlocked ? 'add' : 'remove',
+      idToProcess: resourceId,
+    }),
+  )
 }

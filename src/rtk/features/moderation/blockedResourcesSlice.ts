@@ -1,5 +1,9 @@
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
-import { getBlockedResourcesInApp, ResourceTypes } from 'src/components/utils/datahub/moderation'
+import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import {
+  getBlockedResourcesInApp,
+  getBlockedResourceType,
+  ResourceTypes,
+} from 'src/components/utils/datahub/moderation'
 import { RootState } from 'src/rtk/app/rootReducer'
 import { createSimpleFetchWrapper } from 'src/rtk/app/wrappers'
 
@@ -28,7 +32,24 @@ const slice = createSlice({
   initialState: adapter.getInitialState(),
   reducers: {
     setBlockedResources: adapter.upsertOne,
+    updateBlockedResources: (
+      state,
+      action: PayloadAction<{ id: string; type: 'remove' | 'add'; idToProcess: string }>,
+    ) => {
+      const resourceType = getBlockedResourceType(action.payload.idToProcess)
+      const existing = state.entities[action.payload.id]
+      if (existing && resourceType) {
+        if (action.payload.type === 'add') {
+          existing.resources[resourceType].push(action.payload.idToProcess)
+        } else {
+          existing.resources[resourceType] = existing.resources[resourceType].filter(
+            id => id !== action.payload.idToProcess,
+          )
+        }
+      }
+    },
   },
 })
+export const { updateBlockedResources } = slice.actions
 
 export default slice.reducer
