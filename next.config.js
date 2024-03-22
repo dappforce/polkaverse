@@ -13,6 +13,9 @@ const nextConfig = {
   images: {
     domains: ['app.subsocial.network', 'polkaverse.com', 'localhost', 'ipfs.io', 'grillapp.net'],
   },
+  experimental: {
+    scrollRestoration: true,
+  },
   transpilePackages: ['react-tweet'],
   webpack: (config, { isServer }) => {
     // This code for webpack 4
