@@ -13,12 +13,10 @@ import { useAppSelector } from 'src/rtk/app/store'
 import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { SpaceData } from 'src/types'
 import { useSelectProfile } from '../../../rtk/features/profiles/profilesHooks'
-import { useIsUsingEmail, useMyAddress } from '../../auth/MyAccountsContext'
+import { useMyAddress } from '../../auth/MyAccountsContext'
 import { ProfileSpaceAction } from '../../profiles/address-views/utils/index'
 import HiddenSpaceButton from '../HiddenSpaceButton'
-import { OpenEditPermissions } from '../permissions/EditPermissionsModal'
-import EditorsLink from '../roles/Editors'
-import { TransferOwnershipLink } from '../TransferSpaceOwnership'
+import { EditPermissionsLink } from '../permissions/editSpacePermissionsModal'
 import { createNewPostLinkProps, useIsMySpace } from './common'
 
 type SpaceDropDownProps = BasicDropDownMenuProps & {
@@ -41,7 +39,7 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
   const isMobile = useIsMobileWidthOrDevice()
   const setChatConfig = useSetChatEntityConfig()
 
-  const isUsingEmail = useIsUsingEmail()
+  // const isUsingEmail = useIsUsingEmail()
 
   const showMakeAsProfileButton = isMySpace && (!profileSpaceId || profileSpaceId !== id)
 
@@ -120,23 +118,17 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
               <HiddenSpaceButton space={struct} asLink />
             </Menu.Item>
             <Menu.Item key={`edit-permissions-${spaceKey}`}>
-              <OpenEditPermissions space={struct} />
+              <EditPermissionsLink space={struct} />
             </Menu.Item>
-            {!isUsingEmail && (
+            {/* {!isUsingEmail && (
               <>
-                <Menu.Item key={`edit-editors-${spaceKey}`}>
-                  <EditorsLink space={struct} />
-                </Menu.Item>
                 <Menu.Item key={`transfer-ownership-${spaceKey}`}>
                   <TransferOwnershipLink space={struct} />
                 </Menu.Item>
               </>
-            )}
+            )} */}
           </>
         )}
-        {/* {struct.createdAtBlock && <Menu.Item key={`view-on-block-${spaceKey}`}>
-        <ViewOnBlockchainLink createdAtBlock={struct.createdAtBlock} />
-      </Menu.Item>} */}
         <Menu.Item key={`view-on-ipfs-${spaceKey}`}>
           <ViewOnIpfs contentId={struct.contentId} />
         </Menu.Item>
@@ -150,7 +142,6 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
             Copy Space Id: {id}
           </span>
         </Menu.Item>
-        {/* <ViewOnDropDownMenuItems struct={struct} /> */}
       </>
     )
   }

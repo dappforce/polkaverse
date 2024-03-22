@@ -15,6 +15,8 @@ type Props = AddressProps & {
   network?: string
   emailAddress?: string
   withAddress?: boolean
+  showLabel?: (item: string) => boolean
+  label?: React.ReactNode
 }
 
 export const NameDetails = ({
@@ -24,6 +26,8 @@ export const NameDetails = ({
   withDetails,
   emailAddress = '',
   withAddress = true,
+  showLabel,
+  label,
 }: Props) => {
   // const { struct } = owner
 
@@ -50,6 +54,7 @@ export const NameDetails = ({
       <div className='header DfAccountTitle'>
         <Name owner={owner} address={address} isOnHeader emailAddress={emailAddress} />
         {withLabel && <MyEntityLabel isMy={isMyAccount}>Me</MyEntityLabel>}
+        {showLabel?.(address.toString()) && label}
       </div>
       {/* {extensionName && <div className='DfPopup-handle'>{extensionName}</div>} */}
       {withAddress && (

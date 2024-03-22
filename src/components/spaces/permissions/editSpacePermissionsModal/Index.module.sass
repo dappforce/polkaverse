@@ -1,0 +1,27 @@
+@import 'src/styles/subsocial-vars.scss'
+
+.EditModal
+  :global(.ant-modal-header)
+    padding: $space_large $space_large $space_big $space_large
+
+  :global(.ant-modal-title)
+    font-size: $font_large
+    font-weight: 700
+    color: $color_font_normal
+    line-height: normal
+
+  :global(.ant-modal-footer)
+    padding: $space_big $space_large $space_large $space_large
+
+.ModalContent
+  padding-left: $space_large
+  padding-right: $space_large
+
+  form
+    display: flex
+    flex-direction: column
+    gap: $space_big
+    align-items: center
+
+    :global(.ant-form-item)
+      width: 100%

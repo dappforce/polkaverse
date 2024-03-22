@@ -1,12 +1,12 @@
 import styles from './AccountsListModal.module.sass'
 
 import { GenericAccountId as SubstrateAccountId } from '@polkadot/types'
-import { isEmptyArray } from '@subsocial/utils'
-import { Divider, Tabs } from 'antd'
+import { isDef, isEmptyArray } from '@subsocial/utils'
+import { Divider, Tabs, Tag } from 'antd'
 import clsx from 'clsx'
 import React, { useState } from 'react'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
-import { useFetchSpaceIdsByFollower } from 'src/rtk/app/hooks'
+import { useFetchSpaceIdsByFollower, useSelectSpace } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { useFetchSpaceEditors } from 'src/rtk/features/accounts/accountsHooks'
 import { fetchProfileSpaces } from 'src/rtk/features/profiles/profilesSlice'
@@ -31,6 +31,9 @@ type OuterProps = {
 type InnerProps = Omit<OuterProps, 'address'> & {
   accounts: AnyAccountId[]
   spaceIds?: string[]
+  showLabel?: (item: string) => boolean
+  label?: React.ReactNode
+  footer?: JSX.Element
 }
 
 type InnerProfilePreviewListProps = {
@@ -39,6 +42,8 @@ type InnerProfilePreviewListProps = {
   loadingLabel: string
   scrollableTarget: string
   className?: string
+  showLabel?: (item: string) => boolean
+  label?: React.ReactNode
 }
 const InnerProfilePreviewList = ({
   ids,
@@ -46,6 +51,8 @@ const InnerProfilePreviewList = ({
   loadingLabel,
   scrollableTarget,
   className,
+  showLabel,
+  label,
 }: InnerProfilePreviewListProps) => {
   const { subsocial } = useSubsocialApi()
   const dispatch = useAppDispatch()
@@ -96,6 +103,8 @@ const InnerProfilePreviewList = ({
                 size={46}
                 withFollowButton
                 withProfileChip
+                label={label}
+                showLabel={showLabel}
               />
             ) : (
               <LineSpacePreview withFollowButton spaceId={item} />
@@ -116,6 +125,8 @@ const ProfilePreviewList = (props: InnerProps) => {
       noDataDesc='No accounts followed yet...'
       loadingLabel='Loading followed accounts...'
       ids={props.accounts}
+      showLabel={props.showLabel}
+      label={props.label}
     />
   )
   const renderSpacesList = (className?: string) => (
@@ -150,7 +161,7 @@ const ProfilePreviewList = (props: InnerProps) => {
 }
 
 const InnerAccountsListModal = (props: InnerProps) => {
-  const { accounts, title, pluralizeTitle = '', renderOpenButton } = props
+  const { accounts, title, pluralizeTitle = '', renderOpenButton, footer } = props
   const [visible, setVisible] = useState(false)
 
   const open = () => setVisible(true)
@@ -158,12 +169,15 @@ const InnerAccountsListModal = (props: InnerProps) => {
   const accountCount = accounts.length + (props.spaceIds?.length ?? 0)
 
   if (!accounts) return <Loading label='Accounts loading...' />
+
   return (
     <>
       {renderOpenButton(open, accountCount)}
       {visible && (
         <CustomModal
+          key={'accounts-list-modal'}
           fullHeight
+          footer={footer}
           onCancel={close}
           visible={visible}
           contentElementId='account-list-modal'
@@ -192,14 +206,31 @@ export const SpaceFollowersModal = (props: OuterProps) => {
 
 type SpaceEditorsModalProps = Omit<OuterProps, 'address'> & {
   spaceId: SpaceId
+  footer?: JSX.Element
 }
 
 export const SpaceEditorsModal = ({ spaceId, ...props }: SpaceEditorsModalProps) => {
+  const space = useSelectSpace(spaceId)
   const { spaceEditors, loading } = useFetchSpaceEditors(spaceId, DataSourceTypes.SQUID)
 
-  if (loading || !spaceEditors) return null
+  const spaceOwner = space?.struct.ownerId || ''
 
-  return <InnerAccountsListModal {...props} accounts={spaceEditors} />
+  const accounts = [spaceOwner, ...(spaceEditors || [])].filter(isDef)
+
+  if (loading || isEmptyArray(accounts)) return null
+
+  return (
+    <InnerAccountsListModal
+      {...props}
+      accounts={accounts || []}
+      showLabel={address => address === spaceOwner}
+      label={
+        <Tag color='blue' className='ml-2'>
+          Space owner
+        </Tag>
+      }
+    />
+  )
 }
 
 export const AccountFollowersModal = (props: OuterProps) => {

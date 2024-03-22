@@ -3,3 +3,30 @@
 .EmailText
     color: $color_black_text !important
     cursor: default !important
+
+.SpacePermissions
+    margin-top: 0
+
+    button
+        margin-right: 0 !important
+
+@media ( max-width: $max_mobile_width )
+    .EditForm
+        display: flex
+        flex-direction: column
+        gap: $space_normal
+
+        :global(.ant-form-item-label)
+            padding-bottom: 4px
+
+        :global(.ant-form-item)
+            margin-bottom: 0
+
+        label
+            height: auto
+        
+        :global(.ant-collapse-content-box) > div
+            display: flex
+            flex-direction: column
+            gap: $space_normal
+

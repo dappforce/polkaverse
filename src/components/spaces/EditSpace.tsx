@@ -20,9 +20,7 @@ import { AutoSaveId } from '../utils/DfMdEditor/types'
 import NoData from '../utils/EmptyList'
 import Section from '../utils/Section'
 import styles from './EditSpace.module.sass'
-import { newWritePermission } from './permissions/space-permissions'
 import { BuiltInRole, getWhoCanPost } from './permissions/utils'
-import { WhoCanPostSelector } from './permissions/WhoCanPostSelector'
 import { NewSocialLinks } from './SocialLinks/NewSocialLinks'
 
 import {
@@ -47,6 +45,7 @@ import { useRouter } from 'next/router'
 import { TxCallback, TxFailedCallback } from 'src/components/substrate/SubstrateTxButton'
 import { useAppSelector } from '../../rtk/app/store'
 import { selectSpaceIdsByOwner } from '../../rtk/features/spaceIds/ownSpaceIdsSlice'
+import SpacePermissionInfoSection from './permissions/SpacePermissionInfoSection'
 
 const MAX_TAGS = 10
 
@@ -119,13 +118,7 @@ export function InnerForm(props: FormProps) {
   const tags = initialValues.tags || []
   const links = initialValues.links
 
-  const [whoCanPostHint, setWhoCanPostHint] = useState(
-    messages.formHints.whoCanPost[initialValues.whoCanPost!],
-  )
   const blocked = useAmIBlocked()
-
-  const changeWhoCanPost = (field: BuiltInRole) =>
-    setWhoCanPostHint(messages.formHints.whoCanPost[field])
 
   // Auto save a space's about only if we are on a "New Space" form.
   const autoSaveId: AutoSaveId | undefined = !space ? 'space' : undefined
@@ -135,35 +128,22 @@ export function InnerForm(props: FormProps) {
   }
 
   const newTxParams = (cid: IpfsCid) => {
-    const fieldValues = getFieldValues()
-
-    /** Returns `undefined` if value hasn't been changed. */
-    function getValueIfChanged(field: FieldName): any | undefined {
-      return form.isFieldTouched(field) ? (fieldValues[field] as any) : undefined
-    }
-
     /** Returns `undefined` if CID hasn't been changed. */
     function getCidIfChanged(): IpfsCid | undefined {
       const prevCid = space?.struct.contentId
       return prevCid !== cid.toString() ? cid : undefined
     }
 
-    const permissions = newWritePermission(
-      getValueIfChanged('whoCanPost'),
-      initialValues['whoCanPost'],
-    )
-
     if (!space) {
       if (asProfile) {
         return [IpfsContent(cid)]
       }
-      return [IpfsContent(cid), permissions]
+      return [IpfsContent(cid)]
     } else {
       return [
         space.struct.id,
         {
           content: OptionIpfsContent(getCidIfChanged()),
-          permissions,
         },
       ]
     }
@@ -219,7 +199,12 @@ export function InnerForm(props: FormProps) {
 
   return (
     <>
-      <DfForm form={form} validateTrigger={['onBlur']} initialValues={initialValues}>
+      <DfForm
+        form={form}
+        validateTrigger={['onBlur']}
+        className={styles.EditForm}
+        initialValues={initialValues}
+      >
         <Form.Item
           name={fieldName('image')}
           label='Avatar'
@@ -241,9 +226,14 @@ export function InnerForm(props: FormProps) {
           <Input placeholder={`Name of your ${entityLabel}`} />
         </Form.Item>
 
-        <Form.Item name={fieldName('whoCanPost')} label='Who can post?' help={whoCanPostHint}>
-          <WhoCanPostSelector space={space?.struct} onChange={changeWhoCanPost} />
-        </Form.Item>
+        {space && (
+          <Form.Item label='Who can post?'>
+            <SpacePermissionInfoSection
+              spaceId={space.struct.id}
+              className={styles.SpacePermissions}
+            />
+          </Form.Item>
+        )}
 
         <Form.Item
           name={fieldName('about')}
