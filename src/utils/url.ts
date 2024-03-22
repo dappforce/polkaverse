@@ -25,7 +25,6 @@ export function getCurrentUrlWithoutQuery(queryNameToRemove?: string) {
 }
 
 export function getCurrentUrlOrigin() {
-  return 'http://localhost:3000'
   if (typeof window === 'undefined') return ''
   return window.location.origin
 }
