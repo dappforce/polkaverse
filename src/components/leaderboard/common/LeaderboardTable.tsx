@@ -82,8 +82,10 @@ export default function LeaderboardTable({
       >
         <div className={clsx(styles.LeaderboardTitles, 'ColorMuted')}>
           <span>#</span>
-          <span>{role === 'creator' ? 'Creator' : 'Staker'}</span>
-          <span style={{ textAlign: 'right' }}>Rewards</span>
+          <div className='d-flex align-items-center GapSmall w-100' style={{ gridColumn: '2/4' }}>
+            <span>{role === 'creator' ? 'Creator' : 'Staker'}</span>
+            <span style={{ textAlign: 'right', marginLeft: 'auto' }}>Rewards</span>
+          </div>
         </div>
         {slicedData.length === 0 &&
           (isLoading ? (
@@ -295,8 +297,10 @@ function LeaderboardTableModal({
       <div className={clsx(styles.ModalTable, 'FontWeightMedium')}>
         <div className={clsx(styles.ModalTitles, 'ColorMuted')}>
           <span>#</span>
-          <span>Staker</span>
-          <span>Rewards this week</span>
+          <div className='d-flex align-items-center GapSmall w-100' style={{ gridColumn: '2/4' }}>
+            <span>Staker</span>
+            <span style={{ marginLeft: 'auto', textAlign: 'right' }}>Rewards this week</span>
+          </div>
         </div>
         <InfiniteScroll
           dataLength={data.length}
