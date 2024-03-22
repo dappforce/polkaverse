@@ -13,11 +13,10 @@ import { useAppSelector } from 'src/rtk/app/store'
 import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { SpaceData } from 'src/types'
 import { useSelectProfile } from '../../../rtk/features/profiles/profilesHooks'
-import { useIsUsingEmail, useMyAddress } from '../../auth/MyAccountsContext'
+import { useMyAddress } from '../../auth/MyAccountsContext'
 import { ProfileSpaceAction } from '../../profiles/address-views/utils/index'
 import HiddenSpaceButton from '../HiddenSpaceButton'
 import { EditPermissionsLink } from '../permissions/editSpacePermissionsModal'
-import { TransferOwnershipLink } from '../TransferSpaceOwnership'
 import { createNewPostLinkProps, useIsMySpace } from './common'
 
 type SpaceDropDownProps = BasicDropDownMenuProps & {
@@ -40,7 +39,7 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
   const isMobile = useIsMobileWidthOrDevice()
   const setChatConfig = useSetChatEntityConfig()
 
-  const isUsingEmail = useIsUsingEmail()
+  // const isUsingEmail = useIsUsingEmail()
 
   const showMakeAsProfileButton = isMySpace && (!profileSpaceId || profileSpaceId !== id)
 
@@ -121,13 +120,13 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
             <Menu.Item key={`edit-permissions-${spaceKey}`}>
               <EditPermissionsLink space={struct} />
             </Menu.Item>
-            {!isUsingEmail && (
+            {/* {!isUsingEmail && (
               <>
                 <Menu.Item key={`transfer-ownership-${spaceKey}`}>
                   <TransferOwnershipLink space={struct} />
                 </Menu.Item>
               </>
-            )}
+            )} */}
           </>
         )}
         <Menu.Item key={`view-on-ipfs-${spaceKey}`}>
