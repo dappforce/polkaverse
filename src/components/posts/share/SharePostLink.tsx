@@ -30,7 +30,7 @@ export const SharePostLink = ({
   } = useAuth()
   const [open, setOpen] = useState<boolean>()
   const postId = isSharedPost ? ext && ext.post.struct.id : id
-  const title = 'Write a post'
+  const title = 'Your space'
   const sendEvent = useSendEvent()
 
   return (
