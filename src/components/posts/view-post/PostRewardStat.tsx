@@ -1,7 +1,6 @@
 import { Skeleton, Tooltip } from 'antd'
 import BigNumber from 'bignumber.js'
 import clsx from 'clsx'
-import capitalize from 'lodash/capitalize'
 import { ComponentProps, ReactNode } from 'react'
 import { TiWarningOutline } from 'react-icons/ti'
 import { useIsMyAddress } from 'src/components/auth/MyAccountsContext'
@@ -33,21 +32,23 @@ function generateTooltip(
       withMutedDecimals: false,
     })
   return (
-    <div>
-      <span>
-        {capitalize(entity)} author rewards: {formatBalance(total)}
+    <div style={{ lineHeight: 1.35 }}>
+      <span className='d-block mb-1'>
+        {formatBalance(total)} earned by the {entity} author.
+        <br />
+        Breakdown of rewards:
       </span>
       <ul className='pl-3 mb-1'>
-        <li>
+        <li className='mb-1'>
           {formatBalance(fromDirectSuperLikes)} from direct likes on this {entity}
         </li>
         {BigInt(fromCommentSuperLikes) > 0 && entity === 'post' && (
-          <li>
+          <li className='mb-1'>
             {formatBalance(fromCommentSuperLikes)} from the likes on comments to this {entity}
           </li>
         )}
         {BigInt(fromShareSuperLikes) > 0 && (
-          <li>
+          <li className='mb-1'>
             {formatBalance(fromShareSuperLikes)} from the likes on shared posts of this {entity}
           </li>
         )}
@@ -117,7 +118,11 @@ export default function PostRewardStat({ postId, ...props }: PostRewardStatProps
       {({ reward, tooltip, isZeroReward }) =>
         isZeroReward ? null : (
           <div {...props} className={props.className}>
-            <Tooltip title={tooltip} className={clsx('d-flex align-items-center')}>
+            <Tooltip
+              title={tooltip}
+              overlayClassName={styles.RewardTooltip}
+              className={clsx('d-flex align-items-center')}
+            >
               <span className={clsx('d-flex align-items-center GapTiny ColorMuted')}>{reward}</span>
             </Tooltip>
           </div>
