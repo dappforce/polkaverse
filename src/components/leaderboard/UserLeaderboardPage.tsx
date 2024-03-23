@@ -223,7 +223,9 @@ export default function UserLeaderboardPage({
       )}
       <div className={styles.IncreaseRewardsAlert}>
         <DfImage preview={false} src='/images/coins.png' className={styles.Image} />
-        <div className={styles.Title}>Increase your daily rewards by locking more SUB</div>
+        <div className={clsx(styles.Title, styles.WeightNormal)}>
+          Increase your daily rewards by locking more SUB
+        </div>
         <Button
           size='middle'
           type='primary'
