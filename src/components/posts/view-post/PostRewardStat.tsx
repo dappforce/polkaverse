@@ -22,6 +22,7 @@ function generateTooltip(
     fromShareSuperLikes,
   }: PostRewards['rewardsBySource'],
   entity: 'post' | 'comment',
+  total: string,
 ) {
   const formatBalance = (value: string) =>
     formatBalanceToJsx({
@@ -33,7 +34,9 @@ function generateTooltip(
     })
   return (
     <div>
-      <span>{capitalize(entity)} author rewards:</span>
+      <span>
+        {capitalize(entity)} author rewards: {formatBalance(total)}
+      </span>
       <ul className='pl-3 mb-1'>
         <li>
           {formatBalance(fromDirectSuperLikes)} from direct likes on this {entity}
@@ -82,7 +85,7 @@ export function PostRewardStatWrapper({
       </>
     )
   } else {
-    tooltip = generateTooltip(reward.rewardsBySource, isComment ? 'comment' : 'post')
+    tooltip = generateTooltip(reward.rewardsBySource, isComment ? 'comment' : 'post', reward.reward)
   }
 
   return (
@@ -132,11 +135,9 @@ function parseBalance(value: string) {
   if (parsedValue.gte(1000000)) {
     parsedValue = parsedValue.div(1000000)
     roundings = 'M'
-    precision = 0
   } else if (parsedValue.gte(1000)) {
     parsedValue = parsedValue.div(1000)
     roundings = 'K'
-    precision = 0
   }
 
   const [prefix, postfix] = parsedValue.toString().split('.')
