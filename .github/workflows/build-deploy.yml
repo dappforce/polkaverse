@@ -59,7 +59,7 @@ jobs:
             GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://sub-data-hub.subsocial.network/graphql-ws
             GH_DATAHUB_QUEUE_URL=https://sub-queue-data-hub.subsocial.network/graphql
             GH_DATAHUB_QUEUE_TOKEN=${{ secrets.DATAHUB_QUEUE_TOKEN }}
-            GH_NEXT_PUBLIC_ENABLE_MAINTENANCE_PAGE=true
+            # GH_NEXT_PUBLIC_ENABLE_MAINTENANCE_PAGE=true
           tags: |
             ${{ env.image }}
             docker.io/dappforce/subsocial-web-app:master-latest
