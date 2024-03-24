@@ -138,7 +138,7 @@ export function InnerForm(props: FormProps) {
       if (asProfile) {
         return [IpfsContent(cid)]
       }
-      return [IpfsContent(cid)]
+      return [IpfsContent(cid), null]
     } else {
       return [
         space.struct.id,
