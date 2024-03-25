@@ -199,7 +199,7 @@ function InnerProgressModal() {
         </div>
         <div className={styles.InfoPanel}>
           <div className={styles.InfoPanelContent}>
-            <div className={styles.Title}>
+            <div className={clsx(styles.Title, 'FontLarge')}>
               <span>Increase your SUB rewards</span>
             </div>
 

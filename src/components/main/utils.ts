@@ -159,7 +159,7 @@ export const setTabInUrl = (router: NextRouter, tab: string, queries?: Record<st
     .join('&')
   const asPath = `${router.asPath.split('?')[0]}?${queryStr}`
 
-  router.push(newPath, asPath)
+  router.replace(newPath, asPath, { shallow: true })
 }
 
 export const setFiltersInUrl = (

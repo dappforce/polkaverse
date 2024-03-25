@@ -40,6 +40,7 @@ import {
   useIsMySpace,
   useIsUnlistedSpace,
 } from './helpers'
+import SpacePermissionInfoSection from './permissions/SpacePermissionInfoSection'
 import { ContactInfo } from './SocialLinks/ViewSocialLinks'
 import SpaceStatsRow from './SpaceStatsRow'
 import ViewSpaceLink from './ViewSpaceLink'
@@ -354,6 +355,9 @@ export const InnerViewSpace = (props: Props) => {
       <PendingSpaceOwnershipPanel space={space} />
       <HiddenSpaceAlert space={space} />
       <Section className='pt-2'>{renderPreview()}</Section>
+
+      {isMySpace && <SpacePermissionInfoSection spaceId={space.id} />}
+
       {canCreatePostAndIsNotHidden && (
         <WriteSomething className='mt-3' defaultSpaceId={spaceData.id} />
       )}
