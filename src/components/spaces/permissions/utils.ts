@@ -26,6 +26,11 @@ export const permissionsState: Record<string, string | Function> = {
     `You and ${editors.length} selected editor accounts can post here`,
 }
 
+export const useGetSpacePermissionsConfigWithoutEditor = (space?: SpaceStruct) => {
+  const whoCanPost = getWhoCanPost(space)
+  return whoCanPost
+}
+
 export const useGetSpacePermissionsConfig = (space?: SpaceStruct) => {
   const whoCanPost = getWhoCanPost(space)
 

@@ -1,5 +1,5 @@
 import { AccountId, SpaceStruct } from '@subsocial/api/types'
-import { Button, ButtonProps, Form, Modal } from 'antd'
+import { Alert, Button, ButtonProps, Form, Modal } from 'antd'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { DfForm } from 'src/components/forms'
@@ -9,7 +9,11 @@ import { useFetchSpaceEditors } from 'src/rtk/features/accounts/accountsHooks'
 import { InputAccountsField } from '../../roles/AccountInputsField'
 import { buildCreateEditorRoleArgs } from '../../roles/editor-role'
 import useGetRoleId from '../useRoleCreated'
-import { BuiltInRole, useGetSpacePermissionsConfig } from '../utils'
+import {
+  BuiltInRole,
+  useGetSpacePermissionsConfig,
+  useGetSpacePermissionsConfigWithoutEditor,
+} from '../utils'
 import { EditEditorsTxButton } from './EditEditorsTxButton'
 import styles from './Index.module.sass'
 import { EditWritePermission } from './UpdateWritePermission'
@@ -34,6 +38,8 @@ const EditSpacePermissionsModal = (props: Props) => {
   const spaceId = space?.id || ''
 
   const [form] = Form.useForm()
+
+  const initialWhoCanPostWithoutEditor = useGetSpacePermissionsConfigWithoutEditor(space)
   const initialWhoCanPost = useGetSpacePermissionsConfig(space)
   const { roleId, loaded } = useGetRoleId(spaceId)
   const { spaceEditors: editors = [], loading } = useFetchSpaceEditors(spaceId)
@@ -80,6 +86,35 @@ const EditSpacePermissionsModal = (props: Props) => {
       className={clsx('DfSignInModal', styles.EditModal)}
     >
       <div className={styles.ModalContent}>
+        {initialWhoCanPost === 'editors' &&
+          initialWhoCanPostWithoutEditor !== 'space_owner' &&
+          initialWhoCanPostWithoutEditor !== 'none' && (
+            <div className='mb-3 mt-1'>
+              <Alert
+                type='warning'
+                message={
+                  <span>
+                    ⚠️{' '}
+                    {initialWhoCanPostWithoutEditor === 'everyone' ? 'Everyone' : 'Your followers'}{' '}
+                    can still create posts in this space. <br />
+                    Click the button below to allow only you and your editors to post.
+                  </span>
+                }
+                action={
+                  <EditWritePermission
+                    ghost
+                    className='mt-1'
+                    size='middle'
+                    block={false}
+                    space={space}
+                    whoCanPost='space_owner'
+                    onSuccess={close}
+                    label='Update permission'
+                  />
+                }
+              />
+            </div>
+          )}
         <DfForm
           layout='vertical'
           form={form}

@@ -86,12 +86,12 @@ export function EditWritePermission(props: UpdateWritePermissionProps) {
     <TxButton
       {...buttonProps}
       label={label || 'Update permissions'}
-      type='primary'
+      type={buttonProps.type ?? 'primary'}
       tx={tx}
       params={params}
       canUseProxy={false}
-      block
-      size='large'
+      block={buttonProps.block ?? true}
+      size={buttonProps.size ?? 'large'}
       onSuccess={onTxSuccess}
       failedMessage={'Failed to update permissions of this space'}
       withSpinner
