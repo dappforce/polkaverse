@@ -1,4 +1,7 @@
 import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
 
 export type DateIntervalType = 'day' | 'month' | 'year'
 export function getDateWithOffset(offset: number, interval: DateIntervalType = 'day') {
@@ -32,4 +35,23 @@ export function getTimeRelativeToNow(
   }
 
   return dayjs(date).format('lll')
+}
+
+export function getShortTimeRelativeToNow(date: Date | string | number) {
+  const dateObj = new Date(date)
+  const now = new Date()
+
+  if (
+    now.getDate() === dateObj.getDate() &&
+    now.getMonth() === dateObj.getMonth() &&
+    now.getFullYear() === dateObj.getFullYear()
+  ) {
+    return dayjs(date).format('HH:mm')
+  }
+
+  if (now.getFullYear() === dateObj.getFullYear()) {
+    return dayjs(date).format('MMM D')
+  }
+
+  return dayjs(date).format('MMM D, YYYY')
 }
