@@ -229,17 +229,19 @@ export default function UserLeaderboardPage({
           <span className={clsx(styles.WeightNormal, styles.Title)}>
             Increase your daily rewards by locking more SUB
           </span>
-          <span className='FontSmall'>
-            You can lock{' '}
-            {formatBalanceToJsx({
-              value: availableBalance.toString(),
-              currency: '',
-              decimals: 10,
-              withMutedDecimals: false,
-              precision: 2,
-            })}
-            more SUB to increase your future rewards
-          </span>
+          {!availableBalance.isZero() && (
+            <span className='FontSmall'>
+              You can lock{' '}
+              {formatBalanceToJsx({
+                value: availableBalance.toString(),
+                currency: '',
+                decimals: 10,
+                withMutedDecimals: false,
+                precision: 2,
+              })}
+              more SUB to increase your future rewards
+            </span>
+          )}
         </div>
         <Button
           size='middle'
