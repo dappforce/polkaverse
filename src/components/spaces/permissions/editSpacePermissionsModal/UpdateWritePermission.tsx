@@ -18,10 +18,11 @@ type UpdateWritePermissionProps = TxButtonProps & {
   space?: SpaceStruct
   whoCanPost: BuiltInRole
   label?: string
+  shouldRevokeEditors?: boolean
 }
 
 export function EditWritePermission(props: UpdateWritePermissionProps) {
-  const { space, label, whoCanPost, onSuccess, ...buttonProps } = props
+  const { space, label, whoCanPost, onSuccess, shouldRevokeEditors = true, ...buttonProps } = props
   const { id } = space || {}
   const spaceId = id || ''
 
@@ -50,7 +51,7 @@ export function EditWritePermission(props: UpdateWritePermissionProps) {
       }),
     ]
 
-    if (isHaveEditors) {
+    if (isHaveEditors && shouldRevokeEditors) {
       batchTxs.push(api.tx.roles.revokeRole(...buildGrantOrRevokeRoleArgs(roleId, editors)))
     }
 

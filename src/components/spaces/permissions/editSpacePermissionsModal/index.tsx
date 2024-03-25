@@ -102,6 +102,7 @@ const EditSpacePermissionsModal = (props: Props) => {
                 }
                 action={
                   <EditWritePermission
+                    shouldRevokeEditors={false}
                     ghost
                     className='mt-1'
                     size='middle'
