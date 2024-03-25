@@ -60,12 +60,14 @@ export function EditWritePermission(props: UpdateWritePermissionProps) {
 
   const onTxSuccess: TxCallback = () => {
     reloadSpace({ id: spaceId })
-    dispatch(
-      upsertSpaceEditorsBySpaceId({
-        id: spaceId,
-        spaceEditors: [],
-      }),
-    )
+    if (shouldRevokeEditors) {
+      dispatch(
+        upsertSpaceEditorsBySpaceId({
+          id: spaceId,
+          spaceEditors: [],
+        }),
+      )
+    }
     onSuccess && onSuccess()
   }
 
