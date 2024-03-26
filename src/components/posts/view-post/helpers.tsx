@@ -495,6 +495,7 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
   } = postDetails
 
   const embedType = getEmbedLinkType(content?.link)
+  const shouldRenderEmbed = embedType && !content?.image
   if (!struct || !content) return null
 
   return (
@@ -502,12 +503,12 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
       <div className='DfRow'>
         <div className='w-100'>
           <PostPreviewCreatorInfo postDetails={postDetails} space={space} isPromoted={isPromoted} />
-          {content.link && <Embed link={content.link} className='mt-3' />}
+          {shouldRenderEmbed && <Embed link={content.link!} className='mt-3' />}
           <PostContent
             withMarginForCardType={withMarginForCardType && !withTags}
             postDetails={postDetails}
             space={space?.struct}
-            withImage={withImage && !embedType}
+            withImage={withImage && !shouldRenderEmbed}
           />
           {withTags && <ViewTags tags={content?.tags} />}
           {/* {withStats && <StatsPanel id={post.id}/>} */}
