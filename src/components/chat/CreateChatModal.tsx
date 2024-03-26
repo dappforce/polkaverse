@@ -21,7 +21,7 @@ type CreateChatModalButtonProps = {
 
 const CreateChatModalButton = ({ size }: CreateChatModalButtonProps) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
-  const [isOpenProfileModal, setIsOpenProfileModal] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -32,14 +32,14 @@ const CreateChatModalButton = ({ size }: CreateChatModalButtonProps) => {
 
       const { name, value } = message
       if (name === 'create-chat' && value === 'close') {
-        setIsOpenProfileModal(false)
+        setOpenModal(false)
       } else if (name === 'redirect') {
         router.push(value)
-        setIsOpenProfileModal(false)
+        setOpenModal(false)
       } else if (name === 'redirect-hard') {
         // Using router push for redirect don't redirect properly, it just have loading for a bit and changes the url much later
         window.location.href = value
-        setIsOpenProfileModal(false)
+        setOpenModal(false)
       }
     }
   }, [])
@@ -57,7 +57,7 @@ const CreateChatModalButton = ({ size }: CreateChatModalButtonProps) => {
           },
           '*',
         )
-        setIsOpenProfileModal(true)
+        setOpenModal(true)
       }}
       className='DfCurrentAddress icon CursorPointer'
     >
@@ -69,8 +69,8 @@ const CreateChatModalButton = ({ size }: CreateChatModalButtonProps) => {
           ref={iframeRef}
           src={`${getCurrentUrlOrigin()}/c/widget/create-chat?theme=light`}
           style={{
-            opacity: isOpenProfileModal ? 1 : 0,
-            pointerEvents: isOpenProfileModal ? 'auto' : 'none',
+            opacity: openModal ? 1 : 0,
+            pointerEvents: openModal ? 'auto' : 'none',
             transition: 'opacity 0.3s ease-in-out',
             colorScheme: 'none',
             background: 'transparent',
