@@ -17,6 +17,7 @@ import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { AccountActivity } from '../activity/AccountActivity'
 import { useMyAddress } from '../auth/MyAccountsContext'
+// import { CreateChatModalButton } from '../chat/CreateChatModal'
 import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
 import WriteSomething from '../posts/WriteSomething'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
@@ -49,6 +50,7 @@ import { ViewSpaceOptsProps, ViewSpaceProps } from './ViewSpaceProps'
 const log = newLogger('ViewSpace')
 
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false })
+const CreateChatModalButton = dynamic(() => import('../chat/CreateChatModal'), { ssr: false })
 
 type Props = ViewSpaceProps
 
@@ -163,6 +165,8 @@ export const InnerViewSpace = (props: Props) => {
   const contactInfo = { email, links }
   const spaceName = renderSpaceName(spaceData)
 
+  const chatButton = <CreateChatModalButton />
+
   const primaryClass = `ProfileDetails ${isMy && 'MySpace'} d-flex`
 
   const renderNameOnly = () =>
@@ -217,11 +221,6 @@ export const InnerViewSpace = (props: Props) => {
     e.stopPropagation()
     setCollapseAbout(prev => !prev)
   }
-  // const toggleCreatorChat = () => {
-  //   sendEvent('creator_chat_opened', { spaceId: space.id })
-  //   setChatConfig({ entity: { data: spaceData, type: 'space' }, withFloatingButton: false })
-  //   setChatOpen(true)
-  // }
 
   const previewButtons = (size: 'small' | 'middle' = 'middle') => (
     <div className='d-flex align-items-center GapTiny'>
@@ -236,24 +235,24 @@ export const InnerViewSpace = (props: Props) => {
         </ButtonLink>
       )}
 
-      {/* {!isMobile && isCreatorSpace && (
-        <Button size={size} type='primary' ghost onClick={toggleCreatorChat}>
-          Creator Chat
-        </Button>
-      )} */}
-
       {withFollowButton && (
-        <div
-          onClick={() =>
-            sendEvent('follow', {
-              spaceId: space.id,
-              eventSource: 'space',
-              amountRange: getAmountRange(totalStake?.amount),
-            })
-          }
-        >
-          <FollowSpaceButton size={size} ghost={false} space={space} />
-        </div>
+        <>
+          {isProfileSpace && isMySpace ? (
+            chatButton
+          ) : (
+            <div
+              onClick={() =>
+                sendEvent('follow', {
+                  spaceId: space.id,
+                  eventSource: 'space',
+                  amountRange: getAmountRange(totalStake?.amount),
+                })
+              }
+            >
+              <FollowSpaceButton size={size} ghost={false} space={space} />
+            </div>
+          )}
+        </>
       )}
     </div>
   )
@@ -362,6 +361,8 @@ export const InnerViewSpace = (props: Props) => {
         <WriteSomething className='mt-3' defaultSpaceId={spaceData.id} />
       )}
       <Section className='DfContentPage mt-4'>
+        {/* <CreateChatModalButton /> */}
+
         {isProfileSpace ? (
           <AccountActivity
             withSpacePosts={{ spaceData, postIds: filteredPostIds, posts: filteredPosts }}
