@@ -18,10 +18,11 @@ type UpdateWritePermissionProps = TxButtonProps & {
   space?: SpaceStruct
   whoCanPost: BuiltInRole
   label?: string
+  shouldRevokeEditors?: boolean
 }
 
 export function EditWritePermission(props: UpdateWritePermissionProps) {
-  const { space, label, whoCanPost, onSuccess, ...buttonProps } = props
+  const { space, label, whoCanPost, onSuccess, shouldRevokeEditors = true, ...buttonProps } = props
   const { id } = space || {}
   const spaceId = id || ''
 
@@ -50,7 +51,7 @@ export function EditWritePermission(props: UpdateWritePermissionProps) {
       }),
     ]
 
-    if (isHaveEditors) {
+    if (isHaveEditors && shouldRevokeEditors) {
       batchTxs.push(api.tx.roles.revokeRole(...buildGrantOrRevokeRoleArgs(roleId, editors)))
     }
 
@@ -59,12 +60,14 @@ export function EditWritePermission(props: UpdateWritePermissionProps) {
 
   const onTxSuccess: TxCallback = () => {
     reloadSpace({ id: spaceId })
-    dispatch(
-      upsertSpaceEditorsBySpaceId({
-        id: spaceId,
-        spaceEditors: [],
-      }),
-    )
+    if (shouldRevokeEditors) {
+      dispatch(
+        upsertSpaceEditorsBySpaceId({
+          id: spaceId,
+          spaceEditors: [],
+        }),
+      )
+    }
     onSuccess && onSuccess()
   }
 
@@ -86,12 +89,12 @@ export function EditWritePermission(props: UpdateWritePermissionProps) {
     <TxButton
       {...buttonProps}
       label={label || 'Update permissions'}
-      type='primary'
+      type={buttonProps.type ?? 'primary'}
       tx={tx}
       params={params}
       canUseProxy={false}
-      block
-      size='large'
+      block={buttonProps.block ?? true}
+      size={buttonProps.size ?? 'large'}
       onSuccess={onTxSuccess}
       failedMessage={'Failed to update permissions of this space'}
       withSpinner

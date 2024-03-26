@@ -1,7 +1,6 @@
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons'
 import { Alert, Button, Tag, Tooltip } from 'antd'
 import clsx from 'clsx'
-import dayjs from 'dayjs'
 import { FC, useEffect, useState } from 'react'
 import { TbCoins, TbMessageCircle2 } from 'react-icons/tb'
 import { getNeededLock } from 'src/config/constants'
@@ -15,6 +14,7 @@ import {
   PostWithSomeDetails,
   SpaceStruct,
 } from 'src/types'
+import { getShortTimeRelativeToNow } from 'src/utils/date'
 import { activeStakingLinks } from 'src/utils/links'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
@@ -148,7 +148,7 @@ export const InnerViewComment: FC<Props> = props => {
               <MutedSpan>&middot;</MutedSpan>
               <CustomLink href='/[spaceId]/[slug]' as={commentLink}>
                 <a className='DfGreyLink FontTiny' title={formatDate(createdAtTime)}>
-                  {dayjs(createdAtTime).fromNow()}
+                  {getShortTimeRelativeToNow(createdAtTime)}
                 </a>
               </CustomLink>
             </div>

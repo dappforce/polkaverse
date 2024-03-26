@@ -9,8 +9,9 @@ import { useFetchUserStatistics } from 'src/rtk/features/leaderboard/hooks'
 import { UserStatistics } from 'src/rtk/features/leaderboard/userStatisticsSlice'
 import { getContentStakingLink } from 'src/utils/links'
 import { truncateAddress } from 'src/utils/storage'
+import { useAuth } from '../auth/AuthContext'
 import { useMyAddress } from '../auth/MyAccountsContext'
-import { FormatBalance } from '../common/balances'
+import { FormatBalance, formatBalanceToJsx } from '../common/balances'
 import RewardHistoryModal, { RewardHistoryPanel } from '../creators/RewardHistoryModal'
 import { PageContent } from '../main/PageWrapper'
 import { useIsMobileWidthOrDevice } from '../responsive'
@@ -169,6 +170,7 @@ export default function UserLeaderboardPage({
   const { data } = useFetchUserStatistics(address)
   const [isOpenHistoryModal, setIsOpenHistoryModal] = useState(false)
   const isMobile = useIsMobileWidthOrDevice()
+  const { balance: availableBalance } = useAuth()
 
   const { data: rewardHistory, loading } = useFetchUserRewardHistory(address)
 
@@ -223,8 +225,23 @@ export default function UserLeaderboardPage({
       )}
       <div className={styles.IncreaseRewardsAlert}>
         <DfImage preview={false} src='/images/coins.png' className={styles.Image} />
-        <div className={clsx(styles.Title, styles.WeightNormal)}>
-          Increase your daily rewards by locking more SUB
+        <div className={clsx('d-flex flex-column GapMini')} style={{ marginLeft: '45px' }}>
+          <span className={clsx(styles.WeightNormal, styles.Title)}>
+            Increase your daily rewards by locking more SUB
+          </span>
+          {!availableBalance.isZero() && (
+            <span className='FontSmall'>
+              You can lock{' '}
+              {formatBalanceToJsx({
+                value: availableBalance.toString(),
+                currency: '',
+                decimals: 10,
+                withMutedDecimals: false,
+                precision: 2,
+              })}
+              more SUB to increase your future rewards
+            </span>
+          )}
         </div>
         <Button
           size='middle'

@@ -79,9 +79,11 @@ export function useDefaultSpaceIdToPost(defaultSpaceId?: string) {
 }
 
 export const PostEditorModalBody = ({
+  visible,
   closeModal,
   defaultSpaceId,
 }: {
+  visible?: boolean
   closeModal: () => void
   defaultSpaceId?: string
 }) => {
@@ -98,14 +100,21 @@ export const PostEditorModalBody = ({
   const [form] = Form.useForm()
   const { ipfs } = useSubsocialApi()
   const [IpfsCid, setIpfsCid] = useState<IpfsCid>()
-  const [publishIsDisable, setPublishIsDisable] = useState(true)
   const sendEvent = useSendEvent()
 
   const router = useRouter()
   const [spaceId, setSpaceId] = useState<string>(defaultSpace)
 
   const { loading } = useFetchSpaces({ ids: spaceIds, dataSource: DataSourceTypes.SQUID })
-  const { savedData, saveContent } = useAutoSaveFromForm({ entity: 'post' })
+  const { savedData, saveContent, clearDraft } = useAutoSaveFromForm({ entity: 'post' })
+  const hasDraft = !!savedData.body
+  const [publishIsDisable, setPublishIsDisable] = useState(true)
+
+  useEffect(() => {
+    if (visible && hasDraft) {
+      setPublishIsDisable(!hasDraft)
+    }
+  }, [hasDraft, visible])
 
   useEffect(() => {
     setSpaceId(defaultSpace)
@@ -247,6 +256,10 @@ export const PostEditorModalBody = ({
             type='primary'
             disabled={publishIsDisable}
             {...txProps}
+            onSuccess={status => {
+              txProps.onSuccess(status)
+              clearDraft()
+            }}
           />
         </Col>
       </Row>
@@ -278,6 +291,7 @@ export const PostEditorModal = ({ defaultSpaceId, ...props }: PostEditorModalPro
     >
       <div className={styles.Content}>
         <PostEditorModalBody
+          visible={props.visible}
           defaultSpaceId={defaultSpaceId}
           closeModal={() => props.onCancel && props.onCancel()}
         />
