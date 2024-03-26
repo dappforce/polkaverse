@@ -8,6 +8,7 @@ import Error from 'next/error'
 import React, { FC, useState } from 'react'
 import { RiPushpin2Fill } from 'react-icons/ri'
 import { TbCoins, TbMessageCircle2 } from 'react-icons/tb'
+import SubTeamLabel from 'src/components/moderation/SubTeamLabel'
 import CustomLink from 'src/components/referral/CustomLink'
 import { useIsMobileWidthOrDevice } from 'src/components/responsive'
 import { useIsMySpace } from 'src/components/spaces/helpers'
@@ -169,11 +170,14 @@ export const PostCreator: FC<PostCreatorProps> = ({
       isPadded={false}
       size={size}
       afterName={
-        isPromoted ? (
-          <Tag color='processing' className='ml-2'>
-            Promoted
-          </Tag>
-        ) : undefined
+        <>
+          <SubTeamLabel address={ownerId} className='ml-2' />
+          {isPromoted ? (
+            <Tag color='processing' className='ml-2'>
+              Promoted
+            </Tag>
+          ) : undefined}
+        </>
       }
       details={
         <div>

@@ -18,6 +18,7 @@ import {
 import { activeStakingLinks } from 'src/utils/links'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
+import SubTeamLabel from '../moderation/SubTeamLabel'
 import { ShareDropdown } from '../posts/share/ShareDropdown'
 import { useShouldRenderMinStakeAlert } from '../posts/view-post'
 import { PostDropDownMenu } from '../posts/view-post/PostDropDownMenu'
@@ -144,6 +145,7 @@ export const InnerViewComment: FC<Props> = props => {
                     <Tooltip title='Original Poster'>OP</Tooltip>
                   </Tag>
                 )}
+                <SubTeamLabel address={ownerId} />
               </div>
               <MutedSpan>&middot;</MutedSpan>
               <CustomLink href='/[spaceId]/[slug]' as={commentLink}>

@@ -18,9 +18,10 @@ export function useFetchModerator(address: string) {
   }
 }
 
-export function useIsAdmin() {
+export function useIsAdmin(address?: string) {
   const myAddress = useMyAddress()
-  const { data: moderator } = useFetchModerator(myAddress)
+  const usedAddress = address || myAddress
+  const { data: moderator } = useFetchModerator(usedAddress)
   return moderator?.appIds.includes(appId)
 }
 
