@@ -237,9 +237,9 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
     },
     selectEntityIds: selectPostIds,
     handleAfterDataFetch: async (entities, args, { dispatch }) => {
+      console.log('start afterdata')
       const {
         api,
-        newIds,
         withContent = true,
         withOwner = true,
         withSpace = true,
@@ -252,19 +252,7 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
         entities,
       )
 
-      // no need to wait for posts rewards fetch in client side
-      // will not be prefetched from server side because this query takes pretty long
-      if (isClientSide()) {
-        dispatch(fetchPostRewards({ postIds: newIds as string[] }))
-        dispatch(fetchPostsViewCount({ postIds: newIds as string[] }))
-      }
-      const fetches: Promise<any>[] = [
-        dispatch(fetchSuperLikeCounts({ postIds: newIds as string[] })),
-        dispatch(fetchCanPostsSuperLiked({ postIds: newIds as string[] })),
-        // need to wait for this to be fetched before any post is rendered
-        dispatch(fetchBlockedResources({ appId })),
-      ]
-
+      const fetches: Promise<any>[] = []
       if (withOwner) {
         const ids = getUniqueOwnerIds(entities)
         const prefetchedData = generatePrefetchData<ProfileSpaceIdByAccount>(
@@ -335,6 +323,7 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
         }
       }
 
+      console.log('fetches', fetches)
       await Promise.all(fetches)
       return entities
     },
@@ -348,6 +337,19 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
         newIds: _newIds,
       } = args
       const newIds = _newIds as string[]
+
+      // no need to wait for posts rewards fetch in client side
+      // will not be prefetched from server side because this query takes pretty long
+      if (isClientSide()) {
+        dispatch(fetchPostRewards({ postIds: newIds as string[] }))
+        dispatch(fetchPostsViewCount({ postIds: newIds as string[] }))
+      }
+      const fetches: Promise<any>[] = [
+        dispatch(fetchSuperLikeCounts({ postIds: newIds as string[] })),
+        dispatch(fetchCanPostsSuperLiked({ postIds: newIds as string[] })),
+        // need to wait for this to be fetched before any post is rendered
+        dispatch(fetchBlockedResources({ appId })),
+      ]
 
       // removed because now it uses super likes
       // withReactionByAccount &&
@@ -417,6 +419,8 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
       })
       const allEntities = entities.concat(extEntities)
       await getPostCountDataFromChain(api, allEntities)
+
+      await Promise.all(fetches)
 
       return allEntities
     },
