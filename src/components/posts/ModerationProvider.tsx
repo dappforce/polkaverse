@@ -1,7 +1,9 @@
 import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { isDevMode } from 'src/config/env'
+import { useIsAdmin } from 'src/rtk/features/moderation/hooks'
 import { parseGrillMessage } from 'src/utils/iframe'
 import { getCurrentUrlOrigin } from 'src/utils/url'
+import { useMyAddress } from '../auth/MyAccountsContext'
 
 type State = {
   openModal: (postId: string) => void
@@ -12,6 +14,8 @@ const Context = React.createContext<State>({ openModal: () => undefined })
 export default function ModerationProvider({ children }: { children: ReactNode }) {
   const [isOpenModal, setIsOpenModal] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
+  const myAddress = useMyAddress()
+  const isAdmin = useIsAdmin(myAddress)
 
   useEffect(() => {
     const listener = (event: MessageEvent<any>) => {
@@ -45,7 +49,7 @@ export default function ModerationProvider({ children }: { children: ReactNode }
   return (
     <Context.Provider value={value}>
       {children}
-      {!isDevMode && (
+      {!isDevMode && isAdmin && (
         <iframe
           ref={iframeRef}
           src={`${getCurrentUrlOrigin()}/c/widget/moderation?theme=light`}
