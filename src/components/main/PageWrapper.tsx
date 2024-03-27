@@ -54,7 +54,7 @@ const resolveIpfsOrLocalUrl = (url: string) => {
 }
 
 export function HeadMeta(props: HeadMetaProps) {
-  const { forceTitle, title, desc, image, canonical, externalCanonical, tags } = props
+  const { forceTitle, title, desc, image, canonical, tags } = props
   const summary = desc ? summarize(desc, { limit: MAX_DESC_LEN }) : metaTags.desc
   const img = nonEmptyStr(image) ? resolveIpfsOrLocalUrl(image) : fullUrl(metaTags.defaultImage)
 
