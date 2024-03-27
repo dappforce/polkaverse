@@ -29,6 +29,8 @@ export function useFetchBlockedResourcesInApp() {
   const data = useAppSelector(state => selectBlockedResources(state, appId))
   const fetchData = useFetchWithoutApi(fetchBlockedResources, { appId }, { enabled: !!appId })
 
+  console.log('data', data)
+
   return {
     ...fetchData,
     data,

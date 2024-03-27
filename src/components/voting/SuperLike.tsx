@@ -56,7 +56,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const myAddress = useMyAddress()
   const sendEvent = useSendEvent()
 
-  const isBlocked = useIsBlocked(myAddress)
+  const { isBlocked, loading } = useIsBlocked(myAddress)
   const [isOpenBlockedModal, setIsOpenBlockedModal] = useState(false)
   // const [isSigning, setIsSigning] = useState(false)
 
@@ -80,7 +80,8 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
 
   const isActive = hasILiked
   const canBeSuperliked = clientCanPostSuperLiked && canPostSuperLiked
-  const isDisabled = !canBeSuperliked || isMyPost || loadingTotalStake || !superLikeMessage.message
+  const isDisabled =
+    !canBeSuperliked || isMyPost || loadingTotalStake || !superLikeMessage.message || loading
 
   const onClick = async () => {
     if (isActive || isDisabled) return
