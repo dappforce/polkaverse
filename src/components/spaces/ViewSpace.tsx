@@ -17,7 +17,6 @@ import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { AccountActivity } from '../activity/AccountActivity'
 import { useMyAddress } from '../auth/MyAccountsContext'
-// import { CreateChatModalButton } from '../chat/CreateChatModal'
 import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
 import WriteSomething from '../posts/WriteSomething'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
@@ -145,7 +144,9 @@ export const InnerViewSpace = (props: Props) => {
   const isMySpace = useIsMySpace(spaceData?.struct)
   const { filteredPostIds, filteredPosts } = useMemo(() => {
     if (isMySpace) return { filteredPosts: posts, filteredPostIds: postIds }
+
     const hiddenPosts = new Set()
+
     const filteredPosts = posts.filter(post => {
       if (isHidden(post.post.struct)) {
         hiddenPosts.add(post.post.id)
@@ -153,6 +154,7 @@ export const InnerViewSpace = (props: Props) => {
       }
       return true
     })
+
     const filteredPostIds = postIds.filter(id => !hiddenPosts.has(id))
     return { filteredPosts, filteredPostIds }
   }, [posts, postIds])
@@ -165,7 +167,7 @@ export const InnerViewSpace = (props: Props) => {
   const contactInfo = { email, links }
   const spaceName = renderSpaceName(spaceData)
 
-  const chatButton = <CreateChatModalButton />
+  const chatButton = <CreateChatModalButton spaceId={spaceId} />
 
   const primaryClass = `ProfileDetails ${isMy && 'MySpace'} d-flex`
 
@@ -361,13 +363,12 @@ export const InnerViewSpace = (props: Props) => {
         <WriteSomething className='mt-3' defaultSpaceId={spaceData.id} />
       )}
       <Section className='DfContentPage mt-4'>
-        {/* <CreateChatModalButton /> */}
-
         {isProfileSpace ? (
           <AccountActivity
             withSpacePosts={{ spaceData, postIds: filteredPostIds, posts: filteredPosts }}
             withWriteSomethingBlock={false}
             address={spaceData.struct.ownerId}
+            spaceId={spaceId}
           />
         ) : (
           <PostPreviewsOnSpace
