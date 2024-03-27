@@ -1,7 +1,7 @@
 import { Keyring } from '@polkadot/api'
 import { isStr } from '@subsocial/utils'
 import Button, { ButtonProps } from 'antd/lib/button'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import config from 'src/config'
 import { useIsProxyAddedContext } from '../onboarding/contexts/IsProxyAdded'
 import { isProxyAdded } from '../utils/OffchainSigner/ExternalStorage'
@@ -20,6 +20,7 @@ import useSignerExternalStorage from 'src/hooks/useSignerExternalStorage'
 import useWaitHasEnergy from 'src/hooks/useWaitHasEnergy'
 import messages from 'src/messages'
 import { useBuildSendEvent } from 'src/providers/AnalyticContext'
+import { useIsBlocked } from 'src/rtk/features/moderation/hooks'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
 import { useMyAccount } from 'src/stores/my-account'
 import { AnyAccountId } from 'src/types'
@@ -29,6 +30,7 @@ import { useAuth } from '../auth/AuthContext'
 import { useMyAddress, useMyEmailAddress } from '../auth/MyAccountsContext'
 import useEncryptedStorage from '../auth/signIn/email/useEncryptionToStorage'
 import { getCurrentWallet } from '../auth/utils'
+import BlockedModal from '../moderation/BlockedModal'
 import { useResponsiveSize } from '../responsive/ResponsiveContext'
 import { controlledMessage, Message, showErrorMessage, showSuccessMessage } from '../utils/Message'
 import {
@@ -112,6 +114,7 @@ function TxButton({
   const [isSending, , setIsSending] = useToggle(false)
   const hasEnoughEnergy = useMyAccount(state => (state.energy ?? 0) >= ESTIMATED_ENERGY_FOR_ONE_TX)
   const waitHasEnergy = useWaitHasEnergy()
+  const [isOpenBlockedModal, setIsOpenBlockedModal] = useState(false)
 
   const { isMobile } = useResponsiveSize()
   const {
@@ -134,6 +137,7 @@ function TxButton({
   const myAddress = useMyAddress()
   const { getEncryptedStoredAccount } = useEncryptedStorage()
   const { isProxyAdded: isProxyAddedState } = useIsProxyAddedContext()
+  const { isBlocked, loading: isLoadingBlockedData } = useIsBlocked(myAddress)
 
   const myEmailAddress = useMyEmailAddress()
 
@@ -469,28 +473,36 @@ function TxButton({
   const isDisabled = disabled || isSending || isEmptyStr(tx)
 
   return (
-    <Component
-      {...antdProps}
-      onClick={() => {
-        if (!customNodeApi && !isFreeTx && !getIsUsingKeypairSigner(accountId ?? '')) {
-          if (!accountId) {
-            openSignInModal(false)
-            return setIsSending(false)
+    <>
+      <Component
+        {...antdProps}
+        onClick={() => {
+          if (isBlocked) {
+            setIsOpenBlockedModal(true)
+            return
           }
-          if (!hasTokens) {
-            // TODO: create independent energy modal
-            openOnBoardingModal('open', { toStep: 'energy', type: 'partial' })
-            return setIsSending(false)
-          }
-        }
 
-        sendTx()
-      }}
-      disabled={isDisabled || isSending}
-      loading={(withSpinner && isSending) || loading}
-    >
-      {buttonLabel}
-    </Component>
+          if (!customNodeApi && !isFreeTx && !getIsUsingKeypairSigner(accountId ?? '')) {
+            if (!accountId) {
+              openSignInModal(false)
+              return setIsSending(false)
+            }
+            if (!hasTokens) {
+              // TODO: create independent energy modal
+              openOnBoardingModal('open', { toStep: 'energy', type: 'partial' })
+              return setIsSending(false)
+            }
+          }
+
+          sendTx()
+        }}
+        disabled={isDisabled || isSending || isLoadingBlockedData}
+        loading={(withSpinner && isSending) || loading}
+      >
+        {buttonLabel}
+      </Component>
+      <BlockedModal visible={isOpenBlockedModal} onCancel={() => setIsOpenBlockedModal(false)} />
+    </>
   )
 }
 

@@ -24,6 +24,8 @@ import generalStatistics from '../features/leaderboard/generalStatisticsSlice'
 import leaderboard from '../features/leaderboard/leaderboardSlice'
 import topUsers from '../features/leaderboard/topUsersSlice'
 import userStatistics from '../features/leaderboard/userStatisticsSlice'
+import blockedResources from '../features/moderation/blockedResourcesSlice'
+import moderators from '../features/moderation/moderatorSlice'
 import onBoarding from '../features/onBoarding/onBoardingSlice'
 import mySpacePermissions from '../features/permissions/mySpacePermissionsSlice'
 import myFeed from '../features/posts/myFeedSlice'
@@ -81,6 +83,8 @@ const rootReducer = combineReducers({
   prevReward,
   superLikeMessage,
   postsViewCount,
+  moderators,
+  blockedResources,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import React, { createContext, FC, useContext, useEffect, useRef, useState } from 'react'
-import { getCurrentUrlOrigin } from 'src/utils/url'
+import { parseGrillMessage } from 'src/utils/iframe'
 import { InfoDetails } from '../profiles/address-views'
 import Avatar from '../profiles/address-views/Avatar'
 import Address from '../profiles/address-views/Name'
@@ -9,6 +9,7 @@ import {
   withMyProfile,
   withProfileByAccountId,
 } from '../profiles/address-views/utils/withLoadedOwner'
+import GrillIframeModal from '../utils/GrillIframe'
 
 type SelectAddressType = AddressProps & {
   onClick?: () => void
@@ -66,24 +67,14 @@ const MyAccountDrawerContext = createContext<MyAccountSectionContextState>(initV
 
 export const useMyAccountDrawer = () => useContext(MyAccountDrawerContext)
 
-function parseMessage(data: string) {
-  const match = data.match(/^([^:]+):([^:]+):(.+)$/)
-  if (!match) return null
-
-  const origin = match[1]
-  const name = match[2]
-  const value = match[3]
-  if (origin !== 'grill') return null
-  return { name: name ?? '', value: value ?? '' }
-}
 export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, owner }) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [isOpenProfileModal, setIsOpenProfileModal] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
-    window.onmessage = event => {
-      const message = parseMessage(event.data + '')
+    function listener(event: MessageEvent<any>) {
+      const message = parseGrillMessage(event.data + '')
       if (!message) return
 
       const { name, value } = message
@@ -98,10 +89,9 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
         setIsOpenProfileModal(false)
       }
     }
+    window.addEventListener('message', listener)
+    return () => window.removeEventListener('message', listener)
   }, [])
-
-  const origin = getCurrentUrlOrigin()
-  const isDevMode = origin.includes('localhost')
 
   return (
     <span
@@ -118,23 +108,7 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
       className='DfCurrentAddress icon CursorPointer'
     >
       <Avatar address={address} avatar={owner?.content?.image} asLink={false} size={30} noMargin />
-      {!isDevMode && (
-        <iframe
-          ref={iframeRef}
-          src={`${getCurrentUrlOrigin()}/c/widget/profile?theme=light`}
-          style={{
-            opacity: isOpenProfileModal ? 1 : 0,
-            pointerEvents: isOpenProfileModal ? 'auto' : 'none',
-            transition: 'opacity 0.3s ease-in-out',
-            colorScheme: 'none',
-            background: 'transparent',
-            position: 'fixed',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-          }}
-        />
-      )}
+      <GrillIframeModal pathname='/widget/profile' isOpen={isOpenProfileModal} ref={iframeRef} />
     </span>
   )
 }

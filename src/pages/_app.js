@@ -39,6 +39,7 @@ import { DatahubSubscriber } from 'src/components/utils/datahub/subscriber'
 import Script from 'next/script'
 import { initAllStores } from 'src/stores/registry'
 import { ReferralUrlChanger } from 'src/components/referral/ReferralUrlChanger'
+import ModerationProvider from 'src/components/posts/ModerationProvider'
 
 dayjs.extend(relativeTime)
 dayjs.extend(localizedFormat)
@@ -92,11 +93,13 @@ function MyApp(props) {
         <AnalyticProvider>
           <DfApolloProvider initialApolloState={pageProps.initialApolloState}>
             <ThemeProvider defaultTheme='light' forcedTheme='light'>
-              <MainPage>
-                <ReferralUrlChanger />
-                <AppLaunchedEventSender />
-                <Component {...pageProps} />
-              </MainPage>
+              <ModerationProvider>
+                <MainPage>
+                  <ReferralUrlChanger />
+                  <Component {...pageProps} />
+                  <AppLaunchedEventSender />
+                </MainPage>
+              </ModerationProvider>
             </ThemeProvider>
           </DfApolloProvider>
         </AnalyticProvider>
