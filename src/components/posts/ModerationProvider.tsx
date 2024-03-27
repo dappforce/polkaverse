@@ -1,9 +1,8 @@
 import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
-import { isDevMode } from 'src/config/env'
 import { useIsAdmin } from 'src/rtk/features/moderation/hooks'
 import { parseGrillMessage } from 'src/utils/iframe'
-import { getCurrentUrlOrigin } from 'src/utils/url'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import GrillIframeModal from '../utils/GrillIframe'
 
 type State = {
   openModal: (postId: string) => void
@@ -49,23 +48,12 @@ export default function ModerationProvider({ children }: { children: ReactNode }
   return (
     <Context.Provider value={value}>
       {children}
-      {!isDevMode && isAdmin && (
-        <iframe
+      {isAdmin && (
+        <GrillIframeModal
+          pathname='/widget/moderation'
+          style={{ zIndex: 20 }}
+          isOpen={isOpenModal}
           ref={iframeRef}
-          src={`${getCurrentUrlOrigin()}/c/widget/moderation?theme=light`}
-          style={{
-            opacity: isOpenModal ? 1 : 0,
-            pointerEvents: isOpenModal ? 'auto' : 'none',
-            border: 'none',
-            zIndex: 20,
-            transition: 'opacity 0.3s ease-in-out',
-            colorScheme: 'none',
-            background: 'transparent',
-            position: 'fixed',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-          }}
         />
       )}
     </Context.Provider>

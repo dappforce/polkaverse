@@ -1,8 +1,6 @@
 import { useRouter } from 'next/router'
 import React, { createContext, FC, useContext, useEffect, useRef, useState } from 'react'
-import { isDevMode } from 'src/config/env'
 import { parseGrillMessage } from 'src/utils/iframe'
-import { getCurrentUrlOrigin } from 'src/utils/url'
 import { InfoDetails } from '../profiles/address-views'
 import Avatar from '../profiles/address-views/Avatar'
 import Address from '../profiles/address-views/Name'
@@ -11,6 +9,7 @@ import {
   withMyProfile,
   withProfileByAccountId,
 } from '../profiles/address-views/utils/withLoadedOwner'
+import GrillIframeModal from '../utils/GrillIframe'
 
 type SelectAddressType = AddressProps & {
   onClick?: () => void
@@ -109,25 +108,7 @@ export const AccountMenu: React.FunctionComponent<AddressProps> = ({ address, ow
       className='DfCurrentAddress icon CursorPointer'
     >
       <Avatar address={address} avatar={owner?.content?.image} asLink={false} size={30} noMargin />
-      {!isDevMode && (
-        <iframe
-          ref={iframeRef}
-          src={`${getCurrentUrlOrigin()}/c/widget/profile?theme=light`}
-          style={{
-            opacity: isOpenProfileModal ? 1 : 0,
-            pointerEvents: isOpenProfileModal ? 'auto' : 'none',
-            transition: 'opacity 0.3s ease-in-out',
-            border: 'none',
-            colorScheme: 'none',
-            background: 'transparent',
-            position: 'fixed',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-          }}
-          allow='clipboard-write'
-        />
-      )}
+      <GrillIframeModal pathname='/widget/profile' isOpen={isOpenProfileModal} ref={iframeRef} />
     </span>
   )
 }
