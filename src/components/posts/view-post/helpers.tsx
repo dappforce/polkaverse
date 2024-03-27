@@ -543,7 +543,8 @@ export const PostNotFound = () => <NoData description='Post not found' />
 export const PostNotFoundPage = () => <Error statusCode={404} title='Post not found' />
 
 export function useShouldRenderMinStakeAlert(post: PostStruct) {
-  const { isExist, validByCreatorMinStake, validByCreationDate } = useCanPostSuperLiked(post.id)
+  const { isExist, validByCreatorMinStake, validByCreationDate } =
+    useCanPostSuperLiked(post.id) || {}
   const isMyPost = useIsMyAddress(post.ownerId)
   const isMadeWithinOneMinute = Date.now() - post.createdAtTime < 60 * 1000
   const myAddress = useMyAddress() ?? ''

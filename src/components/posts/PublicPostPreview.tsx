@@ -17,7 +17,7 @@ export const PublicPostPreviewById = React.memo(
   ({ postId, showPinnedIcon, showMuted, isPromoted, shouldHideChatRooms }: Props) => {
     const post = useSelectPost(postId, showMuted)
     const { value: showLikeablePostOnly } = useShowLikeablePostsContext()
-    const { validByCreatorMinStake } = useCanPostSuperLiked(postId)
+    const { validByCreatorMinStake } = useCanPostSuperLiked(postId) || {}
 
     if (!post || (showLikeablePostOnly && !validByCreatorMinStake && !isPromoted)) return null
 

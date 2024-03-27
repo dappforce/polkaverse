@@ -56,7 +56,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const myAddress = useMyAddress()
   const sendEvent = useSendEvent()
 
-  const { isBlocked, loading } = useIsBlocked(myAddress)
+  const { isBlocked, loading: loadingIsBlocked } = useIsBlocked(myAddress)
   const [isOpenBlockedModal, setIsOpenBlockedModal] = useState(false)
   // const [isSigning, setIsSigning] = useState(false)
 
@@ -66,7 +66,9 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const spaceId = post.spaceId
   const amIFollower = useAmISpaceFollower(spaceId)
 
-  const { isExist, canPostSuperLiked, validByCreatorMinStake } = useCanPostSuperLiked(post.id)
+  const record = useCanPostSuperLiked(post.id)
+  const isLoadingSuperLiked = !record
+  const { isExist, canPostSuperLiked, validByCreatorMinStake } = record ?? {}
 
   const [isOpenShouldStakeModal, setIsOpenShouldStakeModal] = useState(false)
   // const [isOpenActiveStakingModal, setIsOpenActiveStakingModal] = useState(false)
@@ -81,7 +83,12 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
   const isActive = hasILiked
   const canBeSuperliked = clientCanPostSuperLiked && canPostSuperLiked
   const isDisabled =
-    !canBeSuperliked || isMyPost || loadingTotalStake || !superLikeMessage.message || loading
+    !canBeSuperliked ||
+    isMyPost ||
+    loadingTotalStake ||
+    !superLikeMessage.message ||
+    loadingIsBlocked ||
+    isLoadingSuperLiked
 
   const onClick = async () => {
     if (isActive || isDisabled) return
@@ -178,7 +185,7 @@ export default function SuperLike({ post, iconClassName, isComment, ...props }: 
 
   let tooltipTitle = ''
   if (isMyPost) tooltipTitle = `You cannot like your own ${entity}`
-  else if (!isExist)
+  else if (!isExist && !isLoadingSuperLiked)
     tooltipTitle = `This ${entity} is still being minted, please wait a few seconds`
   else if (!validByCreatorMinStake)
     tooltipTitle = `This ${entity} cannot be liked because its author has not yet locked at least 2,000 SUB`
