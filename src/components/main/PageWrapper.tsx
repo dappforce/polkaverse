@@ -54,7 +54,7 @@ const resolveIpfsOrLocalUrl = (url: string) => {
 }
 
 export function HeadMeta(props: HeadMetaProps) {
-  const { forceTitle, title, desc, image, canonical, externalCanonical, tags } = props
+  const { forceTitle, title, desc, image, canonical, tags } = props
   const summary = desc ? summarize(desc, { limit: MAX_DESC_LEN }) : metaTags.desc
   const img = nonEmptyStr(image) ? resolveIpfsOrLocalUrl(image) : fullUrl(metaTags.defaultImage)
 
@@ -64,12 +64,7 @@ export function HeadMeta(props: HeadMetaProps) {
         <title>{forceTitle ? title : optimizeTitle(title)}</title>
         <meta name='description' content={summary} />
         {nonEmptyArr(tags) && <meta name='keywords' content={tags?.join(', ')} />}
-        {nonEmptyStr(canonical) && (
-          <link
-            rel='canonical'
-            href={fullUrl(canonical, canonicalUrl)}
-          />
-        )}
+        {nonEmptyStr(canonical) && <link rel='canonical' href={fullUrl(canonical, canonicalUrl)} />}
 
         <meta property='og:site_name' content={metaTags.siteName} />
         <meta property='og:image' content={img} />
