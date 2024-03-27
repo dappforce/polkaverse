@@ -6,7 +6,6 @@ const { appBaseUrl } = config
 
 const createRobotsTxt = () => `
   User-agent: *
-  Disallow: /_next/static/
   Disallow: /*/new$
   Disallow: /*/*/new$
   Disallow: /*/edit$
@@ -14,6 +13,15 @@ const createRobotsTxt = () => `
   Disallow: /sudo
   Disallow: /feed
   Disallow: /notifications
+  Disallow: /accounts/*
+  Allow: /*.css
+  Allow: /*.js
+  Allow: /*.jpg
+  Allow: /*.jpeg
+  Allow: /*.gif
+  Allow: /*.svg
+  Allow: /*.png
+  Allow: /*.webp
 
   Sitemap: ${appBaseUrl}/sitemap/spaces/index.xml
   Sitemap: ${appBaseUrl}/sitemap/posts/index.xml

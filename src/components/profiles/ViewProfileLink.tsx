@@ -16,7 +16,7 @@ export const ViewProfileLink = React.memo(({ account, title, hint, className, st
   if (!address) return null
 
   return (
-    <CustomLink href='/accounts/[address]' as={accountUrl(account)}>
+    <CustomLink href='/accounts/[address]' as={accountUrl(account)} rel='noreferrer nofollow'>
       <a className={className} title={hint} style={style}>
         {title || address.toString()}
       </a>

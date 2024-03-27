@@ -6,7 +6,7 @@ import { idsToBns } from 'src/types'
 import { tryParseInt } from 'src/utils'
 import { ONE } from '.'
 
-const { lastReservedSpaceId } = config
+const { lastReservedSpaceId, seoSitemapPageSize } = config
 
 const lastReservedSpaceIdBn = new BN(lastReservedSpaceId)
 
@@ -77,26 +77,14 @@ export const getPageOfIds = <T = BN>(ids: T[], query: PaginationQuery): T[] => {
 
 export const approxCountOfPublicSpaces = (nextId: BN) => nextId.sub(lastReservedSpaceIdBn).sub(ONE)
 
-export const approxCountOfPostPages = (nextId: BN, query: PaginationQuery) => {
-  const { size } = parsePageQuery(query)
+export const approxCountOfPostPages = (nextId: BN) => {
   const totalCount = nextId.subn(1).toNumber()
-  return Math.ceil(totalCount / size)
+  return Math.ceil(totalCount / seoSitemapPageSize)
 }
 
-export const approxCountOfSpacePages = (nextId: BN, query: PaginationQuery) => {
-  const { size } = parsePageQuery(query)
+export const approxCountOfSpacePages = (nextId: BN) => {
   const totalCount = approxCountOfPublicSpaces(nextId).toNumber()
-  return Math.ceil(totalCount / size)
-}
-
-export const canHaveNextPostPage = (nextId: BN, query: PaginationQuery) => {
-  const { page } = parsePageQuery(query)
-  return page < approxCountOfPostPages(nextId, query)
-}
-
-export const canHaveNextSpacePage = (nextId: BN, query: PaginationQuery) => {
-  const { page } = parsePageQuery(query)
-  return page < approxCountOfSpacePages(nextId, query)
+  return Math.ceil(totalCount / seoSitemapPageSize)
 }
 
 const reverseClaimedSpaceIds = claimedSpaceIds.reverse()

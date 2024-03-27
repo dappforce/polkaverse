@@ -201,9 +201,8 @@ const getPostsByIds = generateFetcher<
 
 export class SpacesSitemapIndex extends React.Component {
   static async getInitialProps(props: NextPageContext) {
-    const query = getPageAndSize(props)
     const nextSpaceId = await getNextSpaceId(undefined)
-    const totalPages = approxCountOfSpacePages(nextSpaceId, query)
+    const totalPages = approxCountOfSpacePages(nextSpaceId)
     const xml = renderSitemapIndexOfResource({ resource: 'spaces', totalPages })
     sendXml(props, xml)
   }
@@ -211,9 +210,8 @@ export class SpacesSitemapIndex extends React.Component {
 
 export class PostsSitemapIndex extends React.Component {
   static async getInitialProps(props: NextPageContext) {
-    const query = getPageAndSize(props)
     const nextPostId = await getNextPostId(undefined)
-    const totalPages = approxCountOfPostPages(nextPostId, query)
+    const totalPages = approxCountOfPostPages(nextPostId)
     const xml = renderSitemapIndexOfResource({ resource: 'posts', totalPages })
     sendXml(props, xml)
   }
@@ -237,12 +235,7 @@ export class SpacesUrlSet extends React.Component {
           loc: spaceLoc,
           changefreq: 'daily',
           lastmod,
-        },
-        {
-          loc: `${spaceLoc}/about`,
-          changefreq: 'weekly',
-          lastmod,
-        },
+        }
       )
     })
 
@@ -258,9 +251,9 @@ export class PostsUrlSet extends React.Component {
     const ids = getReversePageOfPostIds(nextPostId, query)
     const posts = await getPostsByIds(ids)
 
-    const items: UrlItem[] = posts.map(({ postStruct, postContent, space }) => {
+    const items: UrlItem[] = posts.map(({ postStruct, space }) => {
       return {
-        loc: postUrl(space, { struct: postStruct, content: postContent }),
+        loc: postUrl(space, { struct: postStruct }),
         lastmod: getLastModFromStruct(postStruct),
         changefreq: 'weekly',
       }

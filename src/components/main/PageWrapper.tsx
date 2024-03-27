@@ -17,7 +17,7 @@ import { useIsMobileWidthOrDevice } from '../responsive'
 import { fullUrl } from '../urls/helpers'
 import Section from '../utils/Section'
 
-const { metaTags, canonicalUrl, appBaseUrl } = config
+const { metaTags, canonicalUrl } = config
 
 export type HeadMetaProps = {
   forceTitle?: boolean
@@ -67,11 +67,7 @@ export function HeadMeta(props: HeadMetaProps) {
         {nonEmptyStr(canonical) && (
           <link
             rel='canonical'
-            href={
-              externalCanonical?.startsWith(appBaseUrl)
-                ? fullUrl(canonical, canonicalUrl)
-                : externalCanonical
-            }
+            href={fullUrl(canonical, canonicalUrl)}
           />
         )}
 

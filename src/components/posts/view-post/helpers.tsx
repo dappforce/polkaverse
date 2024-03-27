@@ -530,7 +530,7 @@ export const OriginalPostPanel = ({ canonicalUrl }: OriginalPostPanelProps) => {
   const message = (
     <span className='FontNormal'>
       {messages.postPage.originalPost}{' '}
-      <a href={canonicalUrl} rel='noreferrer npofollow'>
+      <a href={canonicalUrl} rel='noreferrer nofollow'>
         {shortUrl}
       </a>
     </span>
