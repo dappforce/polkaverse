@@ -1,7 +1,9 @@
+import { EntityId } from '@reduxjs/toolkit'
 import { useMemo } from 'react'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import config from 'src/config'
 import { useActions } from 'src/rtk/app/helpers'
+import { useFetch } from 'src/rtk/app/hooksCommon'
 import { useAppSelector } from 'src/rtk/app/store'
 import { asCommentStruct, PostId, PostStruct, PostWithSomeDetails } from 'src/types'
 import { selectAllCanPostSuperLiked } from '../activeStaking/canPostSuperLikedSlice'
@@ -11,6 +13,7 @@ import {
   fetchPosts,
   SelectPostArgs,
   selectPostMap,
+  selectPosts,
   SelectPostsArgs,
   selectPostStructById,
   upsertPost,
@@ -21,6 +24,16 @@ export function useIsMuted(address: string) {
   const myAddress = useMyAddress() ?? ''
   const mutedAccounts = config.mutedAccounts?.[myAddress]
   return mutedAccounts?.includes(address) ?? false
+}
+
+export const useFetchPosts = (postIds?: string[]) => {
+  const result = useFetch(fetchPosts, { ids: (postIds as EntityId[] | undefined) || [] })
+  const entity = useAppSelector(state => selectPosts(state, { ids: postIds || [] }))
+
+  return {
+    ...result,
+    entity,
+  }
 }
 
 export const useSelectPost = (

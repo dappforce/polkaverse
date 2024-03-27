@@ -1,6 +1,5 @@
 import grill, { GrillConfig, GrillEventListener } from '@subsocial/grill-widget'
 import { Resource } from '@subsocial/resource-discussions'
-import { summarizeMd } from '@subsocial/utils'
 import clsx from 'clsx'
 import { ComponentProps, useEffect, useState } from 'react'
 import config from 'src/config'
@@ -141,30 +140,14 @@ function generatePostGrillConfig(
   commonSettings: CommonSettings,
 ): GrillConfig {
   const post = entity.data
-  const title = summarizeMd(post.content?.title || post.content?.body || '', {
-    limit: 50,
-  }).summary
-  const body = summarizeMd(post.content?.body ?? '', { limit: 50 }).summary
 
   return {
     ...commonSettings.root,
     hub: { id: config.commentsHubId },
     channel: {
       ...commonSettings.settings,
-      type: 'resource',
-      resource: new Resource({
-        schema: 'social',
-        app: 'polkaverse',
-        resourceType: 'post',
-        resourceValue: {
-          id: post.struct.id,
-        },
-      }),
-      metadata: {
-        title,
-        body,
-        image: post.content?.image,
-      },
+      type: 'channel',
+      id: post.struct.id,
     },
   }
 }

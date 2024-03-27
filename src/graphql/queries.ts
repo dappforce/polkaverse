@@ -62,6 +62,7 @@ export const SPACE_SIMPLE_FRAGMENT = gql`
     hidden
     id
     updatedAtTime
+    experimental
     postsCount
     image
     tagsOriginal

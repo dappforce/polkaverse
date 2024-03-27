@@ -2,6 +2,7 @@ import { Button } from 'antd'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+// import { useSelectSpace } from 'src/rtk/app/hooks'
 import { getCurrentUrlOrigin } from 'src/utils/url'
 
 function parseMessage(data: string) {
@@ -17,12 +18,19 @@ function parseMessage(data: string) {
 
 type CreateChatModalButtonProps = {
   size?: 'small' | 'middle' | 'large'
+  spaceId?: string
 }
 
 const CreateChatModalButton = ({ size }: CreateChatModalButtonProps) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [openModal, setOpenModal] = useState(false)
   const router = useRouter()
+
+  // const space = useSelectSpace(spaceId)
+
+  // const spaceContent = space?.content
+
+  // const chats = spaceContent?.chats
 
   useEffect(() => {
     window.onmessage = event => {
@@ -37,6 +45,7 @@ const CreateChatModalButton = ({ size }: CreateChatModalButtonProps) => {
         router.push(value)
         setOpenModal(false)
       } else if (name === 'redirect-hard') {
+        console.log(value)
         // Using router push for redirect don't redirect properly, it just have loading for a bit and changes the url much later
         window.location.href = value
         setOpenModal(false)
@@ -44,8 +53,7 @@ const CreateChatModalButton = ({ size }: CreateChatModalButtonProps) => {
     }
   }, [])
 
-  // const origin = getCurrentUrlOrigin()
-  // const isDevMode = origin.includes('localhost')
+  // if (spaceContent && !isEmptyArray(chats)) return null
 
   return (
     <span
