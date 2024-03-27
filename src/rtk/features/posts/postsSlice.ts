@@ -237,7 +237,6 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
     },
     selectEntityIds: selectPostIds,
     handleAfterDataFetch: async (entities, args, { dispatch }) => {
-      console.log('start afterdata')
       const {
         api,
         withContent = true,
@@ -323,7 +322,6 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
         }
       }
 
-      console.log('fetches', fetches)
       await Promise.all(fetches)
       return entities
     },
