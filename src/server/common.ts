@@ -15,7 +15,7 @@ export function handlerWrapper<Input extends z.ZodTypeAny>(config: {
   dataGetter: (req: NextApiRequest) => unknown
 }) {
   return <Output>(handlerConfig: {
-    errorLabel?: string
+    errorLabel: string
     handler: (
       data: z.infer<Input>,
       req: NextApiRequest,
@@ -59,7 +59,7 @@ export function handlerWrapper<Input extends z.ZodTypeAny>(config: {
       try {
         return await handler(params.data, req, res)
       } catch (err) {
-        console.error(`Error in ${errorLabel || 'handler'}:`, err)
+        console.error(`Error in ${errorLabel || 'handler'}, ${req.method}:`, err)
         let errorMessage = ''
         if (err instanceof Error) {
           errorMessage = err.message
