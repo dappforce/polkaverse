@@ -22,12 +22,12 @@ export async function addPostView(input: SocialEventDataApiInput) {
   input.callData.signer = signerAddress
   const signedPayload = await backendSigWrapper(input)
   const res = await datahubQueueRequest<{
-    addPostView: { processed: boolean; message: string | null }
+    addPostViewsBatch: { processed: boolean; message: string | null }
   }>({
     document: ADD_POST_VIEW_BATCH,
     variables: {
       args: signedPayload,
     },
   })
-  throwErrorIfNotProcessed(res.addPostView, 'Failed to add post view')
+  throwErrorIfNotProcessed(res.addPostViewsBatch, 'Failed to add post view')
 }
