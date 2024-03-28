@@ -7,7 +7,7 @@ import { addPostViews } from '../utils/datahub/post-view'
 const postViewStorage = new LocalStorage(() => 'post-view')
 function addPostViewsToStorage(postId: string) {
   const string = postViewStorage.get() ?? ''
-  return `${string},${postId}`
+  postViewStorage.set(`${string},${postId}`)
 }
 function getPostViewsFromStorage() {
   const postViewsString = postViewStorage.get()
@@ -41,9 +41,11 @@ export default function PostViewSubmitter() {
   useEffect(() => {
     if (!myAddress) return
 
+    console.log('masuk?')
     const intervalId = setInterval(async () => {
       try {
         const postViews = getPostViewsFromStorage()
+        console.log('postviews?', postViews)
         if (!postViews.length) return
 
         postViewStorage.remove()
@@ -58,6 +60,7 @@ export default function PostViewSubmitter() {
         })
       } catch {}
     }, BATCH_TIMEOUT)
+
     return () => {
       clearTimeout(intervalId)
     }
