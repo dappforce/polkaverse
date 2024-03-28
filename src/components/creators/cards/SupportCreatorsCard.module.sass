@@ -91,17 +91,21 @@
 
   :global(.slick-dots)
     bottom: 7px
-    
-    li 
+
+    li
       width: 9px !important
       height: 9px !important
 
       button
         height: 9px !important
         border-radius: 50% !important
+        background: rgba(0, 0, 0, 0.4) !important
+
+    li.slick-active
+      button
+        background: #64748B !important
 
   .ItemContent
-    background-color: #2D81FF
     padding: $space_normal
     overflow: hidden
     position: relative
@@ -110,25 +114,42 @@
     color: white
     z-index: 1
     position: relative
+    display: flex
+    flex-direction: column
+    justify-content: space-between
+    min-height: 212px
+    color: #64748B
 
     .Title
       line-height: normal
       max-width: 66%
+      font-size: $font_normal
 
     .Subtitle
       opacity: 0.8
       font-size: $font_small
       line-height: 22px
-      max-width: 98%
+      max-width: 80%
 
     .Image
       position: absolute
       display: block
       float: right
-      width: 115px
-      right: -36px
-      top: -17px
-  
+      right: -25px
+      top: -25px
+
+    .LearnMoreButton
+      height: 36px !important
+      display: flex
+      align-items: center
+      justify-content: center
+      padding: 0
+      border: none
+      transition: none
+
+      &:hover
+        border: 1px solid #f759ab !important
+
   .DotsSection
     padding-top: $space_normal
     padding-bottom: $space_normal
