@@ -56,6 +56,7 @@ export default function PostViewSubmitter() {
     const intervalId = setInterval(async () => {
       try {
         const postViews = getPostViewsFromStorage()
+        if (!postViews.length) return
 
         postViewStorage.remove()
         await addPostViews({
