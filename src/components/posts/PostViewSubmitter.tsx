@@ -4,25 +4,19 @@ import { LocalStorage } from 'src/utils/storage'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { addPostViews } from '../utils/datahub/post-view'
 
-export const postViewStorage = new LocalStorage(() => 'post-view')
-export function getPostViewsFromStorage() {
-  try {
-    const postViewsString = postViewStorage.get()
-    if (!postViewsString) return []
-    const postViews = JSON.parse(postViewsString) as string[]
-    if (!Array.isArray(postViews)) return []
+const postViewStorage = new LocalStorage(() => 'post-view')
+function addPostViewsToStorage(postId: string) {
+  const string = postViewStorage.get() ?? ''
+  return `${string},${postId}`
+}
+function getPostViewsFromStorage() {
+  const postViewsString = postViewStorage.get()
+  if (!postViewsString) return []
+  const postViews = postViewsString.split(',').filter(Boolean)
+  if (!Array.isArray(postViews)) return []
 
-    const filteredIds = new Set<string>()
-    postViews.forEach(id => {
-      if (typeof id !== 'string') return
-      filteredIds.add(id)
-    })
-
-    return postViews
-  } catch {
-    postViewStorage.remove()
-  }
-  return []
+  const filteredIds = new Set<string>(postViews)
+  return Array.from(filteredIds)
 }
 
 export function usePostViewTracker(postId: string, sharedPostId?: string, enabled?: boolean) {
@@ -30,14 +24,8 @@ export function usePostViewTracker(postId: string, sharedPostId?: string, enable
     if (!enabled) return
 
     const timeoutId = setTimeout(async () => {
-      const postViews = getPostViewsFromStorage()
-      const viewsSet = new Set(postViews)
-      viewsSet.add(postId)
-      if (sharedPostId) {
-        viewsSet.add(sharedPostId)
-      }
-
-      postViewStorage.set(JSON.stringify(Array.from(viewsSet)))
+      addPostViewsToStorage(postId)
+      if (sharedPostId) addPostViewsToStorage(sharedPostId)
     }, POST_VIEW_DURATION)
 
     return () => {
