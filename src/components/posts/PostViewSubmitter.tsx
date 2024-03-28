@@ -38,7 +38,7 @@ export default function PostViewSubmitter() {
     return () => {
       clearTimeout(intervalId)
     }
-  }, [])
+  }, [myAddress])
 
   return null
 }
