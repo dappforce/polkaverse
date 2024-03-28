@@ -42,11 +42,11 @@ export async function getPostsViewCount(postIds: string[]): Promise<PostViewCoun
 }
 
 // MUTATIONS
-export async function addPostView(
-  params: Omit<DatahubParams<SocialCallDataArgs<'synth_add_post_view'>>, 'address'>,
+export async function addPostViews(
+  params: Omit<DatahubParams<SocialCallDataArgs<'synth_add_post_views_batch'>>, 'address'>,
 ) {
   // `signer` is using backend signer address
-  const input = createSocialDataEventPayload(socialCallName.synth_add_post_view, {
+  const input = createSocialDataEventPayload(socialCallName.synth_add_post_views_batch, {
     ...params,
     address: '',
   })

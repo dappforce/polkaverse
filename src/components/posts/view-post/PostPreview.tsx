@@ -1,11 +1,8 @@
 import { newLogger } from '@subsocial/utils'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
-import { addPostView } from 'src/components/utils/datahub/post-view'
 import { Segment } from 'src/components/utils/Segment'
-import { POST_VIEW_DURATION } from 'src/config/constants'
 import { useIsPostBlocked } from 'src/rtk/features/moderation/hooks'
 import { asSharedPostStruct, PostWithAllDetails, PostWithSomeDetails, SpaceData } from 'src/types'
 import {
@@ -15,6 +12,7 @@ import {
   SharedPreview,
   useIsUnlistedPost,
 } from '.'
+import { usePostViewTracker } from '../PostViewSubmitter'
 import PostNotEnoughMinStakeAlert from './helpers'
 
 const log = newLogger('ViewPost')
@@ -61,38 +59,8 @@ export function PostPreview(props: PreviewProps) {
   const { isBlocked } = useIsPostBlocked(post)
 
   const { inView, ref } = useInView()
-  useEffect(() => {
-    if (!inView || !myAddress) return
-
-    const timeoutId = setTimeout(async () => {
-      try {
-        const operations = [
-          addPostView({
-            args: { viewerId: myAddress, duration: POST_VIEW_DURATION, postPersistentId: post.id },
-          }),
-        ]
-        if (post.isSharedPost) {
-          const originalPostId = asSharedPostStruct(post).originalPostId
-          operations.push(
-            addPostView({
-              args: {
-                viewerId: myAddress,
-                duration: POST_VIEW_DURATION,
-                postPersistentId: originalPostId,
-              },
-            }),
-          )
-        }
-        await Promise.all(operations)
-      } catch (err) {
-        console.error('Failed to add view', err)
-      }
-    }, POST_VIEW_DURATION)
-
-    return () => {
-      clearTimeout(timeoutId)
-    }
-  }, [inView, myAddress])
+  const sharedPostOriginalId = isSharedPost ? asSharedPostStruct(post).originalPostId : undefined
+  usePostViewTracker(post.id, sharedPostOriginalId, inView && !!myAddress)
 
   if (isUnlisted || isHiddenChatRoom || isBlocked) return null
 
