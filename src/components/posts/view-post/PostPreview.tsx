@@ -14,7 +14,7 @@ import {
   SharedPreview,
   useIsUnlistedPost,
 } from '.'
-import { postViewStorage } from '../PostViewSubmitter'
+import { getPostViewsFromStorage, postViewStorage } from '../PostViewSubmitter'
 import PostNotEnoughMinStakeAlert from './helpers'
 
 const log = newLogger('ViewPost')
@@ -65,21 +65,14 @@ export function PostPreview(props: PreviewProps) {
     if (!inView || !myAddress) return
 
     const timeoutId = setTimeout(async () => {
-      try {
-        let views = JSON.parse(postViewStorage.get() || '[]') as string[]
-        if (!Array.isArray(views)) {
-          views = []
-        }
-        const viewsSet = new Set(views)
-        viewsSet.add(post.id)
-        if (isSharedPost) {
-          viewsSet.add(asSharedPostStruct(post).originalPostId)
-        }
-
-        postViewStorage.set(JSON.stringify(Array.from(viewsSet)))
-      } catch {
-        postViewStorage.remove()
+      const postViews = getPostViewsFromStorage()
+      const viewsSet = new Set(postViews)
+      viewsSet.add(post.id)
+      if (isSharedPost) {
+        viewsSet.add(asSharedPostStruct(post).originalPostId)
       }
+
+      postViewStorage.set(JSON.stringify(Array.from(viewsSet)))
     }, POST_VIEW_DURATION)
 
     return () => {
