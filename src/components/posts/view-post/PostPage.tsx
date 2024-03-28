@@ -16,7 +16,6 @@ import SpaceCard from 'src/components/spaces/SpaceCard'
 import { postUrl } from 'src/components/urls'
 import { Loading, useIsVisible } from 'src/components/utils'
 import DfCard from 'src/components/utils/cards/DfCard'
-import { addPostView } from 'src/components/utils/datahub/post-view'
 import NoData from 'src/components/utils/EmptyList'
 import { return404 } from 'src/components/utils/next'
 import Segment from 'src/components/utils/Segment'
@@ -41,6 +40,7 @@ import Section from '../../utils/Section'
 import ViewTags from '../../utils/ViewTags'
 import Embed, { getEmbedLinkType, getGleevVideoId, getYoutubeVideoId } from '../embed/Embed'
 import { StatsPanel } from '../PostStats'
+import { postViewStorage } from '../PostViewSubmitter'
 import ViewPostLink from '../ViewPostLink'
 import {
   HiddenPostAlert,
@@ -266,13 +266,20 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
 function PostViewChecker({ postId }: { postId: string }) {
   const myAddress = useMyAddress()
   useEffect(() => {
+    if (!myAddress) return
+
     const timeoutId = setTimeout(async () => {
       try {
-        await addPostView({
-          args: { viewerId: myAddress, duration: POST_VIEW_DURATION, postPersistentId: postId },
-        })
-      } catch (err) {
-        console.error('Failed to add view', err)
+        let views = JSON.parse(postViewStorage.get() || '[]') as string[]
+        if (!Array.isArray(views)) {
+          views = []
+        }
+        const viewsSet = new Set(views)
+        viewsSet.add(postId)
+
+        postViewStorage.set(JSON.stringify(Array.from(viewsSet)))
+      } catch {
+        postViewStorage.remove()
       }
     }, POST_VIEW_DURATION)
 

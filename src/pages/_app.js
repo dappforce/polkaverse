@@ -40,6 +40,7 @@ import Script from 'next/script'
 import { initAllStores } from 'src/stores/registry'
 import { ReferralUrlChanger } from 'src/components/referral/ReferralUrlChanger'
 import ModerationProvider from 'src/components/posts/ModerationProvider'
+import PostViewSubmitter from 'src/components/posts/PostViewSubmitter'
 
 dayjs.extend(relativeTime)
 dayjs.extend(localizedFormat)
@@ -86,6 +87,7 @@ function MyApp(props) {
           showSpinner: false,
         }}
       />
+      <PostViewSubmitter />
       <Provider store={store}>
         {/* <AdBlockModal /> */}
         <GoogleAnalytics trackPageViews gaMeasurementId={config.ga.id} />

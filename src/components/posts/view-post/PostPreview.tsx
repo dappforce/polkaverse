@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
-import { addPostView } from 'src/components/utils/datahub/post-view'
 import { Segment } from 'src/components/utils/Segment'
 import { POST_VIEW_DURATION } from 'src/config/constants'
 import { useIsPostBlocked } from 'src/rtk/features/moderation/hooks'
@@ -15,6 +14,7 @@ import {
   SharedPreview,
   useIsUnlistedPost,
 } from '.'
+import { postViewStorage } from '../PostViewSubmitter'
 import PostNotEnoughMinStakeAlert from './helpers'
 
 const log = newLogger('ViewPost')
@@ -66,26 +66,19 @@ export function PostPreview(props: PreviewProps) {
 
     const timeoutId = setTimeout(async () => {
       try {
-        const operations = [
-          addPostView({
-            args: { viewerId: myAddress, duration: POST_VIEW_DURATION, postPersistentId: post.id },
-          }),
-        ]
-        if (post.isSharedPost) {
-          const originalPostId = asSharedPostStruct(post).originalPostId
-          operations.push(
-            addPostView({
-              args: {
-                viewerId: myAddress,
-                duration: POST_VIEW_DURATION,
-                postPersistentId: originalPostId,
-              },
-            }),
-          )
+        let views = JSON.parse(postViewStorage.get() || '[]') as string[]
+        if (!Array.isArray(views)) {
+          views = []
         }
-        await Promise.all(operations)
-      } catch (err) {
-        console.error('Failed to add view', err)
+        const viewsSet = new Set(views)
+        viewsSet.add(post.id)
+        if (isSharedPost) {
+          viewsSet.add(asSharedPostStruct(post).originalPostId)
+        }
+
+        postViewStorage.set(JSON.stringify(Array.from(viewsSet)))
+      } catch {
+        postViewStorage.remove()
       }
     }, POST_VIEW_DURATION)
 
