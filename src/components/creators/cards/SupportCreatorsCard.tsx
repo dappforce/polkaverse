@@ -169,7 +169,7 @@ const NotStakedCard = () => {
 
   const diamond = (
     <img
-      src='/images/creators/diamonds/diamond-list-item.svg'
+      src='/images/creators/diamonds/diamond-small.svg'
       className={clsx(styles.OutsideDiamondRight)}
     />
   )
