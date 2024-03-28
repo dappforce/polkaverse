@@ -1,10 +1,8 @@
 import { newLogger } from '@subsocial/utils'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import { Segment } from 'src/components/utils/Segment'
-import { POST_VIEW_DURATION } from 'src/config/constants'
 import { useIsPostBlocked } from 'src/rtk/features/moderation/hooks'
 import { asSharedPostStruct, PostWithAllDetails, PostWithSomeDetails, SpaceData } from 'src/types'
 import {
@@ -14,7 +12,7 @@ import {
   SharedPreview,
   useIsUnlistedPost,
 } from '.'
-import { getPostViewsFromStorage, postViewStorage } from '../PostViewSubmitter'
+import { usePostViewTracker } from '../PostViewSubmitter'
 import PostNotEnoughMinStakeAlert from './helpers'
 
 const log = newLogger('ViewPost')
@@ -61,24 +59,8 @@ export function PostPreview(props: PreviewProps) {
   const { isBlocked } = useIsPostBlocked(post)
 
   const { inView, ref } = useInView()
-  useEffect(() => {
-    if (!inView || !myAddress) return
-
-    const timeoutId = setTimeout(async () => {
-      const postViews = getPostViewsFromStorage()
-      const viewsSet = new Set(postViews)
-      viewsSet.add(post.id)
-      if (isSharedPost) {
-        viewsSet.add(asSharedPostStruct(post).originalPostId)
-      }
-
-      postViewStorage.set(JSON.stringify(Array.from(viewsSet)))
-    }, POST_VIEW_DURATION)
-
-    return () => {
-      clearTimeout(timeoutId)
-    }
-  }, [inView, myAddress])
+  const sharedPostOriginalId = isSharedPost ? asSharedPostStruct(post).originalPostId : undefined
+  usePostViewTracker(post.id, sharedPostOriginalId, inView && !!myAddress)
 
   if (isUnlisted || isHiddenChatRoom || isBlocked) return null
 

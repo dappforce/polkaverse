@@ -25,6 +25,27 @@ export function getPostViewsFromStorage() {
   return []
 }
 
+export function usePostViewTracker(postId: string, sharedPostId?: string, enabled?: boolean) {
+  useEffect(() => {
+    if (!enabled) return
+
+    const timeoutId = setTimeout(async () => {
+      const postViews = getPostViewsFromStorage()
+      const viewsSet = new Set(postViews)
+      viewsSet.add(postId)
+      if (sharedPostId) {
+        viewsSet.add(sharedPostId)
+      }
+
+      postViewStorage.set(JSON.stringify(Array.from(viewsSet)))
+    }, POST_VIEW_DURATION)
+
+    return () => {
+      clearTimeout(timeoutId)
+    }
+  }, [enabled])
+}
+
 const BATCH_TIMEOUT = 10_000
 export default function PostViewSubmitter() {
   const myAddress = useMyAddress()

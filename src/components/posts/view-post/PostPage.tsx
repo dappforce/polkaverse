@@ -20,7 +20,6 @@ import NoData from 'src/components/utils/EmptyList'
 import { return404 } from 'src/components/utils/next'
 import Segment from 'src/components/utils/Segment'
 import config from 'src/config'
-import { POST_VIEW_DURATION } from 'src/config/constants'
 import { appId } from 'src/config/env'
 import { resolveIpfsUrl } from 'src/ipfs'
 import { getInitialPropsWithRedux, NextContextWithRedux } from 'src/rtk/app'
@@ -40,7 +39,7 @@ import Section from '../../utils/Section'
 import ViewTags from '../../utils/ViewTags'
 import Embed, { getEmbedLinkType, getGleevVideoId, getYoutubeVideoId } from '../embed/Embed'
 import { StatsPanel } from '../PostStats'
-import { postViewStorage } from '../PostViewSubmitter'
+import { usePostViewTracker } from '../PostViewSubmitter'
 import ViewPostLink from '../ViewPostLink'
 import {
   HiddenPostAlert,
@@ -265,28 +264,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
 
 function PostViewChecker({ postId }: { postId: string }) {
   const myAddress = useMyAddress()
-  useEffect(() => {
-    if (!myAddress) return
-
-    const timeoutId = setTimeout(async () => {
-      try {
-        let views = JSON.parse(postViewStorage.get() || '[]') as string[]
-        if (!Array.isArray(views)) {
-          views = []
-        }
-        const viewsSet = new Set(views)
-        viewsSet.add(postId)
-
-        postViewStorage.set(JSON.stringify(Array.from(viewsSet)))
-      } catch {
-        postViewStorage.remove()
-      }
-    }, POST_VIEW_DURATION)
-
-    return () => {
-      clearTimeout(timeoutId)
-    }
-  }, [postId])
+  usePostViewTracker(postId, undefined, !!myAddress)
   return null
 }
 
