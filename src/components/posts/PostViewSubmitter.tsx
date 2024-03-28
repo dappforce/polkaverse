@@ -25,6 +25,7 @@ export default function PostViewSubmitter() {
           filteredIds.add(id)
         })
 
+        postViewStorage.remove()
         await addPostViews({
           args: {
             views: Array.from(filteredIds).map(value => ({
@@ -34,7 +35,6 @@ export default function PostViewSubmitter() {
             })),
           },
         })
-        postViewStorage.remove()
       } catch {}
     }, BATCH_TIMEOUT)
     return () => {
