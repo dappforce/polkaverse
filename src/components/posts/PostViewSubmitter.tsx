@@ -18,12 +18,12 @@ export default function PostViewSubmitter() {
         if (!postViewsString) return
         const postViews = JSON.parse(postViewsString) as string[]
         if (!Array.from(postViews)) return
+
         const filteredIds = new Set<string>()
         postViews.forEach(id => {
           if (typeof id !== 'string') return
           filteredIds.add(id)
         })
-        console.log('postviews', postViews)
         await addPostViews({
           args: {
             views: Array.from(filteredIds).map(value => ({
