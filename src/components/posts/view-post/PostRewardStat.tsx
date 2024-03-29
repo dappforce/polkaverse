@@ -1,4 +1,4 @@
-import { Skeleton, Tooltip } from 'antd'
+import { Button, Skeleton, Tooltip } from 'antd'
 import BigNumber from 'bignumber.js'
 import clsx from 'clsx'
 import { ComponentProps, ReactNode } from 'react'
@@ -10,6 +10,7 @@ import { useSelectPost } from 'src/rtk/app/hooks'
 import { useSelectPostReward } from 'src/rtk/features/activeStaking/hooks'
 import { PostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
+import { getContentStakingLink } from 'src/utils/links'
 import styles from './helpers.module.sass'
 
 export type PostRewardStatProps = ComponentProps<'div'> & { postId: string }
@@ -89,11 +90,24 @@ export function PostRewardStatWrapper({
     tooltip = generateTooltip(reward.rewardsBySource, isComment ? 'comment' : 'post', reward.reward)
   }
 
+  const tooltipText = (
+    <>
+      {tooltip}
+      <Button
+        className='p-0'
+        href={`${getContentStakingLink()}#how-to-increase-my-rewards`}
+        type='link'
+      >
+        How to increase rewards?{' '}
+      </Button>
+    </>
+  )
+
   return (
     <>
       {children({
         isZeroReward: !reward?.isNotZero,
-        tooltip: reward?.isNotZero ? tooltip : null,
+        tooltip: reward?.isNotZero ? tooltipText : null,
         reward: !reward ? (
           <>
             <Skeleton className={styles.Skeleton} paragraph={false} round /> SUB
