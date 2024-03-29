@@ -2,7 +2,6 @@ import { Button } from 'antd'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-// import { useSelectSpace } from 'src/rtk/app/hooks'
 import { getCurrentUrlOrigin } from 'src/utils/url'
 
 function parseMessage(data: string) {
@@ -26,12 +25,6 @@ const CreateChatModalButton = ({ size }: CreateChatModalButtonProps) => {
   const [openModal, setOpenModal] = useState(false)
   const router = useRouter()
 
-  // const space = useSelectSpace(spaceId)
-
-  // const spaceContent = space?.content
-
-  // const chats = spaceContent?.chats
-
   useEffect(() => {
     window.onmessage = event => {
       const message = parseMessage(event.data + '')
@@ -52,8 +45,6 @@ const CreateChatModalButton = ({ size }: CreateChatModalButtonProps) => {
       }
     }
   }, [])
-
-  // if (spaceContent && !isEmptyArray(chats)) return null
 
   return (
     <span

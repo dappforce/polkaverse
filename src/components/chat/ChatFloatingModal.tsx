@@ -93,7 +93,7 @@ export default function ChatFloatingModal() {
 }
 
 type Entity = NonNullable<ChatEntity['entity']>
-function getUnreadCount(entity: Entity) {
+export function getUnreadCount(entity: Entity) {
   return parseInt(localStorage.getItem(`unreadCount:${entity.type}:${entity.data.id}`) ?? '') ?? 0
 }
 

@@ -2,7 +2,7 @@ import { EditOutlined } from '@ant-design/icons'
 import { isEmptyStr, newLogger, nonEmptyStr } from '@subsocial/utils'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
-import React, { MouseEvent, useCallback, useMemo, useState } from 'react'
+import React, { MouseEvent, useCallback, useState } from 'react'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
@@ -17,6 +17,7 @@ import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { AccountActivity } from '../activity/AccountActivity'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import ChatButton from '../chat/ChatButton'
 import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
 import WriteSomething from '../posts/WriteSomething'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
@@ -49,7 +50,6 @@ import { ViewSpaceOptsProps, ViewSpaceProps } from './ViewSpaceProps'
 const log = newLogger('ViewSpace')
 
 const FollowSpaceButton = dynamic(() => import('../utils/FollowSpaceButton'), { ssr: false })
-const CreateChatModalButton = dynamic(() => import('../chat/CreateChatModal'), { ssr: false })
 
 type Props = ViewSpaceProps
 
@@ -136,28 +136,23 @@ export const InnerViewSpace = (props: Props) => {
     )
   }, [spaceData, imageSize])
 
-  // const setChatConfig = useSetChatEntityConfig()
-  // const setChatOpen = useSetChatOpen()
-
-  // const { isCreatorSpace } = useIsCreatorSpace(spaceData?.id)
-
   const isMySpace = useIsMySpace(spaceData?.struct)
-  const { filteredPostIds, filteredPosts } = useMemo(() => {
-    if (isMySpace) return { filteredPosts: posts, filteredPostIds: postIds }
+  // const { filteredPostIds, filteredPosts } = useMemo(() => {
+  //   if (isMySpace) return { filteredPosts: posts, filteredPostIds: postIds }
 
-    const hiddenPosts = new Set()
+  //   const hiddenPosts = new Set()
 
-    const filteredPosts = posts.filter(post => {
-      if (isHidden(post.post.struct)) {
-        hiddenPosts.add(post.post.id)
-        return false
-      }
-      return true
-    })
+  //   const filteredPosts = posts.filter(post => {
+  //     if (isHidden(post.post.struct)) {
+  //       hiddenPosts.add(post.post.id)
+  //       return false
+  //     }
+  //     return true
+  //   })
 
-    const filteredPostIds = postIds.filter(id => !hiddenPosts.has(id))
-    return { filteredPosts, filteredPostIds }
-  }, [posts, postIds])
+  //   const filteredPostIds = postIds.filter(id => !hiddenPosts.has(id))
+  //   return { filteredPosts, filteredPostIds }
+  // }, [posts, postIds])
 
   // We do not return 404 page here, because this component could be used to render a space in list.
   if (!spaceData) return null
@@ -167,7 +162,7 @@ export const InnerViewSpace = (props: Props) => {
   const contactInfo = { email, links }
   const spaceName = renderSpaceName(spaceData)
 
-  const chatButton = <CreateChatModalButton spaceId={spaceId} />
+  const chatButton = <ChatButton spaceId={spaceId} />
 
   const primaryClass = `ProfileDetails ${isMy && 'MySpace'} d-flex`
 
@@ -365,7 +360,6 @@ export const InnerViewSpace = (props: Props) => {
       <Section className='DfContentPage mt-4'>
         {isProfileSpace ? (
           <AccountActivity
-            withSpacePosts={{ spaceData, postIds: filteredPostIds, posts: filteredPosts }}
             withWriteSomethingBlock={false}
             address={spaceData.struct.ownerId}
             spaceId={spaceId}

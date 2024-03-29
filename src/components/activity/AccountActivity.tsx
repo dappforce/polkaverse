@@ -1,5 +1,5 @@
 import { PostWithSomeDetails, SpaceData } from '@subsocial/api/types'
-import { Button, Tabs } from 'antd'
+import { Tabs } from 'antd'
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -12,19 +12,14 @@ import {
   // useGetFollowActivities,
   useGetPostActivities,
 } from 'src/graphql/hooks'
-import {
-  useFetchPosts,
-  useSelectPost,
-  useSelectSpace,
-  useSetChatEntityConfig,
-  useSetChatOpen,
-} from 'src/rtk/app/hooks'
+import { useFetchPosts, useSelectPost, useSelectSpace } from 'src/rtk/app/hooks'
 import { useIsMyAddress } from '../auth/MyAccountsContext'
 import WriteSomething from '../posts/WriteSomething'
 // import { PostPreviewsOnSpace } from '../spaces/helpers'
 import { Loading } from '../utils'
 import { createLoadMorePosts, FeedActivities } from './FeedActivities'
 // import { createLoadMoreActivities, NotifActivities } from './Notifications'
+import ChatLinkButtonWithCounter from '../chat/ChatLinkButtonWithCounter'
 import { OnchainAccountActivity } from './OnchainAccountActivity'
 import { SpaceActivities } from './SpaceActivities'
 import styles from './style.module.sass'
@@ -105,6 +100,7 @@ const CommentActivities = (props: BaseActivityProps) => {
 const PostActivities = (props: BaseActivityProps) => {
   const getPostActivities = useGetPostActivities()
   const loadMorePosts = createLoadMorePosts(getPostActivities)
+
   return (
     <FeedActivities
       {...props}
@@ -162,14 +158,10 @@ const OffchainAccountActivity = ({
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<ActivityTab>(initialActiveTab)
   const [counts, setCounts] = useState<ActivityCounts>()
-  const setChatConfig = useSetChatEntityConfig()
-  const setChatOpen = useSetChatOpen()
 
   const space = useSelectSpace(spaceId)
 
   const chatId = (space?.content?.chats as any[])?.[0]?.id as string | undefined
-
-  console.log('ChatId', chatId, space?.content)
 
   useFetchPosts(chatId ? [chatId] : [])
 
@@ -213,20 +205,8 @@ const OffchainAccountActivity = ({
       renderTabBar={(props, DefaultTabBar) => {
         return (
           <div className={styles.TabsBlock}>
-            {chatId && post && (
-              <Button
-                onClick={() => {
-                  setChatConfig({
-                    entity: { type: 'post', data: post.post },
-                    withFloatingButton: false,
-                  })
-                  setChatOpen(true)
-                }}
-                type='link'
-                className={styles.ChatButton}
-              >
-                Chat
-              </Button>
+            {chatId && post && !post.post.struct.hidden && (
+              <ChatLinkButtonWithCounter post={post.post} />
             )}
             <DefaultTabBar {...props} />
           </div>
