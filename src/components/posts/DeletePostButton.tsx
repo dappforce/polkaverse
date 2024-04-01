@@ -2,9 +2,8 @@ import clsx from 'clsx'
 import { useDispatch } from 'react-redux'
 import { TxDiv } from 'src/components/substrate/TxDiv'
 import TxButton from 'src/components/utils/TxButton'
-import { fetchPosts } from 'src/rtk/features/posts/postsSlice'
-import { DataSourceTypes, PostStruct } from 'src/types'
-import { useSubsocialApi } from '../substrate'
+import { removePost } from 'src/rtk/features/posts/postsSlice'
+import { PostStruct } from 'src/types'
 import styles from './view-post/helpers.module.sass'
 
 type DeletePostProps = {
@@ -16,7 +15,6 @@ type DeletePostProps = {
 export function DeletePostButton(props: DeletePostProps) {
   const { post, asLink, label } = props
   const dispatch = useDispatch()
-  const { subsocial } = useSubsocialApi()
   const { isComment } = post
   const postType = isComment ? 'comment' : 'post'
 
@@ -25,15 +23,7 @@ export function DeletePostButton(props: DeletePostProps) {
   }
 
   const onTxSuccess = () => {
-    dispatch(
-      fetchPosts({
-        api: subsocial,
-        ids: [post.id],
-        withSpace: true,
-        dataSource: DataSourceTypes.CHAIN,
-        reload: true,
-      }),
-    )
+    dispatch(removePost(post.id))
   }
   const TxAction = asLink ? TxDiv : TxButton
 
