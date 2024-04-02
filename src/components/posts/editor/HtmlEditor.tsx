@@ -17,7 +17,6 @@ export default function HtmlEditor({
   saveBodyDraft,
   className,
   showToolbar,
-  autoFocus,
 }: HTMLEditorProps) {
   const editor = useCreateEditor(onChange, value, saveBodyDraft)
 

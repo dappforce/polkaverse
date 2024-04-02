@@ -74,8 +74,6 @@ export const useCreateEditor = (
       content: htmlContent || content,
       onUpdate: ({ editor }) => {
         debouncedSaveDraft(editor.getHTML())
-      },
-      onBlur: ({ editor }) => {
         onUpdate(editor.getHTML())
       },
       autofocus: true,
