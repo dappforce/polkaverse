@@ -18,10 +18,13 @@ const ChatButton = ({ spaceId }: ChatButtonProps) => {
   const post = useSelectPost(chat.id)
 
   const isPostHidden = !!post?.post.struct.hidden
+  const isRemovedPost = !post?.post.struct.spaceId
 
-  if (spaceContent && !isEmptyArray(chats) && !isPostHidden) return null
+  console.log(isRemovedPost, post?.id)
 
-  return isPostHidden ? (
+  if (chat && spaceContent && !isEmptyArray(chats) && !isPostHidden) return null
+
+  return isPostHidden && !isRemovedPost ? (
     <UnhideChatButton post={post?.post?.struct} />
   ) : (
     <CreateChatModalButton spaceId={spaceId} />

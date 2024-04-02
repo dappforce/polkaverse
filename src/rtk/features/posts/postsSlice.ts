@@ -1,3 +1,4 @@
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { xxhashAsHex } from '@polkadot/util-crypto'
 import { createAsyncThunk, createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit'
 import { SubsocialApi } from '@subsocial/api'
@@ -18,6 +19,7 @@ import {
   ThunkApiConfig,
 } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
+import { AppDispatch } from 'src/rtk/app/store'
 import {
   createFetchDataFn,
   createFetchManyDataWrapper,
@@ -30,7 +32,6 @@ import {
   asCommentStruct,
   asSharedPostStruct,
   CommentStruct,
-  DataSourceTypes,
   getUniqueContentIds,
   getUniqueOwnerIds,
   getUniqueSpaceIds,
@@ -42,6 +43,7 @@ import {
   SpaceData,
   SpaceStruct,
 } from 'src/types'
+import { DataSourceTypes } from '../../../types/index'
 import { fetchAddressLikeCounts } from '../activeStaking/addressLikeCountSlice'
 import { fetchCanPostsSuperLiked } from '../activeStaking/canPostSuperLikedSlice'
 import { fetchPostRewards } from '../activeStaking/postRewardSlice'
@@ -427,6 +429,146 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
 
 export const fetchPost = createFetchOne(fetchPosts)
 
+type FetchProfilePostsArgs = {
+  id: AccountId
+  publicOnly?: boolean
+  dispatch: AppDispatch
+  api: SubsocialApi
+  client?: ApolloClient<NormalizedCacheObject> | undefined
+  limit?: number
+  offset?: number
+
+  additionalData?: {
+    withContent?: boolean
+    withSpace?: boolean
+    withOwner?: boolean
+    withRootPost?: boolean
+  }
+}
+
+export const fetchProfilePosts = createAsyncThunk<
+  PostStruct[],
+  FetchProfilePostsArgs,
+  ThunkApiConfig
+>(
+  'posts/fetchOneByAddress',
+  async ({ id, client, additionalData, dispatch, api, limit, offset }): Promise<PostStruct[]> => {
+    const address = id as AccountId
+
+    if (!client) return []
+
+    const posts = await getPostsData(client, {
+      offset,
+      limit,
+      where: {
+        ownedByAccount: { id_eq: address },
+        space_isNull: false,
+      },
+      orderBy: 'createdAtTime_DESC',
+    })
+
+    const {
+      withContent = true,
+      withSpace = true,
+      withOwner = true,
+      withRootPost = true,
+    } = additionalData || {}
+
+    const fixedPosts = await Promise.all(
+      posts.map(async post => {
+        if (!post.contentId && post.ipfsContent) {
+          const newCid = xxhashAsHex(Buffer.from(JSON.stringify(post.ipfsContent)), 128, true)
+          post.contentId = Buffer.from(newCid).toString('hex')
+        }
+        return post
+      }),
+    )
+
+    const entities = fixedPosts.map<PostState>(post => ({ ...post, isOverview: true }))
+
+    const generatePrefetchData = generatePrefetchDataFn<PostState, PostFragmentWithParent>(entities)
+
+    const fetches: Promise<any>[] = []
+    if (withOwner) {
+      const ids = getUniqueOwnerIds(entities)
+      const prefetchedData = generatePrefetchData<ProfileSpaceIdByAccount>(
+        data => data.ownerId,
+        data => data.ownedByAccount,
+      )
+      if (ids.length) {
+        fetches.push(
+          dispatch(
+            fetchProfileSpaces({ api, ids, dataSource: DataSourceTypes.SQUID, prefetchedData }),
+          ),
+        )
+      }
+    }
+
+    if (withContent) {
+      const ids = getUniqueContentIds(entities)
+      const prefetchedData = generatePrefetchData<Content>(
+        data => data.contentId,
+        data =>
+          data.ipfsContent && {
+            id: data.contentId ?? '',
+            ...data.ipfsContent,
+          },
+      )
+      if (ids.length) {
+        fetches.push(
+          dispatch(fetchContents({ api, ids, dataSource: DataSourceTypes.SQUID, prefetchedData })),
+        )
+      }
+    }
+
+    if (withSpace) {
+      const ids = getUniqueSpaceIds(entities)
+      const prefetchedData = generatePrefetchData<SpaceStruct>(
+        data => data.spaceId,
+        data => data.space,
+      )
+      if (ids.length) {
+        fetches.push(
+          dispatch(
+            fetchSpaces({
+              api,
+              ids,
+              ...withSpaceOwner,
+              dataSource: DataSourceTypes.SQUID,
+              prefetchedData,
+            }),
+          ),
+        )
+      }
+    }
+
+    if (withRootPost) {
+      const needToFetchRootPostIds: string[] = []
+      entities.forEach(entity => {
+        const rootPostId = (entity as CommentStruct).rootPostId
+        if (rootPostId) {
+          needToFetchRootPostIds.push(rootPostId)
+        }
+      })
+      if (needToFetchRootPostIds.length) {
+        fetches.push(
+          dispatch(
+            fetchPosts({
+              api,
+              ids: needToFetchRootPostIds,
+              withRootPost: false,
+            }),
+          ),
+        )
+      }
+    }
+
+    await Promise.all(fetches)
+
+    return entities
+  },
+)
+
 const posts = createSlice({
   name: 'posts',
   initialState: postsAdapter.getInitialState(),
@@ -435,7 +577,8 @@ const posts = createSlice({
     removePost: postsAdapter.removeOne,
   },
   extraReducers: builder => {
-    builder.addCase(fetchPosts.fulfilled, postsAdapter.upsertMany)
+    builder.addCase(fetchPosts.fulfilled, postsAdapter.upsertMany),
+      builder.addCase(fetchProfilePosts.fulfilled, postsAdapter.upsertMany)
     // builder.addCase(fetchPosts.rejected, (state, action) => {
     //   state.error = action.error
     // })

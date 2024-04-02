@@ -253,8 +253,31 @@ export const GET_POST_IDS_BY_SPACES = gql`
 
 export const GET_POSTS_DATA = gql`
   ${POST_FRAGMENT}
-  query GetPostsData($where: PostWhereInput) {
-    posts(where: $where) {
+  query GetPostsData($where: PostWhereInput, $offset: Int, $limit: Int) {
+    posts(where: $where, limit: $limit, offset: $offset) {
+      ...PostFragment
+      sharedPost {
+        ...PostFragment
+      }
+      parentPost {
+        ...PostFragment
+      }
+    }
+  }
+`
+
+export const GET_POSTS_COUNT = gql`
+  query GetPostsCount($where: PostWhereInput) {
+    postsConnection(where: $where, orderBy: id_DESC) {
+      totalCount
+    }
+  }
+`
+
+export const GET_POSTS_DATA_WITH_POSTS_COUNT = gql`
+  ${POST_FRAGMENT}
+  query GetPostsData($where: PostWhereInput, $offset: Int, $limit: Int) {
+    posts(where: $where, limit: $limit, offset: $offset) {
       ...PostFragment
       sharedPost {
         ...PostFragment

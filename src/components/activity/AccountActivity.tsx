@@ -1,25 +1,29 @@
-import { PostWithSomeDetails, SpaceData } from '@subsocial/api/types'
+import { useApolloClient } from '@apollo/client'
+import { PostWithSomeDetails, SpaceData, SpaceStruct } from '@subsocial/api/types'
 import { Tabs } from 'antd'
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import config from 'src/config'
 import { ActivityCounts } from 'src/graphql/apis'
 import {
   useGetActivityCounts,
-  // useGetAllActivities,
   useGetCommentActivities,
-  // useGetFollowActivities,
   useGetPostActivities,
 } from 'src/graphql/hooks'
 import { useFetchPosts, useSelectPost, useSelectSpace } from 'src/rtk/app/hooks'
+import { useAppDispatch } from 'src/rtk/app/store'
+import { fetchProfilePosts } from 'src/rtk/features/posts/postsSlice'
 import { useIsMyAddress } from '../auth/MyAccountsContext'
+import ChatLinkButtonWithCounter from '../chat/ChatLinkButtonWithCounter'
+import { InfinitePageList, InnerLoadMoreFn } from '../lists'
+import { PublicPostPreviewById } from '../posts/PublicPostPreview'
 import WriteSomething from '../posts/WriteSomething'
-// import { PostPreviewsOnSpace } from '../spaces/helpers'
+import { CreatePostButton } from '../spaces/helpers/CreatePostButton'
+import { FollowerCanPostAlert } from '../spaces/permissions/FollowerCanPostAlert'
+import { useSubsocialApi } from '../substrate'
 import { Loading } from '../utils'
 import { createLoadMorePosts, FeedActivities } from './FeedActivities'
-// import { createLoadMoreActivities, NotifActivities } from './Notifications'
-import ChatLinkButtonWithCounter from '../chat/ChatLinkButtonWithCounter'
 import { OnchainAccountActivity } from './OnchainAccountActivity'
 import { SpaceActivities } from './SpaceActivities'
 import styles from './style.module.sass'
@@ -35,53 +39,10 @@ type WithSpacePosts = {
 type ActivitiesByAddressProps = {
   address: string
   withSpacePosts?: WithSpacePosts
+  postsCount?: number
   withWriteSomethingBlock?: boolean
   spaceId?: string
 }
-
-// const AllActivities = (props: BaseActivityProps) => {
-//   const getAllActivities = useGetAllActivities()
-//   const loadMoreActivities = createLoadMoreActivities(getAllActivities)
-//   return (
-//     <NotifActivities
-//       {...props}
-//       showMuted
-//       type='activities'
-//       loadMore={loadMoreActivities}
-//       noDataDesc='No activities yet'
-//       loadingLabel='Loading activities...'
-//     />
-//   )
-// }
-
-// const ReactionActivities = (props: BaseActivityProps) => {
-//   const getReactionActivities = useGetReactionActivities()
-//   const loadMoreReactions = createLoadMoreActivities(getReactionActivities)
-//   return (
-//     <NotifActivities
-//       {...props}
-//       type='activities'
-//       loadMore={loadMoreReactions}
-//       noDataDesc='No reactions yet'
-//       loadingLabel='Loading reactions...'
-//     />
-//   )
-// }
-
-// const FollowActivities = (props: BaseActivityProps) => {
-//   const getFollowActivities = useGetFollowActivities()
-//   const loadMoreFollows = createLoadMoreActivities(getFollowActivities)
-//   return (
-//     <NotifActivities
-//       {...props}
-//       showMuted
-//       type='activities'
-//       loadMore={loadMoreFollows}
-//       noDataDesc='No follows yet'
-//       loadingLabel='Loading follows...'
-//     />
-//   )
-// }
 
 const CommentActivities = (props: BaseActivityProps) => {
   const getCommentActivities = useGetCommentActivities()
@@ -112,23 +73,62 @@ const PostActivities = (props: BaseActivityProps) => {
   )
 }
 
-// const SpacePostsContent = (props: WithSpacePosts) => {
-//   return <PostPreviewsOnSpace {...props} />
-// }
+type ProfileSpacePostsProps = {
+  address: string
+  postIds: string[]
+  space: SpaceStruct
+  profilePostsCount?: number
+}
 
-// const TweetActivities = (props: BaseActivityProps) => {
-//   const getTweetActivities = useGetTweetActivities()
-//   const loadMorePosts = createLoadMorePosts(getTweetActivities)
-//   return (
-//     <FeedActivities
-//       {...props}
-//       showMuted
-//       loadMore={loadMorePosts}
-//       noDataDesc='No tweets yet'
-//       loadingLabel='Loading tweets...'
-//     />
-//   )
-// }
+const ProfileSpacePosts = ({
+  address,
+  postIds,
+  space,
+  profilePostsCount,
+}: ProfileSpacePostsProps) => {
+  const dispatch = useAppDispatch()
+  const { subsocial, isApiReady } = useSubsocialApi()
+  const client = useApolloClient()
+
+  const loadMore: InnerLoadMoreFn = async (page, size) => {
+    if (!isApiReady) return []
+
+    const offset = (page - 1) * size
+    const result = await dispatch(
+      fetchProfilePosts({
+        api: subsocial,
+        id: address,
+        client: client as any,
+        limit: size,
+        offset,
+        dispatch,
+      }),
+    )
+    const posts = result.payload as PostWithSomeDetails[]
+
+    return posts.map(p => p.id)
+  }
+
+  const List = useCallback(
+    () => (
+      <InfinitePageList
+        loadingLabel='Loading more posts...'
+        initialPage={1}
+        dataSource={postIds}
+        loadMore={loadMore}
+        totalCount={profilePostsCount || 0}
+        noDataDesc='No posts yet'
+        noDataExt={<CreatePostButton space={space} />}
+        getKey={postId => postId}
+        renderItem={postId => <PublicPostPreviewById postId={postId} />}
+        beforeList={<FollowerCanPostAlert space={space} />}
+      />
+    ),
+    [isApiReady, profilePostsCount],
+  )
+
+  return <List />
+}
 
 const activityTabs = [
   'space-posts',
@@ -150,6 +150,8 @@ const OffchainAccountActivity = ({
   address,
   withWriteSomethingBlock = true,
   spaceId,
+  postsCount: profilePostsCount,
+  withSpacePosts,
 }: ActivitiesByAddressProps) => {
   const initialActiveTab = 'posts'
 
@@ -198,6 +200,17 @@ const OffchainAccountActivity = ({
     router.replace('#' + activeKey)
   }
 
+  const postsView = withSpacePosts ? (
+    <ProfileSpacePosts
+      postIds={withSpacePosts.postIds}
+      profilePostsCount={profilePostsCount}
+      space={withSpacePosts.spaceData.struct}
+      address={address}
+    />
+  ) : (
+    <PostActivities address={address} totalCount={postsCount} />
+  )
+
   return (
     <Tabs
       activeKey={activeTab}
@@ -213,14 +226,17 @@ const OffchainAccountActivity = ({
         )
       }}
     >
-      <TabPane tab={getTabTitle('Posts', postsCount)} key={getTab('posts')}>
+      <TabPane
+        tab={getTabTitle('Posts', withSpacePosts ? profilePostsCount || 0 : postsCount)}
+        key={getTab('posts')}
+      >
         {isMyAddress ? (
           <div className={clsx('d-flex flex-column', withWriteSomethingBlock && 'mt-3')}>
             {withWriteSomethingBlock && <WriteSomething />}
-            <PostActivities address={address} totalCount={postsCount} />
+            {postsView}
           </div>
         ) : (
-          <PostActivities address={address} totalCount={postsCount} />
+          postsView
         )}
       </TabPane>
       <TabPane tab={getTabTitle('Comments', commentsCount)} key={getTab('comments')}>

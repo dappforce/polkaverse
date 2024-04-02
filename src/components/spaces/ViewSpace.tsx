@@ -2,7 +2,7 @@ import { EditOutlined } from '@ant-design/icons'
 import { isEmptyStr, newLogger, nonEmptyStr } from '@subsocial/utils'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
-import React, { MouseEvent, useCallback, useState } from 'react'
+import React, { MouseEvent, useCallback, useMemo, useState } from 'react'
 import { ButtonLink } from 'src/components/utils/CustomLinks'
 import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
@@ -101,6 +101,7 @@ export const InnerViewSpace = (props: Props) => {
     postIds = [],
     posts = [],
     imageSize = LARGE_AVATAR_SIZE,
+    postsCount,
 
     onClick,
   } = props
@@ -137,22 +138,36 @@ export const InnerViewSpace = (props: Props) => {
   }, [spaceData, imageSize])
 
   const isMySpace = useIsMySpace(spaceData?.struct)
-  // const { filteredPostIds, filteredPosts } = useMemo(() => {
-  //   if (isMySpace) return { filteredPosts: posts, filteredPostIds: postIds }
+  const { filteredPostIds, filteredPosts, filteredPostsCount } = useMemo(() => {
+    const postsWithSpace = posts?.filter(post => !!post.post.struct.spaceId)
+    const postsWithSpaceIds = postsWithSpace?.map(post => post.post.id)
 
-  //   const hiddenPosts = new Set()
+    if (isMySpace)
+      return {
+        filteredPosts: postsWithSpace,
+        filteredPostIds: postsWithSpaceIds,
+        filteredPostsCount: postsCount,
+      }
 
-  //   const filteredPosts = posts.filter(post => {
-  //     if (isHidden(post.post.struct)) {
-  //       hiddenPosts.add(post.post.id)
-  //       return false
-  //     }
-  //     return true
-  //   })
+    const hiddenPosts = new Set()
 
-  //   const filteredPostIds = postIds.filter(id => !hiddenPosts.has(id))
-  //   return { filteredPosts, filteredPostIds }
-  // }, [posts, postIds])
+    const filteredPosts = postsWithSpace.filter(post => {
+      if (isHidden(post.post.struct)) {
+        hiddenPosts.add(post.post.id)
+        return false
+      }
+      return true
+    })
+
+    const filteredPostIds = postsWithSpaceIds.filter(id => !hiddenPosts.has(id))
+    const filteredPostsCount = postsCount ? postsCount - filteredPostIds.length : 0
+
+    return {
+      filteredPosts,
+      filteredPostIds,
+      filteredPostsCount: filteredPostsCount > 0 ? filteredPostsCount : 0,
+    }
+  }, [posts, postIds, isMySpace])
 
   // We do not return 404 page here, because this component could be used to render a space in list.
   if (!spaceData) return null
@@ -360,9 +375,15 @@ export const InnerViewSpace = (props: Props) => {
       <Section className='DfContentPage mt-4'>
         {isProfileSpace ? (
           <AccountActivity
+            withSpacePosts={{
+              spaceData,
+              posts: filteredPosts,
+              postIds: filteredPostIds,
+            }}
             withWriteSomethingBlock={false}
             address={spaceData.struct.ownerId}
             spaceId={spaceId}
+            postsCount={filteredPostsCount}
           />
         ) : (
           <PostPreviewsOnSpace

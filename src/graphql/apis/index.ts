@@ -281,6 +281,14 @@ export async function getPostsData(client: GqlClient, variables: GetPostsDataVar
   return posts.data.posts.map<PostFragmentWithParent>(post => mapPostFragmentWithParent(post))
 }
 
+export async function getPostsCount(client: GqlClient, variables: GetPostsDataVariables) {
+  const postsConnection = await client.query<any, GetPostsDataVariables>({
+    query: q.GET_POSTS_COUNT,
+    variables,
+  })
+  return postsConnection.data.postsConnection.totalCount
+}
+
 export async function getSpacesData(client: GqlClient, variables: GetSpacesDataVariables) {
   const spaces = await client.query<GetSpacesData, GetSpacesDataVariables>({
     query: q.GET_SPACES_DATA,
