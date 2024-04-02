@@ -38,7 +38,6 @@ const CreateChatModalButton = ({ size }: CreateChatModalButtonProps) => {
         router.push(value)
         setOpenModal(false)
       } else if (name === 'redirect-hard') {
-        console.log(value)
         // Using router push for redirect don't redirect properly, it just have loading for a bit and changes the url much later
         window.location.href = value
         setOpenModal(false)

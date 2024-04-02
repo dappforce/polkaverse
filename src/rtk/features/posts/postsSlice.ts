@@ -462,9 +462,8 @@ export const fetchProfilePosts = createAsyncThunk<
       limit,
       where: {
         ownedByAccount: { id_eq: address },
-        space_isNull: false,
+        AND: [{ space_isNull: false, isComment_eq: false }],
       },
-      orderBy: 'createdAtTime_DESC',
     })
 
     const {

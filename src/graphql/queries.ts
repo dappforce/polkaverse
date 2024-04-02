@@ -254,7 +254,7 @@ export const GET_POST_IDS_BY_SPACES = gql`
 export const GET_POSTS_DATA = gql`
   ${POST_FRAGMENT}
   query GetPostsData($where: PostWhereInput, $offset: Int, $limit: Int) {
-    posts(where: $where, limit: $limit, offset: $offset) {
+    posts(where: $where, limit: $limit, offset: $offset, orderBy: createdAtTime_DESC) {
       ...PostFragment
       sharedPost {
         ...PostFragment
@@ -435,7 +435,7 @@ export const GET_NEWS_FEEDS = gql`
 
 // Activities
 // ------------------------------------------------------------------------------------
-export const GET_ACTIVITY_COUNTS = gql`
+export const GET_ACTIVITY_COUNTS = (withHidden?: boolean) => gql`
   query GetActivityCounts($address: String!) {
     activities: activitiesConnection(
       orderBy: id_ASC
@@ -469,7 +469,9 @@ export const GET_ACTIVITY_COUNTS = gql`
     }
     posts: postsConnection(
       orderBy: id_ASC
-      where: { ownedByAccount: { id_eq: $address }, isComment_eq: false, hidden_eq: false }
+      where: { ownedByAccount: { id_eq: $address }, isComment_eq: false, space_isNull: false, 
+        ${!withHidden ? 'hidden_eq: false' : ''}
+      }
     ) {
       totalCount
     }
@@ -489,7 +491,9 @@ export const GET_ACTIVITY_COUNTS = gql`
     }
     comments: postsConnection(
       orderBy: id_ASC
-      where: { ownedByAccount: { id_eq: $address }, isComment_eq: true, hidden_eq: false }
+      where: { ownedByAccount: { id_eq: $address }, isComment_eq: true, ${
+        !withHidden ? 'hidden_eq: false' : ''
+      } }
     ) {
       totalCount
     }
@@ -649,7 +653,7 @@ export const GET_POST_ACTIVITIES = gql`
         limit: $limit
         offset: $offset
         orderBy: createdAtTime_DESC
-        where: { isComment_eq: false, hidden_eq: false }
+        where: { isComment_eq: false, hidden_eq: false, space_isNull: false }
       ) {
         id
       }

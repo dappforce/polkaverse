@@ -62,7 +62,13 @@ export function PostPreview(props: PreviewProps) {
   const sharedPostOriginalId = isSharedPost ? asSharedPostStruct(post).originalPostId : undefined
   usePostViewTracker(post.id, sharedPostOriginalId, inView && !!myAddress)
 
-  if (isUnlisted || isHiddenChatRoom || isBlocked || !post.spaceId) return null
+  if (
+    isUnlisted ||
+    isHiddenChatRoom ||
+    isBlocked ||
+    ((post.isRegularPost || post.isSharedPost) && !post.spaceId)
+  )
+    return null
 
   const postContent = postDetails.post.content
   const isEmptyContent = !isSharedPost && !postContent?.title && !postContent?.body

@@ -20,8 +20,6 @@ const ChatButton = ({ spaceId }: ChatButtonProps) => {
   const isPostHidden = !!post?.post.struct.hidden
   const isRemovedPost = !post?.post.struct.spaceId
 
-  console.log(isRemovedPost, post?.id)
-
   if (chat && spaceContent && !isEmptyArray(chats) && !isPostHidden) return null
 
   return isPostHidden && !isRemovedPost ? (

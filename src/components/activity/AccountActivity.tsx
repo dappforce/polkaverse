@@ -6,11 +6,7 @@ import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import config from 'src/config'
 import { ActivityCounts } from 'src/graphql/apis'
-import {
-  useGetActivityCounts,
-  useGetCommentActivities,
-  useGetPostActivities,
-} from 'src/graphql/hooks'
+import { useGetActivityCounts, useGetCommentActivities } from 'src/graphql/hooks'
 import { useFetchPosts, useSelectPost, useSelectSpace } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { fetchProfilePosts } from 'src/rtk/features/posts/postsSlice'
@@ -19,6 +15,7 @@ import ChatLinkButtonWithCounter from '../chat/ChatLinkButtonWithCounter'
 import { InfinitePageList, InnerLoadMoreFn } from '../lists'
 import { PublicPostPreviewById } from '../posts/PublicPostPreview'
 import WriteSomething from '../posts/WriteSomething'
+import { useIsMySpace } from '../spaces/helpers'
 import { CreatePostButton } from '../spaces/helpers/CreatePostButton'
 import { FollowerCanPostAlert } from '../spaces/permissions/FollowerCanPostAlert'
 import { useSubsocialApi } from '../substrate'
@@ -58,25 +55,10 @@ const CommentActivities = (props: BaseActivityProps) => {
   )
 }
 
-const PostActivities = (props: BaseActivityProps) => {
-  const getPostActivities = useGetPostActivities()
-  const loadMorePosts = createLoadMorePosts(getPostActivities)
-
-  return (
-    <FeedActivities
-      {...props}
-      showMuted
-      loadMore={loadMorePosts}
-      noDataDesc='No posts yet'
-      loadingLabel='Loading posts...'
-    />
-  )
-}
-
 type ProfileSpacePostsProps = {
   address: string
-  postIds: string[]
-  space: SpaceStruct
+  postIds?: string[]
+  space?: SpaceStruct
   profilePostsCount?: number
 }
 
@@ -113,18 +95,18 @@ const ProfileSpacePosts = ({
     () => (
       <InfinitePageList
         loadingLabel='Loading more posts...'
-        initialPage={1}
+        initialPage={postIds ? 1 : 0}
         dataSource={postIds}
         loadMore={loadMore}
         totalCount={profilePostsCount || 0}
         noDataDesc='No posts yet'
-        noDataExt={<CreatePostButton space={space} />}
+        noDataExt={space && <CreatePostButton space={space} />}
         getKey={postId => postId}
         renderItem={postId => <PublicPostPreviewById postId={postId} />}
-        beforeList={<FollowerCanPostAlert space={space} />}
+        beforeList={space && <FollowerCanPostAlert space={space} />}
       />
     ),
-    [isApiReady, profilePostsCount],
+    [isApiReady],
   )
 
   return <List />
@@ -150,7 +132,6 @@ const OffchainAccountActivity = ({
   address,
   withWriteSomethingBlock = true,
   spaceId,
-  postsCount: profilePostsCount,
   withSpacePosts,
 }: ActivitiesByAddressProps) => {
   const initialActiveTab = 'posts'
@@ -169,6 +150,8 @@ const OffchainAccountActivity = ({
 
   const post = useSelectPost(chatId)
 
+  const isMySpace = useIsMySpace(space?.struct)
+
   // to make tweets tab doesn't disappear until the address is changed.
 
   useEffect(() => {
@@ -177,10 +160,10 @@ const OffchainAccountActivity = ({
     ;(async () => {
       if (!address) return
 
-      const counts = await getActivityCounts({ address })
+      const counts = await getActivityCounts({ address, withHidden: isMySpace || isMyAddress })
       setCounts(counts)
     })()
-  }, [address])
+  }, [address, isMySpace, isMyAddress])
 
   useEffect(() => {
     const hash = window.location.hash.substring(1) as ActivityTab
@@ -200,15 +183,13 @@ const OffchainAccountActivity = ({
     router.replace('#' + activeKey)
   }
 
-  const postsView = withSpacePosts ? (
+  const postsView = (
     <ProfileSpacePosts
-      postIds={withSpacePosts.postIds}
-      profilePostsCount={profilePostsCount}
-      space={withSpacePosts.spaceData.struct}
+      postIds={withSpacePosts?.postIds}
+      profilePostsCount={postsCount}
+      space={space?.struct}
       address={address}
     />
-  ) : (
-    <PostActivities address={address} totalCount={postsCount} />
   )
 
   return (
@@ -226,10 +207,7 @@ const OffchainAccountActivity = ({
         )
       }}
     >
-      <TabPane
-        tab={getTabTitle('Posts', withSpacePosts ? profilePostsCount || 0 : postsCount)}
-        key={getTab('posts')}
-      >
+      <TabPane tab={getTabTitle('Posts', postsCount)} key={getTab('posts')}>
         {isMyAddress ? (
           <div className={clsx('d-flex flex-column', withWriteSomethingBlock && 'mt-3')}>
             {withWriteSomethingBlock && <WriteSomething />}

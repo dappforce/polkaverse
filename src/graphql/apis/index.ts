@@ -99,11 +99,11 @@ export async function getPostIdsBySpaces(
 export type ActivityCounts = Counts & { tweetsCount: number }
 export async function getActivityCounts(
   client: GqlClient,
-  variables: GetActivityCountsVariables,
+  variables: GetActivityCountsVariables & { withHidden?: boolean },
 ): Promise<ActivityCounts> {
   const res = await client.query<GetActivityCounts, GetActivityCountsVariables>({
-    query: q.GET_ACTIVITY_COUNTS,
-    variables,
+    query: q.GET_ACTIVITY_COUNTS(variables.withHidden),
+    variables: { address: variables.address },
   })
 
   const { activities, comments, follows, posts, reactions, spaces, tweets } = res.data
@@ -232,6 +232,7 @@ export async function getCommentActivities(
     query: q.GET_COMMENT_ACTIVITIES,
     variables,
   })
+
   const commentIds: string[] = []
   activities.data.accountById?.posts.forEach(post => {
     const commentId = post?.id
@@ -239,6 +240,7 @@ export async function getCommentActivities(
       commentIds.push(commentId)
     }
   })
+
   return commentIds
 }
 

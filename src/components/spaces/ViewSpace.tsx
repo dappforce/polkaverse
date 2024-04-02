@@ -382,7 +382,7 @@ export const InnerViewSpace = (props: Props) => {
             }}
             withWriteSomethingBlock={false}
             address={spaceData.struct.ownerId}
-            spaceId={spaceId}
+            spaceId={ownerProfileSpaceId}
             postsCount={filteredPostsCount}
           />
         ) : (
