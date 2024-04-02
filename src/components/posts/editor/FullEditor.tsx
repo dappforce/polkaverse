@@ -57,7 +57,6 @@ const EditorCard = ({
   markdownMode,
   onChange,
   saveBodyDraft,
-  form,
 }: EditorCardProps) => {
   const [fixedToolbar, setFixedToolbar] = useState(false)
   const { isMobile } = useResponsiveSize()
@@ -69,7 +68,6 @@ const EditorCard = ({
   }
 
   const onChangeHtmlEditor = (text: string) => {
-    console.log('iudjfhgsuiydfgiuy', text)
     const mdText = htmlToMd(text) || ''
     onChange(mdText)
   }
