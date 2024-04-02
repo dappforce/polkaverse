@@ -149,12 +149,31 @@ const FullEditor = ({
   function onBodyChanged(text: string) {
     form.setFieldsValue({ [fieldName('body')]: text })
     handleChange()
+    setPublishIsDisable(!text)
+  }
+
+  const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const title = e.target.value
+
+    form.setFieldsValue({ [fieldName('title')]: title })
+
+    const image = form.getFieldValue(fieldName('image'))
+
+    if (image) {
+      setPublishIsDisable(!title)
+    }
   }
 
   const defaultSpace = spaceForPost || allowedSpaceIds[0]
 
   useEffect(() => {
     setSpaceForPost(defaultSpace)
+
+    const { title, image, body } = initialValues
+
+    if (title && (image || body)) {
+      setPublishIsDisable(false)
+    }
   }, [defaultSpace])
 
   if (isEmptyArray(allowedSpaceIds)) return <NoData description='You need to create a space' />
@@ -163,12 +182,16 @@ const FullEditor = ({
 
   const onAvatarChanged = (url?: string) => {
     form.setFieldsValue({ [fieldName('image')]: url })
+    const title = form.getFieldValue(fieldName('title'))
+
+    if (title) {
+      setPublishIsDisable(!url)
+    }
   }
 
   const tags = initialValues.tags || []
 
   const saveDraft = (content: PostContent) => {
-    setPublishIsDisable(!content.body)
     saveContent(content)
   }
 
@@ -199,7 +222,7 @@ const FullEditor = ({
             <Form.Item
               name={fieldName('title')}
               className='mb-0'
-              validateTrigger='onBlur'
+              validateTrigger='onChange'
               rules={[
                 {
                   min: TITLE_MIN_LEN,
@@ -211,11 +234,7 @@ const FullEditor = ({
                 },
               ]}
             >
-              <Input
-                onBlur={e => form.setFieldsValue({ [fieldName('title')]: e.target.value.trim() })}
-                placeholder='Title'
-                className={styles.TitleInput}
-              />
+              <Input onChange={onTitleChange} placeholder='Title' className={styles.TitleInput} />
             </Form.Item>
             <div className={styles.CoverSection}>
               {!postType && (
