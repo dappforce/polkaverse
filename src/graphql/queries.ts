@@ -166,7 +166,7 @@ export const GET_LATEST_POST_ID = gql`
 export const GET_LATEST_POST_IDS = gql`
   query GetLatestPostIds($kinds: [PostKind!] = [RegularPost], $offset: Int = 0, $limit: Int!) {
     posts(
-      where: { kind_in: $kinds }
+      where: { kind_in: $kinds, space_isNull: false }
       orderBy: createdAtBlock_DESC
       offset: $offset
       limit: $limit
@@ -405,7 +405,10 @@ export const GET_NEWS_FEEDS_COUNT = gql`
       orderBy: id_ASC
       where: {
         account: { id_eq: $address }
-        activity: { account: { id_not_eq: $address }, post: { isComment_eq: false } }
+        activity: {
+          account: { id_not_eq: $address }
+          post: { isComment_eq: false, space_isNull: false }
+        }
       }
     ) {
       totalCount
@@ -420,7 +423,12 @@ export const GET_NEWS_FEEDS = gql`
         limit: $limit
         offset: $offset
         orderBy: activity_date_DESC
-        where: { activity: { account: { id_not_eq: $address }, post: { isComment_eq: false } } }
+        where: {
+          activity: {
+            account: { id_not_eq: $address }
+            post: { isComment_eq: false, space_isNull: false }
+          }
+        }
       ) {
         activity {
           post {
