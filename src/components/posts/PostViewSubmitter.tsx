@@ -41,7 +41,6 @@ export default function PostViewSubmitter() {
   useEffect(() => {
     if (!myAddress) return
 
-    console.log('masuk?')
     const intervalId = setInterval(async () => {
       try {
         const postViews = getPostViewsFromStorage()

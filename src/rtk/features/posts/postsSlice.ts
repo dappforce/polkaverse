@@ -351,17 +351,6 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
         dispatch(fetchBlockedResources({ appId })),
       ]
 
-      // removed because now it uses super likes
-      // withReactionByAccount &&
-      //   dispatch(
-      //     fetchMyReactionsByPostIds({
-      //       ids: newIds,
-      //       myAddress: withReactionByAccount,
-      //       api,
-      //       dataSource,
-      //     }),
-      //   )
-
       withReactionByAccount &&
         dispatch(fetchAddressLikeCounts({ postIds: newIds, address: withReactionByAccount }))
 
@@ -431,7 +420,7 @@ export const fetchPost = createFetchOne(fetchPosts)
 
 type FetchProfilePostsArgs = {
   id: AccountId
-  publicOnly?: boolean
+  spaceId?: string
   dispatch: AppDispatch
   api: SubsocialApi
   client?: ApolloClient<NormalizedCacheObject> | undefined
@@ -452,7 +441,16 @@ export const fetchProfilePosts = createAsyncThunk<
   ThunkApiConfig
 >(
   'posts/fetchOneByAddress',
-  async ({ id, client, additionalData, dispatch, api, limit, offset }): Promise<PostStruct[]> => {
+  async ({
+    id,
+    spaceId,
+    client,
+    additionalData,
+    dispatch,
+    api,
+    limit,
+    offset,
+  }): Promise<PostStruct[]> => {
     const address = id as AccountId
 
     if (!client) return []
@@ -463,6 +461,7 @@ export const fetchProfilePosts = createAsyncThunk<
       where: {
         ownedByAccount: { id_eq: address },
         AND: [{ space_isNull: false, isComment_eq: false }],
+        OR: [{ space: { id_eq: spaceId } }],
       },
     })
 

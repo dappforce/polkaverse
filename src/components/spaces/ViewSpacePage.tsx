@@ -1,6 +1,5 @@
 import { FC, useEffect } from 'react'
 import config from 'src/config'
-import { getPostsCount } from 'src/graphql/apis'
 import { initializeApollo } from 'src/graphql/client'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { useAppDispatch } from 'src/rtk/app/store'
@@ -40,8 +39,6 @@ const InnerViewSpacePage: FC<Props> = props => {
   if (useIsUnlistedSpace(spaceData) || !spaceData) {
     return <SpaceNotFountPage />
   }
-
-  // if (loading && isClientSide()) return <Loading label='Loading space...' center />.
 
   const id = idToBn(spaceData.struct.id)
   const { name, image } = (spaceData.content as SpaceContent | undefined) || {}
@@ -111,7 +108,6 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
 
   let pageIds: string[] = []
   let sortedPostIds: string[] = []
-  let totalCount = undefined
 
   // We need to reverse post ids to display posts in a descending order on a space page.
 
@@ -127,6 +123,7 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
     const result = await dispatch(
       fetchProfilePosts({
         id: data.struct.ownerId,
+        spaceId: data.id,
         client,
         api: subsocial,
         limit: 20,
@@ -134,13 +131,6 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
         dispatch,
       }),
     )
-
-    totalCount = await getPostsCount(client, {
-      where: {
-        ownedByAccount: { id_eq: data.struct.ownerId },
-        space_isNull: false,
-      },
-    })
 
     const posts = result.payload as PostStruct[]
 
@@ -176,7 +166,6 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
     spaceData: data,
     posts,
     postIds: sortedPostIds,
-    postsCount: totalCount,
     prefetchedIds: pageIds,
     customImage,
     isProfileSpace,

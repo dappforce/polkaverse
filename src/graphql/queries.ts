@@ -435,7 +435,7 @@ export const GET_NEWS_FEEDS = gql`
 
 // Activities
 // ------------------------------------------------------------------------------------
-export const GET_ACTIVITY_COUNTS = (withHidden?: boolean) => gql`
+export const GET_ACTIVITY_COUNTS = (withHidden?: boolean, spaceId?: string) => gql`
   query GetActivityCounts($address: String!) {
     activities: activitiesConnection(
       orderBy: id_ASC
@@ -470,7 +470,8 @@ export const GET_ACTIVITY_COUNTS = (withHidden?: boolean) => gql`
     posts: postsConnection(
       orderBy: id_ASC
       where: { ownedByAccount: { id_eq: $address }, isComment_eq: false, space_isNull: false, 
-        ${!withHidden ? 'hidden_eq: false' : ''}
+        ${!withHidden ? 'hidden_eq: false' : ''},
+        ${spaceId ? `OR: {space: { id_eq: "${spaceId}" }}` : ''}
       }
     ) {
       totalCount

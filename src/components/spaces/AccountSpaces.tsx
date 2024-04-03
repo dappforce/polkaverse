@@ -165,7 +165,7 @@ export const OwnedSpacesList = ({ ...props }: Omit<AccountSpacesProps, 'withTitl
           />
         </TabPane>
       )}
-      {hasUnlistedSpaces && (
+      {hasUnlistedSpaces && isMy && (
         <TabPane tab={`Hidden (${unlistedSpaceIds.length})`} key='hidden'>
           <SpacesListBySpaceIds spaceIds={unlistedSpaceIds} totalCount={unlistedCount} {...props} />
         </TabPane>

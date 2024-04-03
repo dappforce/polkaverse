@@ -69,7 +69,6 @@ const EditorCard = ({
   }
 
   const onChangeHtmlEditor = (text: string) => {
-    console.log('iudjfhgsuiydfgiuy', text)
     const mdText = htmlToMd(text) || ''
     onChange(mdText)
   }

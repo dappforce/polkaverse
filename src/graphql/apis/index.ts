@@ -99,10 +99,10 @@ export async function getPostIdsBySpaces(
 export type ActivityCounts = Counts & { tweetsCount: number }
 export async function getActivityCounts(
   client: GqlClient,
-  variables: GetActivityCountsVariables & { withHidden?: boolean },
+  variables: GetActivityCountsVariables & { withHidden?: boolean; spaceId?: string },
 ): Promise<ActivityCounts> {
   const res = await client.query<GetActivityCounts, GetActivityCountsVariables>({
-    query: q.GET_ACTIVITY_COUNTS(variables.withHidden),
+    query: q.GET_ACTIVITY_COUNTS(variables.withHidden, variables.spaceId),
     variables: { address: variables.address },
   })
 

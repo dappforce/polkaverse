@@ -80,6 +80,7 @@ const ProfileSpacePosts = ({
       fetchProfilePosts({
         api: subsocial,
         id: address,
+        spaceId: space?.id,
         client: client as any,
         limit: size,
         offset,
@@ -160,7 +161,11 @@ const OffchainAccountActivity = ({
     ;(async () => {
       if (!address) return
 
-      const counts = await getActivityCounts({ address, withHidden: isMySpace || isMyAddress })
+      const counts = await getActivityCounts({
+        address,
+        withHidden: isMySpace || isMyAddress,
+        spaceId,
+      })
       setCounts(counts)
     })()
   }, [address, isMySpace, isMyAddress])

@@ -8,7 +8,6 @@ import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
 import { useSendEvent } from 'src/providers/AnalyticContext'
-// import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
 import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { SpaceContent, SpaceId, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
@@ -308,7 +307,7 @@ export const InnerViewSpace = (props: Props) => {
 
       {withStats && (
         <span className='d-flex justify-content-between flex-wrap mt-3'>
-          <SpaceStatsRow space={space} />
+          <SpaceStatsRow space={space} isProfileSpace={isProfileSpace} />
           {!preview && <ContactInfo {...contactInfo} />}
         </span>
       )}
