@@ -15,9 +15,9 @@ const ChatButton = ({ spaceId }: ChatButtonProps) => {
   const chats = spaceContent?.chats
   const chat = chats?.[0]
 
-  useFetchPosts(chat ? [chat.id] : [])
+  useFetchPosts(chat ? [chat?.id] : [])
 
-  const post = useSelectPost(chat.id)
+  const post = useSelectPost(chat?.id)
 
   const isPostHidden = !!post?.post.struct.hidden
   const isRemovedPost = !post?.post.struct.spaceId
