@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/client'
-import { PostWithSomeDetails, SpaceData, SpaceStruct } from '@subsocial/api/types'
+import { PostStruct, PostWithSomeDetails, SpaceData, SpaceStruct } from '@subsocial/api/types'
 import { Tabs } from 'antd'
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
@@ -71,6 +71,8 @@ const ProfileSpacePosts = ({
   const dispatch = useAppDispatch()
   const { subsocial, isApiReady } = useSubsocialApi()
   const client = useApolloClient()
+  const isMySpace = useIsMySpace(space)
+  const isMyAddress = useIsMyAddress(address)
 
   const loadMore: InnerLoadMoreFn = async (page, size) => {
     if (!isApiReady) return []
@@ -81,13 +83,14 @@ const ProfileSpacePosts = ({
         api: subsocial,
         id: address,
         spaceId: space?.id,
+        withHidden: isMySpace || isMyAddress,
         client: client as any,
         limit: size,
         offset,
         dispatch,
       }),
     )
-    const posts = result.payload as PostWithSomeDetails[]
+    const posts = result.payload as PostStruct[]
 
     return posts.map(p => p.id)
   }
@@ -136,7 +139,6 @@ const OffchainAccountActivity = ({
   withSpacePosts,
 }: ActivitiesByAddressProps) => {
   const initialActiveTab = 'posts'
-
   const isMyAddress = useIsMyAddress(address)
   const getActivityCounts = useGetActivityCounts()
   const router = useRouter()
@@ -166,6 +168,7 @@ const OffchainAccountActivity = ({
         withHidden: isMySpace || isMyAddress,
         spaceId,
       })
+
       setCounts(counts)
     })()
   }, [address, isMySpace, isMyAddress])

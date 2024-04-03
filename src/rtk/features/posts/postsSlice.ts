@@ -421,6 +421,7 @@ export const fetchPost = createFetchOne(fetchPosts)
 type FetchProfilePostsArgs = {
   id: AccountId
   spaceId?: string
+  withHidden?: boolean
   dispatch: AppDispatch
   api: SubsocialApi
   client?: ApolloClient<NormalizedCacheObject> | undefined
@@ -446,6 +447,7 @@ export const fetchProfilePosts = createAsyncThunk<
     spaceId,
     client,
     additionalData,
+    withHidden,
     dispatch,
     api,
     limit,
@@ -455,13 +457,15 @@ export const fetchProfilePosts = createAsyncThunk<
 
     if (!client) return []
 
+    const showHidden = withHidden ? {} : { hidden_eq: false }
+
     const posts = await getPostsData(client, {
       offset,
       limit,
       where: {
         ownedByAccount: { id_eq: address },
-        AND: [{ space_isNull: false, isComment_eq: false }],
-        OR: [{ space: { id_eq: spaceId } }],
+        AND: [{ space_isNull: false, isComment_eq: false, ...showHidden }],
+        OR: [{ space: { id_eq: spaceId }, ...showHidden }],
       },
     })
 

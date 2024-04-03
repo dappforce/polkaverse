@@ -124,6 +124,7 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
       fetchProfilePosts({
         id: data.struct.ownerId,
         spaceId: data.id,
+        withHidden: isProfileSpace,
         client,
         api: subsocial,
         limit: 20,
@@ -134,7 +135,7 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
 
     const posts = result.payload as PostStruct[]
 
-    const postIds = posts.map(p => p.id)
+    const postIds = posts?.map(p => p.id) || []
 
     sortedPostIds = descSort(postIds)
 

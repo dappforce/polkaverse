@@ -479,7 +479,11 @@ export const GET_ACTIVITY_COUNTS = (withHidden?: boolean, spaceId?: string) => g
       orderBy: id_ASC
       where: { ownedByAccount: { id_eq: $address }, isComment_eq: false, space_isNull: false, 
         ${!withHidden ? 'hidden_eq: false' : ''},
-        ${spaceId ? `OR: {space: { id_eq: "${spaceId}" }}` : ''}
+        ${
+          spaceId
+            ? `OR: {space: { id_eq: "${spaceId}" }, ${!withHidden ? 'hidden_eq: false' : ''}}`
+            : ''
+        }
       }
     ) {
       totalCount

@@ -176,7 +176,7 @@ export const InnerViewSpace = (props: Props) => {
   const contactInfo = { email, links }
   const spaceName = renderSpaceName(spaceData)
 
-  const chatButton = <ChatButton spaceId={spaceId} />
+  const chatButton = <ChatButton spaceId={spaceData.id} />
 
   const primaryClass = `ProfileDetails ${isMy && 'MySpace'} d-flex`
 

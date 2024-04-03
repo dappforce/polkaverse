@@ -4,7 +4,7 @@ import CreateChatModalButton from './CreateChatModal'
 import UnhideChatButton from './UnhideChatButton'
 
 type ChatButtonProps = {
-  spaceId?: string
+  spaceId: string
 }
 
 const ChatButton = ({ spaceId }: ChatButtonProps) => {

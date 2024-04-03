@@ -17,10 +17,10 @@ function parseMessage(data: string) {
 
 type CreateChatModalButtonProps = {
   size?: 'small' | 'middle' | 'large'
-  spaceId?: string
+  spaceId: string
 }
 
-const CreateChatModalButton = ({ size }: CreateChatModalButtonProps) => {
+const CreateChatModalButton = ({ size, spaceId }: CreateChatModalButtonProps) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [openModal, setOpenModal] = useState(false)
   const router = useRouter()
@@ -51,7 +51,7 @@ const CreateChatModalButton = ({ size }: CreateChatModalButtonProps) => {
         iframeRef.current?.contentWindow?.postMessage(
           {
             type: 'grill:create-chat',
-            payload: 'open',
+            payload: `open|${spaceId}`,
           },
           '*',
         )
