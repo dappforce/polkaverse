@@ -18,7 +18,7 @@ type BannerCardProps = {
   titleColor: string
 }
 
-const BannerCard = ({
+export const BannerCard = ({
   title,
   subtitle,
   imagePath,
@@ -215,3 +215,11 @@ const NotStakedCard = () => {
     </div>
   )
 }
+
+export const BannerCardWithWrapper = ({ color, ...props }: BannerCardProps & { color: string }) => (
+  <div className={styles.CarouselWrapper}>
+    <div className={styles.ItemContent} style={{ backgroundColor: color }}>
+      <BannerCard {...props} />
+    </div>
+  </div>
+)

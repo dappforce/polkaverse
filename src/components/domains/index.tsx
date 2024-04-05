@@ -8,6 +8,7 @@ import { useFetchDomainPendingOrdersByAccount } from 'src/rtk/features/domainPen
 import { useMyDomains } from 'src/rtk/features/domains/domainHooks'
 import { useFetchSellerConfig } from 'src/rtk/features/sellerConfig/sellerConfigHooks'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import { BannerCardWithWrapper } from '../creators/cards/SupportCreatorsCard'
 import { PageContent } from '../main/PageWrapper'
 import { useIsMobileWidthOrDevice } from '../responsive'
 import useSubstrate from '../substrate/useSubstrate'
@@ -172,7 +173,26 @@ export const DomainRegisterPage = ({ promoCode }: DomainServerProps) => {
           image: '/images/dotsama-domains-preview.jpg',
         }}
         rightPanel={
-          <div style={{ width: '380px' }} className='d-flex flex-column align-items-stretch'>
+          <div
+            style={{ width: '275px', gap: '16px' }}
+            className='d-flex flex-column align-items-stretch'
+          >
+            {isMobile ? null : (
+              <BannerCardWithWrapper
+                title='Transfer Usernames'
+                subtitle={
+                  <p className={clsx(styles.Subtitle, 'mb-3')}>
+                    Send your usernames to your other accounts, or to other people on Grill!
+                  </p>
+                }
+                imagePath='/images/creators/establish-your-brand.png'
+                learnMoreHref='https://docs.subsocial.network/docs/tutorials/usernames#how-do-i-transfer-a-username-to-another-account'
+                buttonLabel='View Tutorial'
+                backgroundColor='#ECF1FF'
+                titleColor='#0F172A'
+                color='#ECF1FF'
+              />
+            )}
             {rightPanelContent}
           </div>
         }
