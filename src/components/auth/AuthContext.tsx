@@ -8,7 +8,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useIsSignedIn, useMyAddress } from 'src/components/auth/MyAccountsContext'
 import useExternalStorage from 'src/hooks/useExternalStorage'
 import { useOpenCloseOnBoardingModal } from 'src/rtk/features/onBoarding/onBoardingHooks'
-import { useMyAccount } from 'src/stores/my-account'
 import store from 'store'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import ConfirmationModal from '../confirmation-modal/ConfirmationModal'
@@ -132,7 +131,6 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
   // const { signOut } = useMyAccountsContext()
 
   const myAddress = useMyAddress()
-  const address = useMyAccount(state => state.address) || myAddress
   const isSignedIn = useIsSignedIn()
   const { tokenDecimal } = useSubstrate()
 
@@ -199,7 +197,7 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
       }
 
       const subBalance = async () => {
-        if (!address || !myAddress) return
+        if (!myAddress) return
 
         const api = await substrate.api
 
@@ -208,7 +206,7 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
           setBalance(freeBalance)
 
           unsubEnergy = await api.query.energy.energyBalance(
-            address,
+            myAddress,
             async (energyBalance: u128) => {
               const isEmptyBalanseAndEnergy = energyBalance.eqn(0) && freeBalance.eqn(0)
 
@@ -228,7 +226,7 @@ export function AuthProvider(props: React.PropsWithChildren<any>) {
         unsubBalance && unsubBalance()
       }
     },
-    [myAddress, address, isSignedIn],
+    [myAddress, isSignedIn],
   )
 
   useEffect(() => setShowModal(false), [asPath])
