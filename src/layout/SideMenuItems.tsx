@@ -5,8 +5,9 @@ import { MdOutlineLeaderboard } from 'react-icons/md'
 import { RiLineChartLine } from 'react-icons/ri'
 import { TbCoins, TbWorld } from 'react-icons/tb'
 import { TiFlashOutline } from 'react-icons/ti'
-import { LocalIcon, SubIcon } from 'src/components/utils'
+import { SubIcon } from 'src/components/utils'
 import { getIsLoggedIn } from 'src/stores/my-account'
+import GreyGrillIcon from '../components/utils/icons/GreyGrill'
 
 export type Divider = 'Divider'
 
@@ -83,7 +84,7 @@ export const buildAuthorizedMenu = (myAddress?: string): MenuItem[] => {
     Divider,
     {
       name: 'What is Grill?',
-      icon: <LocalIcon path={'/icons/grill-grey.svg'} />,
+      icon: <GreyGrillIcon />,
       href: '/c/landing',
       forceHardNavigation: true,
     },
