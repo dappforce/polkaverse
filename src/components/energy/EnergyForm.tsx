@@ -5,13 +5,13 @@ import {
   isDefined,
   nonEmptyStr,
 } from '@subsocial/utils'
-import { Alert, Button, CardProps, Checkbox, Col, Form, Input, Row, Tooltip } from 'antd'
+import { Button, CardProps, Checkbox, Col, Form, Input, Row, Tooltip } from 'antd'
 import { FormInstance } from 'antd/es/form/Form'
 import BigNumber from 'bignumber.js'
 import clsx from 'clsx'
 import React, { useEffect, useState } from 'react'
-import { useMyAccount } from 'src/stores/my-account'
 import { useAuth } from '../auth/AuthContext'
+import { useMyAddress } from '../auth/MyAccountsContext'
 import { FormatBalance } from '../common/balances'
 import { useSubstrate } from '../substrate'
 import { AccountInputField } from '../utils/forms/AccountInputField'
@@ -193,15 +193,14 @@ const EnergyForm = ({ forSelfOnly, subscribeValues, className }: EnergyFormProps
   const [isAnotherRecipient, setIsAnotherRecipient] = useState(false)
   const [success, setSuccess] = useState(false)
 
-  const address = useMyAccount(state => state.address)
-  const hasProxy = useMyAccount(state => !!state.parentProxyAddress)
+  const myAddress = useMyAddress()
 
   const buildTxParams = () => {
     if (!amount) return []
 
     const recipient = form.getFieldValue(fieldName('recipient'))
 
-    return [recipient || address, amount.toString()]
+    return [recipient || myAddress, amount.toString()]
   }
 
   useEffect(() => {
@@ -251,12 +250,6 @@ const EnergyForm = ({ forSelfOnly, subscribeValues, className }: EnergyFormProps
               <QuestionCircleOutlined style={{ color: '#94A3B8' }} />
             </Tooltip>
           </div>
-        )}
-        {!isAnotherRecipient && hasProxy && (
-          <Alert
-            className={styles.FormAlert}
-            message='Energy will be generated for your current Grill proxy key. To generate energy for a different account, click the checkmark above'
-          />
         )}
         {isAnotherRecipient && (
           <AccountInputField

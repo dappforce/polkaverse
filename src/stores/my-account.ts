@@ -113,13 +113,13 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
       console.error('Failed to login', e)
       return false
     }
-    return address
+    return get().parentProxyAddress || get().address || false
   },
   _subscribeEnergy: () => {
-    const { address, _unsubscribeEnergy } = get()
+    const { address, parentProxyAddress, _unsubscribeEnergy } = get()
     _unsubscribeEnergy()
 
-    const unsub = subscribeEnergy(address, energy => {
+    const unsub = subscribeEnergy(parentProxyAddress || address, energy => {
       set({ energy })
     })
     set({ _unsubscribeEnergy: () => unsub.then(unsub => unsub?.()) })
@@ -195,6 +195,7 @@ export const useMyAccount = create<State & Actions>()((set, get) => ({
       }
     }
 
+    get()._subscribeEnergy()
     set({ isInitializedProxy: true })
 
     window.addEventListener(
