@@ -115,7 +115,6 @@ function TxButton({
   const energy = useMyAccount(state => state.energy)
   const hasEnoughEnergy = useMyAccount(state => (state.energy ?? 0) >= ESTIMATED_ENERGY_FOR_ONE_TX)
   console.log(hasEnoughEnergy, energy, ESTIMATED_ENERGY_FOR_ONE_TX)
-  const waitHasEnergy = useWaitHasEnergy()
   const [isOpenBlockedModal, setIsOpenBlockedModal] = useState(false)
 
   const { isMobile } = useResponsiveSize()
@@ -155,6 +154,8 @@ function TxButton({
     (isProxyAdded(myAddress!) || isProxySet) && isProxyAddedState
   const isSigningWithSignerAccount =
     isStr(signerToken) && !isStr(myEmailAddress) && isCurrentAddressAddedWithProxy
+
+  const waitHasEnergy = useWaitHasEnergy(isCurrentAddressAddedWithProxy)
 
   const currentUserSignerToken = isSigningWithEmail ? emailSignerToken : signerToken
   const currentUserRefreshToken = isSigningWithEmail ? emailRefreshToken : refreshToken
