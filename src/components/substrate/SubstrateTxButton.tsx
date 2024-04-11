@@ -114,7 +114,6 @@ function TxButton({
   const [isSending, , setIsSending] = useToggle(false)
   const energy = useMyAccount(state => state.energy)
   const hasEnoughEnergy = useMyAccount(state => (state.energy ?? 0) >= ESTIMATED_ENERGY_FOR_ONE_TX)
-  console.log(hasEnoughEnergy, energy, ESTIMATED_ENERGY_FOR_ONE_TX)
   const [isOpenBlockedModal, setIsOpenBlockedModal] = useState(false)
 
   const { isMobile } = useResponsiveSize()
@@ -336,10 +335,8 @@ function TxButton({
         if (!keypairSigner) throw new Error('No account signer provided')
         account = keypairSigner
 
-        console.log('hasEnoughEnergy', hasEnoughEnergy, accountId.toString(), myAddress)
 
         if (!hasEnoughEnergy) {
-          console.log('Token requested')
           waitHasEnergyMessage.open()
           // TODO: We used to request token for myAddress where for proxy we have MAIN (PARENT) address
           await requestToken({ address: myAddress })
