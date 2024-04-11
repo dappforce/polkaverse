@@ -112,7 +112,9 @@ function TxButton({
   const { api: subsocialApi } = useSubstrate()
   const openOnBoardingModal = useOpenCloseOnBoardingModal()
   const [isSending, , setIsSending] = useToggle(false)
+  const energy = useMyAccount(state => state.energy)
   const hasEnoughEnergy = useMyAccount(state => (state.energy ?? 0) >= ESTIMATED_ENERGY_FOR_ONE_TX)
+  console.log(hasEnoughEnergy, energy, ESTIMATED_ENERGY_FOR_ONE_TX)
   const waitHasEnergy = useWaitHasEnergy()
   const [isOpenBlockedModal, setIsOpenBlockedModal] = useState(false)
 
