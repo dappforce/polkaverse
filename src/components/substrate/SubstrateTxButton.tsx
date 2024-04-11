@@ -335,12 +335,13 @@ function TxButton({
         if (!keypairSigner) throw new Error('No account signer provided')
         account = keypairSigner
 
-        console.log('hasEnoughEnergy', hasEnoughEnergy, accountId.toString())
+        console.log('hasEnoughEnergy', hasEnoughEnergy, accountId.toString(), myAddress)
 
         if (!hasEnoughEnergy) {
           console.log('Token requested')
           waitHasEnergyMessage.open()
-          await requestToken({ address: accountId.toString() })
+          // TODO: We used to request token for myAddress where for proxy we have MAIN (PARENT) address
+          await requestToken({ address: myAddress })
           await waitHasEnergy()
           waitHasEnergyMessage.close()
         }
