@@ -335,7 +335,10 @@ function TxButton({
         if (!keypairSigner) throw new Error('No account signer provided')
         account = keypairSigner
 
+        console.log('hasEnoughEnergy', hasEnoughEnergy, accountId.toString())
+
         if (!hasEnoughEnergy) {
+          console.log('Token requested')
           waitHasEnergyMessage.open()
           await requestToken({ address: accountId.toString() })
           await waitHasEnergy()
