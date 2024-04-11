@@ -17,7 +17,7 @@ export const getEnergyCoef = async (api: ApiPromise) => {
 }
 
 const CRITICAL_TRANSACTIONS_COUNT = 5
-const MEDIUM_TX_FEE = 0.02
+const MEDIUM_TX_FEE = 0.33
 const TX_PER_SUB = 1 / MEDIUM_TX_FEE
 
 export const calculateTransactionCount = (
