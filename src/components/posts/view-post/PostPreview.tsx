@@ -42,6 +42,8 @@ const HIDE_PREVIEW_FROM_SPACE: string[] = [
   '12410', // Sandbox Highlights
   '12466', // Staging space
   '27631', // Apillon default hub
+  '8105', // Sam space 1
+  '18133', // Sam space 2
 ]
 export function PostPreview(props: PreviewProps) {
   const router = useRouter()
