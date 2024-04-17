@@ -6,13 +6,13 @@ import { useEffect, useState } from 'react'
 import { useSubsocialApi } from 'src/components/substrate/SubstrateContext'
 import { TxCallback, TxFailedCallback } from 'src/components/substrate/SubstrateTxButton'
 import { DESC_MAX_LEN, NAME_MAX_LEN, NAME_MIN_LEN } from 'src/config/ValidationsConfig'
+import useGetProfileUrl from 'src/hooks/useGetProfileUrl'
 import messages from 'src/messages'
 import { AnyAccountId, IpfsCid, SpaceContent, SpaceData } from 'src/types'
 import { DfForm, DfFormButtons, maxLenError, minLenError } from '../forms'
 import { PageContent } from '../main/PageWrapper'
 import { getTxParams } from '../substrate'
 import { UploadAvatar } from '../uploader'
-import { accountUrl } from '../urls'
 import DfMdEditor from '../utils/DfMdEditor'
 import { clearAutoSavedContent } from '../utils/DfMdEditor/client'
 import { AutoSaveId } from '../utils/DfMdEditor/types'
@@ -50,6 +50,7 @@ export function InnerForm(props: FormProps) {
   const { owner, address } = props
   const hasProfile = !!owner?.struct === true
   const initialValues = getInitialValues(props)
+  const profileUrl = useGetProfileUrl(address.toString())
 
   useEffect(() => {
     form.setFields(Object.entries(initialValues).map(([name, value]) => ({ name, value })))
@@ -104,7 +105,7 @@ export function InnerForm(props: FormProps) {
 
   const goToProfilePage = () => {
     if (address) {
-      Router.push('/accounts/[address]', accountUrl({ address })).catch(err =>
+      Router.push(profileUrl).catch(err =>
         log.error('Failed to redirect to "View Account" page:', err),
       )
     }

@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
 import { useAppSelector } from 'src/rtk/app/store'
+import { useSendEvent } from 'src/stores/analytics'
 import { getUnreadCount } from './ChatFloatingModal'
 import styles from './ChatIframe.module.sass'
 
@@ -14,6 +15,7 @@ type ChatLinkButtonWithCounterProps = {
 const ChatLinkButtonWithCounter = ({ post }: ChatLinkButtonWithCounterProps) => {
   const setChatConfig = useSetChatEntityConfig()
   const setChatOpen = useSetChatOpen()
+  const sendEvent = useSendEvent()
 
   const entity = useAppSelector(state => state.chat.entity)
 
@@ -37,13 +39,15 @@ const ChatLinkButtonWithCounter = ({ post }: ChatLinkButtonWithCounterProps) => 
             withFloatingButton: false,
           })
           setChatOpen(true)
+
+          sendEvent('open_chat_clicked', { eventSource: 'profile_page' })
         }}
         type='link'
         className={styles.ChatButton}
       >
         Chat
+        <div className={clsx(styles.ChatUnreadCount)}>{unreadCount ? unreadCount : 'New'}</div>
       </Button>
-      {!!unreadCount && <div className={clsx(styles.ChatUnreadCount)}>{unreadCount}</div>}
     </span>
   )
 }

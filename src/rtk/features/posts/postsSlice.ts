@@ -191,6 +191,19 @@ const getPostCountDataFromChain = async (api: SubsocialApi, posts: PostStruct[])
   await Promise.all(postsPromise)
 }
 
+const changePostsContentId = async (posts: PostFragmentWithParent[]) => {
+  const fixedPosts = await Promise.all(
+    posts.map(async post => {
+      if (!post.contentId && post.ipfsContent) {
+        const newCid = xxhashAsHex(Buffer.from(JSON.stringify(post.ipfsContent)), 128, true)
+        post.contentId = Buffer.from(newCid).toString('hex')
+      }
+      return post
+    }),
+  )
+  return fixedPosts.map<PostState>(post => ({ ...post, isOverview: true }))
+}
+
 const getPosts = createFetchDataFn<PostState[]>([])({
   chain: async ({
     api,
@@ -213,19 +226,103 @@ const getPosts = createFetchDataFn<PostState[]>([])({
       },
     })
     // TODO It is fix bug of Squid, so we need to remove it after fix
-    const fixedPosts = await Promise.all(
-      posts.map(async post => {
-        if (!post.contentId && post.ipfsContent) {
-          const newCid = xxhashAsHex(Buffer.from(JSON.stringify(post.ipfsContent)), 128, true)
-          post.contentId = Buffer.from(newCid).toString('hex')
-        }
-        return post
-      }),
-    )
-
-    return fixedPosts.map<PostState>(post => ({ ...post, isOverview: true }))
+    return changePostsContentId(posts)
   },
 })
+
+type HandleAfterDataFetchProps = {
+  entities: PostState[]
+  args: FetchPostsArgs
+  dispatch: AppDispatch
+}
+
+const handleAfterDataFetch = async ({ entities, args, dispatch }: HandleAfterDataFetchProps) => {
+  const generatePrefetchData = generatePrefetchDataFn<PostState, PostFragmentWithParent>(entities)
+
+  const {
+    api,
+    dataSource,
+    withOwner = true,
+    withContent = true,
+    withSpace = true,
+    withRootPost = true,
+    eagerLoadHandles,
+  } = args
+
+  const fetches: Promise<any>[] = []
+  if (withOwner) {
+    const ids = getUniqueOwnerIds(entities)
+    const prefetchedData = generatePrefetchData<ProfileSpaceIdByAccount>(
+      data => data.ownerId,
+      data => data.ownedByAccount,
+    )
+    if (ids.length) {
+      fetches.push(dispatch(fetchProfileSpaces({ api, ids, dataSource, prefetchedData })))
+    }
+  }
+
+  if (withContent) {
+    const ids = getUniqueContentIds(entities)
+    const prefetchedData = generatePrefetchData<Content>(
+      data => data.contentId,
+      data =>
+        data.ipfsContent && {
+          id: data.contentId ?? '',
+          ...data.ipfsContent,
+        },
+    )
+    if (ids.length) {
+      fetches.push(dispatch(fetchContents({ api, ids, dataSource, prefetchedData })))
+    }
+  }
+
+  if (withSpace) {
+    const ids = getUniqueSpaceIds(entities)
+    const prefetchedData = generatePrefetchData<SpaceStruct>(
+      data => data.spaceId,
+      data => data.space,
+    )
+    if (ids.length) {
+      fetches.push(
+        dispatch(
+          fetchSpaces({
+            api,
+            ids,
+            ...withSpaceOwner,
+            dataSource,
+            prefetchedData,
+            eagerLoadHandles: eagerLoadHandles,
+          }),
+        ),
+      )
+    }
+  }
+
+  if (withRootPost) {
+    const needToFetchRootPostIds: string[] = []
+    entities.forEach(entity => {
+      const rootPostId = (entity as CommentStruct).rootPostId
+      if (rootPostId) {
+        needToFetchRootPostIds.push(rootPostId)
+      }
+    })
+    if (needToFetchRootPostIds.length) {
+      fetches.push(
+        dispatch(
+          fetchPosts({
+            ...args,
+            api,
+            ids: needToFetchRootPostIds,
+            withRootPost: false,
+          }),
+        ),
+      )
+    }
+  }
+
+  await Promise.all(fetches)
+}
+
 /**
  * If used for prefetching posts, do the fetchPostRewards call in client side,
  * because this call is not prefetched
@@ -239,92 +336,12 @@ export const fetchPosts = createAsyncThunk<PostStruct[], FetchPostsArgs, ThunkAp
     },
     selectEntityIds: selectPostIds,
     handleAfterDataFetch: async (entities, args, { dispatch }) => {
-      const {
-        api,
-        withContent = true,
-        withOwner = true,
-        withSpace = true,
-        withRootPost,
-        dataSource,
-        eagerLoadHandles,
-      } = args
-
-      const generatePrefetchData = generatePrefetchDataFn<PostState, PostFragmentWithParent>(
+      await handleAfterDataFetch({
         entities,
-      )
+        args,
+        dispatch,
+      })
 
-      const fetches: Promise<any>[] = []
-      if (withOwner) {
-        const ids = getUniqueOwnerIds(entities)
-        const prefetchedData = generatePrefetchData<ProfileSpaceIdByAccount>(
-          data => data.ownerId,
-          data => data.ownedByAccount,
-        )
-        if (ids.length) {
-          fetches.push(dispatch(fetchProfileSpaces({ api, ids, dataSource, prefetchedData })))
-        }
-      }
-
-      if (withContent) {
-        const ids = getUniqueContentIds(entities)
-        const prefetchedData = generatePrefetchData<Content>(
-          data => data.contentId,
-          data =>
-            data.ipfsContent && {
-              id: data.contentId ?? '',
-              ...data.ipfsContent,
-            },
-        )
-        if (ids.length) {
-          fetches.push(dispatch(fetchContents({ api, ids, dataSource, prefetchedData })))
-        }
-      }
-
-      if (withSpace) {
-        const ids = getUniqueSpaceIds(entities)
-        const prefetchedData = generatePrefetchData<SpaceStruct>(
-          data => data.spaceId,
-          data => data.space,
-        )
-        if (ids.length) {
-          fetches.push(
-            dispatch(
-              fetchSpaces({
-                api,
-                ids,
-                ...withSpaceOwner,
-                dataSource,
-                prefetchedData,
-                eagerLoadHandles: eagerLoadHandles,
-              }),
-            ),
-          )
-        }
-      }
-
-      if (withRootPost) {
-        const needToFetchRootPostIds: string[] = []
-        entities.forEach(entity => {
-          const rootPostId = (entity as CommentStruct).rootPostId
-          if (rootPostId) {
-            needToFetchRootPostIds.push(rootPostId)
-          }
-        })
-        if (needToFetchRootPostIds.length) {
-          fetches.push(
-            dispatch(
-              fetchPosts({
-                ...args,
-                api,
-                ids: needToFetchRootPostIds,
-                withRootPost: false,
-              }),
-            ),
-          )
-        }
-      }
-
-      await Promise.all(fetches)
       return entities
     },
     getData: async (args, { getState, dispatch }) => {
@@ -441,7 +458,7 @@ export const fetchProfilePosts = createAsyncThunk<
   FetchProfilePostsArgs,
   ThunkApiConfig
 >(
-  'posts/fetchOneByAddress',
+  'posts/fetchManyByAddress',
   async ({
     id,
     spaceId,
@@ -476,96 +493,21 @@ export const fetchProfilePosts = createAsyncThunk<
       withRootPost = true,
     } = additionalData || {}
 
-    const fixedPosts = await Promise.all(
-      posts.map(async post => {
-        if (!post.contentId && post.ipfsContent) {
-          const newCid = xxhashAsHex(Buffer.from(JSON.stringify(post.ipfsContent)), 128, true)
-          post.contentId = Buffer.from(newCid).toString('hex')
-        }
-        return post
-      }),
-    )
+    const entities = await changePostsContentId(posts)
 
-    const entities = fixedPosts.map<PostState>(post => ({ ...post, isOverview: true }))
-
-    const generatePrefetchData = generatePrefetchDataFn<PostState, PostFragmentWithParent>(entities)
-
-    const fetches: Promise<any>[] = []
-    if (withOwner) {
-      const ids = getUniqueOwnerIds(entities)
-      const prefetchedData = generatePrefetchData<ProfileSpaceIdByAccount>(
-        data => data.ownerId,
-        data => data.ownedByAccount,
-      )
-      if (ids.length) {
-        fetches.push(
-          dispatch(
-            fetchProfileSpaces({ api, ids, dataSource: DataSourceTypes.SQUID, prefetchedData }),
-          ),
-        )
-      }
-    }
-
-    if (withContent) {
-      const ids = getUniqueContentIds(entities)
-      const prefetchedData = generatePrefetchData<Content>(
-        data => data.contentId,
-        data =>
-          data.ipfsContent && {
-            id: data.contentId ?? '',
-            ...data.ipfsContent,
-          },
-      )
-      if (ids.length) {
-        fetches.push(
-          dispatch(fetchContents({ api, ids, dataSource: DataSourceTypes.SQUID, prefetchedData })),
-        )
-      }
-    }
-
-    if (withSpace) {
-      const ids = getUniqueSpaceIds(entities)
-      const prefetchedData = generatePrefetchData<SpaceStruct>(
-        data => data.spaceId,
-        data => data.space,
-      )
-      if (ids.length) {
-        fetches.push(
-          dispatch(
-            fetchSpaces({
-              api,
-              ids,
-              ...withSpaceOwner,
-              dataSource: DataSourceTypes.SQUID,
-              prefetchedData,
-            }),
-          ),
-        )
-      }
-    }
-
-    if (withRootPost) {
-      const needToFetchRootPostIds: string[] = []
-      entities.forEach(entity => {
-        const rootPostId = (entity as CommentStruct).rootPostId
-        if (rootPostId) {
-          needToFetchRootPostIds.push(rootPostId)
-        }
-      })
-      if (needToFetchRootPostIds.length) {
-        fetches.push(
-          dispatch(
-            fetchPosts({
-              api,
-              ids: needToFetchRootPostIds,
-              withRootPost: false,
-            }),
-          ),
-        )
-      }
-    }
-
-    await Promise.all(fetches)
+    await handleAfterDataFetch({
+      entities,
+      args: {
+        api,
+        ids: entities.map(x => x.id),
+        withContent,
+        withSpace,
+        withOwner,
+        withRootPost,
+        dataSource: DataSourceTypes.SQUID,
+      },
+      dispatch,
+    })
 
     return entities
   },
@@ -581,9 +523,6 @@ const posts = createSlice({
   extraReducers: builder => {
     builder.addCase(fetchPosts.fulfilled, postsAdapter.upsertMany),
       builder.addCase(fetchProfilePosts.fulfilled, postsAdapter.upsertMany)
-    // builder.addCase(fetchPosts.rejected, (state, action) => {
-    //   state.error = action.error
-    // })
   },
 })
 

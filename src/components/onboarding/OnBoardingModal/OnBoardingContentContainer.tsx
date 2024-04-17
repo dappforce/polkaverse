@@ -9,6 +9,7 @@ import PrivacyPolicyText from 'src/components/utils/PrivacyPolicyText'
 import TwitterMock from 'src/components/utils/TwitterMock'
 import TxButton from 'src/components/utils/TxButton'
 import config from 'src/config'
+import useGetProfileUrl from 'src/hooks/useGetProfileUrl'
 import { useFetchProfileSpace } from 'src/rtk/app/hooks'
 import { useAppDispatch } from 'src/rtk/app/store'
 import {
@@ -214,14 +215,14 @@ function ContentWrapper({
 
 function SuccessContent() {
   const myAddress = useMyAddress()
-  const { entity: profile, loading } = useFetchProfileSpace({
+  const { loading } = useFetchProfileSpace({
     id: myAddress ?? '',
     dataSource: DataSourceTypes.CHAIN,
     reload: true,
   })
   const twitterText = `I just onboarded to ${config.appName}, the premier social platform of the @Polkadot ecosystem, powered by @SubsocialChain!\n\nYou can follow me here:`
 
-  const redirectUrl = profile?.id ? `/${profile.id}` : `/accounts/${myAddress}`
+  const redirectUrl = useGetProfileUrl(myAddress)
 
   if (loading) {
     return <Skeleton />
