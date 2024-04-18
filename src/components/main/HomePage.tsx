@@ -156,14 +156,15 @@ const TabsHomePage = ({
   })
 
   const isLoadingFollowedIds = followedIds === undefined
+  const hasFollowers = (followedIds?.length ?? 0) > 0
   useEffect(() => {
     if (!isInitialized || !isSignedIn || isLoadingFollowedIds) return
-    if (followedIds.length === 0) {
+    if (!hasFollowers) {
       setFiltersInUrl(router, 'posts', { type: 'hot' }, { ref: refId })
     } else {
       onChangeKey(tab)
     }
-  }, [followedIds, isInitialized])
+  }, [hasFollowers, isInitialized])
 
   const handleScroll = () => {
     const currentScrollPos = window.pageYOffset

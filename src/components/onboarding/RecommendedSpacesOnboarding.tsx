@@ -22,10 +22,12 @@ export default function RecommendedSpacesOnboarding() {
   const isMobile = useIsMobileWidthOrDevice()
   const sendEvent = useSendEvent()
   const isInitializedProxy = useMyAccount(state => state.isInitializedProxy)
-  const { data: isFinishedOnBoarding, setData: setIsFinishedOnBoarding } =
-    useBooleanExternalStorage(ON_BOARDING_MODAL_KEY, {
+  const { getDataForAddress, setData: setIsFinishedOnBoarding } = useBooleanExternalStorage(
+    ON_BOARDING_MODAL_KEY,
+    {
       storageKeyType: 'user',
-    })
+    },
+  )
   const { setIsOnBoardingSkipped } = useIsOnBoardingSkippedContext()
   const { api } = useSubsocialApi()
 
@@ -38,8 +40,8 @@ export default function RecommendedSpacesOnboarding() {
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
-    if (isInitializedProxy && !isFinishedOnBoarding && myAddress) setIsOpen(true)
-  }, [myAddress, isInitializedProxy, isFinishedOnBoarding])
+    if (isInitializedProxy && !getDataForAddress(myAddress) && myAddress) setIsOpen(true)
+  }, [myAddress, isInitializedProxy])
 
   const closeModal = () => {
     sendEvent('login_space_suggestion_skipped')
