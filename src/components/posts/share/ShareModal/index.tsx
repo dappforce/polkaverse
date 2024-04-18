@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
 import { Controller, ErrorMessage, useForm } from 'react-hook-form'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
+import { htmlToMd } from 'src/components/editor/tiptap'
 import { TxCallback, TxFailedCallback } from 'src/components/substrate/SubstrateTxButton'
 import {
   useCreateReloadPost,
@@ -17,9 +18,9 @@ import { IpfsCid, PostId, SharedPostContent, SpaceId } from 'src/types'
 import { CreateSpaceButton } from '../../../spaces/helpers'
 import { getNewIdFromEvent, getTxParams } from '../../../substrate'
 import { useSubsocialApi } from '../../../substrate/SubstrateContext'
-import DfMdEditor from '../../../utils/DfMdEditor'
 import { MyAccountProps } from '../../../utils/MyAccount'
 import SelectSpacePreview from '../../../utils/SelectSpacePreview'
+import HtmlEditor from '../../editor/HtmlEditor'
 import { buildSharePostValidationSchema } from '../../PostValidation'
 import { PublicPostPreviewById } from '../../PublicPostPreview'
 import styles from './index.module.sass'
@@ -82,7 +83,7 @@ const InnerSharePostModal = (props: Props) => {
       disabled={isSubmitting}
       params={() =>
         getTxParams({
-          json: { body } as SharedPostContent,
+          json: { body: htmlToMd(body) } as SharedPostContent,
           buildTxParamsCallback: newTxParams,
           setIpfsCid,
           ipfs,
@@ -138,13 +139,15 @@ const InnerSharePostModal = (props: Props) => {
         </span>
 
         <form style={{ margin: '1rem 0' }}>
-          <Controller
-            control={control}
-            as={<DfMdEditor options={{ autofocus: true }} />}
-            name={Fields.body}
-            value={body}
-            className={`${errors[Fields.body] && 'error'} ${styles.DfShareModalMdEditor}`}
-          />
+          <div className={styles.EditorContainer}>
+            <Controller
+              control={control}
+              as={<HtmlEditor autoFocus showToolbar />}
+              name={Fields.body}
+              value={body}
+              className={`${errors[Fields.body] && 'error'} ${styles.DfShareModalMdEditor}`}
+            />
+          </div>
           <div className='DfError'>
             <ErrorMessage errors={errors} name={Fields.body} />
           </div>
