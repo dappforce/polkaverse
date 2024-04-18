@@ -106,9 +106,7 @@ const createModalIfNotExist = () => {
   let modalIframe = document.getElementById('create-modal-iframe') as HTMLIFrameElement | null
 
   if (!modalIframe) {
-    document.body.appendChild(document.createElement('iframe'))
-
-    const iframe = document.querySelector('iframe')
+    const iframe = document.body.appendChild(document.createElement('iframe'))
 
     if (!iframe) return null
 
