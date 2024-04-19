@@ -8,7 +8,6 @@ import { Segment } from 'src/components/utils/Segment'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
 import { useSendEvent } from 'src/providers/AnalyticContext'
-// import { useSetChatEntityConfig, useSetChatOpen } from 'src/rtk/app/hooks'
 import { useIsCreatorSpace } from 'src/rtk/features/creators/creatorsListHooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { SpaceContent, SpaceId, SpaceStruct, SpaceWithSomeDetails } from 'src/types'
@@ -17,6 +16,7 @@ import { useSelectProfileSpace } from '../../rtk/features/profiles/profilesHooks
 import { useSelectSpace } from '../../rtk/features/spaces/spacesHooks'
 import { AccountActivity } from '../activity/AccountActivity'
 import { useMyAddress } from '../auth/MyAccountsContext'
+import ChatButton from '../chat/ChatButton'
 import MobileActiveStakingSection from '../creators/MobileActiveStakingSection'
 import WriteSomething from '../posts/WriteSomething'
 import MakeAsProfileModal from '../profiles/address-views/utils/MakeAsProfileModal'
@@ -100,6 +100,7 @@ export const InnerViewSpace = (props: Props) => {
     postIds = [],
     posts = [],
     imageSize = LARGE_AVATAR_SIZE,
+    postsCount,
 
     onClick,
   } = props
@@ -135,25 +136,37 @@ export const InnerViewSpace = (props: Props) => {
     )
   }, [spaceData, imageSize])
 
-  // const setChatConfig = useSetChatEntityConfig()
-  // const setChatOpen = useSetChatOpen()
-
-  // const { isCreatorSpace } = useIsCreatorSpace(spaceData?.id)
-
   const isMySpace = useIsMySpace(spaceData?.struct)
-  const { filteredPostIds, filteredPosts } = useMemo(() => {
-    if (isMySpace) return { filteredPosts: posts, filteredPostIds: postIds }
+  const { filteredPostIds, filteredPosts, filteredPostsCount } = useMemo(() => {
+    const postsWithSpace = posts?.filter(post => !!post.post.struct.spaceId)
+    const postsWithSpaceIds = postsWithSpace?.map(post => post.post.id)
+
+    if (isMySpace)
+      return {
+        filteredPosts: postsWithSpace,
+        filteredPostIds: postsWithSpaceIds,
+        filteredPostsCount: postsCount,
+      }
+
     const hiddenPosts = new Set()
-    const filteredPosts = posts.filter(post => {
+
+    const filteredPosts = postsWithSpace.filter(post => {
       if (isHidden(post.post.struct)) {
         hiddenPosts.add(post.post.id)
         return false
       }
       return true
     })
-    const filteredPostIds = postIds.filter(id => !hiddenPosts.has(id))
-    return { filteredPosts, filteredPostIds }
-  }, [posts, postIds])
+
+    const filteredPostIds = postsWithSpaceIds.filter(id => !hiddenPosts.has(id))
+    const filteredPostsCount = postsCount ? postsCount - filteredPostIds.length : 0
+
+    return {
+      filteredPosts,
+      filteredPostIds,
+      filteredPostsCount: filteredPostsCount > 0 ? filteredPostsCount : 0,
+    }
+  }, [posts, postIds, isMySpace])
 
   // We do not return 404 page here, because this component could be used to render a space in list.
   if (!spaceData) return null
@@ -162,6 +175,8 @@ export const InnerViewSpace = (props: Props) => {
   const { about, tags, email, links } = content
   const contactInfo = { email, links }
   const spaceName = renderSpaceName(spaceData)
+
+  const chatButton = <ChatButton spaceId={spaceData.id} />
 
   const primaryClass = `ProfileDetails ${isMy && 'MySpace'} d-flex`
 
@@ -217,11 +232,6 @@ export const InnerViewSpace = (props: Props) => {
     e.stopPropagation()
     setCollapseAbout(prev => !prev)
   }
-  // const toggleCreatorChat = () => {
-  //   sendEvent('creator_chat_opened', { spaceId: space.id })
-  //   setChatConfig({ entity: { data: spaceData, type: 'space' }, withFloatingButton: false })
-  //   setChatOpen(true)
-  // }
 
   const previewButtons = (size: 'small' | 'middle' = 'middle') => (
     <div className='d-flex align-items-center GapTiny'>
@@ -236,24 +246,24 @@ export const InnerViewSpace = (props: Props) => {
         </ButtonLink>
       )}
 
-      {/* {!isMobile && isCreatorSpace && (
-        <Button size={size} type='primary' ghost onClick={toggleCreatorChat}>
-          Creator Chat
-        </Button>
-      )} */}
-
       {withFollowButton && (
-        <div
-          onClick={() =>
-            sendEvent('follow', {
-              spaceId: space.id,
-              eventSource: 'space',
-              amountRange: getAmountRange(totalStake?.amount),
-            })
-          }
-        >
-          <FollowSpaceButton size={size} ghost={false} space={space} />
-        </div>
+        <>
+          {isProfileSpace && isMySpace ? (
+            chatButton
+          ) : (
+            <div
+              onClick={() =>
+                sendEvent('follow', {
+                  spaceId: space.id,
+                  eventSource: 'space',
+                  amountRange: getAmountRange(totalStake?.amount),
+                })
+              }
+            >
+              <FollowSpaceButton size={size} ghost={false} space={space} />
+            </div>
+          )}
+        </>
       )}
     </div>
   )
@@ -297,7 +307,7 @@ export const InnerViewSpace = (props: Props) => {
 
       {withStats && (
         <span className='d-flex justify-content-between flex-wrap mt-3'>
-          <SpaceStatsRow space={space} />
+          <SpaceStatsRow space={space} isProfileSpace={isProfileSpace} />
           {!preview && <ContactInfo {...contactInfo} />}
         </span>
       )}
@@ -364,9 +374,15 @@ export const InnerViewSpace = (props: Props) => {
       <Section className='DfContentPage mt-4'>
         {isProfileSpace ? (
           <AccountActivity
-            withSpacePosts={{ spaceData, postIds: filteredPostIds, posts: filteredPosts }}
+            withSpacePosts={{
+              spaceData,
+              posts: filteredPosts,
+              postIds: filteredPostIds,
+            }}
             withWriteSomethingBlock={false}
             address={spaceData.struct.ownerId}
+            spaceId={ownerProfileSpaceId}
+            postsCount={filteredPostsCount}
           />
         ) : (
           <PostPreviewsOnSpace

@@ -1,6 +1,6 @@
-import { SpaceContent } from '@subsocial/api/types'
+import { EntityData, SpaceContent, SpaceStruct } from '@subsocial/api/types'
 import { bnsToIds, bnToId, idsToBns, idToBn } from '@subsocial/utils/bn'
-import { ReactionId, ReactionType, SpaceData } from 'src/types'
+import { ReactionId, ReactionType } from 'src/types'
 import { EventName } from './graphql-global-types'
 
 export * from '@subsocial/api/subsocial/flatteners'
@@ -9,6 +9,18 @@ export * from '@subsocial/api/types'
 export * from '@subsocial/elasticsearch/types'
 export { idToBn, bnToId, idsToBns, bnsToIds }
 export type EventsName = EventName
+
+type SpaceData = EntityData<
+  SpaceStruct,
+  SpaceContent & {
+    chats?: any
+    experimental?: any
+  }
+>
+
+export type SpaceWithSomeDetails = SpaceData & {
+  owner?: SpaceData
+}
 
 export type ProfileData = SpaceData
 

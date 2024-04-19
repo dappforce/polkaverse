@@ -1,3 +1,4 @@
+import { SizeType } from 'antd/lib/config-provider/SizeContext'
 import { TxCallback } from 'src/components/substrate/SubstrateTxButton'
 import { TxDiv } from 'src/components/substrate/TxDiv'
 import TxButton from 'src/components/utils/TxButton'
@@ -13,10 +14,24 @@ type Props = {
   label?: string
   asLink?: boolean
   onTxSuccess?: () => void
+  buttonType?: 'text' | 'link' | 'ghost' | 'default' | 'primary' | 'dashed' | undefined
+  ghost?: boolean
+  size?: SizeType
 }
 
 export function HiddenButton(props: Props) {
-  const { struct, newTxParams, label, type, asLink, setVisibility, onTxSuccess } = props
+  const {
+    struct,
+    newTxParams,
+    label,
+    type,
+    asLink,
+    setVisibility,
+    onTxSuccess,
+    buttonType,
+    ghost,
+    size = 'small',
+  } = props
   const { hidden } = struct
 
   const extrinsic = type === 'space' ? 'spaces.updateSpace' : 'posts.updatePost'
@@ -31,9 +46,11 @@ export function HiddenButton(props: Props) {
   return (
     <TxAction
       className={asLink ? 'm-0' : ''}
-      label={label || hidden ? 'Make visible' : `Hide ${type}`}
-      size='small'
+      label={label || (hidden ? 'Make visible' : `Hide ${type}`)}
+      size={size}
       params={newTxParams}
+      ghost={ghost}
+      type={buttonType}
       tx={extrinsic}
       onSuccess={onSuccess}
       failedMessage={`Failed to hide your ${type}`}

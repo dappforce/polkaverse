@@ -10,6 +10,7 @@ import BaseAvatar from 'src/components/utils/DfAvatar'
 import { MutedSpan } from 'src/components/utils/MutedText'
 import Segment from 'src/components/utils/Segment'
 import { TextWithEmoji } from 'src/components/utils/TextWithEmoji'
+import useGetProfileUrl from 'src/hooks/useGetProfileUrl'
 import { useSelectProfile } from '../../rtk/features/profiles/profilesHooks'
 import { useIsUsingEmail, useMyAccountsContext } from '../auth/MyAccountsContext'
 import CustomLink from '../referral/CustomLink'
@@ -120,6 +121,7 @@ const InnerModal = ({
 export const DonationSection = ({ recipientAddress }: DonateProps) => {
   const isMobile = useIsMobileWidthOrDevice()
   const profileData = useSelectProfile(recipientAddress)
+  const profileUrl = useGetProfileUrl(recipientAddress)
 
   const bgImg = `donation-bg${isMobile ? '-mobile' : ''}.png`
 
@@ -130,7 +132,7 @@ export const DonationSection = ({ recipientAddress }: DonateProps) => {
     >
       <Row justify='center' className={styles.DonationContainer}>
         <Row justify='center'>
-          <CustomLink passHref href={`/accounts/${recipientAddress}`}>
+          <CustomLink passHref href={profileUrl}>
             <a>
               <BaseAvatar
                 identityValue={recipientAddress}
@@ -143,7 +145,7 @@ export const DonationSection = ({ recipientAddress }: DonateProps) => {
         <Row justify='center' className='my-2'>
           <MutedSpan>
             Enjoy this post? Support{' '}
-            <CustomLink href={`/accounts/${recipientAddress}`}>
+            <CustomLink href={profileUrl}>
               {profileData?.content?.name || toShortAddress(recipientAddress)}
             </CustomLink>
             .

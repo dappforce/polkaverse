@@ -72,6 +72,7 @@ export const mapSimpleSpaceFragment = (space: SpaceSimpleFragment): SpaceSimpleF
     email: space.email ?? '',
     links: getTokensFromUnifiedString(space.linksOriginal),
     isShowMore: summarizedAbout.isShowMore,
+    experimental: space.experimental,
   })
   const isIpfsDataError =
     space.content && !space.name && !space.image && !space.about && !space.email

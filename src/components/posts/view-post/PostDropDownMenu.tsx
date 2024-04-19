@@ -11,6 +11,7 @@ import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useIsAdmin } from 'src/rtk/features/moderation/hooks'
 import { PostData, SpaceStruct } from 'src/types'
 import { useIsMyAddress, useMyAddress } from '../../auth/MyAccountsContext'
+import DeletePostButton from '../DeletePostButton'
 import HiddenPostButton from '../HiddenPostButton'
 import ModerateButton from '../ModerateButton'
 import MovePostLink from '../MovePostLink'
@@ -81,6 +82,11 @@ const InnerPostDropDownMenu: FC<DropdownProps> = props => {
         <Menu.Item key={`view-on-ipfs-${postId}`}>
           <ViewOnIpfs contentId={struct.contentId} />
         </Menu.Item>
+        {canMovePost && (
+          <Menu.Item key={`delete-${postId}`}>
+            <DeletePostButton post={struct} asLink />
+          </Menu.Item>
+        )}
       </>
     )
   }, [myAddress, canEditPost, canHidePost, canMovePost, isAdmin])

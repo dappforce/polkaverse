@@ -53,3 +53,6 @@ export function decodeSecretKey(encodedSecretKey: string) {
   if (isSecretKeyUsingMiniSecret(hexString)) return hexString
   return buffer.toString()
 }
+
+export const getProfileUrl = (address: string, spaceId?: string) =>
+  spaceId ? `/${spaceId}` : `/accounts/${address}`

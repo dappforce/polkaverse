@@ -1,6 +1,6 @@
 import { BN } from '@polkadot/util'
 import { PostId } from '@subsocial/api/types/substrate'
-import { isEmptyObj, isEmptyStr } from '@subsocial/utils'
+import { isEmptyObj, isEmptyStr, summarize } from '@subsocial/utils'
 import { Alert, Button, Image, Tag, Tooltip } from 'antd'
 import clsx from 'clsx'
 import isEmpty from 'lodash.isempty'
@@ -24,6 +24,7 @@ import { resolveIpfsUrl } from 'src/ipfs'
 import messages from 'src/messages'
 import { isBlockedPost } from 'src/moderation'
 import { useHasUserASpacePermission } from 'src/permissions/checkPermission'
+import { useFetchPosts, useSelectPost } from 'src/rtk/app/hooks'
 import { useCanPostSuperLiked } from 'src/rtk/features/activeStaking/hooks'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import {
@@ -124,6 +125,39 @@ type PostNameProps = {
 export const PostName: FC<PostNameProps> = React.memo(({ post: postDetails, withLink }) => {
   const { space, post } = postDetails
   const { content: { title } = {} } = post
+
+  const rootPostId = (post.struct as any).rootPostId
+
+  useFetchPosts(rootPostId ? [rootPostId] : [])
+
+  const rootPost = useSelectPost(rootPostId)
+
+  if (post.struct.isComment) {
+    const renderResponseTitle = (parentPost?: PostData) => {
+      if (!parentPost || !parentPost.content) return null
+
+      const { title, summary } = parentPost.content
+
+      const smallSummary = summarize(summary, { limit: 80 })
+
+      return (
+        parentPost && (
+          <>
+            In response to{' '}
+            <ViewPostLink
+              space={space?.struct}
+              post={parentPost}
+              title={title || smallSummary || 'the post'}
+            />
+          </>
+        )
+      )
+    }
+
+    const titleMsg = post.struct.isComment ? renderResponseTitle(rootPost?.post) : title
+
+    return <div className={'header DfPostTitle--preview'}>{titleMsg}</div>
+  }
 
   if (!post.struct || !space || isEmptyStr(title)) return null
 

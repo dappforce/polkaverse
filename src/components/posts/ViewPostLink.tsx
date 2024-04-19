@@ -15,7 +15,14 @@ export const ViewPostLink = React.memo(({ space, post, title, hint, className }:
   if (!post.struct.id || !title) return null
 
   return (
-    <CustomLink href='/[spaceId]/[slug]' as={postUrl(space, post)}>
+    <CustomLink
+      href='/[spaceId]/[slug]'
+      as={postUrl(space, post)}
+      onClick={e => {
+        e.preventDefault()
+        e.stopPropagation()
+      }}
+    >
       <a className={className} title={hint}>
         {title}
       </a>

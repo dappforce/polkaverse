@@ -1,17 +1,15 @@
 import { FC, useEffect } from 'react'
 import config from 'src/config'
-import { DEFAULT_PAGE_SIZE } from 'src/config/ListData.config'
-import { getActivityCounts, getPostActivities } from 'src/graphql/apis'
 import { initializeApollo } from 'src/graphql/client'
 import { getInitialPropsWithRedux } from 'src/rtk/app'
 import { useAppDispatch } from 'src/rtk/app/store'
 import { fetchPostRewards } from 'src/rtk/features/activeStaking/postRewardSlice'
 import { useIsBlocked } from 'src/rtk/features/moderation/hooks'
 import { useFetchMyPermissionsBySpaceId } from 'src/rtk/features/permissions/mySpacePermissionsHooks'
-import { fetchPosts, selectPosts } from 'src/rtk/features/posts/postsSlice'
+import { fetchPosts, fetchProfilePosts, selectPosts } from 'src/rtk/features/posts/postsSlice'
 import { fetchPostsViewCount } from 'src/rtk/features/posts/postsViewCountSlice'
 import { fetchProfileSpace, selectProfileSpace } from 'src/rtk/features/profiles/profilesSlice'
-import { DataSourceTypes, HasStatusCode, idToBn, SpaceContent } from 'src/types'
+import { DataSourceTypes, HasStatusCode, idToBn, PostStruct, SpaceContent } from 'src/types'
 import { descSort, isPolkaProject, isUnclaimedSpace } from 'src/utils'
 import { useMyAddress } from '../auth/MyAccountsContext'
 import { PageContent } from '../main/PageWrapper'
@@ -41,8 +39,6 @@ const InnerViewSpacePage: FC<Props> = props => {
   if (useIsUnlistedSpace(spaceData) || !spaceData) {
     return <SpaceNotFountPage />
   }
-
-  // if (loading && isClientSide()) return <Loading label='Loading space...' center />.
 
   const id = idToBn(spaceData.struct.id)
   const { name, image } = (spaceData.content as SpaceContent | undefined) || {}
@@ -86,8 +82,8 @@ const InnerViewSpacePage: FC<Props> = props => {
 
 const ViewSpacePage: FC<Props & { prefetchedIds: string[] }> = props => {
   const { statusCode, prefetchedIds } = props
-
   const dispatch = useAppDispatch()
+
   useEffect(() => {
     dispatch(fetchPostRewards({ postIds: prefetchedIds }))
     dispatch(fetchPostsViewCount({ postIds: prefetchedIds }))
@@ -110,12 +106,11 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
 
   const spaceId = idToBn(data.id)
 
+  let pageIds: string[] = []
+  let sortedPostIds: string[] = []
+
   // We need to reverse post ids to display posts in a descending order on a space page.
-  const postIds = await subsocial.blockchain.postIdsBySpaceId(spaceId)
 
-  const sortedPostIds = descSort(postIds)
-
-  const pageIds = getPageOfIds(sortedPostIds, query)
   const customImage = query.customImage as string | undefined
 
   await dispatch(fetchProfileSpace({ id: data.struct.ownerId, api: subsocial }))
@@ -125,25 +120,35 @@ getInitialPropsWithRedux(ViewSpacePage, async props => {
   let initialApolloState: any = undefined
   const client = initializeApollo(null, true)
   if (isProfileSpace && client) {
-    await Promise.allSettled([
-      getActivityCounts(client, { address: data.struct.ownerId }),
-      getPostActivities(client, {
-        address: data.struct.ownerId,
-        limit: DEFAULT_PAGE_SIZE,
+    const result = await dispatch(
+      fetchProfilePosts({
+        id: data.struct.ownerId,
+        spaceId: data.id,
+        withHidden: isProfileSpace,
+        client,
+        api: subsocial,
+        limit: 20,
         offset: 0,
+        dispatch,
       }),
-      dispatch(
-        fetchPosts({
-          api: subsocial,
-          ids: pageIds,
-          reload: true,
-          eagerLoadHandles: true,
-          dataSource: DataSourceTypes.SQUID,
-        }),
-      ),
-    ] as const)
+    )
+
+    const posts = result.payload as PostStruct[]
+
+    const postIds = posts?.map(p => p.id) || []
+
+    sortedPostIds = descSort(postIds)
+
+    pageIds = getPageOfIds(sortedPostIds, query)
+
     initialApolloState = client.extract()
   } else {
+    const postIds = await subsocial.blockchain.postIdsBySpaceId(spaceId)
+
+    sortedPostIds = descSort(postIds)
+
+    pageIds = getPageOfIds(sortedPostIds, query)
+
     await dispatch(
       fetchPosts({
         api: subsocial,

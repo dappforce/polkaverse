@@ -1,9 +1,16 @@
-import { Col, Row } from 'antd'
+import { Button, Col, Row } from 'antd'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
 import React, { FC } from 'react'
 import { Pluralize } from 'src/components/utils/Plularize'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
+import {
+  useFetchPosts,
+  useSelectPost,
+  useSetChatEntityConfig,
+  useSetChatOpen,
+} from 'src/rtk/app/hooks'
+import { useSendEvent } from 'src/stores/analytics'
 import { ProfileData } from 'src/types'
 import { useSelectProfile } from '../../../rtk/features/profiles/profilesHooks'
 import { AccountFollowersModal, AccountFollowingModal } from '../AccountsListModal'
@@ -79,6 +86,28 @@ export const ProfilePreview: FC<ProfilePreviewProps> = ({
 
 export const ProfilePreviewPopup: FC<ProfilePreviewProps> = props => {
   const { address, withDetails = false, bottom, withFollowButton = true } = props
+  const setChatConfig = useSetChatEntityConfig()
+  const setChatOpen = useSetChatOpen()
+  const sendEvent = useSendEvent()
+  const profile = useSelectProfile(address.toString())
+
+  const chat = profile?.content?.chats?.[0]
+
+  useFetchPosts(chat ? [chat.id] : [])
+
+  const post = useSelectPost(chat?.id)
+
+  const onOpenChatClick = () => {
+    if (!post) return
+
+    sendEvent('open_chat_clicked', { eventSource: 'profile_modal' })
+    setChatConfig({
+      entity: { type: 'post', data: post.post },
+      withFloatingButton: false,
+    })
+
+    setChatOpen(true)
+  }
 
   return (
     <ProfilePreview
@@ -113,7 +142,22 @@ export const ProfilePreviewPopup: FC<ProfilePreviewProps> = props => {
                   )}
                 />
               </div>
-              <CreateOrEditProfileSpace address={address} className='DfGreyLink FontNormal mb-2' />
+              <div className='d-flex flex-column GapSemiTiny'>
+                <CreateOrEditProfileSpace
+                  address={address}
+                  className='DfGreyLink FontNormal mb-2'
+                />
+                {post && !post.post.struct.hidden && (
+                  <Button
+                    type='primary'
+                    ghost
+                    style={{ width: 'fit-content' }}
+                    onClick={onOpenChatClick}
+                  >
+                    Open chat
+                  </Button>
+                )}
+              </div>
             </>
           )}
           {bottom}

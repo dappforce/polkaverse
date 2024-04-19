@@ -1345,5 +1345,7 @@ export interface GetPostsData {
 }
 
 export interface GetPostsDataVariables {
+  offset?: number
+  limit?: number
   where?: PostWhereInput | null;
 }

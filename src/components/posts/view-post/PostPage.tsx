@@ -322,8 +322,8 @@ const PostPage: FC<PostDetailsProps & HasStatusCode> = props => {
   const { statusCode, postData } = props
   const dispatch = useAppDispatch()
   useEffect(() => {
-    dispatch(fetchPostRewards({ postIds: [postData.id] }))
-    dispatch(fetchPostsViewCount({ postIds: [postData.id] }))
+    dispatch(fetchPostRewards({ postIds: [postData?.id] }))
+    dispatch(fetchPostsViewCount({ postIds: [postData?.id] }))
   }, [dispatch])
 
   if (statusCode === 404) {

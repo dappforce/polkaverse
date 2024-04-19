@@ -55,7 +55,7 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
       <>
         {isCreatorSpace && hasChatSetup && isMobile && (
           <Menu.Item
-            key={`edit-space-${spaceKey}`}
+            key={`open-chat-${spaceKey}`}
             onClick={() => {
               setChatConfig({
                 entity: { data: props.spaceData, type: 'space' },

@@ -86,6 +86,10 @@ export interface SpaceSimpleFragment {
    */
   tagsOriginal: string | null;
   /**
+  * A list of experimental properties of a Space
+  */
+  experimental?: any;
+  /**
    * The about text (bio) of a Space (IPFS content)
    */
   about: string | null;

@@ -1,6 +1,6 @@
 @import 'src/styles/subsocial-vars.scss'
 
-@media screen and ( max-width: 768px)   
+@media screen and ( max-width: 768px)
   .NotificationPage
     padding: 0 $space_tiny
     \:global .infinite-scroll-component
@@ -11,3 +11,18 @@
 
 .DfNotifCounter p
   margin: 0 !important
+
+.TabsBlock
+  display: flex
+  align-items: center
+  width: 100%
+  border-bottom: 1px solid #f0f0f0
+
+  :global(.ant-tabs-nav)
+    margin: 0 !important
+
+    &::before
+      border-bottom: none !important
+
+  :global(.ant-tabs-tab)
+    margin: 0 19px 0 0 !important

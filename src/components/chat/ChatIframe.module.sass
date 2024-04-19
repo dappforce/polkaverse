@@ -1,6 +1,44 @@
+@import 'src/styles/subsocial-vars.scss'
+
 .ChatIframe
   transition: opacity 150ms ease-out
   opacity: 1
 
   &.ChatIframeLoading
     opacity: 0
+
+.ButtonWrapper
+  margin: 0 19px 0 0
+  padding: 12px 0
+
+  button
+    display: flex
+    align-items: center
+    gap: $space_tiny
+    align-items: center
+
+.ChatButton
+  height: auto
+  position: relative
+  display: inline-flex
+  font-size: 14px
+  background: transparent
+  align-items: center
+  color: black
+  padding: 0
+  border: 0
+  outline: none
+  cursor: pointer
+
+.ChatUnreadCount
+  font-size: 10px
+  padding: 2px 3px
+  display: flex
+  align-items: center
+  justify-content: center
+  height: 14px
+  min-width: 14px
+  font-weight: 500
+  background: #EB2F95
+  border-radius: 32px
+  color: white

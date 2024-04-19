@@ -1,6 +1,7 @@
 import React, { CSSProperties } from 'react'
+import useGetProfileUrl from 'src/hooks/useGetProfileUrl'
 import CustomLink from '../referral/CustomLink'
-import { accountUrl, HasAddress } from '../urls'
+import { HasAddress } from '../urls'
 
 type Props = {
   account: HasAddress
@@ -12,11 +13,12 @@ type Props = {
 
 export const ViewProfileLink = React.memo(({ account, title, hint, className, style }: Props) => {
   const { address } = account
+  const profileUrl = useGetProfileUrl(address.toString())
 
   if (!address) return null
 
   return (
-    <CustomLink href='/accounts/[address]' as={accountUrl(account)} rel='noreferrer nofollow'>
+    <CustomLink href={profileUrl} rel='noreferrer nofollow'>
       <a className={className} title={hint} style={style}>
         {title || address.toString()}
       </a>

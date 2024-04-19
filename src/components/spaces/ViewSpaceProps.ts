@@ -17,6 +17,7 @@ export type ViewSpaceOptsProps = {
 export type ViewSpaceProps = ViewSpaceOptsProps & {
   spaceData?: SpaceWithSomeDetails
   postIds?: PostId[]
+  postsCount?: number
   posts?: PostWithSomeDetails[]
   followers?: AccountId[]
 

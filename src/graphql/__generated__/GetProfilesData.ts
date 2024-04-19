@@ -93,6 +93,10 @@ export interface GetProfilesData_accounts_profileSpace {
    * The URL of the Space's image (IPFS content)
    */
   image: string | null;
+   /**
+   * Experimental fields 
+   */
+  experimental: string | null;
   /**
    * A list of a Space's tags, converted to a string with "comma" as a separator (IPFS content)
    */
