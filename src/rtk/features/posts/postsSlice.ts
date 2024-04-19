@@ -482,7 +482,7 @@ export const fetchProfilePosts = createAsyncThunk<
       where: {
         ownedByAccount: { id_eq: address },
         AND: [{ space_isNull: false, isComment_eq: false, ...showHidden }],
-        OR: [{ space: { id_eq: spaceId }, ...showHidden }],
+        ...(spaceId ? { OR: [{ space: { id_eq: spaceId }, ...showHidden }] } : {}),
       },
     })
 
