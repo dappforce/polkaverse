@@ -10,7 +10,13 @@ export * from '@subsocial/elasticsearch/types'
 export { idToBn, bnToId, idsToBns, bnsToIds }
 export type EventsName = EventName
 
-type SpaceData = EntityData<SpaceStruct, SpaceContent & { chats?: any }>
+type SpaceData = EntityData<
+  SpaceStruct,
+  SpaceContent & {
+    chats?: any
+    experimental?: any
+  }
+>
 
 export type SpaceWithSomeDetails = SpaceData & {
   owner?: SpaceData

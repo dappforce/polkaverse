@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import { useMyAddress } from 'src/components/auth/MyAccountsContext'
 import CreateChatModalButton from 'src/components/chat/CreateChatModal'
 import { newSpaceUrl } from 'src/components/urls'
+import { getCreatorChatIdFromProfile } from 'src/components/utils'
 import { DfImage } from 'src/components/utils/DfImage'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import {
@@ -116,11 +117,11 @@ const BannerOpenCreateChatModalButton = () => {
   const setChatOpen = useSetChatOpen()
   const sendEvent = useSendEvent()
 
-  const chat = profile?.content?.chats?.[0]
+  const chatId = getCreatorChatIdFromProfile(profile)
 
-  useFetchPosts(chat ? [chat.id] : [])
+  useFetchPosts(chatId ? [chatId] : [])
 
-  const post = useSelectPost(chat?.id)
+  const post = useSelectPost(chatId)
   const spaceId = profile?.id
 
   if (!spaceId) {
@@ -139,7 +140,7 @@ const BannerOpenCreateChatModalButton = () => {
 
   const isRemovedPost = !post?.post.struct.spaceId
 
-  return chat && !isRemovedPost ? (
+  return chatId && !isRemovedPost ? (
     <Button
       block
       className={styles.LearnMoreButton}

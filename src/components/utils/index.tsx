@@ -11,7 +11,7 @@ import NextError from 'next/error'
 import React, { useEffect, useMemo } from 'react'
 import { IconBaseProps } from 'react-icons'
 import config from 'src/config'
-import { AnyAccountId, PostStruct, SpaceStruct } from 'src/types'
+import { AnyAccountId, PostStruct, SpaceData, SpaceStruct } from 'src/types'
 import { useIsMyAddress } from '../auth/MyAccountsContext'
 import { ButtonLink } from './CustomLinks'
 import { BareProps } from './types'
@@ -301,4 +301,10 @@ export const detectBrowser = () => {
 
 export const getInstallUrl = (instalUrls: string) => {
   return instalUrls
+}
+
+export function getCreatorChatIdFromProfile(profile?: SpaceData | null) {
+  const chats = (profile?.content as any)?.experimental?.chats || (profile?.content as any)?.chats
+
+  return chats?.[0]?.id as string | undefined
 }
