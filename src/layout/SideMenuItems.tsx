@@ -1,5 +1,6 @@
 import React from 'react'
 import { BiChat, BiNews } from 'react-icons/bi'
+import { GoLaw } from 'react-icons/go'
 import { LuCompass } from 'react-icons/lu'
 import { MdOutlineLeaderboard } from 'react-icons/md'
 import { RiLineChartLine } from 'react-icons/ri'
@@ -41,6 +42,12 @@ export const buildAuthorizedMenu = (myAddress?: string): MenuItem[] => {
       name: 'Chat',
       icon: <SubIcon Icon={BiChat} />,
       href: '/c',
+      forceHardNavigation: true,
+    },
+    {
+      name: 'Open Gov',
+      icon: <SubIcon Icon={GoLaw} />,
+      href: '/c/opengov',
       forceHardNavigation: true,
     },
     ...(getIsLoggedIn()
