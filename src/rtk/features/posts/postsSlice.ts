@@ -459,17 +459,10 @@ export const fetchProfilePosts = createAsyncThunk<
   ThunkApiConfig
 >(
   'posts/fetchManyByAddress',
-  async ({
-    id,
-    spaceId,
-    client,
-    additionalData,
-    withHidden,
-    dispatch,
-    api,
-    limit,
-    offset,
-  }): Promise<PostStruct[]> => {
+  async (
+    { id, spaceId, client, additionalData, withHidden, dispatch, api, limit, offset },
+    { getState },
+  ): Promise<PostStruct[]> => {
     const address = id as AccountId
 
     if (!client) return []
@@ -494,6 +487,52 @@ export const fetchProfilePosts = createAsyncThunk<
     } = additionalData || {}
 
     const entities = await changePostsContentId(posts)
+
+    const newIds = entities.map(x => x.id)
+
+    if (isClientSide()) {
+      dispatch(fetchPostRewards({ postIds: newIds as string[] }))
+      dispatch(fetchPostsViewCount({ postIds: newIds as string[] }))
+    }
+    const fetches: Promise<any>[] = [
+      dispatch(fetchSuperLikeCounts({ postIds: newIds as string[] })),
+      dispatch(fetchCanPostsSuperLiked({ postIds: newIds as string[] })),
+      // need to wait for this to be fetched before any post is rendered
+      dispatch(fetchBlockedResources({ appId })),
+    ]
+
+    const alreadyLoadedIds = new Set(newIds)
+    const extPostIds = new Set<PostId>()
+
+    const addToExtPostIds = (id: PostId) => {
+      if (id && !alreadyLoadedIds.has(id)) {
+        extPostIds.add(id)
+      }
+    }
+
+    entities.forEach(x => {
+      if (x.isComment) {
+        addToExtPostIds(asCommentStruct(x).rootPostId)
+      } else if (x.isSharedPost) {
+        addToExtPostIds(asSharedPostStruct(x).originalPostId)
+      }
+    })
+
+    const newExtIds = selectUnknownPostIds(getState(), Array.from(extPostIds), true)
+
+    fetches.push(
+      dispatch(
+        fetchPosts({
+          api,
+          ids: newExtIds,
+          withRootPost: false,
+          withContent,
+          reload: true,
+        }),
+      ),
+    )
+
+    await Promise.all(fetches)
 
     await handleAfterDataFetch({
       entities,
