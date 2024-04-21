@@ -60,7 +60,7 @@ const SpacesListBySpaceIds = (props: SpacesListBySpaceIdsProps) => {
   const loadMoreSpaces = async (page: number, size: number) => {
     const ids = getPageOfIds(spaceIds, { page, size })
 
-    await dispatch(fetchSpaces({ ids, api: subsocial }))
+    await dispatch(fetchSpaces({ ids, api: subsocial, dataSource: DataSourceTypes.SQUID }))
 
     return ids
   }
