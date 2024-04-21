@@ -66,7 +66,7 @@ export const fetchContents = createAsyncThunk<
       unknownFlagAttr: 'isOverview',
     },
     getData: async ({ api, newIds }) => {
-      const timeoutMs = 10_000
+      const timeoutMs = 3_000
       let contents = await api.ipfs.getContentArray(newIds as string[], timeoutMs)
       return Object.entries(contents)
         .map(([id, content]) => {
