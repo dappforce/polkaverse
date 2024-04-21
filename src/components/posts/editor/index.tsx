@@ -129,8 +129,10 @@ function EditPostForm(props: PostFormProps) {
   const goToPostPage = (postId: AnyId) => {
     const content = getFieldValues() as PostContent
     const postData = { struct: { id: postId.toString() }, content }
+
+    const url = postUrl({ id: spaceForPost! }, postData)
     router
-      .push('/[spaceId]/[slug]', postUrl({ id: spaceForPost! }, postData))
+      .push('/[spaceId]/[slug]', url + '?source=chain')
       .catch(err => log.error(`Failed to redirect to a post page. ${err}`))
   }
 

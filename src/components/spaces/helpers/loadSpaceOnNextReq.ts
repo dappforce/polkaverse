@@ -12,7 +12,7 @@ export async function loadSpaceOnNextReq(
 ): Promise<SpaceWithSomeDetails & HasStatusCode> {
   const { context, subsocial, dispatch, reduxStore } = props
   const { query, res } = context
-  const { spaceId } = query
+  const { spaceId, source } = query
   const idOrHandle = spaceId as string
 
   try {
@@ -29,7 +29,7 @@ export async function loadSpaceOnNextReq(
         id: idStr,
         reload: true,
         eagerLoadHandles: true,
-        dataSource: DataSourceTypes.CHAIN,
+        dataSource: source === 'chain' ? DataSourceTypes.CHAIN : DataSourceTypes.SQUID,
       }),
     )
     const spaceData = selectSpace(reduxStore.getState(), { id: idStr })

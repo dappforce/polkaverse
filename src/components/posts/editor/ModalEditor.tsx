@@ -158,8 +158,10 @@ export const PostEditorModalBody = ({
   const goToPostPage = (postId: AnyId) => {
     const content = getFieldValues() as PostContent
     const postData = { struct: { id: postId.toString() }, content }
+
+    const url = postUrl({ id: spaceId! }, postData)
     router
-      .push('/[spaceId]/[slug]', postUrl({ id: spaceId! }, postData))
+      .push('/[spaceId]/[slug]', url + '?source=chain')
       .catch(err => log.error(`Failed to redirect to a post page. ${err}`))
   }
 
