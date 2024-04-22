@@ -2,6 +2,7 @@ import { Button, Col, Row } from 'antd'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
 import React, { FC } from 'react'
+import { getCreatorChatIdFromProfile } from 'src/components/utils'
 import { Pluralize } from 'src/components/utils/Plularize'
 import { LARGE_AVATAR_SIZE } from 'src/config/Size.config'
 import {
@@ -91,11 +92,11 @@ export const ProfilePreviewPopup: FC<ProfilePreviewProps> = props => {
   const sendEvent = useSendEvent()
   const profile = useSelectProfile(address.toString())
 
-  const chat = profile?.content?.chats?.[0]
+  const chatId = getCreatorChatIdFromProfile(profile)
 
-  useFetchPosts(chat ? [chat.id] : [])
+  useFetchPosts(chatId ? [chatId] : [])
 
-  const post = useSelectPost(chat?.id)
+  const post = useSelectPost(chatId)
 
   const onOpenChatClick = () => {
     if (!post) return

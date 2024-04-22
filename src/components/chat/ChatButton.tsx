@@ -1,5 +1,5 @@
-import { isEmptyArray } from '@subsocial/utils'
 import { useFetchPosts, useSelectPost, useSelectSpace } from 'src/rtk/app/hooks'
+import { getCreatorChatIdFromProfile } from '../utils'
 import CreateChatModalButton from './CreateChatModal'
 import UnhideChatButton from './UnhideChatButton'
 
@@ -12,20 +12,19 @@ const ChatButton = ({ spaceId }: ChatButtonProps) => {
 
   const spaceContent = space?.content
 
-  const chats = spaceContent?.chats
-  const chat = chats?.[0]
+  const chatId = getCreatorChatIdFromProfile(space)
 
-  useFetchPosts(chat ? [chat?.id] : [])
+  useFetchPosts(chatId ? [chatId] : [])
 
-  const post = useSelectPost(chat?.id)
+  const chat = useSelectPost(chatId)
 
-  const isPostHidden = !!post?.post.struct.hidden
-  const isRemovedPost = !post?.post.struct.spaceId
+  const isPostHidden = !!chat?.post.struct.hidden
+  const isRemovedPost = !chat?.post.struct.spaceId
 
-  if (chat && post && spaceContent && !isEmptyArray(chats) && !isPostHidden) return null
+  if (chatId && chat && spaceContent && !isPostHidden) return null
 
   return isPostHidden && !isRemovedPost ? (
-    <UnhideChatButton post={post?.post?.struct} />
+    <UnhideChatButton post={chat?.post?.struct} />
   ) : (
     <CreateChatModalButton spaceId={spaceId} />
   )
