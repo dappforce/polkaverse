@@ -32,7 +32,14 @@ import { useIsPostBlocked } from 'src/rtk/features/moderation/hooks'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { fetchPostsViewCount } from 'src/rtk/features/posts/postsViewCountSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
-import { asCommentStruct, DataSourceTypes, HasStatusCode, idToBn, PostData, PostWithSomeDetails } from 'src/types'
+import {
+  asCommentStruct,
+  DataSourceTypes,
+  HasStatusCode,
+  idToBn,
+  PostData,
+  PostWithSomeDetails,
+} from 'src/types'
 import { DfImage } from '../../utils/DfImage'
 import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
@@ -205,12 +212,13 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
                     {titleMsg}
                   </h1>
                 )}
-                {image && (
+                {image ? (
                   <div className='d-flex justify-content-center'>
                     <DfImage src={resolveIpfsUrl(image)} className='DfPostImage' />
                   </div>
+                ) : (
+                  link && <Embed link={link} className={!!body ? 'mb-3' : 'mb-0'} />
                 )}
-                {link && <Embed link={link} className={!!body ? 'mb-3' : 'mb-0'} />}
                 {body && <DfMd source={body} />}
                 <ViewTags tags={tags} className='mt-2' />
 
@@ -290,13 +298,15 @@ export async function loadPostOnNextReq({
   async function getPost() {
     const replyIds = await blockchain.getReplyIdsByPostId(idToBn(postId!))
     const ids = replyIds.concat(postId!)
-    await dispatch(fetchPosts({
-      api: subsocial,
-      ids,
-      reload: true,
-      eagerLoadHandles: true,
-      dataSource: source === 'chain' ? DataSourceTypes.CHAIN : DataSourceTypes.SQUID
-    }))
+    await dispatch(
+      fetchPosts({
+        api: subsocial,
+        ids,
+        reload: true,
+        eagerLoadHandles: true,
+        dataSource: source === 'chain' ? DataSourceTypes.CHAIN : DataSourceTypes.SQUID,
+      }),
+    )
   }
   await Promise.all([getPost(), dispatch(fetchBlockedResources({ appId }))])
   const postData = selectPost(reduxStore.getState(), { id: postId })
