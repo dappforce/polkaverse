@@ -19,7 +19,7 @@ import { useIsMySpace } from '../spaces/helpers'
 import { CreatePostButton } from '../spaces/helpers/CreatePostButton'
 import { FollowerCanPostAlert } from '../spaces/permissions/FollowerCanPostAlert'
 import { useSubsocialApi } from '../substrate'
-import { Loading } from '../utils'
+import { getCreatorChatIdFromProfile, Loading } from '../utils'
 import { createLoadMorePosts, FeedActivities } from './FeedActivities'
 import { OnchainAccountActivity } from './OnchainAccountActivity'
 import { SpaceActivities } from './SpaceActivities'
@@ -147,7 +147,7 @@ const OffchainAccountActivity = ({
 
   const space = useSelectSpace(spaceId)
 
-  const chatId = (space?.content?.chats as any[])?.[0]?.id as string | undefined
+  const chatId = getCreatorChatIdFromProfile(space)
 
   useFetchPosts(chatId ? [chatId] : [])
 
