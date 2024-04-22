@@ -122,8 +122,11 @@ function toParamsAndIds({ id, ...params }: CommonFetchPropsAndId): CommonFetchPr
 }
 
 export function validateDataSource(dataSource: DataSourceTypes | undefined) {
-  if (!dataSource || !config.enableSquidDataSource) {
+  if (!config.enableSquidDataSource) {
     dataSource = DataSourceTypes.CHAIN
+  }
+  if (!dataSource) {
+    dataSource = DataSourceTypes.SQUID
   }
   return dataSource
 }
