@@ -32,11 +32,11 @@ import { useIsPostBlocked } from 'src/rtk/features/moderation/hooks'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { fetchPostsViewCount } from 'src/rtk/features/posts/postsViewCountSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
+import { fetchPostReplyIds, selectReplyIds } from 'src/rtk/features/replies/repliesSlice'
 import {
   asCommentStruct,
   DataSourceTypes,
   HasStatusCode,
-  idToBn,
   PostData,
   PostWithSomeDetails,
 } from 'src/types'
@@ -288,16 +288,15 @@ export async function loadPostOnNextReq({
     asPath,
   } = context
 
-  const { blockchain } = subsocial
-
   const slugStr = slug as string
   const postId = getPostIdFromSlug(slugStr)
 
   if (!postId) return return404(context)
 
   async function getPost() {
-    const replyIds = await blockchain.getReplyIdsByPostId(idToBn(postId!))
-    const ids = replyIds.concat(postId!)
+    await dispatch(fetchPostReplyIds({ id: postId!, api: subsocial }))
+    const replyIds = selectReplyIds(reduxStore.getState(), postId!)
+    const ids = [postId!, ...(replyIds?.replyIds ?? [])]
     await dispatch(
       fetchPosts({
         api: subsocial,

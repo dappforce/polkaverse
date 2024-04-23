@@ -1,13 +1,17 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
+import { SubsocialApi } from '@subsocial/api'
 import { idToBn, isEmptyArray } from '@subsocial/utils'
+import { getReplyIdsByParentId } from 'src/graphql/apis'
 import {
   CommonFetchProps,
   createSelectUnknownIds,
   SelectManyArgs,
   SelectOneArgs,
   ThunkApiConfig,
+  validateDataSource,
 } from 'src/rtk/app/helpers'
 import { RootState } from 'src/rtk/app/rootReducer'
+import { createFetchDataFn } from 'src/rtk/app/wrappers'
 import { AccountId, DataSourceTypes, PostId, PostWithSomeDetails } from 'src/types'
 import { fetchPosts } from '../posts/postsSlice'
 
@@ -72,12 +76,26 @@ export function selectManyReplyIds(
 //   return selectManyPostReplies(state, { ids: [ parentId ]})[parentId] || []
 // }
 
+const getReplyIds = createFetchDataFn<string[]>([])({
+  chain: async ({ api, parentId }: { api: SubsocialApi; parentId: string }) => {
+    return api.blockchain.getReplyIdsByPostId(idToBn(parentId))
+  },
+  squid: async ({ parentId }: { parentId: string }, client) => {
+    if (!parentId) return []
+    const ids = await getReplyIdsByParentId(client, {
+      parentId,
+    })
+    return ids
+  },
+})
+
 export const fetchPostReplyIds = createAsyncThunk<
   ReplyIdsByPostId[],
   FetchManyPostRepliesArgs,
   ThunkApiConfig
 >('replyIds/fetchMany', async (args, { getState, dispatch }) => {
-  const { id: parentId, myAddress, api, reload } = args
+  const { id: parentId, myAddress, api, reload, dataSource: _dataSource } = args
+  const dataSource = validateDataSource(_dataSource)
 
   if (!reload) {
     const parentIds = selectUnknownParentIds(getState(), [parentId])
@@ -87,7 +105,10 @@ export const fetchPostReplyIds = createAsyncThunk<
     }
   }
 
-  const replyIds = await api.blockchain.getReplyIdsByPostId(idToBn(parentId))
+  const replyIds = await getReplyIds(dataSource, {
+    chain: { api, parentId },
+    squid: { parentId },
+  })
 
   await Promise.allSettled([
     dispatch(

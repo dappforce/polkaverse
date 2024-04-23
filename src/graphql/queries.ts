@@ -835,3 +835,19 @@ export const GET_LASTEST_POST_IDS_IN_SPACE = gql`
     }
   }
 `
+
+// Replies
+
+export const GET_REPLY_IDS_BY_PARENT_ID = gql`
+  query GetReplyIdsByParentId($parentId: String!) {
+    posts(
+      orderBy: createdAtTime_ASC
+      where: {
+        parentPost: { id_eq: $parentId }
+        OR: { rootPost: { id_eq: $parentId }, parentPost: { id_isNull: true } }
+      }
+    ) {
+      id
+    }
+  }
+`
