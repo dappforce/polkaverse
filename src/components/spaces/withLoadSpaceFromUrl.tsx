@@ -2,8 +2,10 @@ import { isFunction } from '@polkadot/util'
 import { newLogger } from '@subsocial/utils'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
+import { useDispatch, useStore } from 'react-redux'
 import { useFetchMyPermissionsBySpaceId } from 'src/rtk/features/permissions/mySpacePermissionsHooks'
-import { SpaceData } from 'src/types'
+import { fetchSpace, selectSpace } from 'src/rtk/features/spaces/spacesSlice'
+import { DataSourceTypes, SpaceData } from 'src/types'
 import useSubsocialEffect from '../api/useSubsocialEffect'
 import { getSpaceId } from '../substrate'
 import { Loading } from '../utils'
@@ -35,6 +37,8 @@ export function withLoadSpaceFromUrl<Props extends CanHaveSpaceProps>(
     const [isLoaded, setIsLoaded] = useState(!idOrHandle)
     const [loadedData, setLoadedData] = useState<CanHaveSpaceProps>({})
     useFetchMyPermissionsBySpaceId(loadedData.space?.id)
+    const dispatch = useDispatch()
+    const store = useStore()
 
     useSubsocialEffect(
       ({ subsocial }) => {
@@ -45,7 +49,19 @@ export function withLoadSpaceFromUrl<Props extends CanHaveSpaceProps>(
 
           if (isMounted && id) {
             setIsLoaded(false)
-            const space = await subsocial.findSpace({ id })
+            await dispatch(fetchSpace({ api: subsocial, id: id.toString() }))
+            let space = selectSpace(store.getState(), { id: id.toString() })
+
+            if (!space) {
+              await dispatch(
+                fetchSpace({
+                  api: subsocial,
+                  id: id.toString(),
+                  dataSource: DataSourceTypes.CHAIN,
+                }),
+              )
+              space = selectSpace(store.getState(), { id: id.toString() })
+            }
 
             setLoadedData({ space })
           }
