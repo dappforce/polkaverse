@@ -161,7 +161,7 @@ export const PostEditorModalBody = ({
 
     const url = postUrl({ id: spaceId! }, postData)
     router
-      .push('/[spaceId]/[slug]', url + '?source=chain')
+      .push('/[spaceId]/[slug]', url)
       .catch(err => log.error(`Failed to redirect to a post page. ${err}`))
   }
 

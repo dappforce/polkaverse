@@ -283,7 +283,7 @@ export async function loadPostOnNextReq({
   reduxStore,
 }: NextContextWithRedux): Promise<PostWithSomeDetails & HasStatusCode> {
   const {
-    query: { slug, source },
+    query: { slug },
     res,
     asPath,
   } = context
@@ -303,9 +303,21 @@ export async function loadPostOnNextReq({
         ids,
         reload: true,
         eagerLoadHandles: true,
-        dataSource: source === 'chain' ? DataSourceTypes.CHAIN : DataSourceTypes.SQUID,
+        dataSource: DataSourceTypes.SQUID,
       }),
     )
+    const postData = selectPost(reduxStore.getState(), { id: postId! })
+    if (!postData) {
+      await dispatch(
+        fetchPosts({
+          api: subsocial,
+          ids: [postId!],
+          reload: true,
+          eagerLoadHandles: true,
+          dataSource: DataSourceTypes.CHAIN,
+        }),
+      )
+    }
   }
   await Promise.all([getPost(), dispatch(fetchBlockedResources({ appId }))])
   const postData = selectPost(reduxStore.getState(), { id: postId })
