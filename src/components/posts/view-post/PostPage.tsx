@@ -32,11 +32,11 @@ import { useIsPostBlocked } from 'src/rtk/features/moderation/hooks'
 import { fetchPost, fetchPosts, selectPost } from 'src/rtk/features/posts/postsSlice'
 import { fetchPostsViewCount } from 'src/rtk/features/posts/postsViewCountSlice'
 import { useFetchMyReactionsByPostId } from 'src/rtk/features/reactions/myPostReactionsHooks'
+import { fetchPostReplyIds, selectReplyIds } from 'src/rtk/features/replies/repliesSlice'
 import {
   asCommentStruct,
   DataSourceTypes,
   HasStatusCode,
-  idToBn,
   PostData,
   PostWithSomeDetails,
 } from 'src/types'
@@ -283,12 +283,10 @@ export async function loadPostOnNextReq({
   reduxStore,
 }: NextContextWithRedux): Promise<PostWithSomeDetails & HasStatusCode> {
   const {
-    query: { slug, source },
+    query: { slug },
     res,
     asPath,
   } = context
-
-  const { blockchain } = subsocial
 
   const slugStr = slug as string
   const postId = getPostIdFromSlug(slugStr)
@@ -296,17 +294,30 @@ export async function loadPostOnNextReq({
   if (!postId) return return404(context)
 
   async function getPost() {
-    const replyIds = await blockchain.getReplyIdsByPostId(idToBn(postId!))
-    const ids = replyIds.concat(postId!)
+    await dispatch(fetchPostReplyIds({ id: postId!, api: subsocial }))
+    const replyIds = selectReplyIds(reduxStore.getState(), postId!)
+    const ids = [postId!, ...(replyIds?.replyIds ?? [])]
     await dispatch(
       fetchPosts({
         api: subsocial,
         ids,
         reload: true,
         eagerLoadHandles: true,
-        dataSource: source === 'chain' ? DataSourceTypes.CHAIN : DataSourceTypes.SQUID,
+        dataSource: DataSourceTypes.SQUID,
       }),
     )
+    const postData = selectPost(reduxStore.getState(), { id: postId! })
+    if (!postData) {
+      await dispatch(
+        fetchPosts({
+          api: subsocial,
+          ids: [postId!],
+          reload: true,
+          eagerLoadHandles: true,
+          dataSource: DataSourceTypes.CHAIN,
+        }),
+      )
+    }
   }
   await Promise.all([getPost(), dispatch(fetchBlockedResources({ appId }))])
   const postData = selectPost(reduxStore.getState(), { id: postId })
