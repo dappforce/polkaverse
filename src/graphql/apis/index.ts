@@ -419,15 +419,9 @@ export async function getLastestPostIdsInSpace(
 }
 
 export async function getReplyIdsByParentId(client: GqlClient, variables: { parentId: string }) {
-  try {
-    const posts = await client.query<{ posts: { id: string }[] }, { parentId: string }>({
-      query: q.GET_REPLY_IDS_BY_PARENT_ID,
-      variables,
-    })
-    return posts.data.posts.map(post => post.id)
-  } catch (err) {
-    console.log(variables)
-    console.log(err)
-    return []
-  }
+  const posts = await client.query<{ posts: { id: string }[] }, { parentId: string }>({
+    query: q.GET_REPLY_IDS_BY_PARENT_ID,
+    variables,
+  })
+  return posts.data.posts.map(post => post.id)
 }
