@@ -143,9 +143,20 @@ const getSpaces = createFetchDataFn<SpaceState[]>([])({
     }
     return entities
   },
-  squid: async ({ ids }: { ids: string[] }, client) => {
-    const spaces = await getSpacesData(client, { where: { id_in: ids } })
-    return spaces.map<SpaceState>(space => ({ ...space, isOverview: true }))
+  squid: async ({ api, ids }: { api: SubsocialApi; ids: string[] }, client) => {
+    // need to fetch from chain to get correct permissions, while fetch from squid to prefetch the content
+    const [spaces, spacesFromChain] = await Promise.all([
+      getSpacesData(client, { where: { id_in: ids } }),
+      api.findSpaceStructs(ids),
+    ] as const)
+    const spacesFromChainMap = new Map<string, SpaceStruct>()
+    spacesFromChain.forEach(space => spacesFromChainMap.set(space.id, space))
+
+    return spaces.map<SpaceState>(space => ({
+      ...space,
+      ...spacesFromChainMap.get(space.id),
+      isOverview: false,
+    }))
   },
 })
 export const fetchSpaces = createAsyncThunk<SpaceStruct[], FetchSpacesArgs, ThunkApiConfig>(
@@ -201,7 +212,7 @@ export const fetchSpaces = createAsyncThunk<SpaceStruct[], FetchSpacesArgs, Thun
       const newIds = _newIds as string[]
       const entities = await getSpaces(dataSource, {
         chain: { api, ids: idsToBns(newIds) },
-        squid: { ids: newIds },
+        squid: { ids: newIds, api },
       })
       if (dataSource === DataSourceTypes.CHAIN) {
         await getSpacesCountDataFromChain(api, entities)
