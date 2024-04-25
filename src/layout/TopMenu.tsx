@@ -1,16 +1,16 @@
-import { CloseCircleOutlined, MenuOutlined, SearchOutlined } from '@ant-design/icons'
+import { CloseCircleOutlined, SearchOutlined } from '@ant-design/icons'
 import { Tooltip } from 'antd'
 import { useState } from 'react'
 import { useResponsiveSize } from 'src/components/responsive'
 import config from 'src/config'
 import AuthorizationPanel from '../components/auth/AuthorizationPanel'
 import SearchInput from '../components/search/SearchInput'
-import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext'
+// import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext'
 
 const { enableSearch, appLogo, mobileAppLogo, appName } = config
 
 // import { useTheme } from 'next-themes'
-import clsx from 'clsx'
+// import clsx from 'clsx'
 import CustomLink from 'src/components/referral/CustomLink'
 
 // const ThemeChanger = () => {
@@ -25,7 +25,7 @@ import CustomLink from 'src/components/referral/CustomLink'
 // }
 
 const InnerMenu = () => {
-  const { toggle } = useSidebarCollapsed()
+  // const { toggle } = useSidebarCollapsed()
   const { isNotMobile, isMobile } = useResponsiveSize()
   const [show, setShow] = useState(false)
 
@@ -39,11 +39,11 @@ const InnerMenu = () => {
   ) : (
     <div className='DfTopBar'>
       <div className='DfTopBar--leftContent'>
-        <MenuOutlined
-          style={{ fontSize: '1rem', paddingLeft: '0.4rem', paddingRight: '0.4rem' }}
-          onClick={toggle}
-          className={clsx('DfBurgerIcon mx-3', isMobile && 'mr-2')}
-        />
+        {/*<MenuOutlined*/}
+        {/*  style={{ fontSize: '1rem', paddingLeft: '0.4rem', paddingRight: '0.4rem' }}*/}
+        {/*  onClick={toggle}*/}
+        {/*  className={clsx('DfBurgerIcon mx-3', isMobile && 'mr-2')}*/}
+        {/*/>*/}
         <CustomLink href='/' as='/'>
           <a className='DfBrand'>
             <img className='d-block' src={isMobile ? mobileAppLogo : appLogo} alt={appName} />

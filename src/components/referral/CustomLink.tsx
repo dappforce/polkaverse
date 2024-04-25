@@ -12,7 +12,7 @@ export default function CustomLink(props: React.PropsWithChildren<LinkProps>) {
     }
   }
 
-  return <Link {...props} />
+  return <Link legacyBehavior {...props} />
 }
 
 function augmentLink(link: LinkProps['href'], refId: string) {

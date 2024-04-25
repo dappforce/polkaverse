@@ -75,7 +75,7 @@ class SignerKeyringManager {
 
   public generateKeypairBySecret(secret: string) {
     const keypair = this.keyring.addFromUri(secret, {}, 'sr25519')
-    return keypair
+    return keypair as any
   }
 }
 

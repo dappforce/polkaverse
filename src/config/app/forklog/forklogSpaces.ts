@@ -1,4 +1,1 @@
-export default [
-  // Subsocial
-  '1',
-]
+export default ['28094', '28095']

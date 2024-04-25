@@ -1,14 +1,14 @@
-import { Drawer, Layout } from 'antd'
-import React, { FunctionComponent, useEffect, useMemo } from 'react'
-import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext'
+import { Layout } from 'antd'
+import React, { useMemo } from 'react'
+// import { useSidebarCollapsed } from '../components/utils/SideBarCollapsedContext'
 import styles from './Sider.module.sass'
 
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
+// import { useRouter } from 'next/router'
 
 const TopMenu = dynamic(() => import('./TopMenu'), { ssr: false })
-const Menu = dynamic(() => import('./SideMenu'), { ssr: false })
+// const Menu = dynamic(() => import('./SideMenu'), { ssr: false })
 
 const {
   Header,
@@ -39,33 +39,33 @@ interface Props {
 //   )
 // }
 
-const DefaultNav: FunctionComponent = () => {
-  const {
-    state: { collapsed },
-    hide,
-  } = useSidebarCollapsed()
-  const { asPath } = useRouter()
-
-  useEffect(() => hide(), [asPath])
-  useEffect(() => {
-    document.body.style.overflow = !collapsed ? 'hidden' : 'unset'
-  }, [collapsed])
-
-  return (
-    <Drawer
-      className='DfSideBar'
-      bodyStyle={{ padding: 0 }}
-      placement='left'
-      closable={false}
-      onClose={hide}
-      visible={!collapsed}
-      getContainer={false}
-      keyboard
-    >
-      <Menu />
-    </Drawer>
-  )
-}
+// const DefaultNav: FunctionComponent = () => {
+//   const {
+//     state: { collapsed },
+//     hide,
+//   } = useSidebarCollapsed()
+//   const { asPath } = useRouter()
+//
+//   useEffect(() => hide(), [asPath])
+//   useEffect(() => {
+//     document.body.style.overflow = !collapsed ? 'hidden' : 'unset'
+//   }, [collapsed])
+//
+//   return (
+//     <Drawer
+//       className='DfSideBar'
+//       bodyStyle={{ padding: 0 }}
+//       placement='left'
+//       closable={false}
+//       onClose={hide}
+//       visible={!collapsed}
+//       getContainer={false}
+//       keyboard
+//     >
+//       {/*<Menu />*/}
+//     </Drawer>
+//   )
+// }
 
 export const Navigation = (props: Props): JSX.Element => {
   const { children } = props
@@ -81,7 +81,7 @@ export const Navigation = (props: Props): JSX.Element => {
         <TopMenu />
       </Header>
       <Layout className='ant-layout-has-sider'>
-        <DefaultNav />
+        {/*<DefaultNav />*/}
         {content}
       </Layout>
     </Layout>

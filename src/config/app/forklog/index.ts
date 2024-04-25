@@ -20,7 +20,7 @@ const index: AppConfig = {
   resolvedDomain: 'sub',
   // Reserved spaces
   lastReservedSpaceId: '1000',
-  claimedSpaceIds: ['1', '2', '3', '4', '5'],
+  claimedSpaceIds: [],
   recommendedSpaceIds: forklogSpaces,
   // suggestedTlds: ['sub', 'polka'],
 }

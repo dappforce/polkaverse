@@ -5,12 +5,12 @@ import { datahubQueryUrl, featureOverrides as env } from './env'
 import { CommonSubsocialFeatures, SubsocialFeatures } from './types'
 import { getOrFalse, getOrTrue } from './utils'
 
-const enableGraphQl = getOrTrue(env.enableGraphQl) && nonEmptyStr(connections.graphqlUrl)
+const enableGraphQl = getOrFalse(env.enableGraphQl) && nonEmptyStr(connections.graphqlUrl)
 const isSquidGraphQLEnabled = getOrTrue(env.enableSquidDataSource) && enableGraphQl
 const isDatahubAvailable = !!nonEmptyStr(datahubQueryUrl)
 
 const commonFeatures: CommonSubsocialFeatures = {
-  enableSearch: isSquidGraphQLEnabled && getOrTrue(env.enableSearch),
+  enableSearch: getOrFalse(env.enableSearch),
   enableFeed: getOrTrue(env.enableFeed),
   enableNotifications: getOrTrue(env.enableNotifications),
   enableActivity: getOrTrue(env.enableActivity),
