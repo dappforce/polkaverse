@@ -30,7 +30,7 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
     spaceOwnerId,
     ...otherProps
   } = props
-  const { id } = struct
+  const { id, ownerId } = struct
   const spaceKey = `space-${id.toString()}`
   const canCreatePost = useHasUserASpacePermission({ space: struct, permission: 'CreatePosts' })
   const isMySpace = useIsMySpace(struct)
@@ -140,6 +140,16 @@ export const SpaceDropdownMenu = (props: SpaceDropDownProps) => {
             }}
           >
             Copy Space Id: {id}
+          </span>
+        </Menu.Item>
+        <Menu.Item key={`copy-owner-address-${spaceKey}`}>
+          <span
+            onClick={() => {
+              navigator.clipboard.writeText(ownerId)
+              showSuccessMessage('Owner Address copied to clipboard')
+            }}
+          >
+            Copy Owner Address
           </span>
         </Menu.Item>
       </>
