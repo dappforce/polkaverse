@@ -6,6 +6,7 @@ import config from 'src/config'
 import { useSendEvent } from 'src/providers/AnalyticContext'
 import { useFetchTotalStake } from 'src/rtk/features/creators/totalStakeHooks'
 import { getAmountRange } from 'src/utils/analytics'
+import styles from './LeaderboardTable.module.sass'
 
 export default function LeaderboardTabs({
   activeKey,
@@ -19,7 +20,6 @@ export default function LeaderboardTabs({
   return (
     <>
       <Tabs
-        className='sm-hidden'
         activeKey={activeKey}
         onChange={key => {
           if (key === 'user') {
@@ -29,13 +29,13 @@ export default function LeaderboardTabs({
               role: 'staker',
               amountRange: getAmountRange(totalStake?.amount),
             })
-            router.push(`/leaderboard/${myAddress}?role=staker`, undefined, { shallow: true })
+            router.push(`/c/leaderboard/${myAddress}`, undefined, { shallow: true })
           } else if (key === 'general') {
             sendEvent('leaderboard_global_stats_opened', {
               eventSource: 'leaderboard_tab',
               amountRange: getAmountRange(totalStake?.amount),
             })
-            router.push('/leaderboard', undefined, { shallow: true })
+            router.push('/c/leaderboard', undefined, { shallow: true })
           } else if (key === 'stats') {
             sendEvent('leaderboard_activity_opened', {
               eventSource: 'leaderboard_tab',
@@ -48,7 +48,12 @@ export default function LeaderboardTabs({
         {myAddress && (
           <Tabs.TabPane
             tab={
-              <CustomLink href={`/leaderboard/${myAddress}?role=staker`} shallow passHref>
+              <CustomLink
+                href={`/c/leaderboard/${myAddress}`}
+                className={styles.LinkTab}
+                shallow
+                passHref
+              >
                 <a style={{ color: 'inherit' }}>My Staking Stats</a>
               </CustomLink>
             }
@@ -57,7 +62,7 @@ export default function LeaderboardTabs({
         )}
         <Tabs.TabPane
           tab={
-            <CustomLink href='/leaderboard' shallow passHref>
+            <CustomLink href='/c/leaderboard' className={styles.LinkTab} shallow passHref>
               <a style={{ color: 'inherit' }}>Global Staking Stats</a>
             </CustomLink>
           }
@@ -65,14 +70,14 @@ export default function LeaderboardTabs({
         />
         <Tabs.TabPane
           tab={
-            <CustomLink href='/stats' shallow passHref>
+            <CustomLink href='/c/stats' shallow passHref>
               <a style={{ color: 'inherit' }}>{config.appName} Stats</a>
             </CustomLink>
           }
           key='stats'
         />
       </Tabs>
-      <Tabs
+      {/* <Tabs
         className='lg-hidden'
         activeKey={activeKey}
         onChange={key => {
@@ -108,7 +113,7 @@ export default function LeaderboardTabs({
           }
           key='stats'
         />
-      </Tabs>
+      </Tabs> */}
     </>
   )
 }

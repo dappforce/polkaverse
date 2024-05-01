@@ -70,7 +70,8 @@ export const buildAuthorizedMenu = (myAddress?: string): MenuItem[] => {
     {
       name: 'Leaderboard',
       icon: <SubIcon Icon={MdOutlineLeaderboard} />,
-      href: '/leaderboard',
+      href: myAddress ? `/c/leaderboard/${myAddress}` : '/c/leaderboard',
+      forceHardNavigation: true,
     },
     {
       name: 'Statistics',
