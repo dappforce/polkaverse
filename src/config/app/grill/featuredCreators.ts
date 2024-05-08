@@ -89,5 +89,9 @@ export default [
   // Makoto Takahiro
   '12816',
   // gSan71
-  '11087'
+  '11087',
+  // Dyored.com
+  '7215',
+  // Heimdall223
+  '8541'
 ]
