@@ -152,7 +152,10 @@ export function InnerForm(props: FormProps) {
   const fieldValuesToContent = (): Content => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { whoCanPost, ...spaceContent } = getFieldValues()
-    return getNonEmptySpaceContent(spaceContent as Content)
+
+    const content = { ...(space?.content || {}), ...spaceContent }
+
+    return getNonEmptySpaceContent(content as Content)
   }
 
   const pinToIpfsAndBuildTxParams = () =>
