@@ -304,7 +304,9 @@ export const getInstallUrl = (instalUrls: string) => {
 }
 
 export function getCreatorChatIdFromProfile(profile?: SpaceData | null) {
-  const chats = (profile?.content as any)?.experimental?.chats || (profile?.content as any)?.chats
+  const content = profile?.content as any
 
+  const chats =
+    content?.experimental?.chats || content?.chats || content?.experimental?.experimental?.chats
   return chats?.[0]?.id as string | undefined
 }
