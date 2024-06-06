@@ -55,7 +55,6 @@ function MyApp(props) {
     if (isInitialized.current) return
     isInitialized.current = true
     initAllStores()
-    import('eruda').then(lib => lib.default.init())
   }, [])
 
   // Debug store

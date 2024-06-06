@@ -123,7 +123,6 @@
     "dayjs": "^1.9.6",
     "dotenv-webpack": "^1.0.2",
     "easymde": "^2.15.0",
-    "eruda": "^3.0.1",
     "eslint-config-next": "13",
     "graphql": "^15.5.0",
     "graphql-request": "^5.2.0",
