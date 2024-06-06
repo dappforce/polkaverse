@@ -85,9 +85,9 @@ jobs:
             GH_SELLER_CLIENT_ID=5DYm3Wk4aa1BbfhH1ajmY6MNEELXoicmKRnP4tzHYjSKnD9K
             GH_SELLER_TOKEN_SIGNER=retire strong pole intact cool music high path salt praise stadium spatial
             GH_SERVER_MNEMONIC=plunge pumpkin penalty segment cattle more print below fat lemon clap uniform
-            GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=https://ownership-pallet-data-hub-core.subsocial.network/graphql
-            GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://ownership-pallet-data-hub-core.subsocial.network/graphql-ws
-            GH_DATAHUB_QUEUE_URL=https://ownership-pallet-data-hub-queue.subsocial.network/graphql
+            GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=https://sub-data-hub.subsocial.network/graphql
+            GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://sub-data-hub.subsocial.network/graphql-ws
+            GH_DATAHUB_QUEUE_URL=https://sub-queue-data-hub.subsocial.network/graphql
             GH_DATAHUB_QUEUE_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZX0.jpXwkIJ4DpV4IvSI3eWVVXE6x89qr_GIq7IlbBv5YE0
             GH_NEXT_PUBLIC_APP_ID=12364
             # GH_NEXT_PUBLIC_ENABLE_MAINTENANCE_PAGE=true
