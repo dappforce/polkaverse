@@ -16,6 +16,7 @@ const GrillIframeModal = forwardRef<
       style={{
         opacity: isOpen ? 1 : 0,
         pointerEvents: isOpen ? 'auto' : 'none',
+        display: isOpen ? 'block' : 'none',
         transition: 'opacity 0.3s ease-in-out',
         border: 'none',
         colorScheme: 'none',
