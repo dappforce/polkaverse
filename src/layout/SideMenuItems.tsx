@@ -9,6 +9,7 @@ import { TiFlashOutline } from 'react-icons/ti'
 import { SubIcon } from 'src/components/utils'
 import { getIsLoggedIn } from 'src/stores/my-account'
 import GreyGrillIcon from '../components/utils/icons/GreyGrill'
+import { MdOutlineLocalPolice } from "react-icons/md";
 
 export type Divider = 'Divider'
 
@@ -96,5 +97,10 @@ export const buildAuthorizedMenu = (myAddress?: string): MenuItem[] => {
       href: '/c/landing',
       forceHardNavigation: true,
     },
-  ]
+    {
+      name: 'Content Policy',
+      icon: <SubIcon Icon={MdOutlineLocalPolice} />,
+      href: '/legal/content-policy',
+    }
+    ]
 }
