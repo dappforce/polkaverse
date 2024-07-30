@@ -1,7 +1,7 @@
 import { getLastestPostIdsInSpace } from 'src/graphql/apis'
 import { GqlClient } from 'src/graphql/ApolloProvider'
 
-const PINNED_POST_IDS: string[] = ['192597']
+const PINNED_POST_IDS: string[] = []
 export const PINNED_POST_ID = PINNED_POST_IDS[Math.floor(Math.random() * PINNED_POST_IDS.length)]
 
 const COMMUNITY_SPACE_ID = '1244'
