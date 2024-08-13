@@ -4,8 +4,8 @@ import { SubsocialConfig } from '../types'
 const mainConfig: SubsocialConfig = {
   sudoOne: '3osmnRNnrcScHsgkTJH1xyBF5kGjpbWHsGrqM31BJpy4vwn8',
 
-  substrateUrl: 'wss://api-subsocial.dwellir.com/d3b15e09-ebc8-48de-94af-907466466d10',
-  substrateRpcUrl: 'https://api-subsocial.dwellir.com/d3b15e09-ebc8-48de-94af-907466466d10',
+  substrateUrl: 'wss://para.subsocial.network',
+  substrateRpcUrl: 'https://para.subsocial.network/http',
   kusamaUrl: 'wss://kusama-rpc.polkadot.io',
 
   offchainUrl: 'https://api.subsocial.network',
