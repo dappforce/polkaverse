@@ -93,5 +93,8 @@ export default [
   // Dyored.com
   '7215',
   // Heimdall223
-  '8541'
+  '8541',
+
+  // Dyored.com
+  '30099',
 ]
