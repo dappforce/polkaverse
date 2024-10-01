@@ -44,11 +44,12 @@ import { DfImage } from '../../utils/DfImage'
 import { DfMd } from '../../utils/DfMd'
 import Section from '../../utils/Section'
 import ViewTags from '../../utils/ViewTags'
-import Embed, { getEmbedLinkType, getGleevVideoId, getYoutubeVideoId } from '../embed/Embed'
+import Embed from '../embed/Embed'
 import { StatsPanel } from '../PostStats'
 import { usePostViewTracker } from '../PostViewSubmitter'
 import ViewPostLink from '../ViewPostLink'
 import {
+  getCoverImageOrEmbed,
   HiddenPostAlert,
   OriginalPostPanel,
   PostActionsPanel,
@@ -147,15 +148,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
     }
   }
 
-  let usedImage = image
-  if (!usedImage && link) {
-    const embedType = getEmbedLinkType(link)
-    if (embedType === 'Youtube') {
-      usedImage = `https://i3.ytimg.com/vi/${getYoutubeVideoId(link)}/maxresdefault.jpg`
-    } else if (embedType === 'Gleev (Joystream)') {
-      usedImage = `https://assets.joyutils.org/video/${getGleevVideoId(link)}/thumbnail`
-    }
-  }
+  const { coverLink, imageAsMeta, type } = getCoverImageOrEmbed(content)
 
   const isSpaceAlreadyRenderedInSidebar = isNotMobile
 
@@ -165,7 +158,7 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
         title: metaTitle || defaultMetaTitle,
         forceTitle,
         desc: content.summary,
-        image: usedImage,
+        image: imageAsMeta,
         tags,
         canonical: postUrl(spaceStruct, postData.post),
         externalCanonical: content.canonical,
@@ -212,13 +205,14 @@ const InnerPostPage: NextPage<PostDetailsProps> = props => {
                     {titleMsg}
                   </h1>
                 )}
-                {image ? (
-                  <div className='d-flex justify-content-center'>
-                    <DfImage src={resolveIpfsUrl(image)} className='DfPostImage' />
-                  </div>
-                ) : (
-                  link && <Embed link={link} className={!!body ? 'mb-3' : 'mb-0'} />
-                )}
+                {coverLink &&
+                  (type === 'image' ? (
+                    <div className='d-flex justify-content-center'>
+                      <DfImage src={resolveIpfsUrl(coverLink)} className='DfPostImage' />
+                    </div>
+                  ) : (
+                    <Embed link={coverLink} className={!!body ? 'mb-3' : 'mb-0'} />
+                  ))}
                 {body && <DfMd source={body} />}
                 <ViewTags tags={tags} className='mt-2' />
 

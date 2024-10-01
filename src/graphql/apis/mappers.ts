@@ -98,12 +98,13 @@ function getFirstImageLink(mdText: string) {
   return match ? match[1] : null
 }
 export const mapSimplePostFragment = (post: PostSimpleFragment): PostSimpleFragmentMapped => {
-  const getContent = (): PostContent => {
+  const getContent = (): PostContent & { isImageFromBody: boolean } => {
     const summary = summarizeMd(post.body ?? '')
     const firstImageLink = getFirstImageLink(post.body ?? '')
     return {
       summary: summary.summary ?? '',
       image: post.image || firstImageLink || '',
+      isImageFromBody: !post.image && !!firstImageLink,
       title: post.title ?? '',
       link: post.link ?? undefined,
       body: post.body || '',

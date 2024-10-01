@@ -45,7 +45,7 @@ import { SpaceNameAsLink } from '../../spaces/ViewSpace'
 import { formatDate, isHidden, toShortUrl, useIsVisible } from '../../utils'
 import { SummarizeMd } from '../../utils/md/SummarizeMd'
 import ViewTags from '../../utils/ViewTags'
-import Embed, { getEmbedLinkType } from '../embed/Embed'
+import Embed, { getEmbedLinkType, getGleevVideoId, getYoutubeVideoId } from '../embed/Embed'
 import { isPinnedPost } from '../pinned-post'
 import { ShareDropdown } from '../share/ShareDropdown'
 import ViewPostLink from '../ViewPostLink'
@@ -528,21 +528,21 @@ export const InfoPostPreview: FC<PostPreviewProps> = props => {
     post: { struct, content },
   } = postDetails
 
-  const embedType = getEmbedLinkType(content?.link)
-  const shouldRenderEmbed = embedType && !content?.image
   if (!struct || !content) return null
+
+  const { coverLink, type } = getCoverImageOrEmbed(content)
 
   return (
     <div className='DfInfo'>
       <div className='DfRow'>
         <div className='w-100'>
           <PostPreviewCreatorInfo postDetails={postDetails} space={space} isPromoted={isPromoted} />
-          {shouldRenderEmbed && <Embed link={content.link!} className='mt-3' />}
+          {coverLink && type === 'embed' && <Embed link={coverLink} className='mt-3' />}
           <PostContent
             withMarginForCardType={withMarginForCardType && !withTags}
             postDetails={postDetails}
             space={space?.struct}
-            withImage={withImage && !shouldRenderEmbed}
+            withImage={withImage && !!coverLink && type === 'image'}
           />
           {withTags && <ViewTags tags={content?.tags} />}
           {/* {withStats && <StatsPanel id={post.id}/>} */}
@@ -631,4 +631,38 @@ export function PinnedPostIcon({ postId }: { postId: string }) {
       <span>Pinned</span>
     </div>
   )
+}
+
+export function getCoverImageOrEmbed(content: PostContentType) {
+  const { image, link } = content
+
+  let imageAsCover = ''
+  // first priority, if image is put directly by user, not from body
+  // added data from squid mapper
+  if (!(content as unknown as { isImageFromBody: boolean }).isImageFromBody && image) {
+    imageAsCover = image
+  }
+  // second priority, to get the cover image from supported link
+  const embedType = getEmbedLinkType(link)
+  if (!imageAsCover && link) {
+    if (embedType === 'Youtube') {
+      imageAsCover = `https://i3.ytimg.com/vi/${getYoutubeVideoId(link)}/maxresdefault.jpg`
+    } else if (embedType === 'Gleev (Joystream)') {
+      imageAsCover = `https://assets.joyutils.org/video/${getGleevVideoId(link)}/thumbnail`
+    }
+  }
+  // third priority, if there is no embeddable link, use the first image from body
+  if (!imageAsCover && !embedType && image) {
+    imageAsCover = image
+  }
+  // if there is an embeddable link, it will use the link as the cover
+
+  const imageAsMeta = imageAsCover || image
+
+  // if there is no image, use link as embed cover
+  return {
+    type: (imageAsCover ? 'image' : 'embed') as 'image' | 'embed',
+    coverLink: imageAsCover || link,
+    imageAsMeta,
+  }
 }
