@@ -9,7 +9,7 @@ export type SpaceSimpleFragmentMapped = SpaceStruct & {
 export type PostSimpleFragmentMapped = PostStruct & {
   originalPostId?: string
   rootPostId?: string
-} & { ipfsContent?: PostContent }
+} & { ipfsContent?: PostContent & { isImageFromBody: boolean } }
 export type ProfileSimpleFragmentMapped = ProfileSpaceIdByAccount
 
 // Full Fragment Results
