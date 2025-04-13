@@ -19,9 +19,9 @@ runs:
       uses: actions/checkout@v4
 
     - name: Extract main branch name
-      if: github.ref == 'refs/heads/main'
+      if: contains(github.ref, 'main')
       shell: bash
-      run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+      run: echo "name=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')" >> $GITHUB_ENV
       id: extract_branch
 
     - name: Extract feature branch name

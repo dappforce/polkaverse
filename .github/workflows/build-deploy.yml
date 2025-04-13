@@ -34,8 +34,8 @@ jobs:
       - name: Base ${{ matrix.apps }}
         uses: './.github/actions/common-ci-setup'
         with:
-          username_input: ${{ secrets.DOCKER_USERNAME }}
-          password_input: ${{ secrets.DOCKER_PASSWORD }}
+          username_input: ${{ secrets.DOCKER_FALLBACK_USERNAME }}
+          password_input: ${{ secrets.DOCKER_FALLBACK_PASSWORD }}
           app_input: ${{ matrix.apps }}
 
       - name: Build production image
