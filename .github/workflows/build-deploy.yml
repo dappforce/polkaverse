@@ -10,6 +10,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  final_image: ${{ secrets.BACKUP_IMAGE }}
+
 jobs:
   front_build:
     strategy:
@@ -37,6 +40,7 @@ jobs:
           username_input: ${{ secrets.DOCKER_FALLBACK_USERNAME }}
           password_input: ${{ secrets.DOCKER_FALLBACK_PASSWORD }}
           app_input: ${{ matrix.apps }}
+          backup_image: ${{ secrets.BACKUP_IMAGE }}
 
       - name: Build production image
         if: matrix.apps == 'prod'
@@ -45,7 +49,8 @@ jobs:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
           file: docker/Dockerfile
-          push: true
+          load: true
+          push: false
           build-args: |
             GH_GA_ID=G-TP1XEFNHQD
             GH_APP_KIND=grill
@@ -63,11 +68,17 @@ jobs:
             GH_DATAHUB_QUEUE_TOKEN=${{ secrets.DATAHUB_QUEUE_TOKEN }}
             # GH_NEXT_PUBLIC_ENABLE_MAINTENANCE_PAGE=true
           tags: |
-            ${{ secrets.BACKUP_IMAGE }}
             ${{ env.image }}
+            ${{ env.backup_image }}
             docker.io/dappforce/subsocial-web-app:master-latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+      - name: Push production image
+        if: matrix.apps == 'prod'
+        run: |
+          docker push ${{ env.image }} || echo "Failed to push image ${{ env.image }}"
+          docker push ${{ env.backup_image }} || echo "Failed to push image ${{ env.backup_image }}"
 
       - name: Build feature docker image
         if: matrix.apps == 'deploy'
@@ -101,9 +112,13 @@ jobs:
       - name: Set fallback image on failure
         if: always()
         run: |
-          if ! docker pull -q ${{ secrets.BACKUP_IMAGE }}; then
-            echo "image=${{ secrets.BACKUP_IMAGE }}:${{ env.name }}-$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
+          set +e
+          if ! docker pull -q "${{ env.image }}"; then
+            echo "final_image=${{ env.backup_image }}" >> $GITHUB_ENV
+          else
+            echo "final_image=${{ env.image }}" >> $GITHUB_ENV
           fi
+          set -e
 
       - name: Move cache
         run: |
@@ -131,7 +146,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: prod deploy ${{ matrix.apps }}
-        if: github.ref == 'refs/heads/main'
+        if: contains(github.ref, 'main')
         uses: './.github/actions/common-cd-setup'
         with:
           token_input: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_PROD }}

@@ -11,6 +11,9 @@ inputs:
   app_input:
     description: 'the App name'
     required: true
+  backup_image:
+    description: 'the backup image name'
+    required: false
 
 runs:
   using: composite
@@ -62,3 +65,4 @@ runs:
       shell: bash
       run: |
         echo "image=dappforce/subsocial-web-app:${{ env.name }}-$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
+        echo "backup_image=${{ inputs.backup_image }}:${{ env.name }}-$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV

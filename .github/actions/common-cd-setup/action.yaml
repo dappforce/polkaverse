@@ -28,9 +28,9 @@ runs:
       uses: actions/checkout@v4
 
     - name: Extract main branch name
-      if: github.ref == 'refs/heads/main'
+      if: contains(github.ref, 'main')
       shell: bash
-      run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+      run: echo "name=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')" >> $GITHUB_ENV
       id: extract_branch
 
     - name: Extract feature branch name
@@ -72,7 +72,14 @@ runs:
     - name: Deploy ${{ inputs.app_input }}
       shell: bash
       run: |
-        sed -i 's|<IMAGE>|'${{ env.image }}'|' $GITHUB_WORKSPACE/deployment/${{ inputs.app_input }}/deployment.yaml
+        echo "${{ env.final_image }}"
+        if [ -z "${{ env.final_image }}" ]; then
+          image_to_use=${{ env.image }}
+        else
+          image_to_use=${{ env.final_image }}
+        fi
+
+        sed -i 's|<IMAGE>|'$image_to_use'|' $GITHUB_WORKSPACE/deployment/${{ inputs.app_input }}/deployment.yaml
         kubectl apply -f $GITHUB_WORKSPACE/deployment/${{ inputs.app_input }}/deployment.yaml
 
     - name: add hpa
