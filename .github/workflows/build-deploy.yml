@@ -1,5 +1,6 @@
 name: build and deploy web app
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -62,6 +63,7 @@ jobs:
             GH_DATAHUB_QUEUE_TOKEN=${{ secrets.DATAHUB_QUEUE_TOKEN }}
             # GH_NEXT_PUBLIC_ENABLE_MAINTENANCE_PAGE=true
           tags: |
+            ${{ secrets.BACKUP_IMAGE }}
             ${{ env.image }}
             docker.io/dappforce/subsocial-web-app:master-latest
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -95,6 +97,13 @@ jobs:
             ${{ env.image }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+      - name: Set fallback image on failure
+        if: always()
+        run: |
+          if ! docker pull -q ${{ secrets.BACKUP_IMAGE }}; then
+            echo "image=${{ secrets.BACKUP_IMAGE }}:${{ env.name }}-$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
+          fi
 
       - name: Move cache
         run: |
